@@ -9,12 +9,13 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
+import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunResult;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -110,30 +111,33 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             return false;
         }
 
-        final ConnectAllHostsToLunCommandReturnValue connectResult = connectAllHostsToLun();
-        if (!connectResult.getSucceeded()) {
+        final VdcReturnValueBase returnValue = connectAllHostsToLun();
+        if (!returnValue.getSucceeded()) {
             addValidationMessage(EngineMessage.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
-            if (connectResult.getFailedVds() != null) {
+
+            ConnectAllHostsToLunResult result = (ConnectAllHostsToLunResult) getActionReturnValue();
+            if (result.getFailedVds() != null) {
                 getReturnValue().getValidationMessages().add(String.format("$hostName %1s",
-                        connectResult.getFailedVds().getName()));
+                        result.getFailedVds().getName()));
             }
-            String lunId = connectResult.getFailedLun() != null ? connectResult.getFailedLun().getLUNId() : "";
+
+            String lunId = result.getFailedLun() != null ? result.getFailedLun().getLUNId() : "";
             getReturnValue().getValidationMessages().add(String.format("$lun %1s", lunId));
             return false;
         } else {
             // use luns list from connect command
-            getParameters().setLunsList(connectResult.getActionReturnValue());
+            getParameters().setLunsList(returnValue.getActionReturnValue());
         }
 
-        if (!validate(discardHelper.isExistingDiscardFunctionalityPreserved(connectResult.getActionReturnValue(),
+        if (!validate(discardHelper.isExistingDiscardFunctionalityPreserved(returnValue.getActionReturnValue(),
                 getStorageDomain()))) {
             return false;
         }
         return true;
     }
 
-    protected ConnectAllHostsToLunCommandReturnValue connectAllHostsToLun() {
-        return (ConnectAllHostsToLunCommandReturnValue) runInternalAction(
+    protected VdcReturnValueBase connectAllHostsToLun() {
+        return runInternalAction(
                 VdcActionType.ConnectAllHostsToLun,
                 new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(),
                         getParameters().getLunIds()));

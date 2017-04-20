@@ -1199,13 +1199,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return true;
     }
 
-    /**
-     * Factory to determine the type of the ReturnValue field
-     */
-    protected VdcReturnValueBase createReturnValue() {
-        return new VdcReturnValueBase();
-    }
-
     protected boolean getSucceeded() {
         return getReturnValue().getSucceeded();
     }
@@ -1560,7 +1553,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     public VdcReturnValueBase getReturnValue() {
         if (returnValue == null) {
-            returnValue = createReturnValue();
+            returnValue = new VdcReturnValueBase();
         }
         return returnValue;
     }

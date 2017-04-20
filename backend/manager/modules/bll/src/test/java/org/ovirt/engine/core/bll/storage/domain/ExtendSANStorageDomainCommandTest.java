@@ -16,9 +16,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunCommandReturnValue;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -74,7 +74,7 @@ public class ExtendSANStorageDomainCommandTest {
         doReturn(true).when(command).checkStorageDomainStatus(StorageDomainStatus.Active);
         storageDomain.setStorageType(StorageType.ISCSI);
 
-        ConnectAllHostsToLunCommandReturnValue connectResult = new ConnectAllHostsToLunCommandReturnValue();
+        VdcReturnValueBase connectResult = new VdcReturnValueBase();
         connectResult.setActionReturnValue(new ArrayList<>());
         connectResult.setSucceeded(true);
         doReturn(connectResult).when(command).connectAllHostsToLun();

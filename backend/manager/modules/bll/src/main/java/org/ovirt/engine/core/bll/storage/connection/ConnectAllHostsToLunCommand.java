@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -40,7 +40,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         super(parameters, commandContext);
     }
 
-    public static class ConnectAllHostsToLunCommandReturnValue extends VdcReturnValueBase {
+    public static class ConnectAllHostsToLunResult implements Serializable {
         private VDS failedVds;
         private LUNs failedLun;
 
@@ -59,15 +59,6 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         public void setFailedLun(LUNs failedLun) {
             this.failedLun = failedLun;
         }
-    }
-
-    @Override
-    protected ConnectAllHostsToLunCommandReturnValue createReturnValue() {
-        return new ConnectAllHostsToLunCommandReturnValue();
-    }
-
-    private ConnectAllHostsToLunCommandReturnValue getResult() {
-        return (ConnectAllHostsToLunCommandReturnValue) getReturnValue();
     }
 
     @Override
@@ -165,7 +156,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                     new GetDeviceListVDSCommandParameters(vds.getId(),
                             getStorageDomain().getStorageType())).getReturnValue();
         } catch (EngineException e) {
-            getResult().setFailedVds(vds);
+            handleFailure(vds);
             throw e;
         }
     }
@@ -203,17 +194,26 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         return true;
     }
 
+    private void handleFailure(VDS vds) {
+        ConnectAllHostsToLunResult result = new ConnectAllHostsToLunResult();
+        result.setFailedVds(vds);
+        setActionReturnValue(result);
+    }
+
     private void handleFailure(VDS vds, LUNs lun) {
-        ConnectAllHostsToLunCommandReturnValue result = getResult();
+        ConnectAllHostsToLunResult result = new ConnectAllHostsToLunResult();
         result.setFailedVds(vds);
         result.setFailedLun(lun);
+        setActionReturnValue(result);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        // this should return only error, if command succeeded no logging is
-        // required
-        setVds(getResult().getFailedVds()); // For audit logging purposes in case of an error
+        // this should return only error, if command succeeded no logging is required
+        ConnectAllHostsToLunResult result = (ConnectAllHostsToLunResult) getActionReturnValue();
+
+        // For audit logging purposes in case of an error
+        setVds(result.getFailedVds());
         return AuditLogType.USER_CONNECT_HOSTS_TO_LUN_FAILED;
     }
 }

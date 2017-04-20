@@ -511,17 +511,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        getHostListByCluster(cluster, asyncQuery(returnValue -> {
-                    List<VDS> hosts = null;
-                    if (returnValue instanceof List) {
-                        hosts = (List<VDS>) returnValue;
-                    } else if (returnValue instanceof VdcQueryReturnValue
-                            && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof List) {
-                        hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                    } else {
-                        throw new IllegalArgumentException("The return value should be List<VDS> or VdcQueryReturnValue with return value List<VDS>"); //$NON-NLS-1$
-                    }
-
+        getHostListByCluster(cluster, asyncQuery(hosts -> {
                     List<VDS> oldDefaultHosts = getModel().getDefaultHost().getSelectedItems();
                     if (getModel().getBehavior().getSystemTreeSelectedItem() != null
                             && getModel().getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {

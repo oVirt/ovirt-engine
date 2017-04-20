@@ -7,8 +7,17 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdcReturnValueBase implements Serializable {
-    private static final long serialVersionUID = 6063371142273092365L;
+/**
+ * Action (command) return value class.
+ *
+ * <p>
+ * Final on purpose, to avoid the need of implementing GWT custom field serializer
+ * for each subclass. Instead of subclassing, consider using the {@link #returnValue}
+ * object itself to carry any additional data.
+ * </p>
+ */
+public final class VdcReturnValueBase implements Serializable {
+    private static final long serialVersionUID = 9194321065754359119L;
 
     private boolean valid;
     private ArrayList<String> validationMessages;

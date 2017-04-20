@@ -5,10 +5,16 @@ import java.io.Serializable;
 import org.ovirt.engine.core.common.HasCorrelationId;
 
 /**
- * Query return value class, If inheriting from this class add logic to QueriesCommandBase class.
+ * Query return value class.
+ *
+ * <p>
+ * Final on purpose, to avoid the need of implementing GWT custom field serializer
+ * for each subclass. Instead of subclassing, consider using the {@link #returnValue}
+ * object itself to carry any additional data.
+ * </p>
  */
-public class VdcQueryReturnValue implements Serializable, HasCorrelationId {
-    private static final long serialVersionUID = -7737597005584540781L;
+public final class VdcQueryReturnValue implements Serializable, HasCorrelationId {
+    private static final long serialVersionUID = -8111910149841490393L;
 
     private boolean succeeded;
     private String exceptionString;
