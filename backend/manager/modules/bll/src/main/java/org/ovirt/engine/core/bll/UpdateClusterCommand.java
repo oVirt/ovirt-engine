@@ -21,7 +21,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
-import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -128,7 +127,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private boolean isAddedToStoragePool = false;
 
-    private NetworkCluster managementNetworkCluster;
+    private Network managementNetwork;
 
     private List<VmStatic> vmsLockedForUpdate = Collections.emptyList();
     private List<VmTemplate> templatesLockedForUpdate = Collections.emptyList();
@@ -173,7 +172,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     public UpdateClusterCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
-
 
     protected UpdateClusterCommand(Guid commandId) {
         super(commandId);
@@ -250,6 +248,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 }
             }
 
+            final NetworkCluster managementNetworkCluster = createManagementNetworkCluster(managementNetwork);
             networkClusterDao.save(managementNetworkCluster);
         }
 
@@ -595,7 +594,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             isAddedToStoragePool = oldCluster.getStoragePoolId() == null
                     && getCluster().getStoragePoolId() != null;
 
-            if (isAddedToStoragePool && !validateManagementNetworkAttachement()) {
+            if (isAddedToStoragePool && !validateManagementNetwork()) {
                 return false;
             }
 
@@ -773,8 +772,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         return true;
     }
 
-    private boolean validateManagementNetworkAttachement() {
-        final Network managementNetwork;
+    private boolean validateManagementNetwork() {
         final Guid managementNetworkId = getParameters().getManagementNetworkId();
         if (managementNetworkId == null) {
             managementNetwork =
@@ -790,10 +788,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 return false;
             }
         }
-
-        managementNetworkCluster = createManagementNetworkCluster(managementNetwork);
-        final UpdateClusterNetworkClusterValidator networkClusterValidator = createManagementNetworkClusterValidator();
-        return validate(networkClusterValidator.managementNetworkChange());
+        return true;
     }
 
     @Override
@@ -874,14 +869,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     DefaultManagementNetworkFinder getDefaultManagementNetworkFinder() {
         return defaultManagementNetworkFinder;
-    }
-
-    UpdateClusterNetworkClusterValidator createManagementNetworkClusterValidator() {
-        return new UpdateClusterNetworkClusterValidator(
-                interfaceDao,
-                networkDao,
-                vdsDao,
-                managementNetworkCluster);
     }
 
     @Override

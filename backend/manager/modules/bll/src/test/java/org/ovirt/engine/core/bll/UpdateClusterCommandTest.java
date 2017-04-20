@@ -29,7 +29,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
-import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
@@ -111,8 +110,6 @@ public class UpdateClusterCommandTest {
     private SupportedHostFeatureDao hostFeatureDao;
     @Mock
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
-    @Mock
-    private UpdateClusterNetworkClusterValidator networkClusterValidator;
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
@@ -323,18 +320,6 @@ public class UpdateClusterCommandTest {
     private void managementNetworkNotFoundById() {
         managementNetworkId = TEST_MANAGEMENT_NETWORK_ID;
         when(networkDao.get(TEST_MANAGEMENT_NETWORK_ID)).thenReturn(null);
-    }
-
-    @Test
-    public void invalidDefaultManagementNetworkAttachement() {
-        newDefaultManagementNetworkFound();
-        final EngineMessage expected = EngineMessage.Unassigned;
-        when(networkClusterValidator.managementNetworkChange()).thenReturn(new ValidationResult(expected));
-
-        createCommandWithDefaultCluster();
-        oldGroupIsDetachedDefault();
-        setupCpu();
-        validateFailedWithReason(expected);
     }
 
     private void setupCpu() {
@@ -618,7 +603,6 @@ public class UpdateClusterCommandTest {
         doReturn(dbFacadeMock).when(cmd).getDbFacade();
         doReturn(clusterDao).when(dbFacadeMock).getClusterDao();
         doReturn(storagePoolDao).when(dbFacadeMock).getStoragePoolDao();
-        doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
         doReturn(true).when(cmd).isSupportedEmulatedMachinesMatchClusterLevel(any());
 
         // cluster upgrade
