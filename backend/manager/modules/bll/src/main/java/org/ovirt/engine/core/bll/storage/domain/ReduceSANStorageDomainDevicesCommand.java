@@ -175,7 +175,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_DEVICES_PROVIDED);
         }
 
-        if (!(checkStorageDomain())) {
+        if (!checkStorageDomain()) {
             return false;
         }
 
