@@ -92,7 +92,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -579,8 +580,9 @@ public class VmHandler implements BackendService {
      */
     public void warnMemorySizeLegal(VmBase vm, Version clusterVersion) {
         if (! VmValidationUtils.isMemorySizeLegal(vm.getOsId(), vm.getMemSizeMb(), clusterVersion)) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.addCustomValue("VmName", vm.getName());
+            AuditLogable logable = new AuditLogableImpl();
+            logable.setVmId(vm.getId());
+            logable.setVmName(vm.getName());
             logable.addCustomValue("VmMemInMb", String.valueOf(vm.getMemSizeMb()));
             logable.addCustomValue("VmMinMemInMb",
                     String.valueOf(VmValidationUtils.getMinMemorySizeInMb(vm.getOsId(), clusterVersion)));
