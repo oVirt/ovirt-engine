@@ -236,7 +236,7 @@ public class AttachDiskModel extends NewDiskModel {
             // Disk is attached to VM as read only or not, null is applicable only for floating disks
             // but this is not a case here.
             AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(dve , activate,
-                    Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
+                    Boolean.TRUE.equals(disk.isReadOnly()));
 
             actionTypes.add(VdcActionType.AttachDiskToVm);
             paramerterList.add(parameters);

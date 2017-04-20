@@ -39,7 +39,7 @@ public class EditDiskModel extends AbstractDiskModel {
         getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
         getIsScsiPassthrough().setEntity(getDisk().isScsiPassthrough());
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
-        getIsReadOnly().setEntity(getDisk().getReadOnly());
+        getIsReadOnly().setEntity(getDiskVmElement().isReadOnly());
         getIsBootable().setEntity(getDiskVmElement().isBoot());
         getPassDiscard().setEntity(getDiskVmElement().isPassDiscard());
 

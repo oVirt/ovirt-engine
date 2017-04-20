@@ -31,7 +31,6 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getImageId(), transform.getImageId());
         assertEquals(model.getFormat(), transform.getFormat());
-        assertEquals(model.isReadOnly(), transform.isReadOnly());
         assertEquals(model.getDescription(), transform.getDescription());
         assertEquals(model.getLogicalName(), transform.getLogicalName());
         assertEquals(model.getOpenstackVolumeType().getName(), transform.getOpenstackVolumeType().getName());
@@ -59,23 +58,6 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         DiskImage inverse = getInverse(to);
         Disk transform = back.map(inverse, null);
         verify(model, transform);
-    }
-
-    @Test
-    public void testReadOnlyMapping() {
-        Disk model = new Disk();
-        model.setReadOnly(true);
-
-        org.ovirt.engine.core.common.businessentities.storage.Disk entity = DiskMapper.map(model, null);
-        assertTrue(entity.getReadOnly());
-
-        model.setReadOnly(false);
-        entity = DiskMapper.map(model, null);
-        assertFalse(entity.getReadOnly());
-
-        model.setReadOnly(null);
-        entity = DiskMapper.map(model, null);
-        assertNull(entity.getReadOnly());
     }
 
     @Test

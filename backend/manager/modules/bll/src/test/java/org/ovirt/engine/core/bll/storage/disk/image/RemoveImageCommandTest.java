@@ -129,7 +129,6 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         disk.setStoragePoolId(vm.getStoragePoolId());
         disk.setActive(Boolean.TRUE);
         disk.setPlugged(Boolean.TRUE);
-        disk.setReadOnly(Boolean.FALSE);
         disk.setVmSnapshotId(snapshotId);
         disk.setImageStatus(ImageStatus.OK);
         disk.setAppList("");

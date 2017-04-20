@@ -169,7 +169,6 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
     private static final RowMapper<Disk> diskForVmRowMapper = (rs, rowNum) -> {
         Disk disk = diskRowMapper.mapRow(rs, rowNum);
         disk.setPlugged(rs.getBoolean("is_plugged"));
-        disk.setReadOnly(rs.getBoolean("is_readonly"));
         disk.setLogicalName(rs.getString("logical_name"));
         return disk;
     };

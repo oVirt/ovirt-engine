@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -47,14 +48,16 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         panel.setSpacing(1);
         panel.setWidth("100%"); //$NON-NLS-1$
 
+        DiskVmElement dve = disk.getDiskVmElements().iterator().next();
+
         addItemToPanel(panel, new Image(resources.diskImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new StringValueLabel(), disk.getDiskAlias(), ""); //$NON-NLS-1$
-        addItemToPanel(panel, disk.getReadOnly() ? new Image(resources.readOnlyDiskIcon()) : new Image(), "60px"); //$NON-NLS-1$
+        addItemToPanel(panel, dve.isReadOnly() ? new Image(resources.readOnlyDiskIcon()) : new Image(), "60px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(), disk.getSizeInGigabytes(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Long>(SizeConverter.SizeUnit.BYTES), disk.getActualSizeInBytes(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<ImageStatus>(), disk.getImageStatus(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getVolumeType(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskVmElements().iterator().next().getDiskInterface(), "120px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), dve.getDiskInterface(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskStorageType>(), disk.getDiskStorageType(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DateLabel(), disk.getCreationDate(), "90px"); //$NON-NLS-1$
         TreeItem treeItem = new TreeItem(panel);

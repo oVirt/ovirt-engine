@@ -245,6 +245,10 @@ public class BackendVmDiskResource
             diskVmElement.setBoot(disk.isBootable());
         }
 
+        if (disk.isSetReadOnly()) {
+            diskVmElement.setReadOnly(disk.isReadOnly());
+        }
+
         return diskVmElement;
     }
 }

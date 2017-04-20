@@ -150,7 +150,10 @@ public class DisksViewColumns {
 
         @Override
         public ImageResource getValue(Disk object) {
-            return object.getReadOnly() ? getDefaultImage() : null;
+            if (object.getDiskVmElements().size() == 1) {
+                return object.getDiskVmElements().iterator().next().isReadOnly() ? getDefaultImage() : null;
+            }
+            return null;
         }
 
         @Override
@@ -160,8 +163,9 @@ public class DisksViewColumns {
 
         @Override
         public SafeHtml getTooltip(Disk object) {
-            if (object.getReadOnly()) {
-                return SafeHtmlUtils.fromSafeConstant(constants.readOnly());
+            if (object.getDiskVmElements().size() == 1) {
+                return object.getDiskVmElements().iterator().next().isReadOnly() ?
+                        SafeHtmlUtils.fromSafeConstant(constants.readOnly()) : null;
             }
             return null;
         }

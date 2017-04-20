@@ -67,9 +67,6 @@ public class DiskMapper {
         if (disk.isSetWipeAfterDelete()) {
             engineDisk.setWipeAfterDelete(disk.isWipeAfterDelete());
         }
-        if (disk.isSetReadOnly()) {
-            engineDisk.setReadOnly(disk.isReadOnly());
-        }
 
         if (disk.isSetLogicalName()) {
             engineDisk.setLogicalName(disk.getLogicalName());
@@ -150,7 +147,6 @@ public class DiskMapper {
         }
         model.setPropagateErrors(PropagateErrors.On == entity.getPropagateErrors());
         model.setWipeAfterDelete(entity.isWipeAfterDelete());
-        model.setReadOnly(entity.getReadOnly());
         model.setShareable(entity.isShareable());
         model.setDescription(entity.getDiskDescription());
         model.setLogicalName(entity.getLogicalName());

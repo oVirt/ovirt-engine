@@ -79,7 +79,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return validate(isHostedEngineDisk);
         }
 
-        disk.setReadOnly(getParameters().isReadOnly());
         DiskValidator diskValidator = getDiskValidator(disk);
 
         if (!checkDiskUsedAsOvfStore(diskValidator)) {

@@ -20,7 +20,7 @@ public class ReadOnlyDiskModel extends EditDiskModel {
         getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
         getIsScsiPassthrough().setEntity(getDisk().isScsiPassthrough());
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
-        getIsReadOnly().setEntity(getVm() != null && getDisk().getReadOnly());
+        getIsReadOnly().setEntity(getVm() != null && getDiskVmElement().isReadOnly());
 
         switch (getDisk().getDiskStorageType()) {
             case IMAGE:

@@ -79,6 +79,7 @@ public class RunVmValidator {
     private Set<String> cachedInterfaceNetworkNames;
     private List<Network> cachedClusterNetworks;
     private Set<String> cachedClusterNetworksNames;
+    private Map<Disk, DiskVmElement> cachedVmDveMap;
 
     @Inject
     private SnapshotsValidator snapshotsValidator;
@@ -155,7 +156,8 @@ public class RunVmValidator {
 
     private List<DiskImage> filterReadOnlyAndPreallocatedDisks(List<DiskImage> vmImageDisks) {
         return vmImageDisks.stream()
-                .filter(disk -> !(disk.getVolumeType() == VolumeType.Preallocated || disk.getReadOnly()))
+                .filter(disk -> !(disk.getVolumeType() == VolumeType.Preallocated ||
+                        getVmDiskVmElementMap().get(disk).isReadOnly()))
                 .collect(Collectors.toList());
     }
 
@@ -310,16 +312,13 @@ public class RunVmValidator {
     }
 
     protected ValidationResult validateDisksPassDiscard(VM vm) {
-        Map<Guid, Disk> disksMap = getVmDisks().stream().collect(Collectors.toMap(Disk::getId, Function.identity()));
-        Map<Disk, DiskVmElement> diskToDiskVmElement = Injector.get(DiskHandler.class).getDiskToDiskVmElementMap(
-                vm.getId(), disksMap);
         Map<Guid, Guid> diskIdToDestSdId = getVmDisks().stream()
                 .collect(Collectors.toMap(Disk::getId,
                         disk -> disk.getDiskStorageType() == DiskStorageType.IMAGE ?
                                 ((DiskImage) disk).getStorageIds().get(0) : Guid.Empty));
 
         MultipleDiskVmElementValidator multipleDiskVmElementValidator =
-                createMultipleDiskVmElementValidator(diskToDiskVmElement);
+                createMultipleDiskVmElementValidator(getVmDiskVmElementMap());
         return multipleDiskVmElementValidator.isPassDiscardSupportedForDestSds(diskIdToDestSdId);
     }
 
@@ -561,6 +560,15 @@ public class RunVmValidator {
         }
 
         return cachedVmDisks;
+    }
+
+    protected Map<Disk, DiskVmElement> getVmDiskVmElementMap() {
+        if (cachedVmDveMap == null) {
+            Map<Guid, Disk> disksMap = getVmDisks().stream().collect(Collectors.toMap(Disk::getId, Function.identity()));
+            cachedVmDveMap = Injector.get(DiskHandler.class).getDiskToDiskVmElementMap(vm.getId(), disksMap);
+        }
+
+        return cachedVmDveMap;
     }
 
     private List<DiskImage> getVmImageDisks() {

@@ -631,7 +631,6 @@ CREATE OR REPLACE VIEW all_disks_for_vms AS
 
 SELECT all_disks_including_snapshots.*,
     vm_device.is_plugged,
-    vm_device.is_readonly,
     vm_device.logical_name,
     vm_device.vm_id
 FROM all_disks_including_snapshots

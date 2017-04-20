@@ -52,14 +52,14 @@ public class DiskVmElementValidatorTest {
 
     @Test
     public void readOnlyIsNotSupportedByDiskInterface() {
-        disk.setReadOnly(true);
+        dve.setReadOnly(true);
         dve.setDiskInterface(DiskInterface.IDE);
 
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(),
                 both(failsWith(EngineMessage.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                         and(replacements(hasItem(String.format("$interface %1$s", DiskInterface.IDE)))));
 
-        disk.setReadOnly(true);
+        dve.setReadOnly(true);
         disk.setSgio(ScsiGenericIO.FILTERED);
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(),
@@ -68,7 +68,7 @@ public class DiskVmElementValidatorTest {
 
     @Test
     public void readOnlyIsSupportedByDiskInterface() {
-        disk.setReadOnly(true);
+        dve.setReadOnly(true);
         DiskVmElement dve = new DiskVmElement();
         dve.setDiskInterface(DiskInterface.VirtIO);
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
@@ -76,15 +76,15 @@ public class DiskVmElementValidatorTest {
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
 
-        disk.setReadOnly(false);
+        dve.setReadOnly(false);
         dve.setDiskInterface(DiskInterface.IDE);
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
 
-        disk.setReadOnly(true);
+        dve.setReadOnly(true);
         dve.setDiskInterface(DiskInterface.VirtIO);
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
 
-        disk.setReadOnly(false);
+        dve.setReadOnly(false);
         dve.setDiskInterface(DiskInterface.VirtIO_SCSI);
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
 

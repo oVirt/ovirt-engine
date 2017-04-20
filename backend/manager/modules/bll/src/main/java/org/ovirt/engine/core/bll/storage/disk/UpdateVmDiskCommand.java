@@ -435,7 +435,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
             private void updateDeviceProperties() {
                 if (updateReadOnlyRequested()) {
-                    vmDeviceForVm.setReadOnly(getNewDisk().getReadOnly());
+                    vmDeviceForVm.setReadOnly(getDiskVmElement().isReadOnly());
                     vmDeviceDao.update(vmDeviceForVm);
                 }
 
@@ -535,7 +535,6 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         diskToUpdate.setDiskAlias(getNewDisk().getDiskAlias());
         diskToUpdate.setDiskDescription(getNewDisk().getDiskDescription());
         diskToUpdate.setShareable(getNewDisk().isShareable());
-        diskToUpdate.setReadOnly(getNewDisk().getReadOnly());
         diskToUpdate.setSgio(getNewDisk().getSgio());
 
         dveToUpdate.setBoot(getDiskVmElement().isBoot());
@@ -806,8 +805,8 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     protected boolean updateReadOnlyRequested() {
-        Boolean readOnlyNewValue = getNewDisk().getReadOnly();
-        return readOnlyNewValue != null && !getVmDeviceForVm().getReadOnly().equals(readOnlyNewValue);
+        boolean readOnlyNewValue = getDiskVmElement().isReadOnly();
+        return !getVmDeviceForVm().getReadOnly().equals(readOnlyNewValue);
     }
 
     protected boolean updateWipeAfterDeleteRequested() {

@@ -89,7 +89,6 @@ public class OvfVmReader extends OvfReader {
         }
         VmDevice readDevice = readManagedVmDevice(node, image.getId());
         image.setPlugged(readDevice.isPlugged());
-        image.setReadOnly(readDevice.getReadOnly());
     }
 
     @Override

@@ -353,7 +353,6 @@ public class BackendTemplateDiskResourceTest
         when(entity.getPropagateErrors()).thenReturn(PropagateErrors.On);
         when(entity.getDiskStorageType()).thenReturn(DiskStorageType.IMAGE);
         when(entity.getImageId()).thenReturn(GUIDS[1]);
-        when(entity.getReadOnly()).thenReturn(true);
         ArrayList<Guid> sdIds = new ArrayList<>();
         sdIds.add(Guid.Empty);
         when(entity.getStorageIds()).thenReturn(sdIds);

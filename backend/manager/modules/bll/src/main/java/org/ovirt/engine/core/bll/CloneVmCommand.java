@@ -220,12 +220,13 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private void attachDetachDisk(Disk disk, VdcActionType actionType) {
+        DiskVmElement oldDve = disk.getDiskVmElementForVm(oldVmId);
         runInternalAction(
                 actionType,
                 new AttachDetachVmDiskParameters(
                         new DiskVmElement(disk.getId(), getParameters().getNewVmGuid()),
-                        disk.getPlugged(),
-                        disk.getReadOnly()
+                        oldDve.isPlugged(),
+                        oldDve.isReadOnly()
                 )
         );
     }

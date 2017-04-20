@@ -310,8 +310,7 @@ public class RunVmValidatorTest {
 
     private void mockPassDiscardSupport(ValidationResult validationResult) {
         doReturn(Collections.emptyList()).when(runVmValidator).getVmDisks();
-
-        injectorRule.bind(DiskHandler.class, diskHandler);
+        doReturn(Collections.emptyMap()).when(runVmValidator).getVmDiskVmElementMap();
 
         MultipleDiskVmElementValidator multipleDiskVmElementValidator = mock(MultipleDiskVmElementValidator.class);
         doReturn(multipleDiskVmElementValidator).when(runVmValidator).createMultipleDiskVmElementValidator(anyMap());

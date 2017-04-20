@@ -533,7 +533,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         AbstractCheckboxColumn<EntityModel> readOnlyCheckboxColumn = new AbstractCheckboxColumn<EntityModel>(
                 (idx, object, value) -> {
                     DiskModel diskModel = (DiskModel) object.getEntity();
-                    diskModel.getDisk().setReadOnly(value);
+                    diskModel.setReadOnly(value);
                 }) {
                 @Override
                 protected boolean canEdit(EntityModel object) {
@@ -547,7 +547,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 @Override
                 public Boolean getValue(EntityModel object) {
                     DiskModel diskModel = (DiskModel) object.getEntity();
-                    return diskModel.getDisk().getReadOnly();
+                    return diskModel.isReadOnly();
                 }
             };
         return readOnlyCheckboxColumn;

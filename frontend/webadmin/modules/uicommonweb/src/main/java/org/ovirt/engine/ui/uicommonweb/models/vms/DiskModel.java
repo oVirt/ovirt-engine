@@ -35,6 +35,7 @@ public class DiskModel extends Model {
 
     private ListModel<VolumeType> volumeType;
     private ListModel<DiskInterface> diskInterface;
+    private boolean readOnly;
     private ListModel<StorageDomain> sourceStorageDomain;
     private ListModel<StorageDomain> storageDomain;
     private ListModel<DiskProfile> diskProfile;
@@ -113,6 +114,14 @@ public class DiskModel extends Model {
 
     public void setDiskInterface(ListModel<DiskInterface> diskInterface) {
         this.diskInterface = diskInterface;
+    }
+
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     public EntityModel<Boolean> getIsBootable() {

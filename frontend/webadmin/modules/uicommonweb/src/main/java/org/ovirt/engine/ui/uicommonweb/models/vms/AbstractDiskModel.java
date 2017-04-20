@@ -866,7 +866,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             getIsReadOnly().setIsChangeable(isEditEnabled());
         }
         if (!getIsNew()) {
-            getIsReadOnly().setEntity(getDisk().getReadOnly());
+            getIsReadOnly().setEntity(getDiskVmElement().isReadOnly());
         }
     }
 
@@ -1093,9 +1093,9 @@ public abstract class AbstractDiskModel extends DiskModel {
         getDisk().setShareable(getIsShareable().getEntity());
         getDisk().setPlugged(getIsPlugged().getEntity());
         getDisk().setPropagateErrors(PropagateErrors.Off);
-        getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : null);
 
         if (getVm() != null) {
+            getDiskVmElement().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : false);
             getDiskVmElement().setBoot(getIsBootable().getEntity());
             getDiskVmElement().setDiskInterface(getDiskInterface().getSelectedItem());
             getDiskVmElement().setPassDiscard(getPassDiscard().getEntity());

@@ -32,7 +32,7 @@ public class DiskVmElementValidator {
     }
 
     public ValidationResult isReadOnlyPropertyCompatibleWithInterface() {
-        if (Boolean.TRUE.equals(disk.getReadOnly())) {
+        if (Boolean.TRUE.equals(diskVmElement.isReadOnly())) {
             DiskInterface diskInterface = diskVmElement.getDiskInterface();
 
             if (diskInterface == DiskInterface.IDE) {

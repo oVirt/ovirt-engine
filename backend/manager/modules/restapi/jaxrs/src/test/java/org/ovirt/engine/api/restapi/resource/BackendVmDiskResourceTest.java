@@ -164,7 +164,7 @@ public class BackendVmDiskResourceTest
             setUpActionExpectations(
                 VdcActionType.UpdateVmDisk,
                 VmDiskOperationParameterBase.class,
-                new String[] { "VmId", "DiskInfo.ReadOnly" },
+                new String[] { "VmId", "DiskVmElement.ReadOnly" },
                 new Object[] { VM_ID, Boolean.TRUE },
                 true,
                 true
@@ -355,7 +355,7 @@ public class BackendVmDiskResourceTest
     protected Disk getUpdate() {
         Disk update = new Disk();
         update.setWipeAfterDelete(false);
-        update.setReadOnly(false);
+        update.setReadOnly(true);
         return update;
     }
 
@@ -546,7 +546,6 @@ public class BackendVmDiskResourceTest
         when(entity.getPropagateErrors()).thenReturn(PropagateErrors.On);
         when(entity.getDiskStorageType()).thenReturn(DiskStorageType.IMAGE);
         when(entity.getImageId()).thenReturn(GUIDS[1]);
-        when(entity.getReadOnly()).thenReturn(true);
         ArrayList<Guid> sdIds = new ArrayList<>();
         sdIds.add(Guid.Empty);
         when(entity.getStorageIds()).thenReturn(sdIds);

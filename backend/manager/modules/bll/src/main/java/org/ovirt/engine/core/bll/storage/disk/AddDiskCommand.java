@@ -484,7 +484,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getVmId(),
                 diskId,
                 shouldDiskBePlugged(),
-                Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()));
+                Boolean.TRUE.equals(getParameters().getDiskVmElement().isReadOnly()));
     }
 
     protected DiskVmElement addDiskVmElementForDisk(DiskVmElement diskVmElement) {

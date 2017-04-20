@@ -346,7 +346,6 @@ public class OvfManagerTest {
         disk.setImageId(Guid.newGuid());
         disk.setStoragePoolId(Guid.newGuid());
         disk.setPlugged(true);
-        disk.setReadOnly(false);
         disk.setAppList(rnd.nextPropertyString(100));
 
         Image image = new Image();
@@ -360,6 +359,7 @@ public class OvfManagerTest {
         DiskVmElement diskVmElement = new DiskVmElement(disk.getId(), vm.getId());
         diskVmElement.setBoot(rnd.nextBoolean());
         diskVmElement.setDiskInterface(rnd.nextEnum(DiskInterface.class));
+        diskVmElement.setReadOnly(false);
         disk.setDiskVmElements(Collections.singletonList(diskVmElement));
 
         return disk;

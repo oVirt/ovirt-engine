@@ -33,7 +33,6 @@ public abstract class Disk extends BaseDisk {
      * In case the disk is not in a vm context, null will ensure they are invisible.
      */
     private boolean plugged;
-    private Boolean readOnly;
     private String logicalName;
 
     /**
@@ -64,16 +63,8 @@ public abstract class Disk extends BaseDisk {
         this.plugged = plugged;
     }
 
-    public Boolean getReadOnly() {
-        return readOnly;
-    }
-
     public String getLogicalName() {
         return logicalName;
-    }
-
-    public void setReadOnly(Boolean readOnly) {
-        this.readOnly = readOnly;
     }
 
     public void setLogicalName(String logicalName) {
@@ -111,7 +102,6 @@ public abstract class Disk extends BaseDisk {
         return Objects.hash(
                 super.hashCode(),
                 plugged,
-                readOnly,
                 vmNames,
                 templateVersionNames,
                 vmEntityType,
@@ -131,7 +121,6 @@ public abstract class Disk extends BaseDisk {
         Disk other = (Disk) obj;
         return super.equals(obj)
                 && Objects.equals(plugged, other.plugged)
-                && Objects.equals(readOnly, other.readOnly)
                 && Objects.equals(vmNames, other.vmNames)
                 && Objects.equals(templateVersionNames, other.templateVersionNames)
                 && Objects.equals(logicalName, other.logicalName)

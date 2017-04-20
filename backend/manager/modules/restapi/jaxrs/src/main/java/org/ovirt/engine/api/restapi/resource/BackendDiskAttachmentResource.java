@@ -99,16 +99,22 @@ public class BackendDiskAttachmentResource
     protected class UpdateParametersProvider implements ParametersProvider<DiskAttachment, org.ovirt.engine.core.common.businessentities.storage.DiskVmElement> {
         @Override
         public VdcActionParametersBase getParameters(DiskAttachment incoming, org.ovirt.engine.core.common.businessentities.storage.DiskVmElement entity) {
+            DiskVmElement dve = map(incoming, entity);
+            dve.getId().setVmId(vmId);
+
             // Disk has to be sent along with the attachment data to the update command
             Disk disk = runQuery(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(Guid.createGuidFromString(diskId))).getReturnValue();
 
             // If a <disk> was specified inside the attachment data we can update its properties too
             if (incoming.isSetDisk()) {
                 disk = DiskMapper.map(incoming.getDisk(), disk);
+
+                // TODO: Remove this in version 5 of the API as the setting of the read only attribute should be from DiskAttachment
+                if (incoming.getDisk().isSetReadOnly()) {
+                    dve.setReadOnly(incoming.getDisk().isReadOnly());
+                }
             }
 
-            DiskVmElement dve = map(incoming, entity);
-            dve.getId().setVmId(vmId);
             return new VmDiskOperationParameterBase(dve, disk);
         }
     }
