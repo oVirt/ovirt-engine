@@ -705,17 +705,14 @@ public class AsyncDataProvider {
     }
 
     private void runQueryByIdParameter(VdcQueryType queryType, AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new CastingConverter();
         Frontend.getInstance().runQuery(queryType, new IdQueryParameters(id), aQuery);
     }
 
     public void getHostArchitecture(AsyncQuery<ArchitectureType> aQuery, Guid id) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetHostArchitecture, new IdQueryParameters(id), aQuery);
     }
 
     public void getClusterById(AsyncQuery<Cluster> aQuery, Guid id) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterById, new IdQueryParameters(id), aQuery);
     }
 
@@ -727,22 +724,18 @@ public class AsyncDataProvider {
     }
 
     public void getAuthzGroupsByUserId(AsyncQuery<List<AuthzGroup>> aQuery, Guid userId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAuthzGroupsByUserId, new IdQueryParameters(userId), aQuery);
     }
 
     public void getPoolById(AsyncQuery<VmPool> aQuery, Guid poolId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmPoolById, new IdQueryParameters(poolId), aQuery);
     }
 
     public void getVmById(AsyncQuery<VM> aQuery, Guid vmId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), aQuery);
     }
 
     public void getVmNextRunConfiguration(AsyncQuery<VM> aQuery, Guid vmId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(vmId), aQuery);
     }
 
@@ -1084,7 +1077,6 @@ public class AsyncDataProvider {
     }
 
     public void getHostById(AsyncQuery<VDS> aQuery, Guid id) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(id).withoutRefresh(), aQuery);
     }
 
@@ -1190,14 +1182,12 @@ public class AsyncDataProvider {
     }
 
     public void getStorageDomainById(AsyncQuery<StorageDomain> aQuery, Guid storageDomainId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainById,
                 new IdQueryParameters(storageDomainId),
                 aQuery);
     }
 
     public void getStorageDomainByName(AsyncQuery<StorageDomainStatic> aQuery, String storageDomainName) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainByName,
                 new NameQueryParameters(storageDomainName),
                 aQuery);
@@ -1270,7 +1260,6 @@ public class AsyncDataProvider {
     }
 
     public void getDataCenterById(AsyncQuery<StoragePool> aQuery, Guid dataCenterId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolById,
                 new IdQueryParameters(dataCenterId).withoutRefresh(), aQuery);
     }
@@ -1291,12 +1280,10 @@ public class AsyncDataProvider {
     }
 
     public void getTemplateById(AsyncQuery<VmTemplate> aQuery, Guid templateId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(templateId), aQuery);
     }
 
     public void countAllTemplates(AsyncQuery<Integer> aQuery) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplateCount, new VdcQueryParametersBase(), aQuery);
     }
 
@@ -1375,7 +1362,6 @@ public class AsyncDataProvider {
     }
 
     public void getClusterGlusterServices(AsyncQuery<GlusterVolumeAdvancedDetails> aQuery, Guid clusterId) {
-        aQuery.converterCallback = new CastingConverter<>();
         // Passing empty values for Volume and Brick to get the services of all the volumes/hosts in the cluster
         GlusterVolumeAdvancedDetailsParameters parameters =
                 new GlusterVolumeAdvancedDetailsParameters(clusterId, null, null, false); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1393,7 +1379,6 @@ public class AsyncDataProvider {
     }
 
     public void getGlusterHostsNewlyAdded(AsyncQuery<Map<String, String>> aQuery, Guid clusterId, boolean isFingerprintRequired) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetAddedGlusterServers,
                 new AddedGlusterServersParameters(clusterId, isFingerprintRequired),
                 aQuery);
@@ -1434,21 +1419,18 @@ public class AsyncDataProvider {
     }
 
     public void getVolumeSnapshotSchedule(AsyncQuery<GlusterVolumeSnapshotSchedule> aQuery, Guid volumeId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotScheduleByVolumeId,
                 new IdQueryParameters(volumeId),
                 aQuery);
     }
 
     public void getIsGlusterVolumeSnapshotCliScheduleEnabled(AsyncQuery<Boolean> aQuery, Guid clusterId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotCliScheduleFlag,
                 new IdQueryParameters(clusterId),
                 aQuery);
     }
 
     public void getGlusterHook(AsyncQuery<GlusterHookEntity> aQuery, Guid hookId, boolean includeServerHooks) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterHookById,
                 new GlusterHookQueryParameters(hookId, includeServerHooks),
                 aQuery);
@@ -1605,7 +1587,6 @@ public class AsyncDataProvider {
     }
 
     public void getDataCentersByStorageDomain(AsyncQuery<List<StoragePool>> aQuery, Guid storageDomainId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
                 new IdQueryParameters(storageDomainId),
                 aQuery);
@@ -1734,8 +1715,6 @@ public class AsyncDataProvider {
     }
 
     public void getStorageDomainsByConnection(AsyncQuery<List<StorageDomain>> aQuery, Guid storagePoolId, String connectionPath) {
-        aQuery.converterCallback = new CastingConverter<>();
-
         GetStorageDomainsByConnectionParameters param = new GetStorageDomainsByConnectionParameters();
         param.setConnection(connectionPath);
         if (storagePoolId != null) {
@@ -1750,8 +1729,6 @@ public class AsyncDataProvider {
             StorageDomainType domainType,
             StorageType storageType,
             String path) {
-        aQuery.converterCallback = new CastingConverter<>();
-
         Frontend.getInstance().runQuery(VdcQueryType.GetExistingStorageDomainList, new GetExistingStorageDomainListParameters(hostId,
                 storageType,
                 domainType,
@@ -1960,7 +1937,6 @@ public class AsyncDataProvider {
     }
 
     public void getVmListByClusterName(AsyncQuery<List<VM>> aQuery, String clusterName) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("Vms: cluster=" + clusterName, SearchType.VM), aQuery); //$NON-NLS-1$
     }
@@ -1975,7 +1951,6 @@ public class AsyncDataProvider {
     }
 
     public void getNextAvailableDiskAliasNameByVMId(AsyncQuery<String> aQuery, Guid vmId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
                 new IdQueryParameters(vmId),
                 aQuery);
@@ -1996,7 +1971,6 @@ public class AsyncDataProvider {
     }
 
     public void getVmConfigurationBySnapshot(AsyncQuery<VM> aQuery, Guid snapshotSourceId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmConfigurationBySnapshot,
                 new IdQueryParameters(snapshotSourceId).withoutRefresh(),
                 aQuery);
@@ -2010,7 +1984,6 @@ public class AsyncDataProvider {
     }
 
     public void getAncestorImagesByImagesIds(AsyncQuery<Map<Guid, DiskImage>> aQuery, List<Guid> imagesIds) {
-        aQuery.converterCallback = new CastingConverter<>();
         IdsQueryParameters params = new IdsQueryParameters(imagesIds);
         Frontend.getInstance().runQuery(VdcQueryType.GetAncestorImagesByImagesIds, params, aQuery);
     }
@@ -2029,7 +2002,6 @@ public class AsyncDataProvider {
     }
 
     public void getStorageDomainDefaultWipeAfterDelete(AsyncQuery<Boolean> aQuery, StorageType storageType) {
-        aQuery.converterCallback = new CastingConverter<>();
         GetStorageDomainDefaultWipeAfterDeleteParameters params =
                 new GetStorageDomainDefaultWipeAfterDeleteParameters(storageType);
         Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainDefaultWipeAfterDelete, params, aQuery);
@@ -2050,7 +2022,6 @@ public class AsyncDataProvider {
     public void getStorageConnectionsByDataCenterIdAndStorageType(AsyncQuery<List<StorageServerConnections>> aQuery,
                                                                          Guid storagePoolId,
                                                                          StorageType storageType) {
-        aQuery.converterCallback = new CastingConverter<>();
         GetConnectionsByDataCenterAndStorageTypeParameters params = new GetConnectionsByDataCenterAndStorageTypeParameters(storagePoolId, storageType);
         Frontend.getInstance().runQuery(VdcQueryType.GetConnectionsByDataCenterAndStorageType, params, aQuery);
     }
@@ -2278,7 +2249,6 @@ public class AsyncDataProvider {
     }
 
     public void getIsPasswordDelegationPossible(AsyncQuery<Boolean> asyncQuery) {
-        asyncQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.IsPasswordDelegationPossible,
                 new VdcQueryParametersBase(),
                 asyncQuery);
@@ -2908,21 +2878,17 @@ public class AsyncDataProvider {
     }
 
     public void getSupportedCpuList(AsyncQuery<List<ServerCpu>> aQuery, String cpuName) {
-        aQuery.converterCallback = new CastingConverter<>();
-
         Frontend.getInstance().runQuery(VdcQueryType.GetSupportedCpuList, new GetSupportedCpuListParameters(cpuName), aQuery);
 
     }
 
     public void getStorageDevices(AsyncQuery<List<StorageDevice>> aQuery, Guid hostId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterStorageDevices,
                 new IdQueryParameters(hostId),
                 aQuery);
     }
 
     public void getClusterEditWarnings(AsyncQuery<ClusterEditWarnings> aQuery, Guid clusterId, Cluster cluster) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 
@@ -3023,13 +2989,11 @@ public class AsyncDataProvider {
     }
 
     public void getUnusedBricksFromServer(AsyncQuery<List<StorageDevice>> asyncQuery, Guid hostId) {
-        asyncQuery.converterCallback = new CastingConverter<>();
         IdQueryParameters parameters = new IdQueryParameters(hostId);
         Frontend.getInstance().runQuery(VdcQueryType.GetUnusedGlusterBricks, parameters, asyncQuery);
     }
 
     public void getCinderVolumeTypesList(AsyncQuery<List<CinderVolumeType>> aQuery, Guid storageDomainId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetCinderVolumeTypesByStorageDomainId, new IdQueryParameters(storageDomainId), aQuery);
     }
 
@@ -3157,7 +3121,6 @@ public class AsyncDataProvider {
     }
 
     public void validateVmMacs(AsyncQuery<Map<Guid, List<List<String>>>> asyncQuery, Map<Guid, List<VM>> vmsByCluster) {
-        asyncQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.ValidateVmMacs,
                 new ValidateVmMacsParameters(vmsByCluster),
                 asyncQuery);
@@ -3172,7 +3135,6 @@ public class AsyncDataProvider {
     }
 
     public void getGlusterVolumeGeoRepSessionById(AsyncQuery<GlusterGeoRepSession> aQuery, Guid geoRepSessionId) {
-        aQuery.converterCallback = new CastingConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepSessionById,
                 new IdQueryParameters(geoRepSessionId),
                 aQuery);
