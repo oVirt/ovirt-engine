@@ -2892,14 +2892,7 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 
-    private static class CastingConverter<T extends S, S> implements Converter<T, S> {
-        @Override
-        public T convert(S source) {
-            return (T) source;
-        }
-    }
-
-    private static class DefaultValueConverter<T extends S, S> extends CastingConverter<T, S> {
+    private static class DefaultValueConverter<T extends S, S> implements Converter<T, S> {
 
         private final T defaultValue;
 
@@ -2909,8 +2902,7 @@ public class AsyncDataProvider {
 
         @Override
         public T convert(S returnValue) {
-            T value = super.convert(returnValue);
-            return value != null ? value : defaultValue;
+            return returnValue != null ? (T) returnValue : defaultValue;
         }
     }
 
