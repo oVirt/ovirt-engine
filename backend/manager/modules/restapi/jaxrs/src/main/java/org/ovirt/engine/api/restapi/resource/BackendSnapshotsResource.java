@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ConfigurationType;
@@ -62,17 +64,15 @@ public class BackendSnapshotsResource
                                block);
     }
 
-    public ArrayList<DiskImage> mapDisks(DiskAttachments diskAttachments) {
-        ArrayList<DiskImage> diskImages = null;
-        if (diskAttachments != null && diskAttachments.isSetDiskAttachments()) {
-            diskImages = new ArrayList<>();
-            for (DiskAttachment diskAttachment : diskAttachments.getDiskAttachments()) {
-                Disk disk = diskAttachment.getDisk();
-                if (disk != null) {
-                    DiskImage diskImage = (DiskImage) DiskMapper.map(disk, null);
-                    diskImages.add(diskImage);
-                }
-            }
+    private List<DiskImage> mapDisks(DiskAttachments diskAttachments) {
+        List<DiskImage> diskImages = null;
+        if (diskAttachments.isSetDiskAttachments()) {
+            diskImages =
+                    diskAttachments.getDiskAttachments().stream()
+                            .map(DiskAttachment::getDisk)
+                            .filter(Objects::nonNull)
+                            .map(d -> (DiskImage) DiskMapper.map(d, null))
+                            .collect(Collectors.toList());
         }
         return diskImages;
     }
