@@ -59,7 +59,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
@@ -905,10 +906,7 @@ public class SchedulingManager implements BackendService {
                             haReservationHandling.checkHaReservationStatusForCluster(cluster, returnedFailedHosts);
                     if (!clusterHaStatus) {
                         // create Alert using returnedFailedHosts
-                        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-                        logable.setClusterId(cluster.getId());
-                        logable.addCustomValue("ClusterName", cluster.getName());
-
+                        AuditLogable logable = createEventForCluster(cluster);
                         String failedHostsStr =
                                 returnedFailedHosts.stream().map(VDS::getName).collect(Collectors.joining(", "));
 
@@ -926,15 +924,20 @@ public class SchedulingManager implements BackendService {
 
                     // Create Alert if the status was changed from false to true
                     if (!clusterHaStatusFromPreviousCycle && clusterHaStatus) {
-                        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-                        logable.setClusterId(cluster.getId());
-                        logable.addCustomValue("ClusterName", cluster.getName());
+                        AuditLogable logable = createEventForCluster(cluster);
                         AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN, auditLogDirector);
                     }
                 }
             }
         }
         log.debug("HA Reservation check timer finished.");
+    }
+
+    private AuditLogable createEventForCluster(Cluster cluster) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setClusterName(cluster.getName());
+        logable.setClusterId(cluster.getId());
+        return logable;
     }
 
     @OnTimerMethodAnnotation("performLoadBalancing")

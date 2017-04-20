@@ -17,7 +17,7 @@ public final class AlertDirector {
      * @param logType
      *            Type of the log.
      */
-    public static void alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector) {
+    public static void alert(AuditLogable auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector) {
         auditLogDirector.log(auditLogable, logType);
     }
 
