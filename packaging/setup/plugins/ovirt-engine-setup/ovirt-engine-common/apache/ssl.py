@@ -33,7 +33,6 @@ from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 from ovirt_setup_lib import dialog
 
-
 _SSL_REQUESTS_LOG_FORMAT = (
     'CustomLog logs/ovirt-requests-log '
     ' "%t %h \\"Correlation-Id: %{Correlation-Id}o\\" '

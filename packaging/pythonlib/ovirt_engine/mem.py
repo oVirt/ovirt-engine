@@ -18,7 +18,6 @@
 import gettext
 import re
 
-
 from . import util
 
 
