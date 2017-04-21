@@ -52,7 +52,9 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
         switch (getParameters().getSnapshot().getType()) {
         case REGULAR:
-            removeOtherImageAndParents(imageToRemoveId, getDiskImage().getParentId());
+            if(imageToRemoveId != null) {
+                removeOtherImageAndParents(imageToRemoveId, getDiskImage().getParentId());
+            }
             break;
         case PREVIEW:
         case STATELESS:
@@ -87,6 +89,9 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         while (!lastParent.equals(currentParent)) {
             image = getDiskImageDao().getSnapshotById(currentParent);
             // store current image's parent Id
+            if(image == null){
+                return;
+            }
             currentParent = image.getParentId();
             removeSnapshot(image);
         }
