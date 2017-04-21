@@ -111,6 +111,7 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -145,6 +146,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Inject
     private InClusterUpgradeValidator clusterUpgradeValidator;
+
+    @Inject
+    private DiskProfileDao diskProfileDao;
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);
@@ -870,7 +874,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         storageIds.add(storageId);
         newImage.setStorageIds(storageIds);
         newImage.setQuotaId(image.getQuotaId());
-        newImage.setDiskProfileId(image.getDiskProfileId());
+
+        // Find out the correct disk profile for storage domain
+        newImage.setDiskProfileId(diskProfileDao.getAllForStorageDomain(storageId).stream()
+                .filter(p -> image.getDiskProfileIds().contains(p.getId()))
+                .findFirst()
+                .map(p -> p.getId())
+                .orElse(null));
+
         return newImage;
     }
 
