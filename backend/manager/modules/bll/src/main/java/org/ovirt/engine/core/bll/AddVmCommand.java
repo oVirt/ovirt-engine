@@ -122,6 +122,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
@@ -178,6 +179,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private VmStatisticsDao vmStatisticsDao;
     @Inject
     private PermissionDao permissionDao;
+    @Inject
+    private DiskProfileDao diskProfileDao;
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);
@@ -903,7 +906,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         storageIds.add(storageId);
         newImage.setStorageIds(storageIds);
         newImage.setQuotaId(image.getQuotaId());
-        newImage.setDiskProfileId(image.getDiskProfileId());
+
+        // Find out the correct disk profile for storage domain
+        newImage.setDiskProfileId(diskProfileDao.getAllForStorageDomain(storageId).stream()
+                .filter(p -> image.getDiskProfileIds().contains(p.getId()))
+                .findFirst()
+                .map(p -> p.getId())
+                .orElse(null));
+
         return newImage;
     }
 
