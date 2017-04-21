@@ -137,4 +137,44 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
         getCallsHandler()
                 .executeModification("UpdateLabel", parameterSource);
     }
+
+    @Override
+    public void addVmToLabels(Guid vmId, List<Guid> labelIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId)
+                .addValue("labels", createArrayOf("uuid", labelIds.toArray()));
+
+        getCallsHandler()
+                .executeModification("AddVmToLabels", parameterSource);
+    }
+
+    @Override
+    public void addHostToLabels(Guid hostId, List<Guid> labelIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("host_id", hostId)
+                .addValue("labels", createArrayOf("uuid", labelIds.toArray()));
+
+        getCallsHandler()
+                .executeModification("AddHostToLabels", parameterSource);
+    }
+
+    @Override
+    public void updateLabelsForVm(Guid vmId, List<Guid> labelIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId)
+                .addValue("labels", createArrayOf("uuid", labelIds.toArray()));
+
+        getCallsHandler()
+                .executeModification("UpdateLabelsForVm", parameterSource);
+    }
+
+    @Override
+    public void updateLabelsForHost(Guid hostId, List<Guid> labelIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("host_id", hostId)
+                .addValue("labels", createArrayOf("uuid", labelIds.toArray()));
+
+        getCallsHandler()
+                .executeModification("UpdateLabelsForHost", parameterSource);
+    }
 }

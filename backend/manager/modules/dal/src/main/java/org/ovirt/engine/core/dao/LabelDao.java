@@ -74,4 +74,36 @@ public interface LabelDao extends Dao {
      * Removes the label with the specified id.
      */
     void remove(Guid id);
+
+    /**
+     * Adds the VM to each of the labels in the provided list
+     *
+     * @param vmId VM id to add
+     * @param labelIds the list of labels
+     */
+    void addVmToLabels(Guid vmId, List<Guid> labelIds);
+
+    /**
+     * Adds the host to each of the labels in the provided list
+     *
+     * @param hostId host id to add
+     * @param labelIds the list of labels
+     */
+    void addHostToLabels(Guid hostId, List<Guid> labelIds);
+
+    /**
+     * Updates the VM to be associated with the provided list of labels
+     *
+     * @param vmId the VM to update
+     * @param labelIds the list of labels
+     */
+    void updateLabelsForVm(Guid vmId, List<Guid> labelIds);
+
+    /**
+     * Updates the host to be associated with the provided list of labels
+     *
+     * @param hostId the host to update
+     * @param labelIds the list of labels
+     */
+    void updateLabelsForHost(Guid hostId, List<Guid> labelIds);
 }

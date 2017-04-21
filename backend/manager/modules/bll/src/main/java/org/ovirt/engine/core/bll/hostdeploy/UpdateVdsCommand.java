@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.hostdeploy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -37,6 +39,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.FenceAgentDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -82,6 +85,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private NetworkDao networkDao;
     @Inject
     private FenceAgentDao fenceAgentDao;
+    @Inject
+    private LabelDao labelDao;
 
     public UpdateVdsCommand(T parameters, CommandContext cmdContext) {
         this(parameters, cmdContext, ActionType.InstallVdsInternal);
@@ -222,6 +227,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         alertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
         testVdsPowerManagementStatus(getParameters().getVdsStaticData());
         checkKdumpIntegrationStatus();
+        updateAffinityLabels();
         setSucceeded(true);
     }
 
@@ -307,5 +313,13 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                                              List<FenceAgent> fenceAgents,
                                              String clusterCompatibilityVersion) {
         return super.isPowerManagementLegal(pmEnabled, fenceAgents, clusterCompatibilityVersion);
+    }
+
+    private void updateAffinityLabels() {
+        List<Label> affinityLabels = getParameters().getAffinityLabels();
+        List<Guid> labelIds = affinityLabels.stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
+        labelDao.updateLabelsForHost(getVdsId(), labelIds);
     }
 }

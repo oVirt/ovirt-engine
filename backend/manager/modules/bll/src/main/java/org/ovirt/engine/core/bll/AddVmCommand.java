@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -115,6 +116,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -190,6 +192,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private DiskProfileDao diskProfileDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
+    @Inject
+    private LabelDao labelDao;
 
     @Inject
     private VmInitDao vmInitDao;
@@ -967,6 +971,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             addVmPermission();
             addVmInit();
             addVmRngDevice();
+            addAffinityLabels();
             getCompensationContext().stateChanged();
             return null;
         });
@@ -1769,5 +1774,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private InClusterUpgradeValidator getClusterUpgradeValidator() {
         return clusterUpgradeValidator;
+    }
+
+    private void addAffinityLabels() {
+        List<Label> affinityLabels = getParameters().getAffinityLabels();
+        List<Guid> labelIds = affinityLabels.stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
+        labelDao.addVmToLabels(getVmId(), labelIds);
     }
 }

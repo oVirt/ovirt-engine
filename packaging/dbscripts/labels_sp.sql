@@ -161,3 +161,67 @@ BEGIN
         OR vds_ids::uuid[] && v_entity_ids;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION AddVmToLabels (
+    v_vm_id UUID,
+    v_labels uuid[]
+)
+RETURNS VOID AS $PROCEDURE$
+DECLARE
+    o uuid;
+BEGIN
+    INSERT INTO labels_map (
+        label_id,
+        vm_id
+    )
+    SELECT unnest(v_labels), v_vm_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION AddHostToLabels (
+    v_host_id UUID,
+    v_labels uuid[]
+)
+RETURNS VOID AS $PROCEDURE$
+DECLARE
+    o uuid;
+BEGIN
+    INSERT INTO labels_map (
+        label_id,
+        vds_id
+    )
+    SELECT unnest(v_labels), v_host_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateLabelsForVm (
+    v_vm_id UUID,
+    v_labels uuid[]
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    -- Remove existing entries for the VM
+    DELETE FROM labels_map
+    WHERE vm_id = v_vm_id;
+
+    -- Add the current entries for the VM
+    PERFORM
+        AddVmToLabels(v_vm_id, v_labels);
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION UpdateLabelsForHost (
+    v_host_id UUID,
+    v_labels uuid[]
+)
+RETURNS VOID AS $PROCEDURE$
+BEGIN
+    -- Remove existing entries for the host
+    DELETE FROM labels_map
+    WHERE vds_id = v_host_id;
+
+    -- Add the current entries for the host
+    PERFORM
+        AddHostToLabels(v_host_id, v_labels);
+END;$PROCEDURE$
+LANGUAGE plpgsql;

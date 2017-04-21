@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -9,6 +11,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -122,6 +125,8 @@ public class VmManagementParametersBase extends VmOperationParameterBase
                                    name = "graphicsProtocol")
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
 
+    private List<Label> affinityLabels;
+
     public VmManagementParametersBase() {
         init();
     }
@@ -136,6 +141,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
         storageDomainId = Guid.Empty;
         consoleEnabled = Boolean.FALSE;
         graphicsDevices = new HashMap<>();
+        affinityLabels = new ArrayList<>();
     }
 
     public VmManagementParametersBase(VM vm) {
@@ -305,6 +311,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase
 
     public void setVmLargeIcon(String vmLargeIcon) {
         this.vmLargeIcon = vmLargeIcon;
+    }
+
+    public List<Label> getAffinityLabels() {
+        return affinityLabels;
+    }
+
+    public void setAffinityLabels(List<Label> affinityLabels) {
+        this.affinityLabels = affinityLabels;
     }
 
     @Override
