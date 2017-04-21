@@ -128,9 +128,6 @@
                       <b:Row>
                         <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" label="{constants.commentLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
                       </b:Row>
-                      <b:Row>
-                        <e:ListModelMultipleSelectListBoxEditor ui:field="labelEditor" label="{constants.affinityLabels}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
-                      </b:Row>
                       <!-- New VM Pool -->
                       <b:Row>
                         <ge:EntityModelTextBoxEditor ui:field="numOfVmsEditor" label="{constants.numOfVmsPoolPopup}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
@@ -749,6 +746,17 @@
               <b:Container addStyleNames="{style.container}">
                 <b:Row>
                   <e:ListModelListBoxEditor ui:field="providersEditor" labelColSize="LG_6" widgetColSize="LG_6" usePatternFly="true"/>
+                </b:Row>
+              </b:Container>
+            </t:content>
+          </t:DialogTab>
+        </t:tab>
+        <t:tab>
+          <t:DialogTab ui:field="affinityLabelsTab" label="{constants.affinityLabels}">
+            <t:content>
+              <b:Container addStyleNames="{style.container}" fluid="true">
+                <b:Row addStyleNames="{style.topElement}">
+                  <e:ListModelMultipleSelectListBoxEditor ui:field="labelEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                 </b:Row>
               </b:Container>
             </t:content>

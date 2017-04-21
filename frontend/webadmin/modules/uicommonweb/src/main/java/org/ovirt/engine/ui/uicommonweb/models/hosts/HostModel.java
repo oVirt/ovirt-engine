@@ -1430,11 +1430,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
                         }
                     }), getHostId());
                 }
-
-                // This is phase 1 of this feature. Phase 2 will introduce the ability to make
-                // changes to the selected labels via the UI. Until then, labels can be set through
-                // the REST API.
-                labelList.setIsChangeable(false);
             }
         }));
     }

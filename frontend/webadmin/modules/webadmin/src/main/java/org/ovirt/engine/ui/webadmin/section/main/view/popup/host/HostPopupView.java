@@ -115,6 +115,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     @UiField
     @WithElementId
+    DialogTab affinityLabelsTab;
+
+    @UiField
+    @WithElementId
     DialogTab powerManagementTab;
 
     @UiField(provided = true)
@@ -628,6 +632,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         kernelCmdlineKvmNestedInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineKvmNestedInfoIcon()));
         kernelCmdlinePciReallocInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlinePciReallocInfoIcon()));
         kernelCmdlineInfoIcon.setText(SafeHtmlUtils.fromString(constants.kernelCmdlineInfoIcon()));
+
+        // Affinity Labels Tab
+        affinityLabelsTab.setLabel(constants.affinityLabels());
     }
 
     private void applyModeCustomizations() {
@@ -1016,6 +1023,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Override
     public int setTabIndexes(int nextTabIndex) {
         // ==General Tab==
+        nextTabIndex = generalTab.setTabIndexes(nextTabIndex);
         clusterEditor.setTabIndex(nextTabIndex++);
         externalHostProviderEnabledEditor.setTabIndex(nextTabIndex++);
         providersEditor.setTabIndex(nextTabIndex++);
@@ -1031,6 +1039,39 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         userNameEditor.setTabIndex(nextTabIndex++);
         rbPassword.setTabIndex(nextTabIndex++);
         passwordEditor.setTabIndex(nextTabIndex++);
+
+        // ==Power Management Tab==
+        nextTabIndex = powerManagementTab.setTabIndexes(nextTabIndex);
+        pmEnabledEditor.setTabIndex(nextTabIndex++);
+        pmKdumpDetectionEditor.setTabIndex(nextTabIndex++);
+        disableAutomaticPowerManagementEditor.setTabIndex(nextTabIndex++);
+        fenceAgentsEditor.setTabIndexes(nextTabIndex++);
+        pmExpander.setTabIndexes(nextTabIndex);
+        proxySourceEditor.setTabIndexes(nextTabIndex++);
+
+        // ==SPM Tab==
+        nextTabIndex = spmTab.setTabIndexes(nextTabIndex);
+
+        // ==Console Tab==
+        nextTabIndex = consoleTab.setTabIndexes(nextTabIndex);
+        consoleAddressEnabled.setTabIndex(nextTabIndex++);
+        consoleAddress.setTabIndex(nextTabIndex++);
+
+        // ==Kernel Tab==
+        nextTabIndex = kernelTab.setTabIndexes(nextTabIndex);
+        kernelCmdlineIommu.setTabIndex(nextTabIndex++);
+        kernelCmdlineKvmNested.setTabIndex(nextTabIndex++);
+        kernelCmdlineUnsafeInterrupts.setTabIndex(nextTabIndex++);
+        kernelCmdlinePciRealloc.setTabIndex(nextTabIndex++);
+        kernelCmdlineText.setTabIndex(nextTabIndex++);
+
+        // ==Hosted Engine Tab==
+        nextTabIndex = hostedEngineTab.setTabIndexes(nextTabIndex);
+        hostedEngineDeployActionsEditor.setTabIndex(nextTabIndex++);
+
+        // ==Affinity Labels Tab==
+        nextTabIndex = affinityLabelsTab.setTabIndexes(nextTabIndex);
+
         return nextTabIndex;
     }
 
