@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfiguration;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 
@@ -25,6 +28,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     private AuthenticationMethod authMethod;
     private String networkMappings;
     private HostedEngineDeployConfiguration hostedEngineDeployConfiguration;
+    private List<Label> affinityLabels;
 
     public enum AuthenticationMethod {
         Password(0),
@@ -59,6 +63,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         password = passwordVal;
         authMethod = AuthenticationMethod.Password;
         enableSerialConsole = true;
+        affinityLabels = new ArrayList<>();
     }
 
     public VdsOperationActionParameters(VdsStatic vdsStatic) {
@@ -68,6 +73,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     public VdsOperationActionParameters() {
         authMethod = AuthenticationMethod.Password;
         enableSerialConsole = true;
+        affinityLabels = new ArrayList<>();
     }
 
     public VdsStatic getVdsStaticData() {
@@ -149,5 +155,13 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public void setHostedEngineDeployConfiguration(HostedEngineDeployConfiguration hostedEngineDeployConfiguration) {
         this.hostedEngineDeployConfiguration = hostedEngineDeployConfiguration;
+    }
+
+    public List<Label> getAffinityLabels() {
+        return affinityLabels;
+    }
+
+    public void setAffinityLabels(List<Label> affinityLabels) {
+        this.affinityLabels = affinityLabels;
     }
 }

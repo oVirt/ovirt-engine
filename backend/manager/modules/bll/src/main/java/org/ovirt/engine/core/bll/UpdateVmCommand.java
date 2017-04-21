@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -90,6 +92,7 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.utils.transaction.TransactionCompletionListener;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.VmDevicesMonitoring;
@@ -109,6 +112,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private InClusterUpgradeValidator clusterUpgradeValidator;
     @Inject
     private RngDeviceUtils rngDeviceUtils;
+    @Inject
+    private LabelDao labelDao;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -233,6 +238,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         updateVmNetworks();
         updateVmNumaNodes();
+        updateAffinityLabels();
+
         if (isHotSetEnabled()) {
             hotSetCpus(userVm);
             updateCurrentMemory(userVm);
@@ -1249,6 +1256,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     protected InClusterUpgradeValidator getClusterUpgradeValidator() {
         return clusterUpgradeValidator;
+    }
+
+    private void updateAffinityLabels() {
+        List<Label> affinityLabels = getParameters().getAffinityLabels();
+        List<Guid> labelIds = affinityLabels.stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
+        labelDao.updateLabelsForVm(getVmId(), labelIds);
     }
 
 }

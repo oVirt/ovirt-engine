@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.naming.AuthenticationException;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -53,6 +55,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.LabelDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -66,6 +69,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     @Inject
     private HostedEngineHelper hostedEngineHelper;
+    @Inject
+    private LabelDao labelDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -107,6 +112,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             addVdsStaticToDb();
             addVdsDynamicToDb();
             addVdsStatisticsToDb();
+            addAffinityLabels();
             getCompensationContext().stateChanged();
             return null;
         });
@@ -565,5 +571,17 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     @Override
     protected boolean validate(ValidationResult validationResult) {
         return super.validate(validationResult);
+    }
+
+    private void addAffinityLabels() {
+        List<Label> affinityLabels = getParameters().getAffinityLabels();
+        if (affinityLabels.isEmpty()) {
+            return;
+        }
+
+        List<Guid> labelIds = affinityLabels.stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
+        labelDao.addHostToLabels(getVdsId(), labelIds);
     }
 }

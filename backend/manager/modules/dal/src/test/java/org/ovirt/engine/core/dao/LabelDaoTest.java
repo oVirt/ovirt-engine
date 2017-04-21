@@ -3,8 +3,10 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -99,9 +101,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
     public void testCreateAndGetWithVM() {
         Guid guid = Guid.newGuid();
 
-        VmStatic vm = new VmStatic();
-        vm.setId(Guid.newGuid());
-        vmDao.save(vm);
+        VmStatic vm = createAndSaveVm();
 
         Label label = new LabelBuilder()
                 .name("test label")
@@ -153,9 +153,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
 
         labelDao.save(label);
 
-        VmStatic vm = new VmStatic();
-        vm.setId(Guid.newGuid());
-        vmDao.save(vm);
+        VmStatic vm = createAndSaveVm();
 
         label = new LabelBuilder()
                 .name("test label 2")
@@ -165,9 +163,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
 
         labelDao.save(label);
 
-        VmStatic vm2 = new VmStatic();
-        vm2.setId(Guid.newGuid());
-        vmDao.save(vm2);
+        VmStatic vm2 = createAndSaveVm();
 
         label = new LabelBuilder()
                 .name("test label not in result")
@@ -193,13 +189,8 @@ public class LabelDaoTest extends BaseDaoTestCase {
 
         labelDao.save(label);
 
-        VmStatic vm = new VmStatic();
-        vm.setId(Guid.newGuid());
-        vmDao.save(vm);
-
-        VmStatic vm2 = new VmStatic();
-        vm2.setId(Guid.newGuid());
-        vmDao.save(vm2);
+        VmStatic vm = createAndSaveVm();
+        VmStatic vm2 = createAndSaveVm();
 
         Label label2 = new LabelBuilder()
                 .name("test label 2")
@@ -225,9 +216,7 @@ public class LabelDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testCreateAndGetLabelWithTwoItems() {
-        VmStatic vm = new VmStatic();
-        vm.setId(Guid.newGuid());
-        vmDao.save(vm);
+        VmStatic vm = createAndSaveVm();
 
         Label label = new LabelBuilder()
                 .name("test label")
@@ -258,5 +247,116 @@ public class LabelDaoTest extends BaseDaoTestCase {
         Label read = labelDao.get(guid);
 
         assertNull(read);
+    }
+
+    @Test
+    public void testAddVmToLabels() {
+        Label label = createAndSaveLabel("test_label");
+        Label label2 = createAndSaveLabel("test_label_2");
+        VmStatic vm = createAndSaveVm();
+
+        List<Label> labelsToAssign = Lists.newArrayList(label, label2);
+        List<Guid> guidsForLabelsToAssign = labelsToAssign.stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
+
+        labelDao.addVmToLabels(vm.getId(), guidsForLabelsToAssign);
+
+        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
+
+        assertNotNull(assignedLabels);
+        assertTrue(labelsToAssign.containsAll(assignedLabels) && assignedLabels.containsAll(labelsToAssign));
+    }
+
+    @Test
+    public void testAddHostToLabels() {
+        Label label = createAndSaveLabel("test_label");
+        Label label2 = createAndSaveLabel("test_label_2");
+
+        List<Label> labelsToAssign = Lists.newArrayList(label, label2);
+        List<Guid> guidsForLabelsToAssign = labelsToAssign.stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
+
+        labelDao.addHostToLabels(host.getId(), guidsForLabelsToAssign);
+
+        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(host.getId()));
+
+        assertNotNull(assignedLabels);
+        assertTrue(labelsToAssign.containsAll(assignedLabels) && assignedLabels.containsAll(labelsToAssign));
+    }
+
+    @Test
+    public void testUpdateLabelsForVm() {
+        VmStatic vm = createAndSaveVm();
+
+        Label label = createAndSaveLabel("test_label");
+        labelDao.addVmToLabels(vm.getId(), Lists.newArrayList(label.getId()));
+
+        Label label2 = createAndSaveLabel("test_label_2");
+
+        labelDao.updateLabelsForVm(vm.getId(), Lists.newArrayList(label2.getId()));
+
+        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
+
+        assertNotNull(assignedLabels);
+        assertEquals(Lists.newArrayList(label2), assignedLabels);
+    }
+
+    @Test
+    public void testUpdateLabelsForHost() {
+        Label label = createAndSaveLabel("test_label");
+        labelDao.addHostToLabels(host.getId(), Lists.newArrayList(label.getId()));
+
+        Label label2 = createAndSaveLabel("test_label_2");
+
+        labelDao.updateLabelsForHost(host.getId(), Lists.newArrayList(label2.getId()));
+
+        List<Label> assignedLabels = labelDao.getAllByEntityIds(Lists.newArrayList(host.getId()));
+
+        assertNotNull(assignedLabels);
+        assertEquals(Lists.newArrayList(label2), assignedLabels);
+    }
+
+    @Test
+    public void testRemoveLabelFromVm() {
+        Label label = createAndSaveLabel("test_label");
+        Label label2 = createAndSaveLabel("test_label_2");
+        VmStatic vm = createAndSaveVm();
+
+        List<Label> labelsToAssign = Lists.newArrayList(label, label2);
+        List<Guid> guidsForLabelsToAssign = labelsToAssign.stream()
+                .map(Label::getId)
+                .collect(Collectors.toList());
+
+        labelDao.addVmToLabels(vm.getId(), guidsForLabelsToAssign);
+
+        guidsForLabelsToAssign.remove(label2.getId());
+        labelDao.updateLabelsForVm(vm.getId(), guidsForLabelsToAssign);
+
+        List<Label> labelsForVm = labelDao.getAllByEntityIds(Lists.newArrayList(vm.getId()));
+
+        assertTrue(labelsForVm.size() == 1);
+        assertEquals(label, labelsForVm.get(0));
+    }
+
+    private Label createAndSaveLabel(String labelName) {
+        Label label = new LabelBuilder()
+                .name(labelName)
+                .id(Guid.newGuid())
+                .build();
+
+        labelDao.save(label);
+
+        return label;
+    }
+
+    private VmStatic createAndSaveVm() {
+        VmStatic vm = new VmStatic();
+        vm.setId(Guid.newGuid());
+
+        vmDao.save(vm);
+
+        return vm;
     }
 }
