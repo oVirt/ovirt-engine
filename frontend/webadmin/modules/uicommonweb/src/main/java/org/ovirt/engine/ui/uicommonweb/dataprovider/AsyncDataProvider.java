@@ -1234,28 +1234,12 @@ public class AsyncDataProvider {
     }
 
     public void getAllNetworkQos(Guid dcId, AsyncQuery<List<NetworkQoS>> query) {
-        query.converterCallback = new ListConverter<NetworkQoS>() {
-
-            @Override
-            public List<NetworkQoS> convert(List<NetworkQoS> returnValue) {
-                List<NetworkQoS> qosList = super.convert(returnValue);
-                qosList.add(0, NetworkQoSModel.EMPTY_QOS);
-                return qosList;
-            }
-        };
+        query.converterCallback = new PrependingConverter<>(NetworkQoSModel.EMPTY_QOS);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, new IdQueryParameters(dcId), query);
     }
 
     public void getAllHostNetworkQos(Guid dcId, AsyncQuery<List<HostNetworkQos>> query) {
-        query.converterCallback = new ListConverter<HostNetworkQos>() {
-
-            @Override
-            public List<HostNetworkQos> convert(List<HostNetworkQos> returnValue) {
-                List<HostNetworkQos> qosList = super.convert(returnValue);
-                qosList.add(0, NetworkModel.EMPTY_HOST_NETWORK_QOS);
-                return qosList;
-            }
-        };
+        query.converterCallback = new PrependingConverter<>(NetworkModel.EMPTY_HOST_NETWORK_QOS);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dcId, QosType.HOSTNETWORK),
                 query);
@@ -2934,6 +2918,21 @@ public class AsyncDataProvider {
     private static class StringConverter extends DefaultValueConverter<String> {
         public StringConverter() {
             super("");
+        }
+    }
+
+    private static class PrependingConverter<T> extends ListConverter<T> {
+        private T firstValue;
+
+        public PrependingConverter(T firstValue) {
+            this.firstValue  = firstValue;
+        }
+
+        @Override
+        public List<T> convert(List<T> source) {
+            List<T> list = super.convert(source);
+            list.add(0, firstValue);
+            return list;
         }
     }
 
