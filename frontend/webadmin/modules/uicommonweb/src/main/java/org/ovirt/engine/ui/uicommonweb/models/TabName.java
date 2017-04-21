@@ -32,5 +32,6 @@ public enum TabName {
     IPV6_TAB,
     QOS_TAB,
     KERNEL_TAB,
-    HOSTED_ENGINE
+    HOSTED_ENGINE,
+    AFFINITY_LABELS
 }

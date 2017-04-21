@@ -928,6 +928,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("providers")
     public ListModelListBoxEditor<Provider<OpenstackNetworkProviderProperties>> providersEditor;
 
+    // ==Affinity Labels Tab==
+    @UiField
+    protected DialogTab affinityLabelsTab;
+
     @UiField(provided = true)
     @Path(value = "labelList.selectedItems")
     @WithElementId("labelList")
@@ -1066,6 +1070,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         getTabNameMapping().put(TabName.SYSTEM_TAB, this.systemTab.getTabListItem());
         getTabNameMapping().put(TabName.ICON_TAB, this.iconTab.getTabListItem());
         getTabNameMapping().put(TabName.FOREMAN_TAB, foremanTab.getTabListItem());
+        getTabNameMapping().put(TabName.AFFINITY_LABELS, this.affinityLabelsTab.getTabListItem());
     }
 
     private void initDetachableFields() {
@@ -1962,6 +1967,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // ==Foreman Tab==
         nextTabIndex = foremanTab.setTabIndexes(nextTabIndex);
+
+        // ==Affinity Labels Tab==
+        nextTabIndex = affinityLabelsTab.setTabIndexes(nextTabIndex);
+
         return nextTabIndex;
     }
 
@@ -2030,7 +2039,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 poolTab.getTabListItem(),
                 systemTab.getTabListItem(),
                 iconTab.getTabListItem(),
-                foremanTab.getTabListItem()
+                foremanTab.getTabListItem(),
+                affinityLabelsTab.getTabListItem()
                 );
     }
 
@@ -2129,7 +2139,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             systemTab,
             rngDeviceTab,
             iconTab,
-            foremanTab
+            foremanTab,
+            affinityLabelsTab
         );
     }
 

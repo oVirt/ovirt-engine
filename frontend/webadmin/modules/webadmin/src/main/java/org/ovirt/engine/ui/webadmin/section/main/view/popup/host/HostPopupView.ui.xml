@@ -247,9 +247,6 @@
                                     <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row>
-                                    <e:ListModelMultipleSelectListBoxEditor ui:field="labelEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
-                                </b:Row>
-                                <b:Row>
                                     <ge:StringEntityModelTextBoxEditor ui:field="hostAddressEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row>
@@ -471,6 +468,17 @@
                                 </b:Row>
                                 <b:Row>
                                     <e:ListModelListBoxEditor ui:field="hostedEngineDeployActionsEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                            </b:Container>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="affinityLabelsTab">
+                        <t:content>
+                            <b:Container fluid="true">
+                                <b:Row addStyleNames="{style.topElement}">
+                                        <e:ListModelMultipleSelectListBoxEditor ui:field="labelEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                             </b:Container>
                         </t:content>

@@ -1856,10 +1856,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 }), vmId);
             } else {
                 labelList.setItems(allLabels);
-                labelList.setSelectedItems(new ArrayList<Label>());
+                labelList.setSelectedItems(new ArrayList<>());
             }
-
-            labelList.setIsChangeable(false);
         }));
     }
 
