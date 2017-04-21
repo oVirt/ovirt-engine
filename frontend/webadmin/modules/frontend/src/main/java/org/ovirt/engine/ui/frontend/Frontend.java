@@ -246,7 +246,7 @@ public class Frontend implements HasHandlers {
                     } else {
                         if (callback.getConverter() != null) {
                             callback.getAsyncCallback().onSuccess(
-                                    callback.getConverter().convert(result.getReturnValue()));
+                                    callback.getConverter().apply(result.getReturnValue()));
                         } else {
                             callback.getAsyncCallback().onSuccess(result);
                         }

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.frontend;
 
+import java.util.function.Function;
+
 public class AsyncQuery<T> {
 
     /**
@@ -9,7 +11,7 @@ public class AsyncQuery<T> {
 
     private final Object model;
     private final AsyncCallback<T> asyncCallback;
-    public Converter<T, ?> converterCallback = null;
+    public Function<?, T> converterCallback = null;
     private boolean handleFailure;
 
     public AsyncQuery() {
@@ -52,7 +54,7 @@ public class AsyncQuery<T> {
         return asyncCallback;
     }
 
-    public Converter<T, ?> getConverter() {
+    public Function<?, T> getConverter() {
         return converterCallback;
     }
 
