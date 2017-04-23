@@ -862,14 +862,14 @@ BEGIN
 
         SELECT image_guid AS image_id,
             disk_id
-        FROM images_storage_domain_view
+        FROM memory_and_disk_images_storage_domain_view
         WHERE storage_id = v_storage_domain_id
 
         EXCEPT
 
         SELECT image_guid AS image_id,
             disk_id
-        FROM images_storage_domain_view
+        FROM memory_and_disk_images_storage_domain_view
         WHERE storage_id != v_storage_domain_id;
 
         exception when others then
@@ -879,14 +879,14 @@ BEGIN
         INSERT INTO STORAGE_DOMAIN_MAP_TABLE
         SELECT image_guid AS image_id,
             disk_id
-        FROM images_storage_domain_view
+        FROM memory_and_disk_images_storage_domain_view
         WHERE storage_id = v_storage_domain_id
 
         EXCEPT
 
         SELECT image_guid AS image_id,
             disk_id
-        FROM images_storage_domain_view
+        FROM memory_and_disk_images_storage_domain_view
         WHERE storage_id != v_storage_domain_id;
     END;
 
