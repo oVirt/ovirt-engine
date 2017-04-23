@@ -315,33 +315,6 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
     }
 
     @Override
-    protected boolean acquireLock() {
-        if (getLock() == null) {
-            if (!super.acquireLock()) {
-                return false;
-            }
-            if (!Guid.Empty.equals(getVmId()) && isVmPrestarted()) {
-                EngineLock runLock = vmPoolHandler.createLock(getVmId());
-
-                Map<String, Pair<String, String>> exclusiveLocks = new HashMap<>();
-                Map<String, Pair<String, String>> sharedLocks = new HashMap<>();
-                if (getContext().getLock().getExclusiveLocks() != null) {
-                    exclusiveLocks.putAll(getContext().getLock().getExclusiveLocks());
-                }
-                exclusiveLocks.putAll(runLock.getExclusiveLocks());
-                if (getContext().getLock().getSharedLocks() != null) {
-                    sharedLocks.putAll(getContext().getLock().getSharedLocks());
-                }
-                if (runLock.getSharedLocks() != null) {
-                    sharedLocks.putAll(runLock.getSharedLocks());
-                }
-                setLock(new EngineLock(exclusiveLocks, sharedLocks));
-            }
-        }
-        return true;
-    }
-
-    @Override
     protected void freeCustomLocks() {
         if (getCommandStatus() == CommandStatus.ENDED_WITH_FAILURE && !Guid.Empty.equals(getVmId())
                 && !getParameters().isVmPrestarted()) {
@@ -358,8 +331,25 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getAdUserId().toString(),
+        Map<String, Pair<String, String>> locks = new HashMap<>();
+        locks.put(getAdUserId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.USER_VM_POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        if (!Guid.Empty.equals(getVmId()) && isVmPrestarted()) {
+            EngineLock runLock = vmPoolHandler.createLock(getVmId());
+            if (runLock.getExclusiveLocks() != null) {
+                locks.putAll(runLock.getExclusiveLocks());
+            }
+        }
+        return locks;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        if (!Guid.Empty.equals(getVmId()) && isVmPrestarted()) {
+            return vmPoolHandler.createLock(getVmId()).getSharedLocks();
+        } else {
+            return null;
+        }
     }
 
     @Override
