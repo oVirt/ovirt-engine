@@ -503,7 +503,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     }
 
     private static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
-        Set<Guid> idsToSubtract = imagesToSubtract.stream().map(DiskImage::getImageId).collect(Collectors.toSet());
+        Set<Guid> idsToSubtract = imagesToSubtract.stream().map(DiskImage::getId).collect(Collectors.toSet());
         return images.stream().filter(new Linq.IdsPredicate<>(idsToSubtract).negate()).collect(Collectors.toList());
     }
 
