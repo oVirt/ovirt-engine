@@ -290,10 +290,9 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getRefreshCapabilitiesCommand();
             }
         });
-        // Confirm rebooted host
+        // Confirm Host Rebooted button
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
-                CommandLocation.OnlyFromContext) {
+            managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost()) {
                 @Override
                 protected UICommand resolveCommand() {
                     return getMainModel().getManualFenceCommand();
