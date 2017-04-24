@@ -1258,5 +1258,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String EntityAffinityRule___NEGATIVE();
 
     String EntityAffinityRule___POSITIVE();
+
+    String SwitchType___LEGACY();
+
+    String SwitchType___OVS();
 }
 
