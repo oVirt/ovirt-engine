@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -22,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.di.Injector;
 
@@ -112,6 +116,13 @@ public class StorageDomainValidator {
         });
     }
 
+    private double getTotalSizeForMerge(Collection<SubchainInfo> subchains, VdcActionType vdcActionType) {
+        return subchains
+                .stream()
+                .mapToDouble(subchain -> getRequiredSizeForMerge(subchain, vdcActionType))
+                .sum();
+    }
+
     /**
      * Returns the required space in the storage domain for creating cloned DiskImages with collapse.
      * */
@@ -151,7 +162,7 @@ public class StorageDomainValidator {
         return getTotalSizeForDisksByMethod(diskImages, diskImage -> {
             double sizeForDisk = diskImage.getSize();
             if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse)
-                || diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                    || diskImage.getVolumeFormat() == VolumeFormat.COW) {
                 sizeForDisk = diskImage.getActualDiskWithSnapshotsSizeInBytes();
             }
 
@@ -184,6 +195,16 @@ public class StorageDomainValidator {
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForDisks = getTotalSizeForClonedDisks(diskImages);
+
+        return validateRequiredSpace(availableSize, totalSizeForDisks);
+    }
+
+    public ValidationResult hasSpaceForMerge(List<SubchainInfo> subchains, VdcActionType snapshotActionType) {
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            return ValidationResult.VALID;
+        }
+        Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        double totalSizeForDisks = getTotalSizeForMerge(subchains, snapshotActionType);
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
@@ -265,6 +286,62 @@ public class StorageDomainValidator {
             }
         }
         return totalSizeForDisks;
+    }
+
+    /**
+     * Calculates the required space for snpashot merge (live and cold).
+     * The calculation is performed as follows:
+     *
+     *
+     *      | File Domain                                                           | Block Domain
+     * -----|-----------------------------------------------------------------------|--------------
+     * qcow | min(virtual_size(top) * 1.1 - actual_size(base), actual_size(top))    | same as file
+     * -----|-----------------------------------------------------------------------|--------------
+     * raw  | min(virtual_size(top) / 1.1, virtual_size(base) - actual_size(base))  | 0
+     *      |                                                                       |
+     *
+     * If the cold merge operation performed is pre-4.1,
+     * we return min(actual_size(top) + actual_size(base), virtual_size(top))
+     *  * The qcow/raw refers to the base snapshot format
+     *  * base/top - base snapshot/ top snapshot
+     *  * 1.1 - qcow2 overhead
+     *
+     * @param subchain - The snapshot subchain, containing base and top snapshots
+     * @param snapshotActionType - Type of the merge operation (cold/live)
+     * @return required size for merge
+     */
+    private double getRequiredSizeForMerge(SubchainInfo subchain, VdcActionType snapshotActionType) {
+        DiskImage baseSnapshot = subchain.getBaseImage();
+        DiskImage topSnapshot = subchain.getTopImage();
+
+        // We are doing a pre-4.1 cold merge, using block-rebase
+        // IMPORTANT: baseSnapshot and topSnapshot are swapped becuase
+        // this is the old cold merge flow
+        if (snapshotActionType == VdcActionType.RemoveSnapshotSingleDisk) {
+            return Math.min(baseSnapshot.getActualSizeInBytes() + topSnapshot.getActualSizeInBytes(),
+                    baseSnapshot.getSize()) * StorageConstants.QCOW_OVERHEAD_FACTOR;
+        }
+
+        // The snapshot is the root snapshot
+        if (Guid.isNullOrEmpty(baseSnapshot.getParentId())) {
+            if (baseSnapshot.getVolumeFormat() == VolumeFormat.RAW) {
+                // Raw/Block can only be preallocated thus we are necessarily overlapping
+                // with existing data
+                if (baseSnapshot.getVolumeType() == VolumeType.Preallocated) {
+                    return 0.0;
+                }
+
+                return Math.min(topSnapshot.getActualSizeInBytes() / StorageConstants.QCOW_OVERHEAD_FACTOR,
+                        baseSnapshot.getSize() - baseSnapshot.getActualSizeInBytes());
+            }
+        }
+
+        // The required size for the extension of the volume we merge into.
+        // If the actual size of top is larger than the actual size of base we
+        // will be overlapping, hence we extend by the lower of the two.
+        return Math.min(topSnapshot.getSize() * StorageConstants.QCOW_OVERHEAD_FACTOR - baseSnapshot.getActualSizeInBytes(),
+                topSnapshot.getActualSizeInBytes());
+
     }
 
     @FunctionalInterface

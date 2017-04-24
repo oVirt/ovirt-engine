@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -117,6 +119,20 @@ public class MultipleStorageDomainsValidator {
      * Validates that all the domains have enough space for the request
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
+    public ValidationResult allDomainsHaveSpaceForMerge(List<SubchainInfo> snapshots, VdcActionType snapshotActionType) {
+        final Map<Guid, List<SubchainInfo>> storageToSnapshots = getDomainsToSnapshotsMap(snapshots);
+
+        return validOrFirstFailure(entry -> {
+            Guid sdId = entry.getKey();
+            List<SubchainInfo> subchain = storageToSnapshots.get(sdId);
+            return getStorageDomainValidator(entry).hasSpaceForMerge(subchain, snapshotActionType);
+        });
+    }
+
+    /**
+     * Validates that all the domains have enough space for the request
+     * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
+     */
     public ValidationResult allDomainsHaveSpaceForAllDisks(List<DiskImage> newDiskImages, List<DiskImage> clonedDiskImages) {
         final Map<Guid, List<DiskImage>> domainsNewDisksMap = getDomainsDisksMap(newDiskImages);
         final Map<Guid, List<DiskImage>> domainsClonedDisksMap = getDomainsDisksMap(clonedDiskImages);
@@ -182,5 +198,13 @@ public class MultipleStorageDomainsValidator {
     /** A predicate for evaluating storage domains */
     private static interface ValidatorPredicate {
         public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry);
+    }
+
+    private Map<Guid, List<SubchainInfo>> getDomainsToSnapshotsMap(List<SubchainInfo> snapshots) {
+        Map<Guid, List<SubchainInfo>> domainsDisksMap = new HashMap<>();
+        for (SubchainInfo subchain : snapshots) {
+            MultiValueMapUtils.addToMap(subchain.getStorageDomainId(), subchain, domainsDisksMap);
+        }
+        return domainsDisksMap;
     }
 }

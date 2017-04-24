@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
@@ -41,6 +44,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -371,18 +375,42 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
      * @return True if there is enough space in all relevant storage domains. False otherwise.
      */
     protected boolean validateStorageDomains() {
-        List<DiskImage> disksList = getDisksListForStorageAllocations();
         MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
         return validate(storageDomainsValidator.allDomainsExistAndActive())
                 && validate(storageDomainsValidator.allDomainsWithinThresholds())
-                && validate(storageDomainsValidator.allDomainsHaveSpaceForClonedDisks(disksList));
+                && validate(storageDomainsValidator.allDomainsHaveSpaceForMerge(getAllDisksSnapshot(getSourceImages()),
+                                                                                getSnapshotActionType()));
     }
 
-    protected List<DiskImage> getDisksListForStorageAllocations() {
-        if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
-            return ImagesHandler.getDisksDummiesForStorageAllocations(getSourceImages());
-        }
-        return ImagesHandler.getSnapshotsDummiesForStorageAllocations(getSourceImages());
+    /**
+     * The base snapshot is the parent of the top snapshot. This is reversed the if old cold merge
+     * is performed (pre-4.1).
+     *
+     * @param snapshots list of the parent snapshot disks
+     * @return list of subchains which contain the base and top snapshots.
+     */
+    protected List<SubchainInfo> getAllDisksSnapshot(List<DiskImage> snapshots) {
+        Set<DiskImage> topSnapshots = diskImageDao.getAllSnapshotsForParents(
+                snapshots
+                    .stream()
+                    .map(DiskImage::getImageId)
+                    .collect(Collectors.toList())
+        );
+
+        Map<Guid, DiskImage> baseSnapshotMap = snapshots
+                .stream()
+                .collect(Collectors.toMap(DiskImage::getImageId, Function.identity()));
+
+        return topSnapshots
+            .stream()
+            .map(topSnapshot -> {
+                if (!isQemuimgCommitSupported() && getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDisk) {
+                    return new SubchainInfo(topSnapshot, baseSnapshotMap.get(topSnapshot.getParentId()));
+                } else {
+                    return new SubchainInfo(baseSnapshotMap.get(topSnapshot.getParentId()), topSnapshot);
+                }
+            })
+            .collect(Collectors.toList());
     }
 
     protected Collection<Guid> getStorageDomainsIds() {

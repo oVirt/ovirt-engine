@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
+import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -37,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -91,6 +93,13 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         doReturn(vm).when(cmd).getVm();
     }
 
+    private void mockCluster(Version compatabilityVersion) {
+        Cluster cluster = new Cluster();
+        cluster.setId(Guid.newGuid());
+        cluster.setCompatibilityVersion(compatabilityVersion);
+        doReturn(cluster).when(cmd).getCluster();
+    }
+
     private void mockSnapshot(SnapshotType snapshotType) {
         Snapshot snapshot = new Snapshot();
         snapshot.setId(cmd.getParameters().getSnapshotId());
@@ -105,7 +114,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         doReturn(sdIds).when(cmd).getStorageDomainsIds();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsHaveSpaceForMerge(anyList(), any());
     }
 
     @Test
@@ -137,8 +146,9 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         prepareForVmValidatorTests();
         spySdValidator();
         cmd.getVm().setStatus(VMStatus.Up);
+        List<DiskImage> parentSnapshots = mockDisksList(2);
+        doReturn(parentSnapshots).when(cmd).getSourceImages();
 
-        mockDisksList(4);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
@@ -147,12 +157,14 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         prepareForVmValidatorTests();
         spySdValidator();
         cmd.getVm().setStatus(VMStatus.Up);
+        mockDisksList(2);
 
-        List<DiskImage> imagesDisks = mockDisksList(4);
-        when(storageDomainsValidator.allDomainsHaveSpaceForClonedDisks(imagesDisks)).thenReturn(
-                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+        when(storageDomainsValidator.allDomainsHaveSpaceForMerge(anyList(), any()))
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
+
 
     private void prepareForVmValidatorTests() {
         StoragePool sp = new StoragePool();
@@ -220,7 +232,6 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
             disksList.add(image);
         }
         doReturn(disksList).when(cmd).getSourceImages();
-        doReturn(disksList).when(cmd).getDisksListForStorageAllocations();
         return disksList;
     }
 }

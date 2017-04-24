@@ -218,4 +218,12 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
+CREATE OR REPLACE FUNCTION GetSnapshotsByParentsGuid(v_parent_guids uuid[])
+RETURNS SETOF images_storage_domain_view STABLE
+AS $procedure$
+BEGIN
+     RETURN QUERY SELECT *
+     FROM images_storage_domain_view
+     WHERE parentid = ANY(v_parent_guids);
+END; $procedure$
+LANGUAGE plpgsql;

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
+
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -23,8 +24,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -193,6 +196,30 @@ public class MultipleStorageDomainsValidatorTest {
         assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 
+    @Test
+    public void testAllDomainsHaveSpaceForMergeSuccess(){
+        List<SubchainInfo> subchains = generateSubchainList(2, Arrays.asList(sdId1, sdId2));
+        VdcActionType vdcActionType = VdcActionType.ColdMergeSnapshotSingleDisk;
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForMerge(any(), any());
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+
+        assertTrue(validator.allDomainsHaveSpaceForMerge(subchains, vdcActionType).isValid());
+        verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForMerge(any(), any());
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForMergeFail(){
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(storageDomainValidator).hasSpaceForMerge(any(), any());
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+
+        ValidationResult result = validator.allDomainsHaveSpaceForMerge(anyList(), any());
+        assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+    }
+
     private List<DiskImage> generateDisksList(int size, List<Guid> sdIds) {
         List<DiskImage> disksList = new ArrayList<>();
         ArrayList<Guid> _sdIds = new ArrayList<>(sdIds);
@@ -203,5 +230,23 @@ public class MultipleStorageDomainsValidatorTest {
             disksList.add(diskImage);
         }
         return disksList;
+    }
+
+    private List<SubchainInfo> generateSubchainList(int size, List<Guid> sdIds) {
+        List<SubchainInfo> subchains = new ArrayList<>(size);
+
+        for (int i = 0; i < size; i++) {
+            DiskImage parent = new DiskImage();
+            parent.setImageId(Guid.newGuid());
+            parent.setStorageIds(new ArrayList<>(sdIds));
+
+            DiskImage child = new DiskImage();
+            child.setParentId(parent.getImageId());
+            child.setStorageIds(new ArrayList<>());
+
+            subchains.add(new SubchainInfo(sdIds.get(i), parent, child));
+        }
+
+        return subchains;
     }
 }
