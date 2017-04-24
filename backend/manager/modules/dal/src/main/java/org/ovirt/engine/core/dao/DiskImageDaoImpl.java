@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -108,6 +110,15 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
         return getCallsHandler().executeReadList("GetSnapshotsByImageGroupId",
                 DiskImageRowMapper.instance,
                 parameterSource);
+    }
+
+    @Override
+    public Set<DiskImage> getAllSnapshotsForParents(Collection<Guid> parentIds) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("parent_guids", createArrayOfUUIDs(parentIds));
+        return new HashSet<>(getCallsHandler().executeReadList("GetSnapshotsByParentsGuid",
+                DiskImageRowMapper.instance,
+                parameterSource));
     }
 
     @Override

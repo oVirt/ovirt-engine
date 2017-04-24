@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -138,4 +139,12 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
      * @return List of DiskImages
      */
     List<DiskImage> getAllForDiskProfiles(Collection<Guid> diskProfileIds);
+
+    /**
+     * Return all children snapshots for a list of parents
+     *
+     * @param parentIds List of parent image guids
+     * @return List of child snpashots
+     */
+    Set<DiskImage> getAllSnapshotsForParents(Collection<Guid> parentIds);
 }

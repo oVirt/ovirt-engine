@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -194,6 +195,26 @@ public class MultipleStorageDomainsValidatorTest {
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
         ValidationResult result = validator.allDomainsHaveSpaceForAllDisks(disksListForNew, disksListForCloned);
+        assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForMergeSuccess(){
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+
+        assertTrue(validator.allDomainsHaveSpaceForMerge(anyList(), any()).isValid());
+        verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForMerge(any(), any());
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForMergeFail(){
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(storageDomainValidator).hasSpaceForMerge(any(), any());
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+
+        ValidationResult result = validator.allDomainsHaveSpaceForMerge(anyList(), any());
         assertThat(result, failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
     }
 

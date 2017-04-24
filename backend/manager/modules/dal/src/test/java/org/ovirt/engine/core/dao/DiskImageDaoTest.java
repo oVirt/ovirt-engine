@@ -12,6 +12,7 @@ import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -22,6 +23,8 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskImageDao> {
     private static final Guid ANCESTOR_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
+    private static final Guid PARENT_SNAPSHOT_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0c");
+    private static final Guid CHILD_SNAPSHOT_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0d");
 
     private DiskImage existingTemplate;
 
@@ -180,5 +183,19 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
         assertNotNull(diskImages);
         assertEquals(6, diskImages.size());
+    }
+
+    @Test
+    public void testGetAllSnapshotsForParents() {
+        Set<DiskImage> childSnapshots = dao
+                .getAllSnapshotsForParents(Collections.singletonList(PARENT_SNAPSHOT_ID));
+        DiskImage diskImage = childSnapshots
+                .stream()
+                .findFirst()
+                .get();
+
+        assertNotNull(childSnapshots);
+        assertEquals(1, childSnapshots.size());
+        assertEquals(CHILD_SNAPSHOT_ID, diskImage.getImageId());
     }
 }
