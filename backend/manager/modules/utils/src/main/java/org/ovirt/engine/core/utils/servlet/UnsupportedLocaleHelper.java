@@ -54,7 +54,7 @@ public class UnsupportedLocaleHelper {
                 && !configValues.equals(ConfigValues.UnsupportedLocalesFilterOverrides)) {
             throw new IllegalArgumentException("Passed in config value not related to locales"); //$NON-NLS-1$
         }
-        List<String> locales = Config.<List<String>> getValue(configValues);
+        List<String> locales = Config.getValue(configValues);
         List<String> result = new ArrayList<>();
         if (locales != null && !locales.isEmpty()) {
             for (String localeKey: locales) {
