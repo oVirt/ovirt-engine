@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import org.ovirt.engine.core.compat.LongCompat;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
@@ -41,7 +40,7 @@ public class LongValidation implements IValidation {
 
         if (value != null && ((value instanceof String && !"".equals(value)) || value instanceof Long)) { //$NON-NLS-1$
             // Do not use org.apache.commons.lang.math.NumberUtils. Null is expected if conversion fails.
-            Long longValue = value instanceof String ? LongCompat.tryParse((String) value) : (Long) value;
+            Long longValue = value instanceof String ? tryParseLong((String) value) : (Long) value;
             String msg = ""; //$NON-NLS-1$
             String prefixMsg =
                     ConstantsManager.getInstance().getConstants().thisFieldMustContainNumberInvalidReason();
@@ -76,5 +75,13 @@ public class LongValidation implements IValidation {
         }
 
         return result;
+    }
+
+    private Long tryParseLong(final String value) {
+        try {
+            return Long.valueOf(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
