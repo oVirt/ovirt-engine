@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -145,6 +147,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 vmTemplateFromConfiguration = ovfHelper.readVmTemplateFromOvf(ovfEntityData.getOvfData());
                 vmTemplateFromConfiguration.setClusterId(getParameters().getClusterId());
                 setVmTemplate(vmTemplateFromConfiguration);
+                setEffectiveCompatibilityVersion(CompatibilityVersionUtils.getEffective(getVmTemplate(), this::getCluster));
+                VmHandler.updateMaxMemorySize(getVmTemplate(), getEffectiveCompatibilityVersion());
                 getParameters().setVmTemplate(vmTemplateFromConfiguration);
                 getParameters().setDestDomainId(ovfEntityData.getStorageDomainId());
                 getParameters().setSourceDomainId(ovfEntityData.getStorageDomainId());
