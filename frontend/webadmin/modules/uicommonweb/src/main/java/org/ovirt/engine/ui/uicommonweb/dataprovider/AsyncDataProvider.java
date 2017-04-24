@@ -11,11 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.aaa.ProfileEntry;
@@ -2894,46 +2892,44 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 
-    private static class DefaultSupplierConverter<T> implements Converter<T, T> {
-        private Supplier<T> supplier;
+    private static class DefaultValueConverter<T> implements Converter<T, T> {
 
-        public DefaultSupplierConverter(Supplier<T> supplier) {
-            this.supplier = supplier;
+        private final T defaultValue;
+
+        public DefaultValueConverter(T defaultValue) {
+            this.defaultValue = defaultValue;
         }
 
         @Override
-        public T convert(T source) {
-            return Optional.of(source).orElseGet(supplier);
-        }
-    }
-
-    private static class ListConverter<T> extends DefaultSupplierConverter<List<T>> {
-        public ListConverter() {
-            super(ArrayList::new);
-        }
-    }
-
-    private static class MapConverter<K, V> extends DefaultSupplierConverter<Map<K, V>> {
-        public MapConverter() {
-            super(HashMap::new);
-        }
-    }
-
-    private static class SetConverter<T> extends DefaultSupplierConverter<Set<T>> {
-        public SetConverter() {
-            super(HashSet::new);
-        }
-    }
-
-    private static class DefaultValueConverter<T> extends DefaultSupplierConverter<T> {
-        public DefaultValueConverter(T defaultValue) {
-            super(() -> defaultValue);
+        public T convert(T returnValue) {
+            return returnValue != null ? returnValue : defaultValue;
         }
     }
 
     private static class StringConverter extends DefaultValueConverter<String> {
         public StringConverter() {
             super("");
+        }
+    }
+
+    private static class ListConverter<T> implements Converter<List<T>, List<T>> {
+        @Override
+        public List<T> convert(List<T> source) {
+            return source != null ? source : new ArrayList<T>();
+        }
+    }
+
+    private static class MapConverter<K, V> implements Converter<Map<K, V>, Map<K, V>> {
+        @Override
+        public Map<K, V> convert(Map<K, V> source) {
+            return source != null ? source : new HashMap<K, V>();
+        }
+    }
+
+    private static class SetConverter<T> implements Converter<Set<T>, Set<T>> {
+        @Override
+        public Set<T> convert(Set<T> source) {
+            return source != null ? source : new HashSet<T>();
         }
     }
 
