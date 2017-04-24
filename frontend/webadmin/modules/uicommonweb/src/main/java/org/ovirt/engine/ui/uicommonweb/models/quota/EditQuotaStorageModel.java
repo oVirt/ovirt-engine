@@ -59,9 +59,7 @@ public class EditQuotaStorageModel extends EntityModel<QuotaStorage> {
     }
 
     public boolean validate() {
-        LongValidation longValidation = new LongValidation();
-        longValidation.setMinimum(1);
-        longValidation.setMaximum(65535);
+        LongValidation longValidation = new LongValidation(1, 65535);
         getSpecificStorageValue().setIsValid(true);
         if (getSpecificStorage().getEntity()) {
             getSpecificStorageValue().validateEntity(new IValidation[] { longValidation, new NotEmptyValidation() });

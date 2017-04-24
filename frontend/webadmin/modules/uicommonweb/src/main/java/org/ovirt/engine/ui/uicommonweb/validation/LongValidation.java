@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.validation;
 
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class LongValidation implements IValidation {
 
     private long maximum;
