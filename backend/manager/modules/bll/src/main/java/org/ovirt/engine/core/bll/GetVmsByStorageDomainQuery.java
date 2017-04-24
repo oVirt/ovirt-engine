@@ -34,14 +34,13 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
     @Override
     protected void executeQueryCommand() {
         Guid domainId = getParameters().getId();
-        List<DiskImage> disksOfDomain = null;
 
         List<VM> vms = getAllVMsForStorageDomain(domainId);
 
         // get all disks and snapshots
         VdcQueryReturnValue queryReturnValue = getAllDisksByStorageDomain(domainId);
         if (queryReturnValue.getSucceeded()) {
-            disksOfDomain = queryReturnValue.getReturnValue();
+            List<DiskImage> disksOfDomain = queryReturnValue.getReturnValue();
             Map<String, VM> vmNameToVMMap = new HashMap<>();
 
             for (VM vm : vms) {
