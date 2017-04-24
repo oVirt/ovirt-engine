@@ -68,17 +68,17 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         switch (getParameters().getCommandStep()) {
             case PREPARE_MERGE:
                 nextCommand = new Pair<>(VdcActionType.PrepareMerge,
-                        buildColdMergeParameters(getImageId(), getDestinationImageId()));
+                        buildColdMergeParameters(getImage(), getDestinationDiskImage()));
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.MERGE);
                 break;
             case MERGE:
                 nextCommand = new Pair<>(VdcActionType.ColdMerge,
-                        buildColdMergeParameters(getImageId(), getDestinationImageId()));
+                        buildColdMergeParameters(getImage(), getDestinationDiskImage()));
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.FINALIZE_MERGE);
                 break;
             case FINALIZE_MERGE:
                 nextCommand = new Pair<>(VdcActionType.FinalizeMerge,
-                        buildColdMergeParameters(getImageId(), getDestinationImageId()));
+                        buildColdMergeParameters(getImage(), getDestinationDiskImage()));
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
                 break;
             case DESTROY_IMAGE:
@@ -148,9 +148,8 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         return Collections.emptyList();
     }
 
-    private ColdMergeCommandParameters buildColdMergeParameters(Guid baseVolumeId, Guid topVolumeId) {
-        SubchainInfo subchainInfo = new SubchainInfo(getDiskImage().getStorageIds().get(0), getImageGroupId(),
-                baseVolumeId, topVolumeId);
+    private ColdMergeCommandParameters buildColdMergeParameters(DiskImage baseVolume, DiskImage topVolume) {
+        SubchainInfo subchainInfo = new SubchainInfo(getDiskImage().getStorageIds().get(0), baseVolume, topVolume);
         ColdMergeCommandParameters parameters = new ColdMergeCommandParameters(
                 getDiskImage().getStoragePoolId(), subchainInfo);
         parameters.setEndProcedure(VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
