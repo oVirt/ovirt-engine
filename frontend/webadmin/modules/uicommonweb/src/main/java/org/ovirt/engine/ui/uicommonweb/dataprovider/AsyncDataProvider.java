@@ -15,7 +15,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -183,6 +182,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.OsValueAutoCompleter;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Converter;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.comparators.QuotaComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -680,7 +680,7 @@ public class AsyncDataProvider {
             Guid storagePoolId,
             boolean forceRefresh,
             ImageFileType imageFileType,
-            Function<List<RepoImage>, List<String>> converterCallBack) {
+            Converter<List<String>, List<RepoImage>> converterCallBack) {
 
         aQuery.converterCallback = converterCallBack;
 
@@ -2070,8 +2070,8 @@ public class AsyncDataProvider {
 
             // run converter
             if (aQuery.converterCallback != null) {
-                Function<T, T> converter = (Function<T, T>) aQuery.converterCallback;
-                returnValue = converter.apply(returnValue);
+                Converter<T, T> converter = (Converter<T, T>) aQuery.converterCallback;
+                returnValue = converter.convert(returnValue);
             }
             if (returnValue != null) {
                 cachedConfigValues.put(config_key, returnValue);
@@ -2087,10 +2087,10 @@ public class AsyncDataProvider {
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
     }
 
-    private static class TemplateConverter implements Function<List<VmTemplate>, List<VmTemplate>> {
+    private static class TemplateConverter implements Converter<List<VmTemplate>, List<VmTemplate>> {
 
         @Override
-        public List<VmTemplate> apply(List<VmTemplate> source) {
+        public List<VmTemplate> convert(List<VmTemplate> source) {
             List<VmTemplate> list = new ArrayList<>();
             if (source != null) {
                 VmTemplate blankTemplate = null;
@@ -2878,7 +2878,7 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetClusterEditWarnings, new ClusterEditParameters(cluster), aQuery);
     }
 
-    private static class DefaultSupplierConverter<T> implements Function<T, T> {
+    private static class DefaultSupplierConverter<T> implements Converter<T, T> {
         private Supplier<T> supplier;
 
         public DefaultSupplierConverter(Supplier<T> supplier) {
@@ -2886,7 +2886,7 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public T apply(T source) {
+        public T convert(T source) {
             return Optional.of(source).orElseGet(supplier);
         }
     }
@@ -2929,8 +2929,8 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public List<T> apply(List<T> source) {
-            List<T> list = super.apply(source);
+        public List<T> convert(List<T> source) {
+            List<T> list = super.convert(source);
             list.add(0, firstValue);
             return list;
         }
@@ -2948,8 +2948,8 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public List<T> apply(List<T> source) {
-            List<T> list = super.apply(source);
+        public List<T> convert(List<T> source) {
+            List<T> list = super.convert(source);
             Collections.sort(list, comparator);
             return list;
         }
@@ -2961,9 +2961,9 @@ public class AsyncDataProvider {
         }
     }
 
-    private static class IsNonEmptyCollectionConverter<T> implements Function<Collection<T>, Boolean> {
+    private static class IsNonEmptyCollectionConverter<T> implements Converter<Boolean, Collection<T>> {
         @Override
-        public Boolean apply(Collection<T> source) {
+        public Boolean convert(Collection<T> source) {
             if (source != null) {
                 return !source.isEmpty();
             }
@@ -2972,9 +2972,9 @@ public class AsyncDataProvider {
         }
     }
 
-    private static class GetFirstConverter<T> implements Function<Iterable<T>, T> {
+    private static class GetFirstConverter<T> implements Converter<T, Iterable<T>> {
         @Override
-        public T apply(Iterable<T> source) {
+        public T convert(Iterable<T> source) {
             Iterator<T> iterator = source.iterator();
             while (iterator.hasNext()) {
                 return iterator.next();
@@ -3006,9 +3006,9 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    private static class RepoImageToImageFileNameAsyncConverter implements Function<List<RepoImage>, List<String>> {
+    private static class RepoImageToImageFileNameAsyncConverter implements Converter<List<String>, List<RepoImage>> {
         @Override
-        public List<String> apply(List<RepoImage> source) {
+        public List<String> convert(List<RepoImage> source) {
             if (source != null) {
                 ArrayList<String> fileNameList = new ArrayList<>();
                 for (RepoImage repoImage : source) {
@@ -3063,7 +3063,7 @@ public class AsyncDataProvider {
         return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrMaxRetries);
     }
 
-    private static final class QuotaConverter implements Function<List<Quota>, List<Quota>> {
+    private static final class QuotaConverter implements Converter<List<Quota>, List<Quota>> {
         private final Guid topId;
 
         public QuotaConverter(Guid topId) {
@@ -3071,7 +3071,7 @@ public class AsyncDataProvider {
         }
 
         @Override
-        public List<Quota> apply(List<Quota> quotaList) {
+        public List<Quota> convert(List<Quota> quotaList) {
             if (quotaList != null && !quotaList.isEmpty()) {
                 Comparator<Quota> comparator = (topId == null) ? QuotaComparator.NAME :
                         QuotaComparator.withTopId(topId, QuotaComparator.NAME);

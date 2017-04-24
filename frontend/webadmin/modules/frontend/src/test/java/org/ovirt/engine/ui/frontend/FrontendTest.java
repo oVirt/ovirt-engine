@@ -13,7 +13,6 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -88,7 +87,7 @@ public class FrontendTest {
     @Mock
     AsyncCallback mockAsyncCallback;
     @Mock
-    Function<Object, Object> mockConverter;
+    Converter<Object, Object> mockConverter;
     @Mock
     EventBus mockEventBus;
     @Mock
@@ -433,7 +432,7 @@ public class FrontendTest {
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
         mockReturnValue.setReturnValue(mockResultModel);
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
-        when(mockConverter.apply(mockResultModel)).thenReturn(mockConvertedModel);
+        when(mockConverter.convert(mockResultModel)).thenReturn(mockConvertedModel);
         // Return value set to success
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);
