@@ -108,7 +108,7 @@ public class VmsMonitoring {
 
     private void unlockVms(List<VmAnalyzer> vmAnalyzers) {
         vmAnalyzers.stream().map(VmAnalyzer::getVmId).forEach(vmId -> {
-            VmManager vmManager = resourceManager.getVmManager(vmId);
+            VmManager vmManager = getVmManager(vmId);
             vmManager.updateVmDataChangedTime();
             vmManager.unlock();
         });
@@ -137,7 +137,7 @@ public class VmsMonitoring {
                     vmAnalyzers.add(vmAnalyzer);
                 } catch (RuntimeException ex) {
                     Guid vmId = getVmId(vm.getFirst(), vm.getSecond());
-                    VmManager vmManager = resourceManager.getVmManager(vmId);
+                    VmManager vmManager = getVmManager(vmId);
                     vmManager.unlock();
 
                     log.error("Failed during monitoring vm: {} , error is: {}", vmId, ex);
@@ -162,7 +162,7 @@ public class VmsMonitoring {
 
     private boolean shouldAnalyzeVm(Pair<VmDynamic, VdsmVm> pair, long fetchTime, Guid vdsId) {
         Guid vmId = getVmId(pair.getFirst(), pair.getSecond());
-        VmManager vmManager = resourceManager.getVmManager(vmId);
+        VmManager vmManager = getVmManager(vmId);
 
         if (!vmManager.trylock()) {
             log.debug("skipping VM '{}' from this monitoring cycle" +
@@ -315,7 +315,7 @@ public class VmsMonitoring {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         vmStatisticsDao.updateAllInBatch(statistics);
-        statistics.forEach(stats -> resourceManager.getVmManager(stats.getId()).setStatistics(stats));
+        statistics.forEach(stats -> getVmManager(stats.getId()).setStatistics(stats));
     }
 
     protected void addUnmanagedVms(List<VmAnalyzer> vmAnalyzers, Guid vdsId) {
@@ -358,6 +358,10 @@ public class VmsMonitoring {
 
     protected IVdsEventListener getVdsEventListener() {
         return resourceManager.getEventListener();
+    }
+
+    protected VmManager getVmManager(Guid vmId) {
+        return resourceManager.getVmManager(vmId);
     }
 
 }
