@@ -6,8 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,9 @@ public class InstallerMessages {
 
     public void post(Severity severity, String text) {
         AuditLogType logType;
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(_vds.getId()));
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(_vds.getId());
+        logable.setVdsName(_vds.getName());
         logable.setCorrelationId(_correlationId);
         logable.addCustomValue("Message", text);
         switch (severity) {
