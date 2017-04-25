@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.EventFloodRegulator;
 
 public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> extends ExternalEventCommandBase<T> {
 
@@ -44,8 +46,14 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
         AuditLog auditLog = auditLogDao.get(getParameters().getAuditLogId());
         auditLogDao.remove(getParameters().getAuditLogId());
         setAuditLogDetails(auditLog);
+
+        // clear the id so the event will be considered as a system-level event
+        auditLog.setUserId(Guid.Empty);
+        AuditLogableBase logableToClear = new AuditLogableBase(auditLog);
+
         // clean cache manager entry (if exists)
-        evict(auditLogDirector.composeSystemObjectId(this, auditLog.getLogType()));
+        EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(logableToClear, auditLog.getLogType());
+        eventFloodRegulator.evict();
         setSucceeded(true);
     }
 

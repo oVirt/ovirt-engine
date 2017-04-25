@@ -95,7 +95,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuditLogableBase extends TimeoutBase {
+public class AuditLogableBase {
     private static final Logger log = LoggerFactory.getLogger(AuditLogableBase.class);
     private static final String COMMA_SEPARATOR = ", ";
 
@@ -796,11 +796,6 @@ public class AuditLogableBase extends TimeoutBase {
 
     public Map<String, String> getCustomValues() {
         return customValues;
-    }
-
-    @Override
-    protected String getKey() {
-        return getAuditLogTypeValue().toString();
     }
 
     public String getCustomValue(final String name) {

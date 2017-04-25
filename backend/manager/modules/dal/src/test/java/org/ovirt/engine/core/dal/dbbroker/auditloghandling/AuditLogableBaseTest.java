@@ -1054,10 +1054,4 @@ public class AuditLogableBaseTest {
         final String s = b.getCustomValue(NAME);
         assertEquals("", s);
     }
-
-    @Test
-    public void key() {
-        final String s = b.getKey();
-        assertEquals(AuditLogType.UNASSIGNED.toString(), s);
-    }
 }

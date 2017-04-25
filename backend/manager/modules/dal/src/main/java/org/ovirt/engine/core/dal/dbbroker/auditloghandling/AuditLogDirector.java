@@ -5,10 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.MissingResourceException;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
@@ -75,9 +72,10 @@ public class AuditLogDirector {
             return;
         }
 
-        updateTimeoutLogableObject(auditLogable, logType);
+        EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(auditLogable, logType);
+        eventFloodRegulator.updateTimeoutLogableObject();
 
-        if (auditLogable.getLegal()) {
+        if (eventFloodRegulator.isLegal()) {
             saveToDb(auditLogable, logType, loggerString);
         }
     }
@@ -178,94 +176,8 @@ public class AuditLogDirector {
         }
     }
 
-    /**
-     * Update the logged object timeout attribute by log type definition
-     * @param auditLogable
-     *            the logable object to be updated
-     * @param logType
-     *            the log type which determine if timeout is used for it
-     */
-    private void updateTimeoutLogableObject(AuditLogableBase auditLogable, AuditLogType logType) {
-        int eventFloodRate = (auditLogable.isExternal() && auditLogable.getEventFloodInSec() == 0)
-                ?
-                30 // Minimal default duration for External Events is 30 seconds.
-                :
-                logType.getEventFloodRate();
-        if (eventFloodRate > 0) {
-            auditLogable.setEndTime(TimeUnit.SECONDS.toMillis(eventFloodRate));
-            auditLogable.setTimeoutObjectId(composeObjectId(auditLogable, logType));
-        }
-    }
-
     private DbFacade getDbFacadeInstance() {
         return DbFacade.getInstance();
-    }
-
-    /**
-     * Composes an object id from all log id's to identify uniquely each instance.
-     * @param logable
-     *                the object to log
-     * @param logType
-     *                the log type associated with the object
-     * @param userId
-     *                the userid to be composed
-     * @return unique object id
-     */
-    private String composeObjectId(AuditLogableBase logable, AuditLogType logType, Guid userId) {
-        final StringBuilder builder = new StringBuilder();
-
-        compose(builder, "type", logType.toString());
-        compose(builder, "sd", nullToEmptyString(logable.getStorageDomainId()));
-        compose(builder, "dc", nullToEmptyString(logable.getStoragePoolId()));
-        compose(builder, "user", nullToEmptyString(userId));
-        compose(builder, "cluster", logable.getClusterId().toString());
-        compose(builder, "vds", logable.getVdsId().toString());
-        compose(builder, "vm", emptyGuidToEmptyString(logable.getVmId()));
-        compose(builder, "template", emptyGuidToEmptyString(logable.getVmTemplateId()));
-        compose(builder, "customId", StringUtils.defaultString(logable.getCustomId()));
-
-        return builder.toString();
-    }
-    /**
-     * Composes an object id from all log id's to identify uniquely each instance.
-     * @param logable
-     *            the object to log
-     * @param logType
-     *            the log type associated with the object
-     * @return a unique object id
-     */
-    private String composeObjectId(AuditLogableBase logable, AuditLogType logType) {
-        return composeObjectId(logable, logType, logable.getUserId());
-    }
-
-    /**
-     * Composes an system object id from all log id's to identify uniquely each instance.
-     * @param logable
-     *            the object to log
-     * @param logType
-     *            the log type associated with the object
-     * @return a unique object id
-     */
-    public String composeSystemObjectId(AuditLogableBase logable, AuditLogType logType) {
-        return composeObjectId(logable, logType, Guid.Empty);
-    }
-
-    private void compose(StringBuilder builder, String key, String value) {
-        final char DELIMITER = ',';
-        final char NAME_VALUE_SEPARATOR = '=';
-        if (builder.length() > 0) {
-            builder.append(DELIMITER);
-        }
-
-        builder.append(key).append(NAME_VALUE_SEPARATOR).append(value);
-    }
-
-    private String emptyGuidToEmptyString(Guid guid) {
-        return guid.equals(Guid.Empty) ? "" : guid.toString();
-    }
-
-    private static String nullToEmptyString(Object obj) {
-        return Objects.toString(obj, "");
     }
 
     String resolveMessage(String message, AuditLogableBase logable) {
