@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
@@ -50,6 +51,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
     protected Widget getContents() {
 
         Image mgmtNetworkImage;
+        Image defaultRouteImage;
         Image vmImage;
         Image monitorImage;
         Image migrationImage;
@@ -60,20 +62,21 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         if (!item.isManaged()) {
             monitorImage = null;
             mgmtNetworkImage = null;
+            defaultRouteImage = null;
             vmImage = null;
             migrationImage = null;
             glusterNwImage = null;
             notSyncImage = null;
             alertImage = null;
         } else {
-            monitorImage = item.getNetwork().getCluster().isDisplay() ?
-                    new Image(resources.networkMonitor()) : null;
+            NetworkCluster networkCluster = item.getNetwork().getCluster();
+
+            monitorImage = networkCluster.isDisplay() ? new Image(resources.networkMonitor()) : null;
             mgmtNetworkImage = item.isManagement() ? new Image(resources.mgmtNetwork()) : null;
+            defaultRouteImage = networkCluster.isDefaultRoute() ? new Image(resources.defaultRouteNetwork()) : null;
             vmImage = item.getNetwork().isVmNetwork() ? new Image(resources.networkVm()) : null;
-            migrationImage = item.getNetwork().getCluster().isMigration() ?
-                    new Image(resources.migrationNetwork()) : null;
-            glusterNwImage = item.getNetwork().getCluster().isGluster() ?
-                    new Image(resources.glusterNetwork()) : null;
+            migrationImage = networkCluster.isMigration() ? new Image(resources.migrationNetwork()) : null;
+            glusterNwImage = networkCluster.isGluster() ? new Image(resources.glusterNetwork()) : null;
             notSyncImage = !item.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
             alertImage = item.getErrorMessage() != null ? new Image(resources.alertImage()) : null;
 
@@ -85,15 +88,19 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
                 vmImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (item.getNetwork().getCluster().isDisplay()) {
+            if (networkCluster.isDisplay()) {
                 monitorImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (item.getNetwork().getCluster().isMigration()) {
+            if (networkCluster.isMigration()) {
                 migrationImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (item.getNetwork().getCluster().isGluster()) {
+            if (networkCluster.isDefaultRoute()) {
+                defaultRouteImage.setStylePrimaryName(style.networkImageBorder());
+            }
+
+            if (networkCluster.isGluster()) {
                 glusterNwImage.setStylePrimaryName(style.networkImageBorder());
             }
 
@@ -139,7 +146,8 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         rowPanel.setWidget(0, 5, vmImage);
         rowPanel.setWidget(0, 6, migrationImage);
         rowPanel.setWidget(0, 7, glusterNwImage);
-        rowPanel.setWidget(0, 8, actionButton);
+        rowPanel.setWidget(0, 8, defaultRouteImage);
+        rowPanel.setWidget(0, 9, actionButton);
 
         return rowPanel;
     }
