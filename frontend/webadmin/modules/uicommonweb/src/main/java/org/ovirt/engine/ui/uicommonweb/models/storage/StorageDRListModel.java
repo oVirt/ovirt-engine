@@ -61,16 +61,6 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
     }
 
     @Override
-    public StorageDomain getEntity() {
-        return super.getEntity();
-    }
-
-    @Override
-    public void setEntity(StorageDomain value) {
-        super.setEntity(value);
-    }
-
-    @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
 
@@ -143,12 +133,6 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
                 getSelectedItems() : new ArrayList<StorageDomainDR>();
 
         getEditCommand().setIsExecutionAllowed(domainDRs.size() == 1);
-    }
-
-    private void remove() {
-        if (getWindow() != null) {
-            return;
-        }
     }
 
     private void newDR() {
