@@ -112,16 +112,15 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
     }
 
     private void populateSessionsMap(List<StorageDomainDR> storageDRs) {
-        for (final StorageDomainDR storageDR : storageDRs) {
-            if (!geoRepSessionsMap.containsKey(storageDR.getGeoRepSessionId())) {
-                AsyncDataProvider.getInstance()
-                        .getGlusterVolumeGeoRepSessionById(new AsyncQuery<>(geoRepSession -> {
-                            if (geoRepSession != null) {
-                                geoRepSessionsMap.put(storageDR.getGeoRepSessionId(), geoRepSession);
-                            }
-                        }), storageDR.getGeoRepSessionId());
-            }
-        }
+        storageDRs.stream().filter(storageDR -> !geoRepSessionsMap.containsKey(storageDR.getGeoRepSessionId()))
+                .forEach(storageDR -> {
+                    AsyncDataProvider.getInstance()
+                            .getGlusterVolumeGeoRepSessionById(new AsyncQuery<>(geoRepSession -> {
+                                if (geoRepSession != null) {
+                                    geoRepSessionsMap.put(storageDR.getGeoRepSessionId(), geoRepSession);
+                                }
+                            }), storageDR.getGeoRepSessionId());
+                });
     }
 
     public Map<Guid, GlusterGeoRepSession> getGeoRepSessionsMap() {
