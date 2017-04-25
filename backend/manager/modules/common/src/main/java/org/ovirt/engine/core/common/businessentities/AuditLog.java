@@ -9,6 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AuditLog implements IVdcQueryable {
     private static final long serialVersionUID = -2808392095455280186L;
+    public static final String OVIRT_ORIGIN = "oVirt";
 
     private long auditLogId;
     private Date logTime;
@@ -64,7 +65,7 @@ public class AuditLog implements IVdcQueryable {
     public AuditLog(AuditLogType type, AuditLogSeverity severity) {
         this.logType = type.getValue();
         this.severity = severity.getValue();
-        this.origin = "oVirt";
+        this.origin = OVIRT_ORIGIN;
         this.customEventId = -1;
         this.eventFloodInSec = 30;
         this.customData = "";

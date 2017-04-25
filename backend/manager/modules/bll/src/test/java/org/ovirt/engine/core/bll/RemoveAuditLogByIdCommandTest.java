@@ -21,7 +21,6 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     @Mock
     private AuditLogDao auditLogDao;
 
-    private static final String OVIRT_ORIGIN = "oVirt";
     private static final String EXTERNAL_ORIGIN = "External";
 
     private static final long EVENT_ID_1 = 101;
@@ -37,7 +36,7 @@ public class RemoveAuditLogByIdCommandTest extends BaseCommandTest {
     private AuditLog getEventWithOvirtOrigin() {
         AuditLog auditLog = new AuditLog();
         auditLog.setAuditLogId(EVENT_ID_2);
-        auditLog.setOrigin(OVIRT_ORIGIN);
+        auditLog.setOrigin(AuditLog.OVIRT_ORIGIN);
         return auditLog;
     }
 

@@ -21,8 +21,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.EventFloodRegulator;
 
 public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> extends ExternalEventCommandBase<T> {
 
-    private static final String OVIRT="oVirt";
-
     @Inject
     private AuditLogDirector auditLogDirector;
 

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
-    private static final String OVIRT="oVirt";
 
     public AddExternalEventCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -23,7 +22,8 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
     @Override
     protected boolean validate() {
         boolean result=true;
-        if (getParameters().getEvent() == null || getParameters().getEvent().getOrigin().equalsIgnoreCase(OVIRT)){
+        if (getParameters().getEvent() == null
+                || getParameters().getEvent().getOrigin().equalsIgnoreCase(AuditLog.OVIRT_ORIGIN)) {
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
             result = false;
         }

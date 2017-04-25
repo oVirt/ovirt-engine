@@ -41,7 +41,6 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     private static final int FILTERED_COUNT = 6;
     private static final int AFTER_DATE_COUNT = 7;
     private static final int TOTAL_COUNT = 8;
-    private static final String ORIGIN="oVirt";
     private static final int CUSTOM_BAKUP_EVENT_ID = 9022;
     private AuditLogDao dao;
 
@@ -397,11 +396,11 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testDeleteBackupRelatedAlerts() {
-        AuditLog entry = dao.getByOriginAndCustomEventId(ORIGIN, CUSTOM_BAKUP_EVENT_ID);
+        AuditLog entry = dao.getByOriginAndCustomEventId(AuditLog.OVIRT_ORIGIN, CUSTOM_BAKUP_EVENT_ID);
         assertNotNull(entry);
         assertFalse(entry.isDeleted());
         dao.deleteBackupRelatedAlerts();
-        entry = dao.getByOriginAndCustomEventId(ORIGIN, CUSTOM_BAKUP_EVENT_ID);
+        entry = dao.getByOriginAndCustomEventId(AuditLog.OVIRT_ORIGIN, CUSTOM_BAKUP_EVENT_ID);
         assertNotNull(entry);
         assertTrue(entry.isDeleted());
     }
