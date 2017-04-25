@@ -20,7 +20,7 @@ public class EventKeyComposer {
      *            the log type associated with the event
      * @return unique object id
      */
-    public static String composeObjectId(AuditLogableBase event, AuditLogType logType) {
+    public static String composeObjectId(AuditLogable event, AuditLogType logType) {
         final StringBuilder builder = new StringBuilder();
 
         compose(builder, "type", logType.toString());

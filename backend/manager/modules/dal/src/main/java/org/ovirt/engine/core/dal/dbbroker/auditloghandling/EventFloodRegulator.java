@@ -7,13 +7,13 @@ import org.ovirt.engine.core.dal.utils.CacheManager;
 
 public class EventFloodRegulator {
 
-    private final AuditLogableBase event;
+    private final AuditLogable event;
     private final AuditLogType logType;
     private boolean useTimeout;
     private long endTime;
     private String timeoutObjectId;
 
-    public EventFloodRegulator(AuditLogableBase event, AuditLogType logType) {
+    public EventFloodRegulator(AuditLogable event, AuditLogType logType) {
         this.event = event;
         this.logType = logType;
         timeoutObjectId = "";

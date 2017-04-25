@@ -63,11 +63,11 @@ public class AuditLogDirector {
         log(auditLogable, logType);
     }
 
-    public void log(AuditLogableBase auditLogable, AuditLogType logType) {
+    public void log(AuditLogable auditLogable, AuditLogType logType) {
         log(auditLogable, logType, "");
     }
 
-    public void log(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
+    public void log(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
         if (!logType.shouldBeLogged()) {
             return;
         }
@@ -80,39 +80,19 @@ public class AuditLogDirector {
         }
     }
 
-    private void saveToDb(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
+    private void saveToDb(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
         AuditLogSeverity severity = logType.getSeverity();
         AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString, severity);
 
         if (auditLog == null) {
             log.warn("Unable to create AuditLog");
         } else {
-            setPropertiesFromAuditLogableBase(auditLogable, auditLog);
+            auditLogable.setPropertiesForAuditLog(auditLog);
             // truncate user name
             auditLog.setUserName(StringUtils.abbreviate(auditLog.getUserName(), USERNAME_LENGTH));
             getDbFacadeInstance().getAuditLogDao().save(auditLog);
             logMessage(severity, getMessageToLog(loggerString, auditLog));
         }
-    }
-
-    private static void setPropertiesFromAuditLogableBase(AuditLogableBase auditLogable, AuditLog auditLog) {
-        auditLog.setStorageDomainId(auditLogable.getStorageDomainId());
-        auditLog.setStorageDomainName(auditLogable.getStorageDomainName());
-        auditLog.setStoragePoolId(auditLogable.getStoragePoolId());
-        auditLog.setStoragePoolName(auditLogable.getStoragePoolName());
-        auditLog.setClusterId(auditLogable.getClusterId());
-        auditLog.setClusterName(auditLogable.getClusterName());
-        auditLog.setCorrelationId(auditLogable.getCorrelationId());
-        auditLog.setJobId(auditLogable.getJobId());
-        auditLog.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
-        auditLog.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
-        auditLog.setExternal(auditLogable.isExternal());
-        auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
-        auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
-        auditLog.setCallStack(auditLogable.getCallStack());
-        auditLog.setBrickId(auditLogable.getBrickId());
-        auditLog.setBrickPath(auditLogable.getBrickPath());
-        auditLog.setRepeatable(auditLogable.isRepeatable());
     }
 
     private void logMessage(AuditLogSeverity severity, String logMessage) {
@@ -143,24 +123,10 @@ public class AuditLogDirector {
                 auditLog.getLogType().getValue(), message);
     }
 
-    private AuditLog createAuditLog(AuditLogableBase auditLogable, AuditLogType logType, String loggerString, AuditLogSeverity severity) {
+    private AuditLog createAuditLog(AuditLogable auditLogable, AuditLogType logType, String loggerString, AuditLogSeverity severity) {
         // handle external log messages invoked by plugins via the API
         if (auditLogable.isExternal()) {
-            return new AuditLog(logType,
-                    severity,
-                    loggerString,
-                    auditLogable.getUserId(),
-                    auditLogable.getUserName(),
-                    auditLogable.getVmIdRef(),
-                    auditLogable.getVmIdRef() != null ? getDbFacadeInstance().getVmDao().get(auditLogable.getVmIdRef()).getName() : null,
-                    auditLogable.getVdsIdRef(),
-                    auditLogable.getVdsIdRef() != null ? getDbFacadeInstance().getVdsDao().get(auditLogable.getVdsIdRef()).getName() : null,
-                    auditLogable.getVmTemplateIdRef(),
-                    auditLogable.getVmTemplateIdRef() != null ? getDbFacadeInstance().getVmTemplateDao().get(auditLogable.getVmTemplateIdRef()).getName() : null,
-                    auditLogable.getOrigin(),
-                    auditLogable.getCustomEventId(),
-                    auditLogable.getEventFloodInSec(),
-                    auditLogable.getCustomData());
+            return auditLogable.createAuditLog(logType, severity, loggerString);
         }
 
         final String messageByType = getMessageOrNull(logType);
@@ -169,10 +135,7 @@ public class AuditLogDirector {
         } else {
             // Application log message from AuditLogMessages
             String resolvedMessage = resolveMessage(messageByType, auditLogable);
-            return new AuditLog(logType, severity, resolvedMessage, auditLogable.getUserId(),
-                    auditLogable.getUserName(), auditLogable.getVmIdRef(), auditLogable.getVmName(),
-                    auditLogable.getVdsIdRef(), auditLogable.getVdsName(), auditLogable.getVmTemplateIdRef(),
-                    auditLogable.getVmTemplateName());
+            return auditLogable.createAuditLog(logType, severity, resolvedMessage);
         }
     }
 
@@ -180,7 +143,7 @@ public class AuditLogDirector {
         return DbFacade.getInstance();
     }
 
-    String resolveMessage(String message, AuditLogableBase logable) {
+    String resolveMessage(String message, AuditLogable logable) {
         String returnValue = message;
         if (logable != null) {
             Map<String, String> map = getAvailableValues(message, logable);
@@ -248,7 +211,7 @@ public class AuditLogDirector {
         return result;
     }
 
-    private Map<String, String> getAvailableValues(String message, AuditLogableBase logable) {
+    private Map<String, String> getAvailableValues(String message, AuditLogable logable) {
         Map<String, String> returnValue = new HashMap<>(logable.getCustomValues());
         Set<String> attributes = resolvePlaceHolders(message);
         if (attributes != null && attributes.size() > 0) {

@@ -13,6 +13,7 @@ import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -95,7 +96,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AuditLogableBase {
+public class AuditLogableBase implements AuditLogable {
     private static final Logger log = LoggerFactory.getLogger(AuditLogableBase.class);
     private static final String COMMA_SEPARATOR = ", ";
 
@@ -141,6 +142,13 @@ public class AuditLogableBase {
     private String callStack;
     private Guid brickId;
     private String brickPath;
+
+    /**
+     * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
+     */
+    private boolean repeatable;
+    private String storagePoolName;
+    private String storageDomainName;
 
     // DAOs for injection
 
@@ -332,14 +340,8 @@ public class AuditLogableBase {
 
     @Inject
     protected QuotaDao quotaDao;
-
     @Inject
     protected VdsKdumpStatusDao vdsKdumpStatusDao;
-
-    /**
-     * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
-     */
-    private boolean repeatable;
 
     public AuditLogableBase() {
     }
@@ -564,10 +566,15 @@ public class AuditLogableBase {
     }
 
     public String getStorageDomainName() {
-        if (getStorageDomain() != null) {
-            return getStorageDomain().getStorageName();
+        if (storageDomainName == null && getStorageDomain() != null) {
+            storageDomainName = getStorageDomain().getStorageName();
         }
-        return "";
+        return StringUtils.defaultString(storageDomainName);
+    }
+
+    @Override
+    public void setStorageDomainName(String storageDomainName) {
+        this.storageDomainName = storageDomainName;
     }
 
     private StoragePool storagePool;
@@ -599,10 +606,15 @@ public class AuditLogableBase {
     }
 
     public String getStoragePoolName() {
-        if (getStoragePool() != null) {
-            return getStoragePool().getName();
+        if (storagePoolName == null && getStoragePool() != null) {
+            storagePoolName = getStoragePool().getName();
         }
-        return "";
+        return StringUtils.defaultString(storagePoolName);
+    }
+
+    @Override
+    public void setStoragePoolName(String storagePoolName) {
+        this.storagePoolName = storagePoolName;
     }
 
     public AuditLogType getAuditLogTypeValue() {
@@ -753,7 +765,7 @@ public class AuditLogableBase {
         }
     }
 
-    public AuditLogableBase addCustomValue(final String name, final String value) {
+    public AuditLogable addCustomValue(final String name, final String value) {
         allocateCustomValues();
         customValues.put(name.toLowerCase(), value);
         return this;
@@ -1005,4 +1017,22 @@ public class AuditLogableBase {
         this.brickPath = brickPath;
     }
 
+    @Override
+    public AuditLog createAuditLog(AuditLogType logType, AuditLogSeverity severity, String message) {
+        return new AuditLog(logType,
+                severity,
+                message,
+                getUserId(),
+                getUserName(),
+                getVmIdRef(),
+                getVmName(),
+                getVdsIdRef(),
+                getVdsName(),
+                getVmTemplateIdRef(),
+                getVmTemplateName(),
+                getOrigin(),
+                getCustomEventId(),
+                getEventFloodInSec(),
+                getCustomData());
+    }
 }
