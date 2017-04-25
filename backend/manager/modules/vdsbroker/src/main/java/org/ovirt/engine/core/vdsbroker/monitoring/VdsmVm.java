@@ -36,7 +36,7 @@ public class VdsmVm {
     private List<DiskImageDynamic> diskStatistics;
 
     public VdsmVm(Double timestamp) {
-        this.lunsMap = Collections.<String, LUNs>emptyMap();
+        this.lunsMap = Collections.emptyMap();
         this.timestamp = timestamp;
     }
 
