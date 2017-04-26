@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -20,7 +21,7 @@ public class PoolModelBehaviorBaseTest extends BaseVmModelBehaviorTest {
         return new PoolModelBehaviorBase() {
             @Override
             protected List<Cluster> filterClusters(List<Cluster> clusters) {
-                return null;
+                return Collections.emptyList();
             }
         };
     }
