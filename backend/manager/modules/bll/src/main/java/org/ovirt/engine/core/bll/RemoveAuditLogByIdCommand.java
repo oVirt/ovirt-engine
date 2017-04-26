@@ -23,6 +23,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    private AuditLog auditLog;
 
     public RemoveAuditLogByIdCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -30,9 +31,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     protected boolean validate() {
-        AuditLog event = auditLogDao.get(getParameters().getAuditLogId());
-
-        if (event == null) {
+        if (getAuditLog() == null) {
             return failValidation(EngineMessage.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
         }
 
@@ -41,11 +40,11 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     protected void executeCommand() {
-        AuditLog auditLog = auditLogDao.get(getParameters().getAuditLogId());
+        AuditLog auditLog = getAuditLog();
         auditLogDao.remove(getParameters().getAuditLogId());
         setAuditLogDetails(auditLog);
 
-        // clear the id so the event will be considered as a system-level event
+        // clear the id so the auditLog will be considered as a system-level auditLog
         auditLog.setUserId(Guid.Empty);
         AuditLogableBase logableToClear = new AuditLogableBase(auditLog);
 
@@ -53,6 +52,14 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
         EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(logableToClear, auditLog.getLogType());
         eventFloodRegulator.evict();
         setSucceeded(true);
+    }
+
+    private AuditLog getAuditLog() {
+        if (auditLog == null) {
+            auditLog = auditLogDao.get(getParameters().getAuditLogId());
+        }
+
+        return auditLog;
     }
 
     private void setAuditLogDetails(AuditLog auditLog) {
@@ -66,7 +73,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        AuditLog event = auditLogDao.get(getParameters().getAuditLogId());
+        AuditLog event = getAuditLog();
         if (AuditLogSeverity.ALERT.equals(event.getSeverity())) {
             return Collections.singletonList(new PermissionSubject(Guid.SYSTEM,
                     VdcObjectType.System,
