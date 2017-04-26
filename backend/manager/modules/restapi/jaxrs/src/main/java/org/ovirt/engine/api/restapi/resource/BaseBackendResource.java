@@ -16,12 +16,15 @@ import javax.ws.rs.core.UriInfo;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.CompletenessAssertor;
 import org.ovirt.engine.api.common.util.EnumValidator;
+import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.LocalConfig;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.api.restapi.resource.utils.LinkFollower;
+import org.ovirt.engine.api.restapi.resource.utils.LinksTreeNode;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
@@ -35,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 public class BaseBackendResource {
     private static final String FILTER = "filter";
+    public static final String FOLLOW = "follow";
+    protected static final String MAX = "max";
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendResource.class);
 
@@ -42,6 +47,7 @@ public class BaseBackendResource {
     protected UriInfo uriInfo;
     protected HttpHeaders httpHeaders;
     protected MappingLocator mappingLocator;
+    protected LinkFollower linkFollower = new LinkFollower();
 
     protected <S extends BaseBackendResource> S inject(S resource) {
         resource.setMappingLocator(mappingLocator);
@@ -388,5 +394,33 @@ public class BaseBackendResource {
             }
         }
         return result;
+    }
+
+    /**
+     * Follows links in the entity according to value of "follow" URL query parameter.
+     * A valid value of'follow' is a comma separated list of strings, which represent
+     * internal links to be followed. Links may have several 'levels' denoted by periods.
+     * e.g: GET ...api/vms?follow="nics,disk_attachments.template,disk_attachments.disks"
+     */
+    public final void follow (ActionableResource entity) {
+        String followValue = ParametersHelper.getParameter(getHttpHeaders(), getUriInfo(), FOLLOW);
+        if (followValue!=null && !followValue.equals("")) {
+            ParametersHelper.removeParameter(FOLLOW);
+            ParametersHelper.removeParameter(MAX);
+            LinksTreeNode linksTree = linkFollower.createLinksTree(entity.getClass(), followValue);
+            follow(entity, linksTree);
+            linkFollower.followLinks(entity, linksTree);
+        }
+    }
+
+    public void follow(ActionableResource entity, LinksTreeNode linksTree) {
+        //a placeholder for handing special cases of link-following.
+        //overriding code should have the following general structure:
+        //1. establish whether the links which require special handling exist.
+        //   (use linksTree.pathExists() method to check this).
+        //2. Invoke designated engine query/queries, fetch the information.
+        //3. Set the information in the entity
+        //4. Mark these links as followed in the links-tree by invoking:
+        //   linksTree.markAsFollowed() method.
     }
 }
