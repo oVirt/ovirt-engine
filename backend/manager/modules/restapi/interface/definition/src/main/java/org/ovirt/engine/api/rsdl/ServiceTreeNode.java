@@ -5,14 +5,15 @@ import java.util.List;
 
 /**
  * A node in the 'Service' tree, which contains:
- * 1) The name of the service class
+ * 1) The name of the resource class
  *      e.g: VmDisksResource
  * 2) The path section leading to it
- *      e.g: 'vms'
- * 3) A list of Nodes, which are the child 'Services'.
- * 4) A list of actions, which are the actions of this service,
- *    consisting of the HTTP methods and the 'actions' (e.g VM start)
- * @author oliel
+ *      e.g: 'diskattachments'
+ * 3) Name of getter-method for this service at this service's parent.
+ *      e.g: 'getDiskAttachments'
+ * 4) A list of Nodes, which are the child 'Services'.
+ * 5) A list of 'actions', which are the actions of this service,
+ *    consisting of the JAX-RS methods and special actions, e.g: 'start'
  */
 public class ServiceTreeNode {
 
@@ -26,6 +27,9 @@ public class ServiceTreeNode {
 
     private List<ServiceTreeNode> subServices = new ArrayList<>();
     private List<String> actions = new ArrayList<>();
+
+    //Name of getter-method for this service at this service's parent.
+    private String getter;
 
     public String getName() {
         return name;
@@ -56,6 +60,12 @@ public class ServiceTreeNode {
     }
     public void setActions(List<String> actions) {
         this.actions = actions;
+    }
+    public String getGetter() {
+        return getter;
+    }
+    public void setGetter(String getter) {
+        this.getter = getter;
     }
 
     /**
@@ -95,6 +105,10 @@ public class ServiceTreeNode {
         return null;
     }
 
+    public boolean isCollection() {
+        return getSon()!=null;
+    }
+
     public static class Builder {
         ServiceTreeNode node;
         public Builder() {
@@ -116,6 +130,10 @@ public class ServiceTreeNode {
             node.setActions(actions);
             return this;
         }
+        public Builder getter(String getter) {
+            node.setGetter(getter);
+            return this;
+        }
         public ServiceTreeNode build() {
             if (node.subServices!=null) {
                 node.setSon(node.getSubService("{id}"));
@@ -134,6 +152,7 @@ public class ServiceTreeNode {
         String tabs = getTabs(tabNum);
         builder.append(tabs).append("name: ").append(name).append("\n")
         .append(tabs).append("path: ").append(path).append("\n")
+        .append(tabs).append("getter: ").append(getter).append("\n")
         .append(tabs).append("son: ").append(son==null ? "" : son.getName()).append("\n")
         .append(tabs).append("actions: ").append(printActions()).append("\n")
         .append(tabs).append("sub-services:\n").append(printSubServices(++tabNum)).append("\n");
