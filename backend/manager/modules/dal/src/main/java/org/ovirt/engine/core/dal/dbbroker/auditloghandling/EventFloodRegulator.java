@@ -16,7 +16,7 @@ public class EventFloodRegulator {
     public EventFloodRegulator(AuditLogable event, AuditLogType logType) {
         this.event = event;
         this.logType = logType;
-        timeoutObjectId = "";
+        updateTimeoutLogableObject();
     }
 
     /**
@@ -46,13 +46,15 @@ public class EventFloodRegulator {
     /**
      * Update the logged object timeout attribute by log type definition
      */
-    public void updateTimeoutLogableObject() {
+    private void updateTimeoutLogableObject() {
         int eventFloodRate = (event.isExternal() && event.getEventFloodInSec() == 0)
                 ? 30 // Minimal default duration for External Events is 30 seconds.
                 : logType.getEventFloodRate();
         if (eventFloodRate > 0) {
             setEndTime(TimeUnit.SECONDS.toMillis(eventFloodRate));
             timeoutObjectId = composeObjectId();
+        } else {
+            timeoutObjectId = "";
         }
     }
 

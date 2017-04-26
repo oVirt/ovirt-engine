@@ -73,8 +73,6 @@ public class AuditLogDirector {
         }
 
         EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(auditLogable, logType);
-        eventFloodRegulator.updateTimeoutLogableObject();
-
         if (eventFloodRegulator.isLegal()) {
             saveToDb(auditLogable, logType, loggerString);
         }
