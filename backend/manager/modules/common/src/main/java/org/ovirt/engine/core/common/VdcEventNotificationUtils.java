@@ -73,6 +73,11 @@ public final class VdcEventNotificationUtils {
         addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_DOWN_ERROR);
         addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VDS_INITIATED_RUN_VM_FAILED);
         addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_PAUSED);
+        addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_PAUSED_EIO);
+        addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_PAUSED_ENOSPC);
+        addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_PAUSED_EPERM);
+        addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_PAUSED_ERROR);
+        addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_RECOVERED_FROM_PAUSE_ERROR);
         addEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.MAC_ADDRESS_IS_EXTERNAL);
         // IRS
         addEventNotificationEntry(EventNotificationEntity.Storage, AuditLogType.VDS_SLOW_STORAGE_RESPONSE_TIME);

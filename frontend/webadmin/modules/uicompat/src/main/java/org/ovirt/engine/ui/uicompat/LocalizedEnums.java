@@ -1159,6 +1159,16 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___VM_PAUSED();
 
+    String AuditLogType___VM_PAUSED_EIO();
+
+    String AuditLogType___VM_PAUSED_ENOSPC();
+
+    String AuditLogType___VM_PAUSED_EPERM();
+
+    String AuditLogType___VM_PAUSED_ERROR();
+
+    String AuditLogType___VM_RECOVERED_FROM_PAUSE_ERROR();
+
     String AuditLogType___HOST_CERTIFICATION_HAS_EXPIRED();
 
     String AuditLogType___HOST_CERTIFICATION_IS_ABOUT_TO_EXPIRE();
