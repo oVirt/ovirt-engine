@@ -22,24 +22,27 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
 
     @Override
     protected boolean validate() {
-        boolean result=true;
-        if (getParameters().getEvent() == null
-                || getParameters().getEvent().getOrigin().equalsIgnoreCase(AuditLog.OVIRT_ORIGIN)) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
-            result = false;
+        if (getEvent() == null
+                || AuditLog.OVIRT_ORIGIN.equalsIgnoreCase(getEvent().getOrigin())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
         }
-        if (!result) {
-            addValidationMessage(EngineMessage.VAR__ACTION__ADD);
-            addValidationMessage(EngineMessage.VAR__TYPE__EXTERNAL_EVENT);
-        }
-        return result;
+
+        return true;
     }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__ADD);
+        addValidationMessage(EngineMessage.VAR__TYPE__EXTERNAL_EVENT);
+    }
+
     @Override
     protected void executeCommand() {
         AuditLogableBase event = Injector.injectMembers(new AuditLogableBase(getParameters().getEvent()));
         event.setExternal(true);
-        String message = getParameters().getEvent().getMessage();
-        switch (getParameters().getEvent().getSeverity()){
+        String message = getEvent().getMessage();
+
+        switch (getEvent().getSeverity()){
             case NORMAL:
                 auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_NORMAL, message);
                 break;
@@ -53,44 +56,50 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
                 AlertDirector.alert(event, AuditLogType.EXTERNAL_ALERT, auditLogDirector, message);
                 break;
         }
-        AuditLog auditLog = auditLogDao.getByOriginAndCustomEventId(getParameters().getEvent().getOrigin(), getParameters().getEvent().getCustomEventId());
+
+        AuditLog auditLog =
+                auditLogDao.getByOriginAndCustomEventId(getEvent().getOrigin(), getEvent().getCustomEventId());
         if (auditLog != null) {
             setActionReturnValue(auditLog.getAuditLogId());
             setSucceeded(true);
         }
+
         // Update host external status if set
         if (hasHostExternalStatus()) {
-            vdsDynamicDao.updateExternalStatus(getParameters().getEvent().getVdsId(), getParameters().getExternalStatus());
+            vdsDynamicDao.updateExternalStatus(getEvent().getVdsId(), getParameters().getExternalStatus());
         }
         // update storage domain external status if set
         if (hasStorageDomainExternalStatus()) {
-            storageDomainDynamicDao.updateExternalStatus(getParameters().getEvent().getStorageDomainId(),
+            storageDomainDynamicDao.updateExternalStatus(getEvent().getStorageDomainId(),
                     getParameters().getExternalStatus());
         }
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = getPermissionList(getParameters().getEvent());
+        List<PermissionSubject> permissionList = getPermissionList(getEvent());
         // check for external host status modification
         if (hasHostExternalStatus()) {
-            permissionList.add(new PermissionSubject(getParameters().getEvent().getVdsId(),
+            permissionList.add(new PermissionSubject(getEvent().getVdsId(),
                     VdcObjectType.VDS, ActionGroup.EDIT_HOST_CONFIGURATION));
         }
         // check for external storage domain status modification
         if (hasStorageDomainExternalStatus()) {
-            permissionList.add(new PermissionSubject(getParameters().getEvent().getStorageDomainId(),
+            permissionList.add(new PermissionSubject(getEvent().getStorageDomainId(),
                     VdcObjectType.Storage, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION));
         }
         return permissionList;
     }
 
     private boolean hasHostExternalStatus() {
-        return getParameters().getEvent().getVdsId() != null && getParameters().getExternalStatus() != null;
+        return getEvent().getVdsId() != null && getParameters().getExternalStatus() != null;
     }
 
     private boolean hasStorageDomainExternalStatus() {
-        return getParameters().getEvent().getStorageDomainId() != null &&
-                getParameters().getExternalStatus() != null;
+        return getEvent().getStorageDomainId() != null && getParameters().getExternalStatus() != null;
+    }
+
+    private AuditLog getEvent() {
+        return getParameters().getEvent();
     }
 }
