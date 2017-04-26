@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
 
@@ -35,7 +36,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
     }
     @Override
     protected void executeCommand() {
-        AuditLogableBase event = new AuditLogableBase(getParameters().getEvent());
+        AuditLogableBase event = Injector.injectMembers(new AuditLogableBase(getParameters().getEvent()));
         event.setExternal(true);
         String message = getParameters().getEvent().getMessage();
         switch (getParameters().getEvent().getSeverity()){
