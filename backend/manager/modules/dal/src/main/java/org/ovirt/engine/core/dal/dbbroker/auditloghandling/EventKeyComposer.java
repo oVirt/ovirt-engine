@@ -8,6 +8,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class EventKeyComposer {
 
+    private static final char KEY_PARTS_DELIMITER = ',';
+    private static final char NAME_VALUE_SEPARATOR = '=';
+
     private EventKeyComposer() {
     }
 
@@ -37,10 +40,8 @@ public class EventKeyComposer {
     }
 
     private static void compose(StringBuilder builder, String key, String value) {
-        final char DELIMITER = ',';
-        final char NAME_VALUE_SEPARATOR = '=';
         if (builder.length() > 0) {
-            builder.append(DELIMITER);
+            builder.append(KEY_PARTS_DELIMITER);
         }
 
         builder.append(key).append(NAME_VALUE_SEPARATOR).append(value);
