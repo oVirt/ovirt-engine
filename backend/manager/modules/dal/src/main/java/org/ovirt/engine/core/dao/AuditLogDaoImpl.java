@@ -162,12 +162,9 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
 
     @Override
     public void save(AuditLog event) {
-        if (event.isExternal()) {
-            getCallsHandler().executeModification("InsertExternalAuditLog", getExternalEventSqlMapper(event));
-        }
-        else {
-            getCallsHandler().executeModification("InsertAuditLog", getSqlMapper(event));
-        }
+        Map<String, Object> outParameters =
+                getCallsHandler().executeModification("InsertAuditLog", getSqlMapper(event));
+        event.setAuditLogId((Long) outParameters.get("audit_log_id"));
     }
 
     @Override
@@ -206,11 +203,7 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
                 .addValue("call_stack", event.getCallStack())
                 .addValue("repeatable", event.isRepeatable())
                 .addValue("brick_id", event.getBrickId())
-                .addValue("brick_path", event.getBrickPath());
-    }
-
-    private MapSqlParameterSource getExternalEventSqlMapper(AuditLog event) {
-        return getSqlMapper(event)
+                .addValue("brick_path", event.getBrickPath())
                 .addValue("origin", event.getOrigin())
                 .addValue("custom_event_id", event.getCustomEventId())
                 .addValue("event_flood_in_sec", event.getEventFloodInSec())

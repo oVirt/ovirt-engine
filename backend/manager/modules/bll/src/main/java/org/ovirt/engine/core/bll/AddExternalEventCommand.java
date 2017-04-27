@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -11,6 +12,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -52,7 +55,8 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
     protected void executeCommand() {
         AuditLogableBase event = Injector.injectMembers(new AuditLogableBase(getParameters().getEvent()));
         event.setExternal(true);
-        String message = getEvent().getMessage();
+        String message =
+                StringUtils.abbreviate(getEvent().getMessage(), Config.getValue(ConfigValues.MaxAuditLogMessageLength));
 
         switch (getEvent().getSeverity()){
             case NORMAL:

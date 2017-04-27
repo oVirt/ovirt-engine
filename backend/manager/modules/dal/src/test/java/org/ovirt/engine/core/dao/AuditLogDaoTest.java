@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -17,8 +16,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -290,34 +287,27 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         assertEquals(countBefore + 1, countAfter);
     }
 
-    /**
-     * Ensures that saving a AuditLog with long message works as expected.
-     * <strong>Note:</strong> Since inserting a new AuditLog autogenerates its
-     * ID, we cannot rely on the {@link AuditLogDao#get(long)} method.
-     * Instead, we'll use the {@link AuditLogDao#getAllAfterDate(Date)} method
-     * to check that a new one was added.
-     */
     @Test
-    public void testLongMessageSave() {
-        Date newAuditLogDateCuttoff = newAuditLog.getLogTime();
-        newAuditLogDateCuttoff.setTime(newAuditLogDateCuttoff.getTime() - 1);
-        List<AuditLog> before = dao.getAllAfterDate(newAuditLogDateCuttoff);
+    public void testSaveExternalEvent() {
+        AuditLog newExternalEvent = new AuditLog();
+        newExternalEvent.setLogType(AuditLogType.EXTERNAL_EVENT_NORMAL);
+        newExternalEvent.setExternal(true);
+        newExternalEvent.setOrigin("XYZ");
+        newExternalEvent.setCustomEventId(123123123);
+        newExternalEvent.setCustomData("Some text here");
+        newExternalEvent.setMessage("And here");
+        newExternalEvent.setEventFloodInSec(100);
 
-        // generate a value that is longer than the max configured.
-        char[] fill = new char[Config.<Integer> getValue(ConfigValues.MaxAuditLogMessageLength) + 1];
-        Arrays.fill(fill, '0');
-        newAuditLog.setAuditLogId(45000);
-        newAuditLog.setMessage(new String(fill));
-        newAuditLog.setExternal(true);
-        dao.save(newAuditLog);
+        dao.save(newExternalEvent);
+        AuditLog result = dao.get(newExternalEvent.getAuditLogId());
 
-        List<AuditLog> after = dao.getAllAfterDate(newAuditLogDateCuttoff);
-        after.removeAll(before);
-
-        assertEquals(1, after.size());
-        AuditLog result = after.get(0);
         assertNotNull(result);
-        assertTrue(result.getMessage().endsWith("..."));
+        assertTrue(result.getAuditLogId() > 0);
+        assertEquals(newExternalEvent.getOrigin(), result.getOrigin());
+        assertEquals(newExternalEvent.getCustomEventId(), result.getCustomEventId());
+        assertEquals(newExternalEvent.getCustomData(), result.getCustomData());
+        assertEquals(newExternalEvent.getMessage(), result.getMessage());
+        assertEquals(newExternalEvent.getEventFloodInSec(), result.getEventFloodInSec());
     }
 
     /**

@@ -4,7 +4,7 @@
 -- [audit_log] Table
 --
 CREATE OR REPLACE FUNCTION InsertAuditLog (
-    INOUT v_audit_log_id INT,
+    INOUT v_audit_log_id BIGINT,
     v_log_time TIMESTAMP WITH TIME ZONE,
     v_log_type INT,
     v_log_type_name VARCHAR(100),
@@ -33,7 +33,11 @@ CREATE OR REPLACE FUNCTION InsertAuditLog (
     v_call_stack TEXT,
     v_repeatable BOOLEAN,
     v_brick_id UUID,
-    v_brick_path TEXT
+    v_brick_path TEXT,
+    v_origin VARCHAR(25),
+    v_custom_event_id INT,
+    v_event_flood_in_sec INT,
+    v_custom_data TEXT
     ) AS $PROCEDURE$
 DECLARE v_min_alert_severity INT;
 
@@ -70,7 +74,11 @@ BEGIN
             gluster_volume_name,
             call_stack,
             brick_id,
-            brick_path
+            brick_path,
+            origin,
+            custom_event_id,
+            event_flood_in_sec,
+            custom_data
             )
         VALUES (
             v_log_time,
@@ -100,7 +108,11 @@ BEGIN
             v_gluster_volume_name,
             v_call_stack,
             v_brick_id,
-            v_brick_path
+            v_brick_path,
+            v_origin,
+            v_custom_event_id,
+            v_event_flood_in_sec,
+            v_custom_data
             );
 
         v_audit_log_id := CURRVAL('audit_log_seq');
@@ -143,7 +155,11 @@ BEGIN
             gluster_volume_name,
             call_stack,
             brick_id,
-            brick_path
+            brick_path,
+            origin,
+            custom_event_id,
+            event_flood_in_sec,
+            custom_data
             )
         VALUES (
             v_log_time,
@@ -173,7 +189,11 @@ BEGIN
             v_gluster_volume_name,
             v_call_stack,
             v_brick_id,
-            v_brick_path
+            v_brick_path,
+            v_origin,
+            v_custom_event_id,
+            v_event_flood_in_sec,
+            v_custom_data
             );
 
             v_audit_log_id := CURRVAL('audit_log_seq');
@@ -186,135 +206,6 @@ BEGIN
             AND log_type = v_log_type;
         END IF;
     END IF;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
--- External Event/Alert
-CREATE OR REPLACE FUNCTION InsertExternalAuditLog (
-    INOUT v_audit_log_id INT,
-    v_log_time TIMESTAMP WITH TIME ZONE,
-    v_log_type INT,
-    v_log_type_name VARCHAR(100),
-    v_severity INT,
-    v_message TEXT,
-    v_user_id UUID,
-    v_user_name VARCHAR(255),
-    v_vds_id UUID,
-    v_vds_name VARCHAR(255),
-    v_vm_id UUID,
-    v_vm_name VARCHAR(255),
-    v_vm_template_id UUID,
-    v_vm_template_name VARCHAR(40),
-    v_storage_pool_id UUID,
-    v_storage_pool_name VARCHAR(40),
-    v_storage_domain_id UUID,
-    v_storage_domain_name VARCHAR(250),
-    v_cluster_id UUID,
-    v_cluster_name VARCHAR(255),
-    v_quota_id UUID,
-    v_quota_name VARCHAR(60),
-    v_correlation_id VARCHAR(50),
-    v_job_id UUID,
-    v_gluster_volume_id UUID,
-    v_gluster_volume_name VARCHAR(1000),
-    v_call_stack TEXT,
-    v_brick_id UUID,
-    v_brick_path TEXT,
-    v_origin VARCHAR(25),
-    v_custom_event_id INT,
-    v_event_flood_in_sec INT,
-    v_custom_data TEXT
-    ) AS $PROCEDURE$
-DECLARE v_max_message_length INT;
-
-v_truncated_message TEXT;
-
-BEGIN
-    -- truncate message if exceeds configured max length. truncated messages will be ended
-    -- with "..." to indicate that message is incomplete due to size limits.
-    v_truncated_message := v_message;
-
-    v_max_message_length := cast(option_value AS INT)
-    FROM vdc_options
-    WHERE option_name = 'MaxAuditLogMessageLength'
-        AND version = 'general';
-
-    IF (
-            v_max_message_length IS NOT NULL
-            AND length(v_message) > v_max_message_length
-            ) THEN
-                  v_truncated_message := substr(v_message, 1, v_max_message_length - 3) || '...';
-    END IF;
-    INSERT INTO audit_log (
-        log_time,
-        log_type,
-        log_type_name,
-        severity,
-        message,
-        user_id,
-        user_name,
-        vds_id,
-        vds_name,
-        vm_id,
-        vm_name,
-        vm_template_id,
-        vm_template_name,
-        storage_pool_id,
-        storage_pool_name,
-        storage_domain_id,
-        storage_domain_name,
-        cluster_id,
-        cluster_name,
-        correlation_id,
-        job_id,
-        quota_id,
-        quota_name,
-        gluster_volume_id,
-        gluster_volume_name,
-        call_stack,
-        origin,
-        custom_event_id,
-        event_flood_in_sec,
-        custom_data,
-        brick_id,
-        brick_path
-        )
-    VALUES (
-        v_log_time,
-        v_log_type,
-        v_log_type_name,
-        v_severity,
-        v_truncated_message,
-        v_user_id,
-        v_user_name,
-        v_vds_id,
-        v_vds_name,
-        v_vm_id,
-        v_vm_name,
-        v_vm_template_id,
-        v_vm_template_name,
-        v_storage_pool_id,
-        v_storage_pool_name,
-        v_storage_domain_id,
-        v_storage_domain_name,
-        v_cluster_id,
-        v_cluster_name,
-        v_correlation_id,
-        v_job_id,
-        v_quota_id,
-        v_quota_name,
-        v_gluster_volume_id,
-        v_gluster_volume_name,
-        v_call_stack,
-        v_origin,
-        v_custom_event_id,
-        v_event_flood_in_sec,
-        v_custom_data,
-        v_brick_id,
-        v_brick_path
-        );
-
-    v_audit_log_id := CURRVAL('audit_log_seq');
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
