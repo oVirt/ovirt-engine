@@ -29,7 +29,7 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
  * "http://docs.oracle.com/javase/7/docs/technotes/guides/language/type-inference-generic-instance-creation.html">
  * diamond operator</a>).
  *
- * It is largerly based on the work of Aleksey Nesterenko from the
+ * It is largely based on the work of Aleksey Nesterenko from the
  * <a href="https://github.com/sevntu-checkstyle">sventu-checkstyle</a>.
  *
  * @author <a href="mailto:amureini@redhat.com">Allon Mureinik</a> (oVirt adaptation)
