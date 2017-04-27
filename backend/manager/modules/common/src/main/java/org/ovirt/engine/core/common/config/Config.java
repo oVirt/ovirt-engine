@@ -15,11 +15,11 @@ public final class Config {
     }
 
     public static <T> T getValue(ConfigValues value) {
-        return Config.<T> getValue(value, ConfigCommon.defaultConfigurationVersion);
+        return Config.getValue(value, ConfigCommon.defaultConfigurationVersion);
     }
 
     public static <T> T getValue(ConfigValues value, String version) {
-        return getConfigUtils().<T>getValue(value, version);
+        return getConfigUtils().getValue(value, version);
     }
 
     public static void refresh() {
@@ -33,8 +33,8 @@ public final class Config {
      * @return an absolute path for oVirtISOsRepositoryPath
      */
     public static String resolveOVirtISOsRepositoryPath() {
-        return ConfigUtil.resolvePath(Config.<String> getValue(ConfigValues.DataDir),
-                Config.<String> getValue(ConfigValues.oVirtISOsRepositoryPath));
+        return ConfigUtil.resolvePath(Config.getValue(ConfigValues.DataDir),
+                Config.getValue(ConfigValues.oVirtISOsRepositoryPath));
     }
 
     /**
@@ -44,7 +44,7 @@ public final class Config {
      * @return an absolute path for AttestaionTruststore
      */
     public static String resolveAttestationTrustStorePath() {
-        return ConfigUtil.resolvePath(Config.<String> getValue(ConfigValues.DataDir),
-                Config.<String> getValue(ConfigValues.AttestationTruststore));
+        return ConfigUtil.resolvePath(Config.getValue(ConfigValues.DataDir),
+                Config.getValue(ConfigValues.AttestationTruststore));
     }
 }
