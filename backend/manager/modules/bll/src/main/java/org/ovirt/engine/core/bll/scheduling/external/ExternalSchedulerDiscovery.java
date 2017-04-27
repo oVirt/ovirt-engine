@@ -44,7 +44,7 @@ public class ExternalSchedulerDiscovery {
      * @return {@code true} if new policies where found and saved to db, {@code false} otherwise.
      */
     public boolean discover() {
-        boolean dbUpdated = false;
+        boolean dbUpdated;
 
         Optional<ExternalSchedulerDiscoveryResult> discoveryResult = broker.runDiscover();
         if (discoveryResult.isPresent()) {
