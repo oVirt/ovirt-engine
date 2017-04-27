@@ -70,23 +70,27 @@ public class AuditLogDirector {
 
         EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(auditLogable, logType);
         if (eventFloodRegulator.isLegal()) {
-            saveToDb(auditLogable, logType, loggerString);
+            AuditLog savedAuditLog = saveToDb(auditLogable, logType, loggerString);
+            if (savedAuditLog == null) {
+                log.warn("Unable to create AuditLog");
+            } else {
+                logMessage(logType.getSeverity(), getMessageToLog(loggerString, savedAuditLog));
+            }
         }
     }
 
-    private void saveToDb(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
-        AuditLogSeverity severity = logType.getSeverity();
-        AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString, severity);
+    private AuditLog saveToDb(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
+        AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString, logType.getSeverity());
 
         if (auditLog == null) {
-            log.warn("Unable to create AuditLog");
-        } else {
-            auditLogable.setPropertiesForAuditLog(auditLog);
-            // truncate user name
-            auditLog.setUserName(StringUtils.abbreviate(auditLog.getUserName(), USERNAME_LENGTH));
-            getDbFacadeInstance().getAuditLogDao().save(auditLog);
-            logMessage(severity, getMessageToLog(loggerString, auditLog));
+            return null;
         }
+
+        auditLogable.setPropertiesForAuditLog(auditLog);
+        // truncate user name
+        auditLog.setUserName(StringUtils.abbreviate(auditLog.getUserName(), USERNAME_LENGTH));
+        getDbFacadeInstance().getAuditLogDao().save(auditLog);
+        return auditLog;
     }
 
     private void logMessage(AuditLogSeverity severity, String logMessage) {
