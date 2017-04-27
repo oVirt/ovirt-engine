@@ -35,13 +35,13 @@ CREATE OR REPLACE FUNCTION InsertAuditLog (
     v_brick_id UUID,
     v_brick_path TEXT
     ) AS $PROCEDURE$
-DECLARE v_min_alret_severity INT;
+DECLARE v_min_alert_severity INT;
 
 BEGIN
-    v_min_alret_severity := 10;
+    v_min_alert_severity := 10;
 
     -- insert regular log messages (non alerts)
-    IF (v_severity < v_min_alret_severity) THEN
+    IF (v_severity < v_min_alert_severity) THEN
         INSERT INTO audit_log (
             LOG_TIME,
             log_type,
@@ -584,14 +584,14 @@ CREATE OR REPLACE FUNCTION DeleteAuditLogAlertsByVdsID (
     v_delete_config_alerts BOOLEAN = true
     )
 RETURNS VOID AS $PROCEDURE$
-DECLARE v_min_alret_severity INT;
+DECLARE v_min_alert_severity INT;
 
 v_no_config_alret_type INT;
 
 v_no_max_alret_type INT;
 
 BEGIN
-    v_min_alret_severity := 10;
+    v_min_alert_severity := 10;
 
     v_no_config_alret_type := 9000;
 
@@ -601,14 +601,14 @@ BEGIN
         UPDATE audit_log
         SET deleted = true
         WHERE vds_id = v_vds_id
-            AND severity >= v_min_alret_severity
+            AND severity >= v_min_alert_severity
             AND log_type BETWEEN v_no_config_alret_type
                 AND v_no_max_alret_type;
     ELSE
         UPDATE audit_log
         SET deleted = true
         WHERE vds_id = v_vds_id
-            AND severity >= v_min_alret_severity
+            AND severity >= v_min_alert_severity
             AND log_type BETWEEN v_no_config_alret_type + 1
                 AND v_no_max_alret_type;
 END
