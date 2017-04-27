@@ -89,41 +89,28 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
     @Override
     protected boolean validate() {
-        boolean returnValue = true;
-
         if (getVmPool() == null) {
-            addValidationMessage(EngineMessage.VM_POOL_NOT_FOUND);
-            returnValue = false;
+            return failValidation(EngineMessage.VM_POOL_NOT_FOUND);
         }
 
-        if (returnValue && Guid.Empty.equals(getVmId())) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
-            returnValue = false;
+        if (Guid.Empty.equals(getVmId())) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_NO_AVAILABLE_POOL_VMS);
         }
 
-        // check user isn't already attached to maximum number of vms from this pool
-        if (returnValue) {
-            List<VM> vmsForUser = vmDao.getAllForUser(getAdUserId());
-
-            int vmCount = 0;
-            for (VM vm : vmsForUser) {
-                if (vm.getVmPoolId() != null && getVmPoolId().equals(vm.getVmPoolId())) {
-                    vmCount++;
-                }
-            }
-
-            int limit = getVmPool().getMaxAssignedVmsPerUser();
-            if (vmCount >= limit) {
-                addValidationMessage(EngineMessage.VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL);
-                returnValue = false;
-            }
+        long vmCount = countVmsAssignedToUser();
+        int limit = getVmPool().getMaxAssignedVmsPerUser();
+        if (vmCount >= limit) {
+            return failValidation(EngineMessage.VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL);
         }
 
-        if (!returnValue) {
-            setActionMessageParameters();
-        }
+        return true;
+    }
 
-        return returnValue;
+    private long countVmsAssignedToUser() {
+        return vmDao.getAllForUser(getAdUserId())
+                .stream()
+                .filter(vm -> vm.getVmPoolId() != null && getVmPoolId().equals(vm.getVmPoolId()))
+                .count();
     }
 
     @Override
@@ -301,7 +288,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         }
     }
 
-    protected void detachUserFromVmFromPool() {
+    private void detachUserFromVmFromPool() {
         if (!Guid.Empty.equals(getAdUserId())) {
             Permission perm = permissionDao
                     .getForRoleAndAdElementAndObject(
