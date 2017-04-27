@@ -75,6 +75,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
+        addValidationMessage(EngineMessage.VAR__TYPE__DESKTOP_POOL);
+    }
+
+    @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(LockProperties.Scope.Execution);
     }
