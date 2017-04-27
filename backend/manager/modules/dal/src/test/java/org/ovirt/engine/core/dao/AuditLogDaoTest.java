@@ -270,21 +270,13 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
 
     /**
      * Ensures that saving a AuditLog works as expected.
-     * <strong>Note:</strong> Since inserting a new AuditLog autogenerates its
-     * ID, we cannot rely on the {@link AuditLogDao#get(long)} method.
-     * Instead, we'll use the {@link AuditLogDao#getAllAfterDate(Date)} method
-     * to check that a new one was added.
      */
     @Test
     public void testSave() {
-        Date newAuditLogDateCuttoff = newAuditLog.getLogTime();
-        newAuditLogDateCuttoff.setTime(newAuditLogDateCuttoff.getTime() - 1);
-        int countBefore = dao.getAllAfterDate(newAuditLogDateCuttoff).size();
-
         dao.save(newAuditLog);
-
-        int countAfter = dao.getAllAfterDate(newAuditLogDateCuttoff).size();
-        assertEquals(countBefore + 1, countAfter);
+        AuditLog result = dao.get(newAuditLog.getAuditLogId());
+        assertNotNull(result);
+        assertEquals(newAuditLog, result);
     }
 
     @Test
@@ -345,6 +337,8 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         assertEquals(0L, getAlertCount(entry, dao.getAll(null, false)));
 
         dao.save(entry);
+        AuditLog savedAlert = dao.get(entry.getAuditLogId());
+        assertNotNull(savedAlert);
 
         // test if 1st alert was stored in db
         assertEquals(1L, getAlertCount(entry, dao.getAll(null, false)));
@@ -352,6 +346,8 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         // try to store 2nd alert in db
         entry.setLogTime(new Date());
         dao.save(entry);
+        savedAlert = dao.get(entry.getAuditLogId());
+        assertNotNull(savedAlert);
 
         // test if 2nd alert was ignored
         assertEquals(1L, getAlertCount(entry, dao.getAll(null, false)));
@@ -372,6 +368,8 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         assertEquals(0L, getAlertCount(entry, dao.getAll(null, false)));
 
         dao.save(entry);
+        AuditLog savedAlert = dao.get(entry.getAuditLogId());
+        assertNotNull(savedAlert);
 
         // test if 1st alert was stored in db
         assertEquals(1L, getAlertCount(entry, dao.getAll(null, false)));
@@ -379,6 +377,8 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         // try to save 2nd alert
         entry.setLogTime(new Date());
         dao.save(entry);
+        savedAlert = dao.get(entry.getAuditLogId());
+        assertNotNull(savedAlert);
 
         // test if 2nd alert was also stored in db
         assertEquals(2L, getAlertCount(entry, dao.getAll(null, false)));
