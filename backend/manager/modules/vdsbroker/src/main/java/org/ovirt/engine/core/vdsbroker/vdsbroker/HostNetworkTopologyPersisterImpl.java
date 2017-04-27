@@ -27,12 +27,12 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.vdsbroker.NetworkImplementationDetailsUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -182,10 +182,17 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                     new DisplayInterfaceEqualityPredicate(engineDisplayInterface);
             if (vdsmDisplayInterface == null // the display interface is't on host anymore
                 || !displayIneterfaceEqualityPredicate.test(vdsmDisplayInterface)) {
-                final AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase(host.getId()));
+                final AuditLogable loggable = createAuditLogForHost(host);
                 auditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
             }
         }
+    }
+
+    private AuditLogable createAuditLogForHost(VDS host) {
+        final AuditLogable loggable = new AuditLogableImpl();
+        loggable.setVdsId(host.getId());
+        loggable.setVdsName(host.getName());
+        return loggable;
     }
 
     private boolean isVmRunningOnHost(Guid hostId) {
@@ -236,7 +243,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         }
 
         if (!networkNames.isEmpty()) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(host.getId()));
+            final AuditLogable logable = createAuditLogForHost(host);
             logable.addCustomValue("Networks", StringUtils.join(networkNames, ","));
             auditLogDirector.log(logable, AuditLogType.VDS_NETWORKS_OUT_OF_SYNC);
         }
