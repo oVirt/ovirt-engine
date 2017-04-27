@@ -437,7 +437,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         final int memoryAddedMb = newAmountOfMemory - currentMemory;
-        final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryMultiplicationSizeMb);
+        final int factor = Config.<Integer>getValue(ConfigValues.HotPlugMemoryBlockSizeMb);
         final boolean memoryDividable = memoryAddedMb % factor == 0;
         if (!memoryDividable) {
             addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));

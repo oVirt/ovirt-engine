@@ -1895,9 +1895,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("16")
     MaxMemorySlots,
 
+    /** User can only hot plug multiples of this value. */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("256")
-    HotPlugMemoryMultiplicationSizeMb,
+    HotPlugMemoryBlockSizeMb,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("HostedEngine")
