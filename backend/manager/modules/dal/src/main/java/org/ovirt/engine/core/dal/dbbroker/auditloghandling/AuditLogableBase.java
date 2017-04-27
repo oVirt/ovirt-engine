@@ -525,7 +525,7 @@ public class AuditLogableBase implements AuditLogable {
         final Transaction transaction = TransactionSupport.suspend();
         try {
             try {
-                auditLogDirector.log(this);
+                auditLogDirector.log(this, getAuditLogTypeValue());
             } catch (final RuntimeException ex) {
                 log.error("Error during log command: {}. Exception {}", getClass().getName(), ex.getMessage());
                 log.debug("Exception", ex);

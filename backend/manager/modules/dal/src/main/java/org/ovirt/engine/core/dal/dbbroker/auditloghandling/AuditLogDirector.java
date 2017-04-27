@@ -58,11 +58,6 @@ public class AuditLogDirector {
         }
     }
 
-    public void log(AuditLogableBase auditLogable) {
-        AuditLogType logType = auditLogable.getAuditLogTypeValue();
-        log(auditLogable, logType);
-    }
-
     public void log(AuditLogable auditLogable, AuditLogType logType) {
         log(auditLogable, logType, "");
     }
