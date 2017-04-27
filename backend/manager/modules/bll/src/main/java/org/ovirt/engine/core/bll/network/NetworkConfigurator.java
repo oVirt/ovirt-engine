@@ -30,7 +30,8 @@ import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommand
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.network.function.NicToIpv4AddressFunction;
@@ -91,7 +92,7 @@ public class NetworkConfigurator {
         if (interfaces.contains(nic)) {
             configureManagementNetwork(createSetupNetworkParams(nic));
         } else {
-            final AuditLogableBase event = createEvent();
+            final AuditLogable event = createEvent();
             event.addCustomValue("InterfaceName", nic.getName());
             auditLogDirector.log(event,
                     AuditLogType.INVALID_BOND_INTERFACE_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
@@ -174,7 +175,7 @@ public class NetworkConfigurator {
         }
 
         if (!nicHasValidVlanId(managementNetwork, nic)) {
-            final AuditLogableBase event = createEvent();
+            final AuditLogable event = createEvent();
             event.addCustomValue("VlanId", resolveVlanId(nic.getVlanId()));
             event.addCustomValue("MgmtVlanId", resolveVlanId(managementNetwork.getVlanId()));
             event.addCustomValue("InterfaceName", nic.getName());
@@ -187,9 +188,10 @@ public class NetworkConfigurator {
         return nic;
     }
 
-    private AuditLogableBase createEvent() {
-        final AuditLogableBase event = new AuditLogableBase();
+    private AuditLogable createEvent() {
+        final AuditLogable event = new AuditLogableImpl();
         event.setVdsName(host.getName());
+        event.setVdsId(host.getId());
         return event;
     }
 

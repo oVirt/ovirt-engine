@@ -50,7 +50,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -90,7 +90,7 @@ public class NetworkConfiguratorTest {
     @Mock
     private AuditLogDirector auditLogDirector;
     @Captor
-    private ArgumentCaptor<AuditLogableBase> auditLogableBaseArgumentCaptor;
+    private ArgumentCaptor<AuditLogable> auditLogableArgumentCaptor;
 
     private VDS host;
     private VdsNetworkInterface nic = new VdsNetworkInterface();
@@ -223,10 +223,10 @@ public class NetworkConfiguratorTest {
             underTest.createManagementNetworkIfRequired();
         } catch (NetworkConfiguratorException e) {
             verify(auditLogDirector).log(
-                    auditLogableBaseArgumentCaptor.capture(),
+                    auditLogableArgumentCaptor.capture(),
                     eq(auditLogType),
                     anyString());
-            final AuditLogableBase capturedEvent = auditLogableBaseArgumentCaptor.getValue();
+            final AuditLogable capturedEvent = auditLogableArgumentCaptor.getValue();
             assertThat(capturedEvent.getVdsName(), is(HOST_NAME));
             return capturedEvent.getCustomValues();
         }
