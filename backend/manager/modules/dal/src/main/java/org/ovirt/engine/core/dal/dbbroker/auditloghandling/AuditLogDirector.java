@@ -80,7 +80,7 @@ public class AuditLogDirector {
     }
 
     private AuditLog saveToDb(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
-        AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString, logType.getSeverity());
+        AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString);
 
         if (auditLog == null) {
             return null;
@@ -123,11 +123,10 @@ public class AuditLogDirector {
 
     private AuditLog createAuditLog(AuditLogable auditLogable,
             AuditLogType logType,
-            String loggerString,
-            AuditLogSeverity severity) {
+            String loggerString) {
         // handle external log messages invoked by plugins via the API
         if (auditLogable.isExternal()) {
-            return auditLogable.createAuditLog(logType, severity, loggerString);
+            return auditLogable.createAuditLog(logType, loggerString);
         }
 
         final String messageByType = getMessageOrNull(logType);
@@ -136,7 +135,7 @@ public class AuditLogDirector {
         } else {
             // Application log message from AuditLogMessages
             String resolvedMessage = resolveMessage(messageByType, auditLogable);
-            return auditLogable.createAuditLog(logType, severity, resolvedMessage);
+            return auditLogable.createAuditLog(logType, resolvedMessage);
         }
     }
 

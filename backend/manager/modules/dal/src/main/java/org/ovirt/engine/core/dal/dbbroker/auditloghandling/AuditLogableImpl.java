@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -386,9 +385,9 @@ public class AuditLogableImpl implements AuditLogable {
     }
 
     @Override
-    public AuditLog createAuditLog(AuditLogType logType, AuditLogSeverity severity, String message) {
+    public AuditLog createAuditLog(AuditLogType logType, String message) {
         return new AuditLog(logType,
-                severity,
+                logType.getSeverity(),
                 message,
                 getUserId(),
                 getUserName(),

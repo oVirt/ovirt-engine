@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import java.util.Map;
 
-import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
@@ -169,5 +168,5 @@ public interface AuditLogable {
     /**
      * @return a new instance of {@link AuditLog} representing data of this instance
      */
-    AuditLog createAuditLog(AuditLogType logType, AuditLogSeverity severity, String message);
+    AuditLog createAuditLog(AuditLogType logType, String message);
 }

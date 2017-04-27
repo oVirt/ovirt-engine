@@ -13,7 +13,6 @@ import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -788,9 +787,9 @@ public class AuditLogableBase implements AuditLogable {
     }
 
     @Override
-    public AuditLog createAuditLog(AuditLogType logType, AuditLogSeverity severity, String message) {
+    public AuditLog createAuditLog(AuditLogType logType, String message) {
         return new AuditLog(logType,
-                severity,
+                logType.getSeverity(),
                 message,
                 getUserId(),
                 getUserName(),
