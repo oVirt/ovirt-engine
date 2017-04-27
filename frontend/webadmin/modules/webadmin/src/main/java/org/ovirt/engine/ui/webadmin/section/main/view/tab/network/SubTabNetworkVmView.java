@@ -153,7 +153,8 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                 public SafeHtml getTooltip(
                         PairQueryable<VmNetworkInterface, VM> object) {
                     String tooltipContent = object.getSecond().getFqdn();
-                    return SafeHtmlUtils.fromString(tooltipContent);
+                    return tooltipContent == null ?
+                            SafeHtmlUtils.fromString("") : SafeHtmlUtils.fromString(tooltipContent);
                 }
             };
 
