@@ -7,9 +7,11 @@ import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -22,6 +24,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.EngineCronTrigger;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,8 +34,6 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.monitoring.NetworkMonitoringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +48,8 @@ public class AutoRecoveryManager implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(AutoRecoveryManager.class);
 
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     @Inject
     private BackendInternal backend;
@@ -69,16 +72,23 @@ public class AutoRecoveryManager implements BackendService {
     @PostConstruct
     void initialize() {
         log.info("Start initializing {}", getClass().getSimpleName());
-        schedulerUtil.scheduleACronJob(this, "onTimer",
-                new Class<?>[] {}, new Object[] {}, Config.getValue(ConfigValues.AutoRecoverySchedule));
+        executor.schedule(this::recover, new EngineCronTrigger(Config.getValue(ConfigValues.AutoRecoverySchedule)));
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     /**
      * Called by the scheduler in regular intervals.
      */
-    @OnTimerMethodAnnotation("onTimer")
-    public void onTimer() {
+    public void recover() {
+        try {
+            recoverImpl();
+        } catch (Throwable t) {
+            log.error("Exception in recover: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        }
+    }
+
+    public void recoverImpl() {
         check(vdsDao,
                 ActionType.ActivateVds,
                 arg -> {

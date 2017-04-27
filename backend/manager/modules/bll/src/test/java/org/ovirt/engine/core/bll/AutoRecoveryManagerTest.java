@@ -80,7 +80,7 @@ public class AutoRecoveryManagerTest {
                 Boolean.TRUE.toString());
         Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
                 Boolean.TRUE.toString());
-        manager.onTimer();
+        manager.recover();
         verify(backendMock, times(vdss.size())).runInternalAction(eq(ActionType.ActivateVds), any());
         verify(backendMock, times(storageDomains.size())).runInternalAction(eq(ActionType.ConnectDomainToStorage), any());
     }
@@ -91,7 +91,7 @@ public class AutoRecoveryManagerTest {
                 Boolean.FALSE.toString());
         Config.<Map<String, String>> getValue(ConfigValues.AutoRecoveryAllowedTypes).put("hosts",
                 Boolean.FALSE.toString());
-        manager.onTimer();
+        manager.recover();
         verify(backendMock, never()).runInternalAction(eq(ActionType.ActivateVds), any());
         verify(backendMock, never()).runInternalAction(eq(ActionType.ConnectDomainToStorage), any());
     }

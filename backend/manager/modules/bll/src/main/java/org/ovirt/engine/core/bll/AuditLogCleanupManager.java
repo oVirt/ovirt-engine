@@ -5,16 +5,18 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.EngineCronTrigger;
+import org.ovirt.engine.core.common.utils.ThreadPools;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.dao.AuditLogDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,8 @@ public class AuditLogCleanupManager implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(AuditLogCleanupManager.class);
 
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     @Inject
     private AuditLogDao auditLogDao;
@@ -40,21 +43,21 @@ public class AuditLogCleanupManager implements BackendService {
                 calendar.get(Calendar.MINUTE), calendar.get(Calendar.HOUR_OF_DAY));
 
         log.info("Setting audit cleanup manager to run at '{}'", cronExpression);
-        schedulerUtil.scheduleACronJob(this, "onTimer", new Class[] {}, new Object[] {}, cronExpression);
+        executor.schedule(this::cleanup, new EngineCronTrigger(cronExpression));
         log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
-    @OnTimerMethodAnnotation("onTimer")
-    public void onTimer() {
+    public void cleanup() {
         try {
-            log.info("Start deleteAgedOutAuditLogs");
+            log.debug("Start cleanup");
             DateTime latestTimeToKeep = DateTime.getNow().addDays(
                     Config.<Integer>getValue(ConfigValues.AuditLogAgingThreshold)
                             * -1);
             auditLogDao.removeAllBeforeDate(latestTimeToKeep);
-            log.info("Finished deleteAgedOutAuditLogs");
-        } catch (RuntimeException e) {
-            log.error("deleteAgedOutAuditLog failed with exception", e);
+            log.debug("Finished cleanup");
+        } catch (Throwable t) {
+            log.error("Exception in performing audit log cleanup: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
         }
     }
 
