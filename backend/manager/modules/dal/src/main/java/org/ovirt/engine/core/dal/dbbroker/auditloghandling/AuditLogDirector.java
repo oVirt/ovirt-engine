@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
@@ -63,18 +62,28 @@ public class AuditLogDirector {
         log(auditLogable, logType, "");
     }
 
-    public void log(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
+    /**
+     * Log an event with the given message
+     *
+     * @param auditLogable
+     *            the event which contains the data members to log
+     * @param logType
+     *            the log type to be logged
+     * @param message
+     *            the message to be logged, which overrides the calculated message provided by the given auditLogable
+     */
+    public void log(AuditLogable auditLogable, AuditLogType logType, String message) {
         if (!logType.shouldBeLogged()) {
             return;
         }
 
         EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(auditLogable, logType);
         if (eventFloodRegulator.isLegal()) {
-            AuditLog savedAuditLog = saveToDb(auditLogable, logType, loggerString);
+            AuditLog savedAuditLog = saveToDb(auditLogable, logType, message);
             if (savedAuditLog == null) {
                 log.warn("Unable to create AuditLog");
             } else {
-                logMessage(logType.getSeverity(), getMessageToLog(loggerString, savedAuditLog));
+                logMessage(savedAuditLog);
             }
         }
     }
@@ -93,8 +102,9 @@ public class AuditLogDirector {
         return auditLog;
     }
 
-    private void logMessage(AuditLogSeverity severity, String logMessage) {
-        switch (severity) {
+    private void logMessage(AuditLog auditLog) {
+        String logMessage = getMessageToLog(auditLog);
+        switch (auditLog.getSeverity()) {
         case NORMAL:
             log.info(logMessage);
             break;
@@ -109,16 +119,10 @@ public class AuditLogDirector {
         }
     }
 
-    private static String getMessageToLog(String loggerString, AuditLog auditLog) {
-        String message;
-        if (loggerString.isEmpty()) {
-            message = auditLog.toStringForLogging();
-        } else {
-            message = MessageFormat.format(loggerString, auditLog.getMessage());
-        }
+    private static String getMessageToLog(AuditLog auditLog) {
         return MessageFormat.format("EVENT_ID: {0}({1}), {2}",
                 auditLog.getLogType(),
-                auditLog.getLogType().getValue(), message);
+                auditLog.getLogType().getValue(), auditLog.getMessage());
     }
 
     private AuditLog createAuditLog(AuditLogable auditLogable,
