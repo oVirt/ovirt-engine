@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
@@ -69,7 +68,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
                 auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_ERROR, message);
                 break;
             case ALERT:
-                AlertDirector.alert(event, AuditLogType.EXTERNAL_ALERT, auditLogDirector, message);
+                auditLogDirector.log(event, AuditLogType.EXTERNAL_ALERT, message);
                 break;
         }
 

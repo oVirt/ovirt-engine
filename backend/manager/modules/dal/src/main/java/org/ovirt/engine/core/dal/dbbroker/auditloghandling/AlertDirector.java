@@ -21,10 +21,6 @@ public final class AlertDirector {
         auditLogDirector.log(auditLogable, logType);
     }
 
-    public static void alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector, String message) {
-        auditLogDirector.log(auditLogable, logType, message);
-    }
-
     public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector) {
         addVdsAlert(vdsId, type, auditLogDirector, new AuditLogableBase());
     }
