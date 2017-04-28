@@ -79,7 +79,7 @@ public class NeutronAgentModel extends EntityModel {
             isPluginConfigurationAvailable().setEntity(!NeutronPluginTranslator.isDisplayStringCustom(displayString));
             if (!NeutronPluginTranslator.isDisplayStringCustom(displayString)) {
                 switch(NeutronPluginTranslator.getPluginTypeForDisplayString(displayString)) {
-                    case OPEN_VSWITCH:
+                    case LINUX_BRIDGE:
                     getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
                             .getConstants()
                             .bridgeMappings());
@@ -87,7 +87,7 @@ public class NeutronAgentModel extends EntityModel {
                             .getConstants()
                             .bridgeMappingsExplanation());
                         break;
-                    case LINUX_BRIDGE:
+                    case OPEN_VSWITCH:
                     default:
                     getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
                             .getConstants()
