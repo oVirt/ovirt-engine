@@ -17,7 +17,7 @@ public class AllocateVolumeVDSCommand<P extends AllocateVolumeVDSCommandParamete
         Map<String, Object> map = new HashMap<>();
         map.put("code", EngineError.Done.getValue());
         map.put("message", "done");
-        status = new StatusOnlyReturn(Collections.<String, Object>singletonMap("status", map));
+        status = new StatusOnlyReturn(Collections.singletonMap("status", map));
         proceedProxyReturnValue();
     }
 }
