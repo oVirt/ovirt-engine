@@ -121,6 +121,24 @@
               </resources>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-AppErrors-translations</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/bundles</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../../../../frontend/webadmin/modules/frontend/src/main/resources/org/ovirt/engine/ui/frontend/</directory>
+                  <includes>
+                    <include>AppErrors*.properties</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
