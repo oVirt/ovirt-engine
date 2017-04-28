@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.ClusterAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
@@ -178,6 +179,12 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         return affinityGroupListModel;
     }
 
+    private final ClusterAffinityLabelListModel affinityLabelListModel;
+
+    public ClusterAffinityLabelListModel getAffinityLabelListModel() {
+        return affinityLabelListModel;
+    }
+
     private final CpuProfileListModel cpuProfileListModel;
 
     public CpuProfileListModel getCpuProfileListModel() {
@@ -190,12 +197,14 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             final ClusterAffinityGroupListModel clusterAffinityGroupListModel,
             final CpuProfileListModel cpuProfileListModel, final ClusterGeneralModel clusterGeneralModel,
             final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel<Cluster> permissionListModel) {
+            final PermissionListModel<Cluster> permissionListModel,
+            final ClusterAffinityLabelListModel clusterAffinityLabelListModel) {
         this.clusterVmListModel = clusterVmListModel;
         this.clusterServiceModel = clusterServiceModel;
         this.clusterGlusterHookListModel = clusterGlusterHookListModel;
         this.affinityGroupListModel = clusterAffinityGroupListModel;
         this.cpuProfileListModel = cpuProfileListModel;
+        this.affinityLabelListModel = clusterAffinityLabelListModel;
         setDetailList(clusterGeneralModel, clusterNetworkListModel, clusterHostListModel, permissionListModel);
 
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
@@ -263,6 +272,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         list.add(cpuProfileListModel);
         list.add(permissionListModel);
         list.add(affinityGroupListModel);
+        list.add(affinityLabelListModel);
         setDetailModels(list);
     }
 
@@ -270,11 +280,15 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
         Cluster cluster = getSelectedItem();
-        getClusterVmListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
-        getClusterServiceModel().setIsAvailable(cluster != null && cluster.supportsGlusterService());
-        getClusterGlusterHookListModel().setIsAvailable(cluster != null && cluster.supportsGlusterService());
-        getAffinityGroupListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
-        getCpuProfileListModel().setIsAvailable(cluster != null && cluster.supportsVirtService());
+        boolean clusterSupportsVirtService = cluster != null && cluster.supportsVirtService();
+        boolean clusterSupportsGlusterService = cluster != null && cluster.supportsGlusterService();
+
+        getClusterVmListModel().setIsAvailable(clusterSupportsVirtService);
+        getClusterServiceModel().setIsAvailable(clusterSupportsGlusterService);
+        getClusterGlusterHookListModel().setIsAvailable(clusterSupportsGlusterService);
+        getAffinityGroupListModel().setIsAvailable(clusterSupportsVirtService);
+        getCpuProfileListModel().setIsAvailable(clusterSupportsVirtService);
+        getAffinityLabelListModel().setIsAvailable(clusterSupportsVirtService);
     }
 
     @Override

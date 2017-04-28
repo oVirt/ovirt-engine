@@ -2,7 +2,9 @@ package org.ovirt.engine.core.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -11,6 +13,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -42,6 +45,16 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
                         .map(Guid::new)
                         .collect(Collectors.toSet()))
                 .build();
+    };
+
+    private static final RowMapper<Pair<Guid, String>> entityIdNameRowMapper = (rs, rowNum) -> {
+        Pair<Guid, String> idNamePair = new Pair<>();
+        Guid entityId = getGuidDefaultNewGuid(rs, "entity_id");
+        String entityName = rs.getString("entity_name");
+        idNamePair.setFirst(entityId);
+        idNamePair.setSecond(entityName);
+
+        return idNamePair;
     };
 
     @Override
@@ -176,5 +189,18 @@ public class LabelDaoImpl extends BaseDao implements LabelDao {
 
         getCallsHandler()
                 .executeModification("UpdateLabelsForHost", parameterSource);
+    }
+
+    @Override
+    public Map<Guid, String> getEntitiesNameMap() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+
+        List<Pair<Guid, String>> returnValues = getCallsHandler()
+                .executeReadList("GetEntitiesNameMap", entityIdNameRowMapper, parameterSource);
+
+        Map<Guid, String> returnMap = new HashMap<>();
+        returnValues.forEach(pair -> returnMap.put(pair.getFirst(), pair.getSecond()));
+
+        return returnMap;
     }
 }

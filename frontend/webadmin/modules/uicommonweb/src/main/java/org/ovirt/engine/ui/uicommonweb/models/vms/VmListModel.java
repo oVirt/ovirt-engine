@@ -79,6 +79,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
@@ -93,6 +94,7 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.ICancelable;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
@@ -387,10 +389,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
             final VmGuestInfoModel vmGuestInfoModel, final Provider<ImportVmsModel> importVmsModelProvider,
-            final VmHostDeviceListModel vmHostDeviceListModel, final VmDevicesListModel vmDevicesListModel) {
+            final VmHostDeviceListModel vmHostDeviceListModel, final VmDevicesListModel vmDevicesListModel,
+            final VmAffinityLabelListModel vmAffinityLabelListModel) {
         setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel, vmHostDeviceListModel,
-                vmDevicesListModel);
+                vmDevicesListModel, vmAffinityLabelListModel);
         this.importVmsModelProvider = importVmsModelProvider;
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
@@ -438,6 +441,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+
+        getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                vmAffinityLabelListModel.loadEntitiesNameMap();
+            }
+        });
     }
 
     private void setDetailList(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
@@ -445,7 +455,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
             final VmGuestInfoModel vmGuestInfoModel, final VmHostDeviceListModel vmHostDeviceListModel,
-            final VmDevicesListModel vmDevicesListModel) {
+            final VmDevicesListModel vmDevicesListModel, final VmAffinityLabelListModel vmAffinityLabelListModel) {
         List<HasEntity<VM>> list = new ArrayList<>();
         list.add(vmGeneralModel);
         list.add(vmInterfaceListModel);
@@ -459,6 +469,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         list.add(vmAffinityGroupListModel);
         list.add(vmGuestInfoModel);
         list.add(vmHostDeviceListModel);
+        list.add(vmAffinityLabelListModel);
         setDetailModels(list);
     }
 

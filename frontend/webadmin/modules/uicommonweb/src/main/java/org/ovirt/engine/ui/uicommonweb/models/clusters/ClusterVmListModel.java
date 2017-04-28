@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -37,7 +38,8 @@ public class ClusterVmListModel extends VmListModel<Cluster> {
             VmGuestInfoModel vmGuestInfoModel,
             Provider<ImportVmsModel> importVmsModelProvider,
             VmHostDeviceListModel vmHostDeviceListModel,
-            VmDevicesListModel vmDevicesListModel) {
+            VmDevicesListModel vmDevicesListModel,
+            VmAffinityLabelListModel vmAffinityLabelListModel) {
         super(vmGeneralModel,
                 vmInterfaceListModel,
                 vmDiskListModel,
@@ -49,7 +51,8 @@ public class ClusterVmListModel extends VmListModel<Cluster> {
                 vmGuestInfoModel,
                 importVmsModelProvider,
                 vmHostDeviceListModel,
-                vmDevicesListModel);
+                vmDevicesListModel,
+                vmAffinityLabelListModel);
     }
 
     @Override

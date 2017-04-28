@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -30,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.HostErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.HostAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
@@ -59,6 +61,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFenc
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.NetworkAttachmentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
@@ -327,6 +330,44 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
+    public SearchableDetailModelProvider<Label, HostListModel<Void>, HostAffinityLabelListModel> getAffinityLabelListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<AffinityLabelPopupPresenterWidget> popupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
+            final Provider<HostAffinityLabelListModel> modelProvider) {
+        SearchableDetailTabModelProvider<Label, HostListModel<Void>, HostAffinityLabelListModel> result =
+                new SearchableDetailTabModelProvider<Label, HostListModel<Void>, HostAffinityLabelListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostAffinityLabelListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()) {
+                            return popupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostAffinityLabelListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
+    @Provides
+    @Singleton
     public DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> getHostErrataCountProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<HostErrataListWithDetailsPopupPresenterWidget> errataPopupProvider,
@@ -368,6 +409,7 @@ public class HostModule extends AbstractGinModule {
         bind(FenceProxyModelProvider.class).in(Singleton.class);
         bind(HostErrataCountModel.class).in(Singleton.class);
         bind(HostErrataListModel.class).in(Singleton.class);
+        bind(HostAffinityLabelListModel.class).in(Singleton.class);
         bind(HostMainTabSelectedItems.class).asEagerSingleton();
 
 

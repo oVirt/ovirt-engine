@@ -225,3 +225,18 @@ BEGIN
         AddHostToLabels(v_host_id, v_labels);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetEntitiesNameMap ()
+RETURNS TABLE(entity_id UUID, entity_name TEXT) STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT DISTINCT concat(labels_map.vm_id, vds_static.vds_id)::UUID AS entity_id,
+                    concat(vm_static.vm_name, vds_static.vds_name)::TEXT AS entity_name
+    FROM labels_map
+        LEFT JOIN vm_static
+            ON vm_static.vm_guid = labels_map.vm_id
+        LEFT JOIN vds_static
+            ON vds_static.vds_id = labels_map.vds_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;

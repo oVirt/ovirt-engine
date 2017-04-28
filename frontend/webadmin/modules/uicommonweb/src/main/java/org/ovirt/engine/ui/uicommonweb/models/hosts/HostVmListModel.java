@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -36,10 +37,11 @@ public class HostVmListModel extends VmListModel<VDS> {
             VmGuestInfoModel vmGuestInfoModel,
             Provider<ImportVmsModel> importVmsModelProvider,
             VmHostDeviceListModel vmHostDeviceListModel,
-            VmDevicesListModel vmDevicesListModel) {
+            VmDevicesListModel vmDevicesListModel,
+            VmAffinityLabelListModel vmAffinityLabelListModel) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel, importVmsModelProvider,
-                vmHostDeviceListModel, vmDevicesListModel);
+                vmHostDeviceListModel, vmDevicesListModel, vmAffinityLabelListModel);
     }
 
     @Override

@@ -1070,6 +1070,11 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetLabelByEntityId, new IdQueryParameters(entityId), aQuery);
     }
 
+    public void getEntitiesNameMap(AsyncQuery<Map<Guid, String>> aQuery) {
+        aQuery.converterCallback = new MapConverter<>();
+        Frontend.getInstance().runQuery(VdcQueryType.GetEntitiesNameMap, new VdcQueryParametersBase(), aQuery);
+    }
+
     public void getTemplateDiskList(AsyncQuery<List<DiskImage>> aQuery, Guid templateId) {
         aQuery.converterCallback = new ListConverter<>();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesDisks, new IdQueryParameters(templateId), aQuery);

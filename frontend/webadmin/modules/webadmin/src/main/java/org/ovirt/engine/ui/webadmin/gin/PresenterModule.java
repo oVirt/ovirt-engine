@@ -76,6 +76,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
@@ -152,6 +153,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfil
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityGroupPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityLabelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterCpuProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGlusterHookPresenter;
@@ -191,6 +193,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVol
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostGeneralSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostAffinityLabelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostDevicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
@@ -268,6 +271,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityGroupPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityLabelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineErrataPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineEventPresenter;
@@ -350,6 +354,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLa
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.VfsConfigPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.label.AffinityLabelPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoolPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
@@ -434,6 +439,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVnicProfileView
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVolumeView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.ClusterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterAffinityGroupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterAffinityLabelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterCpuProfileView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGlusterHookView;
@@ -473,6 +479,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePe
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostGeneralSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostAffinityLabelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostDeviceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
@@ -550,6 +557,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserPermiss
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.UserSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityGroupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineAffinityLabelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineApplicationView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineErrataView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineEventView;
@@ -610,6 +618,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(AffinityGroupPopupPresenterWidget.class,
                 AffinityGroupPopupPresenterWidget.ViewDef.class,
                 AffinityGroupPopupView.class);
+        bindPresenterWidget(AffinityLabelPopupPresenterWidget.class,
+                AffinityLabelPopupPresenterWidget.ViewDef.class,
+                AffinityLabelPopupView.class);
 
         // Main section: main tabs
         bindPresenter(MainTabPanelPresenter.class,
@@ -872,6 +883,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(GlusterVolumeSnapshotCreatePopupPresenterWidget.class,
                 GlusterVolumeSnapshotCreatePopupPresenterWidget.ViewDef.class,
                 GlusterVolumeSnapshotCreatePopupView.class);
+        bindPresenter(SubTabClusterAffinityLabelPresenter.class,
+                SubTabClusterAffinityLabelPresenter.ViewDef.class,
+                SubTabClusterAffinityLabelView.class,
+                SubTabClusterAffinityLabelPresenter.ProxyDef.class);
 
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,
@@ -934,6 +949,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostGlusterStorageDevicesPresenter.ViewDef.class,
                 SubTabHostGlusterStorageDevicesView.class,
                 SubTabHostGlusterStorageDevicesPresenter.ProxyDef.class);
+        bindPresenter(SubTabHostAffinityLabelPresenter.class,
+                SubTabHostAffinityLabelPresenter.ViewDef.class,
+                SubTabHostAffinityLabelView.class,
+                SubTabHostAffinityLabelPresenter.ProxyDef.class);
 
         // VirtualMachine
         bindPresenter(VirtualMachineSubTabPanelPresenter.class,
@@ -992,7 +1011,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineErrataPresenter.ViewDef.class,
                 SubTabVirtualMachineErrataView.class,
                 SubTabVirtualMachineErrataPresenter.ProxyDef.class);
-
+        bindPresenter(SubTabVirtualMachineAffinityLabelPresenter.class,
+                SubTabVirtualMachineAffinityLabelPresenter.ViewDef.class,
+                SubTabVirtualMachineAffinityLabelView.class,
+                SubTabVirtualMachineAffinityLabelPresenter.ProxyDef.class);
 
         // Pool
         bindPresenter(PoolSubTabPanelPresenter.class,

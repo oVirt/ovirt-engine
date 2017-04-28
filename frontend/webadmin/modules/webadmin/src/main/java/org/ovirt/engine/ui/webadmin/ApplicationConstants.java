@@ -370,6 +370,24 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String affinityGroupSubTabLabel();
 
+    String affinityLabelsNameLabel();
+
+    String affinityLabelsSubTabLabel();
+
+    String affinityLabelsNameColumnLabel();
+
+    String affinityLabelsNoMembers();
+
+    String affinityLabelsVmsColumnLabel();
+
+    String affinityLabelsHostsColumnLabel();
+
+    String affinityLabelsSubTabNewButton();
+
+    String affinityLabelsSubTabEditButton();
+
+    String affinityLabelsSubTabRemoveButton();
+
     String clusterPermissionSubTabLabel();
 
     String virtualMachineGeneralSubTabLabel();

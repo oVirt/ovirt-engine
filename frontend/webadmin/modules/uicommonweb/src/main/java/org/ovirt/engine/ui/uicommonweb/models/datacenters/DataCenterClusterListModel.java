@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.ClusterAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -26,7 +27,8 @@ public class DataCenterClusterListModel extends ClusterListModel<StoragePool> {
             ClusterGeneralModel clusterGeneralModel,
             ClusterNetworkListModel clusterNetworkListModel,
             ClusterHostListModel clusterHostListModel,
-            PermissionListModel<Cluster> permissionListModel) {
+            PermissionListModel<Cluster> permissionListModel,
+            ClusterAffinityLabelListModel clusterAffinityLabelListModel) {
         super(clusterVmListModel,
                 clusterServiceModel,
                 clusterGlusterHookListModel,
@@ -35,7 +37,8 @@ public class DataCenterClusterListModel extends ClusterListModel<StoragePool> {
                 clusterGeneralModel,
                 clusterNetworkListModel,
                 clusterHostListModel,
-                permissionListModel);
+                permissionListModel,
+                clusterAffinityLabelListModel);
     }
 
     @Override
