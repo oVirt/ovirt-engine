@@ -33,7 +33,7 @@ public class CustomMapSqlParameterSource extends MapSqlParameterSource {
         if (tmpValue != null) {
 
             // lets check if we need to translate value
-            if (tmpValue.getClass().isEnum()) {
+            if (tmpValue instanceof Enum) {
                 tmpValue = extractEnumValue(tmpValue);
             } else if (tmpValue instanceof Guid) {
                 tmpValue = ((Guid) tmpValue).getUuid();
