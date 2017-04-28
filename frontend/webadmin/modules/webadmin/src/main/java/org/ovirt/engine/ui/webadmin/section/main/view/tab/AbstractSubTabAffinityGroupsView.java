@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.AffinityGroupListModel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -71,7 +72,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         AbstractTextColumn<AffinityGroup> vmMembersColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup group) {
-                String vmNames = join(getVmNames(group), ", "); //$NON-NLS-1$
+                String vmNames = StringUtils.join(getVmNames(group), ", "); //$NON-NLS-1$
                 if (vmNames.isEmpty()) {
                     return constants.noMembersAffinityGroup();
                 }
@@ -84,7 +85,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         AbstractTextColumn<AffinityGroup> hostMembersColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup group) {
-                String hostNames = join(getHostNames(group), ", "); //$NON-NLS-1$
+                String hostNames = StringUtils.join(getHostNames(group), ", "); //$NON-NLS-1$
                 if (hostNames.isEmpty()) {
                     return constants.noMembersAffinityGroup();
                 }
@@ -125,21 +126,6 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
 
     protected List<String> getHostNames(AffinityGroup group) {
         return group.getVdsEntityNames();
-    }
-
-    protected String join(List<String> strings, String separator) {
-        StringBuilder result = new StringBuilder();
-        if (strings == null) {
-            return result.toString();
-        }
-        for (String s : strings) {
-            if (result.length() != 0) {
-                result.append(separator);
-            }
-            result.append(s);
-        }
-
-        return result.toString();
     }
 
     protected abstract void generateIds();

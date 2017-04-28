@@ -1743,6 +1743,14 @@ public interface UIConstants extends Constants {
 
     String connectToPoolNotSupported();
 
+    String affinityLabelsTitle();
+
+    String newAffinityLabelTitle();
+
+    String editAffinityLabelTitle();
+
+    String removeAffinityLabelsTitle();
+
     String affinityGroupsTitle();
 
     String newAffinityGroupsTitle();

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.compat.Guid;
@@ -106,4 +107,12 @@ public interface LabelDao extends Dao {
      * @param labelIds the list of labels
      */
     void updateLabelsForHost(Guid hostId, List<Guid> labelIds);
+
+    /**
+     * Returns a map of entity ids to entity names for any
+     * entity attached to a label
+     *
+     * @return the id to name map
+     */
+    Map<Guid, String> getEntitiesNameMap();
 }

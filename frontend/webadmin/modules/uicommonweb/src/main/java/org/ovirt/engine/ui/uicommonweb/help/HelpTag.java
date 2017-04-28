@@ -32,6 +32,8 @@ public enum HelpTag {
 
     affinity_groups("affinity_groups", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    affinity_labels("affinity_labels", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
     applications("applications", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     guest_containers("guest_containers", HelpTagType.UNKNOWN), //$NON-NLS-1$
@@ -137,6 +139,8 @@ public enum HelpTag {
     editConsole("editConsole", HelpTagType.USERPORTAL), //$NON-NLS-1$
 
     edit_affinity_group("edit_affinity_group", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Groups sub-tab -> Edit"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    edit_affinity_label("edit_affinity_label", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Labels sub-tab -> Edit"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_and_approve_host("edit_and_approve_host", HelpTagType.WEBADMIN, "Host Tab > Edit/Approve Host"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -302,6 +306,8 @@ public enum HelpTag {
 
     new_affinity_group("new_affinity_group", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Groups sub-tab -> New"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    new_affinity_label("new_affinity_label", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Labels sub-tab -> New"), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_bookmark("new_bookmark", HelpTagType.WEBADMIN, "Main > Bookmark > New Bookmark"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_cluster("new_cluster", HelpTagType.WEBADMIN, "Cluster Tab > New"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -395,6 +401,8 @@ public enum HelpTag {
     quota("quota", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     remove_affinity_groups("remove_affinity_groups", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Groups sub-tab -> Remove"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_affinity_labels("remove_affinity_labels", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Labels sub-tab -> Remove"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_backed_up_template("remove_backed_up_template", HelpTagType.WEBADMIN, "Storage Tab > Import Template > Remove Backed up Template(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 

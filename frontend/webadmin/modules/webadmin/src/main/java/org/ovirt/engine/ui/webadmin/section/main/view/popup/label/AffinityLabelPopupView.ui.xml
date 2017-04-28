@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui="urn:ui:com.google.gwt.uibinder"
+        xmlns:g="urn:import:com.google.gwt.user.client.ui"
+        xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+        xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+        xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
+        xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+    <ui:style>
+        .container {
+            width: 100%;
+        }
+
+        .firstRow {
+            padding-top: 15px;
+        }
+    </ui:style>
+
+    <d:SimpleDialogPanel width="520px" height="345px">
+        <d:content>
+            <b:Container addStyleNames="{style.container}">
+                <b:Row addStyleNames="{style.firstRow}">
+                    <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.affinityLabelsNameLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <g:Label text="{constants.vmsAffinitySelectionLabel}" addStyleNames="form-group" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                        <g:Label text="{constants.hostsAffinitySelectionLabel}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="SM_6">
+                        <k:KeyWidget ui:field="addRemoveVmWidget" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="SM_6">
+                        <k:KeyWidget ui:field="addRemoveHostWidget" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+            </b:Container>
+        </d:content>
+    </d:SimpleDialogPanel>
+</ui:UiBinder>

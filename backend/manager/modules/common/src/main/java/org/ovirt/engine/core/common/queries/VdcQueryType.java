@@ -488,6 +488,7 @@ public enum VdcQueryType implements Serializable {
     GetAllLabels,
     GetLabelById,
     GetLabelByEntityId,
+    GetEntitiesNameMap,
 
     GetEntitiesWithLeaseByStorageId,
 

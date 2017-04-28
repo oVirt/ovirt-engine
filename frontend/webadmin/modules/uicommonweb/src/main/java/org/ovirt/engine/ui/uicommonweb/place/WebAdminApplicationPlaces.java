@@ -157,6 +157,9 @@ public class WebAdminApplicationPlaces {
     public static final String clusterAffinityGroupsSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "affinity_groups"; //$NON-NLS-1$
 
+    public static final String clusterAffinityLabelsSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
+            + "affinity_labels"; //$NON-NLS-1$
+
     public static final String clusterCpuProfileSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "cpu_profiles"; //$NON-NLS-1$
 
@@ -191,6 +194,9 @@ public class WebAdminApplicationPlaces {
 
     public static final String virtualMachineAffinityGroupsSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "affinity_groups"; //$NON-NLS-1$
+
+    public static final String virtualMachineAffinityLabelsSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "affinity_labels"; //$NON-NLS-1$
 
     public static final String virtualMachinePermissionSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
@@ -238,6 +244,9 @@ public class WebAdminApplicationPlaces {
 
     public static final String hostEventSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "events"; //$NON-NLS-1$
+
+    public static final String hostAffinityLabelsSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
+            + "affinity_labels"; //$NON-NLS-1$
 
     // Pool
 

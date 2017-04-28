@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -30,10 +31,10 @@ public class TemplateVmListModel extends VmListModel<VmTemplate> {
             final PermissionListModel<VM> permissionListModel,
             final VmAffinityGroupListModel vmAffinityGroupListModel, final VmGuestInfoModel vmGuestInfoModel,
             Provider<ImportVmsModel> importVmsModelProvider, VmHostDeviceListModel vmHostDeviceListModel,
-            final VmDevicesListModel vmDevicesListModel) {
+            final VmDevicesListModel vmDevicesListModel, final VmAffinityLabelListModel vmAffinityLabelListModel) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel, importVmsModelProvider,
-                vmHostDeviceListModel,  vmDevicesListModel);
+                vmHostDeviceListModel,  vmDevicesListModel, vmAffinityLabelListModel);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$

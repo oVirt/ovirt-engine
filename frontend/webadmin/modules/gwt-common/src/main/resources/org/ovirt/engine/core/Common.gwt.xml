@@ -143,6 +143,7 @@
         <include name="common/businessentities/Tags.java" />
         <include name="common/businessentities/TagsType.java" />
         <include name="common/businessentities/Label.java" />
+        <include name="common/businessentities/LabelBuilder.java" />
         <include name="common/EventNotificationMethod.java" />
         <include name="common/businessentities/UsbPolicy.java" />
         <include name="common/businessentities/SsoMethod.java" />

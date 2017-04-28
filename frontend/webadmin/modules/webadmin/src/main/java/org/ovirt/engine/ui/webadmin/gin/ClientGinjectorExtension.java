@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
+import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -70,6 +71,9 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.ClusterAffinityLabelListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.HostAffinityLabelListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;
@@ -321,6 +325,8 @@ public interface ClientGinjectorExtension {
 
     SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> getSubTabClusterCpuProfileModelProvider();
 
+    SearchableDetailModelProvider<Label, ClusterListModel<Void>, ClusterAffinityLabelListModel> getSubTabClusterAffinityLabelModelProvider();
+
     // VirtualMachine
 
     DetailModelProvider<VmListModel<Void>, VmGeneralModel> getSubTabVirtualMachineGeneralModelProvider();
@@ -351,6 +357,8 @@ public interface ClientGinjectorExtension {
 
     DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> getVmErrataCountProvider();
 
+    SearchableDetailModelProvider<Label, VmListModel<Void>, VmAffinityLabelListModel> getSubTabVirtualMachineAffinityLabelModelProvider();
+
     // Host
 
     DetailModelProvider<HostListModel<Void>, HostGeneralModel> getSubTabHostGeneralModelProvider();
@@ -378,6 +386,8 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<Erratum, HostListModel<Void>, HostErrataListModel> getHostErrataListProvider();
 
     DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> getHostErrataCountProvider();
+
+    SearchableDetailModelProvider<Label, HostListModel<Void>, HostAffinityLabelListModel> getSubTabHostAffinityLabelModelProvider();
 
     // Pool
 
