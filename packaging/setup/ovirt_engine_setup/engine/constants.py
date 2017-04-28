@@ -862,6 +862,8 @@ class OvnEnv(object):
         OVN_NORTHD_SERVICE,
     )
 
+    PROVIDER_NAME = 'ovirt-provider-ovn'
+
 
 @util.export
 class OvnFileLocations(object):

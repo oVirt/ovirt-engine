@@ -30,6 +30,7 @@ from otopi import filetransaction
 from otopi import plugin
 from otopi import util
 
+from ovirt_engine import configfile
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -329,10 +330,42 @@ class Plugin(plugin.PluginBase):
             )
         )
 
+    def _upate_external_providers_keystore(self):
+        config = configfile.ConfigFile([
+            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
+            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_SSO
+        ])
+        truststore = config.get(
+            'ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE'
+        )
+        truststore_password = config.get(
+            'ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD'
+        )
+        self._execute_command(
+            (
+                'keytool',
+                '-import',
+                '-alias',
+                OvnEnv.PROVIDER_NAME,
+                '-keystore',
+                truststore,
+                '-file',
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                '-noprompt',
+                '-storepass',
+                truststore_password,
+            ),
+            _(
+                'Failed to import provider certificate into '
+                'the external provider keystore.)'
+            )
+        )
+
     def _configure_pki(self):
         self._configure_ovndb_north_connection()
         self._configure_ovndb_south_connection()
         self._update_provider_config_with_pki()
+        self._upate_external_providers_keystore()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
