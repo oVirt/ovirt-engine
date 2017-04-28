@@ -94,6 +94,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -134,6 +135,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private DiskVmElementDao diskVmElementDao;
     @Inject
     private SnapshotDao snapshotDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;

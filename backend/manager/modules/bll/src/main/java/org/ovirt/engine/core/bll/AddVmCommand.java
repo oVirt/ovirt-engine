@@ -120,6 +120,7 @@ import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
@@ -181,6 +182,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private PermissionDao permissionDao;
     @Inject
     private DiskProfileDao diskProfileDao;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);

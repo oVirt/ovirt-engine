@@ -42,7 +42,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     @Inject
     private CpuProfileHelper cpuProfileHelper;
     @Inject
-    protected VmTemplateDao vmTemplateDao;
+    private VmTemplateDao vmTemplateDao;
     @Inject
     private VdsDao vdsDao;
 
