@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
@@ -17,6 +19,8 @@ import org.ovirt.engine.core.common.validation.group.gluster.RemoveBrick;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 /**
  * BLL command to Start Remove Bricks from Gluster volume. Before removing the brick, it will migrate the contents in
@@ -25,6 +29,11 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBrick
  */
 @NonTransactiveCommandAttribute
 public class StartRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBase<GlusterVolumeRemoveBricksParameters> {
+
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     public StartRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params,
             CommandContext commandContext) {

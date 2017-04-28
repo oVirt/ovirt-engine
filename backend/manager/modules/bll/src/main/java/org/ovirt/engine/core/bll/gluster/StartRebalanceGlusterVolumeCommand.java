@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.gluster.GlusterBrickValidator;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRebalanceVDSParameters;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 /**
  * BLL command to Rebalance Gluster volume This command starts an asynchronous gluster task to start rebalance of
@@ -23,6 +26,9 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRebalanceVD
 
 @NonTransactiveCommandAttribute
 public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<GlusterVolumeRebalanceParameters> {
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     public StartRebalanceGlusterVolumeCommand(GlusterVolumeRebalanceParameters params, CommandContext commandContext) {
         super(params, commandContext);

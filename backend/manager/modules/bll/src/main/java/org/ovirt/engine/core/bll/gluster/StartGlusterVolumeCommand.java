@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,12 +14,16 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeActionVDSParameters;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 /**
  * BLL command to start a Gluster volume
  */
 @NonTransactiveCommandAttribute
 public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeActionParameters> {
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     public StartGlusterVolumeCommand(GlusterVolumeActionParameters params, CommandContext context) {
         super(params, context);

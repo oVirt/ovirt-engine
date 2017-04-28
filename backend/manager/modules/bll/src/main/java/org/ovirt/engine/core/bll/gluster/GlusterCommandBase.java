@@ -49,17 +49,17 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     private Network glusterNetwork;
 
     @Inject
-    protected GlusterUtil glusterUtil;
+    private GlusterUtil glusterUtil;
     @Inject
-    protected VdsStaticDao vdsStaticDao;
+    private VdsStaticDao vdsStaticDao;
     @Inject
-    protected NetworkDao networkDao;
+    private NetworkDao networkDao;
     @Inject
-    protected InterfaceDao interfaceDao;
+    private InterfaceDao interfaceDao;
     @Inject
-    protected GlusterBrickDao glusterBrickDao;
+    private GlusterBrickDao glusterBrickDao;
     @Inject
-    protected GlusterVolumeDao glusterVolumeDao;
+    private GlusterVolumeDao glusterVolumeDao;
 
     public GlusterCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);

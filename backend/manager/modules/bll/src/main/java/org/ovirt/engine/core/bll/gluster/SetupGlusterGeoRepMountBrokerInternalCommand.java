@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServiceVDSParamet
 import org.ovirt.engine.core.common.vdscommands.gluster.SetUpGlusterGeoRepMountBrokerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 @InternalCommandAttribute
@@ -32,6 +33,8 @@ public class SetupGlusterGeoRepMountBrokerInternalCommand extends GlusterCommand
 
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     GlusterVolumeEntity slaveVolume;
 

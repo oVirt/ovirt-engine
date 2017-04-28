@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -33,12 +35,16 @@ import org.ovirt.engine.core.common.validation.group.gluster.CreateStripedVolume
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 /**
  * BLL command to create a new Gluster Volume
  */
 @NonTransactiveCommandAttribute
 public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGlusterVolumeParameters> {
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params, CommandContext commandContext) {
         super(params, commandContext);

@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBricksVDSParameters;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 /**
  * BLL command to commit bricks removal asynchronous task started on a gluster volume
@@ -23,6 +26,9 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBrick
 
 @NonTransactiveCommandAttribute
 public class CommitRemoveGlusterVolumeBricksCommand extends GlusterAsyncCommandBase<GlusterVolumeRemoveBricksParameters> {
+
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
 
     public CommitRemoveGlusterVolumeBricksCommand(GlusterVolumeRemoveBricksParameters params,
             CommandContext commandContext) {

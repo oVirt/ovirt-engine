@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -23,6 +24,8 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
 
     @Inject
     private GlusterHooksDao glusterHooksDao;
+    @Inject
+    private GlusterUtil glusterUtil;
 
     protected GlusterHookEntity entity;
 

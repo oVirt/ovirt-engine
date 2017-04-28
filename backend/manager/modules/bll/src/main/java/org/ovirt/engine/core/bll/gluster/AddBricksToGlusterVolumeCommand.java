@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -34,13 +35,22 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActio
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterVolumeBricksActionParameters> {
+
     @Inject
     private GlusterAuditLogUtil logUtil;
+    @Inject
+    private GlusterVolumeDao glusterVolumeDao;
+    @Inject
+    private GlusterUtil glusterUtil;
+    @Inject
+    private GlusterBrickDao glusterBrickDao;
 
     public AddBricksToGlusterVolumeCommand(GlusterVolumeBricksActionParameters params, CommandContext commandContext) {
         super(params, commandContext);
