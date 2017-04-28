@@ -9,7 +9,6 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -224,8 +223,7 @@ public class NetworkConfiguratorTest {
         } catch (NetworkConfiguratorException e) {
             verify(auditLogDirector).log(
                     auditLogableArgumentCaptor.capture(),
-                    eq(auditLogType),
-                    anyString());
+                    eq(auditLogType));
             final AuditLogable capturedEvent = auditLogableArgumentCaptor.getValue();
             assertThat(capturedEvent.getVdsName(), is(HOST_NAME));
             return capturedEvent.getCustomValues();
