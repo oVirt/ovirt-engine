@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,11 +11,25 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.DbDependentTestBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 
 /** A test case for {@link ImagesHandler} */
-public class ImagesHandlerTest {
+@RunWith(MockitoJUnitRunner.class)
+public class ImagesHandlerTest extends DbDependentTestBase {
+
+    @Mock
+    private StorageDomainDao storageDomainDaoMock;
+
 
     /** The prefix to use for all tests */
     private static final String prefix = "PREFIX";
@@ -29,6 +44,7 @@ public class ImagesHandlerTest {
         disk1 = new DiskImage();
         disk2 = new DiskImage();
         disk3 = new DiskImage();
+        when(DbFacade.getInstance().getStorageDomainDao()).thenReturn(storageDomainDaoMock);
     }
 
     @Test
@@ -107,5 +123,31 @@ public class ImagesHandlerTest {
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(list1, list2);
 
         assertTrue("Intersection should contain only disk1", intersection.size() == 1 && intersection.contains(disk1));
+    }
+
+    @Test
+    public void testDetermineTotalImageInitialSizeFromNfsToCow() {
+        DiskImage disk = new DiskImage();
+        disk.setSize(5000);
+        disk.setActualSizeInBytes(0);
+
+        Guid srcDomainGuid = Guid.newGuid();
+        StorageDomain srcDomain = new StorageDomain();
+        srcDomain.setId(srcDomainGuid);
+        srcDomain.setStorageType(StorageType.NFS);
+        when(storageDomainDaoMock.get(srcDomainGuid)).thenReturn(srcDomain);
+
+        Guid dstDomainGuid = Guid.newGuid();
+        StorageDomain destDomain = new StorageDomain();
+        destDomain.setId(dstDomainGuid);
+        destDomain.setStorageType(StorageType.ISCSI);
+        when(storageDomainDaoMock.get(dstDomainGuid)).thenReturn(destDomain);
+
+        assertEquals("Total Initial Size should be 0",
+                0,
+                ImagesHandler.determineTotalImageInitialSize(disk,
+                        VolumeFormat.COW,
+                        srcDomainGuid,
+                        dstDomainGuid).longValue());
     }
 }

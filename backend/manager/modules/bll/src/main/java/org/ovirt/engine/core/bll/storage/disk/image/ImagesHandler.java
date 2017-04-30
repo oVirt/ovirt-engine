@@ -980,7 +980,7 @@ public final class ImagesHandler {
         if (isInitialSizeSupportedForFormat(destFormat, dstDomain)) {
 
             double totalSizeForClonedDisk = getTotalActualSizeOfDisk(sourceImage,
-                    DbFacade.getInstance().getStorageDomainDao().get(dstDomain).getStorageStaticData());
+                    DbFacade.getInstance().getStorageDomainDao().get(srcDomain).getStorageStaticData());
 
             return computeCowImageNeededSize(sourceImage.getVolumeFormat(), Double.valueOf(totalSizeForClonedDisk).longValue());
         }
