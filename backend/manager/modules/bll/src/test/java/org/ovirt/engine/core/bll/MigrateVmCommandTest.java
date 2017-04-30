@@ -14,15 +14,11 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MigrateVmCommandTest {
 
     private Guid vmId = Guid.newGuid();
-
-    @Mock
-    DbFacade dbFacade;
 
     @Mock
     VmValidator vmValidator;
