@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
-import java.util.Objects;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
@@ -27,11 +25,11 @@ public class EventKeyComposer {
         final StringBuilder builder = new StringBuilder();
 
         compose(builder, "type", logType.toString());
-        compose(builder, "sd", nullToEmptyString(event.getStorageDomainId()));
-        compose(builder, "dc", nullToEmptyString(event.getStoragePoolId()));
-        compose(builder, "user", nullToEmptyString(event.getUserId()));
-        compose(builder, "cluster", nullToEmptyString(event.getClusterId()));
-        compose(builder, "vds", nullToEmptyString(event.getVdsId().toString()));
+        compose(builder, "sd", emptyGuidToEmptyString(event.getStorageDomainId()));
+        compose(builder, "dc", emptyGuidToEmptyString(event.getStoragePoolId()));
+        compose(builder, "user", emptyGuidToEmptyString(event.getUserId()));
+        compose(builder, "cluster", emptyGuidToEmptyString(event.getClusterId()));
+        compose(builder, "vds", emptyGuidToEmptyString(event.getVdsId()));
         compose(builder, "vm", emptyGuidToEmptyString(event.getVmId()));
         compose(builder, "template", emptyGuidToEmptyString(event.getVmTemplateId()));
         compose(builder, "customId", StringUtils.defaultString(event.getCustomId()));
@@ -48,10 +46,6 @@ public class EventKeyComposer {
     }
 
     private static String emptyGuidToEmptyString(Guid guid) {
-        return Guid.Empty.equals(guid) ? "" : guid.toString();
-    }
-
-    private static String nullToEmptyString(Object obj) {
-        return Objects.toString(obj, "");
+        return (guid == null || Guid.Empty.equals(guid)) ? "" : guid.toString();
     }
 }

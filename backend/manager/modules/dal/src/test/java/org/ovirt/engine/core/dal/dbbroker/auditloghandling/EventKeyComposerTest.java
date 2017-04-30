@@ -8,14 +8,23 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class EventKeyComposerTest {
     @Test
-    public void composeObjectIdForAnEmptyAuditLog() throws Exception {
-        String composedObjectId = EventKeyComposer.composeObjectId(new AuditLogableBase(), AuditLogType.UNASSIGNED);
+    public void composeObjectIdForAnEmptyAuditLogForInjectedImpl() throws Exception {
+        composeObjectIdForAnEmptyAuditLog(new AuditLogableBase());
+    }
+
+    @Test
+    public void composeObjectIdForAnEmptyAuditLogForNonInjectedImpl() throws Exception {
+        composeObjectIdForAnEmptyAuditLog(new AuditLogableImpl());
+    }
+
+    private void composeObjectIdForAnEmptyAuditLog(AuditLogable logable) {
+        String composedObjectId = EventKeyComposer.composeObjectId(logable, AuditLogType.UNASSIGNED);
         assertEquals("type=UNASSIGNED," +
                      "sd=," +
                      "dc=," +
-                     "user=00000000-0000-0000-0000-000000000000," +
-                     "cluster=00000000-0000-0000-0000-000000000000," +
-                     "vds=00000000-0000-0000-0000-000000000000," +
+                     "user=," +
+                     "cluster=," +
+                     "vds=," +
                      "vm=," +
                      "template=," +
                      "customId=", composedObjectId);
