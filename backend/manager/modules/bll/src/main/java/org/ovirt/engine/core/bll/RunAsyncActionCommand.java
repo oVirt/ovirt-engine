@@ -9,8 +9,6 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RunAsyncActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 /**
  * Execute the given action using the parameters using CoCo
@@ -28,13 +26,9 @@ public class RunAsyncActionCommand<T extends RunAsyncActionParameters> extends C
 
     @Override
     protected void executeCommand() {
-        VdcActionType actionToExecute = getParameters().getAction();
-        VdcActionParametersBase actionParameters = getParameters().getActionParameters();
-        actionParameters.setParentCommand(VdcActionType.RunAsyncAction);
-        actionParameters.setParentParameters(getParameters());
         CommandCoordinatorUtil.executeAsyncCommand(
-                actionToExecute,
-                actionParameters,
+                getParameters().getAction(),
+                getParameters().getActionParameters(),
                 cloneContextAndDetachFromParent());
         setSucceeded(true);
     }
