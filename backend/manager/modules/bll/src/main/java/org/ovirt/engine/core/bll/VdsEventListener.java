@@ -80,7 +80,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -436,7 +437,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void runFailedAutoStartVMs(List<Guid> vmIds) {
         for (Guid vmId : vmIds) {
             // Alert that the virtual machine failed:
-            AuditLogableBase event = createVmEvent(vmId, AuditLogType.HA_VM_FAILED);
+            AuditLogable event = createVmEvent(vmId, AuditLogType.HA_VM_FAILED);
             log.info("Highly Available VM went down. Attempting to restart. VM Name '{}', VM Id '{}'",
                     event.getVmName(), vmId);
         }
@@ -447,7 +448,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void runColdRebootVms(List<Guid> vmIds) {
         for (Guid vmId : vmIds) {
-            AuditLogableBase event = createVmEvent(vmId, AuditLogType.COLD_REBOOT_VM_DOWN);
+            AuditLogable event = createVmEvent(vmId, AuditLogType.COLD_REBOOT_VM_DOWN);
             log.info("VM is down as a part of cold reboot process. Attempting to restart. VM Name '{}', VM Id '{}",
                     event.getVmName(), vmId);
         }
@@ -455,9 +456,10 @@ public class VdsEventListener implements IVdsEventListener {
         coldRebootAutoStartVmsRunner.addVmsToRun(vmIds);
     }
 
-    private AuditLogableBase createVmEvent(Guid vmId, AuditLogType logType) {
-        AuditLogableBase event = new AuditLogableBase();
+    private AuditLogable createVmEvent(Guid vmId, AuditLogType logType) {
+        AuditLogable event = new AuditLogableImpl();
         event.setVmName(vmStaticDao.get(vmId).getName());
+        event.setVmId(vmId);
         auditLogDirector.log(event, logType);
         return event;
     }
