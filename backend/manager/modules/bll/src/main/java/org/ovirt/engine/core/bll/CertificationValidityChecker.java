@@ -19,7 +19,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -129,10 +130,11 @@ public class CertificationValidityChecker implements BackendService {
         }
 
         if (eventType != null) {
-            AuditLogableBase event = new AuditLogableBase();
+            AuditLogable event = new AuditLogableImpl();
             event.addCustomValue("ExpirationDate", new SimpleDateFormat("yyyy-MM-dd").format(expirationDate));
             if (host != null) {
                 event.setVdsName(host.getName());
+                event.setVdsId(host.getId());
             }
             auditLogDirector.log(event, eventType);
             return false;
