@@ -9,7 +9,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -34,8 +35,9 @@ public class HostUpdatesChecker {
     private ResourceManager resourceManager;
 
     public HostUpgradeManagerResult checkForUpdates(VDS host) {
-        AuditLogableBase auditLog = new AuditLogableBase();
-        auditLog.addCustomValue("VdsName", host.getName());
+        AuditLogable auditLog = new AuditLogableImpl();
+        auditLog.setVdsName(host.getName());
+        auditLog.setVdsId(host.getId());
         if (!vdsDynamicDao.get(host.getId()).getStatus().isEligibleForOnDemandCheckUpdates()) {
             log.warn("Check for available updates is skipped for host '{}' due to unsupported host status '{}' ",
                     host.getName(),
