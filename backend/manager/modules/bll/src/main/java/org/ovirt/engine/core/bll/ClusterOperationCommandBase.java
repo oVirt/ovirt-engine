@@ -30,12 +30,12 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
-import org.ovirt.engine.core.di.Injector;
 
 public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
         ClusterCommandBase<T> {
@@ -221,8 +221,9 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
 
     protected void alertIfFencingDisabled() {
         if (!getCluster().getFencingPolicy().isFencingEnabled()) {
-            AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase());
+            AuditLogable alb = new AuditLogableImpl();
             alb.setClusterId(getCluster().getId());
+            alb.setClusterName(getCluster().getName());
             alb.setRepeatable(true);
             auditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
         }
