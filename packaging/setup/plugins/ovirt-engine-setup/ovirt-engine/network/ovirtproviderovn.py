@@ -308,6 +308,8 @@ class Plugin(plugin.PluginBase):
                 oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_KEY,
             'cacert-file':
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+            'ssl_enabled':
+                'true',
         }
         if os.path.exists(
             oenginecons.OvnFileLocations.OVIRT_PROVIDER_CONFIG_FILE
