@@ -7,16 +7,17 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmsFromExternalProviderParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.di.Injector;
 
 public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProviderQueryParameters>
         extends QueriesCommandBase<T> {
@@ -59,7 +60,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     }
 
     private void logFailureToGetVms() {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable logable = new AuditLogableImpl();
         logable.addCustomValue("URL", getParameters().getUrl());
         auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_EXTERNAL_VMS_INFO_FAILED);
     }
@@ -87,7 +88,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
         }
 
         if (vds.getStatus() != VDSStatus.Up) {
-            logHostCannotBeProxy(vds.getName());
+            logHostCannotBeProxy(vds);
             throw new IllegalArgumentException();
         }
 
@@ -105,16 +106,20 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
         return vdss.get(0).getId();
     }
 
-    private void logHostCannotBeProxy(String hostName) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        logable.addCustomValue("VdsName", hostName);
+    private void logHostCannotBeProxy(VDS host) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsName(host.getName());
+        logable.setVdsId(host.getId());
+        logable.setUserName(String.format("%s@%s", getUser().getLoginName(), getUser().getDomain()));
         auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_HOST_CANNOT_SERVE_AS_PROXY);
     }
 
     private void logNoProxyAvailable(Guid dataCenterId) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        String dcName = storagePoolDao.get(dataCenterId).getName();
-        logable.addCustomValue("StoragePoolName", dcName);
+        AuditLogable logable = new AuditLogableImpl();
+        StoragePool dataCenter = storagePoolDao.get(dataCenterId);
+        logable.setStoragePoolId(dataCenter.getId());
+        logable.setStoragePoolName(dataCenter.getName());
+        logable.setUserName(String.format("%s@%s", getUser().getLoginName(), getUser().getDomain()));
         auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC);
     }
 
