@@ -24,7 +24,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +56,8 @@ public class HostUpgradeManager implements UpdateAvailable, Updateable {
                         StringUtils.join(availablePackages, ", "),
                         host.getName());
 
-                AuditLogableBase auditLog = new AuditLogableBase();
+                AuditLogable auditLog = new AuditLogableImpl();
+                auditLog.setVdsId(host.getId());
                 auditLog.setVdsName(host.getName());
                 Set<String> relevantPackages = filterPackages(packages, availablePackages);
                 if (relevantPackages.isEmpty()) {
