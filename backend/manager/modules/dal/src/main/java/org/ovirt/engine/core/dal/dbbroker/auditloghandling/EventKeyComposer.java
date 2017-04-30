@@ -30,8 +30,8 @@ public class EventKeyComposer {
         compose(builder, "sd", nullToEmptyString(event.getStorageDomainId()));
         compose(builder, "dc", nullToEmptyString(event.getStoragePoolId()));
         compose(builder, "user", nullToEmptyString(event.getUserId()));
-        compose(builder, "cluster", event.getClusterId().toString());
-        compose(builder, "vds", event.getVdsId().toString());
+        compose(builder, "cluster", nullToEmptyString(event.getClusterId()));
+        compose(builder, "vds", nullToEmptyString(event.getVdsId().toString()));
         compose(builder, "vm", emptyGuidToEmptyString(event.getVmId()));
         compose(builder, "template", emptyGuidToEmptyString(event.getVmTemplateId()));
         compose(builder, "customId", StringUtils.defaultString(event.getCustomId()));
