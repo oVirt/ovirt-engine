@@ -25,11 +25,12 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -65,6 +66,9 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     @Inject
     private VmDao vmDao;
+
+    @Inject
+    private VmStaticDao vmStaticDao;
 
     @Inject
     private SnapshotDao snapshotDao;
@@ -187,20 +191,28 @@ public abstract class AutoStartVmsRunner implements BackendService {
     protected abstract boolean isVmNeedsToBeAutoStarted(Guid vmId);
 
     private void logFailedAttemptToRestartVm(Guid vmId) {
-        AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
-        event.setVmId(vmId);
-        auditLogDirector.log(event, getRestartFailedAuditLogType());
+        logVmEvent(vmId, getRestartFailedAuditLogType());
     }
 
     protected abstract AuditLogType getRestartFailedAuditLogType();
 
     private void logFailureToRestartVm(Guid vmId) {
-        AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
-        event.setVmId(vmId);
-        auditLogDirector.log(event, getExceededMaxNumOfRestartsAuditLogType());
+        logVmEvent(vmId, getExceededMaxNumOfRestartsAuditLogType());
     }
 
     protected abstract AuditLogType getExceededMaxNumOfRestartsAuditLogType();
+
+    private void logVmEvent(Guid vmId, AuditLogType restartFailedAuditLogType) {
+        AuditLogable event = createVmEvent(vmId);
+        auditLogDirector.log(event, restartFailedAuditLogType);
+    }
+
+    private AuditLogable createVmEvent(Guid vmId) {
+        AuditLogable event = new AuditLogableImpl();
+        event.setVmId(vmId);
+        event.setVmName(vmStaticDao.get(vmId).getName());
+        return event;
+    }
 
     private EngineLock createEngineLockForRunVm(Guid vmId) {
         return new EngineLock(
