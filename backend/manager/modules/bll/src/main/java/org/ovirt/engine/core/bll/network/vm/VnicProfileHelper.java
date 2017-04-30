@@ -19,7 +19,8 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
@@ -130,7 +131,7 @@ public class VnicProfileHelper {
 
     public void auditInvalidInterfaces(String entityName) {
         if (!invalidNetworkNames.isEmpty()) {
-            AuditLogableBase logable = new AuditLogableBase();
+            AuditLogable logable = new AuditLogableImpl();
             logable.addCustomValue("EntityName", entityName);
             logable.addCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
             logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));

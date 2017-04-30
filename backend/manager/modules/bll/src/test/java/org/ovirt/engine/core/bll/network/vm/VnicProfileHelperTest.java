@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -44,7 +44,7 @@ public class VnicProfileHelperTest {
     private NetworkDao networkDao;
 
     @Captor
-    private ArgumentCaptor<AuditLogableBase> auditLogableBaseCaptor;
+    private ArgumentCaptor<AuditLogable> auditLogableCaptor;
 
     private VnicProfileHelper underTest;
 
@@ -76,8 +76,8 @@ public class VnicProfileHelperTest {
 
         underTest.auditInvalidInterfaces(ENTITY_NAME);
 
-        verify(auditLogDirector).log(auditLogableBaseCaptor.capture(), eq(AUDIT_LOG_TYPE));
-        final Map<String, String> capturedCustomValues = auditLogableBaseCaptor.getValue().getCustomValues();
+        verify(auditLogDirector).log(auditLogableCaptor.capture(), eq(AUDIT_LOG_TYPE));
+        final Map<String, String> capturedCustomValues = auditLogableCaptor.getValue().getCustomValues();
         assertThat(capturedCustomValues, allOf(
                 hasEntry("entityname", ENTITY_NAME),
                 hasEntry("interfaces", vnicNames.stream().collect(Collectors.joining(","))),
