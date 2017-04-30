@@ -39,16 +39,6 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
         setEditConsoleCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
     }
 
-    protected Iterable filterVms(List all) {
-        List<VM> result = new LinkedList<>();
-        for (Object o : all) {
-            if (o instanceof VM) {
-                result.add((VM) o);
-            }
-        }
-        return result;
-    }
-
     public List<VmConsoles> getAutoConnectableConsoles() {
         List<VmConsoles> autoConnectableConsoles = new LinkedList<>();
 
@@ -200,17 +190,6 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
             }
         }
         return result;
-    }
-
-    /**
-     *
-     * @param poolsWithRepresentatives list of pairs of (VmPool; VM representative if exists, otherwise null)
-     * @return only pools with existing representatives
-     */
-    List<Pair<Object, VM>> filterNonNullPools(List<Pair<Object, VM>> poolsWithRepresentatives) {
-        return poolsWithRepresentatives.stream()
-                .filter(p -> p.getSecond() != null)
-                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
