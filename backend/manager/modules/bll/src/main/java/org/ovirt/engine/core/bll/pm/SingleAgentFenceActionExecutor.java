@@ -13,7 +13,8 @@ import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.slf4j.Logger;
@@ -233,10 +234,11 @@ public class SingleAgentFenceActionExecutor implements FenceActionExecutor{
     }
 
     protected void auditVerifyStatusRetryLimitExceeded(FenceActionType fenceAction) {
-        AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable auditLogable = new AuditLogableImpl();
         auditLogable.addCustomValue("Host", fencedHost.getName());
         auditLogable.addCustomValue("Status", fenceAction.name().toLowerCase());
         auditLogable.setVdsId(fencedHost.getId());
+        auditLogable.setVdsName(fencedHost.getName());
         getAuditLogDirector().log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
         log.error(
                 "Failed to verify host '{}' status after {} action: have retried {} times with delay of {} seconds"
