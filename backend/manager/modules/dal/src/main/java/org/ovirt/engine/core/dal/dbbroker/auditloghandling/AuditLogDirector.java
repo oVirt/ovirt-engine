@@ -89,7 +89,7 @@ public class AuditLogDirector {
     }
 
     private AuditLog saveToDb(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
-        AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString);
+        AuditLog auditLog = create(auditLogable, logType, loggerString);
 
         if (auditLog == null) {
             return null;
@@ -125,9 +125,7 @@ public class AuditLogDirector {
                 auditLog.getLogType().getValue(), auditLog.getMessage());
     }
 
-    private AuditLog createAuditLog(AuditLogable auditLogable,
-            AuditLogType logType,
-            String loggerString) {
+    private AuditLog create(AuditLogable auditLogable, AuditLogType logType, String loggerString) {
         // handle external log messages invoked by plugins via the API
         if (auditLogable.isExternal()) {
             return auditLogable.createAuditLog(logType, loggerString);
