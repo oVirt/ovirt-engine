@@ -692,6 +692,7 @@ public class AuditLogableBase implements AuditLogable {
         this.external = external;
     }
 
+    @Override
     public String getCompatibilityVersion() {
         return compatibilityVersion;
     }

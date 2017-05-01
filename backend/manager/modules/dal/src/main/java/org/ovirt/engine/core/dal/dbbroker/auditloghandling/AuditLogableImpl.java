@@ -43,6 +43,7 @@ public class AuditLogableImpl implements AuditLogable {
     private String customData;
     private boolean external;
     private String callStack;
+    private String compatibilityVersion;
 
     public AuditLogableImpl() {
         vmId = Guid.Empty;
@@ -376,6 +377,15 @@ public class AuditLogableImpl implements AuditLogable {
     @Override
     public void setCallStack(String callStack) {
         this.callStack = callStack;
+    }
+
+    @Override
+    public String getCompatibilityVersion() {
+        return compatibilityVersion;
+    }
+
+    public void setCompatibilityVersion(String compatibilityVersion) {
+        this.compatibilityVersion = compatibilityVersion;
     }
 
     @Override

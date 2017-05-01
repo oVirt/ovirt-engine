@@ -138,6 +138,10 @@ public interface AuditLogable {
 
     void setCallStack(String callStack);
 
+    String getCompatibilityVersion();
+
+    void setCompatibilityVersion(String compatibilityVersion);
+
     AuditLogable addCustomValue(final String name, final String value);
 
     /**
