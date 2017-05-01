@@ -48,7 +48,7 @@ public class AuditLogDirector {
         return StringUtils.defaultString(getMessageOrNull(logType));
     }
 
-    protected static String getMessageOrNull(AuditLogType logType) {
+    private static String getMessageOrNull(AuditLogType logType) {
         final String key = logType.name();
         try {
             return resourceBundle.getString(key);
