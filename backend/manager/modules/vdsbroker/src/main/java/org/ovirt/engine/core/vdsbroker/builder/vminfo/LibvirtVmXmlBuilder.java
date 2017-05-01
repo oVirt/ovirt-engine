@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -1110,7 +1111,27 @@ public class LibvirtVmXmlBuilder {
             writeIoTune((DiskImage) disk);
         }
 
+        if (disk.getDiskStorageType() == DiskStorageType.CINDER /** && case RBD */) {
+            writeNetworkDiskAuth((CinderDisk) disk);
+        }
+
         writer.writeEndElement();
+    }
+
+    private void writeNetworkDiskAuth(CinderDisk cinderDisk) {
+        Map<String, Object> connectionInfoData = cinderDisk.getCinderConnectionInfo().getData();
+        boolean authEnabled = (boolean) connectionInfoData.get(VdsProperties.CinderAuthEnabled);
+        if (authEnabled) {
+            writer.writeStartElement("auth");
+            writer.writeAttributeString("username", (String) connectionInfoData.get(VdsProperties.CinderAuthUsername));
+
+            writer.writeStartElement("secret");
+            writer.writeAttributeString("type", (String) connectionInfoData.get(VdsProperties.CinderSecretType));
+            writer.writeAttributeString("uuid", (String) connectionInfoData.get(VdsProperties.CinderSecretUuid));
+            writer.writeEndElement();
+
+            writer.writeEndElement();
+        }
     }
 
     private void writeIoTune(DiskImage diskImage) {
@@ -1157,7 +1178,9 @@ public class LibvirtVmXmlBuilder {
             break;
 
         case CINDER:
-            // TODO
+            // case RBD
+            writer.writeAttributeString("type", "raw");
+            writer.writeAttributeString("error_policy", "stop");
             break;
         }
 
@@ -1206,7 +1229,22 @@ public class LibvirtVmXmlBuilder {
             break;
 
         case CINDER:
-            // TODO (auth)
+            // case RBD
+            CinderDisk cinderDisk = (CinderDisk) disk;
+            Map<String, Object> connectionInfoData = cinderDisk.getCinderConnectionInfo().getData();
+            writer.writeAttributeString("protocol", cinderDisk.getCinderConnectionInfo().getDriverVolumeType());
+            writer.writeAttributeString("name", connectionInfoData.get("name").toString());
+            List<String> hostAddresses = (List<String>) connectionInfoData.get("hosts");
+            List<String> hostPorts = (List<String>) connectionInfoData.get("ports");
+            // Looping over hosts addresses to create 'hosts' element
+            // (Cinder should ensure that the addresses and ports lists are synced in order).
+            for (int i = 0; i < hostAddresses.size(); i++) {
+                writer.writeStartElement("host");
+                writer.writeAttributeString("name", hostAddresses.get(i));
+                writer.writeAttributeString("port", hostPorts.get(i));
+                //  If no transport is specified, "tcp" is assumed.
+                writer.writeEndElement();
+            }
             break;
         }
         writer.writeEndElement();
@@ -1251,7 +1289,8 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("type", "block");
             break;
         case CINDER:
-            // TODO
+            // case RBD
+            writer.writeAttributeString("type", "network");
             break;
         }
 
