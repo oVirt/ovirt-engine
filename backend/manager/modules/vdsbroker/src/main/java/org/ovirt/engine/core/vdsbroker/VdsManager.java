@@ -46,13 +46,15 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.SupportedHostFeatureDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
 import org.ovirt.engine.core.dao.VdsStatisticsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -112,6 +114,9 @@ public class VdsManager {
     private VmDynamicDao vmDynamicDao;
 
     @Inject
+    private VmStaticDao vmStaticDao;
+
+    @Inject
     private VdsStatisticsDao vdsStatisticsDao;
 
     @Inject
@@ -125,7 +130,6 @@ public class VdsManager {
 
     @Inject
     private Instance<IrsProxyManager> irsProxyManager;
-
     private final AtomicInteger failedToRunVmAttempts;
     private final AtomicInteger unrespondedAttempts;
     private final Guid vdsId;
@@ -148,8 +152,8 @@ public class VdsManager {
     private VmStatsRefresher vmsRefresher;
     protected int refreshIteration;
     private int autoRestartUnknownVmsIteration;
-    private final ReentrantLock autoStartVmsWithLeasesLock;
 
+    private final ReentrantLock autoStartVmsWithLeasesLock;
     protected final int HOST_REFRESH_RATE;
     protected final int NUMBER_HOST_REFRESHES_BEFORE_SAVE;
     private HostConnectionRefresher hostRefresher;
@@ -187,7 +191,7 @@ public class VdsManager {
                 updateDynamicData(cachedVds.getDynamicData());
             }
             log.error("Could not find VDC Certificate file.");
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vdsId));
+            AuditLogable logable = createAuditLogableForHost(cachedVds);
             auditLogDirector.log(logable, AuditLogType.CERTIFICATE_FILE_NOT_FOUND);
         }
     }
@@ -397,7 +401,7 @@ public class VdsManager {
         if (cachedVds.getStatus() != VDSStatus.Initializing && cachedVds.getStatus() != VDSStatus.NonOperational) {
             setStatus(VDSStatus.Initializing, cachedVds);
             vdsDynamicDao.updateStatus(cachedVds.getId(), VDSStatus.Initializing);
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(cachedVds.getId()));
+            AuditLogable logable = createAuditLogableForHost(cachedVds);
             logable.addCustomValue("ErrorMessage", ex.getMessage());
             logable.updateCallStackFromThrowable(ex);
             auditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
@@ -655,11 +659,10 @@ public class VdsManager {
                     new Object[0],
                     Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
                     TimeUnit.MINUTES);
-            auditLogDirector.log(
-                    Injector.injectMembers(new AuditLogableBase(vds.getId())).addCustomValue(
-                            "Time",
-                            Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString()),
-                    AuditLogType.VDS_FAILED_TO_RUN_VMS);
+            AuditLogable logable = createAuditLogableForHost(vds);
+            logable.addCustomValue("Time",
+                    Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString());
+            auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_RUN_VMS);
             log.info("Vds '{}' moved to Error mode after {} attempts. Time: {}", vds.getName(),
                     failedToRunVmAttempts, new Date());
         }
@@ -690,7 +693,7 @@ public class VdsManager {
                 VDSReturnValue ret = resourceManager.runVdsCommand(VDSCommandType.GetHardwareInfo,
                         new VdsIdAndVdsVDSCommandParametersBase(vds));
                 if (!ret.getSucceeded()) {
-                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+                    AuditLogable logable = createAuditLogableForHost(vds);
                     logable.updateCallStackFromThrowable(ret.getExceptionObject());
                     auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
                 }
@@ -700,9 +703,10 @@ public class VdsManager {
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)
                     || (vds.getClusterSupportsGlusterService()
                             && vds.getSELinuxEnforceMode().equals(SELinuxMode.PERMISSIVE))) {
-                auditLogDirector.log(Injector.injectMembers(new AuditLogableBase(vds.getId())).addCustomValue("Mode",
-                        vds.getSELinuxEnforceMode() == null ? "UNKNOWN" : vds.getSELinuxEnforceMode().name()),
-                        AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
+                AuditLogable auditLogable = createAuditLogableForHost(vds);
+                auditLogable.addCustomValue("Mode",
+                        vds.getSELinuxEnforceMode() == null ? "UNKNOWN" : vds.getSELinuxEnforceMode().name());
+                auditLogDirector.log(auditLogable, AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
                 if (vds.getSELinuxEnforceMode() != null) {
                     log.warn("Host '{}' is running with SELinux in '{}' mode", vds.getName(), vds.getSELinuxEnforceMode());
                 } else {
@@ -752,6 +756,13 @@ public class VdsManager {
             log.error("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
             throw new RuntimeException(caps.getExceptionString());
         }
+    }
+
+    private AuditLogable createAuditLogableForHost(VDS vds) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(vds.getId());
+        logable.setVdsName(vds.getName());
+        return logable;
     }
 
     private void processHostFeaturesReported(VDS host) {
@@ -878,8 +889,7 @@ public class VdsManager {
                 cachedVds.getId(), cachedVds.getName(), cachedVds.getVmCount(), cachedVds.getSpmStatus(),
                 TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
 
-        AuditLogableBase logable;
-        logable = Injector.injectMembers(new AuditLogableBase(cachedVds.getId()));
+        AuditLogable logable = createAuditLogableForHost(cachedVds);
         logable.updateCallStackFromThrowable(ex);
         if (ex.getCause() instanceof java.net.UnknownHostException){
             auditLogDirector.log(logable, AuditLogType.VDS_UNKNOWN_HOST);
@@ -903,8 +913,7 @@ public class VdsManager {
             auditLogType = AuditLogType.VDS_HOST_NOT_RESPONDING;
             log.warn(msg, cachedVds.getName());
         }
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        logable.setVdsId(cachedVds.getId());
+        AuditLogable logable = createAuditLogableForHost(cachedVds);
         logable.addCustomValue("Seconds", Long.toString(TimeUnit.MILLISECONDS.toSeconds(timeoutToFence)));
         auditLogDirector.log(logable, auditLogType);
     }
@@ -1008,8 +1017,9 @@ public class VdsManager {
 
         vmIds.forEach(vmId -> {
             // log VM transition to unknown status
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+            AuditLogable logable = new AuditLogableImpl();
             logable.setVmId(vmId);
+            logable.setVmName(vmStaticDao.get(vmId).getName());
             auditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
         });
     }
