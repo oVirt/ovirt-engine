@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -739,19 +738,6 @@ public class AuditLogableBase implements AuditLogable {
      */
     public void setCallStack(String callStack) {
         this.callStack = callStack;
-    }
-
-    /**
-     * Sets the call stack string from a Throwable object
-     * Also, the updateCallStackFromThrowable can be used in case you have a Throwable object with the call stack details
-     *
-     * @param throwable
-     *            the Throwable object containing the call stack. Can be null, which will cause no changes to this object
-     */
-    public void updateCallStackFromThrowable(Throwable throwable) {
-        if (throwable != null) {
-            setCallStack(ExceptionUtils.getStackTrace(throwable));
-        }
     }
 
     public boolean isRepeatable() {

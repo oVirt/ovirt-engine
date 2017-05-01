@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import java.util.Map;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
@@ -163,6 +164,20 @@ public interface AuditLogable {
         auditLog.setBrickId(getBrickId());
         auditLog.setBrickPath(getBrickPath());
         auditLog.setRepeatable(isRepeatable());
+    }
+
+    /**
+     * Sets the call stack string from a Throwable object Also, the updateCallStackFromThrowable can be used in case you
+     * have a Throwable object with the call stack details
+     *
+     * @param throwable
+     *            the Throwable object containing the call stack. Can be null, which will cause no changes to this
+     *            object
+     */
+    default void updateCallStackFromThrowable(Throwable throwable) {
+        if (throwable != null) {
+            setCallStack(ExceptionUtils.getStackTrace(throwable));
+        }
     }
 
     /**
