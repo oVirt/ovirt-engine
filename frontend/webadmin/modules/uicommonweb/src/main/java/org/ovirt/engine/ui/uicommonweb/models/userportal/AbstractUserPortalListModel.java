@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -140,8 +141,8 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
             }
         }
 
-        final List<Pair<Object, VM>> vmPairs =
-                vms.stream().map(v -> new Pair<Object, VM>(v, null)).collect(Collectors.toList());
+        final List<Pair<Nameable, VM>> vmPairs =
+                vms.stream().map(v -> new Pair<Nameable, VM>(v, null)).collect(Collectors.toList());
 
         if (filteredPools.isEmpty()) {
             IconUtils.prefetchIcons(vms, true, fetchLargeIcons(), idToIconMap -> finishSearch(vmPairs));
@@ -157,11 +158,11 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
             Frontend.getInstance().runMultipleQueries(
                     poolQueryList, poolParamList,
                     result -> {
-                        final List<Pair<Object, VM>> all =
+                        final List<Pair<Nameable, VM>> all =
                                 Stream.concat(vmPairs.stream(),
                                         IntStream.range(0, filteredPools.size())
                                                 .filter(i -> result.getReturnValues().get(i).getReturnValue() != null)
-                                                .mapToObj(i -> new Pair<Object, VM>(
+                                                .mapToObj(i -> new Pair<Nameable, VM>(
                                                         filteredPools.get(i),
                                                         result.getReturnValues().get(i).getReturnValue())
                                                 )
@@ -178,9 +179,9 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
      * @param vmsAndPools List of pairs of these types: (VM, null) or (VmPool, VM representative)
      * @return all VMs from the input
      */
-    private List<VM> extractVms(List<Pair<Object, VM>> vmsAndPools) {
+    private List<VM> extractVms(List<Pair<Nameable, VM>> vmsAndPools) {
         final ArrayList<VM> result = new ArrayList<>();
-        for (Pair<Object, VM> vmOrPool : vmsAndPools) {
+        for (Pair<Nameable, VM> vmOrPool : vmsAndPools) {
             if (vmOrPool.getFirst() instanceof VM) {
                 result.add((VM) vmOrPool.getFirst());
                 continue;
@@ -192,11 +193,11 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
         return result;
     }
 
-    private void finishSearch(List<Pair<Object, VM>> vmOrPoolAndPoolRepresentants) {
-        Collections.sort((List) vmOrPoolAndPoolRepresentants, new PairFirstComparator<>(new NameableComparator()));
+    private void finishSearch(List<Pair<Nameable, VM>> vmOrPoolAndPoolRepresentants) {
+        Collections.sort(vmOrPoolAndPoolRepresentants, new PairFirstComparator<>(new NameableComparator()));
 
         ArrayList<UserPortalItemModel> items = new ArrayList<>();
-        for (Pair<Object, VM> item : vmOrPoolAndPoolRepresentants) {
+        for (Pair<Nameable, VM> item : vmOrPoolAndPoolRepresentants) {
             UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory);
             model.setEntity(item.getFirst());
             items.add(model);
