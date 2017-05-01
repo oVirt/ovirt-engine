@@ -1,3 +1,2 @@
-ovirt-snapshot,http://resources.ovirt.org/pub/ovirt-3.6-snapshot/rpm/$distro
-ovirt-snapshot-static,http://resources.ovirt.org/pub/ovirt-3.6-snapshot-static/rpm/$distro
+ovirt-36,http://resources.ovirt.org/pub/ovirt-3.6/rpm/$distro
 ci-tools,http://resources.ovirt.org/repos/ci-tools/$distro
