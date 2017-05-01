@@ -62,7 +62,8 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -71,7 +72,6 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -596,9 +596,11 @@ public class VmInfoBuildUtils {
             return;
         }
 
-        AuditLogableBase event = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable event = new AuditLogableImpl();
         event.setVmId(vm.getId());
+        event.setVmName(vm.getName());
         event.setClusterId(vm.getClusterId());
+        event.setClusterName(vm.getClusterName());
         event.setCustomId(nic.getId().toString());
         event.setCompatibilityVersion(vm.getCompatibilityVersion().toString());
         event.addCustomValue("NicName", nic.getName());
