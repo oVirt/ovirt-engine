@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public class DisconnectStoragePoolAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     private static final Logger log = LoggerFactory.getLogger(DisconnectStoragePoolAsyncOperation.class);
 
-    public DisconnectStoragePoolAsyncOperation(ArrayList<VDS> vdss, StoragePool storagePool) {
+    public DisconnectStoragePoolAsyncOperation(List<VDS> vdss, StoragePool storagePool) {
         super(vdss, null, storagePool);
     }
 

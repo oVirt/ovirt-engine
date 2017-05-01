@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.utils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface ISingleAsyncOperationFactory {
-    void initialize(ArrayList<?> parameters);
+    void initialize(List<?> parameters);
 
     ISingleAsyncOperation createSingleAsyncOperation();
 }

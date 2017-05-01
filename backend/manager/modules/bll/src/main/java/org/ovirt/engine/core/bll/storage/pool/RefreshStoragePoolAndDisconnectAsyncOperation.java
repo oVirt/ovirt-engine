@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -23,7 +22,7 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
 
     private List<StoragePoolIsoMap> storagePoolIsoMap;
 
-    public RefreshStoragePoolAndDisconnectAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
+    public RefreshStoragePoolAndDisconnectAsyncOperation(List<VDS> vdss, StorageDomain domain,
             StoragePool storagePool) {
         super(vdss, domain, storagePool);
         masterStorageDomainId = DbFacade.getInstance().getStorageDomainDao()

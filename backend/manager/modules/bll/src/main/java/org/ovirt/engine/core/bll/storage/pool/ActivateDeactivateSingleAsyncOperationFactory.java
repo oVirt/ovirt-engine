@@ -10,11 +10,11 @@ import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.ISingleAsyncOperationFactory;
 
 public abstract class ActivateDeactivateSingleAsyncOperationFactory implements ISingleAsyncOperationFactory {
-    private ArrayList<VDS> vdss;
+    private List<VDS> vdss;
     private StorageDomain storageDomain;
     private StoragePool storagePool;
 
-    protected ArrayList<VDS> getVdss() {
+    protected List<VDS> getVdss() {
         return vdss;
     }
 
@@ -27,15 +27,15 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
     }
 
     @Override
-    public void initialize(ArrayList<?> parameters) {
+    public void initialize(List<?> parameters) {
         if (!(parameters.get(0) instanceof List)) {
             throw new IllegalArgumentException();
         }
-        ArrayList l = new ArrayList((List)parameters.get(0));
+        List l = new ArrayList((List)parameters.get(0));
         if (!l.isEmpty() && !(l.get(0) instanceof VDS)) {
             throw new IllegalArgumentException();
         }
-        vdss = (ArrayList<VDS>) l;
+        vdss = (List<VDS>) l;
         if (parameters.get(1) != null && !(parameters.get(1) instanceof StorageDomain)) {
             throw new IllegalArgumentException();
         }

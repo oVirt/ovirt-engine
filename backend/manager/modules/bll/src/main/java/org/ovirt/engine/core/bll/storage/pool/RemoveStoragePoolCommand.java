@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -380,11 +379,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     @Override
                     public ISingleAsyncOperation createSingleAsyncOperation() {
 
-                        return new ConntectVDSToPoolAndDomains((ArrayList<VDS>) vdsList, masterDomain, storagePool);
+                        return new ConntectVDSToPoolAndDomains(vdsList, masterDomain, storagePool);
                     }
 
                     @Override
-                    public void initialize(ArrayList parameters) {
+                    public void initialize(List parameters) {
                         // no need to initilalize params
                     }
                 });

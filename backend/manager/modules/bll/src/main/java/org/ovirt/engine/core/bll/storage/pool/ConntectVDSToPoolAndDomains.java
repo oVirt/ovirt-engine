@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
@@ -24,7 +23,7 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
 
     private List<StoragePoolIsoMap> storagePoolIsoMap;
 
-    public ConntectVDSToPoolAndDomains(ArrayList<VDS> vdss, StorageDomain domain, StoragePool storagePool) {
+    public ConntectVDSToPoolAndDomains(List<VDS> vdss, StorageDomain domain, StoragePool storagePool) {
         super(vdss, domain, storagePool);
         masterStorageDomainId = DbFacade.getInstance().getStorageDomainDao()
                 .getMasterStorageDomainIdForPool(getStoragePool().getId());

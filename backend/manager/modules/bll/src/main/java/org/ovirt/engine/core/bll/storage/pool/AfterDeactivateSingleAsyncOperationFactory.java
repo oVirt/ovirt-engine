@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
@@ -16,7 +16,7 @@ public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactiva
     }
 
     @Override
-    public void initialize(ArrayList parameters) {
+    public void initialize(List parameters) {
         super.initialize(parameters);
         if (!(parameters.get(3) instanceof Boolean)) {
             throw new IllegalArgumentException();

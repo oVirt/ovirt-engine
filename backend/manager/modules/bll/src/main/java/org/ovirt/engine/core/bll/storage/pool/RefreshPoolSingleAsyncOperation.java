@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -19,14 +18,14 @@ import org.slf4j.LoggerFactory;
 public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
     private static final Logger log = LoggerFactory.getLogger(RefreshPoolSingleAsyncOperation.class);
 
-    private final ArrayList<Guid> vdsIdsToSetNonOperational;
+    private final List<Guid> vdsIdsToSetNonOperational;
 
     private Guid masterStorageDomainId;
 
     private List<StoragePoolIsoMap> storagePoolIsoMap;
 
-    public RefreshPoolSingleAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
-            StoragePool storagePool, ArrayList<Guid> vdssIdsToSetNonoperational) {
+    public RefreshPoolSingleAsyncOperation(List<VDS> vdss, StorageDomain domain,
+            StoragePool storagePool, List<Guid> vdssIdsToSetNonoperational) {
         super(vdss, domain, storagePool);
         vdsIdsToSetNonOperational = vdssIdsToSetNonoperational;
         masterStorageDomainId = DbFacade.getInstance().getStorageDomainDao()

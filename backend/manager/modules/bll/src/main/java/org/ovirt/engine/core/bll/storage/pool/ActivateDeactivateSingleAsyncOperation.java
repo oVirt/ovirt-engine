@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -10,9 +10,9 @@ import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 public abstract class ActivateDeactivateSingleAsyncOperation implements ISingleAsyncOperation {
     private StorageDomain domain;
     private StoragePool pool;
-    private ArrayList<VDS> vdss;
+    private List<VDS> vdss;
 
-    public ActivateDeactivateSingleAsyncOperation(ArrayList<VDS> vdss, StorageDomain domain,
+    public ActivateDeactivateSingleAsyncOperation(List<VDS> vdss, StorageDomain domain,
             StoragePool storagePool) {
         this.vdss = vdss;
         this.domain = domain;
@@ -30,7 +30,7 @@ public abstract class ActivateDeactivateSingleAsyncOperation implements ISingleA
         return pool;
     }
 
-    protected ArrayList<VDS> getVdss() {
+    protected List<VDS> getVdss() {
         return vdss;
     }
 }
