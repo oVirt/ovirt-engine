@@ -79,7 +79,6 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     private List<Long> proccessedOvfGenerationsInfo;
     private List<String> proccessedOvfConfigurationsInfo;
     private HashSet<Guid> proccessedDomains;
-    private List<Guid> removedOvfIdsInfo;
     private List<Guid> activeDataDomainsIds;
 
     public ProcessOvfUpdateForStoragePoolCommand(T parameters, CommandContext commandContext) {
@@ -181,7 +180,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
      */
     protected void removeOvfForTemplatesAndVmsOfStoragePool(StoragePool pool) {
         Guid poolId = pool.getId();
-        removedOvfIdsInfo = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(poolId);
+        List<Guid> removedOvfIdsInfo = vmAndTemplatesGenerationsDao.getIdsForOvfDeletion(poolId);
 
         markDomainsWithOvfsForOvfUpdate(removedOvfIdsInfo);
         vmAndTemplatesGenerationsDao.deleteOvfGenerations(removedOvfIdsInfo);
