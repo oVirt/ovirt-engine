@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +46,9 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
 
                 if (!getVDSReturnValue().getSucceeded()) {
                     if (getParameters().isStopSpmFailureLogged()) {
-                        AuditLogableBase base = Injector.injectMembers(new AuditLogableBase());
-                        base.setVds(vds);
+                        AuditLogable base = new AuditLogableImpl();
+                        base.setVdsId(vds.getId());
+                        base.setVdsName(vds.getName());
                         auditLogDirector.log(base, AuditLogType.VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE);
                     }
 
