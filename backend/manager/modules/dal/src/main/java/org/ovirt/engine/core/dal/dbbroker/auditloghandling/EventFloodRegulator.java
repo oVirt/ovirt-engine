@@ -58,13 +58,7 @@ public class EventFloodRegulator {
     }
 
     public void evict() {
-        String keyForCheck = composeObjectId();
-
-        synchronized (keyForCheck.intern()) {
-            if (CacheManager.getTimeoutBaseCache().containsKey(keyForCheck)) {
-                CacheManager.getTimeoutBaseCache().evict(keyForCheck);
-            }
-        }
+        CacheManager.getTimeoutBaseCache().computeIfPresent(composeObjectId(), (k, v) -> null);
     }
 
     private void setEndTime(long value) {
