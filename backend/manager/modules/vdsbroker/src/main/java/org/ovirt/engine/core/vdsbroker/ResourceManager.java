@@ -42,7 +42,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
@@ -253,8 +254,9 @@ public class ResourceManager implements BackendService {
         removeAsyncRunningVm(vm.getId());
         internalSetVmStatus(vm.getDynamicData(), VMStatus.Unknown);
         // log VM transition to unknown status
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable logable = new AuditLogableImpl();
         logable.setVmId(vm.getId());
+        logable.setVmName(vm.getName());
         auditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
 
         storeVm(vm);
