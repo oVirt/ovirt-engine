@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -210,13 +210,13 @@ public class FenceAgentExecutorTest {
 
     private void verifyAuditFenceExecutionStart(int expectedInvocations) {
         verify(auditLogDirector, times(expectedInvocations)).log(
-                any(AuditLogableBase.class),
+                any(AuditLogable.class),
                 eq(AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_STARTED));
     }
 
     private void verifyAuditFenceExecutionFailure(int expectedInvocations) {
         verify(auditLogDirector, times(expectedInvocations)).log(
-                any(AuditLogableBase.class),
+                any(AuditLogable.class),
                 eq(AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED));
     }
 }

@@ -27,11 +27,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -271,8 +271,8 @@ public class FenceAgentExecutor {
                 createAuditLogObject(action, realAgent, proxyHost),
                 AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED);
     }
-    private AuditLogableBase createAuditLogObject(FenceActionType action, FenceAgent agent, VDS proxyHost) {
-        AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase());
+    private AuditLogable createAuditLogObject(FenceActionType action, FenceAgent agent, VDS proxyHost) {
+        AuditLogable alb = new AuditLogableImpl();
         alb.addCustomValue("Action", action.name().toLowerCase());
         alb.addCustomValue("Host", fencedHost.getName() == null ? fencedHost.getId().toString() : fencedHost.getName());
         alb.addCustomValue("AgentType", agent.getType());
