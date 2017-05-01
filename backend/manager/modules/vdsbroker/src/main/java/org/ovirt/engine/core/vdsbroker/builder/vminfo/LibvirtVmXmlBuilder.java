@@ -1093,7 +1093,6 @@ public class LibvirtVmXmlBuilder {
         writeDiskDriver(device, disk, dve);
         writeDeviceAliasAndAddress(device);
         writeBootOrder(device.getBootOrder());
-        // TODO: index of the first bootable disk
 
         if (disk.getDiskStorageType() != DiskStorageType.LUN) {
             writer.writeElement("serial", disk.getId().toString());
@@ -1149,31 +1148,25 @@ public class LibvirtVmXmlBuilder {
 
     private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve) {
         writer.writeStartElement("driver");
+        writer.writeAttributeString("name", "qemu");
+        if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
+            writer.writeAttributeString("discard", "unmap");
+        }
+        if (device.getSpecParams().containsKey("pinToIoThread")) {
+            writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
+        }
+
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            writer.writeAttributeString("name", "qemu");
             writer.writeAttributeString("io", "threads");
             writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
-            if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
-                writer.writeAttributeString("discard", "unmap");
-            }
-            if (device.getSpecParams().containsKey("pinToIoThread")) {
-                writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
-            }
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
             break;
 
         case LUN:
-            writer.writeAttributeString("name", "qemu");
             writer.writeAttributeString("io", "native");
             writer.writeAttributeString("type", "raw");
-            if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
-                writer.writeAttributeString("discard", "unmap");
-            }
-            if (device.getSpecParams().containsKey("pinToIoThread")) {
-                writer.writeAttributeString("iothread", device.getSpecParams().get("pinToIoThread").toString());
-            }
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
             break;
 
@@ -1181,6 +1174,7 @@ public class LibvirtVmXmlBuilder {
             // case RBD
             writer.writeAttributeString("type", "raw");
             writer.writeAttributeString("error_policy", "stop");
+            writer.writeAttributeString("io", "threads");
             break;
         }
 
