@@ -27,19 +27,14 @@ public class EventFloodRegulator {
      */
     public boolean isLegal() {
         if (useTimeout) {
-            String keyForCheck = "".equals(timeoutObjectId) ? logType.toString() : timeoutObjectId;
-            synchronized (keyForCheck.intern()) {
-                if (!CacheManager.getTimeoutBaseCache().containsKey(keyForCheck)) {
-                    CacheManager.getTimeoutBaseCache().put(keyForCheck,
-                            keyForCheck,
-                            endTime,
-                            TimeUnit.MILLISECONDS);
-                    return true;
-                }
-            }
-            return false;
+            String key = "".equals(timeoutObjectId) ? logType.toString() : timeoutObjectId;
+            String oldValue = CacheManager.getTimeoutBaseCache().putIfAbsent(
+                    key,
+                    key,
+                    endTime,
+                    TimeUnit.MILLISECONDS);
+            return oldValue == null;
         }
-
         return true;
     }
 
