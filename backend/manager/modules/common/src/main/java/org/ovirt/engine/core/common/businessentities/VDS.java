@@ -1401,6 +1401,14 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vdsDynamic.setAdditionalFeatures(additionalFeatures);
     }
 
+    public String getPrettyName() {
+        return vdsDynamic.getPrettyName();
+    }
+
+    public void setPrettyName(String prettyName) {
+        vdsDynamic.setPrettyName(prettyName);
+    }
+
     public boolean isOvirtNode() {
         return getVdsType() == VDSType.oVirtNode;
     }

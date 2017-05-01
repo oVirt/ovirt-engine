@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -126,6 +127,18 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private String osPrettyName;
+
+    public String getOsPrettyName() {
+        return osPrettyName;
+    }
+
+    public void setOsPrettyName(String value) {
+        if (!Objects.equals(osPrettyName, value)) {
+            osPrettyName = value;
+            onPropertyChanged(new PropertyChangedEventArgs("OsPrettyName")); //$NON-NLS-1$
+        }
+    }
     private String kernelVersion;
 
     public String getKernelVersion() {
@@ -818,6 +831,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
         VDS vds = getEntity();
 
         setOS(vds.getHostOs());
+        setOsPrettyName(vds.getPrettyName());
         setKernelVersion(vds.getKernelVersion());
         setKvmVersion(vds.getKvmVersion());
         setLibvirtVersion(vds.getLibvirtVersion());

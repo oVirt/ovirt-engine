@@ -119,6 +119,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
             entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
             entity.setExternalStatus(ExternalStatus.forValue(rs.getInt("external_status")));
             entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
+            entity.setPrettyName(rs.getString("pretty_name"));
             return entity;
         }
     }
@@ -279,7 +280,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("is_live_merge_supported", vds.getLiveMergeSupport())
                 .addValue("maintenance_reason", vds.getMaintenanceReason())
                 .addValue("is_update_available", vds.isUpdateAvailable())
-                .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled());
+                .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled())
+                .addValue("pretty_name", vds.getPrettyName());
 
         return parameterSource;
     }

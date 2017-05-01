@@ -306,7 +306,8 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_online_cpus TEXT,
  v_maintenance_reason TEXT,
  v_is_update_available BOOLEAN,
- v_is_hostdev_enabled BOOLEAN)
+ v_is_hostdev_enabled BOOLEAN,
+ v_pretty_name VARCHAR(255))
 RETURNS VOID
 
 	--The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -350,7 +351,8 @@ BEGIN
       online_cpus = v_online_cpus,
       maintenance_reason = v_maintenance_reason,
       is_update_available = v_is_update_available,
-      is_hostdev_enabled = v_is_hostdev_enabled
+      is_hostdev_enabled = v_is_hostdev_enabled,
+      pretty_name = v_pretty_name
       WHERE vds_id = v_vds_id;
    END;
 

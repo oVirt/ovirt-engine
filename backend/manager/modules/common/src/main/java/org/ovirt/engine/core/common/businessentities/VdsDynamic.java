@@ -192,6 +192,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean hostDevicePassthroughEnabled;
 
+    private String prettyName;
+
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirtVersion = new RpmVersion();
@@ -781,6 +783,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         return hostDevicePassthroughEnabled;
     }
 
+    public String getPrettyName() {
+        return prettyName;
+    }
+
+    public void setPrettyName(String prettyName) {
+        this.prettyName = prettyName;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -847,6 +857,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (maintenanceReason == null ? 0 : maintenanceReason.hashCode());
         result = prime * result + (updateAvailable ? 0 : 1);
         result = prime * result + (hostDevicePassthroughEnabled ? 0 : 1);
+        result = prime * result + (prettyName == null ? 0 : prettyName.hashCode());
 
         return result;
     }
@@ -923,6 +934,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(maintenanceReason, other.maintenanceReason)
                 && updateAvailable == other.updateAvailable
                 && ObjectUtils.objectsEqual(additionalFeatures, other.additionalFeatures)
-                && ObjectUtils.objectsEqual(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled);
+                && ObjectUtils.objectsEqual(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled)
+                && ObjectUtils.objectsEqual(prettyName, other.prettyName);
     }
 }
