@@ -35,7 +35,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -334,7 +335,7 @@ public final class AsyncTaskManager {
         for (SPMTask task : _tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
-                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+                AuditLogable logable = new AuditLogableImpl();
                 logable.addCustomValue("CommandName", task.getParameters().getDbAsyncTask().getActionType().toString());
                 logable.addCustomValue("Date", task.getParameters().getDbAsyncTask().getStartTime().toString());
 
