@@ -36,10 +36,10 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.monitoring.MonitoringStrategyFactory;
@@ -81,8 +81,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         // check if fencing in cluster is enabled
         Cluster cluster = clusterDao.get(vds.getClusterId());
         if (cluster != null && !cluster.getFencingPolicy().isFencingEnabled()) {
-            AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase(vds.getId()));
-            alb.setRepeatable(true);
+            AuditLogable alb = createAuditLogableForHost(vds);
             auditLogDirector.log(alb, AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
             return true;
         }
@@ -94,6 +93,16 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
         // fencing will be executed
         return false;
+    }
+
+    private AuditLogable createAuditLogableForHost(VDS vds) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(vds.getId());
+        logable.setVdsName(vds.getName());
+        logable.setClusterId(vds.getClusterId());
+        logable.setClusterName(vds.getClusterName());
+        logable.setRepeatable(true);
+        return logable;
     }
 
     @Override
@@ -179,8 +188,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         if (restartVdsResult != null
                 && restartVdsResult.<RestartVdsResult>getActionReturnValue().isSkippedDueToFencingPolicy()) {
             // fencing was skipped, fire an alert and suppress standard command logging
-            AuditLogableBase alb = Injector.injectMembers(new AuditLogableBase(getVds().getId()));
-            alb.setRepeatable(true);
+            AuditLogable alb = createAuditLogableForHost(getVds());
             auditLogDirector.log(alb, AuditLogType.VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY);
             setSucceeded(false);
             setCommandShouldBeLogged(false);
@@ -238,10 +246,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     }
 
     private void logAlert(VDS host, int percents) {
-        AuditLogableBase auditLogable = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable auditLogable = createAuditLogableForHost(host);
         auditLogable.addCustomValue("Percents", String.valueOf(percents));
-        auditLogable.setVdsId(host.getId());
-        auditLogable.setRepeatable(true);
         auditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY);
     }
 
