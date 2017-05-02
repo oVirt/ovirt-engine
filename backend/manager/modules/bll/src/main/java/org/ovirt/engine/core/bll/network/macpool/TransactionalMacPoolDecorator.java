@@ -100,18 +100,6 @@ public final class TransactionalMacPoolDecorator extends DelegatingMacPoolDecora
     }
 
     @Override
-    public final void forceAddMac(String mac) {
-        super.forceAddMac(mac);
-        getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(Collections.singletonList(mac)));
-    }
-
-    @Override
-    public void forceAddMacs(List<String> macs) {
-        super.forceAddMacs(macs);
-        getStrategyForMacAllocation().forEach(e->e.releaseMacsInCaseOfRollback(macs));
-    }
-
-    @Override
     public final boolean addMac(String mac) {
         boolean added = super.addMac(mac);
         if (added) {

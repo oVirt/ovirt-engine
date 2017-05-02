@@ -27,17 +27,43 @@ public final class MacPoolUsingRanges implements MacPool {
     private final boolean allowDuplicates;
     private MacsStorage macsStorage;
     private Collection<LongRange> rangesBoundaries;
+    private final AuditLogDirector auditLogDirector;
 
-    public MacPoolUsingRanges(Guid id, Collection<LongRange> rangesBoundaries, boolean allowDuplicates) {
+    public MacPoolUsingRanges(Guid id,
+            Collection<LongRange> rangesBoundaries,
+            boolean allowDuplicates,
+            AuditLogDirector auditLogDirector) {
         this.id = id;
         this.allowDuplicates = allowDuplicates;
         this.rangesBoundaries = rangesBoundaries;
-        initialize();
+        this.auditLogDirector = auditLogDirector;
+
     }
 
-    private void initialize() {
+    void initialize(boolean engineStartup, List<String> macsForMacPool) {
         log.info("Initializing {}", this);
-        this.macsStorage = createMacsStorage(rangesBoundaries);
+        this.macsStorage = createMacsStorage(this.rangesBoundaries);
+
+        log.debug("Initializing {} with macs: {}", this, macsForMacPool);
+        List<String> notAddedMacs = addMacs(macsForMacPool);
+
+        if (!notAddedMacs.isEmpty()) {
+            if (engineStartup) {
+
+                String auditLogMessage =
+                        "Following MACs violates duplicity restriction, and was pushed into MAC pool without respect to it:"
+                                + notAddedMacs;
+                auditLogDirector.log(new AuditLogableImpl(),
+                        AuditLogType.MAC_ADDRESS_VIOLATES_NO_DUPLICATES_SETTING,
+                        auditLogMessage);
+
+                forceAddMacs(notAddedMacs);
+            } else {
+                throw new EngineException(EngineError.MAC_POOL_INITIALIZATION_FAILED,
+                        "Unable to initialize MAC pool due to existing duplicates");
+            }
+        }
+
         log.info("Finished initializing {}. Available MACs in pool: {}", this, macsStorage.getAvailableMacsCount());
     }
 
@@ -110,15 +136,13 @@ public final class MacPoolUsingRanges implements MacPool {
         return notAddedMacs;
     }
 
-    @Override
-    public void forceAddMac(String mac) {
+    private void forceAddMac(String mac) {
         log.debug("Forcibly allocating custom mac address {} from {}", mac, this);
         macsStorage.useMacNoDuplicityCheck(MacAddressRangeUtils.macToLong(mac));
         logWhenMacPoolIsEmpty();
     }
 
-    @Override
-    public void forceAddMacs(List<String> macs) {
+    private void forceAddMacs(List<String> macs) {
         for (String mac : macs) {
             forceAddMac(mac);
         }

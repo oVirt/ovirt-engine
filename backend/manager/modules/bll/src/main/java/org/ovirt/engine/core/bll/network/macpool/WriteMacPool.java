@@ -39,16 +39,6 @@ public interface WriteMacPool {
     List<String> addMacs(List<String> macs);
 
     /**
-     * Add given MAC address, regardless of it being in use.
-     * @param mac MAC to add.
-     */
-    @AcquireWriteLock
-    void forceAddMac(String mac);
-
-    @AcquireWriteLock
-    void forceAddMacs(List<String> macs);
-
-    /**
      *
      * @param macs macs to return to pool
      */

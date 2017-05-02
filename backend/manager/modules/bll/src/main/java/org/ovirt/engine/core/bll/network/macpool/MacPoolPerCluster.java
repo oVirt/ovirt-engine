@@ -62,22 +62,12 @@ public class MacPoolPerCluster {
         try {
             List<org.ovirt.engine.core.common.businessentities.MacPool> macPools = macPoolDao.getAll();
             for (org.ovirt.engine.core.common.businessentities.MacPool macPool : macPools) {
-                initializeMacPool(macPool);
+                createPoolInternal(macPool, true);
             }
             log.info("Successfully initialized");
         } catch (RuntimeException e) {
             log.error("Error initializing: {}", e.getMessage());
             throw e;
-        }
-    }
-
-    private void initializeMacPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
-        List<String> macsForMacPool = macPoolDao.getAllMacsForMacPool(macPool.getId());
-
-        final MacPool pool = createPoolInternal(macPool);
-        log.debug("Initializing {} with macs: {}", pool, macsForMacPool);
-        for (String mac : macsForMacPool) {
-            pool.forceAddMac(mac);
         }
     }
 
@@ -145,17 +135,18 @@ public class MacPoolPerCluster {
      */
     public void createPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
         try (AutoCloseableLock lock = writeLockResource()) {
-            createPoolInternal(macPool);
+            createPoolInternal(macPool, false);
         }
     }
 
-    private MacPool createPoolInternal(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
+    private MacPool createPoolInternal(org.ovirt.engine.core.common.businessentities.MacPool macPool,
+            boolean engineStartup) {
         if (macPools.containsKey(macPool.getId())) {
             throw new IllegalStateException(UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST);
         }
 
         log.debug("Creating new MacPool {}.", macPool);
-        MacPool poolForScope = macPoolFactory.createMacPool(macPool);
+        MacPool poolForScope = macPoolFactory.createMacPool(macPool, engineStartup);
         macPools.put(macPool.getId(), poolForScope);
         return poolForScope;
     }
@@ -172,7 +163,7 @@ public class MacPoolPerCluster {
 
             log.debug("Updating pool {}. (old will be deleted and new initialized from db entity)", macPool);
             removeWithoutLocking(macPoolId);
-            initializeMacPool(macPool);
+            createPoolInternal(macPool, false);
         }
     }
 

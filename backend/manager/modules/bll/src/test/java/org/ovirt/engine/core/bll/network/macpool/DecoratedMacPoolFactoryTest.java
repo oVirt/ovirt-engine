@@ -26,6 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.lock.LockedObjectFactory;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -33,6 +34,9 @@ public class DecoratedMacPoolFactoryTest {
 
     @Mock
     private MacPool macPool;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     @Mock
     private MacPoolDecorator macPoolDecoratorA;
@@ -147,8 +151,10 @@ public class DecoratedMacPoolFactoryTest {
     @Test
     public void testToString() throws Exception {
         Guid underlyingPoolId = Guid.newGuid();
-        MacPoolUsingRanges underlyingPool =
-                new MacPoolUsingRanges(underlyingPoolId, Collections.singletonList(new LongRange(1, 2)), false);
+        MacPoolUsingRanges underlyingPool = new MacPoolUsingRanges(underlyingPoolId,
+                Collections.singletonList(new LongRange(1, 2)),
+                false,
+                auditLogDirector);
 
         DelegatingMacPoolDecorator decoratorA = new DelegatingMacPoolDecorator();
         DelegatingMacPoolDecorator decoratorB = new DelegatingMacPoolDecorator();
