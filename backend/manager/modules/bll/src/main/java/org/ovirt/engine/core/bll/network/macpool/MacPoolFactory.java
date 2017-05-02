@@ -1,15 +1,28 @@
 package org.ovirt.engine.core.bll.network.macpool;
 
-import javax.ejb.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 
 @Singleton
 public class MacPoolFactory {
 
-    public MacPool createMacPool(org.ovirt.engine.core.common.businessentities.MacPool macPool) {
-        return new MacPoolUsingRanges(macPool.getId(),
+    @Inject
+    private MacPoolDao macPoolDao;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
+    public MacPool createMacPool(org.ovirt.engine.core.common.businessentities.MacPool macPool, boolean engineStartup) {
+        MacPoolUsingRanges macPoolUsingRanges = new MacPoolUsingRanges(macPool.getId(),
                 MacAddressRangeUtils.macPoolToRanges(macPool),
-                macPool.isAllowDuplicateMacAddresses());
+                macPool.isAllowDuplicateMacAddresses(),
+                auditLogDirector);
+
+        macPoolUsingRanges.initialize(engineStartup, macPoolDao.getAllMacsForMacPool(macPool.getId()));
+        return macPoolUsingRanges;
     }
 }

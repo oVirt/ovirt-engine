@@ -37,16 +37,6 @@ public class DelegatingMacPoolDecorator implements MacPoolDecorator {
     }
 
     @Override
-    public void forceAddMac(String mac) {
-        macPool.forceAddMac(mac);
-    }
-
-    @Override
-    public void forceAddMacs(List<String> macs) {
-        macPool.forceAddMacs(macs);
-    }
-
-    @Override
     public boolean isMacInUse(String mac) {
         return macPool.isMacInUse(mac);
     }

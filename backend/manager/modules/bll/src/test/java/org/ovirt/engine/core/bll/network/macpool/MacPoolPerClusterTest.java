@@ -18,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
@@ -61,6 +62,9 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     private DecoratedMacPoolFactory decoratedMacPoolFactory;
 
 
+    @InjectMocks
+    private MacPoolFactory macPoolFactory;
+
     private MacPool macPool;
     private Cluster cluster;
     private VmNic vmNic;
@@ -84,7 +88,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
 
         macPoolPerCluster = new MacPoolPerCluster(macPoolDao,
                 clusterDao,
-                new MacPoolFactory(),
+                macPoolFactory,
                 decoratedMacPoolFactory);
     }
 
