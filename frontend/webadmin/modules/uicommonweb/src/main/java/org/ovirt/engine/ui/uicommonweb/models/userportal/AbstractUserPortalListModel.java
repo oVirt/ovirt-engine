@@ -199,7 +199,6 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
         ArrayList<UserPortalItemModel> items = new ArrayList<>();
         for (Pair<Nameable, VM> item : vmOrPoolAndPoolRepresentants) {
             UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory);
-            model.setEntity(item.getFirst());
             items.add(model);
         }
 
