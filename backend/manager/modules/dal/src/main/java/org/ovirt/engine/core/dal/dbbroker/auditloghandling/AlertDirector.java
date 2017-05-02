@@ -22,16 +22,11 @@ public final class AlertDirector {
     }
 
     public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector) {
-        addVdsAlert(vdsId, type, auditLogDirector, new AuditLogableBase());
-    }
-
-    /**
-     * Adds an alert
-     */
-    public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector, AuditLogableBase alert) {
+        AuditLogable alert = new AuditLogableBase();
         alert.setVdsId(vdsId);
         alert(alert, type, auditLogDirector);
     }
+
     /**
      * Removes the alert.
      *
