@@ -36,13 +36,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -266,7 +266,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
             proxy.testConnection();
             updateCinderDomainStatus(storageDomainId, storagePoolId, StorageDomainStatus.Active);
         } catch (EngineException e) {
-            AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase());
+            AuditLogable loggable = new AuditLogableImpl();
             loggable.addCustomValue("CinderException", e.getCause().getCause() != null ?
                     e.getCause().getCause().getMessage() : e.getCause().getMessage());
             new AuditLogDirector().log(loggable, AuditLogType.CINDER_PROVIDER_ERROR);
