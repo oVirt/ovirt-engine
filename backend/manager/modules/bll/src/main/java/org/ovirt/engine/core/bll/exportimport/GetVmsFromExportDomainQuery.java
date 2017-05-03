@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryParameters>
@@ -46,9 +46,8 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
     }
 
     private void auditLogOvfLoadError(String machineName, String errorMessage) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        logable.addCustomValue("ImportedVmName", machineName);
-        logable.addCustomValue("ErrorMessage", errorMessage);
+        AuditLogable logable = new AuditLogableImpl();
+        logable.addCustomValue("ImportedVmName", machineName).addCustomValue("ErrorMessage", errorMessage);
         auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
     }
 }
