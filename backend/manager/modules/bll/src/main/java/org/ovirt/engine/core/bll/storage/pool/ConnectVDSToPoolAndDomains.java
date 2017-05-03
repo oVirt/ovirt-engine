@@ -15,15 +15,15 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOperation {
+public class ConnectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOperation {
 
-    private static final Logger log = LoggerFactory.getLogger(ConntectVDSToPoolAndDomains.class);
+    private static final Logger log = LoggerFactory.getLogger(ConnectVDSToPoolAndDomains.class);
 
     private Guid masterStorageDomainId;
 
     private List<StoragePoolIsoMap> storagePoolIsoMap;
 
-    public ConntectVDSToPoolAndDomains(List<VDS> vdss, StorageDomain domain, StoragePool storagePool) {
+    public ConnectVDSToPoolAndDomains(List<VDS> vdss, StorageDomain domain, StoragePool storagePool) {
         super(vdss, domain, storagePool);
         masterStorageDomainId = DbFacade.getInstance().getStorageDomainDao()
                 .getMasterStorageDomainIdForPool(getStoragePool().getId());

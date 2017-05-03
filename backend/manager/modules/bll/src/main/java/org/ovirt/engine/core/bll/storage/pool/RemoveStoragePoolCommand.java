@@ -379,7 +379,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     @Override
                     public ISingleAsyncOperation createSingleAsyncOperation() {
 
-                        return new ConntectVDSToPoolAndDomains(vdsList, masterDomain, storagePool);
+                        return new ConnectVDSToPoolAndDomains(vdsList, masterDomain, storagePool);
                     }
 
                     @Override
