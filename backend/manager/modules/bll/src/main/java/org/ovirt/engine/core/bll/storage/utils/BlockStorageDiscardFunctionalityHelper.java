@@ -23,12 +23,12 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.di.Injector;
 
 @Singleton
 public class BlockStorageDiscardFunctionalityHelper {
@@ -150,7 +150,7 @@ public class BlockStorageDiscardFunctionalityHelper {
         Collection<Guid> disksWithoutSupportForPassDiscard = multipleDiskVmElementValidator
                 .getDisksWithoutSupportForPassDiscard(diskIdToDestSdId);
         if (!disksWithoutSupportForPassDiscard.isEmpty()) {
-            AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
+            AuditLogable auditLog = new AuditLogableImpl();
             auditLog.addCustomValue("DisksIds", disksWithoutSupportForPassDiscard.stream()
                     .map(Guid::toString).collect(Collectors.joining(", ")));
             auditLogDirector.log(auditLog, AuditLogType.DISKS_WITH_ILLEGAL_PASS_DISCARD_EXIST);
@@ -208,7 +208,7 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     private void logLunsBrokeStorageDomainPassDiscardSupport(Collection<LUNs> lunsThatBreakSdPassDiscardSupport,
             Guid storageDomainId) {
-        AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable auditLog = new AuditLogableImpl();
         auditLog.setStorageDomainId(storageDomainId);
         auditLog.addCustomValue("LunsIds",
                 lunsThatBreakSdPassDiscardSupport.stream().map(LUNs::getLUNId).collect(Collectors.joining(", ")));
@@ -217,7 +217,7 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     private void logLunsBrokeStorageDomainDiscardAfterDeleteSupport(
             Collection<LUNs> lunsThatBreakSdDiscardAfterDeleteSupport, Guid storageDomainId) {
-        AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable auditLog = new AuditLogableImpl();
         auditLog.setStorageDomainId(storageDomainId);
         auditLog.addCustomValue("LunsIds", lunsThatBreakSdDiscardAfterDeleteSupport.stream()
                 .map(LUNs::getLUNId).collect(Collectors.joining(", ")));
