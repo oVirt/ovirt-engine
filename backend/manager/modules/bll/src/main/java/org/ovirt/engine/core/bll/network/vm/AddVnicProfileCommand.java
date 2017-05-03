@@ -43,7 +43,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.portMirroringNotSetIfExternalNetwork())
                 && validator.validateCustomProperties(getReturnValue().getValidationMessages())
-                && validate(validator.passthroughProfileContainsSupportedProperties(useDefaultNetworkFilterId))
+                && validate(validator.passthroughProfileContainsSupportedProperties())
                 && validate(validator.validUseDefaultNetworkFilterFlag(useDefaultNetworkFilterId))
                 && validate(validator.validNetworkFilterId());
     }
@@ -61,7 +61,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
     }
 
     private void updateDefaultNetworkFilterIfRequired() {
-        if (getParameters().isUseDefaultNetworkFiterId()) {
+        if (getParameters().isUseDefaultNetworkFiterId() && !getVnicProfile().isPassthrough()) {
             final NetworkFilter networkFilter = NetworkHelper.resolveVnicProfileDefaultNetworkFilter(networkFilterDao);
             if (networkFilter != null) {
                 final Guid networkFilterId = networkFilter.getId();
