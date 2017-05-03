@@ -1413,6 +1413,37 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeInterface(VmDevice device, VmNetworkInterface nic) {
+        //  <interface type="bridge">
+        //    <mac address="aa:bb:dd:dd:aa:bb"/>
+        //    <model type="virtio"/>
+        //    <source bridge="engine"/>
+        //    [<driver name="vhost/qemu" queues="int"/>]
+        //    [<filterref filter='filter name'>
+        //      [<parameter name='parameter name' value='parameter value'>]
+        //     </filterref>]
+        //    [<tune><sndbuf>0</sndbuf></tune>]
+        //     [<link state='up|down'/>]
+        //     [<bandwidth>
+        //       [<inbound average="int" [burst="int"]  [peak="int"]/>]
+        //       [<outbound average="int" [burst="int"]  [peak="int"]/>]
+        //      </bandwidth>]
+        //  </interface>
+        //
+        //  -- or -- a slightly different SR-IOV network interface
+        //  <interface type='hostdev' managed='no'>
+        //    <driver name='vfio'/>
+        //    <source>
+        //     <address type='pci' domain='0x0000' bus='0x00' slot='0x07'
+        //     function='0x0'/>
+        //    </source>
+        //    <mac address='52:54:00:6d:90:02'/>
+        //    <vlan>
+        //     <tag id=100/>
+        //    </vlan>
+        //    <address type='pci' domain='0x0000' bus='0x00' slot='0x07'
+        //    function='0x0'/>
+        //    <boot order='1'/>
+        //  </interface>
         writer.writeStartElement("interface");
 
         Map<String, String> properties = VmPropertiesUtils.getInstance().getVMProperties(
@@ -1430,9 +1461,9 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("link");
             writer.writeAttributeString("state", nic.isLinked() ? "up" : "down");
             writer.writeEndElement();
-            // TODO: OVS
+            // The source element looks different when using legacy or OVS bridge
             writer.writeStartElement("source");
-            writer.writeAttributeString("bridge", nic.getNetworkName());
+            writer.writeAttributeString("bridge", String.format("NIC-BRIDGE:%s", nic.getNetworkName()));
             writer.writeEndElement();
 
             break;
