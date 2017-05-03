@@ -115,7 +115,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     public void init() {
         super.init();
-        if (getParameters().getOperation() == ImageOperation.Copy) {
+        if (isCopyOperation()) {
             setVmTemplate(getTemplateForImage());
         }
     }
@@ -129,7 +129,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        addValidationMessage(getParameters().getOperation() == ImageOperation.Copy ?
+        addValidationMessage(isCopyOperation() ?
                         EngineMessage.VAR__ACTION__COPY
                         : EngineMessage.VAR__ACTION__MOVE);
         addValidationMessage(EngineMessage.VAR__TYPE__DISK);
@@ -155,7 +155,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean isSourceAndDestTheSame() {
-        if (getParameters().getOperation() == ImageOperation.Move
+        if (isMoveOperation()
                 && getParameters().getSourceDomainId().equals(getParameters().getStorageDomainId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
         }
@@ -172,7 +172,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean isImageNotLocked() {
         DiskImage diskImage = getImage();
         if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
-            if (getParameters().getOperation() == ImageOperation.Move) {
+            if (isMoveOperation()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED,
                         String.format("$%1$s %2$s", "diskAliases", diskImage.getDiskAlias()));
             } else {
@@ -191,8 +191,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * It is allow to move only if it is image of template
      */
     protected boolean checkOperationIsCorrect() {
-        if (getParameters().getOperation() == ImageOperation.Move
-                && getImage().getVmEntityType() != null && getImage().getVmEntityType().isTemplateType()) {
+        if (isMoveOperation() && getImage().getVmEntityType() != null && getImage().getVmEntityType().isTemplateType()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK,
                     String.format("$%1$s %2$s", "diskAliases", getImage().getDiskAlias()));
         }
@@ -206,7 +205,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         }
 
         // Validate shareable disks moving/copying
-        boolean moveOrCopy = getParameters().getOperation() == ImageOperation.Move || getParameters().getOperation() == ImageOperation.Copy;
+        boolean moveOrCopy = isMoveOperation() || isCopyOperation();
         if (moveOrCopy && getImage().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS ) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS,
                     String.format("$%1$s %2$s", "diskAlias", getImage().getDiskAlias()));
@@ -249,9 +248,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean checkIfNeedToBeOverride() {
-        if (isTemplate() &&
-                getParameters().getOperation() == ImageOperation.Copy &&
-                !getParameters().getForceOverride() &&
+        if (isTemplate() && isCopyOperation() && !getParameters().getForceOverride() &&
                 getImage().getStorageIds().contains(getStorageDomain().getId())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
         }
@@ -297,7 +294,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * it is based on template
      */
     protected boolean checkTemplateInDestStorageDomain() {
-        if (getParameters().getOperation() == ImageOperation.Move
+        if (isMoveOperation()
                 && !Guid.Empty.equals(getImage().getImageTemplateId())) {
             DiskImage templateImage = diskImageDao.get(getImage().getImageTemplateId());
             if (!templateImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
@@ -308,7 +305,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected VdcActionType getImagesActionType() {
-        if (getParameters().getOperation() == ImageOperation.Move) {
+        if (isMoveOperation()) {
             return VdcActionType.MoveImageGroup;
         }
         return VdcActionType.CopyImageGroup;
@@ -329,7 +326,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             getReturnValue().setFault(vdcRetValue.getFault());
         } else {
             setSucceeded(true);
-            if (getParameters().getOperation() == ImageOperation.Copy && !isTemplate()) {
+            if (isCopyOperation() && !isTemplate()) {
                 ImagesHandler.addDiskImageWithNoVmDevice(getImage());
             }
         }
@@ -351,7 +348,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean isUnregisteredDiskExistsForCopyTemplate() {
-        if (isTemplate() && getParameters().getOperation() == ImageOperation.Copy) {
+        if (isTemplate() && isCopyOperation()) {
             List<UnregisteredDisk> unregisteredDisks =
                     unregisteredDisksDao.getByDiskIdAndStorageDomainId(getImage().getId(),
                             getParameters().getStorageDomainId());
@@ -386,7 +383,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private void incrementDbGenerationForRelatedEntities() {
-        if (getParameters().getOperation() == ImageOperation.Copy) {
+        if (isCopyOperation()) {
             // When copying a non template disk the copy is to a new
             // floating disk, so no need to increment any generations.
             if (!isTemplate()) {
@@ -407,19 +404,19 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_DISK
+            return getSucceeded() ? (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK
                     : AuditLogType.USER_COPIED_DISK
-                    : (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_FAILED_MOVED_VM_DISK
+                    : (isMoveOperation()) ? AuditLogType.USER_FAILED_MOVED_VM_DISK
                             : AuditLogType.USER_FAILED_COPY_DISK;
 
         case END_SUCCESS:
-            return getSucceeded() ? (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_DISK_FINISHED_SUCCESS
+            return getSucceeded() ? (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK_FINISHED_SUCCESS
                     : AuditLogType.USER_COPIED_DISK_FINISHED_SUCCESS
-                    : (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
+                    : (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
                             : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
 
         default:
-            return (getParameters().getOperation() == ImageOperation.Move) ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
+            return (isMoveOperation()) ? AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE
                     : AuditLogType.USER_COPIED_DISK_FINISHED_FAILURE;
         }
     }
@@ -508,7 +505,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        if (getParameters().getOperation() == ImageOperation.Copy) {
+        if (isCopyOperation()) {
             if (!Guid.Empty.equals(getVmTemplateId())) {
                 return Collections.singletonMap(getVmTemplateId().toString(),
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getDiskIsBeingMigratedMessage()));
@@ -551,8 +548,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean validatePassDiscardSupportedForDestinationStorageDomain() {
-        if (ImageOperation.Move == getParameters().getOperation() ||
-                (ImageOperation.Copy == getParameters().getOperation() && isTemplate())) {
+        if (isMoveOperation() ||
+                (isCopyOperation() && isTemplate())) {
             MultipleDiskVmElementValidator multipleDiskVmElementValidator = createMultipleDiskVmElementValidator();
             return validate(multipleDiskVmElementValidator.isPassDiscardSupportedForDestSd(
                     getParameters().getStorageDomainId()));
@@ -571,7 +568,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 getParameters().getStorageDomainId(),
                 (double)getImage().getSizeInGigabytes()));
 
-        if (ImageOperation.Move == getParameters().getOperation()) {
+        if (isMoveOperation()) {
             if (getImage().getQuotaId() != null && !Guid.Empty.equals(getImage().getQuotaId())) {
                 list.add(new QuotaStorageConsumptionParameter(
                         getImage().getQuotaId(),
@@ -601,7 +598,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             jobProperties.put("sourcesd", sourceSDName);
             jobProperties.put("targetsd", getStorageDomainName());
             jobProperties.put("diskalias", getDiskAlias());
-            if (ImageOperation.Move == getParameters().getOperation()) {
+            if (isMoveOperation()) {
                 jobProperties.put("action", "Moving");
             } else {
                 jobProperties.put("action", "Copying");
@@ -621,5 +618,13 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected MultipleDiskVmElementValidator createMultipleDiskVmElementValidator() {
         return new MultipleDiskVmElementValidator(getImage(),
                 diskVmElementDao.getAllDiskVmElementsByDiskId(getParameters().getImageGroupID()));
+    }
+
+    private boolean isMoveOperation() {
+        return ImageOperation.Move == getParameters().getOperation();
+    }
+
+    private boolean isCopyOperation() {
+        return ImageOperation.Copy == getParameters().getOperation();
     }
 }
