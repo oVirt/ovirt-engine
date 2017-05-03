@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionPar
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -149,6 +152,11 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
     }
 
     protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters(VM vm) {
+        Set<Guid> diskIds =
+                vm.getDiskList().stream()
+                    .map(BaseDisk::getId)
+                    .collect(Collectors.toSet());
+
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(vm.getId(),
                 vm.getName() + getStorageDomain().getName() + DR_SNAPSHOT_NAME_SUFFIX,
                 false);
@@ -156,7 +164,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
         params.setParentCommand(getActionType());
         params.setSnapshotType(SnapshotType.REGULAR);
         params.setParentParameters(getParameters());
-        params.setDisks(vm.getDiskList());
+        params.setDiskIds(diskIds);
         params.setNeedsLocking(false);
         params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         return params;

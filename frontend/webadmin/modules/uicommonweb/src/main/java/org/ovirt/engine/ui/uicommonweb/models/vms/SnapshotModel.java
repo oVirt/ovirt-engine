@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -365,11 +367,16 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
         VM vm = getVm();
         ArrayList<VdcActionParametersBase> params = new ArrayList<>();
+        Set<Guid> snapshotDisksIds =
+                getSnapshotDisks().getSelectedItems().stream()
+                        .map(BaseDisk::getId)
+                        .collect(Collectors.toSet());
+
         CreateAllSnapshotsFromVmParameters param =
                 new CreateAllSnapshotsFromVmParameters(vm.getId(),
                         getDescription().getEntity(),
                         getMemory().getEntity(),
-                        getSnapshotDisks().getSelectedItems());
+                        snapshotDisksIds);
         param.setQuotaId(vm.getQuotaId());
         params.add(param);
 

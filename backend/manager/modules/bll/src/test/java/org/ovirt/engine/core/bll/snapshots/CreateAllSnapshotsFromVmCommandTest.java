@@ -8,6 +8,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -15,7 +16,9 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +32,7 @@ import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculatorImpl;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -64,6 +68,9 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
     private DiskImagesValidator diskImagesValidator;
 
     @Mock
+    private DiskExistenceValidator diskExistenceValidator;
+
+    @Mock
     private MultipleStorageDomainsValidator multipleStorageDomainsValidator;
 
     @Mock
@@ -85,6 +92,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
         doReturn(vmValidator).when(cmd).createVmValidator();
         doReturn(storagePoolValidator).when(cmd).createStoragePoolValidator();
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(anyList());
+        doReturn(diskExistenceValidator).when(cmd).createDiskExistenceValidator(anySet());
         doReturn(multipleStorageDomainsValidator).when(cmd).createMultipleStorageDomainsValidator(anyList());
         doReturn(memoryImageBuilder).when(cmd).getMemoryImageBuilder();
         doReturn(true).when(cmd).validateCinder();
@@ -264,15 +272,11 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
     @Test
     public void testImagesDoesNotExist() {
-        DiskImage diskImage1 = getNewDiskImage();
-        DiskImage diskImage2 = getNewDiskImage();
+        Set<Guid> guidsForDiskImages = new HashSet<>(Arrays.asList(Guid.newGuid(), Guid.newGuid()));
 
-        List<DiskImage> diskImagesFromParams = new ArrayList<>();
-        diskImagesFromParams.addAll(Arrays.asList(diskImage1, diskImage2));
-        cmd.getParameters().setDisks(diskImagesFromParams);
+        cmd.getParameters().setDiskIds(guidsForDiskImages);
 
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST)).when(diskImagesValidator)
-                .diskImagesNotExist();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST)).when(diskExistenceValidator).diskImagesNotExist();
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST);
     }

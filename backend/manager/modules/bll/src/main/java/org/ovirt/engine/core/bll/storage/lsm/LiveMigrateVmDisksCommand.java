@@ -218,19 +218,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                 ExecutionHandler.createInternalJobContext(getContext()));
     }
 
-    private List<DiskImage> getMovedDisks() {
-        Set<Guid> movedDiskIds = getMovedDiskIds();
-        List<DiskImage> disks = new ArrayList<>();
-
-        for (Guid diskId : movedDiskIds) {
-            DiskImage disk = new DiskImage();
-            disk.setId(diskId);
-            disks.add(disk);
-        }
-
-        return disks;
-    }
-
     protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters
                 (getParameters().getVmId(), StorageConstants.LSM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION, false);
@@ -240,7 +227,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         params.setParentParameters(getParameters());
         params.setImagesParameters(getParameters().getImagesParameters());
         params.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-        params.setDisks(getMovedDisks());
+        params.setDiskIds(getMovedDiskIds());
         params.setDiskIdsToIgnoreInChecks(getMovedDiskIds());
         params.setNeedsLocking(false);
         params.setEndProcedure(EndProcedure.COMMAND_MANAGED);

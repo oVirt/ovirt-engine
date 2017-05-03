@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ws.rs.core.Response;
 
@@ -20,6 +21,7 @@ import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.SnapshotMapper;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -56,7 +58,7 @@ public class BackendSnapshotsResource
             snapshotParams.setSaveMemory(snapshot.isPersistMemorystate());
         }
         if (snapshot.isSetDiskAttachments()) {
-            snapshotParams.setDisks(mapDisks(snapshot.getDiskAttachments()));
+            snapshotParams.setDiskIds(mapDisks(snapshot.getDiskAttachments()));
         }
         return performCreate(VdcActionType.CreateAllSnapshotsFromVm,
                                snapshotParams,
@@ -64,17 +66,18 @@ public class BackendSnapshotsResource
                                block);
     }
 
-    private List<DiskImage> mapDisks(DiskAttachments diskAttachments) {
-        List<DiskImage> diskImages = null;
+    private Set<Guid> mapDisks(DiskAttachments diskAttachments) {
+        Set<Guid> diskIds = null;
         if (diskAttachments.isSetDiskAttachments()) {
-            diskImages =
+            diskIds =
                     diskAttachments.getDiskAttachments().stream()
                             .map(DiskAttachment::getDisk)
                             .filter(Objects::nonNull)
                             .map(d -> (DiskImage) DiskMapper.map(d, null))
-                            .collect(Collectors.toList());
+                            .map(BaseDisk::getId)
+                            .collect(Collectors.toSet());
         }
-        return diskImages;
+        return diskIds;
     }
 
     public ArrayList<DiskImage> mapDisks(Disks disks) {

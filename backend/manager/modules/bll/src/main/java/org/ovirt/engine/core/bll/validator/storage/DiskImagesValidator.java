@@ -99,27 +99,6 @@ public class DiskImagesValidator {
     }
 
     /**
-     * Validates that the disks exists
-     *
-     * @return A {@link ValidationResult} with the validation information.
-     */
-    public ValidationResult diskImagesNotExist() {
-        List<String> disksNotExistInDbIds = new ArrayList<>();
-        for (DiskImage diskImage : diskImages) {
-            if (!isDiskExists(diskImage.getId())) {
-                disksNotExistInDbIds.add(diskImage.getId().toString());
-            }
-        }
-
-        if (!disksNotExistInDbIds.isEmpty()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST,
-                    String.format("$diskIds %s", StringUtils.join(disksNotExistInDbIds, ", ")));
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    /**
      * Validates that non of the disk are in the given {@link #status}.
      *
      * @param status

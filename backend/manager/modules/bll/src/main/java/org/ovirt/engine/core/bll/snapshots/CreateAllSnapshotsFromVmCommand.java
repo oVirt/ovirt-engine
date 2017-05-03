@@ -11,8 +11,10 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -41,6 +43,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskExistenceValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -82,6 +85,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -163,13 +167,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             List<DiskImage> imagesAndCinderForVm = getDiskImagesForVm();
 
             // Get disks from the specified parameters or according to the VM
-            if (getParameters().getDisks() == null) {
+            if (getParameters().getDiskIds() == null) {
                 cachedSelectedActiveDisks = imagesAndCinderForVm;
             }
             else {
                 // Get selected images from 'DiskImagesForVm' to ensure disks entities integrity
                 // (i.e. only images' IDs and Cinders' IDs are relevant).
-                cachedSelectedActiveDisks = ImagesHandler.imagesIntersection(imagesAndCinderForVm, getParameters().getDisks());
+                cachedSelectedActiveDisks = getDiskImagesForVm().stream()
+                        .filter(d -> getParameters().getDiskIds().contains(d.getId()))
+                        .collect(Collectors.toList());
             }
         }
         return cachedSelectedActiveDisks;
@@ -364,14 +370,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void fastForwardDisksToActiveSnapshot() {
-        if (getParameters().getDisks() != null) {
-            // Remove disks included in snapshot
-            List<DiskImage> diskImagesToUpdate = ImagesHandler.imagesSubtract(getDiskImagesForVm(), getParameters().getDisks());
-
+        if (getParameters().getDiskIds() != null) {
             // Fast-forward non-included disks to active snapshot
-            for (DiskImage diskImage : diskImagesToUpdate) {
-                imageDao.updateImageVmSnapshotId(diskImage.getImageId(), newActiveSnapshotId);
-            }
+            getDiskImagesForVm().stream()
+                    // Remove disks included in snapshot
+                    .filter(d -> !getParameters().getDiskIds().contains(d.getId()))
+                    .forEach(d -> imageDao.updateImageVmSnapshotId(d.getImageId(), newActiveSnapshotId));
         }
     }
 
@@ -649,7 +653,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             return false;
         }
 
-        if (!isSpecifiedDisksExist(getParameters().getDisks())) {
+        if (!isSpecifiedDisksExist(getParameters().getDiskIds())) {
             return false;
         }
 
@@ -691,6 +695,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return new DiskImagesValidator(disksList);
     }
 
+    protected DiskExistenceValidator createDiskExistenceValidator(Set<Guid> disksGuids) {
+        return Injector.injectMembers(new DiskExistenceValidator(disksGuids));
+    }
+
     protected VmValidator createVmValidator() {
         return new VmValidator(getVm());
     }
@@ -700,13 +708,13 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 validate(vmValidator.validateVmStatusUsingMatrix(VdcActionType.CreateAllSnapshotsFromVm));
     }
 
-    private boolean isSpecifiedDisksExist(List<DiskImage> disks) {
+    private boolean isSpecifiedDisksExist(Set<Guid> disks) {
         if (disks == null || disks.isEmpty()) {
             return true;
         }
 
-        DiskImagesValidator diskImagesValidator = createDiskImageValidator(disks);
-        if (!validate(diskImagesValidator.diskImagesNotExist())) {
+        DiskExistenceValidator diskExistenceValidator = createDiskExistenceValidator(disks);
+        if (!validate(diskExistenceValidator.diskImagesNotExist())) {
             return false;
         }
 

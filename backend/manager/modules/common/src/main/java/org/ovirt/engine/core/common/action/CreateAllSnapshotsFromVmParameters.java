@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import javax.validation.constraints.Size;
@@ -11,7 +10,6 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,7 +35,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     @JsonIgnore
     private Set<Guid> diskIdsToIgnoreInChecks;
 
-    private List<DiskImage> disks;
+    private Set<Guid> disks;
 
     public CreateAllSnapshotsFromVmParameters() {
         needsLocking = true;
@@ -58,9 +56,9 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
         this.saveMemory = saveMemory;
     }
 
-    public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory, List<DiskImage> disks) {
+    public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory, Set<Guid> diskIds) {
         this(vmId, description, saveMemory);
-        this.disks = disks;
+        this.disks = diskIds;
     }
 
     public String getDescription() {
@@ -102,11 +100,11 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
         this.diskIdsToIgnoreInChecks = diskIdsToIgnoreInChecks;
     }
 
-    public List<DiskImage> getDisks() {
+    public Set<Guid> getDiskIds() {
         return disks;
     }
 
-    public void setDisks(List<DiskImage> disks) {
-        this.disks = disks;
+    public void setDiskIds(Set<Guid> diskIds) {
+        this.disks = diskIds;
     }
 }
