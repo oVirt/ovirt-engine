@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 
 public class StorageDomainHelper {
 
@@ -23,8 +23,8 @@ public class StorageDomainHelper {
             long numOfLVs = DbFacade.getInstance().getStorageDomainDao().getNumberOfImagesInStorageDomain(storageDomainId);
             Integer maxNumOfLVs = Config.getValue(ConfigValues.AlertOnNumberOfLVs);
             if (numOfLVs >= maxNumOfLVs) {
-                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-                logable.addCustomValue("storageDomainName", domain.getStorageName());
+                AuditLogable logable = new AuditLogableImpl();
+                logable.setStorageDomainName(domain.getName());
                 logable.addCustomValue("maxNumOfLVs", maxNumOfLVs.toString());
                 logable.setStorageDomainId(storageDomainId);
                 new AuditLogDirector().log(logable, AuditLogType.NUMBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
