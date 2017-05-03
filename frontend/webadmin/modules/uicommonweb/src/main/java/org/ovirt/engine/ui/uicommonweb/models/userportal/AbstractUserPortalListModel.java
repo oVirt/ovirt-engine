@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -194,15 +193,10 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
     }
 
     private void finishSearch(List<Pair<Nameable, VM>> vmOrPoolAndPoolRepresentants) {
-        Collections.sort(vmOrPoolAndPoolRepresentants, new PairFirstComparator<>(new NameableComparator()));
-
-        ArrayList<UserPortalItemModel> items = new ArrayList<>();
-        for (Pair<Nameable, VM> item : vmOrPoolAndPoolRepresentants) {
-            UserPortalItemModel model = new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory);
-            items.add(model);
-        }
-
-        setItems(items);
+        setItems(vmOrPoolAndPoolRepresentants.stream()
+                .sorted(new PairFirstComparator<>(new NameableComparator()))
+                .map(item -> new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory))
+                .collect(Collectors.toList()));
 
         getSearchCompletedEvent().raise(this, EventArgs.EMPTY);
     }
