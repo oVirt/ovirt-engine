@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -243,10 +243,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
     @Override
     protected void logToAudit(){
-        AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase());
-        auditLogableBase.addCustomValue("CommandName", getCommandName());
-        auditLogableBase.addCustomValue("message", getReturnStatus().message);
+        AuditLogable logable = new AuditLogableImpl();
+        logable.addCustomValue("CommandName", getCommandName());
+        logable.addCustomValue("message", getReturnStatus().message);
 
-        auditLogDirector.log(auditLogableBase, AuditLogType.IRS_BROKER_COMMAND_FAILURE);
+        auditLogDirector.log(logable, AuditLogType.IRS_BROKER_COMMAND_FAILURE);
     }
 }
