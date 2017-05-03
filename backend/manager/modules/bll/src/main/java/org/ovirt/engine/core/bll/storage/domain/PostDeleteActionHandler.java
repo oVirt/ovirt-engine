@@ -10,10 +10,10 @@ import org.ovirt.engine.core.common.vdscommands.PostDeleteAction;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.di.Injector;
 
 @Singleton
 public class PostDeleteActionHandler {
@@ -72,7 +72,7 @@ public class PostDeleteActionHandler {
         if (storageDomain.isDiscardAfterDelete()) {
             if (!Boolean.TRUE.equals(storageDomain.getSupportsDiscard())) {
                 parameters.setDiscard(false);
-                AuditLogableBase auditLog = Injector.injectMembers(new AuditLogableBase());
+                AuditLogable auditLog = new AuditLogableImpl();
                 auditLog.setStorageDomainId(storageDomain.getId());
                 auditLogDirector.log(auditLog, AuditLogType.ILLEGAL_STORAGE_DOMAIN_DISCARD_AFTER_DELETE);
             }
