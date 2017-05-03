@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -125,8 +124,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (getImage() == null) {
             return null;
         }
-        Collection<VmTemplate> templates = vmTemplateDao.getAllForImage(getImage().getImageId()).values();
-        return !templates.isEmpty() ? templates.iterator().next() : null;
+        return vmTemplateDao.getAllForImage(getImage().getImageId()).values().stream().findAny().orElse(null);
     }
 
     @Override
@@ -396,10 +394,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             }
             vmStaticDao.incrementDbGeneration(getVmTemplateId());
         } else {
-            List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
-            for (Pair<VM, VmDevice> pair : vmsForDisk) {
-                vmStaticDao.incrementDbGeneration(pair.getFirst().getId());
-            }
+            getVmsWithVmDeviceInfoForDiskId().stream().forEach(p -> vmStaticDao.incrementDbGeneration(p.getFirst().getId()));
         }
     }
 
@@ -521,12 +516,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
             if (!vmsForDisk.isEmpty()) {
-                Map<String, Pair<String, String>> lockMap = new HashMap<>();
-                for (Pair<VM, VmDevice> pair : vmsForDisk) {
-                    lockMap.put(pair.getFirst().getId().toString(),
-                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage()));
-                }
-                return lockMap;
+                return vmsForDisk.stream()
+                        .collect(Collectors.toMap(p -> p.getFirst().getId().toString(),
+                                p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage())));
             }
         }
         return null;
