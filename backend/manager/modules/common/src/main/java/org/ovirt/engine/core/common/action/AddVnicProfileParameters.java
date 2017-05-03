@@ -26,7 +26,7 @@ public class AddVnicProfileParameters extends VnicProfileParameters {
         this.useDefaultNetworkFiterId = useDefaultNetworkFiterId;
     }
 
-    public boolean isUseDefaultNetworkFiterId() {
+    public boolean isUseDefaultNetworkFilterId() {
         return useDefaultNetworkFiterId;
     }
 }

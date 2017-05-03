@@ -34,7 +34,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
     @Override
     protected boolean validate() {
         VnicProfileValidator validator = createVnicProfileValidator();
-        boolean useDefaultNetworkFilterId = getParameters().isUseDefaultNetworkFiterId();
+        boolean useDefaultNetworkFilterId = getParameters().isUseDefaultNetworkFilterId();
 
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.networkExists())
@@ -61,7 +61,7 @@ public class AddVnicProfileCommand<T extends AddVnicProfileParameters> extends V
     }
 
     private void updateDefaultNetworkFilterIfRequired() {
-        if (getParameters().isUseDefaultNetworkFiterId() && !getVnicProfile().isPassthrough()) {
+        if (getParameters().isUseDefaultNetworkFilterId() && !getVnicProfile().isPassthrough()) {
             final NetworkFilter networkFilter = NetworkHelper.resolveVnicProfileDefaultNetworkFilter(networkFilterDao);
             if (networkFilter != null) {
                 final Guid networkFilterId = networkFilter.getId();
