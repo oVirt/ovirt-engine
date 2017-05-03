@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll.storage.disk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -205,10 +205,9 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     private LiveMigrateVmDisksParameters createLiveMigrateVmDisksParameters(List<MoveDiskParameters> moveDiskParamsList, Guid vmId) {
         // Create LiveMigrateDiskParameters list
-        List<LiveMigrateDiskParameters> liveMigrateDiskParametersList = new ArrayList<>();
-        for (MoveDiskParameters moveDiskParameters : moveDiskParamsList) {
-            liveMigrateDiskParametersList.add(createLiveMigrateDiskParameters(moveDiskParameters, vmId));
-        }
+        List<LiveMigrateDiskParameters> liveMigrateDiskParametersList = moveDiskParamsList.stream()
+                .map(moveDiskParameters -> createLiveMigrateDiskParameters(moveDiskParameters, vmId))
+                .collect(Collectors.toList());
 
         // Create LiveMigrateVmDisksParameters (multiple disks)
         LiveMigrateVmDisksParameters liveMigrateDisksParameters =
@@ -218,10 +217,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     }
 
     private ArrayList<VdcActionParametersBase> getParametersArrayList(List<? extends VdcActionParametersBase> parametersList) {
-        for (VdcActionParametersBase parameters : parametersList) {
-            parameters.setSessionId(getParameters().getSessionId());
-        }
-
+        parametersList.stream().forEach(p -> p.setSessionId(getParameters().getSessionId()));
         return new ArrayList<>(parametersList);
     }
 
@@ -240,12 +236,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     }
 
     private List<String> getDisksAliases(List<MoveDiskParameters> moveVmDisksParamsList) {
-        List<String> disksAliases = new LinkedList<>();
-        for (MoveDiskParameters moveDiskParameters : moveVmDisksParamsList) {
-            DiskImage diskImage = diskMap.get(moveDiskParameters.getImageId());
-            disksAliases.add(diskImage.getDiskAlias());
-        }
-        return disksAliases;
+        return moveVmDisksParamsList.stream().map(p -> diskMap.get(p.getImageId()).getDiskAlias()).collect(Collectors.toList());
     }
 
     @Override
