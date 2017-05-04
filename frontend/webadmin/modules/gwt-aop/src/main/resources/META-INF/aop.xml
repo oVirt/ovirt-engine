@@ -1,16 +1,14 @@
 <?xml version="1.0"?>
-
 <!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
-
 <aspectj>
 
   <weaver options="-verbose -XmessageHandlerClass:org.ovirt.engine.ui.gwtaop.AspectJLogHandler">
-    <include within="org.ovirt.engine.ui.gwtaop.DontPrune"/>
-    <include within="com.google.gwt.dev.jjs.impl.ControlFlowAnalyzer"/>
+    <include within="org.ovirt.engine.ui.gwtaop.DontPrune" />
+    <include within="com.google.gwt.dev.jjs.impl.ControlFlowAnalyzer" />
   </weaver>
 
   <aspects>
-    <aspect name="org.ovirt.engine.ui.gwtaop.DontPrune"/>
+    <aspect name="org.ovirt.engine.ui.gwtaop.DontPrune" />
   </aspects>
 
 </aspectj>
