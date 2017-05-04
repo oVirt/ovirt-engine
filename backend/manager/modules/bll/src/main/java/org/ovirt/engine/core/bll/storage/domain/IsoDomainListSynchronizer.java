@@ -220,7 +220,7 @@ public class IsoDomainListSynchronizer implements BackendService {
 
         // If refresh succeeded update the audit log
         if (refreshResult) {
-            addToAuditLogSuccessMessage(storageDomain.getStorageName(), imageType.name());
+            addToAuditLogSuccessMessage(storageDomain, imageType.name());
         }
 
         return refreshResult;
@@ -245,6 +245,8 @@ public class IsoDomainListSynchronizer implements BackendService {
                             AuditLogable logable = new AuditLogableImpl();
                             logable.addCustomValue("imageDomain", storageDomain.getName())
                                     .addCustomValue("imageListSize", String.valueOf(repoImages.size()));
+                            logable.setStorageDomainId(storageDomain.getId());
+                            logable.setStorageDomainName(storageDomain.getName());
                             auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE);
                         }
 
@@ -854,9 +856,11 @@ public class IsoDomainListSynchronizer implements BackendService {
     /**
      * Add audit log message when fetch encounter problems.
      */
-    private void addToAuditLogSuccessMessage(String IsoDomain, String imageType) {
+    private void addToAuditLogSuccessMessage(StorageDomain IsoDomain, String imageType) {
         AuditLogable logable = new AuditLogableImpl();
-        logable.addCustomValue("imageDomains", String.format("%s (%s file type)", IsoDomain, imageType));
+        logable.addCustomValue("imageDomains", String.format("%s (%s file type)", IsoDomain.getName(), imageType));
+        logable.setStorageDomainId(IsoDomain.getId());
+        logable.setStorageDomainName(IsoDomain.getName());
         auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
     }
 
