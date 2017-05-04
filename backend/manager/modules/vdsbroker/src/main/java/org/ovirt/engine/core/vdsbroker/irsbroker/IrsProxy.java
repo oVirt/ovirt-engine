@@ -402,8 +402,10 @@ public class IrsProxy {
                                         domain.getStoragePoolIsoMapData().getId(),
                                         StorageDomainStatus.Maintenance);
                                 AuditLogable logable = new AuditLogableImpl();
-                                logable.addCustomValue("StorageDomainName", domain.getName());
-                                logable.addCustomValue("StoragePoolName", pool.getName());
+                                logable.setStorageDomainId(domain.getId());
+                                logable.setStorageDomainName(domain.getName());
+                                logable.setStoragePoolId(pool.getId());
+                                logable.setStoragePoolName(pool.getName());
                                 new AuditLogDirector().log(logable, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
                             }
                             return null;
@@ -573,7 +575,9 @@ public class IrsProxy {
                     log.warn(logMessage);
 
                     AuditLogable logable = new AuditLogableImpl();
+                    logable.setVdsId(currentVdsId);
                     logable.setVdsName(vdsStaticDao.get(currentVdsId).getName());
+                    logable.setStorageDomainId(masterDomain.getId());
                     logable.setStorageDomainName(masterDomain.getName());
                     new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
 
