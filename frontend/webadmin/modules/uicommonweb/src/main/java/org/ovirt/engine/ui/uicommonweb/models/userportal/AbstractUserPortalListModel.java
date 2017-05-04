@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.PairFirstComparator;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.IconUtils;
@@ -123,22 +125,15 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
             return;
         }
 
+        // Count how many VMs were provided by each pool
+        Map<Guid, Long> vmsPerPool = vms.stream()
+                .filter(vm -> vm.getVmPoolId() != null)
+                .collect(Collectors.groupingBy(VM::getVmPoolId, Collectors.counting()));
+
         // Remove pools that has provided VMs.
-        final ArrayList<VmPool> filteredPools = new ArrayList<>();
-        for (VmPool pool : pools) {
-            // Add pool to map.
-
-            int attachedVmsCount = 0;
-            for (VM vm : vms) {
-                if (vm.getVmPoolId() != null && vm.getVmPoolId().equals(pool.getVmPoolId())) {
-                    attachedVmsCount++;
-                }
-            }
-
-            if (attachedVmsCount < pool.getMaxAssignedVmsPerUser()) {
-                filteredPools.add(pool);
-            }
-        }
+        final List<VmPool> filteredPools = pools.stream()
+                .filter(p -> p.getMaxAssignedVmsPerUser() < vmsPerPool.getOrDefault(p.getVmPoolId(), 0L))
+                .collect(Collectors.toList());
 
         final List<Pair<Nameable, VM>> vmPairs =
                 vms.stream().map(v -> new Pair<Nameable, VM>(v, null)).collect(Collectors.toList());
