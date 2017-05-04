@@ -10,7 +10,7 @@
   <artifactId>compat</artifactId>
   <packaging>jar</packaging>
 
-  <name>CSharp Compatibility</name>
+  <name>GWT UI Compatibility</name>
 
   <build>
     <plugins>
