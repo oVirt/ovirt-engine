@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -221,27 +222,25 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     void stubGetUserBySessionIdQuery() {
+        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        returnValue.setSucceeded(true);
+        returnValue.setReturnValue(mockUser);
+
         when(mockBackend.runQuery(
                 eq(VdcQueryType.GetUserBySessionId),
                 isA(VdcQueryParametersBase.class)
-        )).thenReturn(new VdcQueryReturnValue() {
-            {
-                setSucceeded(true);
-                setReturnValue(mockUser);
-            }
-        });
+        )).thenReturn(returnValue);
     }
 
     void stubGetConfigurationValuePublicQuery() {
+        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        returnValue.setSucceeded(true);
+        returnValue.setReturnValue("1.2.3"); //$NON-NLS-1$
+
         when(mockBackend.runPublicQuery(
                 eq(VdcQueryType.GetConfigurationValue),
                 argThat(configValueParams(ConfigurationValues.ProductRPMVersion))
-        )).thenReturn(new VdcQueryReturnValue() {
-            {
-                setSucceeded(true);
-                setReturnValue("1.2.3"); //$NON-NLS-1$
-            }
-        });
+        )).thenReturn(returnValue);
     }
 
     ArgumentMatcher<GetConfigurationValueParameters> configValueParams(final ConfigurationValues configValue) {
