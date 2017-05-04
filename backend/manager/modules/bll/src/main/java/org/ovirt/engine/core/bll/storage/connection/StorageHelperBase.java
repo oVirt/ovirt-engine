@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.LunDao;
-import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 
 public abstract class StorageHelperBase implements IStorageHelper {
@@ -173,7 +173,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,
             List<StorageServerConnections> connections, LUNs lun) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable logable = new AuditLogableImpl();
 
         String connectionField = getConnectionDescription(connections, connection) +
                 (lun == null ? "" : " (LUN " + lun.getLUNId() + ")");
@@ -239,7 +239,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     public static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable logable = new AuditLogableImpl();
         logable.addCustomValue("StorageDomainName", storageDomainName);
         logable.addCustomValue("VdsName", vdsName);
         new AuditLogDirector().log(logable, auditLogType);
