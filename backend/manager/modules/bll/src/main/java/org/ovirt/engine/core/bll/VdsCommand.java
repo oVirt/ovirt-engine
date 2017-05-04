@@ -30,7 +30,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -115,44 +117,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      *            Type of the log.
      */
     private void alert(AuditLogType logType) {
-        alert(logType, null);
-    }
-
-    /**
-     * Alerts the specified log type.
-     *
-     * @param logType
-     *            Type of the log.
-     * @param operation
-     *            Operation name.
-     */
-    private void alert(AuditLogType logType, String operation) {
-        AuditLogableBase alert = createAlert(operation);
-        AlertDirector.alert(alert, logType, auditLogDirector);
-    }
-
-    private AuditLogableBase createAlert(String operation) {
-        AuditLogableBase alert = new AuditLogableBase();
+        AuditLogable alert = new AuditLogableImpl();
         alert.setVdsName(getVds().getName());
-        String op = (operation == null) ? getActionType().name(): operation;
-        alert.addCustomValue("Operation", op);
-        return alert;
-    }
-
-    /**
-     * Alerts the specified log type.
-     *
-     * @param logType
-     *            Type of the log.
-     * @param operation
-     *            Operation name.
-     * @param throwable
-     *            Throwable object with exception details.
-     */
-    private void alert(AuditLogType logType, String operation, Throwable throwable) {
-        AuditLogableBase alert = createAlert(operation);
-        alert.updateCallStackFromThrowable(throwable);
-        AlertDirector.alert(alert, logType, auditLogDirector);
+        alert.setVdsId(getVds().getId());
+        auditLogDirector.log(alert, logType);
     }
 
     /**
@@ -170,11 +138,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             if (!vdsStatic.isPmEnabled()) {
                 alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
                 // remove any test failure alerts
-                AlertDirector.removeVdsAlert(vdsStatic.getId(),
-                        AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
+                AlertDirector.removeVdsAlert(vdsStatic.getId(), AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
             } else {
-                AlertDirector.removeVdsAlert(vdsStatic.getId(),
-                        AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
+                AlertDirector.removeVdsAlert(vdsStatic.getId(), AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             }
         }
     }
@@ -200,14 +166,13 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     /**
      * Alerts if power management operation skipped.
-     * @param operation The operation name.
      */
-    protected void alertIfPowerManagementOperationSkipped(String operation, Throwable throwable) {
-        alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED, operation, throwable);
+    protected void alertIfPowerManagementOperationSkipped() {
+        alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED);
     }
 
     protected void logSettingVmToDown(String vmName) {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogable logable = new AuditLogableBase();
         logable.setVdsName(getVds().getName());
         logable.setVmName(vmName);
         auditLogDirector.log(logable,

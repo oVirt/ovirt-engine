@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -177,7 +177,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
         mockExecutor(true);
         doNothing().when(command).teardown();
         command.executeCommand();
-        verify(auditLogDirector, times(2)).log(any(AuditLogableBase.class), any(AuditLogType.class));
+        verify(auditLogDirector, times(2)).log(any(AuditLogable.class), any(AuditLogType.class));
 
     }
 
@@ -195,7 +195,7 @@ public class StartVdsCommandTest extends BaseCommandTest {
             command.executeCommand();
             fail();
         } catch (EngineException ex) {
-            verify(auditLogDirector, times(3)).log(any(AuditLogableBase.class), any(AuditLogType.class));
+            verify(auditLogDirector, times(3)).log(any(AuditLogable.class), any(AuditLogType.class));
         }
     }
 }
