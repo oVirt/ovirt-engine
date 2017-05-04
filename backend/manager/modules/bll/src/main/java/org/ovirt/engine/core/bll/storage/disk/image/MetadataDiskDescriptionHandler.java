@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.utils.JsonHelper;
 
 public class MetadataDiskDescriptionHandler {
@@ -232,11 +232,11 @@ public class MetadataDiskDescriptionHandler {
     }
 
     private void auditLog(Map<String, String> customValues, AuditLogType auditLogType) {
-        AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable logable = new AuditLogableImpl();
         for (Map.Entry<String, String> customValue : customValues.entrySet()) {
-            auditLogableBase.addCustomValue(customValue.getKey(), customValue.getValue());
+            logable.addCustomValue(customValue.getKey(), customValue.getValue());
         }
-        getAuditLogDirector().log(auditLogableBase, auditLogType);
+        getAuditLogDirector().log(logable, auditLogType);
     }
 
     protected AuditLogDirector getAuditLogDirector() {
