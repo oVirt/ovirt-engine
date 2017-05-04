@@ -64,7 +64,8 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
             return runVdsCommand(VDSCommandType.GetVmsInfo, buildGetVmsInfoParameters(storage));
         } catch (RuntimeException e) {
             AuditLogable logable = new AuditLogableImpl();
-            logable.addCustomValue("StorageDomainName", storage.getStorageName());
+            logable.setStorageDomainId(storage.getId());
+            logable.setStorageDomainName(storage.getName());
             auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
             throw e;
         }
