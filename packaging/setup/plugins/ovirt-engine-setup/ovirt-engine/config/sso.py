@@ -92,7 +92,7 @@ class Plugin(plugin.PluginBase):
             )
         config = configfile.ConfigFile([
             oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
-            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_SSO
+            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
         ])
         if config.get('ENGINE_SSO_CLIENT_SECRET'):
             client_secret = config.get('ENGINE_SSO_CLIENT_SECRET')
