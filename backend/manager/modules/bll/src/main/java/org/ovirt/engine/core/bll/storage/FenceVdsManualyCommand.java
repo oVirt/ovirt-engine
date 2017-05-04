@@ -46,6 +46,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     private VdsDao vdsDao;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private AlertDirector alertDirector;
 
     private VDS problematicVds;
 
@@ -112,7 +114,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         }
         setSucceeded(true);
         // Remove all alerts except NOT CONFIG alert
-        AlertDirector.removeAllVdsAlerts(problematicVds.getId(), false);
+        alertDirector.removeAllVdsAlerts(problematicVds.getId(), false);
     }
 
     @Override

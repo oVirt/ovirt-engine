@@ -62,6 +62,8 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     protected GlusterDBUtils glusterDBUtils;
     @Inject
     private ProviderDao providerDao;
+    @Inject
+    private AlertDirector alertDirector;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -138,9 +140,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             if (!vdsStatic.isPmEnabled()) {
                 alert(AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
                 // remove any test failure alerts
-                AlertDirector.removeVdsAlert(vdsStatic.getId(), AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
+                alertDirector.removeVdsAlert(vdsStatic.getId(), AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
             } else {
-                AlertDirector.removeVdsAlert(vdsStatic.getId(), AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
+                alertDirector.removeVdsAlert(vdsStatic.getId(), AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
             }
         }
     }

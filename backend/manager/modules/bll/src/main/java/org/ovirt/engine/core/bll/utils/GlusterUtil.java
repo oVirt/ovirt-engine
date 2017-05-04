@@ -87,6 +87,9 @@ public class GlusterUtil {
     @Inject
     private GlusterDBUtils glusterDBUtils;
 
+    @Inject
+    private AlertDirector alertDirector;
+
     /**
      * Returns a server that is in {@link VDSStatus#Up} status.<br>
      * This server is chosen randomly from all the Up servers.
@@ -402,11 +405,11 @@ public class GlusterUtil {
 
     public void checkAndRemoveVolumeSnapshotLimitsAlert(final GlusterVolumeEntity volume) {
         if (!glusterDBUtils.isVolumeSnapshotSoftLimitReached(volume.getId())) {
-            AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED);
+            alertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED);
         }
 
         if (!glusterDBUtils.isVolumeSnapshotHardLimitReached(volume.getId())) {
-            AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_HARD_LIMIT_REACHED);
+            alertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_HARD_LIMIT_REACHED);
         }
     }
 

@@ -1,13 +1,20 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.AuditLogDao;
 
 /**
  * AlertDirector
  */
-public final class AlertDirector {
+@Singleton
+public class AlertDirector {
+
+    @Inject
+    private AuditLogDao auditLogDao;
 
     /**
      * Removes the alert.
@@ -17,8 +24,8 @@ public final class AlertDirector {
      * @param type
      *            The type.
      */
-    public static void removeVdsAlert(Guid vdsId, AuditLogType type) {
-        DbFacade.getInstance().getAuditLogDao().removeAllOfTypeForVds(vdsId, type.getValue());
+    public void removeVdsAlert(Guid vdsId, AuditLogType type) {
+        auditLogDao.removeAllOfTypeForVds(vdsId, type.getValue());
     }
 
     /**
@@ -28,8 +35,8 @@ public final class AlertDirector {
      * @param type
      *            The alert type
      */
-    public static void removeVolumeAlert(Guid volumeId, AuditLogType type) {
-        DbFacade.getInstance().getAuditLogDao().removeAllOfTypeForVolume(volumeId, type.getValue());
+    public void removeVolumeAlert(Guid volumeId, AuditLogType type) {
+        auditLogDao.removeAllOfTypeForVolume(volumeId, type.getValue());
     }
 
     /**
@@ -40,8 +47,8 @@ public final class AlertDirector {
      * @param removeConfigAlerts
      *            if set to <c>true</c> [remove config alerts].
      */
-    public static void removeAllVdsAlerts(Guid vdsId, boolean removeConfigAlerts) {
-        DbFacade.getInstance().getAuditLogDao().removeAllForVds(vdsId, removeConfigAlerts);
+    public void removeAllVdsAlerts(Guid vdsId, boolean removeConfigAlerts) {
+        auditLogDao.removeAllForVds(vdsId, removeConfigAlerts);
     }
 
     /**
@@ -52,7 +59,7 @@ public final class AlertDirector {
      * @param logtype
      *            The type.
      */
-    public static void removeAlertsByBrickIdLogType(Guid brickId, AuditLogType logtype) {
-        DbFacade.getInstance().getAuditLogDao().removeAllofTypeForBrick(brickId, logtype.getValue());
+    public void removeAlertsByBrickIdLogType(Guid brickId, AuditLogType logtype) {
+        auditLogDao.removeAllofTypeForBrick(brickId, logtype.getValue());
     }
 }

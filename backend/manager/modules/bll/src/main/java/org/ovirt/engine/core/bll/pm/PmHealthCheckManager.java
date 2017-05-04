@@ -55,6 +55,8 @@ public class PmHealthCheckManager implements BackendService {
     private AuditLogDirector auditLogDirector;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private AlertDirector alertDirector;
 
     /**
      * Initializes the PM Health Check Manager
@@ -157,7 +159,7 @@ public class PmHealthCheckManager implements BackendService {
     }
 
     private void removeAlert(Guid hostId, AuditLogType auditMessage) {
-        AlertDirector.removeVdsAlert(hostId, auditMessage);
+        alertDirector.removeVdsAlert(hostId, auditMessage);
     }
 
     private void addAlert(VDS host, AuditLogType auditMessage) {

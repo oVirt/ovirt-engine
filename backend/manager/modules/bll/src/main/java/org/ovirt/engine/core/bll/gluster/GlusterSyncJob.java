@@ -82,6 +82,8 @@ public class GlusterSyncJob extends GlusterJob {
     private BackendInternal backend;
     @Inject
     private GlusterDBUtils glusterDBUtils;
+    @Inject
+    private AlertDirector alertDirector;
 
     @Override
     public Collection<GlusterJobSchedulingDetails> getSchedulingDetails() {
@@ -1001,7 +1003,7 @@ public class GlusterSyncJob extends GlusterJob {
             logUtil.logAuditMessage(volume.getClusterId(), volume, null,
                 AuditLogType.GLUSTER_BRICK_STATUS_DOWN, brick.getId(), brick.getQualifiedName());
         }else if(fetchedStatus == GlusterStatus.UP){
-            AlertDirector.removeAlertsByBrickIdLogType(brick.getId(), AuditLogType.GLUSTER_BRICK_STATUS_DOWN);
+            alertDirector.removeAlertsByBrickIdLogType(brick.getId(), AuditLogType.GLUSTER_BRICK_STATUS_DOWN);
         }
     }
 
