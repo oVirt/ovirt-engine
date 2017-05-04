@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.config.Config;
@@ -31,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -171,12 +171,13 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED);
     }
 
-    protected void logSettingVmToDown(String vmName) {
-        AuditLogable logable = new AuditLogableBase();
+    protected void logSettingVmToDown(VM vm) {
+        AuditLogable logable = new AuditLogableImpl();
         logable.setVdsName(getVds().getName());
-        logable.setVmName(vmName);
-        auditLogDirector.log(logable,
-                AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
+        logable.setVdsId(getVds().getId());
+        logable.setVmName(vm.getName());
+        logable.setVmId(vm.getId());
+        auditLogDirector.log(logable, AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
     }
 
     /**
