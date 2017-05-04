@@ -57,7 +57,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -911,7 +910,7 @@ public class SchedulingManager implements BackendService {
                                 returnedFailedHosts.stream().map(VDS::getName).collect(Collectors.joining(", "));
 
                         logable.addCustomValue("Hosts", failedHostsStr);
-                        AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION, auditLogDirector);
+                        auditLogDirector.log(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
                         log.info("Cluster '{}' fail to pass HA reservation check.", cluster.getName());
                     }
 
@@ -925,7 +924,7 @@ public class SchedulingManager implements BackendService {
                     // Create Alert if the status was changed from false to true
                     if (!clusterHaStatusFromPreviousCycle && clusterHaStatus) {
                         AuditLogable logable = createEventForCluster(cluster);
-                        AlertDirector.alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN, auditLogDirector);
+                        auditLogDirector.log(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN);
                     }
                 }
             }

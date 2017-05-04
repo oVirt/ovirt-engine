@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
@@ -52,7 +53,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -383,13 +383,13 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                     if (!vdsProxyFound) {
                         this.addCustomValue("Reason",
                                 auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
-                        AlertDirector.alert(this, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                        auditLogDirector.log(this, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
                     } else if (!fenceSucceeded) {
                         this.addCustomValue("Reason", fenceStatusResult.getMessage());
-                        AlertDirector.alert(this, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
+                        auditLogDirector.log(this, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
                     }
                 } else {
-                    AlertDirector.alert(this, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
+                    auditLogDirector.log(this, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
                 }
             }
         }

@@ -10,24 +10,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public final class AlertDirector {
 
     /**
-     * Alerts the specified audit logable.
-     *
-     * @param auditLogable
-     *            The audit logable.
-     * @param logType
-     *            Type of the log.
-     */
-    public static void alert(AuditLogable auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector) {
-        auditLogDirector.log(auditLogable, logType);
-    }
-
-    public static void addVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector) {
-        AuditLogable alert = new AuditLogableBase();
-        alert.setVdsId(vdsId);
-        alert(alert, type, auditLogDirector);
-    }
-
-    /**
      * Removes the alert.
      *
      * @param vdsId
