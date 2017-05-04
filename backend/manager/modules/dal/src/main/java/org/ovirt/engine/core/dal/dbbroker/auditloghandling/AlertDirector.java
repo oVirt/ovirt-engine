@@ -47,9 +47,9 @@ public final class AlertDirector {
     /**
      * Removes the brick down alert.
      *
-     * @param vdsId
-     *            The VDS id.
-     * @param type
+     * @param brickId
+     *            The brick id.
+     * @param logtype
      *            The type.
      */
     public static void removeAlertsByBrickIdLogType(Guid brickId, AuditLogType logtype) {
