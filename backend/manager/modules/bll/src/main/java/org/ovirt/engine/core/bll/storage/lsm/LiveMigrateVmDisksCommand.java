@@ -486,4 +486,16 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         }
         return true;
     }
+
+    @Override
+    public void endWithFailure() {
+        setSucceeded(true);
+        if (getParameters().getStage() == LiveMigrateStage.CREATE_SNAPSHOT) {
+            ImagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(
+                    getMovedDiskIds(),
+                    ImageStatus.OK,
+                    ImageStatus.OK,
+                    getCompensationContext());
+        }
+    }
 }
