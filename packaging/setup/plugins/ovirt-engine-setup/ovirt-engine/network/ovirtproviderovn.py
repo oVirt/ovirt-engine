@@ -62,6 +62,7 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._manual_commands = []
+        self._failed_commands = []
 
     def _add_provider_to_db(self):
         auth_required = self._user is not None
@@ -253,12 +254,12 @@ class Plugin(plugin.PluginBase):
     def _execute_command(self, command, error_message):
         if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             rc, stdout, stderr = self.execute(
-                command
+                command,
+                raiseOnError=False
             )
             if rc != 0:
-                self.logger.error(
-                    error_message
-                )
+                self.logger.error(error_message)
+                self._failed_commands.append(command)
         else:
             self._manual_commands.append(command)
 
@@ -394,6 +395,19 @@ class Plugin(plugin.PluginBase):
             return
         self._setup_packages()
 
+    def _print_commands(self, message, commands):
+        self.dialog.note(
+            text='{message}\n   {commands}'.format(
+                message=message,
+                commands=(
+                    '\n    '.join(
+                        command
+                        for command in commands
+                    )
+                )
+            ),
+        )
+
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
@@ -490,20 +504,16 @@ class Plugin(plugin.PluginBase):
         )
     )
     def _print_restart_services_commands(self):
-        self.dialog.note(
-            text=_(
+        self._print_commands(
+            _(
                 'Some services were not restarted automatically \n'
                 'in developer mode and must be restarted manually.\n'
-                'Please execute the following commands to start them:\n'
-                '    {commands}'
-            ).format(
-                commands=(
-                    '\n    '.join(
-                        'systemctl restart ' + name
-                        for name in OvnEnv.ENGINE_MACHINE_OVN_SERVICES
-                    )
-                )
+                'Please execute the following commands to start them:'
             ),
+            [
+                'systemctl restart ' + name
+                for name in OvnEnv.ENGINE_MACHINE_OVN_SERVICES
+            ]
         )
 
     @plugin.event(
@@ -515,24 +525,37 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
         ),
         condition=lambda self: (
-            self._enabled and
-            self._manual_commands
+            self._enabled and (
+                self._manual_commands or
+                self._failed_commands
+            )
         ),
     )
     def _print_manual_commands(self):
-        self._manual_commands.append(('systemctl restart ' +
-                                      OvnEnv.OVN_NORTHD_SERVICE,))
-        self.dialog.note(
-            text=_(
-                'The following commands can not be executed in\n'
-                'developer mode. Please execute them as root:\n'
-                '    {commands}'
-            ).format(
-                commands='\n    '.join(' '.join(command)
-                                       for command
-                                       in self._manual_commands)
+        if self._manual_commands:
+            self._print_commands(
+                _(
+                    'The following commands can not be executed in\n'
+                    'developer mode. Please execute them as root:'
+                ),
+                [
+                    ' '.join(command)
+                    for command
+                    in self._manual_commands
+                ]
             )
-        )
+        if self._failed_commands:
+            self._print_commands(
+                _(
+                    'The following commands failed to execute.\n'
+                    'Please execute them manually as root:'
+                ),
+                [
+                    ' '.join(command)
+                    for command
+                    in self._failed_commands
+                    ]
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
