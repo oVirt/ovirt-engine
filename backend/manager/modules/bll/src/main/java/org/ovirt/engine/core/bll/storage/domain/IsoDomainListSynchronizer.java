@@ -856,11 +856,11 @@ public class IsoDomainListSynchronizer implements BackendService {
     /**
      * Add audit log message when fetch encounter problems.
      */
-    private void addToAuditLogSuccessMessage(StorageDomain IsoDomain, String imageType) {
+    private void addToAuditLogSuccessMessage(StorageDomain isoDomain, String imageType) {
         AuditLogable logable = new AuditLogableImpl();
-        logable.addCustomValue("imageDomains", String.format("%s (%s file type)", IsoDomain.getName(), imageType));
-        logable.setStorageDomainId(IsoDomain.getId());
-        logable.setStorageDomainName(IsoDomain.getName());
+        logable.addCustomValue("imageDomains", String.format("%s (%s file type)", isoDomain.getName(), imageType));
+        logable.setStorageDomainId(isoDomain.getId());
+        logable.setStorageDomainName(isoDomain.getName());
         auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
     }
 
