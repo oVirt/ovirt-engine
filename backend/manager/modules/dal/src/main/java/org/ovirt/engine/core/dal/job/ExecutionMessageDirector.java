@@ -6,7 +6,7 @@ import java.util.ResourceBundle;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,8 +26,6 @@ public class ExecutionMessageDirector {
      * The prefix of the step message in the properties file
      */
     protected static final String STEP_MESSAGE_PREFIX = "step.";
-
-    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     /**
      * A single instance of the {@code ExecutionMessageDirector}
@@ -162,7 +160,7 @@ public class ExecutionMessageDirector {
     public static String resolveJobMessage(VdcActionType actionType, Map<String, String> values) {
         String jobMessage = getInstance().getJobMessage(actionType);
         if (jobMessage != null) {
-            return auditLogDirector.resolveMessage(jobMessage, values);
+            return MessageResolver.resolveMessage(jobMessage, values);
         } else {
             return actionType.name();
         }
@@ -171,7 +169,7 @@ public class ExecutionMessageDirector {
     public static String resolveStepMessage(StepEnum stepName, Map<String, String> values) {
         String stepMessage = getInstance().getStepMessage(stepName);
         if (stepMessage != null) {
-            return auditLogDirector.resolveMessage(stepMessage, values);
+            return MessageResolver.resolveMessage(stepMessage, values);
         } else {
             return stepName.name();
         }

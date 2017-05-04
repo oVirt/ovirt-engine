@@ -11,16 +11,14 @@ import java.util.Map;
 
 import org.junit.Test;
 
-public class AuditLogDirectorTest {
-
-    private AuditLogDirector auditLogDirector = new AuditLogDirector();
+public class MessageResolverTest {
 
     @Test
     public void testResolveUnknownVariable() {
         final String message = "This is my ${Variable}";
-        final String expectedResolved = String.format("This is my %1s", AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
+        final String expectedResolved = String.format("This is my %1s", MessageResolver.UNKNOWN_VARIABLE_VALUE);
         Map<String, String> values = Collections.emptyMap();
-        String resolvedMessage = auditLogDirector.resolveMessage(message, values);
+        String resolvedMessage = MessageResolver.resolveMessage(message, values);
         assertEquals(expectedResolved, resolvedMessage);
     }
 
@@ -29,7 +27,7 @@ public class AuditLogDirectorTest {
         final String message = "This is my ${Variable}";
         final String expectedResolved = "This is my value";
         Map<String, String> values = Collections.singletonMap("variable", "value");
-        String resolvedMessage = auditLogDirector.resolveMessage(message, values);
+        String resolvedMessage = MessageResolver.resolveMessage(message, values);
         assertEquals(expectedResolved, resolvedMessage);
     }
 
@@ -39,12 +37,12 @@ public class AuditLogDirectorTest {
                 "${first} equals one, ${second} equals two, '${blank}' equals blank and ${nonExist} is unknown";
         final String expectedResolved =
                 String.format("one equals one, two equals two, ' ' equals blank and %1s is unknown",
-                        AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
+                        MessageResolver.UNKNOWN_VARIABLE_VALUE);
         Map<String, String> values = new HashMap<>();
         values.put("first", "one");
         values.put("second", "two");
         values.put("blank", " ");
-        String resolvedMessage = auditLogDirector.resolveMessage(message, values);
+        String resolvedMessage = MessageResolver.resolveMessage(message, values);
         assertEquals(expectedResolved, resolvedMessage);
     }
 
@@ -58,13 +56,13 @@ public class AuditLogDirectorTest {
                 String.format("The VM name is %1s, the VDS name is %2s and the template name is %3s",
                         vmName,
                         vdsName,
-                        AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
+                        MessageResolver.UNKNOWN_VARIABLE_VALUE);
 
         AuditLogableBase logable = mock(AuditLogableBase.class, RETURNS_DEFAULTS);
         when(logable.getVdsName()).thenReturn("TestVDS");
         when(logable.getVmName()).thenReturn("TestVM");
 
-        String resolvedMessage = auditLogDirector.resolveMessage(message, logable);
+        String resolvedMessage = MessageResolver.resolveMessage(message, logable);
         assertEquals(expectedResolved, resolvedMessage);
     }
 }
