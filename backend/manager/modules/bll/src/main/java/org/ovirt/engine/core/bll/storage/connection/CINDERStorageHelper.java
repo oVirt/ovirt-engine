@@ -69,7 +69,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         if (!isLibrbdAvailable(vds)) {
             log.error("Couldn't found librbd1 package on vds {} (needed for storage domain {}).",
                     vds.getName(), storageDomain.getName());
-            addMessageToAuditLog(AuditLogType.NO_LIBRBD_PACKAGE_AVAILABLE_ON_VDS, null, vds.getName());
+            addMessageToAuditLog(AuditLogType.NO_LIBRBD_PACKAGE_AVAILABLE_ON_VDS, null, vds);
             return new Pair<>(false, null);
         }
         return registerLibvirtSecrets(storageDomain, vds, libvirtSecrets);
@@ -145,8 +145,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
                 return new Pair<>(false, null);
             }
             if (!returnValue.getSucceeded()) {
-                addMessageToAuditLog(AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET,
-                        storageDomain.getName(), vds.getName());
+                addMessageToAuditLog(AuditLogType.FAILED_TO_REGISTER_LIBVIRT_SECRET, storageDomain, vds);
                 log.error("Failed to register libvirt secret for storage domain {} on vds {}.",
                         storageDomain.getName(), vds.getName());
                 EngineFault engineFault = new EngineFault();
@@ -167,16 +166,14 @@ public class CINDERStorageHelper extends StorageHelperBase {
                         VDSCommandType.UnregisterLibvirtSecrets,
                         new UnregisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecretsUuids));
             } catch (RuntimeException e) {
-                addMessageToAuditLog(AuditLogType.FAILED_TO_UNREGISTER_LIBVIRT_SECRET,
-                        storageDomain.getName(), vds.getName());
+                addMessageToAuditLog(AuditLogType.FAILED_TO_UNREGISTER_LIBVIRT_SECRET, storageDomain, vds);
                 log.error("Failed to unregister libvirt secret for storage domain {} on vds {}. Error: {}",
                         storageDomain.getName(), vds.getName(), e.getMessage());
                 log.debug("Exception", e);
                 return false;
             }
             if (!returnValue.getSucceeded()) {
-                addMessageToAuditLog(AuditLogType.FAILED_TO_UNREGISTER_LIBVIRT_SECRET,
-                        storageDomain.getName(), vds.getName());
+                addMessageToAuditLog(AuditLogType.FAILED_TO_UNREGISTER_LIBVIRT_SECRET, storageDomain, vds);
                 log.error("Failed to unregister libvirt secret for storage domain {} on vds {}.",
                         storageDomain.getName(), vds.getName());
                 return false;

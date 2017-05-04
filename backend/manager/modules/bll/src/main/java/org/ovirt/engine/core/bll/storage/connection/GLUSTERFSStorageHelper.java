@@ -38,7 +38,7 @@ public class GLUSTERFSStorageHelper extends BaseFsStorageHelper {
         if (!canVDSConnectToGlusterfs(vds)) {
             log.error("Couldn't find glusterfs-cli package on vds {} (needed for connecting storage domain {}).",
                     vds.getName(), storageDomain.getName());
-            StorageHelperBase.addMessageToAuditLog(AuditLogType.VDS_CANNOT_CONNECT_TO_GLUSTERFS, null, vds.getName());
+            StorageHelperBase.addMessageToAuditLog(AuditLogType.VDS_CANNOT_CONNECT_TO_GLUSTERFS, null, vds);
             return new Pair<>(false, null);
         }
 

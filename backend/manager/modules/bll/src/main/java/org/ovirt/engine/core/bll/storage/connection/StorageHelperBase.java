@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -238,10 +239,14 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return true;
     }
 
-    public static void addMessageToAuditLog(AuditLogType auditLogType, String storageDomainName, String vdsName){
+    public static void addMessageToAuditLog(AuditLogType auditLogType, StorageDomain storageDomain, VDS vds){
         AuditLogable logable = new AuditLogableImpl();
-        logable.addCustomValue("StorageDomainName", storageDomainName);
-        logable.addCustomValue("VdsName", vdsName);
+        logable.setVdsId(vds.getId());
+        logable.setVdsName(vds.getName());
+        if (storageDomain != null) {
+            logable.setStorageDomainId(storageDomain.getId());
+            logable.setStorageDomainName(storageDomain.getName());
+        }
         new AuditLogDirector().log(logable, auditLogType);
     }
 
