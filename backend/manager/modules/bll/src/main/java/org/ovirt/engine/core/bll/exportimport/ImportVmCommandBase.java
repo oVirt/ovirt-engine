@@ -58,14 +58,14 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -439,10 +439,11 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
     }
 
-    private AuditLogableBase createExternalMacsAuditLog(VM vm, Set<String> externalMacs) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+    private AuditLogable createExternalMacsAuditLog(VM vm, Set<String> externalMacs) {
+        AuditLogable logable = new AuditLogableImpl();
         logable.setVmId(vm.getId());
-        logable.setCustomCommaSeparatedValues("MACAddr", externalMacs);
+        logable.setVmName(vm.getName());
+        logable.addCustomValue("MACAddr", externalMacs.stream().collect(Collectors.joining(", ")));
         return logable;
     }
 
