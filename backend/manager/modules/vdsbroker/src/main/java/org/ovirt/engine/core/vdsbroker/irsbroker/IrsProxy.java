@@ -68,7 +68,8 @@ import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -77,6 +78,7 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -139,6 +141,9 @@ public class IrsProxy {
 
     @Inject
     private VdsDao vdsDao;
+
+    @Inject
+    private VdsStaticDao vdsStaticDao;
 
     @Inject
     private StorageDomainDao storageDomainDao;
@@ -396,10 +401,10 @@ public class IrsProxy {
                                 storagePoolIsoMapDao.updateStatus(
                                         domain.getStoragePoolIsoMapData().getId(),
                                         StorageDomainStatus.Maintenance);
-                                AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase());
-                                auditLogableBase.addCustomValue("StorageDomainName", domain.getName());
-                                auditLogableBase.addCustomValue("StoragePoolName", pool.getName());
-                                new AuditLogDirector().log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
+                                AuditLogable logable = new AuditLogableImpl();
+                                logable.addCustomValue("StorageDomainName", domain.getName());
+                                logable.addCustomValue("StoragePoolName", pool.getName());
+                                new AuditLogDirector().log(logable, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
                             }
                             return null;
                         });
@@ -437,7 +442,7 @@ public class IrsProxy {
                 // and the domain is not master in the VDSM
                 if (!((domainFromVdsm.getStorageDomainType() == StorageDomainType.Master) || (domainFromVdsm.getStorageDomainType() == StorageDomainType.Unknown))) {
                     reconstructMasterDomainNotInSync(domainFromVdsm.getStoragePoolId(),
-                            domainFromDb.getId(),
+                            domainFromDb,
                             "Mismatch between master in DB and VDSM",
                             MessageFormat.format("Master domain is not in sync between DB and VDSM. "
                                     + "Domain {0} marked as master in DB and not in the storage",
@@ -446,7 +451,7 @@ public class IrsProxy {
                   // mismatch
                 else if (dataMasterVersion != storagePool.getMasterDomainVersion()) {
                     reconstructMasterDomainNotInSync(domainFromVdsm.getStoragePoolId(),
-                            domainFromDb.getId(),
+                            domainFromDb,
                             "Mismatch between master version in DB and VDSM",
                             MessageFormat.format("Master domain version is not in sync between DB and VDSM. "
                                     + "Domain {0} marked as master, but the version in DB: {1} and in VDSM: {2}",
@@ -505,9 +510,8 @@ public class IrsProxy {
                     }
 
                     if (type != AuditLogType.UNASSIGNED) {
-                        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-                        logable.setStorageDomain(domainFromVdsm);
-                        logable.setStoragePoolId(_storagePoolId);
+                        AuditLogable logable = new AuditLogableImpl();
+                        logable.setStorageDomainName(domainFromDb.getStorageName());
                         logable.addCustomValue("DiskSpace", domainFromVdsm.getAvailableDiskSize().toString());
                         domainFromVdsm.setStorageName(domainFromDb.getStorageName());
                         new AuditLogDirector().log(logable, type);
@@ -518,10 +522,9 @@ public class IrsProxy {
                 Set<EngineError> alerts = domainFromVdsm.getAlerts();
                 if (alerts != null && !alerts.isEmpty()) {
 
-                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-                    logable.setStorageDomain(domainFromVdsm);
+                    AuditLogable logable = new AuditLogableImpl();
+                    logable.setStorageDomainName(domainFromDb.getStorageName());
                     domainFromVdsm.setStorageName(domainFromDb.getStorageName());
-                    logable.setStoragePoolId(_storagePoolId);
 
                     for (EngineError alert : alerts) {
                         switch (alert) {
@@ -552,28 +555,29 @@ public class IrsProxy {
      *
      * @param storagePoolId
      *            The storage pool id.
-     * @param masterDomainId
-     *            The master domain id.
+     * @param masterDomain
+     *            The master domain.
      * @param exceptionMessage
      *            The message of the exception to throw.
      * @param logMessage
      *            The log message to write in the log.
      */
     private void reconstructMasterDomainNotInSync(final Guid storagePoolId,
-            final Guid masterDomainId,
+            final StorageDomainStatic masterDomain,
             final String exceptionMessage,
             final String logMessage) {
 
         getEventQueue().submitEventSync(new Event(_storagePoolId,
-                masterDomainId, null, EventType.RECONSTRUCT, "Reconstruct caused by failure to execute spm command"),
+                masterDomain.getId(), null, EventType.RECONSTRUCT, "Reconstruct caused by failure to execute spm command"),
                 () -> {
                     log.warn(logMessage);
 
-                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(currentVdsId));
-                    logable.setStorageDomainId(masterDomainId);
+                    AuditLogable logable = new AuditLogableImpl();
+                    logable.setVdsName(vdsStaticDao.get(currentVdsId).getName());
+                    logable.setStorageDomainName(masterDomain.getName());
                     new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
 
-                    return getEventListener().masterDomainNotOperational(masterDomainId, storagePoolId, false, true);
+                    return getEventListener().masterDomainNotOperational(masterDomain.getId(), storagePoolId, false, true);
 
                 });
         throw new IRSNoMasterDomainException(exceptionMessage);
@@ -873,7 +877,8 @@ public class IrsProxy {
             setFencedIrs(null);
             returnValue = selectedVds.argvalue.getHostName();
             log.info("Initialize Irs proxy from vds: {}", returnValue);
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(selectedVds.argvalue.getId()));
+            AuditLogable logable = new AuditLogableImpl();
+            logable.setVdsName(selectedVds.argvalue.getHostName());
             logable.addCustomValue("ServerIp", returnValue);
             new AuditLogDirector().log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
         }
@@ -1244,12 +1249,13 @@ public class IrsProxy {
         // and are contained in the Active or
         // Unknown domains in pool
         for (VDSDomainsData tempData : data) {
+            StorageDomainStatic storageDomain = storageDomainStaticDao.get(tempData.getDomainId());
             if (activeDomainsInPool.contains(tempData.getDomainId()) || unknownDomainsInPool.contains(tempData.getDomainId())) {
                 DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, false);
                 if (domainMonitoringResult.invalidAndActual()) {
                     domainsProblematicReportInfo.put(tempData.getDomainId(), domainMonitoringResult);
                 } else if (domainMonitoringResult.actual() && tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
-                    logDelayedDomain(vdsId, tempData);
+                    logDelayedDomain(vdsName, storageDomain.getName(), tempData.getDelay());
                 }
             }
 
@@ -1265,7 +1271,6 @@ public class IrsProxy {
                 storagePoolIsoMapDao.update(map);
 
                 // For block domains, synchronize LUN details comprising the storage domain with the DB
-                StorageDomain storageDomain = storageDomainDao.get(tempData.getDomainId());
                 if (storageDomain.getStorageType().isBlockDomain()) {
                     getEventListener().syncLunsInfoForBlockStorageDomain(storageDomain.getId(), vdsId);
                 }
@@ -1287,12 +1292,11 @@ public class IrsProxy {
                 });
     }
 
-    private void logDelayedDomain(final Guid vdsId, VDSDomainsData tempData) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        logable.setVdsId(vdsId);
-        logable.setStorageDomainId(tempData.getDomainId());
-        logable.addCustomValue("Delay",
-                Double.toString(tempData.getDelay()));
+    private void logDelayedDomain(String vdsName, String domainName, double delay) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsName(vdsName);
+        logable.setStorageDomainName(domainName);
+        logable.addCustomValue("Delay", Double.toString(delay));
         new AuditLogDirector().log(logable,
                 AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
     }
