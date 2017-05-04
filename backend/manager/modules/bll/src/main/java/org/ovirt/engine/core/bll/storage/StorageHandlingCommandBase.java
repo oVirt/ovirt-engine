@@ -66,7 +66,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -79,7 +80,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
@@ -592,8 +592,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                     break;
                 }
             }
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+            AuditLogable logable = new AuditLogableImpl();
             logable.setStorageDomainId(storageDomainId);
+            logable.setStorageDomainName(storageDomainStaticDao.get(storageDomainId).getName());
             auditLogDirector.log(logable, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
         } else {
             log.warn("There are no OVF_STORE disks on storage domain id {}", storageDomainId);
