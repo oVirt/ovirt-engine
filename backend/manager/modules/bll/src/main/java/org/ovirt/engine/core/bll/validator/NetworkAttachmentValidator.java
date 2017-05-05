@@ -19,6 +19,7 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class NetworkAttachmentValidator {
@@ -120,7 +121,7 @@ public class NetworkAttachmentValidator {
     }
 
     private boolean validBootProtocolForRoleNetwork() {
-        if (!isRoleNetwork()) {
+        if (!NetworkUtils.isRoleNetwork(getNetworkCluster())) {
             return true;
         }
 
@@ -148,12 +149,6 @@ public class NetworkAttachmentValidator {
     private boolean hasIpv4BootProtocol(IpConfiguration ipConfiguration) {
         return ipConfiguration.hasIpv4PrimaryAddressSet()
                 && (ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() != Ipv4BootProtocol.NONE);
-    }
-
-    protected boolean isRoleNetwork() {
-        return getNetworkCluster().isDisplay() ||
-                getNetworkCluster().isMigration() ||
-                getNetworkCluster().isGluster();
     }
 
     public ValidationResult nicNameIsSet() {

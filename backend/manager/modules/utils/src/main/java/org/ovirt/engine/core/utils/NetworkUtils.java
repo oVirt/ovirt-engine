@@ -216,7 +216,10 @@ public final class NetworkUtils {
      * @return whether the network has a role (display, migration or gluster) in the cluster
      */
     public static boolean isRoleNetwork(NetworkCluster networkCluster) {
-        return networkCluster.isDisplay() || networkCluster.isMigration() || networkCluster.isGluster();
+        return networkCluster.isDisplay()
+                || networkCluster.isMigration()
+                || networkCluster.isGluster()
+                || networkCluster.isDefaultRoute();
     }
 
     public static IpConfiguration createIpConfigurationFromVdsNetworkInterface(VdsNetworkInterface nic) {
