@@ -274,10 +274,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         );
     }
 
-    protected boolean validateNetworkProviderProperties(Guid providerId, String networkMappings) {
+    protected boolean validateOpenstackNetworkProviderProperties(Guid providerId, String networkMappings) {
         NetworkProviderValidator validator = new NetworkProviderValidator(providerDao.get(providerId));
         return validate(validator.providerIsSet())
-                && validate(validator.providerTypeValid())
+                && validate(validator.providerTypeIsOpenstack())
                 && validate(validator.networkMappingsProvided(networkMappings))
                 && validate(validator.messagingBrokerProvided());
     }

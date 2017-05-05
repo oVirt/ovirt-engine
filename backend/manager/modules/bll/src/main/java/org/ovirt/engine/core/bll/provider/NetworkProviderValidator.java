@@ -54,7 +54,7 @@ public class NetworkProviderValidator extends ProviderValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult providerTypeValid() {
+    public ValidationResult providerTypeIsOpenstack() {
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH)
                 .when(provider.getType() != ProviderType.OPENSTACK_NETWORK);
     }

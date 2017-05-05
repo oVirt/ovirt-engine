@@ -338,7 +338,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
 
         if (params.getVdsStaticData().getOpenstackNetworkProviderId() != null
-                && !validateNetworkProviderProperties(params.getVdsStaticData().getOpenstackNetworkProviderId(),
+                && !validateOpenstackNetworkProviderProperties(
+                        params.getVdsStaticData().getOpenstackNetworkProviderId(),
                         params.getNetworkMappings())) {
             return false;
         }

@@ -135,7 +135,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private boolean validateNetworkProviderConfiguration() {
         return !getParameters().isInstallHost()
                 || getParameters().getVdsStaticData().getOpenstackNetworkProviderId() == null
-                || validateNetworkProviderProperties(getParameters().getVdsStaticData().getOpenstackNetworkProviderId(),
+                || validateOpenstackNetworkProviderProperties(
+                        getParameters().getVdsStaticData().getOpenstackNetworkProviderId(),
                         getParameters().getNetworkMappings());
     }
 
