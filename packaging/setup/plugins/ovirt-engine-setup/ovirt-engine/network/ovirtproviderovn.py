@@ -339,6 +339,11 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
             'ssl_enabled':
                 'true',
+            'ovn-remote':
+                '%s:127.0.0.1:%s' % (
+                    self.OVN_NORTH_DB_CONFIG.protocol,
+                    self.OVN_NORTH_DB_CONFIG.port,
+                ),
         }
         if os.path.exists(
             oenginecons.OvnFileLocations.OVIRT_PROVIDER_CONFIG_FILE
