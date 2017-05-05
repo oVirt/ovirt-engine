@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -34,7 +33,7 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
         setHelpTag(HelpTag.clusters);
         setHashName("clusters"); //$NON-NLS-1$
-        setComparator(new PairFirstComparator<Cluster, NetworkCluster>(new NameableComparator()));
+        setComparator(Comparator.comparing(PairQueryable::getFirst, new NameableComparator()));
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
     }
 

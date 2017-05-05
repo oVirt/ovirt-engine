@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
@@ -189,7 +189,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
 
     private void finishSearch(List<Pair<Nameable, VM>> vmOrPoolAndPoolRepresentants) {
         setItems(vmOrPoolAndPoolRepresentants.stream()
-                .sorted(new PairFirstComparator<>(new NameableComparator()))
+                .sorted(Comparator.comparing(Pair::getFirst, new NameableComparator()))
                 .map(item -> new UserPortalItemModel(item.getFirst(), item.getSecond(), consolesFactory))
                 .collect(Collectors.toList()));
 

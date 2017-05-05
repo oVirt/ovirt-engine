@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class SizeConverter {
@@ -42,7 +42,7 @@ public class SizeConverter {
             for (SizeUnit unit : SizeUnit.values()) {
                 weightToUnit.add(new Pair<>(unit.getUnitWeight(), unit));
             }
-            Collections.sort(weightToUnit, new PairFirstComparator<Long, SizeUnit>(Collections.<Long> reverseOrder()));
+            weightToUnit.sort(Comparator.comparing(Pair::getFirst, Comparator.reverseOrder()));
         }
 
         public long getUnitWeight() {

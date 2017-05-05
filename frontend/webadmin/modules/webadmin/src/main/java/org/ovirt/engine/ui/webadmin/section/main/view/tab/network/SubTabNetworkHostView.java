@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.utils.PairFirstComparator;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -129,7 +128,6 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                     return (object.getFirst() == null || object.getFirst().getNetworkImplementationDetails().isInSync()) ? null
                             : resources.networkNotSyncImage();
                 }
-
             };
 
 
@@ -272,7 +270,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private void initSorting() {
         hostStatus.makeSortable();
         nameColumn.makeSortable();
-        hostOutOfSync.makeSortable(new PairFirstComparator<>(Comparator.comparing(i -> i != null && i.getNetworkImplementationDetails().isInSync())));
+        hostOutOfSync.makeSortable(Comparator.<PairQueryable<VdsNetworkInterface, VDS>, VdsNetworkInterface> comparing(PairQueryable::getFirst, Comparator.<VdsNetworkInterface, Boolean> comparing(i -> i != null && i.getNetworkImplementationDetails().isInSync())));
 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
