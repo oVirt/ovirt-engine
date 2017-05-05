@@ -4,6 +4,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
@@ -19,7 +21,7 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testEmptyDomainList() {
+    public void emptyDomainList() {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
         List<StorageDomain> domainsList = new ArrayList<>();
@@ -27,103 +29,34 @@ public class RemoveStoragePoolCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testMaintenanceDomainInList() {
+    public void onlyMaintenanceDomainInList() {
         StoragePoolParametersBase param = new StoragePoolParametersBase();
         RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<>();
-        StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(StorageDomainStatus.Maintenance);
-        domainsList.add(tempStorageDomains);
-        assertTrue(cmd.validateDomainsInMaintenance(domainsList));
+        assertTrue(cmd.validateDomainsInMaintenance(createSingleDomainList(StorageDomainStatus.Maintenance)));
     }
 
-    /**
-     * Test when Active domain is in the Data Center
-     */
     @Test
-    public void testActiveDomainInList() {
-        StoragePoolParametersBase param = new StoragePoolParametersBase();
-        RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<>();
-        StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(StorageDomainStatus.Active);
-        domainsList.add(tempStorageDomains);
-        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
+    public void allButMaintenance() {
+        Arrays.stream(StorageDomainStatus.values())
+                .filter(s -> s != StorageDomainStatus.Maintenance)
+                .forEach(s -> {
+                    StoragePoolParametersBase param = new StoragePoolParametersBase();
+                    RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
+                    List<StorageDomain> domainsList = createSingleDomainList(s);
+                    domainsList.add(createDomain(StorageDomainStatus.Maintenance));
+                    assertFalse(cmd.validateDomainsInMaintenance(domainsList));
+                });
     }
 
-    private void testBusyDomainInList(StorageDomainStatus status) {
-        StoragePoolParametersBase param = new StoragePoolParametersBase();
-        RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<>();
-        StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(status);
-        domainsList.add(tempStorageDomains);
-        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
+    private List<StorageDomain> createSingleDomainList(StorageDomainStatus status) {
+        List<StorageDomain> domains = new LinkedList<>();
+        domains.add(createDomain(status));
+        return domains;
     }
 
-    /**
-     * Test removal with locked domain in the Data Center.
-     */
-    @Test
-    public void testLockedDomainInList() {
-        testBusyDomainInList(StorageDomainStatus.Locked);
-    }
-
-    /**
-     * Test removal with moving to maintenance domain in the Data Center.
-     */
-    @Test
-    public void testPreparingForMaintenanceDomainInList() {
-        testBusyDomainInList(StorageDomainStatus.PreparingForMaintenance);
-    }
-
-    private void testBusyAndActiveDomainInList(StorageDomainStatus status) {
-        StoragePoolParametersBase param = new StoragePoolParametersBase();
-        RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<>();
-
-        // Add first locked storage
-        StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(status);
-        domainsList.add(tempStorageDomains);
-
-        // Add second active storage
-        tempStorageDomains.setStatus(StorageDomainStatus.Active);
-        domainsList.add(tempStorageDomains);
-
-        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
-    }
-
-    /**
-     * Test removal with locked and active domains in the Data Center.
-     */
-    @Test
-    public void testLockedAndActiveDomainInList() {
-        testBusyAndActiveDomainInList(StorageDomainStatus.Locked);
-    }
-
-    /**
-     * Test removal with moving to maintenance and active domains in the Data Center.
-     */
-    @Test
-    public void testPreparingForMaintenanceAndActiveDomainInList() {
-        testBusyAndActiveDomainInList(StorageDomainStatus.PreparingForMaintenance);
-    }
-
-    /**
-     * Test when there is in active domain.
-     */
-    @Test
-    public void testInactiveDomainInList() {
-        StoragePoolParametersBase param = new StoragePoolParametersBase();
-        RemoveStoragePoolCommand<StoragePoolParametersBase> cmd = createCommand(param);
-        List<StorageDomain> domainsList = new ArrayList<>();
-
-        // Add first locked storage
-        StorageDomain tempStorageDomains = new StorageDomain();
-        tempStorageDomains.setStatus(StorageDomainStatus.Inactive);
-        domainsList.add(tempStorageDomains);
-
-        assertFalse(cmd.validateDomainsInMaintenance(domainsList));
+    private StorageDomain createDomain(StorageDomainStatus status) {
+        StorageDomain domain = new StorageDomain();
+        domain.setStatus(status);
+        return domain;
     }
 }
