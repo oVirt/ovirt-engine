@@ -23,6 +23,9 @@ import gettext
 import os
 import uuid
 
+
+from collections import namedtuple
+
 from M2Crypto import RSA
 
 from otopi import constants as otopicons
@@ -31,6 +34,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine import configfile
+
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -45,6 +49,18 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+OvnDbConfig = namedtuple(
+    'OvnDbConfig',
+    [
+        'port',
+        'protocol',
+        'command',
+        'key_file',
+        'cert_file'
+    ]
+)
+
+
 @util.export
 class Plugin(plugin.PluginBase):
     """ovirt-provider-ovn plugin."""
@@ -56,8 +72,25 @@ class Plugin(plugin.PluginBase):
         'python-openvswitch',
         'ovirt-provider-ovn',
     )
-    OVN_NDB_PORT = '6641'
-    OVN_SDB_PORT = '6642'
+
+    CONNECTION_TCP = 'tcp'
+    CONNECTION_SSL = 'ssl'
+
+    OVN_NORTH_DB_CONFIG = OvnDbConfig(
+        '6641',
+        CONNECTION_SSL,
+        'ovn-nbctl',
+        oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_KEY,
+        oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_CERT,
+    )
+
+    OVN_SOUTH_DB_CONFIG = OvnDbConfig(
+        '6642',
+        CONNECTION_SSL,
+        'ovn-sbctl',
+        oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_KEY,
+        oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_CERT,
+    )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -263,42 +296,33 @@ class Plugin(plugin.PluginBase):
         else:
             self._manual_commands.append(command)
 
-    def _configure_ovndb_connection(self, command, key_file, cert_file, port):
-        self._execute_command(
-            (
-                command,
-                'set-ssl',
-                key_file,
-                cert_file,
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-            ),
-            _('Failed to configure OVN with SSL')
-        )
+    def _configure_ovndb_connection(self, ovn_db_config):
+        if (ovn_db_config.protocol == self.CONNECTION_SSL):
+            self._execute_command(
+                (
+                    ovn_db_config.command,
+                    'set-ssl',
+                    ovn_db_config.key_file,
+                    ovn_db_config.cert_file,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                ),
+                _('Failed to configure OVN with SSL')
+            )
 
         self._execute_command(
             (
-                command,
+                ovn_db_config.command,
                 'set-connection',
-                'pssl:' + port,
+                'p%s:%s' % (ovn_db_config.protocol, ovn_db_config.port),
             ),
             _('Failed to open OVN SSL connection')
         )
 
     def _configure_ovndb_north_connection(self):
-        self._configure_ovndb_connection(
-            'ovn-nbctl',
-            oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_KEY,
-            oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_CERT,
-            self.OVN_NDB_PORT
-        )
+        self._configure_ovndb_connection(self.OVN_NORTH_DB_CONFIG)
 
     def _configure_ovndb_south_connection(self):
-        self._configure_ovndb_connection(
-            'ovn-sbctl',
-            oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_KEY,
-            oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_SDB_CERT,
-            self.OVN_SDB_PORT
-        )
+        self._configure_ovndb_connection(self.OVN_SOUTH_DB_CONFIG)
 
     def _update_provider_config_with_pki(self):
         content = []
