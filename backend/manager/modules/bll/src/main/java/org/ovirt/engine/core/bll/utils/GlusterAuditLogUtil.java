@@ -11,7 +11,9 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.di.Injector;
 
 /**
@@ -61,10 +63,13 @@ public class GlusterAuditLogUtil {
             final Guid brickId,
             final String brickPath) {
 
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        logable.setVds(server);
-        logable.setGlusterVolume(volume);
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsName(server.getName());
+        logable.setVdsId(server.getId());
+        logable.setGlusterVolumeName(volume.getName());
+        logable.setGlusterVolumeId(volume.getId());
         logable.setClusterId(clusterId);
+        logable.setClusterName(server.getClusterName());
         logable.setBrickId(brickId);
         logable.setBrickPath(brickPath);
         auditLogDirector.log(logable, logType);
