@@ -602,6 +602,7 @@ public class GlusterSyncJob extends GlusterJob {
         logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_CREATED_FROM_CLI);
         if (!volume.getVolumeType().isSupported()) {
             logUtil.logAuditMessage(volume.getClusterId(),
+                    volume.getClusterName(),
                     volume,
                     null,
                     AuditLogType.GLUSTER_VOLUME_TYPE_UNSUPPORTED,
@@ -664,7 +665,10 @@ public class GlusterSyncJob extends GlusterJob {
                 log.info("Detected brick '{}' removed from volume '{}'. Removing it from engine DB as well.",
                         existingBrick.getQualifiedName(),
                         existingVolume.getName());
-                logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
+                logUtil.logAuditMessage(existingVolume.getClusterId(),
+                        existingVolume.getClusterName(),
+                        existingVolume,
+                        null,
                         AuditLogType.GLUSTER_VOLUME_BRICK_REMOVED_FROM_CLI,
                         Collections.singletonMap(GlusterConstants.BRICK, existingBrick.getQualifiedName()));
             }
@@ -692,7 +696,10 @@ public class GlusterSyncJob extends GlusterJob {
                             existingVolume.getName());
                     fetchedBrick.setStatus(existingVolume.isOnline() ? GlusterStatus.UP : GlusterStatus.DOWN);
                     brickDao.save(fetchedBrick);
-                    logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
+                    logUtil.logAuditMessage(existingVolume.getClusterId(),
+                            existingVolume.getClusterName(),
+                            existingVolume,
+                            null,
                             AuditLogType.GLUSTER_VOLUME_BRICK_ADDED_FROM_CLI,
                             Collections.singletonMap(GlusterConstants.BRICK, fetchedBrick.getQualifiedName()));
                 }
@@ -740,8 +747,12 @@ public class GlusterSyncJob extends GlusterJob {
                     Map<String, String> customValues = new HashMap<>();
                     customValues.put(GlusterConstants.OPTION_KEY, existingOption.getKey());
                     customValues.put(GlusterConstants.OPTION_VALUE, existingOption.getValue());
-                    logUtil.logAuditMessage(fetchedVolume.getClusterId(), fetchedVolume, null,
-                            AuditLogType.GLUSTER_VOLUME_OPTION_RESET_FROM_CLI, customValues);
+                    logUtil.logAuditMessage(fetchedVolume.getClusterId(),
+                            fetchedVolume.getClusterName(),
+                            fetchedVolume,
+                            null,
+                            AuditLogType.GLUSTER_VOLUME_OPTION_RESET_FROM_CLI,
+                            customValues);
                 }
             }
         }
@@ -803,8 +814,12 @@ public class GlusterSyncJob extends GlusterJob {
             Map<String, String> customValues = new HashMap<>();
             customValues.put(GlusterConstants.OPTION_KEY, entity.getKey());
             customValues.put(GlusterConstants.OPTION_VALUE, entity.getValue());
-            logUtil.logAuditMessage(volume.getClusterId(), volume, null,
-                    AuditLogType.GLUSTER_VOLUME_OPTION_SET_FROM_CLI, customValues);
+            logUtil.logAuditMessage(volume.getClusterId(),
+                    volume.getClusterName(),
+                    volume,
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_OPTION_SET_FROM_CLI,
+                    customValues);
             log.info("New option '{}'='{}' set on volume '{}' from gluster CLI. Updating engine DB accordingly.",
                     entity.getKey(),
                     entity.getValue(),
@@ -819,8 +834,12 @@ public class GlusterSyncJob extends GlusterJob {
             customValues.put(GlusterConstants.OPTION_KEY, entity.getKey());
             customValues.put(GlusterConstants.OPTION_OLD_VALUE, volume.getOption(entity.getKey()).getValue());
             customValues.put(GlusterConstants.OPTION_NEW_VALUE, entity.getValue());
-            logUtil.logAuditMessage(volume.getClusterId(), volume, null,
-                    AuditLogType.GLUSTER_VOLUME_OPTION_CHANGED_FROM_CLI, customValues);
+            logUtil.logAuditMessage(volume.getClusterId(),
+                    volume.getClusterName(),
+                    volume,
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_OPTION_CHANGED_FROM_CLI,
+                    customValues);
             log.info("Detected change in value of option '{}' of volume '{}' from '{}' to '{}'. Updating engine DB accordingly.",
                     volume.getOption(entity.getKey()),
                     volume.getName(),
@@ -867,10 +886,12 @@ public class GlusterSyncJob extends GlusterJob {
             logUtil.logVolumeMessage(existingVolume, AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI);
             if (volumeTypeUnSupported) {
                 logUtil.logAuditMessage(fetchedVolume.getClusterId(),
+                        fetchedVolume.getClusterName(),
                         fetchedVolume,
                         null,
                         AuditLogType.GLUSTER_VOLUME_TYPE_UNSUPPORTED,
-                        Collections.singletonMap(GlusterConstants.VOLUME_TYPE, fetchedVolume.getVolumeType().toString()));
+                        Collections.singletonMap(GlusterConstants.VOLUME_TYPE,
+                                fetchedVolume.getVolumeType().toString()));
             }
         }
 
@@ -997,11 +1018,17 @@ public class GlusterSyncJob extends GlusterJob {
         customValues.put(GlusterConstants.BRICK_PATH, brick.getQualifiedName());
         customValues.put(GlusterConstants.OPTION_OLD_VALUE, brick.getStatus().toString());
         customValues.put(GlusterConstants.OPTION_NEW_VALUE, fetchedStatus.toString());
-        logUtil.logAuditMessage(volume.getClusterId(), volume, null,
-                AuditLogType.GLUSTER_BRICK_STATUS_CHANGED, customValues);
+        logUtil.logAuditMessage(volume.getClusterId(),
+                volume.getClusterName(),
+                volume,
+                null,
+                AuditLogType.GLUSTER_BRICK_STATUS_CHANGED,
+                customValues);
         if(fetchedStatus == GlusterStatus.DOWN){
-            logUtil.logAuditMessage(volume.getClusterId(), volume, null,
-                AuditLogType.GLUSTER_BRICK_STATUS_DOWN, brick.getId(), brick.getQualifiedName());
+            logUtil.logAuditMessage(volume,
+                    AuditLogType.GLUSTER_BRICK_STATUS_DOWN,
+                    brick.getId(),
+                    brick.getQualifiedName());
         }else if(fetchedStatus == GlusterStatus.UP){
             alertDirector.removeAlertsByBrickIdLogType(brick.getId(), AuditLogType.GLUSTER_BRICK_STATUS_DOWN);
         }

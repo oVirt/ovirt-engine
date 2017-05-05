@@ -75,10 +75,10 @@ public class GlusterSnapshotScheduleJob implements Serializable {
             customValues.put(GlusterConstants.VOLUME_SNAPSHOT_NAME, snapshot.getSnapshotName());
             customValues.put(GlusterConstants.VOLUME_NAME, volume.getName());
             logUtil.logAuditMessage(volume.getClusterId(),
+                    volume.getClusterName(),
                     volume,
                     null,
-                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
-                    customValues);
+                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED, customValues);
         }
 
         // Check if next schedule available, and if not delete the scheduling details from DB
@@ -87,10 +87,10 @@ public class GlusterSnapshotScheduleJob implements Serializable {
         if (endDate != null && endDate.before(new Date())) {
             glusterVolumeSnapshotScheduleDao.removeByVolumeId(volume.getId());
             logUtil.logAuditMessage(volume.getClusterId(),
+                    volume.getClusterName(),
                     volume,
                     null,
-                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED,
-                    Collections.singletonMap(GlusterConstants.VOLUME_NAME, volume.getName()));
+                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SCHEDULE_DELETED, Collections.singletonMap(GlusterConstants.VOLUME_NAME, volume.getName()));
         }
     }
 }

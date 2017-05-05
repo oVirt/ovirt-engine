@@ -379,11 +379,11 @@ public class GlusterUtil {
                         : glusterDBUtils.isVolumeSnapshotSoftLimitReached(volume.getId());
         if (limitReached) {
             glusterAuditLogUtil.logAuditMessage(volume.getClusterId(),
+                    volume.getClusterName(),
                     volume,
                     null,
                     logType,
-                    volumeAsMap(volume)
-            );
+                    volumeAsMap(volume));
             return true;
         }
 

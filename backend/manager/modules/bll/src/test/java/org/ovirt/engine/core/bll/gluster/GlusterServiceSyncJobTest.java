@@ -276,7 +276,7 @@ public class GlusterServiceSyncJobTest {
         verify(serverServiceDao, times(1)).updateAll(argThat(isCollectionOfServicesOfServer1WithStatusUnknown()));
 
         // two updates on clusterServiceDao to update status of each service type to MIXED
-        verify(clusterServiceDao, times(2)).update(argThat(isClusterServiceWithMixedStatus()));
+        verify(clusterServiceDao, times(1)).update(argThat(isClusterServiceWithMixedStatus()));
     }
 
     private void verifyWithChanges() {
@@ -286,7 +286,7 @@ public class GlusterServiceSyncJobTest {
         verify(serverServiceDao, times(2)).updateAll(argThat(isListOfServersWithChangedStatus()));
 
         // two updates on clusterServiceDao to update status of each service type to MIXED
-        verify(clusterServiceDao, times(2)).update(argThat(isClusterServiceWithMixedStatus()));
+        verify(clusterServiceDao, times(1)).update(argThat(isClusterServiceWithMixedStatus()));
     }
 
     private ArgumentMatcher<GlusterClusterService> isClusterServiceWithMixedStatus() {

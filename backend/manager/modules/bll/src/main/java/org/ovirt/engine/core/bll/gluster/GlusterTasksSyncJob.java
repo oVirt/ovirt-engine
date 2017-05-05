@@ -262,7 +262,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             logType = AuditLogType.UNASSIGNED;
             break;
         }
-        logUtil.logAuditMessage(cluster.getId(), vol, null, logType, values);
+        logUtil.logAuditMessage(cluster.getId(), cluster.getName(), vol, null, logType, values);
     }
 
     private void logTaskStoppedFromCLI(Step step, GlusterVolumeEntity vol) {
@@ -278,7 +278,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             logType = AuditLogType.UNASSIGNED;
             break;
         }
-        logUtil.logAuditMessage(vol.getClusterId(), vol, null, logType, null);
+        logUtil.logAuditMessage(vol.getClusterId(), vol.getClusterName(), vol, null, logType, null);
     }
 
     /**

@@ -231,7 +231,7 @@ public class GlusterTaskUtils {
         Map<String, String> customValues = new HashMap<>();
         customValues.put("action", action);
         customValues.put("status", status);
-        logUtil.logAuditMessage(clusterId, volume, null, logType, customValues);
+        logUtil.logAuditMessage(clusterId, volume.getClusterName(), volume, null, logType, customValues);
     }
 
     public String getSummaryMessage(GlusterVolumeTaskStatusDetail statusSummary) {

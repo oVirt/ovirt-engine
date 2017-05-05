@@ -12,9 +12,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.di.Injector;
 
 /**
  * Log Helper for gluster related audit logs. Provides convenience methods to create audit logs related to a gluster
@@ -27,28 +25,25 @@ public class GlusterAuditLogUtil {
     private AuditLogDirector auditLogDirector;
 
     public void logVolumeMessage(final GlusterVolumeEntity volume, final AuditLogType logType) {
-        logAuditMessage(volume.getClusterId(), volume, null, logType, Collections.emptyMap());
+        logAuditMessage(volume.getClusterId(), volume.getClusterName(), volume, null, logType, Collections.emptyMap());
     }
 
     public void logServerMessage(final VDS server, final AuditLogType logType) {
-        logAuditMessage(server == null ? Guid.Empty : server.getClusterId(),
+        logAuditMessage(server.getClusterId(),
+                server.getClusterName(),
                 null,
                 server,
-                logType,
-                Collections.emptyMap());
+                logType, Collections.emptyMap());
     }
 
     public void logAuditMessage(final Guid clusterId,
+            String clusterName,
             final GlusterVolumeEntity volume,
             final VDS server,
             final AuditLogType logType,
             final Map<String, String> customValues) {
 
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
-        logable.setVds(server);
-        logable.setGlusterVolume(volume);
-        logable.setClusterId(clusterId);
-
+        AuditLogable logable = createEvent(volume, server, clusterId, clusterName);
         if (customValues != null) {
             customValues.entrySet().forEach(e -> logable.addCustomValue(e.getKey(), e.getValue()));
         }
@@ -56,22 +51,31 @@ public class GlusterAuditLogUtil {
         auditLogDirector.log(logable, logType);
     }
 
-    public void logAuditMessage(final Guid clusterId,
-            final GlusterVolumeEntity volume,
-            final VDS server,
+    public void logAuditMessage(final GlusterVolumeEntity volume,
             final AuditLogType logType,
             final Guid brickId,
             final String brickPath) {
 
-        AuditLogable logable = new AuditLogableImpl();
-        logable.setVdsName(server.getName());
-        logable.setVdsId(server.getId());
-        logable.setGlusterVolumeName(volume.getName());
-        logable.setGlusterVolumeId(volume.getId());
-        logable.setClusterId(clusterId);
-        logable.setClusterName(server.getClusterName());
+        AuditLogable logable = createEvent(volume, null, volume.getClusterId(), volume.getClusterName());
         logable.setBrickId(brickId);
         logable.setBrickPath(brickPath);
         auditLogDirector.log(logable, logType);
+    }
+
+    private AuditLogable createEvent(GlusterVolumeEntity volume, VDS server, Guid clusterId, String clusterName) {
+        AuditLogable logable = new AuditLogableImpl();
+        if (server != null) {
+            logable.setVdsId(server.getId());
+            logable.setVdsName(server.getName());
+        }
+
+        if (volume != null) {
+            logable.setGlusterVolumeId(volume.getId());
+            logable.setGlusterVolumeName(volume.getName());
+        }
+
+        logable.setClusterId(clusterId);
+        logable.setClusterName(clusterName);
+        return logable;
     }
 }

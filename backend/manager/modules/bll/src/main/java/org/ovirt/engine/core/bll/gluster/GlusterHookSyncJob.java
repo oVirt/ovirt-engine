@@ -312,7 +312,12 @@ public class GlusterHookSyncJob extends GlusterJob {
 
     @SuppressWarnings("serial")
     private void logMessage(Guid clusterId, final String hookName, AuditLogType logType) {
-        logUtil.logAuditMessage(clusterId, null, null, logType, Collections.singletonMap("hookName", hookName));
+        logUtil.logAuditMessage(clusterId,
+                clusterDao.get(clusterId).getName(),
+                null,
+                null,
+                logType,
+                Collections.singletonMap("hookName", hookName));
     }
 
     private int getConflictStatus(GlusterHookEntity hook, GlusterHookEntity fetchedHook) {

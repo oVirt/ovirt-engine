@@ -72,6 +72,7 @@ public class GlusterHookSyncJobTest {
         clusters.add(createCluster(1)); //to check for empty cluster
 
         doReturn(clusters).when(clusterDao).getAll();
+        doReturn(clusters.get(0)).when(clusterDao).get(any());
     }
 
     private void initMocks() {

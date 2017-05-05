@@ -291,8 +291,8 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             logUtil.logAuditMessage(null,
                     null,
                     null,
-                    AuditLogType.GLUSTER_VOLUME_BRICK_ADDED,
-                    new HashMap<String, String>() {
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_BRICK_ADDED, new HashMap<String, String>() {
                         {
                             put(GlusterConstants.BRICK_PATH, brick.getBrickDirectory());
                             put(GlusterConstants.SERVER_NAME, brick.getServerName());

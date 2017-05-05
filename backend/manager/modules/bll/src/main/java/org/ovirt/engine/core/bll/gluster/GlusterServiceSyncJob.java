@@ -237,6 +237,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
                             customValues.put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
                             customValues.put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
                             logUtil.logAuditMessage(server.getClusterId(),
+                                    server.getClusterName(),
                                     null,
                                     server,
                                     AuditLogType.GLUSTER_SERVER_SERVICE_STATUS_CHANGED,
@@ -288,10 +289,10 @@ public class GlusterServiceSyncJob extends GlusterJob {
                 fetchedService.getServiceName(),
                 server.getHostName());
         logUtil.logAuditMessage(server.getClusterId(),
+                server.getClusterName(),
                 null,
                 server,
-                AuditLogType.GLUSTER_SERVICE_ADDED_TO_SERVER,
-                Collections.singletonMap(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName()));
+                AuditLogType.GLUSTER_SERVICE_ADDED_TO_SERVER, Collections.singletonMap(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName()));
     }
 
     @SuppressWarnings("serial")
@@ -310,10 +311,10 @@ public class GlusterServiceSyncJob extends GlusterJob {
         customValues.put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
         customValues.put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
         logUtil.logAuditMessage(clusterService.getClusterId(),
+                clusterDao.get(clusterService.getClusterId()).getName(),
                 null,
                 null,
-                AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_CHANGED,
-                customValues);
+                AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_CHANGED, customValues);
     }
 
     @SuppressWarnings("serial")
@@ -334,10 +335,10 @@ public class GlusterServiceSyncJob extends GlusterJob {
         customValues.put(GlusterConstants.SERVICE_TYPE, serviceType.name());
         customValues.put(GlusterConstants.NEW_STATUS, status.getStatusMsg());
         logUtil.logAuditMessage(clusterService.getClusterId(),
+                clusterDao.get(clusterService.getClusterId()).getName(),
                 null,
                 null,
-                AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_ADDED,
-                customValues);
+                AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_ADDED, customValues);
 
         return clusterService;
     }

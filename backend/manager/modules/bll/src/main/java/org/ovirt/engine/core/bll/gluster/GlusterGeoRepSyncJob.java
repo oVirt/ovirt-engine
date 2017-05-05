@@ -156,7 +156,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
     private void updateDiscoveredSessions(Cluster cluster, Map<String, GlusterGeoRepSession> sessionsMap,
             GlusterVolumeEntity volume) {
-        removeDeletedSessions(cluster.getId(), sessionsMap, volume);
+        removeDeletedSessions(cluster, sessionsMap, volume);
 
         // for each geo-rep session, find session in database and update details.
         for (GlusterGeoRepSession session : sessionsMap.values()) {
@@ -185,7 +185,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                     updateSlaveNodeAndVolumeId(session);
                 }
                 geoRepDao.save(session);
-                logGeoRepMessage(AuditLogType.GLUSTER_GEOREP_SESSION_DETECTED_FROM_CLI, cluster.getId(), session);
+                logGeoRepMessage(AuditLogType.GLUSTER_GEOREP_SESSION_DETECTED_FROM_CLI, cluster, session);
             } else {
                 // if retrieved session does not have the slave uuid's set
                 if (session.getSlaveNodeUuid() == null && session.getSlaveVolumeId() == null) {
@@ -225,7 +225,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                     geoRepDao.updateConfig(sessionConfig);
                     String oldValue = existingKeyConfigMap.get(sessionConfig.getKey()).getValue();
                     logGeoRepMessage(AuditLogType.GEOREP_OPTION_CHANGED_FROM_CLI,
-                            cluster.getId(),
+                            cluster,
                             getOptionChangedCustomVars(session,
                                     sessionConfig.getKey(),
                                     sessionConfig.getValue(),
@@ -233,7 +233,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                 } else {
                     geoRepDao.saveConfig(sessionConfig);
                     logGeoRepMessage(AuditLogType.GEOREP_OPTION_SET_FROM_CLI,
-                            cluster.getId(),
+                            cluster,
                             getOptionChangedCustomVars(session, sessionConfig.getKey(), sessionConfig.getValue(), null));
                 }
             }
@@ -282,15 +282,15 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         geoRepDao.saveOrUpdateDetailsInBatch(session.getSessionDetails());
     }
 
-    private void removeDeletedSessions(Guid clusterId,
-            final Map<String, GlusterGeoRepSession> sessionsMap,
-            GlusterVolumeEntity volume) {
+    private void removeDeletedSessions(Cluster cluster,
+                                       final Map<String, GlusterGeoRepSession> sessionsMap,
+                                       GlusterVolumeEntity volume) {
         List<GlusterGeoRepSession> sessionsInDb;
         if (volume != null) {
             // syncing for a specific volume, so retrieve only that volume's sessions
             sessionsInDb = geoRepDao.getGeoRepSessions(volume.getId());
         } else {
-            sessionsInDb = geoRepDao.getGeoRepSessionsInCluster(clusterId);
+            sessionsInDb = geoRepDao.getGeoRepSessionsInCluster(cluster.getId());
         }
 
         if (CollectionUtils.isEmpty(sessionsInDb)) {
@@ -323,24 +323,23 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                 Map<String, String> customValues = new HashMap<>();
                 customValues.put("storageDomainName", storageDomain.getName());
                 customValues.put("geoRepSessionKey", session.getSessionKey());
-                logGeoRepMessage(AuditLogType.STORAGE_DOMAIN_DR_DELETED, clusterId, customValues);
+                logGeoRepMessage(AuditLogType.STORAGE_DOMAIN_DR_DELETED, cluster, customValues);
 
             }
             geoRepDao.remove(session.getId());
-            logGeoRepMessage(AuditLogType.GLUSTER_GEOREP_SESSION_DELETED_FROM_CLI, clusterId, session);
+            logGeoRepMessage(AuditLogType.GLUSTER_GEOREP_SESSION_DELETED_FROM_CLI, cluster, session);
         }
     }
 
-    private void logGeoRepMessage(AuditLogType logType, Guid clusterId, final GlusterGeoRepSession session) {
+    private void logGeoRepMessage(AuditLogType logType, Cluster cluster, final GlusterGeoRepSession session) {
         Map<String, String> customValues = new HashMap<>();
         customValues.put(GlusterConstants.VOLUME_NAME, session.getMasterVolumeName());
         customValues.put("geoRepSessionKey", session.getSessionKey());
-        logUtil.logAuditMessage(clusterId, null, null, logType, customValues);
+        logUtil.logAuditMessage(cluster.getId(), cluster.getName(), null, null, logType, customValues);
     }
 
-    private void logGeoRepMessage(AuditLogType logType, Guid clusterId, final Map<String, String> customVars) {
-        logUtil.logAuditMessage(clusterId, null, null,
-                logType, customVars);
+    private void logGeoRepMessage(AuditLogType logType, Cluster cluster, final Map<String, String> customVars) {
+        logUtil.logAuditMessage(cluster.getId(), cluster.getName(), null, null, logType, customVars);
     }
 
     private Map<String, String> getOptionChangedCustomVars(final GlusterGeoRepSession session,

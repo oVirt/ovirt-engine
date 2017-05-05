@@ -178,8 +178,8 @@ public class StorageDeviceSyncJob extends GlusterJob {
     }
 
     private void logStorageDeviceMessage(AuditLogType logType, VDS vds, final StorageDevice device) {
-        logUtil.logAuditMessage(vds.getClusterId(), null, vds,
-                logType, Collections.singletonMap("storageDevice", device.getName()));
+        logUtil.logAuditMessage(vds.getClusterId(), vds.getClusterName(), null,
+                vds, logType, Collections.singletonMap("storageDevice", device.getName()));
     }
 
     private boolean supportsGlusterDiskProvisioning(Cluster cluster) {
