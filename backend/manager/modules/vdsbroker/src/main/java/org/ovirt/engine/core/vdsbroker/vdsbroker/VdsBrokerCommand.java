@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -171,12 +171,13 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         if (isPolicyResetMessage(getReturnStatus().message)) {
             return;
         }
-        AuditLogableBase auditLogableBase = Injector.injectMembers(new AuditLogableBase(vds.getId()));
-        auditLogableBase.setVds(vds);
-        auditLogableBase.addCustomValue("CommandName", getCommandName());
-        auditLogableBase.addCustomValue("message", getReturnStatus().message);
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(vds.getId());
+        logable.setVdsName(vds.getName());
+        logable.addCustomValue("CommandName", getCommandName());
+        logable.addCustomValue("message", getReturnStatus().message);
 
-        auditLogDirector.log(auditLogableBase, AuditLogType.VDS_BROKER_COMMAND_FAILURE);
+        auditLogDirector.log(logable, AuditLogType.VDS_BROKER_COMMAND_FAILURE);
     }
 
     protected boolean isPolicyResetMessage(String message) {
