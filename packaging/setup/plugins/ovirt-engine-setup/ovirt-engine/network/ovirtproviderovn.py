@@ -76,9 +76,13 @@ class Plugin(plugin.PluginBase):
     CONNECTION_TCP = 'tcp'
     CONNECTION_SSL = 'ssl'
 
+    # TODO: OVN north db will be temporarily configured to
+    # connect over TCP, not SSL.
+    # This is because of OVN bug: 1446538
+    # Once the bug is fixed, the connection can be moved to SSL
     OVN_NORTH_DB_CONFIG = OvnDbConfig(
         '6641',
-        CONNECTION_SSL,
+        CONNECTION_TCP,
         'ovn-nbctl',
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_KEY,
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_CERT,
