@@ -18,6 +18,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.utils.GlusterEventFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -58,9 +59,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -260,7 +260,7 @@ public class GlusterSyncJob extends GlusterJob {
                 // get another server in the cluster
                 VDS upServer = getAlternateUpServerInCluster(host.getClusterId(), host.getId());
                 if (upServer != null) {
-                    boolean peerProbed = glusterPeerProbeAdditionalInterface(upServer.getId(), iface.getIpv4Address());
+                    boolean peerProbed = glusterPeerProbeAdditionalInterface(upServer, iface.getIpv4Address());
                     if (peerProbed) {
                         serverDao.addKnownAddress(host.getId(), iface.getIpv4Address());
                     }
@@ -298,14 +298,14 @@ public class GlusterSyncJob extends GlusterJob {
         return null;
     }
 
-    private boolean glusterPeerProbeAdditionalInterface(Guid upServerId, String newServerName) {
+    private boolean glusterPeerProbeAdditionalInterface(VDS upServer, String newServerName) {
+        Guid upServerId = upServer.getId();
         try {
             VDSReturnValue returnValue =
                     runVdsCommand(VDSCommandType.AddGlusterServer,
                             new AddGlusterServerVDSParameters(upServerId, newServerName));
             if (!returnValue.getSucceeded()) {
-                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(upServerId));
-                logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
+                AuditLogable logable = GlusterEventFactory.createEvent(upServer, returnValue);
                 auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
             }
             return returnValue.getSucceeded();

@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.utils.GlusterEventFactory;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -31,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParam
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -224,7 +224,7 @@ public class InitGlusterCommandHelper {
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServersList,
                         new VdsIdVDSCommandParametersBase(upServer.getId()));
         if (!returnValue.getSucceeded()) {
-            AuditLogable logable = createEvent(upServer, returnValue);
+            AuditLogable logable = GlusterEventFactory.createEvent(upServer, returnValue);
             auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
         } else {
             glusterServers = (List<GlusterServerInfo>) returnValue.getReturnValue();
@@ -237,7 +237,7 @@ public class InitGlusterCommandHelper {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.AddGlusterServer,
                     new AddGlusterServerVDSParameters(upServerId, newServerName));
             if (!returnValue.getSucceeded()) {
-                AuditLogable logable = createEvent(vds, returnValue);
+                AuditLogable logable = GlusterEventFactory.createEvent(vds, returnValue);
                 auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
             }
             return returnValue.getSucceeded();
@@ -248,17 +248,6 @@ public class InitGlusterCommandHelper {
             log.debug("Exception", e);
             return false;
         }
-    }
-
-    private AuditLogable createEvent(VDS vds, VDSReturnValue returnValue) {
-        AuditLogable logable = new AuditLogableImpl();
-        logable.setVdsId(vds.getId());
-        logable.setVdsName(vds.getName());
-        logable.setClusterId(vds.getClusterId());
-        logable.setClusterName(vds.getClusterName());
-        logable.addCustomValue("ErrorMessage", returnValue.getVdsError().getMessage());
-        logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
-        return logable;
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {
