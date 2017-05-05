@@ -33,13 +33,14 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -289,10 +290,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         if (vdsSt.isPmEnabled() && vdsSt.isPmKdumpDetection()) {
             VdsDynamic vdsDyn = vdsDynamicDao.get(vdsSt.getId());
             if (vdsDyn != null && vdsDyn.getKdumpStatus() != KdumpStatus.ENABLED) {
-                auditLogDirector.log(
-                        Injector.injectMembers(new AuditLogableBase(vdsSt.getId())),
-                        AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS
-                );
+                AuditLogable logable = new AuditLogableImpl();
+                logable.setVdsId(vdsSt.getId());
+                logable.setVdsName(vdsSt.getName());
+                auditLogDirector.log(logable, AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
             }
         }
     }
