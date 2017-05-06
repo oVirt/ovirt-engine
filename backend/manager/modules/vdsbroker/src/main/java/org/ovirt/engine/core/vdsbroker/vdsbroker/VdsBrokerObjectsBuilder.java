@@ -103,7 +103,8 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
@@ -981,7 +982,7 @@ public class VdsBrokerObjectsBuilder {
                 Long timeDrift =
                         TimeUnit.MILLISECONDS.toSeconds(Math.abs(hostDate.getTime() - System.currentTimeMillis()));
                 if (timeDrift > maxTimeDriftAllowed) {
-                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+                    AuditLogable logable = createAuditLogableForHost(vds);
                     logable.addCustomValue("Actual", timeDrift.toString());
                     logable.addCustomValue("Max", maxTimeDriftAllowed.toString());
                     auditLogDirector.log(logable, AuditLogType.VDS_TIME_DRIFT_ALERT);
@@ -1879,16 +1880,23 @@ public class VdsBrokerObjectsBuilder {
         if (interfaces.isEmpty()) {
             auditLogDirector.log(createHostNetworkAuditLog(networkName, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
         } else if (interfaces.size() > 1) {
-            AuditLogableBase logable = createHostNetworkAuditLog(networkName, vds);
+            AuditLogable logable = createHostNetworkAuditLog(networkName, vds);
             logable.addCustomValue("Interfaces",
                     interfaces.stream().map(VdsNetworkInterface::getName).collect(Collectors.joining(",")));
             auditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
         }
     }
 
-    protected static AuditLogableBase createHostNetworkAuditLog(String networkName, VDS vds) {
-        AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+    protected static AuditLogable createHostNetworkAuditLog(String networkName, VDS vds) {
+        AuditLogable logable = createAuditLogableForHost(vds);
         logable.addCustomValue("NetworkName", networkName);
+        return logable;
+    }
+
+    private static AuditLogable createAuditLogableForHost(VDS vds) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(vds.getId());
+        logable.setVdsName(vds.getName());
         return logable;
     }
 
