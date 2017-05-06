@@ -37,8 +37,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -224,7 +224,7 @@ public class HostMonitoring {
                 AuditLogType.VDS_HIGH_MEM_USE;
 
         if (stat.getMemFree() < minAvailableThreshold || stat.getUsageMemPercent() > maxUsedPercentageThreshold) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(stat.getId()));
+            AuditLogable logable = createAuditLogableForHost();
             logable.addCustomValue("HostName", vds.getName());
             logable.addCustomValue("AvailableMemory", stat.getMemFree().toString());
             logable.addCustomValue("UsedMemory", stat.getUsageMemPercent().toString());
@@ -243,7 +243,7 @@ public class HostMonitoring {
         Integer maxUsedPercentageThreshold = Config.getValue(ConfigValues.LogMaxCpuUsedThresholdInPercentage);
         if (stat.getUsageCpuPercent() != null
                 && stat.getUsageCpuPercent() > maxUsedPercentageThreshold) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(stat.getId()));
+            AuditLogable logable = createAuditLogableForHost();
             logable.addCustomValue("HostName", vds.getName());
             logable.addCustomValue("UsedCpu", stat.getUsageCpuPercent().toString());
             logable.addCustomValue("Threshold", maxUsedPercentageThreshold.toString());
@@ -261,7 +261,7 @@ public class HostMonitoring {
             Double receiveRate = iface.getStatistics().getReceiveRate();
             if ((transmitRate != null && iface.getStatistics().getTransmitRate().intValue() > maxUsedPercentageThreshold)
                     || (receiveRate != null && iface.getStatistics().getReceiveRate().intValue() > maxUsedPercentageThreshold)) {
-                AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+                AuditLogable logable = createAuditLogableForHost();
                 logable.setCustomId(iface.getName());
                 logable.addCustomValue("HostName", vds.getName());
                 logable.addCustomValue("InterfaceName", iface.getName());
@@ -296,7 +296,7 @@ public class HostMonitoring {
                 AuditLogType.VDS_HIGH_SWAP_USE;
 
         if (stat.getSwapFree() < allowedMinAvailableThreshold || swapUsedPercent > maxUsedPercentageThreshold) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(stat.getId()));
+            AuditLogable logable = createAuditLogableForHost();
             logable.addCustomValue("HostName", vds.getName());
             logable.addCustomValue("UsedSwap", swapUsedPercent.toString());
             logable.addCustomValue("AvailableSwapMemory", stat.getSwapFree().toString());
@@ -474,7 +474,7 @@ public class HostMonitoring {
             final Integer lowSpaceThreshold,
             AuditLogType logType) {
         if (!disksWithLowSpace.isEmpty()) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+            AuditLogable logable = createAuditLogableForHost();
             logable.addCustomValue("DiskSpace", lowSpaceThreshold.toString());
             logable.addCustomValue("Disks", StringUtils.join(disksWithLowSpace, ", "));
             auditLog(logable, logType);
@@ -525,7 +525,7 @@ public class HostMonitoring {
                             vds.getName(),
                             problematicNicsWithNetworksString);
 
-                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+                    AuditLogable logable = createAuditLogableForHost();
                     logable.addCustomValue("NicsWithNetworks", problematicNicsWithNetworksString);
                     logable.setCustomId(problematicNicsWithNetworksString);
                     auditLog(logable, AuditLogType.VDS_SET_NONOPERATIONAL_IFACE_DOWN);
@@ -597,7 +597,7 @@ public class HostMonitoring {
                 status = iface.getStatistics().getStatus();
                 if (oldStatus != InterfaceStatus.NONE
                         && oldStatus != status) {
-                    AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+                    AuditLogable logable = createAuditLogableForHost();
                     logable.setCustomId(iface.getName());
                     if (iface.getBondName() != null) {
                         logable.addCustomValue("SlaveName", iface.getName());
@@ -632,10 +632,19 @@ public class HostMonitoring {
         }
         // show status UP in audit only when InitVdsOnUpCommand finished successfully
         if (vds.getStatus() != VDSStatus.Up) {
-            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase(vds.getId()));
+            AuditLogable logable = createAuditLogableForHost();
             logable.addCustomValue("HostStatus", vds.getStatus().toString());
             auditLog(logable, AuditLogType.VDS_DETECTED);
         }
+    }
+
+    private AuditLogable createAuditLogableForHost() {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsId(vds.getId());
+        logable.setVdsName(vds.getName());
+        logable.setClusterId(vds.getClusterId());
+        logable.setClusterName(vds.getClusterName());
+        return logable;
     }
 
     private void moveVDSToMaintenanceIfNeeded() {
@@ -691,7 +700,7 @@ public class HostMonitoring {
         return memoryUpdated;
     }
 
-    private void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
+    private void auditLog(AuditLogable auditLogable, AuditLogType logType) {
         auditLogDirector.log(auditLogable, logType);
     }
 
