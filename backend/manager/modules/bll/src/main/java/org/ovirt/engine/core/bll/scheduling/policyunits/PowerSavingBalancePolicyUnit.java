@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,8 +90,12 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     }
 
     private void logAction(VDS vds, AuditLogType type) {
-        AuditLogableBase loggable = Injector.injectMembers(new AuditLogableBase());
+        AuditLogable loggable = new AuditLogableImpl();
         loggable.addCustomValue("Host", vds.getName());
+        loggable.setVdsName(vds.getName());
+        loggable.setVdsId(vds.getId());
+        loggable.setClusterId(vds.getClusterId());
+        loggable.setClusterName(vds.getClusterName());
         new AuditLogDirector().log(loggable, type);
     }
 
