@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -208,35 +207,31 @@ public class MetadataDiskDescriptionHandler {
     }
 
     private void auditLogDiskFieldTruncated(String diskAlias, String fieldName) {
-        Map<String, String> customValues = new HashMap<>();
-        customValues.put("DiskAlias", diskAlias);
-        customValues.put("DiskFieldName", fieldName);
-        auditLog(customValues, AuditLogType.FAILED_TO_STORE_ENTIRE_DISK_FIELD_IN_DISK_DESCRIPTION_METADATA);
+        AuditLogable logable = createDiskEvent(diskAlias);
+        logable.addCustomValue("DiskFieldName", fieldName);
+        getAuditLogDirector().log(logable, AuditLogType.FAILED_TO_STORE_ENTIRE_DISK_FIELD_IN_DISK_DESCRIPTION_METADATA);
     }
 
-    private void auditLogDiskFieldTruncatedAndOthersWereLost(String diskAlias, String fieldName,
+    private void auditLogDiskFieldTruncatedAndOthersWereLost(String diskAlias,
+            String fieldName,
             String diskFieldsNames) {
-        Map<String, String> customValues = new HashMap<>();
-        customValues.put("DiskAlias", diskAlias);
-        customValues.put("DiskFieldName", fieldName);
-        customValues.put("DiskFieldsNames", diskFieldsNames);
-        auditLog(customValues,
+        AuditLogable logable = createDiskEvent(diskAlias);
+        logable.addCustomValue("DiskFieldName", fieldName);
+        logable.addCustomValue("DiskFieldsNames", diskFieldsNames);
+        getAuditLogDirector().log(logable,
                 AuditLogType.FAILED_TO_STORE_ENTIRE_DISK_FIELD_AND_REST_OF_FIELDS_IN_DISK_DESCRIPTION_METADATA);
     }
 
     private void auditLogFailedToStoreDiskFields(String diskAlias, String diskFieldsNames) {
-        Map<String, String> customValues = new HashMap<>();
-        customValues.put("DiskAlias", diskAlias);
-        customValues.put("DiskFieldsNames", diskFieldsNames);
-        auditLog(customValues, AuditLogType.FAILED_TO_STORE_DISK_FIELDS_IN_DISK_DESCRIPTION_METADATA);
+        AuditLogable logable = createDiskEvent(diskAlias);
+        logable.addCustomValue("DiskFieldsNames", diskFieldsNames);
+        getAuditLogDirector().log(logable, AuditLogType.FAILED_TO_STORE_DISK_FIELDS_IN_DISK_DESCRIPTION_METADATA);
     }
 
-    private void auditLog(Map<String, String> customValues, AuditLogType auditLogType) {
+    private AuditLogable createDiskEvent(String diskAlias) {
         AuditLogable logable = new AuditLogableImpl();
-        for (Map.Entry<String, String> customValue : customValues.entrySet()) {
-            logable.addCustomValue(customValue.getKey(), customValue.getValue());
-        }
-        getAuditLogDirector().log(logable, auditLogType);
+        logable.addCustomValue("DiskAlias", diskAlias);
+        return logable;
     }
 
     protected AuditLogDirector getAuditLogDirector() {
