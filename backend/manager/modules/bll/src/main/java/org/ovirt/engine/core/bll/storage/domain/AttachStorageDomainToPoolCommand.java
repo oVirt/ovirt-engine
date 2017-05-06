@@ -181,8 +181,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                         calcStoragePoolStatusByDomainsStatus();
                     }
 
-                    // upgrade the domain format to the storage pool format
-                    updateStorageDomainFormatIfNeeded(getStorageDomain());
                     List<DiskImage> ovfStoreDiskImages =
                             getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
                     registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
@@ -197,6 +195,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 ovf.getEntityName());
                     }
                     initUnregisteredDisksToDB(getParameters().getStorageDomainId());
+
+                    // upgrade the domain format to the storage pool format
+                    updateStorageDomainFormatIfNeeded(getStorageDomain());
                     return null;
                 });
 
