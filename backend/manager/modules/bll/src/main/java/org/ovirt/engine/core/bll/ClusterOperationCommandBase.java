@@ -10,17 +10,19 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.action.ClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -36,13 +38,16 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
-public abstract class ClusterOperationCommandBase<T extends ClusterOperationParameters> extends
+public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnClusterOperationParameters> extends
         ClusterCommandBase<T> {
 
     // If the CPU thresholds are set to -1 then we should get the value from the configuration
     public static final int GET_CPU_THRESHOLDS_FROM_CONFIGURATION = -1;
 
+    @Inject
+    private NetworkDao networkDao;
     @Inject
     private SchedulingManager schedulingManager;
     @Inject
@@ -55,6 +60,10 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
     private VmNumaNodeDao vmNumaNodeDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
+
+    protected Network managementNetwork;
 
     protected ClusterOperationCommandBase(Guid commandId) {
         super(commandId);
@@ -76,6 +85,15 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
      */
     public Cluster getPrevCluster() {
         return super.getCluster();
+    }
+
+    protected Guid getManagementNetworkId() {
+        return getParameters().getManagementNetworkId();
+    }
+
+    protected Network getManagementNetworkById() {
+        final Guid managementNetworkId = getManagementNetworkId();
+        return networkDao.get(managementNetworkId);
     }
 
     @Override
@@ -244,4 +262,38 @@ public abstract class ClusterOperationCommandBase<T extends ClusterOperationPara
             cluster.setRequiredSwitchTypeForCluster(defaultSwitchType);
         }
     }
+
+    protected boolean validateManagementNetwork() {
+        if (getManagementNetworkId() == null) {
+            return findDefaultManagementNetwork();
+        } else {
+            return validateInputManagementNetwork();
+        }
+    }
+
+    protected boolean findDefaultManagementNetwork() {
+        managementNetwork =
+                defaultManagementNetworkFinder.findDefaultManagementNetwork(getCluster().getStoragePoolId());
+        if (managementNetwork == null) {
+            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean findInputManagementNetwork() {
+        managementNetwork = getManagementNetworkById();
+
+        if (managementNetwork == null) {
+            addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
+            return false;
+        }
+        return true;
+    }
+
+    protected NetworkDao getNetworkDao() {
+        return networkDao;
+    }
+
+    protected abstract boolean validateInputManagementNetwork();
 }

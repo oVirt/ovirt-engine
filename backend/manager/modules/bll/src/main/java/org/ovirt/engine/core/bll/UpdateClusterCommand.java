@@ -127,8 +127,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private boolean isAddedToStoragePool = false;
 
-    private Network managementNetwork;
-
     private List<VmStatic> vmsLockedForUpdate = Collections.emptyList();
     private List<VmTemplate> templatesLockedForUpdate = Collections.emptyList();
 
@@ -772,23 +770,9 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         return true;
     }
 
-    private boolean validateManagementNetwork() {
-        final Guid managementNetworkId = getParameters().getManagementNetworkId();
-        if (managementNetworkId == null) {
-            managementNetwork =
-                    getDefaultManagementNetworkFinder().findDefaultManagementNetwork(getCluster().getStoragePoolId());
-            if (managementNetwork == null) {
-                addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
-                return false;
-            }
-        } else {
-            managementNetwork = networkDao.get(managementNetworkId);
-            if (managementNetwork == null) {
-                addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
-                return false;
-            }
-        }
-        return true;
+    @Override
+    protected boolean validateInputManagementNetwork() {
+        return findInputManagementNetwork();
     }
 
     @Override

@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.AddClusterNetworkClusterValidator;
-import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -35,7 +33,6 @@ import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationParameters>
         extends ClusterOperationCommandBase<T> {
@@ -45,21 +42,15 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     @Inject
     protected MacPoolDao macPoolDao;
     @Inject
-    private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
-    @Inject
     private ClusterFeatureDao clusterFeatureDao;
     @Inject
     private ClusterDao clusterDao;
     @Inject
     private NetworkClusterDao networkClusterDao;
     @Inject
-    private NetworkDao networkDao;
-    @Inject
     private InterfaceDao interfaceDao;
     @Inject
     private VdsDao vdsDao;
-
-    private Network managementNetwork;
 
     public AddClusterCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -129,15 +120,6 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         networkClusterDao.save(networkCluster);
     }
 
-    private Guid getManagementNetworkId() {
-        return getParameters().getManagementNetworkId();
-    }
-
-    private Network getManagementNetworkById() {
-        final Guid managementNetworkId = getManagementNetworkId();
-        return networkDao.get(managementNetworkId);
-    }
-
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ADD_CLUSTER
@@ -171,43 +153,23 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 && validate(validator.memoryOptimizationConfiguration());
     }
 
-    private boolean validateManagementNetwork() {
-        if (getManagementNetworkId() == null) {
-            return findDefaultManagementNetwork();
-        } else {
-            return validateInputManagementNetwork();
-        }
-    }
-
-    private boolean findDefaultManagementNetwork() {
-        managementNetwork =
-                defaultManagementNetworkFinder.findDefaultManagementNetwork(getCluster().getStoragePoolId());
-        if (getManagementNetwork() == null) {
-            addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean validateInputManagementNetwork() {
-        setManagementNetwork(getManagementNetworkById());
-
-        if (getManagementNetwork() == null) {
-            addValidationMessage(EngineMessage.NETWORK_NOT_EXISTS);
+    @Override
+    protected boolean validateInputManagementNetwork() {
+        if (!findInputManagementNetwork()) {
             return false;
         }
 
         final NetworkClusterValidatorBase networkClusterValidator = createNetworkClusterValidator();
-        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getCluster(), getManagementNetwork()))
-                && validate(networkClusterValidator.managementNetworkRequired(getManagementNetwork()))
-                && validate(networkClusterValidator.managementNetworkNotExternal(getManagementNetwork()));
+        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getCluster(), managementNetwork))
+                && validate(networkClusterValidator.managementNetworkRequired(managementNetwork))
+                && validate(networkClusterValidator.managementNetworkNotExternal(managementNetwork));
     }
 
     private AddClusterNetworkClusterValidator createNetworkClusterValidator() {
         final NetworkCluster networkCluster = createManagementNetworkCluster();
         return new AddClusterNetworkClusterValidator(
                 interfaceDao,
-                networkDao,
+                getNetworkDao(),
                 vdsDao,
                 networkCluster);
     }
@@ -215,7 +177,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
     private NetworkCluster createManagementNetworkCluster() {
         return new NetworkCluster(
                 getClusterId(),
-                getManagementNetwork().getId(),
+                managementNetwork.getId(),
                 NetworkStatus.OPERATIONAL,
                 true,
                 true,
@@ -223,14 +185,6 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
                 true,
                 false,
                 true);
-    }
-
-    protected Network getManagementNetwork() {
-        return managementNetwork;
-    }
-
-    protected void setManagementNetwork(Network managementNetwork) {
-        this.managementNetwork = managementNetwork;
     }
 
     @Override
