@@ -148,6 +148,7 @@ public class AuditLogableBase implements AuditLogable {
         this.brickPath = auditLog.getBrickPath();
     }
 
+    @Override
     public Guid getUserId() {
         if (userId != null && userId.equals(Guid.Empty) && getCurrentUser() != null) {
             userId = getCurrentUser().getId();
@@ -155,6 +156,7 @@ public class AuditLogableBase implements AuditLogable {
         return userId;
     }
 
+    @Override
     public void setUserId(final Guid value) {
         userId = value;
     }
@@ -163,6 +165,7 @@ public class AuditLogableBase implements AuditLogable {
         return isInternalExecution() ? Optional.empty() : Optional.ofNullable(getUserId());
     }
 
+    @Override
     public String getUserName() {
         if (StringUtils.isEmpty(userName) && getCurrentUser() != null) {
             userName = String.format("%s@%s", getCurrentUser().getLoginName(), getCurrentUser().getDomain());
@@ -170,6 +173,7 @@ public class AuditLogableBase implements AuditLogable {
         return userName;
     }
 
+    @Override
     public void setUserName(final String value) {
         userName = value;
     }
@@ -182,10 +186,12 @@ public class AuditLogableBase implements AuditLogable {
         dbUser = value;
     }
 
+    @Override
     public Guid getVmTemplateId() {
         return getVmTemplateIdRef() != null ? getVmTemplateIdRef() : Guid.Empty;
     }
 
+    @Override
     public void setVmTemplateId(final Guid value) {
         vmTemplateId = value;
     }
@@ -197,6 +203,7 @@ public class AuditLogableBase implements AuditLogable {
         return vmTemplateId;
     }
 
+    @Override
     public String getVmTemplateName() {
         if (vmTemplateName == null && getVmTemplate() != null) {
             vmTemplateName = getVmTemplate().getName();
@@ -204,14 +211,17 @@ public class AuditLogableBase implements AuditLogable {
         return vmTemplateName;
     }
 
+    @Override
     public void setVmTemplateName(final String value) {
         vmTemplateName = value;
     }
 
+    @Override
     public Guid getVmId() {
         return getVmIdRef() != null ? getVmIdRef() : Guid.Empty;
     }
 
+    @Override
     public void setVmId(final Guid value) {
         vmId = value;
     }
@@ -233,6 +243,7 @@ public class AuditLogableBase implements AuditLogable {
         return vmId;
     }
 
+    @Override
     public String getVmName() {
         if (vmName == null && getVm() != null) {
             vmName = getVm().getName();
@@ -240,10 +251,12 @@ public class AuditLogableBase implements AuditLogable {
         return vmName;
     }
 
+    @Override
     public void setVmName(final String value) {
         vmName = value;
     }
 
+    @Override
     public String getReason() {
         if (reason == null && getVm() != null) {
             reason = getVm().getStopReason();
@@ -251,6 +264,7 @@ public class AuditLogableBase implements AuditLogable {
         return reason;
     }
 
+    @Override
     public void setReason(String value) {
         reason = value;
     }
@@ -266,14 +280,17 @@ public class AuditLogableBase implements AuditLogable {
         vdsId = value;
     }
 
+    @Override
     public Guid getVdsId() {
         return vdsId != null ? vdsId : Guid.Empty;
     }
 
+    @Override
     public void setVdsId(final Guid value) {
         vdsId = value;
     }
 
+    @Override
     public String getVdsName() {
         if (vdsName == null) {
             if (getVdsNoLoad() == null) {
@@ -289,6 +306,7 @@ public class AuditLogableBase implements AuditLogable {
         return vdsName;
     }
 
+    @Override
     public void setVdsName(final String value) {
         vdsName = value;
     }
@@ -322,6 +340,7 @@ public class AuditLogableBase implements AuditLogable {
         storageDomain = value;
     }
 
+    @Override
     public Guid getStorageDomainId() {
         if (storageDomain != null) {
             return storageDomain.getId();
@@ -329,10 +348,12 @@ public class AuditLogableBase implements AuditLogable {
         return storageDomainId;
     }
 
+    @Override
     public void setStorageDomainId(final Guid value) {
         storageDomainId = value;
     }
 
+    @Override
     public String getStorageDomainName() {
         if (storageDomainName == null && getStorageDomain() != null) {
             storageDomainName = getStorageDomain().getStorageName();
@@ -358,6 +379,7 @@ public class AuditLogableBase implements AuditLogable {
         storagePool = value;
     }
 
+    @Override
     public Guid getStoragePoolId() {
         if (storagePoolId == null) {
             if (storagePool != null) {
@@ -369,10 +391,12 @@ public class AuditLogableBase implements AuditLogable {
         return storagePoolId;
     }
 
+    @Override
     public void setStoragePoolId(final Guid value) {
         storagePoolId = value;
     }
 
+    @Override
     public String getStoragePoolName() {
         if (storagePoolName == null && getStoragePool() != null) {
             storagePoolName = getStoragePool().getName();
@@ -466,6 +490,7 @@ public class AuditLogableBase implements AuditLogable {
         vmTemplate = value;
     }
 
+    @Override
     public Guid getClusterId() {
         if (clusterId != null) {
             return clusterId;
@@ -477,6 +502,7 @@ public class AuditLogableBase implements AuditLogable {
         }
     }
 
+    @Override
     public void setClusterId(final Guid value) {
         clusterId = value;
     }
@@ -504,10 +530,12 @@ public class AuditLogableBase implements AuditLogable {
     }
 
 
+    @Override
     public void setClusterName(String clusterName) {
         this.clusterName = clusterName == null ? "" : clusterName;
     }
 
+    @Override
     public String getClusterName() {
         if (clusterName == null) {
             if (getCluster() != null) {
@@ -533,6 +561,7 @@ public class AuditLogableBase implements AuditLogable {
         }
     }
 
+    @Override
     public AuditLogable addCustomValue(final String name, final String value) {
         allocateCustomValues();
         customValues.put(name.toLowerCase(), value);
@@ -574,6 +603,7 @@ public class AuditLogableBase implements AuditLogable {
         }
     }
 
+    @Override
     public Map<String, String> getCustomValues() {
         return customValues;
     }
@@ -585,18 +615,22 @@ public class AuditLogableBase implements AuditLogable {
         return "";
     }
 
+    @Override
     public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
     }
 
+    @Override
     public String getCorrelationId() {
         return correlationId;
     }
 
+    @Override
     public void setJobId(Guid jobId) {
         this.jobId = jobId;
     }
 
+    @Override
     public Guid getJobId() {
         return jobId;
     }
@@ -609,14 +643,17 @@ public class AuditLogableBase implements AuditLogable {
         this.isInternalExecution = isInternalExecution;
     }
 
+    @Override
     public Guid getGlusterVolumeId() {
         return glusterVolumeId != null ? glusterVolumeId : Guid.Empty;
     }
 
+    @Override
     public void setGlusterVolumeId(Guid value) {
         glusterVolumeId = value;
     }
 
+    @Override
     public String getGlusterVolumeName() {
         if (glusterVolumeName == null && getGlusterVolume() != null) {
             glusterVolumeName = getGlusterVolume().getName();
@@ -624,6 +661,7 @@ public class AuditLogableBase implements AuditLogable {
         return glusterVolumeName;
     }
 
+    @Override
     public void setGlusterVolumeName(String value) {
         glusterVolumeName = value;
     }
@@ -644,50 +682,62 @@ public class AuditLogableBase implements AuditLogable {
         return DbFacade.getInstance();
     }
 
+    @Override
     public String getCustomId() {
         return customId;
     }
 
+    @Override
     public void setCustomId(String customId) {
         this.customId = customId;
     }
 
+    @Override
     public String getOrigin() {
         return origin;
     }
 
+    @Override
     public void setOrigin(String origin) {
         this.origin = origin;
     }
 
+    @Override
     public int getCustomEventId() {
         return customEventId;
     }
 
+    @Override
     public void setCustomEventId(int customEventId) {
         this.customEventId = customEventId;
     }
 
+    @Override
     public int getEventFloodInSec() {
         return eventFloodInSec;
     }
 
+    @Override
     public void setEventFloodInSec(int eventFloodInSec) {
         this.eventFloodInSec = eventFloodInSec;
     }
 
+    @Override
     public String getCustomData() {
         return customData;
     }
 
+    @Override
     public void setCustomData(String customData) {
         this.customData = customData;
     }
 
+    @Override
     public boolean isExternal() {
         return external;
     }
 
+    @Override
     public void setExternal(boolean external) {
         this.external = external;
     }
@@ -697,35 +747,43 @@ public class AuditLogableBase implements AuditLogable {
         return compatibilityVersion;
     }
 
+    @Override
     public void setCompatibilityVersion(String compatibilityVersion) {
         this.compatibilityVersion = compatibilityVersion;
     }
 
+    @Override
     public String getQuotaEnforcementType() {
         return quotaEnforcementType;
     }
 
+    @Override
     public void setQuotaEnforcementType(String quotaEnforcementType) {
         this.quotaEnforcementType = quotaEnforcementType;
     }
 
 
+    @Override
     public Guid getQuotaIdForLog() {
         return quotaIdForLog;
     }
 
+    @Override
     public void setQuotaIdForLog(Guid quotaIdForLog) {
         this.quotaIdForLog = quotaIdForLog;
     }
 
+    @Override
     public String getQuotaNameForLog() {
         return quotaNameForLog;
     }
 
+    @Override
     public void setQuotaNameForLog(String quotaNameForLog) {
         this.quotaNameForLog = quotaNameForLog;
     }
 
+    @Override
     public String getCallStack() {
         return callStack;
     }
@@ -737,14 +795,17 @@ public class AuditLogableBase implements AuditLogable {
      * @param callStack
      *            the call stack
      */
+    @Override
     public void setCallStack(String callStack) {
         this.callStack = callStack;
     }
 
+    @Override
     public boolean isRepeatable() {
         return repeatable;
     }
 
+    @Override
     public void setRepeatable(boolean repeatable) {
         this.repeatable = repeatable;
     }
@@ -757,18 +818,22 @@ public class AuditLogableBase implements AuditLogable {
         this.auditLogDirector = auditLogDirector;
     }
 
+    @Override
     public Guid getBrickId() {
         return brickId;
     }
 
+    @Override
     public void setBrickId(Guid brickId) {
         this.brickId = brickId;
     }
 
+    @Override
     public String getBrickPath() {
         return brickPath;
     }
 
+    @Override
     public void setBrickPath(String brickPath) {
         this.brickPath = brickPath;
     }
