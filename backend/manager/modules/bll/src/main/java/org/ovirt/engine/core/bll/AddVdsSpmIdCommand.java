@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
+@ValidateSupportsTransaction
 public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
     /**
