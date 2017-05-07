@@ -166,7 +166,9 @@ public class JobRepositoryImpl implements JobRepository {
         }
 
         for (Step step : steps) {
-            step.setSteps(parentStepMap.get(step.getId()));
+            if (parentStepMap.containsKey(step.getId())) {
+                step.setSteps(parentStepMap.get(step.getId()));
+            }
         }
         return jobDirectSteps;
     }
