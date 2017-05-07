@@ -46,7 +46,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected void executeCommand() {
-        List<VdsSpmIdMap> vdsSpmIdMapList = vdsSpmIdMapDao.getAll(getVds().getStoragePoolId());
+        List<VdsSpmIdMap> vdsSpmIdMapList = vdsSpmIdMapDao.getAll(getDcId());
         if (vdsSpmIdMapList.size() >= Config.<Integer> getValue(ConfigValues.MaxNumberOfHostsInStoragePool)) {
             buildFaultResult();
             return;
@@ -67,14 +67,22 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
                 break;
             }
         }
-        // get the dc id from cluster if DC was removed and cluster is attached to a new DC
-        Guid dcId = getVds().getStoragePoolId().equals(Guid.Empty) ? getCluster().getStoragePoolId() : getVds().getStoragePoolId();
-        VdsSpmIdMap newMap = new VdsSpmIdMap(dcId, getVdsId(), selectedId);
+        VdsSpmIdMap newMap = new VdsSpmIdMap(getDcId(), getVdsId(), selectedId);
         vdsSpmIdMapDao.save(newMap);
         if (getParameters().isCompensationEnabled()) {
             getCompensationContext().snapshotNewEntity(newMap);
             getCompensationContext().stateChanged();
         }
+    }
+
+    /**
+     * Gets the dc id from cluster if DC was removed and cluster is attached to a new DC
+     */
+    private Guid getDcId() {
+        final Guid hostDcId = getVds().getStoragePoolId();
+        return hostDcId.equals(Guid.Empty)
+                ? getCluster().getStoragePoolId()
+                : hostDcId;
     }
 
     private void buildFaultResult() {
