@@ -49,6 +49,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.ANSWER_FILE,
             None
         )
+        self.environment.setdefault(
+            osetupcons.CoreEnv.GENERATE_STANDARD_ANSWERFILE,
+            True
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLEANUP,
@@ -56,15 +60,16 @@ class Plugin(plugin.PluginBase):
     )
     def _cleanup(self):
         answers = []
-        answers.append(
-            os.path.join(
-                osetupcons.FileLocations.OVIRT_SETUP_ANSWERS_DIR,
-                '%s-%s.conf' % (
-                    datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
-                    self.environment[osetupcons.CoreEnv.ACTION],
-                ),
+        if self.environment[osetupcons.CoreEnv.GENERATE_STANDARD_ANSWERFILE]:
+            answers.append(
+                os.path.join(
+                    osetupcons.FileLocations.OVIRT_SETUP_ANSWERS_DIR,
+                    '%s-%s.conf' % (
+                        datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
+                        self.environment[osetupcons.CoreEnv.ACTION],
+                    ),
+                )
             )
-        )
         if self.environment[osetupcons.CoreEnv.ANSWER_FILE] is not None:
             answers.append(
                 self.environment[osetupcons.CoreEnv.ANSWER_FILE]
