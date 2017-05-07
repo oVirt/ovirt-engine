@@ -409,7 +409,7 @@ public class AuditLogableBase implements AuditLogable {
         return vds;
     }
 
-    protected VdsStatic getVdsStatic() {
+    private VdsStatic getVdsStatic() {
         if (cachedVdsStatic == null
                 && ((vdsId != null && !Guid.Empty.equals(vdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
             if (vdsId == null || Guid.Empty.equals(vdsId)) {
