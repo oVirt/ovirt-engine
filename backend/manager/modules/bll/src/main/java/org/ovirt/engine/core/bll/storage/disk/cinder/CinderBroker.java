@@ -20,7 +20,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,7 @@ import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import com.woorea.openstack.cinder.model.VolumeForUpdate;
 
-public class CinderBroker extends AuditLogableBase {
+public class CinderBroker {
 
     private static final Logger log = LoggerFactory.getLogger(CinderBroker.class);
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
@@ -195,15 +196,19 @@ public class CinderBroker extends AuditLogableBase {
             CinderConnectionInfo connectionInfo = initializeConnectionForDisk(cinderDisk);
             CinderVolumeDriver cinderVolumeDriver = CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
             if (cinderVolumeDriver == null) {
-                addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
-                new AuditLogDirector().log(this, AuditLogType.CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED);
+                logDiskEvent(cinderDisk, AuditLogType.CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED);
             }
             cinderDisk.setCinderConnectionInfo(connectionInfo);
         } catch (OpenStackResponseException ex) {
-            addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
-            new AuditLogDirector().log(this, AuditLogType.CINDER_DISK_CONNECTION_FAILURE);
+            logDiskEvent(cinderDisk, AuditLogType.CINDER_DISK_CONNECTION_FAILURE);
             throw ex;
         }
+    }
+
+    private void logDiskEvent(CinderDisk cinderDisk, AuditLogType cinderDiskConnectionFailure) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
+        new AuditLogDirector().log(logable, cinderDiskConnectionFailure);
     }
 
     public boolean isDiskExist(final Guid id) {
