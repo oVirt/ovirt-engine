@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
@@ -83,7 +81,6 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
         returnValueBase.setValid(validationSucceeds);
         returnValueBase.setSucceeded(executionSucceeds);
         TestCommand command = new TestCommand(returnValueBase);
-        command.setAuditLogDirector(mock(AuditLogDirector.class));
         return spy(command);
     }
 

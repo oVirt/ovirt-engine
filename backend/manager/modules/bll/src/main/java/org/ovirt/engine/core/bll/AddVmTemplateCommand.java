@@ -95,6 +95,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -115,6 +116,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateManagementCommand<T>
         implements QuotaStorageDependent, QuotaVdsDependent, SerialChildExecutingCommand {
 
+    @Inject
+    private AuditLogDirector auditLogDirector;
     @Inject
     private SchedulerUtilQuartzImpl schedulerUtil;
     @Inject

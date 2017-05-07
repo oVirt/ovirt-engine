@@ -37,12 +37,15 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
 @NonTransactiveCommandAttribute
 public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDomainDevicesCommandParameters> extends StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
 
+    @Inject
+    private AuditLogDirector auditLogDirector;
     @Inject
     private BlockStorageDomainValidator blockSDValidator;
     @Inject
@@ -104,8 +107,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
                     getParameters().getDevicesToReduce());
             if (!metadataDevices.isEmpty()) {
                 setCustomCommaSeparatedValues("deviceIds", metadataDevices);
-                getAuditLogDirector().log(this,
-                        AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_METADATA_DEVICES);
+                auditLogDirector.log(this, AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_METADATA_DEVICES);
                 throw new EngineException(EngineError.GeneralException, "Cannot perform on metadata devices");
             }
         }
@@ -118,8 +120,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
         List<LUNs> allLuns =
                 blockStorageDomainHelper.getVgLUNsInfo(getStorageDomain().getStorageStaticData(), getVdsId());
         if (allLuns == null) {
-            getAuditLogDirector().log(this,
-                    AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_TO_GET_DOMAIN_INFO);
+            auditLogDirector.log(this, AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_TO_GET_DOMAIN_INFO);
             throw new EngineException(EngineError.GeneralException, "Failed to get the vg info");
         }
         long freeExtents = allLuns.stream()
@@ -133,8 +134,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
                 .sum();
 
         if (neededExtents > freeExtents) {
-            getAuditLogDirector().log(this,
-                    AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_NO_FREE_SPACE);
+            auditLogDirector.log(this, AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_NO_FREE_SPACE);
             throw new EngineException(EngineError.GeneralException, "Not enough free space on the destination devices");
         }
     }

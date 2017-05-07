@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeClassificatio
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,12 +196,12 @@ public class CinderBroker extends AuditLogableBase {
             CinderVolumeDriver cinderVolumeDriver = CinderVolumeDriver.forValue(connectionInfo.getDriverVolumeType());
             if (cinderVolumeDriver == null) {
                 addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
-                auditLogDirector.log(this, AuditLogType.CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED);
+                new AuditLogDirector().log(this, AuditLogType.CINDER_DISK_CONNECTION_VOLUME_DRIVER_UNSUPPORTED);
             }
             cinderDisk.setCinderConnectionInfo(connectionInfo);
         } catch (OpenStackResponseException ex) {
             addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
-            auditLogDirector.log(this, AuditLogType.CINDER_DISK_CONNECTION_FAILURE);
+            new AuditLogDirector().log(this, AuditLogType.CINDER_DISK_CONNECTION_FAILURE);
             throw ex;
         }
     }

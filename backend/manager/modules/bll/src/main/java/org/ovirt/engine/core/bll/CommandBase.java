@@ -88,6 +88,7 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -133,6 +134,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     private List<QuotaConsumptionParameter> consumptionParameters;
     protected Map<String, Serializable> commandData;
     private Long sessionSeqId;
+
+    @Inject
+    protected AuditLogDirector auditLogDirector;
 
     @Inject
     protected LockManager lockManager;
@@ -1520,6 +1524,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         InternalCommandAttribute annotation = type.getAnnotation(InternalCommandAttribute.class);
         if (annotation == null) {
             log();
+        }
+    }
+
+    protected void log() {
+        final Transaction transaction = TransactionSupport.suspend();
+        try {
+            auditLogDirector.log(this, getAuditLogTypeValue());
+        } catch (final RuntimeException ex) {
+            log.error("Error during log command: {}. Exception {}", getClass().getName(), ex.getMessage());
+            log.debug("Exception", ex);
+        } finally {
+            TransactionSupport.resume(transaction);
         }
     }
 

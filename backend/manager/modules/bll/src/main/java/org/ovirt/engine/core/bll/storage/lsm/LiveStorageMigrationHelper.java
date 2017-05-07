@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 
@@ -21,6 +22,9 @@ public class LiveStorageMigrationHelper {
 
     @Inject
     private StorageDomainStaticDao storageDomainStaticDao;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public void removeImage(CommandBase<?> cmd, Guid storageDomainId, Guid imageGroupId, Guid imageId,
                                     AuditLogType failureAuditLog) {
@@ -39,7 +43,7 @@ public class LiveStorageMigrationHelper {
             cmd.addCustomValue("DiskAlias", baseDiskDao.get(imageGroupId).getDiskAlias());
             cmd.addCustomValue("StorageDomainName", storageDomainStaticDao.get(storageDomainId).getName());
             cmd.addCustomValue("UserName", cmd.getUserName());
-            cmd.getAuditLogDirector().log(cmd, failureAuditLog);
+            auditLogDirector.log(cmd, failureAuditLog);
         }
     }
 }

@@ -9,7 +9,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -35,7 +34,6 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +41,6 @@ public class AuditLogableBase implements AuditLogable {
     private static final Logger log = LoggerFactory.getLogger(AuditLogableBase.class);
     private static final String COMMA_SEPARATOR = ", ";
 
-    @Inject
-    protected AuditLogDirector auditLogDirector;
     @Inject
     private StorageDomainDao storageDomainDao;
     @Inject
@@ -547,20 +543,6 @@ public class AuditLogableBase implements AuditLogable {
         return clusterName;
     }
 
-    protected void log() {
-        final Transaction transaction = TransactionSupport.suspend();
-        try {
-            try {
-                auditLogDirector.log(this, getAuditLogTypeValue());
-            } catch (final RuntimeException ex) {
-                log.error("Error during log command: {}. Exception {}", getClass().getName(), ex.getMessage());
-                log.debug("Exception", ex);
-            }
-        } finally {
-            TransactionSupport.resume(transaction);
-        }
-    }
-
     @Override
     public AuditLogable addCustomValue(final String name, final String value) {
         allocateCustomValues();
@@ -808,14 +790,6 @@ public class AuditLogableBase implements AuditLogable {
     @Override
     public void setRepeatable(boolean repeatable) {
         this.repeatable = repeatable;
-    }
-
-    public AuditLogDirector getAuditLogDirector() {
-        return auditLogDirector;
-    }
-
-    public void setAuditLogDirector(AuditLogDirector auditLogDirector) {
-        this.auditLogDirector = auditLogDirector;
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.PrepareImageReturn;
@@ -40,6 +41,8 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     private static final String FILE_URL_SCHEME = "file://";
 
+    @Inject
+    private AuditLogDirector auditLogDirector;
     @Inject
     private DiskDao diskDao;
     @Inject
