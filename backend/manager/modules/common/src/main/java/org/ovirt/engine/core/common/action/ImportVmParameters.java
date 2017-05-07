@@ -37,7 +37,7 @@ public class ImportVmParameters extends VmOperationParameterBase implements Seri
     private boolean reassignBadMacs;
 
     public ImportVmParameters() {
-        this(Collections.<ExternalVnicProfileMapping>emptyList(), false);
+        this(Collections.emptyList(), false);
     }
 
     public ImportVmParameters(
