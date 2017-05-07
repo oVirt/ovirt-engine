@@ -30,11 +30,11 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
-import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
     private VmDao vmDao;
 
     @Inject
-    private VmStaticDao vmStaticDao;
+    private ResourceManager resourceManager;
 
     @Inject
     private SnapshotDao snapshotDao;
@@ -210,7 +210,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
     private AuditLogable createVmEvent(Guid vmId) {
         AuditLogable event = new AuditLogableImpl();
         event.setVmId(vmId);
-        event.setVmName(vmStaticDao.get(vmId).getName());
+        event.setVmName(resourceManager.getVmManager(vmId).getName());
         return event;
     }
 
