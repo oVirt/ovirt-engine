@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -227,7 +228,8 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     public CinderBroker getCinderBroker() {
         if (cinderBroker == null) {
-            cinderBroker = new CinderBroker(getStorageDomainId(), getReturnValue().getExecuteFailedMessages());
+            cinderBroker = Injector.injectMembers(
+                    new CinderBroker(getStorageDomainId(), getReturnValue().getExecuteFailedMessages()));
         }
         return cinderBroker;
     }

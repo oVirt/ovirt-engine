@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
@@ -290,7 +291,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
         List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED);
         for (CinderDisk cinderDisk : cinderDisks) {
-            CinderBroker cinderBroker = new CinderBroker(cinderDisk.getStorageIds().get(0), getReturnValue().getExecuteFailedMessages());
+            CinderBroker cinderBroker = Injector.injectMembers(
+                    new CinderBroker(cinderDisk.getStorageIds().get(0), getReturnValue().getExecuteFailedMessages()));
             try {
                 cinderBroker.updateConnectionInfoForDisk(cinderDisk);
             } catch (OpenStackResponseException ex) {
