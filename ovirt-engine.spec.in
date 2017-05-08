@@ -969,6 +969,10 @@ fi
 %{engine_data}/bin/pki-enroll-request.sh
 %{engine_data}/bin/pki-pkcs12-extract.sh
 
+#
+# engine-host-update.py tool
+#
+%{engine_data}/bin/engine-host-update.py
 
 %files setup-base
 %license LICENSE
