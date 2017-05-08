@@ -32,7 +32,6 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
     @Inject
     private ImageDao imageDao;
 
-    private CinderBroker cinderBroker;
     private CinderDisk oldActiveDisk;
 
     public TryBackToCinderSnapshotCommand(T parameters, CommandContext commandContext) {
@@ -139,14 +138,6 @@ public class TryBackToCinderSnapshotCommand<T extends CreateCinderSnapshotParame
         undoActionOnSourceAndDestination();
 
         setSucceeded(true);
-    }
-
-    @Override
-    public CinderBroker getCinderBroker() {
-        if (cinderBroker == null) {
-            cinderBroker = new CinderBroker(getStorageDomainId(), getReturnValue().getExecuteFailedMessages());
-        }
-        return cinderBroker;
     }
 
     @Override
