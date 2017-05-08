@@ -84,4 +84,5 @@ find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 mv ./*tar.gz exported-artifacts/
 
 # Rename junit surefire reports to match jenkins report plugin
-rename .xml .junit.xml exported-artifacts/tests/*
+# Error code 4 means nothing changed, ignore it
+rename .xml .junit.xml exported-artifacts/tests/* ||  [[ $? -eq 4 ]]
