@@ -103,6 +103,7 @@ class Plugin(plugin.PluginBase):
 
     def _add_provider_to_db(self):
         auth_required = self._user is not None
+        fqdn = self.environment[osetupcons.ConfigEnv.FQDN]
 
         password = (
             self._encrypt_password(self._password)
@@ -123,19 +124,21 @@ class Plugin(plugin.PluginBase):
                     v_auth_required:=%(auth_required)s,
                     v_auth_username:=%(auth_username)s,
                     v_auth_password:=%(auth_password)s,
-                    v_custom_properties:=%(custom_properties)s
+                    v_custom_properties:=%(custom_properties)s,
+                    v_auth_url:=%(auth_url)s
                 )
             """,
             args=dict(
                 provider_id=str(uuid.uuid4()),
                 provider_name='ovirt-provider-ovn',
                 provider_description='oVirt network provider for OVN',
-                provider_url='http://localhost:9696',
+                provider_url='https://%s:9696' % fqdn,
                 provider_type='EXTERNAL_NETWORK',
                 auth_required=auth_required,
                 auth_username=self._user,
                 auth_password=password,
-                custom_properties=None
+                custom_properties=None,
+                auth_url='https://%s:35357/v2.0/' % fqdn
             ),
         )
 
