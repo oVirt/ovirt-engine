@@ -5,6 +5,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,6 +24,7 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -52,6 +56,7 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
         super.initSuppliedImage(transferImageCommand);
 
         DiskImage diskImage = new DiskImage();
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
         doReturn(diskImage).when(diskDao).get(any());
 
         doReturn(diskValidator).when(getCommand()).getDiskValidator(any());
