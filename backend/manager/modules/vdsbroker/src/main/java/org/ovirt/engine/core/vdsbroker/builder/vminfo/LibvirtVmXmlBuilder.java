@@ -550,7 +550,7 @@ public class LibvirtVmXmlBuilder {
                 writeWatchdog(device);
                 break;
             case MEMORY:
-                writeMemory(device);
+                // memory devices are only used for hot-plug
                 break;
             case VIDEO:
                 writeVideo(device);
