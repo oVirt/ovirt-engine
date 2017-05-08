@@ -10,7 +10,9 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.AddClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -23,6 +25,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -38,6 +42,7 @@ import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
 public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnClusterOperationParameters> extends
@@ -61,9 +66,11 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
     @Inject
     private VmDao vmDao;
     @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
 
-    protected Network managementNetwork;
+    private Network managementNetwork;
 
     protected ClusterOperationCommandBase(Guid commandId) {
         super(commandId);
@@ -295,5 +302,40 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
         return networkDao;
     }
 
-    protected abstract boolean validateInputManagementNetwork();
+    private boolean validateInputManagementNetwork() {
+        if (!findInputManagementNetwork()) {
+            return false;
+        }
+
+        final NetworkClusterValidatorBase networkClusterValidator = createNetworkClusterValidator();
+        return validateInputManagementNetwork(networkClusterValidator);
+    }
+
+    private AddClusterNetworkClusterValidator createNetworkClusterValidator() {
+        final NetworkCluster networkCluster = createManagementNetworkCluster();
+        return new AddClusterNetworkClusterValidator(
+                interfaceDao,
+                getNetworkDao(),
+                vdsDao,
+                networkCluster);
+    }
+
+    protected NetworkCluster createManagementNetworkCluster() {
+        return new NetworkCluster(
+                getClusterId(),
+                managementNetwork.getId(),
+                NetworkStatus.OPERATIONAL,
+                true,
+                true,
+                true,
+                true,
+                false,
+                true);
+    }
+
+    protected Network getManagementNetwork() {
+        return managementNetwork;
+    }
+
+    protected abstract boolean validateInputManagementNetwork(NetworkClusterValidatorBase networkClusterValidator);
 }

@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -52,9 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -246,7 +245,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
                 }
             }
 
-            final NetworkCluster managementNetworkCluster = createManagementNetworkCluster(managementNetwork);
+            final NetworkCluster managementNetworkCluster = createManagementNetworkCluster();
             networkClusterDao.save(managementNetworkCluster);
         }
 
@@ -446,20 +445,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
 
     private void updateGlusterHosts() {
         allForCluster.forEach(glusterCommandHelper::initGlusterHost);
-    }
-
-    private NetworkCluster createManagementNetworkCluster(Network managementNetwork) {
-        final NetworkCluster networkCluster = new NetworkCluster(
-                getCluster().getId(),
-                managementNetwork.getId(),
-                NetworkStatus.OPERATIONAL,
-                true,
-                true,
-                true,
-                true,
-                false,
-                true);
-        return networkCluster;
     }
 
     @Override
@@ -771,11 +756,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     }
 
     @Override
-    protected boolean validateInputManagementNetwork() {
-        return findInputManagementNetwork();
-    }
-
-    @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
         addValidationMessage(EngineMessage.VAR__ACTION__UPDATE);
@@ -851,10 +831,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         logable.setClusterId(oldCluster.getId());
     }
 
-    DefaultManagementNetworkFinder getDefaultManagementNetworkFinder() {
-        return defaultManagementNetworkFinder;
-    }
-
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         final List<PermissionSubject> result = new ArrayList<>(super.getPermissionCheckSubjects());
@@ -894,5 +870,11 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Override
     protected LockProperties getLockProperties() {
         return LockProperties.create(LockProperties.Scope.Command).withWait(false);
+    }
+
+    @Override
+    protected boolean validateInputManagementNetwork(NetworkClusterValidatorBase networkClusterValidator) {
+        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getCluster(), getManagementNetwork()))
+                && validate(networkClusterValidator.managementNetworkNotExternal(getManagementNetwork()));
     }
 }
