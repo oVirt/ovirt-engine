@@ -102,6 +102,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
         if (getStorageDomain().getVgMetadataDevice() == null || getStorageDomain().getFirstMetadataDevice() == null) {
             blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
                     getParameters().getVdsId());
+            validateRetrievedMetadataDevices();
             storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
             List<String> metadataDevices = blockStorageDomainHelper.findMetadataDevices(getStorageDomain(),
                     getParameters().getDevicesToReduce());
@@ -114,6 +115,14 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
 
         // Performed here in order to avoid storage access during the validate() execution.
         validateFreeSpace();
+    }
+
+    private void validateRetrievedMetadataDevices() {
+        if (getStorageDomain().getVgMetadataDevice() == null || getStorageDomain().getFirstMetadataDevice() == null) {
+            auditLogDirector.log(this,
+                    AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_DETERMINE_METADATA_DEVICES);
+            throw new EngineException(EngineError.GeneralException, "Couldn't determine the domain metadata devices");
+        }
     }
 
     public void validateFreeSpace() {
