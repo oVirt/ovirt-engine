@@ -307,26 +307,24 @@ public class StorageDomainValidator {
         DiskImage topSnapshot = subchain.getTopImage();
 
         // We are doing a pre-4.1 cold merge, using block-rebase
+        // IMPORTANT: baseSnapshot and topSnapshot are swapped becuase
+        // this is the old cold merge flow
         if (snapshotActionType == VdcActionType.RemoveSnapshotSingleDisk) {
             return Math.min(baseSnapshot.getActualSizeInBytes() + topSnapshot.getActualSizeInBytes(),
                     baseSnapshot.getSize()) * StorageConstants.QCOW_OVERHEAD_FACTOR;
         }
-
-        VolumeType volumeType = snapshotActionType == VdcActionType.ColdMergeSnapshotSingleDisk ?
-                baseSnapshot.getVolumeType() :
-                topSnapshot.getVolumeType();
 
         // The snapshot is the root snapshot
         if (Guid.isNullOrEmpty(baseSnapshot.getParentId())) {
             if (baseSnapshot.getVolumeFormat() == VolumeFormat.RAW) {
                 // Raw/Block can only be preallocated thus we are necessarily overlapping
                 // with existing data
-                if (volumeType == VolumeType.Preallocated) {
+                if (baseSnapshot.getVolumeType() == VolumeType.Preallocated) {
                     return 0.0;
                 }
 
                 return Math.min(topSnapshot.getActualSizeInBytes() / StorageConstants.QCOW_OVERHEAD_FACTOR,
-                            baseSnapshot.getSize() - baseSnapshot.getActualSizeInBytes());
+                        baseSnapshot.getSize() - baseSnapshot.getActualSizeInBytes());
             }
         }
 
@@ -334,7 +332,7 @@ public class StorageDomainValidator {
         // If the actual size of top is larger than the actual size of base we
         // will be overlapping, hence we extend by the lower of the two.
         return Math.min(topSnapshot.getSize() * StorageConstants.QCOW_OVERHEAD_FACTOR - baseSnapshot.getActualSizeInBytes(),
-                            topSnapshot.getActualSizeInBytes());
+                topSnapshot.getActualSizeInBytes());
 
     }
 
