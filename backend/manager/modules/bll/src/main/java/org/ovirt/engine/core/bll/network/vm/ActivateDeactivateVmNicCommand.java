@@ -311,6 +311,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                     if (vmDevice.getId().getDeviceId().toString().equals(vdsmDevice.get(VdsProperties.DeviceId))) {
                         vmDevice.setAddress(vdsmDevice.get(VdsProperties.Address).toString());
                         vmDevice.setAlias(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.Alias)));
+                        break;
                     }
                 }
             }
