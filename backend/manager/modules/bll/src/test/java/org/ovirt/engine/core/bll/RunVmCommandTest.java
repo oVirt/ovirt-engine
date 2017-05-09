@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -504,6 +505,7 @@ public class RunVmCommandTest extends BaseCommandTest {
                 any(Cluster.class),
                 any(boolean.class))).thenReturn(true);
         when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
+        when(runVmValidator.validateUsbDevices(any(VmBase.class))).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }
