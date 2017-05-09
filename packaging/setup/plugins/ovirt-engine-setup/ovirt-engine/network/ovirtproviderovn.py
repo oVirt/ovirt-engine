@@ -52,6 +52,7 @@ def _(m):
 OvnDbConfig = namedtuple(
     'OvnDbConfig',
     [
+        'name',
         'port',
         'protocol',
         'command',
@@ -81,6 +82,7 @@ class Plugin(plugin.PluginBase):
     # This is because of OVN bug: 1446538
     # Once the bug is fixed, the connection can be moved to SSL
     OVN_NORTH_DB_CONFIG = OvnDbConfig(
+        'OVN NORTH DB',
         '6641',
         CONNECTION_TCP,
         'ovn-nbctl',
@@ -89,6 +91,7 @@ class Plugin(plugin.PluginBase):
     )
 
     OVN_SOUTH_DB_CONFIG = OvnDbConfig(
+        'OVN SOUTH DB',
         '6642',
         CONNECTION_SSL,
         'ovn-sbctl',
@@ -313,7 +316,11 @@ class Plugin(plugin.PluginBase):
                     ovn_db_config.cert_file,
                     oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
                 ),
-                _('Failed to configure OVN with SSL')
+                _(
+                    'Failed to configure {name} with SSL'
+                ).format(
+                    name=ovn_db_config.name
+                )
             )
 
         self._execute_command(
@@ -322,7 +329,11 @@ class Plugin(plugin.PluginBase):
                 'set-connection',
                 'p%s:%s' % (ovn_db_config.protocol, ovn_db_config.port),
             ),
-            _('Failed to open OVN SSL connection')
+            _(
+                'Failed to open {name} SSL connection'
+            ).format(
+                name=ovn_db_config.name
+            )
         )
 
     def _configure_ovndb_north_connection(self):
