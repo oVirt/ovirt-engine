@@ -24,6 +24,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.DiskHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
@@ -35,10 +36,12 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -83,6 +86,9 @@ public class RunVmValidator {
 
     @Inject
     private SnapshotsValidator snapshotsValidator;
+
+    @Inject
+    private VmDeviceUtils vmDeviceUtils;
 
     public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution, Guid activeIsoDomainId) {
         this.vm = vm;
@@ -198,6 +204,21 @@ public class RunVmValidator {
             return validationResult;
         }
 
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * @return true if USB controllers are valid for the vm
+     */
+    public ValidationResult validateUsbDevices(VmBase vm) {
+        if (vm.getUsbPolicy() == UsbPolicy.DISABLED) {
+            final Collection<VmDevice> usbControllers = getVmDeviceUtils().getUsbControllers(vm.getId());
+            final List<VmDevice> unmanagedControllers = usbControllers.stream().filter(d -> !d.isManaged()).collect(Collectors.toList());
+
+            if (unmanagedControllers.size() > 1) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_USB_UNMANAGED_DEV_EXCEEDED_LIMIT);
+            }
+        }
         return ValidationResult.VALID;
     }
 
@@ -603,5 +624,9 @@ public class RunVmValidator {
         }
 
         return cachedClusterNetworksNames;
+    }
+
+    protected VmDeviceUtils getVmDeviceUtils() {
+        return vmDeviceUtils;
     }
 }

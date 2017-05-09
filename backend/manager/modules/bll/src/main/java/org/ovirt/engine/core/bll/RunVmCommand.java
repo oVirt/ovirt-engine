@@ -1017,6 +1017,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             releaseHostDevicesLock();
         }
 
+        if (!validate(runVmValidator.validateUsbDevices(getVm().getStaticData()))) {
+            return false;
+        }
+
         return true;
     }
 
