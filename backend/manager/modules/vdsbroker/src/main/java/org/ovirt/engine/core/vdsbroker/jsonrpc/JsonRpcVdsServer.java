@@ -70,6 +70,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMNamesListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VolumeInfoReturn;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
@@ -923,13 +924,13 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @SuppressWarnings("rawtypes")
     @Override
-    public StatusOnlyReturn hotPlugNic(Map info) {
+    public VmInfoReturn hotPlugNic(Map info) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.hotplugNic").withParameter("vmID", getVmId(info))
                         .withParameter("params", info)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturn(response);
+        return new VmInfoReturn(response);
     }
 
     @SuppressWarnings("rawtypes")

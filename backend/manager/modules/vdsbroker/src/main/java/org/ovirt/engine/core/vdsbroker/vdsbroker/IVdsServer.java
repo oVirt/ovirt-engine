@@ -207,7 +207,7 @@ public interface IVdsServer {
 
     StatusOnlyReturn hotunplugDisk(Map info);
 
-    StatusOnlyReturn hotPlugNic(Map info);
+    VmInfoReturn hotPlugNic(Map info);
 
     StatusOnlyReturn hotUnplugNic(Map info);
 

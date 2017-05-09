@@ -48,6 +48,8 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VmInfoReturn;
 
 /**
  * Activate or deactivate a virtual network interface of a VM in case it is in a valid status. If the VM is down, simply
@@ -293,7 +295,26 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                         getParameters().getNic(),
                         vmDevice));
 
+        updateVmDeviceWithDataReturnedFromHost(vdsReturnValue);
         return vdsReturnValue.getSucceeded();
+    }
+
+    private void updateVmDeviceWithDataReturnedFromHost(VDSReturnValue vdsReturnValue) {
+        if (vdsReturnValue.getSucceeded() && getParameters().getAction() == PlugAction.PLUG) {
+            VmInfoReturn vmInfoReturn = (VmInfoReturn) vdsReturnValue.getReturnValue();
+            if (vmInfoReturn.getVmInfo() != null) {
+                Map<String, Object> vmInfo = (Map<String, Object>) vmInfoReturn.getVmInfo();
+
+                for (Object o : (Object[]) vmInfo.get(VdsProperties.Devices)) {
+                    Map<String, Object> vdsmDevice = (Map<String, Object>) o;
+
+                    if (vmDevice.getId().getDeviceId().toString().equals(vdsmDevice.get(VdsProperties.DeviceId))) {
+                        vmDevice.setAddress(vdsmDevice.get(VdsProperties.Address).toString());
+                        vmDevice.setAlias(StringUtils.defaultString((String) vdsmDevice.get(VdsProperties.Alias)));
+                    }
+                }
+            }
+        }
     }
 
     private String acquireVF() {
