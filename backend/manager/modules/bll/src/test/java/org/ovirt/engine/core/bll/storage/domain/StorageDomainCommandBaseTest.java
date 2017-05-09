@@ -97,12 +97,12 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         storagePoolExists();
         masterDomainIsUp();
         canDetachDomain();
-        assertTrue(cmd.canDetachDomain(false, false));
+        assertFalse(cmd.canDetachDomain(false, false));
     }
 
     @Test
     public void canDetachMaintenanceDomain() {
-        setStorageDomainStatus(StorageDomainStatus.Inactive);
+        setStorageDomainStatus(StorageDomainStatus.Maintenance);
         storagePoolExists();
         masterDomainIsUp();
         canDetachDomain();

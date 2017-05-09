@@ -99,7 +99,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast) {
         return checkStoragePool()
                 && checkStorageDomain()
-                && checkStorageDomainStatus(StorageDomainStatus.Inactive, StorageDomainStatus.Maintenance)
+                && checkStorageDomainStatus(StorageDomainStatus.Maintenance)
                 && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())
                 && isDetachAllowed(isRemoveLast)
                 && isCinderStorageHasNoDisks();
