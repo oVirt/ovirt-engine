@@ -65,6 +65,11 @@ public class NetworkClusterHelper {
             updateManagementNetwork = true;
         }
 
+        if (oldNetworkCluster.isDefaultRoute()) {
+            managementNetworkCluster.setDefaultRoute(true);
+            updateManagementNetwork = true;
+        }
+
         if (updateManagementNetwork) {
             networkClusterDao.update(managementNetworkCluster);
         }
