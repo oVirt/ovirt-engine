@@ -170,11 +170,11 @@ public class BackendAttachedStorageDomainsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         String[] paramNames = new String[] { "ServerConnectionId" };
         Object[] paramValues = new Object[] { GUIDS[0].toString() };
-        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
         when(backend.runQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
         .thenReturn(queryResult);
-        when(queryResult.getSucceeded()).thenReturn(true);
-        when(queryResult.getReturnValue()).thenReturn(setUpStorageServerConnection());
+        queryResult.setSucceeded(true);
+        queryResult.setReturnValue(setUpStorageServerConnection());
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());

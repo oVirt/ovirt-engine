@@ -177,20 +177,20 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     }
 
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
         SearchParameters params = new SearchParameters(prefix + query, searchType);
-        when(queryResult.getSucceeded()).thenReturn(failure == null);
+        queryResult.setSucceeded(failure == null);
         if (failure == null) {
             List<Q> entities = new ArrayList<>();
             for (int i = 0; i < NAMES.length; i++) {
                 entities.add(getEntity(i));
             }
-            when(queryResult.getReturnValue()).thenReturn(entities);
+            queryResult.setReturnValue(entities);
             when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
                     queryResult);
         } else {
             if (failure instanceof String) {
-                when(queryResult.getExceptionString()).thenReturn((String) failure);
+                queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String)failure);
                 when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
                         queryResult);
@@ -259,9 +259,9 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         }
         if (asyncTasks != null) {
             taskResult.setVdsmTaskIdList(asyncTasks);
-            VdcQueryReturnValue monitorResult = mock(VdcQueryReturnValue.class);
-            when(monitorResult.getSucceeded()).thenReturn(success);
-            when(monitorResult.getReturnValue()).thenReturn(asyncStatuses);
+            VdcQueryReturnValue monitorResult = new VdcQueryReturnValue();
+            monitorResult.setSucceeded(success);
+            monitorResult.setReturnValue(asyncStatuses);
             when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                                     eqParams(GetTasksStatusesByTasksIDsParameters.class,
                                                   addSession(),

@@ -229,18 +229,18 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     private void setUpNetworkAttachmentsQueryExpectations(Object failure) {
         setUpVerifyHostExpectations();
-        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
-        when(queryResult.getSucceeded()).thenReturn(failure == null);
+        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        queryResult.setSucceeded(failure == null);
         List<NetworkAttachment> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < GUIDS.length; i++) {
                 entities.add(getEntity(i));
             }
-            when(queryResult.getReturnValue()).thenReturn(entities);
+            queryResult.setReturnValue(entities);
         } else {
             if (failure instanceof String) {
-                when(queryResult.getExceptionString()).thenReturn((String) failure);
+                queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
                 when(backend.runQuery(eq(listQueryType),
@@ -256,19 +256,19 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
      * host object.
      */
     private void setUpVerifyHostExpectations() {
-        VdcQueryReturnValue result = mock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue result = new VdcQueryReturnValue();
         VDS host = mock(VDS.class);
-        when(result.getSucceeded()).thenReturn(true);
-        when(result.getReturnValue()).thenReturn(host);
+        result.setSucceeded(true);
+        result.setReturnValue(host);
         when(backend.runQuery(eq(VdcQueryType.GetVdsByVdsId), any(IdQueryParameters.class))).thenReturn(result);
 
-        VdcQueryReturnValue interfacesByVdsIdResult = mock(VdcQueryReturnValue.class);
-        when(interfacesByVdsIdResult.getSucceeded()).thenReturn(true);
+        VdcQueryReturnValue interfacesByVdsIdResult = new VdcQueryReturnValue();
+        interfacesByVdsIdResult.setSucceeded(true);
 
         VdsNetworkInterface hostNic = new VdsNetworkInterface();
         hostNic.setId(HOST_NIC_ID);
         List<VdsNetworkInterface> hostNics = Collections.singletonList(hostNic);
-        when(interfacesByVdsIdResult.getReturnValue()).thenReturn(hostNics);
+        interfacesByVdsIdResult.setReturnValue(hostNics);
         when(backend.runQuery(eq(VdcQueryType.GetVdsInterfacesByVdsId), any(IdQueryParameters.class)))
                 .thenReturn(interfacesByVdsIdResult);
     }

@@ -133,17 +133,17 @@ public class BackendExportDomainDiskResourceTest
             Object[] queryValues,
             Object queryReturn,
             Object failure) {
-        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
-        when(queryResult.getSucceeded()).thenReturn(failure == null);
+        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        queryResult.setSucceeded(failure == null);
         if (failure == null) {
-            when(queryResult.getReturnValue()).thenReturn(queryReturn);
+            queryResult.setReturnValue(queryReturn);
             when(backend.runQuery(eq(query),
                     eqParams(queryClass,
                             addSession(queryNames),
                             addSession(queryValues)))).thenReturn(queryResult);
         } else {
             if (failure instanceof String) {
-                when(queryResult.getExceptionString()).thenReturn((String) failure);
+                queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
                 when(backend.runQuery(eq(query),
                         eqParams(queryClass,

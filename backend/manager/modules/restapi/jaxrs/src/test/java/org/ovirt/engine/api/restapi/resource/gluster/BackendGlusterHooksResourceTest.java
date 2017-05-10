@@ -164,18 +164,18 @@ public class BackendGlusterHooksResourceTest extends AbstractBackendCollectionRe
     }
 
     private void setUpHooksQueryExpectations(Object failure) {
-        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
-        when(queryResult.getSucceeded()).thenReturn(failure == null);
+        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        queryResult.setSucceeded(failure == null);
         List<GlusterHookEntity> entities = new ArrayList<>();
 
         if (failure == null) {
             for (int i = 0; i < NAMES.length; i++) {
                 entities.add(getEntity(i));
             }
-            when(queryResult.getReturnValue()).thenReturn(entities);
+            queryResult.setReturnValue(entities);
         } else {
             if (failure instanceof String) {
-                when(queryResult.getExceptionString()).thenReturn((String) failure);
+                queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String)failure);
             } else if (failure instanceof Exception) {
                 when(backend.runQuery(eq(VdcQueryType.GetGlusterHooks), any(GlusterParameters.class))).thenThrow((Exception) failure);

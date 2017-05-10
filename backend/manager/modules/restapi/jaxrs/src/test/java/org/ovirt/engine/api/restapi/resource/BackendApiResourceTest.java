@@ -422,14 +422,14 @@ public class BackendApiResourceTest {
     }
 
     protected void setUpGetSystemVersionExpectations() {
-        VdcQueryReturnValue productRpmQueryResult = mock(VdcQueryReturnValue.class);
-        when(productRpmQueryResult.getSucceeded()).thenReturn(true);
-        when(productRpmQueryResult.getReturnValue()).thenReturn(SYSTEM_VERSION);
+        VdcQueryReturnValue productRpmQueryResult = new VdcQueryReturnValue();
+        productRpmQueryResult.setSucceeded(true);
+        productRpmQueryResult.setReturnValue(SYSTEM_VERSION);
         when(backend.runQuery(eq(VdcQueryType.GetConfigurationValue), getProductRPMVersionParams())).thenReturn(productRpmQueryResult);
 
-        VdcQueryReturnValue productVersionQueryResult = mock(VdcQueryReturnValue.class);
-        when(productVersionQueryResult.getSucceeded()).thenReturn(true);
-        when(productVersionQueryResult.getReturnValue()).thenReturn(new Version(MAJOR, MINOR, BUILD, REVISION));
+        VdcQueryReturnValue productVersionQueryResult = new VdcQueryReturnValue();
+        productVersionQueryResult.setSucceeded(true);
+        productVersionQueryResult.setReturnValue(new Version(MAJOR, MINOR, BUILD, REVISION));
         when(backend.runQuery(eq(VdcQueryType.GetProductVersion), getProductVersionParams())).thenReturn(productVersionQueryResult);
     }
 
@@ -438,12 +438,12 @@ public class BackendApiResourceTest {
     }
 
     protected void setUpGetSystemStatisticsExpectations() {
-        VdcQueryReturnValue queryResult = mock(VdcQueryReturnValue.class);
+        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
 
         when(backend.runQuery(eq(VdcQueryType.GetSystemStatistics), queryParams())).thenReturn(queryResult);
 
-        when(queryResult.getSucceeded()).thenReturn(true);
-        when(queryResult.getReturnValue()).thenReturn(setUpStats());
+        queryResult.setSucceeded(true);
+        queryResult.setReturnValue(setUpStats());
     }
 
     protected VdcQueryParametersBase getProductRPMVersionParams() {
