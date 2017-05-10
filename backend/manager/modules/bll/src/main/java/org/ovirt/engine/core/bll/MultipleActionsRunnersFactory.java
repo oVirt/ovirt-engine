@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -30,7 +30,7 @@ public class MultipleActionsRunnersFactory {
     private ClusterDao clusterDao;
 
     public MultipleActionsRunner createMultipleActionsRunner(VdcActionType actionType,
-                                                             ArrayList<VdcActionParametersBase> parameters,
+                                                             List<VdcActionParametersBase> parameters,
                                                              boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;
         switch (actionType) {
@@ -92,7 +92,7 @@ public class MultipleActionsRunnersFactory {
         return Injector.injectMembers(runner);
     }
 
-    private boolean containsGlusterServer(ArrayList<VdcActionParametersBase> parameters) {
+    private boolean containsGlusterServer(List<VdcActionParametersBase> parameters) {
         Set<Guid> processed = new HashSet<>();
         for (VdcActionParametersBase param : parameters) {
             VDS vds = vdsDao.get(((RemoveVdsParameters) param).getVdsId());

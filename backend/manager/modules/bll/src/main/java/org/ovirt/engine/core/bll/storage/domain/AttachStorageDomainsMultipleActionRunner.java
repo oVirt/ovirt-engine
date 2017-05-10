@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -23,7 +24,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
     public AttachStorageDomainsMultipleActionRunner(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
+            List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }
 
@@ -34,7 +35,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
     private BackendInternal backend;
 
     @Override
-    public ArrayList<VdcReturnValueBase> execute() {
+    public List<VdcReturnValueBase> execute() {
         Iterator<?> iterator = getParameters() == null ? null : getParameters().iterator();
         Object parameter = iterator != null && iterator.hasNext() ? iterator.next() : null;
 
@@ -42,11 +43,11 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
             StorageDomainPoolParametersBase storagePoolParameter = (StorageDomainPoolParametersBase) parameter;
             StoragePool pool = storagePoolDao.get(storagePoolParameter.getStoragePoolId());
             if (pool.getStatus() == StoragePoolStatus.Uninitialized) {
-                ArrayList<Guid> storageDomainIds = new ArrayList<>();
+                List<Guid> storageDomainIds = new ArrayList<>();
                 for (VdcActionParametersBase param : getParameters()) {
                     storageDomainIds.add(((StorageDomainPoolParametersBase) param).getStorageDomainId());
                 }
-                ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+                List<VdcActionParametersBase> parameters = new ArrayList<>();
                 parameters.add(new StoragePoolWithStoragesParameter(pool,
                         storageDomainIds,
                         storagePoolParameter.getSessionId()));

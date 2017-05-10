@@ -2488,13 +2488,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 internalCommandContext);
     }
 
-    protected ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters) {
+    protected List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters) {
         return getBackend().runInternalMultipleActions(actionType, parameters, context.clone());
     }
 
-    protected ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
+    protected List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters,
             ExecutionContext executionContext) {
         return getBackend().runInternalMultipleActions(actionType,
                 parameters,

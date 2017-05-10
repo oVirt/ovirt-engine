@@ -576,17 +576,17 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass) {
+    public List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass) {
         return runMultipleActions(actionType, parameters, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass, boolean waitForResult) {
+    public List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass, boolean waitForResult) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
-            ArrayList<VdcReturnValueBase> list = new ArrayList<>();
+            List<VdcReturnValueBase> list = new ArrayList<>();
             list.add(returnValue);
             return list;
         } else {
@@ -596,22 +596,22 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters) {
+    public List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters) {
         return runMultipleActionsImpl(actionType, parameters, true, false, false, null);
     }
 
 
     @Override
     @ExcludeClassInterceptors
-    public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext) {
+    public List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters, CommandContext commandContext) {
         return runMultipleActionsImpl(actionType, parameters, true, false, false, commandContext);
 
     }
 
-    private ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
+    private List<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters,
             boolean isInternal,
             boolean isRunOnlyIfAllValidationPass,
             boolean isWaitForResult,

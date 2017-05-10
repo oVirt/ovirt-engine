@@ -370,7 +370,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
-                        runOnlyIfAllValidationPass, waitForResults, new AsyncCallback<ArrayList<VdcReturnValueBase>>() {
+                        runOnlyIfAllValidationPass, waitForResults, new AsyncCallback<List<VdcReturnValueBase>>() {
 
                     @Override
                     public void onFailure(final Throwable exception) {
@@ -380,7 +380,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     }
 
                     @Override
-                    public void onSuccess(final ArrayList<VdcReturnValueBase> result) {
+                    public void onSuccess(final List<VdcReturnValueBase> result) {
                         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
                                 getCallbackMap(operations);
                         for (Map.Entry<VdcOperationCallback<?, ?>,

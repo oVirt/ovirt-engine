@@ -95,7 +95,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private void applyNetworkChangesToHosts() {
-        ArrayList<VdcActionParametersBase> parameters = syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork());
+        List<VdcActionParametersBase> parameters = syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork());
 
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);

@@ -17,14 +17,14 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
     @Inject
     private VmStaticDao vmStaticDao;
 
-    public RunVMActionRunner(VdcActionType actionType, ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
+    public RunVMActionRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }
 
     @Override
     protected void sortCommands() {
 
-        ArrayList<CommandBase<?>> commandsList = getCommands();
+        List<CommandBase<?>> commandsList = getCommands();
         HashMap<Guid, RunVmCommandBase<?>> runVmCommandsMap = new HashMap<>();
         for (CommandBase<?> command : commandsList) {
             RunVmCommandBase<?> runVMCommandBase = (RunVmCommandBase<?>) command;

@@ -175,7 +175,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         hostedEngineHelper.createVdsDeployParams(getVdsId(),
                                 getParameters().getHostedEngineDeployConfiguration().getDeployAction()));
             }
-            ArrayList<VdcReturnValueBase> resultList = runInternalMultipleActions(
+            List<VdcReturnValueBase> resultList = runInternalMultipleActions(
                     actionType, new ArrayList<>(Arrays.asList(tempVar)));
 
             // Since Host status is set to "Installing", failure of InstallVdsCommand will hang the Host to in that
@@ -183,7 +183,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             if (!resultList.isEmpty()) {
                 VdcReturnValueBase vdcReturnValueBase = resultList.get(0);
                 if (vdcReturnValueBase != null && !vdcReturnValueBase.isValid()) {
-                    ArrayList<String> validationMessages = vdcReturnValueBase.getValidationMessages();
+                    List<String> validationMessages = vdcReturnValueBase.getValidationMessages();
                     if (!validationMessages.isEmpty()) {
                         // add can do action messages to return value so error messages
                         // are returned back to the client

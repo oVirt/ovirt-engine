@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.frontend.gwtservices;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -30,12 +31,12 @@ public interface GenericApiGWTService extends XsrfProtectedService {
             ArrayList<VdcQueryType> vdcQueryTypeList,
             ArrayList<VdcQueryParametersBase> paramsList);
 
-    ArrayList<VdcReturnValueBase> runMultipleActions(
+    List<VdcReturnValueBase> runMultipleActions(
             VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllValidationPass);
 
-    ArrayList<VdcReturnValueBase> runMultipleActions(
+    List<VdcReturnValueBase> runMultipleActions(
             VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult);

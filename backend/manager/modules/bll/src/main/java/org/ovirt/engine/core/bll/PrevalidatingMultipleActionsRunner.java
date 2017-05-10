@@ -26,7 +26,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
 
     private VdcActionType actionType = VdcActionType.Unknown;
     private final Set<VdcActionParametersBase> parameters;
-    private final ArrayList<CommandBase<?>> commands = new ArrayList<>();
+    private final List<CommandBase<?>> commands = new ArrayList<>();
     protected boolean isInternal;
     private boolean isWaitForResult = false;
 
@@ -57,19 +57,19 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         return parameters;
     }
 
-    protected ArrayList<CommandBase<?>> getCommands() {
+    protected List<CommandBase<?>> getCommands() {
         return commands;
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> execute() {
+    public List<VdcReturnValueBase> execute() {
         // sanity - don't do anything if no parameters passed
         if (parameters == null || parameters.isEmpty()) {
             log.info("{} of type '{}' invoked with no actions", this.getClass().getSimpleName(), actionType);
             return new ArrayList<>();
         }
 
-        ArrayList<VdcReturnValueBase> returnValues = new ArrayList<>();
+        List<VdcReturnValueBase> returnValues = new ArrayList<>();
         try {
             initCommandsAndReturnValues(returnValues);
 
@@ -81,7 +81,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         return returnValues;
     }
 
-    private void initCommandsAndReturnValues(ArrayList<VdcReturnValueBase> returnValues) {
+    private void initCommandsAndReturnValues(List<VdcReturnValueBase> returnValues) {
         VdcReturnValueBase returnValue;
         for (VdcActionParametersBase parameter : getParameters()) {
             parameter.setMultipleAction(true);
@@ -95,7 +95,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         }
     }
 
-    private void invokeCommands(ArrayList<VdcReturnValueBase> returnValues) {
+    private void invokeCommands(List<VdcReturnValueBase> returnValues) {
         if (canRunActions(returnValues)) {
             if (isWaitForResult) {
                 invokeSyncCommands();
@@ -107,7 +107,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         }
     }
 
-    private boolean canRunActions(ArrayList<VdcReturnValueBase> returnValues) {
+    private boolean canRunActions(List<VdcReturnValueBase> returnValues) {
         if (getCommands().size() == 1) {
             CorrelationIdTracker.setCorrelationId(getCommands().get(0).getCorrelationId());
             returnValues.add(getCommands().get(0).validateOnly());
@@ -134,7 +134,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
      * the same time the number of threads is managed by java
      */
     private void checkValidatesAsynchronously(
-            ArrayList<VdcReturnValueBase> returnValues) {
+            List<VdcReturnValueBase> returnValues) {
         for (int i = 0; i < getCommands().size(); i += CONCURRENT_ACTIONS) {
             int handleSize = Math.min(CONCURRENT_ACTIONS, getCommands().size() - i);
 

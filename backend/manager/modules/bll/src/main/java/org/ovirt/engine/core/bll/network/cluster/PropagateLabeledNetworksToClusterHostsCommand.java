@@ -52,7 +52,7 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
                 networkClustersToSetupNetworksParametersTransformer =
                 networkClustersToSetupNetworksParametersTransformerFactory.
                         createNetworkClustersToSetupNetworksParametersTransformer(getContext());
-        final ArrayList<VdcActionParametersBase> setupNetworksParams = new ArrayList<>();
+        final List<VdcActionParametersBase> setupNetworksParams = new ArrayList<>();
         setupNetworksParams.addAll(networkClustersToSetupNetworksParametersTransformer.transform(
                 param.getAttachments(),
                 param.getDetachments()));

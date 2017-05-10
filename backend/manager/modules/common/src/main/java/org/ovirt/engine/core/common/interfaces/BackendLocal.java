@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.interfaces;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -20,12 +20,12 @@ public interface BackendLocal {
 
     ErrorTranslator getVdsErrorsTranslator();
 
-    ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
+    List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters,
             boolean isRunOnlyIfAllValidationPass, boolean waitForResult);
 
-    ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
+    List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters,
             boolean isRunOnlyIfAllValidationPass);
 
     VdcQueryReturnValue runPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);

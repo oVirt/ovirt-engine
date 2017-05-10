@@ -93,7 +93,7 @@ public class FrontendActionTest {
     @Mock
     XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
     @Captor
-    ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback<ArrayList<VdcReturnValueBase>>> callbackMultipleActions;
+    ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback<List<VdcReturnValueBase>>> callbackMultipleActions;
     @Captor
     ArgumentCaptor<com.google.gwt.user.client.rpc.AsyncCallback<VdcReturnValueBase>> callbackAction;
     @Captor

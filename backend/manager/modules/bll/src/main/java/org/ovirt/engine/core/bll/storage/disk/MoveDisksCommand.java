@@ -71,12 +71,12 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
         if (!moveDiskParametersList.isEmpty()) {
             vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(VdcActionType.MoveOrCopyDisk,
-                    getParametersArrayList(moveDiskParametersList), false));
+                    getParametersList(moveDiskParametersList), false));
         }
 
         if (!liveMigrateVmDisksParametersList.isEmpty()) {
             vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(VdcActionType.LiveMigrateVmDisks,
-                    getParametersArrayList(liveMigrateVmDisksParametersList), false));
+                    getParametersList(liveMigrateVmDisksParametersList), false));
         }
 
         handleChildReturnValue();
@@ -223,7 +223,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         return liveMigrateDisksParameters;
     }
 
-    private ArrayList<VdcActionParametersBase> getParametersArrayList(List<? extends VdcActionParametersBase> parametersList) {
+    private List<VdcActionParametersBase> getParametersList(List<? extends VdcActionParametersBase> parametersList) {
         parametersList.stream().forEach(p -> p.setSessionId(getParameters().getSessionId()));
         return new ArrayList<>(parametersList);
     }

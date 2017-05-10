@@ -51,7 +51,7 @@ public class GWTRPCCommunicationProviderTest {
     @Captor
     ArgumentCaptor<AsyncCallback<VdcReturnValueBase>> actionCallback;
     @Captor
-    ArgumentCaptor<AsyncCallback<ArrayList<VdcReturnValueBase>>> actionCallbackList;
+    ArgumentCaptor<AsyncCallback<List<VdcReturnValueBase>>> actionCallbackList;
     @Captor
     ArgumentCaptor<AsyncCallback<VdcQueryReturnValue>> queryCallback;
     @Captor

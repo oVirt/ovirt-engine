@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -22,14 +22,14 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
     private VmDao vmDao;
 
     public MigrateVMActionRunner(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
+            List<VdcActionParametersBase> parameters,
             CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }
 
     @Override
     protected void sortCommands() {
-        ArrayList<CommandBase<?>> commands = getCommands();
+        List<CommandBase<?>> commands = getCommands();
         final Map<Guid, VM> vms = new HashMap<>(commands.size());
         for (CommandBase<?> cmd : commands) {
             vms.put(cmd.getVmId(), vmDao.get(cmd.getVmId()));

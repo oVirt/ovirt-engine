@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -138,13 +139,13 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+    public List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass) {
         return runMultipleActions(actionType, multipleParams, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+    public List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: {}]", multipleParams.size()); //$NON-NLS-1$
 
@@ -156,7 +157,7 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
             }
         }
 
-        ArrayList<VdcReturnValueBase> returnValues =
+        List<VdcReturnValueBase> returnValues =
                 getBackend().runMultipleActions(actionType, multipleParams, isRunOnlyIfAllValidationPass, isWaitForResult);
 
         return returnValues;

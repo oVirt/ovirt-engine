@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.interfaces;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -52,8 +52,8 @@ public interface BackendInternal extends BackendLocal {
             VdcQueryParametersBase parameters,
             EngineContext context);
 
-    ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters);
+    List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters);
 
     /**
      * Invokes multiple actions of the same action type with different parameters under a given command context which if
@@ -75,8 +75,8 @@ public interface BackendInternal extends BackendLocal {
      *            Determines the visibility of the actions.
      * @return A collection of the results of each action validation.
      */
-    ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext);
+    List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters, CommandContext commandContext);
 
     DateTime getStartedAt();
 
