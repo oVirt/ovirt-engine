@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -49,9 +48,7 @@ public class GlusterAuditLogUtil {
         logable.setClusterId(clusterId);
 
         if (customValues != null) {
-            for (Entry<String, String> entry : customValues.entrySet()) {
-                logable.addCustomValue(entry.getKey(), entry.getValue());
-            }
+            customValues.entrySet().forEach(e -> logable.addCustomValue(e.getKey(), e.getValue()));
         }
 
         auditLogDirector.log(logable, logType);
