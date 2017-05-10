@@ -1551,9 +1551,8 @@ public class LibvirtVmXmlBuilder {
         //   <address/>
         // </smartcard>
         writer.writeStartElement("smartcard");
-        // TODO
-//        String mode = device.getSpecParams().get(VdsProperties.Model).toString();
-//        writer.writeAttributeString("model", );
+        writer.writeAttributeString("mode", device.getSpecParams().get("mode").toString());
+        writer.writeAttributeString("type", device.getSpecParams().get("type").toString());
         writeDeviceAliasAndAddress(device);
         writer.writeEndElement();
     }
