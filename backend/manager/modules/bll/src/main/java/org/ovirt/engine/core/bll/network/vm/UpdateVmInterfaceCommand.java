@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -274,7 +275,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 AuditLogType customValue =
                         getInterface().isLinked() ? AuditLogType.NETWORK_UPDATE_VM_INTERFACE_LINK_UP
                                 : AuditLogType.NETWORK_UPDATE_VM_INTERFACE_LINK_DOWN;
-                addCustomValue("LinkState", auditLogDirector.getMessage(customValue));
+                addCustomValue("LinkState", MessageBundler.getMessage(customValue));
             } else {
                 addCustomValue("LinkState", " ");
             }

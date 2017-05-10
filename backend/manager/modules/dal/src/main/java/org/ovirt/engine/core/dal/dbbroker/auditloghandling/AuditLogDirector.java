@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import java.text.MessageFormat;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.inject.Singleton;
 
@@ -17,33 +15,6 @@ import org.slf4j.LoggerFactory;
 public class AuditLogDirector {
     private static final Logger log = LoggerFactory.getLogger(AuditLogDirector.class);
     private static final int USERNAME_LENGTH = 255;
-    private static final ResourceBundle resourceBundle = getResourceBundle();
-
-    static ResourceBundle getResourceBundle() {
-        try {
-            return ResourceBundle.getBundle(getResourceBundleName());
-        } catch (MissingResourceException e) {
-            throw new RuntimeException("Could not find ResourceBundle file '" + getResourceBundleName() +"'.");
-        }
-    }
-
-    static String getResourceBundleName() {
-        return "bundles/AuditLogMessages";
-    }
-
-    public static String getMessage(AuditLogType logType) {
-        return StringUtils.defaultString(getMessageOrNull(logType));
-    }
-
-    private static String getMessageOrNull(AuditLogType logType) {
-        final String key = logType.name();
-        try {
-            return resourceBundle.getString(key);
-        } catch (Exception e) {
-            log.error("Key '{}' is not translated in '{}'", key, getResourceBundleName());
-            return null;
-        }
-    }
 
     public void log(AuditLogable auditLogable, AuditLogType logType) {
         log(auditLogable, logType, "");
@@ -106,7 +77,7 @@ public class AuditLogDirector {
         }
     }
 
-    private static String getMessageToLog(AuditLog auditLog) {
+    private String getMessageToLog(AuditLog auditLog) {
         return MessageFormat.format("EVENT_ID: {0}({1}), {2}",
                 auditLog.getLogType(),
                 auditLog.getLogType().getValue(), auditLog.getMessage());
@@ -118,7 +89,7 @@ public class AuditLogDirector {
             return auditLogable.createAuditLog(logType, loggerString);
         }
 
-        final String messageByType = getMessageOrNull(logType);
+        final String messageByType = MessageBundler.getMessageOrNull(logType);
         if (messageByType == null) {
             return null;
         } else {

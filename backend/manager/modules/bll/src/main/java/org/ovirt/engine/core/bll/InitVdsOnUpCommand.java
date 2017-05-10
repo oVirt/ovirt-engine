@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -385,7 +386,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 if (getVds().isPmEnabled()) {
                     if (!vdsProxyFound) {
                         this.addCustomValue("Reason",
-                                auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
+                                MessageBundler.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
                         auditLogDirector.log(this, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
                     } else if (!fenceSucceeded) {
                         this.addCustomValue("Reason", fenceStatusResult.getMessage());

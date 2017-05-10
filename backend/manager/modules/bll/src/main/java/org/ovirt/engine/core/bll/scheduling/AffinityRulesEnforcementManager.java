@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
@@ -92,8 +93,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
     protected void migrateVM(final VM vmToMigrate) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate.getId());
 
-        parameters.setReason(AuditLogDirector.getMessage(
-                AuditLogType.MIGRATION_REASON_AFFINITY_ENFORCEMENT));
+        parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_AFFINITY_ENFORCEMENT));
 
         backend.runInternalAction(VdcActionType.BalanceVm,
                 parameters,

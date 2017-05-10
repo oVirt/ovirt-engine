@@ -60,6 +60,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
@@ -959,7 +960,7 @@ public class SchedulingManager implements BackendService {
             if (balanceResult.isPresent() && balanceResult.get().isValid()) {
                 migrationHandler.migrateVM(balanceResult.get().getCandidateHosts(),
                         balanceResult.get().getVmToMigrate(),
-                        AuditLogDirector.getMessage(AuditLogType.MIGRATION_REASON_LOAD_BALANCING));
+                        MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_LOAD_BALANCING));
             }
         }
     }

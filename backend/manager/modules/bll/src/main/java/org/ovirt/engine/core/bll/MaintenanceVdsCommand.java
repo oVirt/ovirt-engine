@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageBundler;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -154,7 +154,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
     protected boolean migrateVm(VM vm, ExecutionContext parentContext) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vm.getId());
-        parameters.setReason(AuditLogDirector.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
+        parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
         return runInternalAction(VdcActionType.MigrateVm,
                 parameters,
                 createMigrateVmContext(parentContext, vm))
