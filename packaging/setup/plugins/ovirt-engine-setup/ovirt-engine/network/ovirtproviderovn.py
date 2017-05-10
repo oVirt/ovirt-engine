@@ -400,8 +400,6 @@ class Plugin(plugin.PluginBase):
     def _configure_pki(self):
         self._configure_ovndb_north_connection()
         self._configure_ovndb_south_connection()
-        self._update_provider_config_with_pki()
-        self._upate_external_providers_keystore()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -500,6 +498,23 @@ class Plugin(plugin.PluginBase):
     )
     def _misc_ovn_conf(self):
         self._configure_pki()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        before=(
+            oenginecons.Stages.OVN_PROVIDER_SERVICE_RESTART
+        ),
+        after=(
+            oenginecons.Stages.CA_AVAILABLE,
+            oenginecons.Stages.OVN_SERVICES_RESTART,
+        ),
+        condition=lambda self:
+            self._enabled and
+            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+    )
+    def _misc_provider_conf(self):
+        self._update_provider_config_with_pki()
+        self._upate_external_providers_keystore()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
