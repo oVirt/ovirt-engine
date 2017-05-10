@@ -69,12 +69,6 @@ public class ConfigureConsoleOptionsQueryTest extends
     @Mock
     SessionDataContainer sessionDataContainer;
 
-    @Mock
-    VdcQueryReturnValue caCertificateReturnValue;
-
-    @Mock
-    VdcQueryReturnValue hostSubjectReturnValue;
-
     @Test
     public void shouldFailtWhenNoId() {
         when(getQueryParameters().getOptions()).thenReturn(new ConsoleOptions(GraphicsType.SPICE));
@@ -257,16 +251,18 @@ public class ConfigureConsoleOptionsQueryTest extends
     }
 
     void mockGetCaCertificate() {
+        VdcQueryReturnValue caCertificateReturnValue = new VdcQueryReturnValue();
+        caCertificateReturnValue.setSucceeded(true);
+        caCertificateReturnValue.setReturnValue(CA_CERTIFICATE);
         doReturn(caCertificateReturnValue).when(backend)
                 .runInternalQuery(eq(VdcQueryType.GetCACertificate), any(VdcQueryParametersBase.class));
-        doReturn(true).when(caCertificateReturnValue).getSucceeded();
-        doReturn(CA_CERTIFICATE).when(caCertificateReturnValue).getReturnValue();
     }
 
     void mockGetVdsCertificateSubjectByVmId() {
+        VdcQueryReturnValue hostSubjectReturnValue = new VdcQueryReturnValue();
+        hostSubjectReturnValue.setReturnValue(HOST_SUBJECT);
         doReturn(hostSubjectReturnValue).when(backend)
                 .runInternalQuery(eq(VdcQueryType.GetVdsCertificateSubjectByVmId), any(IdQueryParameters.class));
-        doReturn(HOST_SUBJECT).when(hostSubjectReturnValue).getReturnValue();
     }
 
 }
