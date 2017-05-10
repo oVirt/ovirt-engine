@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.SyncImageGroupDataCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.vdscommands.SyncImageGroupDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class SyncImageGroupDataCommand<T extends SyncImageGroupDataCommandParameters> extends CommandBase<T> {
     public SyncImageGroupDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroup()));
     }
 
     @Override
