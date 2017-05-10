@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -115,9 +114,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
     }
 
     private void mockBackend() {
-        VdcReturnValueBase addClusterReturnValue = mock(VdcReturnValueBase.class);
-
-        when(backend.runAction(any(VdcActionType.class), any(CpuProfileParameters.class))).thenReturn(addClusterReturnValue);
+        when(backend.runAction(any(VdcActionType.class), any(CpuProfileParameters.class))).thenReturn(new VdcReturnValueBase());
     }
 
     @Test
