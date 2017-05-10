@@ -560,16 +560,14 @@ public class LibvirtVmXmlBuilder {
                 case "virtio-serial":
                     device.getSpecParams().put("index", 0);
                     device.getSpecParams().put("ports", 16);
-                    device.getSpecParams().put("type", "virtio-serial");
-                    writeController(device);
                     break;
                 case "virtio-scsi":
+                    device.setDevice(VdsProperties.Scsi);
                     device.getSpecParams().put("index", virtioScsiIndex++);
-                    device.getSpecParams().put("type", VdsProperties.Scsi);
                     device.getSpecParams().put("model", "virtio-scsi");
-                    writeController(device);
                     break;
                 }
+                writeController(device);
                 break;
             case GRAPHICS:
                 writeGraphics(device);
@@ -1055,7 +1053,7 @@ public class LibvirtVmXmlBuilder {
 
     private void writeController(VmDevice device) {
         writer.writeStartElement("controller");
-        writer.writeAttributeString("type", device.getSpecParams().get("type").toString());
+        writer.writeAttributeString("type", device.getDevice());
         if (device.getSpecParams().containsKey(VdsProperties.Model)) {
             writer.writeAttributeString("model", device.getSpecParams().get(VdsProperties.Model).toString());
         }
