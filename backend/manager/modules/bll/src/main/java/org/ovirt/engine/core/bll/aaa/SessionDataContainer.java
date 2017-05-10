@@ -269,6 +269,7 @@ public class SessionDataContainer {
     public final void updateSessionLastActiveTime(String sessionId) {
         if (isSessionExists(sessionId)) {
             setData(sessionId, SESSION_LAST_ACTIVE_TIME, new Date());
+            refresh(sessionId);
         }
     }
 
