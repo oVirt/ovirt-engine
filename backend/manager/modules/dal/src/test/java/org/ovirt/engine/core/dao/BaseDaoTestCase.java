@@ -108,6 +108,7 @@ public abstract class BaseDaoTestCase {
         Connection con = dataSource.getConnection();
         IDatabaseConnection connection = new DatabaseConnection(con);
         connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataFactory);
+        connection.getConfig().setProperty(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, true);
         if (needInitializationSql) {
             try (Statement stmt = con.createStatement()) {
                 stmt.executeUpdate(initSql);

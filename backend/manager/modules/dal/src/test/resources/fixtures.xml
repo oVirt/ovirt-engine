@@ -9141,7 +9141,7 @@
         <row>
             <value>fence-kdump-listener</value>
             <null />
-            <value>2014-04-22 15:00:05 UTC</value>
+            <value>2014-04-22 15:00:05</value>
         </row>
     </table>
 
@@ -9872,8 +9872,8 @@
             <null/>
             <value>3814400</value>
             <value>true</value>
-            <value>2015-02-10 14:49:55.806609+05:30 </value>
-            <value>2015-02-10 16:35:15.362494+05:30</value>
+            <value>2015-02-10 14:49:55.806609</value>
+            <value>2015-02-10 16:35:15.362494</value>
         </row>
         <row>
             <value>00000000-0000-0000-0000-000000000002</value>
@@ -9888,8 +9888,8 @@
             <null/>
             <value>34400</value>
             <value>true</value>
-            <value>2015-02-10 14:49:55.806609+05:30 </value>
-            <value>2015-02-10 16:35:15.362494+05:30</value>
+            <value>2015-02-10 14:49:55.806609</value>
+            <value>2015-02-10 16:35:15.362494</value>
         </row>
      </table>
      <table name="host_nic_vfs_config">
@@ -9961,7 +9961,7 @@
         <column>log_path</column>
         <row>
             <value>db</value>
-            <value>2015-02-10 16:35:15.362494+05:30</value>
+            <value>2015-02-10 16:35:15.362494</value>
             <value>true</value>
             <value>OK</value>
             <value>10.35.1.1</value>
@@ -10056,8 +10056,8 @@
             <value>0</value>
             <null/>
             <value>983fcfe8-ca56-4a11-8d0e-840c988d67af</value>
-            <value>2015-02-10 14:49:55.806609+05:30 </value>
-            <value>2015-02-10 16:35:15.362494+05:30</value>
+            <value>2015-02-10 14:49:55.806609</value>
+            <value>2015-02-10 16:35:15.362494</value>
         </row>
     </table>
     <table name="vm_host_pinning_map">
