@@ -3,7 +3,6 @@ package org.ovirt.engine.core;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -66,10 +65,9 @@ public class WelcomeServletTest {
     final List<String> localeKeys = createLocaleKeys();
 
     private void mockBackendQuery(VdcQueryType queryType, Object returnValue) {
-        VdcQueryReturnValue queryReturnValueMock = when(mock(VdcQueryReturnValue.class).getReturnValue())
-                .thenReturn(returnValue).getMock();
-        when(mockBackend.runPublicQuery(eq(queryType), any(VdcQueryParametersBase.class)))
-                .thenReturn(queryReturnValueMock);
+        VdcQueryReturnValue queryReturnValue = new VdcQueryReturnValue();
+        queryReturnValue.setReturnValue(returnValue);
+        when(mockBackend.runPublicQuery(eq(queryType), any(VdcQueryParametersBase.class))).thenReturn(queryReturnValue);
     }
 
     @Before
