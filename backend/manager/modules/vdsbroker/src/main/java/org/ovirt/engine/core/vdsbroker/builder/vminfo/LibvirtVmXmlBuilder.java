@@ -846,12 +846,12 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("target");
         writer.writeAttributeString("type", "virtio");
-        writer.writeAttributeString("name", "com.redhat.rhevm.vdsm");
+        writer.writeAttributeString("name", "ovirt-guest-agent.0");
         writer.writeEndElement();
 
         writer.writeStartElement("source");
         writer.writeAttributeString("mode", "bind");
-        writer.writeAttributeString("path", String.format("/var/lib/libvirt/qemu/channels/%s.com.redhat.rhevm.vdsm", vm.getId()));
+        writer.writeAttributeString("path", String.format("/var/lib/libvirt/qemu/channels/%s.ovirt-guest-agent.0", vm.getId()));
         writer.writeEndElement();
 
         writer.writeEndElement();
