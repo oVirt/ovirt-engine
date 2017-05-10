@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -81,7 +82,6 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -648,12 +648,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     protected boolean setAndValidateDiskProfiles() {
         if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
-            Map<DiskImage, Guid> map = new HashMap<>();
-            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-                if (diskImage.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    map.put(diskImage, diskImage.getStorageIds().get(0));
-                }
-            }
+            Map<DiskImage, Guid> map = diskInfoDestinationMap.values().stream()
+                    .filter(DisksFilter.ONLY_IMAGES)
+                    .collect(Collectors.toMap(Function.identity(), d -> d.getStorageIds().get(0)));
             return validate(diskProfileHelper.setAndValidateDiskProfiles(map, getCurrentUser()));
         }
         return true;
