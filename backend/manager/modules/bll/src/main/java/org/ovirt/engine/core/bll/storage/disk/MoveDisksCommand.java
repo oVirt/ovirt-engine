@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
-import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -48,6 +48,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     private List<MoveDiskParameters> moveDiskParametersList = new ArrayList<>();
     private List<LiveMigrateVmDisksParameters> liveMigrateVmDisksParametersList = new ArrayList<>();
     private Map<Guid, DiskImage> diskMap = new HashMap<>();
+    private Map<MoveDiskParameters, DiskImage> cachedParamsToDisks;
 
     public MoveDisksCommand(Guid commandId) {
         super(commandId);
@@ -55,6 +56,13 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     public MoveDisksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        cachedParamsToDisks = getParameters().getParametersList().stream()
+                .collect(Collectors.toMap(Function.identity(), p -> diskImageDao.get(p.getImageId())));
     }
 
     @Override
@@ -160,9 +168,8 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
      */
     private Map<VM, List<MoveDiskParameters>> createVmDiskParamsMap() {
         Map<VM, List<MoveDiskParameters>> vmDisksMap = new HashMap<>();
-        for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
-            DiskImage diskImage = diskImageDao.get(moveDiskParameters.getImageId());
-
+        for (Map.Entry<MoveDiskParameters, DiskImage> entry : cachedParamsToDisks.entrySet()) {
+            DiskImage diskImage = entry.getValue();
             Map<Boolean, List<VM>> allVmsForDisk = vmDao.getForDisk(diskImage.getId(), false);
             List<VM> vmsForPluggedDisk = allVmsForDisk.get(Boolean.TRUE);
             List<VM> vmsForUnpluggedDisk = allVmsForDisk.get(Boolean.FALSE);
@@ -172,7 +179,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
                     null; // null is used for floating disks indication
 
             addDiskToMap(diskImage, vmsForPluggedDisk, vmsForUnpluggedDisk);
-            MultiValueMapUtils.addToMap(vm, moveDiskParameters, vmDisksMap);
+            MultiValueMapUtils.addToMap(vm, entry.getKey(), vmDisksMap);
         }
 
         return vmDisksMap;
@@ -243,9 +250,8 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<>();
 
-        for (MoveOrCopyImageGroupParameters parameters : getParameters().getParametersList()) {
-            DiskImage diskImage = diskImageDao.get(parameters.getImageId());
-            Guid diskId = diskImage == null ? Guid.Empty : diskImage.getId();
+        for (DiskImage disk : cachedParamsToDisks.values()) {
+            Guid diskId = disk == null ? Guid.Empty : disk.getId();
             permissionList.add(new PermissionSubject(diskId,
                     VdcObjectType.Disk,
                     ActionGroup.CONFIGURE_DISK_STORAGE));
