@@ -1,0 +1,27 @@
+= Experimental And Helpful Tools
+:toc:
+
+This is the home for experimental and helpful tools for both development and production environments.
+Utilities that prove themself useful may be promoted into ovirt-engine-tools rpm or any other
+relevant package that may be.
+
+To avoid proliferation of utils and scripts please make sure first if a similar tool
+already exist and just missing the functionality proposed.
+
+Being a contrib doesn't mean the code should be dodgy or messy. Use all the best practices
+out there. The best tools have the best chance to go mainline.
+
+== Tools
+=== `log-control.sh`
+log-control is a script to change logging level of various
+log categories (java packages) in real time.
+
+For example to log all db queries into the log:
+
+```bash
+    log-control.sh org.ovirt.engine.core.dal DEBUG
+```
+
+= TODO
+- should we create an rpm for contrib - ovirt-engine-contrib?
+ or just install with the rpm under /.../lib/ovirt-engine/contrib
