@@ -241,23 +241,22 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              String[] queryNames,
                                              Object[] queryValues,
                                              Object queryReturn) {
-        VdcReturnValueBase taskResult = mock(VdcReturnValueBase.class);
-        when(taskResult.isValid()).thenReturn(valid);
+        VdcReturnValueBase taskResult = new VdcReturnValueBase();
+        taskResult.setValid(valid);
         if (valid) {
-            when(taskResult.getSucceeded()).thenReturn(success);
+            taskResult.setSucceeded(success);
             if (success) {
-                when(taskResult.getActionReturnValue()).thenReturn(taskReturn);
+                taskResult.setActionReturnValue(taskReturn);
             } else {
-                when(taskResult.getExecuteFailedMessages()).thenReturn(asList(FAILURE));
+                taskResult.setExecuteFailedMessages(asList(FAILURE));
                 setUpL10nExpectations(asList(FAILURE));
             }
         } else {
-            when(taskResult.getValidationMessages()).thenReturn(asList(CANT_DO));
+            taskResult.setValidationMessages(asList(CANT_DO));
             setUpL10nExpectations(asList(CANT_DO));
         }
-        when(taskResult.getHasAsyncTasks()).thenReturn(asyncTasks != null);
         if (asyncTasks != null) {
-            when(taskResult.getVdsmTaskIdList()).thenReturn(asyncTasks);
+            taskResult.setVdsmTaskIdList(asyncTasks);
             VdcQueryReturnValue monitorResult = mock(VdcQueryReturnValue.class);
             when(monitorResult.getSucceeded()).thenReturn(success);
             when(monitorResult.getReturnValue()).thenReturn(asyncStatuses);

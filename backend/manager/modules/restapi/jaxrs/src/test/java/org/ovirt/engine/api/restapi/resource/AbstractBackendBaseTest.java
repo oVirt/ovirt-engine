@@ -495,20 +495,20 @@ public abstract class AbstractBackendBaseTest extends Assert {
             String baseUri,
             boolean replay,
             String errorMessage) {
-        VdcReturnValueBase result = mock(VdcReturnValueBase.class);
-        when(result.isValid()).thenReturn(valid);
+        VdcReturnValueBase result = new VdcReturnValueBase();
+        result.setValid(valid);
         if (valid) {
-            when(result.getSucceeded()).thenReturn(success);
+            result.setSucceeded(success);
             if (success) {
                 if (taskReturn != null) {
-                    when(result.getActionReturnValue()).thenReturn(taskReturn);
+                    result.setActionReturnValue(taskReturn);
                 }
             } else {
-                when(result.getExecuteFailedMessages()).thenReturn(asList(FAILURE));
+                result.setExecuteFailedMessages(asList(FAILURE));
                 setUpL10nExpectations(asList(FAILURE));
             }
         } else {
-            when(result.getValidationMessages()).thenReturn(asList(errorMessage));
+            result.setValidationMessages(asList(errorMessage));
             setUpL10nExpectations(asList(errorMessage));
         }
         when(backend.runAction(eq(task), eqParams(clz, addSession(names), addSession(values)))).thenReturn(result);
@@ -518,7 +518,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
         VdcQueryReturnValue monitorResult = mock(VdcQueryReturnValue.class);
         when(monitorResult.getSucceeded()).thenReturn(success);
 
-        when(result.getHasAsyncTasks()).thenReturn(asyncTasks != null || jobId != null);
         // simulate polling on async task's statuses, and/or job status.
         setAsyncTaskStatusExpectations(asyncTasks, asyncStatuses, monitorResult, result);
         setJobStatusExpectations(jobId, jobStatus, monitorResult, result);
@@ -647,7 +646,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             VdcQueryReturnValue monitorResult,
             VdcReturnValueBase result) {
         if (asyncTasks != null) {
-            when(result.getVdsmTaskIdList()).thenReturn(asyncTasks);
+            result.setVdsmTaskIdList(asyncTasks);
             when(monitorResult.getReturnValue()).thenReturn(asyncStatuses);
             when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
                     eqParams(GetTasksStatusesByTasksIDsParameters.class,
@@ -660,7 +659,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             JobExecutionStatus jobStatus,
             VdcQueryReturnValue monitorResult,
             VdcReturnValueBase result) {
-        when(result.getJobId()).thenReturn(jobId);
+        result.setJobId(jobId);
         if (jobId != null) {
             Job jobMock = mock(org.ovirt.engine.core.common.job.Job.class);
             when(jobMock.getStatus()).thenReturn(jobStatus);
