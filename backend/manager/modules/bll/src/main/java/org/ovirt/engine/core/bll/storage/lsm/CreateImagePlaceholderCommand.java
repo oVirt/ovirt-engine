@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateImagePlaceholderCommandParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.TargetDomainImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -31,6 +32,7 @@ public class CreateImagePlaceholderCommand<T extends CreateImagePlaceholderComma
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
         setStorageDomainId(getParameters().getStorageDomainId());
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroup()));
     }
 
     @Override
