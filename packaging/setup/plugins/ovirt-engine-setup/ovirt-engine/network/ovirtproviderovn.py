@@ -342,23 +342,37 @@ class Plugin(plugin.PluginBase):
     def _configure_ovndb_south_connection(self):
         self._configure_ovndb_connection(self.OVN_SOUTH_DB_CONFIG)
 
-    def _update_provider_config_with_pki(self):
+    def _display_config_file_commands(self, modified_parameters):
+        if modified_parameters:
+            self._manual_commands.append(
+                (
+                    'sed',
+                    '-i',
+                    '"\\'
+                )
+            )
+
+            for key, content in modified_parameters.items():
+
+                self._manual_commands.append(
+                    (
+                        '    ',
+                        's/^{key}=.*/{key}={value}/; \\'.format(
+                            key=key,
+                            value=content.replace('/', '\/')
+                        ),
+                    )
+                )
+            self._manual_commands.append(
+                (
+                    '" ',
+                    oenginecons.OvnFileLocations.OVIRT_PROVIDER_CONFIG_FILE,
+                )
+            )
+
+    def _update_provider_config_with_pki(self, modified_parameters):
         content = []
-        modified_parameters = {
-            'cert-file':
-                oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_CERT,
-            'key-file':
-                oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_KEY,
-            'cacert-file':
-                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-            'ssl_enabled':
-                'true',
-            'ovn-remote':
-                '%s:127.0.0.1:%s' % (
-                    self.OVN_NORTH_DB_CONFIG.protocol,
-                    self.OVN_NORTH_DB_CONFIG.port,
-                ),
-        }
+
         if os.path.exists(
             oenginecons.OvnFileLocations.OVIRT_PROVIDER_CONFIG_FILE
         ):
@@ -379,6 +393,27 @@ class Plugin(plugin.PluginBase):
                 visibleButUnsafe=True,
             )
         )
+
+    def _configure_ovirt_provider_ovn(self):
+        modified_parameters = {
+            'cert-file':
+                oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_CERT,
+            'key-file':
+                oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_KEY,
+            'cacert-file':
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+            'ssl_enabled':
+                'true',
+            'ovn-remote':
+                '%s:127.0.0.1:%s' % (
+                    self.OVN_NORTH_DB_CONFIG.protocol,
+                    self.OVN_NORTH_DB_CONFIG.port,
+                ),
+        }
+        if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+            self._update_provider_config_with_pki(modified_parameters)
+        else:
+            self._display_config_file_commands(modified_parameters)
 
     def _upate_external_providers_keystore(self):
         config = configfile.ConfigFile([
@@ -410,10 +445,6 @@ class Plugin(plugin.PluginBase):
                 'the external provider keystore.)'
             )
         )
-
-    def _configure_pki(self):
-        self._configure_ovndb_north_connection()
-        self._configure_ovndb_south_connection()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -510,8 +541,9 @@ class Plugin(plugin.PluginBase):
         ),
         condition=lambda self: self._enabled,
     )
-    def _misc_ovn_conf(self):
-        self._configure_pki()
+    def _misc_configure_ovn_pki(self):
+        self._configure_ovndb_north_connection()
+        self._configure_ovndb_south_connection()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
@@ -523,11 +555,10 @@ class Plugin(plugin.PluginBase):
             oenginecons.Stages.OVN_SERVICES_RESTART,
         ),
         condition=lambda self:
-            self._enabled and
-            not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]
+            self._enabled
     )
-    def _misc_provider_conf(self):
-        self._update_provider_config_with_pki()
+    def _misc_configure_provider(self):
+        self._configure_ovirt_provider_ovn()
         self._upate_external_providers_keystore()
 
     @plugin.event(
