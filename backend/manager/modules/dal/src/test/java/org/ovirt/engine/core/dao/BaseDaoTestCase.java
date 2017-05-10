@@ -14,7 +14,7 @@ import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
-import org.dbunit.dataset.xml.XmlDataSet;
+import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -99,8 +99,9 @@ public abstract class BaseDaoTestCase {
     }
 
     protected static IDataSet initDataSet() throws Exception {
-        return new XmlDataSet(BaseDaoTestCase.class.getResourceAsStream(
-                "/fixtures.xml"));
+        FlatXmlDataSetBuilder builder = new FlatXmlDataSetBuilder();
+        builder.setColumnSensing(true);
+        return builder.build(BaseDaoTestCase.class.getResourceAsStream("/fixtures.xml"));
     }
 
     protected static IDatabaseConnection getConnection() throws Exception {
