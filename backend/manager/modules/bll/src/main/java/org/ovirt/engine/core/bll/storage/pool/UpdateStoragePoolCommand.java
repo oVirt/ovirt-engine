@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -61,6 +62,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T>  implements RenamedEntityInfoProvider{
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;

@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
@@ -41,6 +42,9 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCommand<T> {
     private Map<Guid, Guid> diskInfoSourceMap;
     private Map<Guid, Set<Guid>> validDisksDomains;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;

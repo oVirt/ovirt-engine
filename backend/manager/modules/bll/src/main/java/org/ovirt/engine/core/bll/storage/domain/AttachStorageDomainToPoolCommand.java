@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
@@ -47,6 +48,9 @@ import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoolParameters> extends
         StorageDomainCommandBase<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private DiskProfileDao diskProfileDao;

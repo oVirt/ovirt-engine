@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -30,6 +31,9 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkAttachmentsPersister
 @ValidateSupportsTransaction
 public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToClusterParameter>
     extends NetworkClusterCommandBase<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private NetworkAttachmentDao networkAttachmentDao;

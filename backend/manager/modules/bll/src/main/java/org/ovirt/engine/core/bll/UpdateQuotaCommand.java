@@ -16,9 +16,13 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.QuotaDao;
 
 public class UpdateQuotaCommand extends QuotaCRUDCommand {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private QuotaDao quotaDao;

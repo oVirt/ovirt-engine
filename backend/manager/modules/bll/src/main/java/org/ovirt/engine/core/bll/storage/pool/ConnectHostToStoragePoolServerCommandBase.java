@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -30,6 +31,9 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 @InternalCommandAttribute
 public abstract class ConnectHostToStoragePoolServerCommandBase<T extends StoragePoolParametersBase> extends
         StorageHandlingCommandBase<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;

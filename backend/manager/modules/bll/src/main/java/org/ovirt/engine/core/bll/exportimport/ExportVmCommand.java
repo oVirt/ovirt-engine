@@ -69,6 +69,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
@@ -82,6 +83,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyTemplateCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;

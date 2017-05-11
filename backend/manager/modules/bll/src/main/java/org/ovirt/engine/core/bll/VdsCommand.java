@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
@@ -45,6 +46,9 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
 
     protected String _failureMessage = null;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private PmHealthCheckManager pmHealthCheckManager;

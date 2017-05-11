@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -75,6 +76,9 @@ import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
 public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends VmPoolCommandBase<T>
         implements QuotaStorageDependent {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private MacPoolPerCluster macPoolPerCluster;

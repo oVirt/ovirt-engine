@@ -13,10 +13,14 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 
 @NonTransactiveCommandAttribute
 public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNetworksParameters> extends VdsCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private VdsDynamicDao vdsDynamicDao;

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 
@@ -30,6 +31,9 @@ import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 @InternalCommandAttribute
 public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTemplateParameters> extends
         CreateSnapshotCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private BaseDiskDao baseDiskDao;

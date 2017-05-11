@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
@@ -64,6 +65,9 @@ import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @NonTransactiveCommandAttribute
 public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateForStorageDomainCommandParameters> extends StorageDomainCommandBase<T> implements SerialChildExecutingCommand {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao;

@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -78,6 +79,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     private StorageDomain sourceDomain;
     private ImportValidator importValidator;
     private Version effectiveCompatibilityVersion;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     ExternalVmMacsFinder externalVmMacsFinder;

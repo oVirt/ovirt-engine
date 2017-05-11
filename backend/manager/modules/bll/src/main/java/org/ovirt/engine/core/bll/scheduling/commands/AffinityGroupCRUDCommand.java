@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -29,6 +30,9 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
 
     private static final String Entity_VM = "VM";
     private static final String Entity_VDS = "VDS";
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private VmStaticDao vmStaticDao;

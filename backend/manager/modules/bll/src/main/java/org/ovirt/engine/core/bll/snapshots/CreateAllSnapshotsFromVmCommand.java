@@ -81,6 +81,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -98,6 +99,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private String cachedSnapshotIsBeingTakenMessage;
     private Guid newActiveSnapshotId = Guid.newGuid();
     private MemoryImageBuilder memoryBuilder;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;

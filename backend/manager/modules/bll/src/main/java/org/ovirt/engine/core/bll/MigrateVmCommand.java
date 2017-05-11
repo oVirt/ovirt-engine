@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.vdscommands.MigrateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -81,6 +82,9 @@ import org.slf4j.LoggerFactory;
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
     private Logger log = LoggerFactory.getLogger(MigrateVmCommand.class);
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     ConvergenceConfigProvider convergenceConfigProvider;

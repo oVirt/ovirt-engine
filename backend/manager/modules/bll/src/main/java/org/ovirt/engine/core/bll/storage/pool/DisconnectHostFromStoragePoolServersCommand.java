@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -17,11 +19,15 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class DisconnectHostFromStoragePoolServersCommand extends
         ConnectHostToStoragePoolServerCommandBase<HostStoragePoolParametersBase> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

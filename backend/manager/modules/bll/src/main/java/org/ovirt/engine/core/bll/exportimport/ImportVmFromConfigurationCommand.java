@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -49,6 +50,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
     private VM vmFromConfiguration;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private OvfHelper ovfHelper;

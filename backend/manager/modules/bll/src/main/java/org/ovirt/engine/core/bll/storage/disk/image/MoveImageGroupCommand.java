@@ -15,11 +15,15 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ImageDao;
 
 @SuppressWarnings("serial")
 @InternalCommandAttribute
 public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private ImageDao imageDao;

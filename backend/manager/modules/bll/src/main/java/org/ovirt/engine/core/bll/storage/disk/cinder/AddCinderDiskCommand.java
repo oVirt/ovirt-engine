@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -39,6 +40,9 @@ import org.slf4j.LoggerFactory;
 public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(AddCinderDiskCommand.class);
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private BaseDiskDao baseDiskDao;

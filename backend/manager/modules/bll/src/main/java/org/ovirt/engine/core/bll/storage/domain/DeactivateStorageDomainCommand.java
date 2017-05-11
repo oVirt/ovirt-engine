@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.AsyncTaskDao;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -62,6 +63,9 @@ import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParametersBase> extends
         StorageDomainCommandBase<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private CommandEntityDao commandEntityDao;

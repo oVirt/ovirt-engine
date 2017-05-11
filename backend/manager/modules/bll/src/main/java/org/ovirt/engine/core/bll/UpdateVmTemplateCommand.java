@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -58,6 +59,9 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateManagementCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;

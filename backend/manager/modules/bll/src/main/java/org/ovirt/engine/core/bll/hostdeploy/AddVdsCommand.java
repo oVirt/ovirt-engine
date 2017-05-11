@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -66,6 +67,9 @@ import org.ovirt.engine.core.uutils.ssh.SSHClient;
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
 
     private final AuditLogType errorType = AuditLogType.USER_FAILED_ADD_VDS;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private HostedEngineHelper hostedEngineHelper;

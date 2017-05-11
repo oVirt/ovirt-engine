@@ -65,6 +65,7 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
@@ -87,6 +88,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
      * domain.
      */
     private final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     VmNicMacsUtils vmNicMacsUtils;

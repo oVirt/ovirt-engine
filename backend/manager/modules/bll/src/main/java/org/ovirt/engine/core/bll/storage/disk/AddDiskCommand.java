@@ -73,6 +73,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
@@ -86,6 +87,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         implements QuotaStorageDependent {
 
     private LUNs lunFromStorage;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private DiskProfileHelper diskProfileHelper;

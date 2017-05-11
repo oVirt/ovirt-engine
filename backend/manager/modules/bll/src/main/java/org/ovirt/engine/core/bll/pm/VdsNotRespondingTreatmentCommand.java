@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -49,6 +50,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
     private static final String RESTART = "Restart";
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private ResourceManager resourceManager;

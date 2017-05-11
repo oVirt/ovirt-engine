@@ -137,7 +137,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     private Long sessionSeqId;
 
     @Inject
-    protected AuditLogDirector auditLogDirector;
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     protected LockManager lockManager;

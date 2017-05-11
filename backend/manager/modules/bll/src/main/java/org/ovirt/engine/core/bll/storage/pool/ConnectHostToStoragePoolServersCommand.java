@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.storage.pool;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
@@ -24,6 +27,9 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 @InternalCommandAttribute
 public class ConnectHostToStoragePoolServersCommand extends
         ConnectHostToStoragePoolServerCommandBase<ConnectHostToStoragePoolServersParameters> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters,
             CommandContext cmdContext) {

@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -50,6 +51,9 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
 
     // If the CPU thresholds are set to -1 then we should get the value from the configuration
     public static final int GET_CPU_THRESHOLDS_FROM_CONFIGURATION = -1;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private NetworkDao networkDao;

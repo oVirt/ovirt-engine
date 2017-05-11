@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
 import org.ovirt.engine.core.dao.VdsKdumpStatusDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -38,6 +39,9 @@ import org.ovirt.engine.core.utils.ThreadUtils;
  */
 @NonTransactiveCommandAttribute
 public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private VdsKdumpStatusDao vdsKdumpStatusDao;

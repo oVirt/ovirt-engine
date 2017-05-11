@@ -58,6 +58,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -72,6 +73,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends VmCommand<T>
         implements QuotaStorageDependent {
     private List<DiskImage> _sourceImages = null;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private OvfManager ovfManager;

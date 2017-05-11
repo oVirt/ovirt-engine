@@ -31,12 +31,16 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.VmDao;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends BaseImagesCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private ImageDao imageDao;

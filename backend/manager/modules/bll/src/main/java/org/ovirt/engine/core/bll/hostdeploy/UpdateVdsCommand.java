@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.FenceAgentDao;
@@ -46,6 +47,9 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsCommand<T>  implements RenamedEntityInfoProvider{
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private ResourceManager resourceManager;

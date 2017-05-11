@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
@@ -36,6 +37,9 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
     private GlusterVolumeEntity slaveVolume;
     private Set<VDS> remoteServersSet;
     private VDS slaveHost;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private GlusterGeoRepSyncJob glusterGeoRepSyncJob;

@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VmReplicateDiskParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
@@ -55,6 +56,9 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     private Guid sourceQuotaId;
     private Guid sourceDiskProfileId;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private LiveStorageMigrationHelper liveStorageMigrationHelper;

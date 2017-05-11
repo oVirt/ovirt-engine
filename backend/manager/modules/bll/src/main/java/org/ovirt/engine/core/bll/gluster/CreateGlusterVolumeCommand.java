@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.validation.group.gluster.CreateStripedVolume
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
 /**
@@ -45,6 +46,9 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
     @Inject
     private GlusterVolumeDao glusterVolumeDao;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public CreateGlusterVolumeCommand(CreateGlusterVolumeParameters params, CommandContext commandContext) {
         super(params, commandContext);

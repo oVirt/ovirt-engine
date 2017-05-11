@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
@@ -48,6 +49,9 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
     private ArrayList<DiskImage> imagesList;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private OvfHelper ovfHelper;

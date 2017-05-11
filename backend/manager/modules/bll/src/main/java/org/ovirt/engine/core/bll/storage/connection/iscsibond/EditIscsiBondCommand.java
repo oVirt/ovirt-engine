@@ -18,11 +18,15 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends BaseIscsiBondCommand<T> {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     private IscsiBond existingIscsiBond;
 

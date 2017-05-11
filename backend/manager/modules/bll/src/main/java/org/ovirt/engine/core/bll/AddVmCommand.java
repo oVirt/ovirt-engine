@@ -111,6 +111,7 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.PermissionDao;
@@ -135,6 +136,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         implements QuotaStorageDependent, QuotaVdsDependent {
 
     private static final Base64 BASE_64 = new Base64(0, null);
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private DiskProfileHelper diskProfileHelper;

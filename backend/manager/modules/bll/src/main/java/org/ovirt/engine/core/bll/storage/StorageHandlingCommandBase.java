@@ -66,6 +66,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -93,6 +94,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private CinderBroker cinderBroker;
     protected List<DiskImage> ovfDisks;
     protected List<UnregisteredDisk> unregisteredDisks = new ArrayList<>();
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private  MacPoolPerCluster macPoolPerCluster;

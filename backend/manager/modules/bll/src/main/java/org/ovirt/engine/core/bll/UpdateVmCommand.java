@@ -88,6 +88,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
@@ -107,6 +108,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
 
     private static final Base64 BASE_64 = new Base64(0, null);
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private VmSlaPolicyUtils vmSlaPolicyUtils;

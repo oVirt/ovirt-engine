@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -95,6 +96,9 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private final List<VM> vmsDiskPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     VmSlaPolicyUtils vmSlaPolicyUtils;

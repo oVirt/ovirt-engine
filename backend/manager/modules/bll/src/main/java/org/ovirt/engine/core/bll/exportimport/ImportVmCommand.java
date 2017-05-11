@@ -90,6 +90,7 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
@@ -109,6 +110,9 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmCommandBase<T>
         implements QuotaStorageDependent {
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     @Inject
     private VmOverheadCalculator vmOverheadCalculator;
