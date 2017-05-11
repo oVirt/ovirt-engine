@@ -132,7 +132,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
 
         // Remove pools that has provided VMs.
         final List<VmPool> filteredPools = pools.stream()
-                .filter(p -> p.getMaxAssignedVmsPerUser() < vmsPerPool.getOrDefault(p.getVmPoolId(), 0L))
+                .filter(p -> p.getMaxAssignedVmsPerUser() > vmsPerPool.getOrDefault(p.getVmPoolId(), 0L))
                 .collect(Collectors.toList());
 
         final List<Pair<Nameable, VM>> vmPairs =
