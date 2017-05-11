@@ -1082,6 +1082,23 @@ public class VmDeviceUtils {
      */
 
     /**
+     * Add new watchdog device to the VM.
+     *
+     * @param vmId the ID of the VM to add the watchdog device to
+     * @param specParams the spec params of the watchdog device
+     * @return the added device
+     */
+    public VmDevice addWatchdogDevice(Guid vmId, Map<String, Object> specParams) {
+        return addManagedDevice(
+                new VmDeviceId(Guid.newGuid(), vmId),
+                VmDeviceGeneralType.WATCHDOG,
+                VmDeviceType.WATCHDOG,
+                specParams,
+                true,
+                false);
+    }
+
+    /**
      * Get list of all watchdogs in the VM.
      */
     public List<VmDevice> getWatchdogs(Guid vmId) {

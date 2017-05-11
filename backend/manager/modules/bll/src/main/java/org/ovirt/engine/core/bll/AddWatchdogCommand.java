@@ -4,21 +4,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
     @Inject
-    private VmDeviceDao vmDeviceDao;
+    private VmDeviceUtils vmDeviceUtils;
 
     public AddWatchdogCommand(WatchdogParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -26,13 +21,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
 
     @Override
     protected void executeCommand() {
-        VmDevice watchdogDevice = new VmDevice();
-        watchdogDevice.setId(new VmDeviceId(Guid.Empty, getParameters().getId()));
-        watchdogDevice.setDevice(VmDeviceType.WATCHDOG.getName());
-        watchdogDevice.setType(VmDeviceGeneralType.WATCHDOG);
-        watchdogDevice.setAddress(StringUtils.EMPTY);
-        watchdogDevice.setSpecParams(getSpecParams());
-        vmDeviceDao.save(watchdogDevice);
+        VmDevice watchdogDevice = vmDeviceUtils.addWatchdogDevice(getParameters().getId(), getSpecParams());
         setSucceeded(true);
         setActionReturnValue(watchdogDevice.getId().getDeviceId());
     }
@@ -43,7 +32,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
             return false;
         }
 
-        List<VmDevice> vmWatchdogDevices = getVmWatchdogDevices();
+        List<VmDevice> vmWatchdogDevices = vmDeviceUtils.getWatchdogs(getParameters().getId());
         if (vmWatchdogDevices != null && !vmWatchdogDevices.isEmpty()) {
             return failValidation(EngineMessage.WATCHDOG_ALREADY_EXISTS);
         }
@@ -55,7 +44,4 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
         return true;
     }
 
-    private List<VmDevice> getVmWatchdogDevices() {
-        return vmDeviceDao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.WATCHDOG);
-    }
 }
