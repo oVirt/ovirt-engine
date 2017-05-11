@@ -20,6 +20,9 @@ public class AuditLogDirector {
         log(auditLogable, logType, "");
     }
 
+    private AuditLogDirector() {
+    }
+
     /**
      * Log an event with the given message
      *

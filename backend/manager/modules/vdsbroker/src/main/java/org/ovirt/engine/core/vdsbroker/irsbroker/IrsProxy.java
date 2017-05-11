@@ -166,6 +166,9 @@ public class IrsProxy {
     @Inject
     private EventQueue eventQueue;
 
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
     private Guid preferredHostId;
 
     public Guid getCurrentVdsId() {
@@ -406,7 +409,7 @@ public class IrsProxy {
                                 logable.setStorageDomainName(domain.getName());
                                 logable.setStoragePoolId(pool.getId());
                                 logable.setStoragePoolName(pool.getName());
-                                new AuditLogDirector().log(logable, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
+                                auditLogDirector.log(logable, AuditLogType.STORAGE_DOMAIN_MOVED_TO_MAINTENANCE);
                             }
                             return null;
                         });
@@ -516,7 +519,7 @@ public class IrsProxy {
                         logable.setStorageDomainName(domainFromDb.getStorageName());
                         logable.addCustomValue("DiskSpace", domainFromVdsm.getAvailableDiskSize().toString());
                         domainFromVdsm.setStorageName(domainFromDb.getStorageName());
-                        new AuditLogDirector().log(logable, type);
+                        auditLogDirector.log(logable, type);
 
                     }
                 }
@@ -531,10 +534,10 @@ public class IrsProxy {
                     for (EngineError alert : alerts) {
                         switch (alert) {
                         case VG_METADATA_CRITICALLY_FULL:
-                            new AuditLogDirector().log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
+                            auditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
                             break;
                         case SMALL_VG_METADATA:
-                            new AuditLogDirector().log(logable, AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA);
+                            auditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA);
                             break;
                         default:
                             log.error("Unrecognized alert for domain {}(id = {}): {}",
@@ -579,7 +582,7 @@ public class IrsProxy {
                     logable.setVdsName(vdsStaticDao.get(currentVdsId).getName());
                     logable.setStorageDomainId(masterDomain.getId());
                     logable.setStorageDomainName(masterDomain.getName());
-                    new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
+                    auditLogDirector.log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
 
                     return getEventListener().masterDomainNotOperational(masterDomain.getId(), storagePoolId, false, true);
 
@@ -885,7 +888,7 @@ public class IrsProxy {
             logable.setVdsName(selectedVds.argvalue.getHostName());
             logable.addCustomValue("ServerIp", returnValue);
             logable.addCustomValue("StoragePoolName", storagePool.getName());
-            new AuditLogDirector().log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
+            auditLogDirector.log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
         }
         return returnValue;
     }
@@ -1302,7 +1305,7 @@ public class IrsProxy {
         logable.setVdsName(vdsName);
         logable.setStorageDomainName(domainName);
         logable.addCustomValue("Delay", Double.toString(delay));
-        new AuditLogDirector().log(logable,
+        auditLogDirector.log(logable,
                 AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
     }
 

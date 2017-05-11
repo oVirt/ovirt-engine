@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.qos.StorageQosDao;
+import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
@@ -66,6 +68,9 @@ public class VmInfoBuildUtilsTest {
     private static final Guid LUN_DISK_ID = Guid.newGuid();
 
     @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
+
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
     @Mock
     private NetworkDao networkDao;
@@ -84,6 +89,9 @@ public class VmInfoBuildUtilsTest {
     @Mock
     private VmNicFilterParameterDao vmNicFilterParameterDao;
 
+    @Mock
+    private AuditLogDirector auditLogDirector;
+
     @InjectMocks
     private VmInfoBuildUtils underTest;
 
@@ -95,6 +103,7 @@ public class VmInfoBuildUtilsTest {
 
     @Before
     public void setUp() {
+        injectorRule.bind(AuditLogDirector.class, auditLogDirector);
         diskImage.setDiskProfileId(Guid.newGuid());
 
         qos = new StorageQos();

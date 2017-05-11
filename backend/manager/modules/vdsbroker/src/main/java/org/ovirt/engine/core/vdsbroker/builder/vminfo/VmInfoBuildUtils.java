@@ -99,6 +99,7 @@ public class VmInfoBuildUtils {
     private final VmDeviceDao vmDeviceDao;
     private final VnicProfileDao vnicProfileDao;
     private final VmNicFilterParameterDao vmNicFilterParameterDao;
+    private final AuditLogDirector auditLogDirector;
 
     private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
@@ -111,7 +112,8 @@ public class VmInfoBuildUtils {
             VmDeviceDao vmDeviceDao,
             VnicProfileDao vnicProfileDao,
             VmNicFilterParameterDao vmNicFilterParameterDao,
-            NetworkClusterDao networkClusterDao) {
+            NetworkClusterDao networkClusterDao,
+            AuditLogDirector auditLogDirector) {
         this.networkDao = Objects.requireNonNull(networkDao);
         this.networkFilterDao = Objects.requireNonNull(networkFilterDao);
         this.networkQosDao = Objects.requireNonNull(networkQosDao);
@@ -120,6 +122,7 @@ public class VmInfoBuildUtils {
         this.vnicProfileDao = Objects.requireNonNull(vnicProfileDao);
         this.vmNicFilterParameterDao = Objects.requireNonNull(vmNicFilterParameterDao);
         this.networkClusterDao = Objects.requireNonNull(networkClusterDao);
+        this.auditLogDirector = Objects.requireNonNull(auditLogDirector);
     }
 
     OsRepository getOsRepository() {
@@ -611,7 +614,7 @@ public class VmInfoBuildUtils {
         }
 
         event.addCustomValue("UnsupportedFeatures", StringUtils.join(unsupportedFeatureNames, ", "));
-        new AuditLogDirector().log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
+        auditLogDirector.log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
     }
 
     public Network getDisplayNetwork(VM vm) {

@@ -47,7 +47,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     private final NetworkDao networkDao;
     private final Instance<ResourceManager> resourceManager;
     private final ManagementNetworkUtil managementNetworkUtil;
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final AuditLogDirector auditLogDirector;
     private final NetworkAttachmentDao networkAttachmentDao;
     private final NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
@@ -58,7 +58,8 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                      NetworkDao networkDao,
                                      Instance<ResourceManager> resourceManager,
                                      NetworkImplementationDetailsUtils networkImplementationDetailsUtils,
-                                     ManagementNetworkUtil managementNetworkUtil) {
+                                     ManagementNetworkUtil managementNetworkUtil,
+                                     AuditLogDirector auditLogDirector) {
         Validate.notNull(networkDao, "networkAttachmentDao can not be null");
         Validate.notNull(networkDao, "networkDao can not be null");
         Validate.notNull(interfaceDao, "interfaceDao can not be null");
@@ -66,6 +67,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         Validate.notNull(resourceManager, "resourceManager can not be null");
         Validate.notNull(networkImplementationDetailsUtils, "networkImplementationDetailsUtils can not be null");
         Validate.notNull(managementNetworkUtil, "managementNetworkUtil can not be null");
+        Validate.notNull(auditLogDirector, "auditLogDirector can not be null");
 
         this.vmDynamicDao = vmDynamicDao;
         this.interfaceDao = interfaceDao;
@@ -74,6 +76,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         this.managementNetworkUtil = managementNetworkUtil;
         this.networkAttachmentDao = networkAttachmentDao;
         this.networkImplementationDetailsUtils = networkImplementationDetailsUtils;
+        this.auditLogDirector = auditLogDirector;
     }
 
     @Override

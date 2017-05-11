@@ -129,7 +129,7 @@ public class VdsBrokerObjectsBuilder {
 
     private static final int VNC_START_PORT = 5900;
     private static final double NANO_SECONDS = 1000000000;
-    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private static final AuditLogDirector auditLogDirector = Injector.get(AuditLogDirector.class);
 
     private static final Comparator<VdsNumaNode> numaNodeComparator = Comparator.comparing(VdsNumaNode::getIndex);
     private static final Pattern IPV6_ADDRESS_CAPTURE_PREFIX_PATTERN = Pattern.compile("^.*?/(\\d+)?$");

@@ -9,6 +9,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 
 public class StorageDomainHelper {
 
@@ -27,7 +28,8 @@ public class StorageDomainHelper {
                 logable.setStorageDomainName(domain.getName());
                 logable.addCustomValue("maxNumOfLVs", maxNumOfLVs.toString());
                 logable.setStorageDomainId(storageDomainId);
-                new AuditLogDirector().log(logable, AuditLogType.NUMBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
+                Injector.get(AuditLogDirector.class).log(logable,
+                        AuditLogType.NUMBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
             }
         }
     }
