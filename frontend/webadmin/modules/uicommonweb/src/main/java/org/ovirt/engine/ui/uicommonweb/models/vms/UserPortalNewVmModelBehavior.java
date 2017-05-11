@@ -9,10 +9,10 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -145,12 +145,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     }
 
     @Override
-    protected void getHostListByCluster(Cluster cluster, AsyncQuery query) {
-        Frontend.getInstance().runQuery(
-                VdcQueryType.GetHostsByClusterId,
-                new IdQueryParameters(cluster.getId()),
-                query
-                );
+    protected void getHostListByCluster(Cluster cluster, AsyncQuery<List<VDS>> query) {
+        AsyncDataProvider.getInstance().getHostListByClusterId(query, cluster.getId());
     }
 
     @Override
