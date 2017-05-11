@@ -411,6 +411,8 @@ class Const(object):
 
     ENGINE_DB_BACKUP_PREFIX = 'engine'
 
+    OVIRT_PROVIDER_OVN_CLIENT_ID_VALUE = 'ovirt-provider-ovn'
+
     @classproperty
     def ENGINE_DB_ENV_KEYS(self):
         return {
@@ -863,6 +865,7 @@ class OvnEnv(object):
     )
 
     PROVIDER_NAME = 'ovirt-provider-ovn'
+    OVIRT_PROVIDER_OVN_SECRET = 'OVESETUP_OVN/ovirtProviderOvnSecret'
 
 
 @util.export

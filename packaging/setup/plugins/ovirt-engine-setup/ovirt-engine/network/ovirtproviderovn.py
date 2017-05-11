@@ -21,6 +21,8 @@
 import base64
 import gettext
 import os
+import random
+import string
 import uuid
 
 
@@ -38,6 +40,7 @@ from ovirt_engine import configfile
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine.constants import Const
 from ovirt_engine_setup.engine.constants import FileLocations
 from ovirt_engine_setup.engine.constants import OvnEnv
 from ovirt_engine_setup.engine_common import constants as oengcommcons
@@ -104,15 +107,19 @@ class Plugin(plugin.PluginBase):
         self._manual_commands = []
         self._failed_commands = []
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER_KEYS
+        ].append(
+            OvnEnv.OVIRT_PROVIDER_OVN_SECRET
+        )
+
     def _add_provider_to_db(self):
         auth_required = self._user is not None
         fqdn = self.environment[osetupcons.ConfigEnv.FQDN]
-
-        password = (
-            self._encrypt_password(self._password)
-            if self._password
-            else None
-        )
 
         self.environment[
             oenginecons.EngineDBEnv.STATEMENT
@@ -139,13 +146,90 @@ class Plugin(plugin.PluginBase):
                 provider_type='EXTERNAL_NETWORK',
                 auth_required=auth_required,
                 auth_username=self._user,
-                auth_password=password,
+                auth_password=self._password,
                 custom_properties=None,
                 auth_url='https://%s:35357/v2.0/' % fqdn
             ),
         )
 
         self.logger.info(_('Default OVN provider added to database'))
+
+    def _generate_client_secret(self):
+
+        def generatePassword():
+            rand = random.SystemRandom()
+            return ''.join([
+                rand.choice(string.ascii_letters + string.digits)
+                for i in range(32)
+            ])
+        self.environment.setdefault(
+            OvnEnv.OVIRT_PROVIDER_OVN_SECRET,
+            generatePassword()
+        )
+
+    def _add_client_secret_to_db(self):
+        rc, stdout, stderr = self.execute(
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_CRYPTO_TOOL,
+                'pbe-encode',
+                '--password=env:pass',
+            ),
+            envAppend={
+                'OVIRT_ENGINE_JAVA_HOME_FORCE': '1',
+                'OVIRT_ENGINE_JAVA_HOME': self.environment[
+                    oengcommcons.ConfigEnv.JAVA_HOME
+                ],
+                'OVIRT_JBOSS_HOME': self.environment[
+                    oengcommcons.ConfigEnv.JBOSS_HOME
+                ],
+                'pass': self.environment[
+                    OvnEnv.OVIRT_PROVIDER_OVN_SECRET
+                ]
+            },
+            logStreams=False,
+        )
+
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
+            statement="""
+                select sso_oauth_register_client(
+                    %(client_id)s,
+                    %(client_secret)s,
+                    %(scope)s,
+                    %(certificate)s,
+                    %(callback_prefix)s,
+                    %(description)s,
+                    %(email)s,
+                    %(trusted)s,
+                    %(notification_callback)s,
+                    %(notification_callback_host_protocol)s,
+                    %(notification_callback_host_verification)s,
+                    %(notification_callback_chain_validation)s
+                )
+            """,
+            args=dict(
+                client_id=Const.OVIRT_PROVIDER_OVN_CLIENT_ID_VALUE,
+                client_secret=stdout[0],
+                scope=' '.join(
+                    (
+                        'ovirt-app-api',
+                        'ovirt-ext=token-info:validate',
+                        'ovirt-ext=token-info:public-authz-search',
+                    )
+                ),
+                certificate=(
+                    oenginecons.FileLocations.
+                    OVIRT_ENGINE_PKI_ENGINE_CERT
+                ),
+                callback_prefix='',
+                description='ovirt-provider-ovn',
+                email='',
+                trusted=True,
+                notification_callback='',
+                notification_callback_host_protocol='TLS',
+                notification_callback_host_verification=False,
+                notification_callback_chain_validation=True,
+            ),
+        )
 
     def _setup_packages(self):
         self.environment[
@@ -395,6 +479,14 @@ class Plugin(plugin.PluginBase):
         )
 
     def _configure_ovirt_provider_ovn(self):
+        engine_port = self.environment[
+            oengcommcons.ConfigEnv.HTTPS_PORT
+        ] if self.environment[
+            oengcommcons.ConfigEnv.JBOSS_AJP_PORT
+        ] else self.environment[
+            oengcommcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+        ]
+
         modified_parameters = {
             'cert-file':
                 oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_CERT,
@@ -409,6 +501,19 @@ class Plugin(plugin.PluginBase):
                     self.OVN_NORTH_DB_CONFIG.protocol,
                     self.OVN_NORTH_DB_CONFIG.port,
                 ),
+            'sso-client-id':
+                Const.OVIRT_PROVIDER_OVN_CLIENT_ID_VALUE,
+            'sso-client-secret':
+                self.environment[
+                    OvnEnv.OVIRT_PROVIDER_OVN_SECRET
+                ],
+            'host':
+                'https://%s:%s' % (
+                    self.environment[osetupcons.ConfigEnv.FQDN],
+                    engine_port
+                ),
+            'ca-file':
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
         }
         if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             self._update_provider_config_with_pki(modified_parameters)
@@ -558,6 +663,7 @@ class Plugin(plugin.PluginBase):
             self._enabled
     )
     def _misc_configure_provider(self):
+        self._generate_client_secret()
         self._configure_ovirt_provider_ovn()
         self._upate_external_providers_keystore()
 
@@ -580,8 +686,9 @@ class Plugin(plugin.PluginBase):
         ),
         condition=lambda self: self._enabled,
     )
-    def _misc_add_provider_to_db(self):
+    def _misc_db_entries(self):
         self._add_provider_to_db()
+        self._add_client_secret_to_db()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
