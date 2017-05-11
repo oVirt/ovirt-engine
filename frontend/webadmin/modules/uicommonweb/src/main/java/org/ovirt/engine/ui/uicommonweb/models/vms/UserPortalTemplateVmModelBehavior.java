@@ -6,11 +6,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
@@ -45,11 +43,7 @@ public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
     }
 
     @Override
-    protected void getHostListByCluster(Cluster cluster, AsyncQuery query) {
-        Frontend.getInstance().runQuery(
-                VdcQueryType.GetHostsByClusterId,
-                new IdQueryParameters(cluster.getId()),
-                query
-                );
+    protected void getHostListByCluster(Cluster cluster, AsyncQuery<List<VDS>> query) {
+        AsyncDataProvider.getInstance().getHostListByClusterId(query, cluster.getId());
     }
 }
