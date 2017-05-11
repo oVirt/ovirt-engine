@@ -91,6 +91,7 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         iface.setBridged(true);
         iface.setQos(ifaceQos);
         iface.setReportedSwitchType(SwitchType.LEGACY);
+        iface.setIpv4DefaultRoute(true);
 
         network = new Network();
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
@@ -272,20 +273,36 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testReportConfigurationsOnHostWhenDnsConfigurationResolverIsDifferentButNotDefinedByEngineThusInSync() {
-        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration2);
-        ReportedConfigurations reportedConfigurations = createTestedInstanceWithSameNonQosValues(true).reportConfigurationsOnHost();
+    public void testReportConfigurationsOnHostWhenDefaultRouteDiffers() {
+        iface.setIpv4DefaultRoute(false);
 
-        assertThat(reportedConfigurations.isNetworkInSync(), is(true));
+        //cannot use initIpv4ConfigurationBootProtocol because of 'randomized tests' technique.
+        iface.setIpv4BootProtocol(Ipv4BootProtocol.DHCP);
+        IPv4Address address = new IPv4Address();
+        address.setBootProtocol(Ipv4BootProtocol.DHCP);
+        testedNetworkAttachment.getIpConfiguration().setIPv4Addresses(Collections.singletonList(address));
+
+        //network has default route role
+        NetworkInSyncWithVdsNetworkInterface testedInstance = createTestedInstanceWithSameNonQosValues(true);
+        ReportedConfigurations reportedConfigurations = testedInstance.reportConfigurationsOnHost();
+
+        assertThat(reportedConfigurations.isNetworkInSync(), is(false));
         List<ReportedConfiguration> reportedConfigurationList = reportedConfigurations.getReportedConfigurationList();
 
         List<ReportedConfiguration> expectedReportedConfigurations = addReportedConfigurations(
                 combineReportedConfigurations(createBasicReportedConfigurations(), reportQos(true)),
 
+                new ReportedConfiguration(ReportedConfigurationType.IPV4_BOOT_PROTOCOL,
+                        iface.getIpv4BootProtocol().name(),
+                        /*ipv4Address*/address.getBootProtocol().name(),
+                        true),
+
                 new ReportedConfiguration(ReportedConfigurationType.DNS_CONFIGURATION,
                         addressesAsString(sampleDnsResolverConfiguration.getNameServers()),
-                        "",
-                        true)
+                        "192.168.1.1,2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+                        true),
+
+                new ReportedConfiguration(ReportedConfigurationType.DEFAULT_ROUTE, false, true, false)
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
@@ -318,7 +335,9 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                 new ReportedConfiguration(ReportedConfigurationType.DNS_CONFIGURATION,
                         addressesAsString(sampleDnsResolverConfiguration.getNameServers()),
                         addressesAsString(network.getDnsResolverConfiguration().getNameServers()),
-                        false)
+                        false),
+                new ReportedConfiguration(ReportedConfigurationType.DEFAULT_ROUTE, true, true, true)
+
         );
 
         assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
@@ -739,6 +758,27 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
         network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
         testedNetworkAttachment.setDnsResolverConfiguration(sampleDnsResolverConfiguration2);
         assertThat(createTestedInstance(false, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
+    }
+
+    @Test
+    public void testDefaultRouteNonDefaultRouteNetworkIsIgnored() {
+        iface.setIpv4DefaultRoute(true);
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
+        assertThat(createTestedInstance(false, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
+    }
+
+    @Test
+    public void testDefaultRouteWhenInSync() {
+        iface.setIpv4DefaultRoute(true);
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
+        assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(true));
+    }
+
+    @Test
+    public void testDefaultRouteWhenOutOfSync() {
+        iface.setIpv4DefaultRoute(false);
+        network.setDnsResolverConfiguration(sampleDnsResolverConfiguration);
+        assertThat(createTestedInstance(true, sampleDnsResolverConfiguration).isNetworkInSync(), is(false));
     }
 
     @Test

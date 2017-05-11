@@ -562,8 +562,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             HostNetwork networkToConfigure = new HostNetwork(network, attachment);
             networkToConfigure.setBonding(isBonding(attachment, nics));
 
-            if (defaultRouteSupported()
-                    && new ShouldSetDefaultRouteFlagAndDnsData().test(networkCluster.isDefaultRoute(), attachment)) {
+            if (defaultRouteSupported() && networkCluster.isDefaultRoute()) {
                 DnsResolverConfiguration dnsResolverConfiguration =
                         getDnsConfigurationFromNetworkOrItsAttachment(attachment, network);
 

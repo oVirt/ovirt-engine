@@ -16,7 +16,8 @@ public enum ReportedConfigurationType {
     OUT_AVERAGE_UPPER_LIMIT("outAverageUpperLimit"),
     OUT_AVERAGE_REAL_TIME("outAverageRealTime"),
     SWITCH_TYPE("switchType"),
-    DNS_CONFIGURATION("dns_configuration");
+    DNS_CONFIGURATION("dns_configuration"),
+    DEFAULT_ROUTE("default_route");
 
     private final String name;
 

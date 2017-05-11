@@ -44,6 +44,8 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     @Mask
     private String ipv4Subnet;
 
+    private boolean ipv4DefaultRoute;
+
     @Ipv4(message = "IPV4_ADDR_GATEWAY_BAD_FORMAT")
     private String ipv4Gateway;
 
@@ -532,6 +534,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 networkName,
                 bridged,
                 ipv4Gateway,
+                ipv4DefaultRoute,
                 ipv6Gateway,
                 mtu,
                 ipv4Subnet,
@@ -568,6 +571,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 && Objects.equals(networkName, other.networkName)
                 && bridged == other.bridged
                 && Objects.equals(ipv4Gateway, other.ipv4Gateway)
+                && Objects.equals(ipv4DefaultRoute, other.ipv4DefaultRoute)
                 && Objects.equals(ipv6Gateway, other.ipv6Gateway)
                 && mtu == other.mtu
                 && Objects.equals(ipv4Subnet, other.ipv4Subnet)
@@ -579,6 +583,14 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
                 && Objects.equals(labels, other.labels)
                 && Objects.equals(adPartnerMac, other.adPartnerMac)
                 && Objects.equals(adAggregatorId, other.adAggregatorId);
+    }
+
+    public boolean isIpv4DefaultRoute() {
+        return ipv4DefaultRoute;
+    }
+
+    public void setIpv4DefaultRoute(boolean ipv4DefaultRoute) {
+        this.ipv4DefaultRoute = ipv4DefaultRoute;
     }
 
     /**

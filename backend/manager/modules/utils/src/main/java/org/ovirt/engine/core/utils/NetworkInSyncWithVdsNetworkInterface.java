@@ -1,17 +1,16 @@
 package org.ovirt.engine.core.utils;
 
+import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.DEFAULT_ROUTE;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.DNS_CONFIGURATION;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_LINK_SHARE;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_REAL_TIME;
 import static org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType.OUT_AVERAGE_UPPER_LIMIT;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.network.host.ShouldSetDefaultRouteFlagAndDnsData;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
@@ -221,34 +220,20 @@ public class NetworkInSyncWithVdsNetworkInterface {
         List<NameServer> nameServersOfNetwork = getNameServers(network.getDnsResolverConfiguration());
         List<NameServer> nameServersOfHost = getNameServers(reportedDnsResolverConfiguration);
 
-        boolean shouldSetDefaultRoute = new ShouldSetDefaultRouteFlagAndDnsData().test(true, networkAttachment);
-        boolean engineDefineDnsConfiguration =
-                shouldSetDefaultRoute && (nameServersOfNetworkAttachment != null || nameServersOfNetwork != null);
+        boolean engineDefineDnsConfiguration = nameServersOfNetworkAttachment != null || nameServersOfNetwork != null;
 
         List<NameServer> expectedNameServers = nameServersOfNetworkAttachment != null
                 ? nameServersOfNetworkAttachment
                 : nameServersOfNetwork;
 
-        boolean outOfSync = engineDefineDnsConfiguration
-                && !Objects.equals(nameServersOfHost, expectedNameServers);
-
         result.add(DNS_CONFIGURATION,
                 addressesAsString(nameServersOfHost),
                 engineDefineDnsConfiguration ? addressesAsString(expectedNameServers): "",
-                !outOfSync);
-    }
+                !(engineDefineDnsConfiguration && !Objects.equals(nameServersOfHost, expectedNameServers)));
 
-    private boolean isDhcpUsed(NetworkAttachment networkAttachment) {
-        IpConfiguration ipConf = networkAttachment.getIpConfiguration();
+        result.add(DEFAULT_ROUTE, iface.isIpv4DefaultRoute(), isDefaultRouteNetwork);
 
-        boolean dhcpOnIpv4 = ipConf.hasIpv4PrimaryAddressSet() &&
-                Ipv4BootProtocol.DHCP.equals(ipConf.getIpv4PrimaryAddress().getBootProtocol());
 
-        List<Ipv6BootProtocol> ipv6DhcpEnumValues = Arrays.asList(Ipv6BootProtocol.DHCP, Ipv6BootProtocol.AUTOCONF);
-        boolean dhcpOnIpv6 = ipConf.hasIpv6PrimaryAddressSet()
-                && ipv6DhcpEnumValues.contains(ipConf.getIpv6PrimaryAddress().getBootProtocol());
-
-        return dhcpOnIpv4 || dhcpOnIpv6;
     }
 
     private String addressesAsString(List<NameServer> nameServers) {

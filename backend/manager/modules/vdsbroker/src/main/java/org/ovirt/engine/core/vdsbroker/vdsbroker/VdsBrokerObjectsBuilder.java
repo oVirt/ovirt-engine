@@ -1817,6 +1817,7 @@ public class VdsBrokerObjectsBuilder {
                     String v4addr = extractAddress(effectiveProperties);
                     String v4Subnet = extractSubnet(effectiveProperties);
                     String v4gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
+                    boolean v4DefaultRoute = (Boolean) effectiveProperties.get(VdsProperties.IPV4_DEFAULT_ROUTE);
 
                     final String rawIpv6Address = getIpv6Address(effectiveProperties);
                     String v6Addr = extractIpv6Address(rawIpv6Address);
@@ -1828,6 +1829,7 @@ public class VdsBrokerObjectsBuilder {
                         iface.setNetworkName(networkName);
                         iface.setIpv4Address(v4addr);
                         iface.setIpv4Subnet(v4Subnet);
+                        iface.setIpv4DefaultRoute(v4DefaultRoute);
                         iface.setIpv6Address(v6Addr);
                         iface.setIpv6Prefix(v6Prefix);
                         iface.setBridged(bridgedNetwork);

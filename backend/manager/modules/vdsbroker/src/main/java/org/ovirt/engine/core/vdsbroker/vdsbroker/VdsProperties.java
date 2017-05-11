@@ -105,6 +105,7 @@ public final class VdsProperties {
     public static final String CONNECTIVITY_TIMEOUT = "connectivityTimeout";
     public static final String GLOBAL_GATEWAY = "gateway";
     public static final String IPV6_GLOBAL_GATEWAY = "ipv6gateway";
+    public static final String IPV4_DEFAULT_ROUTE = "ipv4defaultroute";
     public static final String DISPLAY_NETWORK = "displayNetwork";
     public static final String VM_NETWORK = "network";
     public static final String VM_INTERFACE_NAME = "name";

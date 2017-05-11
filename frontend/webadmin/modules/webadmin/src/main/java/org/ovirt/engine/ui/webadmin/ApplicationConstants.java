@@ -996,6 +996,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String dnsConfigurationOutOfSyncPopUp();
 
+    String defaultRouteOutOfSyncPopUp();
+
     String outAverageRealTimeOutOfSyncPopUp();
 
     String unknownPropertyOutOfSyncPopUp();

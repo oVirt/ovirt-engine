@@ -127,6 +127,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .addValue("bond_name", nic.getBondName())
                 .addValue("bond_type", nic.getBondType())
                 .addValue("gateway", nic.getIpv4Gateway())
+                .addValue("ipv4_default_route", nic.isIpv4DefaultRoute())
                 .addValue("ipv6_gateway", nic.getIpv6Gateway())
                 .addValue("id", nic.getId())
                 .addValue("is_bond", nic.getBonded())
@@ -307,6 +308,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                     entity.setStatistics(HostNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
                     entity.setType((Integer) rs.getObject("type"));
                     entity.setIpv4Gateway(rs.getString("gateway"));
+                    entity.setIpv4DefaultRoute(rs.getBoolean("ipv4_default_route"));
                     entity.setIpv6Gateway(rs.getString("ipv6_gateway"));
                     entity.setIpv4Subnet(rs.getString("subnet"));
                     entity.setIpv6Prefix(getInteger(rs, "ipv6_prefix"));
