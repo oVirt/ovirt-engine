@@ -33,6 +33,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
         loggable.setVdsId(vds.getId());
         loggable.setClusterId(vds.getClusterId());
         loggable.setClusterName(vds.getClusterName());
-        new AuditLogDirector().log(loggable, type);
+        Injector.get(AuditLogDirector.class).log(loggable, type);
     }
 
     private void processPmAction(Pair<VDS, VDSStatus> action) {

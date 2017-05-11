@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.JsonHelper;
 
 public class MetadataDiskDescriptionHandler {
@@ -235,7 +236,7 @@ public class MetadataDiskDescriptionHandler {
     }
 
     protected AuditLogDirector getAuditLogDirector() {
-        return new AuditLogDirector();
+        return Injector.get(AuditLogDirector.class);
     }
 
     public void enrichDiskByJsonDescription(String jsonDiskDescription, Disk disk)

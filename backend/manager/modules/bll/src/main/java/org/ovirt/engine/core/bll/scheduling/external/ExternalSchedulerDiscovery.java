@@ -35,6 +35,9 @@ public class ExternalSchedulerDiscovery {
     @Inject
     ExternalSchedulerBroker broker;
 
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
     protected ExternalSchedulerDiscovery() {}
 
     /**
@@ -53,7 +56,7 @@ public class ExternalSchedulerDiscovery {
             dbUpdated = true;
         } else {
             AuditLogable loggable = new AuditLogableImpl();
-            new AuditLogDirector().log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
+            auditLogDirector.log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
             log.warn("Discovery returned empty result when talking to broker. Disabling external units");
 
             List<PolicyUnit> failingPolicyUnits = policyUnitDao.getAll().stream()

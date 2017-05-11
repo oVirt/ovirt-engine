@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class AsyncTaskManager {
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskManager.class);
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final AuditLogDirector auditLogDirector = Injector.get(AuditLogDirector.class);
 
     /** Map which consist all tasks that currently are monitored **/
     private ConcurrentMap<Guid, SPMTask> _tasks;

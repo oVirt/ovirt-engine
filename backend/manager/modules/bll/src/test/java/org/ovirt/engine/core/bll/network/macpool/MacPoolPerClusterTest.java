@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -28,13 +29,18 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
+import org.ovirt.engine.core.di.InjectorRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolPerClusterTest extends DbDependentTestBase {
     private static final String SESSION_ID = "session id";
+
+    @ClassRule
+    public static InjectorRule injectorRule = new InjectorRule();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -51,6 +57,8 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     @Mock
     private DecoratedMacPoolFactory decoratedMacPoolFactory;
 
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     private MacPool macPool;
     private Cluster cluster;
@@ -62,6 +70,7 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
 
     @Before
     public void setUp() throws Exception {
+        injectorRule.bind(AuditLogDirector.class, auditLogDirector);
         when(DbFacade.getInstance().getAuditLogDao()).thenReturn(auditLogDao);
 
         commandContext = CommandContext.createContext(SESSION_ID);

@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +58,7 @@ public class InstallerMessages {
             log.error("Installation '{}': {}", _vds.getHostName(), text);
             break;
         }
-        new AuditLogDirector().log(logable, logType);
+        Injector.get(AuditLogDirector.class).log(logable, logType);
     }
 
     public boolean postOldXmlFormat(String message) {

@@ -22,6 +22,9 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
     @Inject
     private DiskDao diskDao;
 
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
     @Override
     protected void childCommandsExecutionEnded(CommandBase<?> command,
             boolean anyFailed,
@@ -68,7 +71,7 @@ public class ExtendCinderDiskCommandCallback extends ConcurrentChildCommandsExec
     private void updateAuditLog(ExtendCinderDiskCommand command, AuditLogType auditLogType, Long imageSizeInGigabytes) {
         command.addCustomValue("DiskAlias", getDisk(command).getDiskAlias());
         command.addCustomValue("NewSize", String.valueOf(imageSizeInGigabytes));
-        new AuditLogDirector().log(command, auditLogType);
+        auditLogDirector.log(command, auditLogType);
     }
 
     protected Guid getDiskId(ExtendCinderDiskCommand<VmDiskOperationParameterBase> command) {

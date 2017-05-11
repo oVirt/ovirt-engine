@@ -60,7 +60,7 @@ public class NetworkConfigurator {
     }
 
     public NetworkConfigurator(VDS host, CommandContext commandContext) {
-        this(host, commandContext, new AuditLogDirector());
+        this(host, commandContext, Injector.get(AuditLogDirector.class));
     }
 
     public void createManagementNetworkIfRequired() {

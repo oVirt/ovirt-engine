@@ -109,9 +109,9 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         Guid createdDiskId = (Guid) getActionReturnValue();
         if (createdDiskId != null) {
             addCustomValue("DiskId", createdDiskId.toString());
-            new AuditLogDirector().log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
+            auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
         } else {
-            new AuditLogDirector().log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_INITIATE_FAILED);
+            auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_INITIATE_FAILED);
         }
     }
 

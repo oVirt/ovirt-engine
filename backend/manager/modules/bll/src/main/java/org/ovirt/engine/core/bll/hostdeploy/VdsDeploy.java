@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.otopi.constants.Confirms;
 import org.ovirt.otopi.dialog.Event;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class VdsDeploy extends VdsDeployBase {
                 logable.setClusterName(getVds().getClusterName());
                 logable.setCorrelationId(getCorrelationId());
                 logable.addCustomValue("Message", message);
-                new AuditLogDirector().log(logable, _levelToType.get(level));
+                Injector.get(AuditLogDirector.class).log(logable, _levelToType.get(level));
             }
         }
     }

@@ -43,6 +43,7 @@ import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -266,7 +267,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
             AuditLogable loggable = new AuditLogableImpl();
             loggable.addCustomValue("CinderException", e.getCause().getCause() != null ?
                     e.getCause().getCause().getMessage() : e.getCause().getMessage());
-            new AuditLogDirector().log(loggable, AuditLogType.CINDER_PROVIDER_ERROR);
+            Injector.get(AuditLogDirector.class).log(loggable, AuditLogType.CINDER_PROVIDER_ERROR);
             throw e;
         }
     }

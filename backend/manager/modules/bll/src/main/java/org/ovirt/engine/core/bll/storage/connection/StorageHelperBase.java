@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 
 public abstract class StorageHelperBase implements IStorageHelper {
@@ -184,7 +185,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         // will set the error code instead.
         String translatedError = getTranslatedStorageError(errorCode);
         logable.addCustomValue("ErrorMessage", translatedError);
-        new AuditLogDirector().log(logable, AuditLogType.STORAGE_DOMAIN_ERROR);
+        Injector.get(AuditLogDirector.class).log(logable, AuditLogType.STORAGE_DOMAIN_ERROR);
         return connectionField;
     }
 
@@ -247,7 +248,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
             logable.setStorageDomainId(storageDomain.getId());
             logable.setStorageDomainName(storageDomain.getName());
         }
-        new AuditLogDirector().log(logable, auditLogType);
+        Injector.get(AuditLogDirector.class).log(logable, auditLogType);
     }
 
 }

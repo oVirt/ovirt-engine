@@ -253,7 +253,7 @@ public class SingleAgentFenceActionExecutor implements FenceActionExecutor{
     // TODO Investigate if injection is possible
     protected AuditLogDirector getAuditLogDirector() {
         if (auditLogDirector == null) {
-            auditLogDirector = new AuditLogDirector();
+            auditLogDirector = Injector.get(AuditLogDirector.class);
         }
         return auditLogDirector;
     }

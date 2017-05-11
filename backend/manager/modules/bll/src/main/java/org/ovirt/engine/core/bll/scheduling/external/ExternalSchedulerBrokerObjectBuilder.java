@@ -8,13 +8,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExternalSchedulerBrokerObjectBuilder {
     private static final Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerObjectBuilder.class);
     private static final int RESULT_OK = 0;
-    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private static final AuditLogDirector auditLogDirector = Injector.get(AuditLogDirector.class);
 
     private static void auditLogPluginError(String pluginName, String errorMessage) {
         AuditLogable loggable = new AuditLogableImpl();

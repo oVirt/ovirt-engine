@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 
 public class QuotaManagerAuditLogger {
     private static final DecimalFormat percentageFormatter = new DecimalFormat("#.##");
@@ -59,7 +60,7 @@ public class QuotaManagerAuditLogger {
 
     public void auditLog(AuditLogType auditLogType, AuditLogableBase auditLogable) {
         if (auditLogType != null) {
-            new AuditLogDirector().log(auditLogable, auditLogType);
+            Injector.get(AuditLogDirector.class).log(auditLogable, auditLogType);
         }
     }
 }

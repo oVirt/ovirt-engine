@@ -22,6 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -208,7 +209,7 @@ public class CinderBroker {
     private void logDiskEvent(CinderDisk cinderDisk, AuditLogType cinderDiskConnectionFailure) {
         AuditLogable logable = new AuditLogableImpl();
         logable.addCustomValue("DiskAlias", cinderDisk.getDiskAlias());
-        new AuditLogDirector().log(logable, cinderDiskConnectionFailure);
+        Injector.get(AuditLogDirector.class).log(logable, cinderDiskConnectionFailure);
     }
 
     public boolean isDiskExist(final Guid id) {

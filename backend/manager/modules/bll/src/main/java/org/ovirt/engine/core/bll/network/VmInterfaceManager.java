@@ -27,6 +27,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,7 +221,7 @@ public class VmInterfaceManager {
     }
 
     AuditLogDirector getAuditLogDirector() {
-        return new AuditLogDirector();
+        return Injector.get(AuditLogDirector.class);
     }
 
     protected VmNetworkStatisticsDao getVmNetworkStatisticsDao() {

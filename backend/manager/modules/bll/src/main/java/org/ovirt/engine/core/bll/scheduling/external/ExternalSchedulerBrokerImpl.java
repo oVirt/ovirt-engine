@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.xmlrpc.XmlRpcException;
@@ -36,6 +37,9 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
     private static final Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerImpl.class);
 
     private XmlRpcClientConfigImpl config = null;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public ExternalSchedulerBrokerImpl() {
         String extSchedUrl = Config.getValue(ConfigValues.ExternalSchedulerServiceURL);
@@ -100,7 +104,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
     private void auditLogFailedToConnect() {
         AuditLogable loggable = new AuditLogableImpl();
-        new AuditLogDirector().log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
+        auditLogDirector.log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
     }
 
     private Object[] createFilterArgs(List<String> filterNames,

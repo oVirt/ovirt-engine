@@ -41,6 +41,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> extends RemoveCinderVolumeParentCommand<T> {
 
     @Inject
+    private AuditLogDirector auditLogDirector;
+
+    @Inject
     private ImageDao imageDao;
     @Inject
     private VmDeviceDao vmDeviceDao;
@@ -114,7 +117,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
         vmDeviceDao.remove(new VmDeviceId(getParameters().getRemovedVolume().getId(), null));
         baseDiskDao.remove(getParameters().getRemovedVolume().getId());
         if (getParameters().getShouldBeLogged()) {
-            new AuditLogDirector().log(this, AuditLogType.USER_FINISHED_REMOVE_DISK);
+            auditLogDirector.log(this, AuditLogType.USER_FINISHED_REMOVE_DISK);
         }
         setSucceeded(true);
     }
@@ -127,7 +130,7 @@ public class RemoveCinderDiskCommand<T extends RemoveCinderDiskParameters> exten
                 getParameters().getChildCommandsParameters().get(removedVolumeIndex).getRemovedVolume();
         imageDao.updateStatusOfImagesByImageGroupId(getDisk().getId(), ImageStatus.ILLEGAL);
         addCustomValue("imageId", cinderVolume.getImageId().toString());
-        new AuditLogDirector().log(this, AuditLogType.USER_FINISHED_FAILED_REMOVE_CINDER_DISK);
+        auditLogDirector.log(this, AuditLogType.USER_FINISHED_FAILED_REMOVE_CINDER_DISK);
         setSucceeded(true);
     }
 

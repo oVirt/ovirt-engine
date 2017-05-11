@@ -172,6 +172,6 @@ public class VnicProfileHelper {
     }
 
     AuditLogDirector createAuditLogDirector() {
-        return new AuditLogDirector();
+        return Injector.get(AuditLogDirector.class);
     }
 }
