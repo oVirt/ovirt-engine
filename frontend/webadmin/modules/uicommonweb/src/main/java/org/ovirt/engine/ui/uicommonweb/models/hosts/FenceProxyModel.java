@@ -28,6 +28,10 @@ public class FenceProxyModel extends EntityModel<FenceProxySourceType> {
         availableProxies = new ListModel<>();
     }
 
+    private FenceProxyModel(FenceProxyModel model) {
+        setEntity(model.getEntity());
+    }
+
     /**
      * Edit the model.
      */
@@ -36,29 +40,41 @@ public class FenceProxyModel extends EntityModel<FenceProxySourceType> {
             return;
         }
         FenceProxyModel newModel = new FenceProxyModel();
-        newModel.setCurrentProxies(currentProxies);
+        newModel.setCurrentProxies(deepCopy(currentProxies));
         setWindow(newModel);
         newModel.setTitle(constants.selectFenceProxy());
         if (!newModel.getAvailableProxies().getItems().isEmpty()) {
             newModel.getCommands().add(UICommand.createDefaultOkUiCommand(OK, this));
         }
         newModel.getCommands().add(UICommand.createDefaultCancelUiCommand(CANCEL, this));
+    }
 
+    private ListModel<FenceProxyModel> deepCopy(ListModel<FenceProxyModel> proxyListModel) {
+        List<FenceProxyModel> proxyModelCopies = new ArrayList<>();
+        for (FenceProxyModel proxyModel : proxyListModel.getItems()) {
+            proxyModelCopies.add(new FenceProxyModel(proxyModel));
+        }
+
+        ListModel<FenceProxyModel> result = new ListModel<>();
+        result.setItems(proxyModelCopies);
+        return result;
     }
 
     private void setCurrentProxies(ListModel<FenceProxyModel> currentProxies) {
         this.currentProxies = currentProxies;
-        //Determine the already selected proxy types.
+
+        // Determine the already selected proxy types.
         List<FenceProxySourceType> currentSourceTypes = new ArrayList<>();
-        for (FenceProxyModel currentProxyModel: currentProxies.getItems()) {
+        for (FenceProxyModel currentProxyModel : currentProxies.getItems()) {
             if (currentProxyModel.getEntity() != null) {
                 currentSourceTypes.add(currentProxyModel.getEntity());
             }
         }
-        availableProxies.setItems(null);
-        //Determine the available proxy types.
+        this.availableProxies.setItems(null);
+
+        // Determine the available proxy types.
         List<FenceProxyModel> availableProxiesList = new ArrayList<>();
-        for(FenceProxySourceType type: FenceProxySourceType.values()) {
+        for(FenceProxySourceType type : FenceProxySourceType.values()) {
             if (!currentSourceTypes.contains(type)) {
                 FenceProxyModel newModel = new FenceProxyModel();
                 newModel.setEntity(type);
