@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
@@ -74,6 +76,48 @@ public class VmAffinityWeightPolicyUnitTest extends VmAffinityPolicyUnitTestBase
         scores = collectScores(policyUnit.score(cluster, hosts, newVm, null));
         assertEquals(scores.get(host1.getId()), scores.get(host3.getId()));
         assertThat(scores.get(host1.getId())).isGreaterThan(scores.get(host2.getId()));
+    }
+
+    @Test
+    public void testPositiveAffinityWithPinnedOrHE() {
+        List<VDS> hosts = Arrays.asList(host1, host2, host3);
+
+        VM vm1 = createVmRunning(host2);
+        VM vm2 = createVmRunning(host3);
+        vm1.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, true,
+                vm1, vm2, newVm));
+
+        Map<Guid, Integer> scores = collectScores(policyUnit.score(cluster, hosts, newVm, null));
+        assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
+        assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
+
+
+        vm1.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        vm1.setOrigin(OriginType.HOSTED_ENGINE);
+
+        scores = collectScores(policyUnit.score(cluster, hosts, newVm, null));
+        assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
+        assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
+
+        vm1.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        vm1.setOrigin(OriginType.RHEV);
+
+        affinityGroups.clear();
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, false,
+                vm1, vm2, newVm));
+
+        scores = collectScores(policyUnit.score(cluster, hosts, newVm, null));
+        assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
+        assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
+
+        vm1.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        vm1.setOrigin(OriginType.HOSTED_ENGINE);
+
+        scores = collectScores(policyUnit.score(cluster, hosts, newVm, null));
+        assertThat(scores.get(host2.getId())).isLessThan(scores.get(host3.getId()));
+        assertThat(scores.get(host3.getId())).isLessThan(scores.get(host1.getId()));
     }
 
     @Test
