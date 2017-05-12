@@ -144,10 +144,7 @@ public class ImagesHandlerTest extends DbDependentTestBase {
         when(storageDomainDaoMock.get(dstDomainGuid)).thenReturn(destDomain);
 
         assertEquals("Total Initial Size should be 0",
-                0,
-                ImagesHandler.determineTotalImageInitialSize(disk,
-                        VolumeFormat.COW,
-                        srcDomainGuid,
-                        dstDomainGuid).longValue());
+                Long.valueOf(0L),
+                ImagesHandler.determineTotalImageInitialSize(disk, VolumeFormat.COW, srcDomainGuid, dstDomainGuid));
     }
 }
