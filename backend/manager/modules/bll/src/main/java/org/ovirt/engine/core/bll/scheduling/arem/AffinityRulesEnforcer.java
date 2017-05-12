@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
@@ -303,6 +304,13 @@ public class AffinityRulesEnforcer {
             return false;
         }
 
+        if (candidateVm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
+            log.debug("VM {} is NOT a viable candidate for solving the affinity group violation situation"
+                            + " since it is not migratable.",
+                    candidateVm.getId());
+            return false;
+        }
+
         List<Guid> vdsBlackList =
                 candidateVm.getRunOnVds() == null ?
                         Collections.emptyList() : Arrays.asList(candidateVm.getRunOnVds());
@@ -329,7 +337,7 @@ public class AffinityRulesEnforcer {
      * @return a list of groups of vms which are candidates for migration
      */
     private List<List<Guid>> groupVmsViolatingNegativeAg(AffinityGroup affinityGroup, Map<Guid, VM> vmsMap) {
-        return groupVmsByHost(vmsMap, affinityGroup.getVmIds()).values().stream()
+        return groupVmsByHostFiltered(vmsMap, affinityGroup.getVmIds()).values().stream()
                 .filter(s -> s.size() > 1)
                 .sorted(Comparator.<List>comparingInt(List::size).reversed())
                 .collect(Collectors.toList());
@@ -346,23 +354,33 @@ public class AffinityRulesEnforcer {
      * @return a list of groups of vms which are candidates for migration
      */
     private List<List<Guid>> groupVmsViolatingPositiveAg(AffinityGroup affinityGroup, Map<Guid, VM> vmsMap) {
-        return groupVmsByHost(vmsMap, affinityGroup.getVmIds()).values().stream()
+        return groupVmsByHostFiltered(vmsMap, affinityGroup.getVmIds()).values().stream()
                 .sorted(Comparator.comparingInt(List::size))
                 .collect(Collectors.toList());
     }
 
+    private Map<Guid, List<Guid>> groupVmsByHostFiltered(Map<Guid, VM> vmsMap, List<Guid> vms) {
+        // Hosts containing nonmigratable VMs will be removed from result
+        Set<Guid> removedHosts = new HashSet<>();
 
-    private Map<Guid, List<Guid>> groupVmsByHost(Map<Guid, VM> vmsMap, List<Guid> vms) {
         Map<Guid, List<Guid>> res = new HashMap<>();
         for(Guid vmId : vms) {
-            Guid host = vmsMap.get(vmId).getRunOnVds();
+            VM vm = vmsMap.get(vmId);
+
+            Guid host = vm.getRunOnVds();
             if (host == null) {
                 continue;
             }
 
-            res.putIfAbsent(host, new ArrayList<>());
-            res.get(host).add(vmId);
+            if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE || vm.isHostedEngine()) {
+                removedHosts.add(host);
+            } else {
+                res.putIfAbsent(host, new ArrayList<>());
+                res.get(host).add(vmId);
+            }
         }
+
+        res.keySet().removeAll(removedHosts);
         return res;
     }
 
