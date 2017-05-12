@@ -1,17 +1,18 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -43,7 +44,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
      * @param onlyEnforcing - check only enforcing affinity groups
      * @return Map containing host ids and the number of nonmigratable VMs running on the host
      */
-    protected List<VDS> getAcceptableHosts(boolean onlyEnforcing,
+    protected Map<Guid, Integer> getAcceptableHostsWithPriorities(boolean onlyEnforcing,
             List<VDS> hosts,
             VM vm,
             PerHostMessages messages) {
@@ -51,7 +52,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
         List<AffinityGroup> affinityGroups = affinityGroupDao.getAllAffinityGroupsByVmId(vm.getId());
         // no affinity groups found for VM return all hosts
         if (affinityGroups.isEmpty()) {
-            return hosts;
+            return hosts.stream().collect(Collectors.toMap(VDS::getId, h -> 0));
         }
 
         Set<Guid> allVmIdsPositive = new HashSet<>();
@@ -76,7 +77,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
 
         // No entities, all hosts are valid
         if (allVmIdsPositive.isEmpty() && allVmIdsNegative.isEmpty()) {
-            return hosts;
+            return hosts.stream().collect(Collectors.toMap(VDS::getId, h -> 0));
         }
 
         // Get all running VMs in cluster
@@ -93,12 +94,14 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
             runningVMsMap.put(pendingVm.getId(), pendingVm);
         }
 
-        Set<Guid> acceptableHosts = new HashSet<>();
+        Map<Guid, Integer> acceptableHosts = new HashMap<>();
         // Group all hosts for VMs with positive affinity
         for (Guid id : allVmIdsPositive) {
             VM runVm = runningVMsMap.get(id);
             if (runVm != null && runVm.getRunOnVds() != null) {
-                acceptableHosts.add(runVm.getRunOnVds());
+                acceptableHosts.merge(runVm.getRunOnVds(),
+                        isVmMigratable(runVm) ? 0 : 1,
+                        (a, b) -> a + b);
             }
         }
 
@@ -118,7 +121,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
 
         // Compute the intersection of hosts with positive and negative affinity and report that
         // contradicting rules to the log
-        unacceptableHosts.retainAll(acceptableHosts);
+        unacceptableHosts.retainAll(acceptableHosts.keySet());
         for (Guid id: unacceptableHosts) {
             log.warn("Host '{}' ({}) belongs to both positive and negative affinity list" +
                             " while scheduling VM '{}' ({})",
@@ -128,7 +131,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
 
         // No hosts associated with positive affinity, all hosts are applicable.
         if (acceptableHosts.isEmpty()) {
-            acceptableHosts.addAll(hostMap.keySet());
+            acceptableHosts = hosts.stream().collect(Collectors.toMap(h -> h.getId(), h -> 0));
         }
         else if (acceptableHosts.size() > 1) {
             log.warn("Invalid affinity situation was detected while scheduling VM '{}' ({})." +
@@ -138,7 +141,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
 
         // Report hosts that were removed because of violating the positive affinity rules
         for (VDS host : hosts) {
-            if (!acceptableHosts.contains(host.getId())) {
+            if (!acceptableHosts.containsKey(host.getId())) {
                 messages.addMessage(host.getId(),
                         String.format("$affinityRules %1$s", "")); // TODO compute the affinity rule names
                 messages.addMessage(host.getId(), EngineMessage.VAR__DETAIL__AFFINITY_FAILED_POSITIVE.toString());
@@ -149,7 +152,7 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
         for (Guid id : allVmIdsNegative) {
             VM runVm = runningVMsMap.get(id);
             if (runVm != null && runVm.getRunOnVds() != null
-                    && acceptableHosts.contains(runVm.getRunOnVds())) {
+                    && acceptableHosts.containsKey(runVm.getRunOnVds())) {
                 acceptableHosts.remove(runVm.getRunOnVds());
                 messages.addMessage(runVm.getRunOnVds(),
                         String.format("$affinityRules %1$s", "")); // TODO compute the affinity rule names
@@ -158,13 +161,10 @@ public abstract class VmAffinityPolicyUnit extends PolicyUnitImpl{
             }
         }
 
-        List<VDS> retList = new ArrayList<>();
-        for (VDS host : hosts) {
-            if (acceptableHosts.contains(host.getId())) {
-                retList.add(host);
-            }
-        }
+        return acceptableHosts;
+    }
 
-        return retList;
+    private static boolean isVmMigratable(VM vm) {
+        return (vm.getMigrationSupport() == MigrationSupport.MIGRATABLE) && !vm.isHostedEngine();
     }
 }

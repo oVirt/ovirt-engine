@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,26 +33,20 @@ public class VmAffinityWeightPolicyUnit extends VmAffinityPolicyUnit {
 
     @Override
     public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        // reuse filter functionality with soft constraint
-        List<VDS> acceptableHostsList = getAcceptableHosts(false,
-                        hosts,
-                        vm,
-                        new PerHostMessages());
+        Map<Guid, Integer> acceptableHosts = getAcceptableHostsWithPriorities(false,
+                hosts,
+                vm,
+                new PerHostMessages());
 
-        Map<Guid, VDS> acceptableHostsMap = new HashMap<>();
-        if (acceptableHostsList != null) {
-            for (VDS acceptableHost : acceptableHostsList) {
-                acceptableHostsMap.put(acceptableHost.getId(), acceptableHost);
-            }
-        }
+        int maxNonmigratableVms = acceptableHosts.values().stream()
+                .reduce(0, Integer::max);
 
         List<Pair<Guid, Integer>> retList = new ArrayList<>();
-        int score;
         for (VDS host : hosts) {
-            score = DEFAULT_SCORE;
-            if (!acceptableHostsMap.containsKey(host.getId())) {
-                score = MaxSchedulerWeight;
-            }
+            int score = acceptableHosts.containsKey(host.getId()) ?
+                    DEFAULT_SCORE + maxNonmigratableVms - acceptableHosts.get(host.getId()) :
+                    MaxSchedulerWeight;
+
             retList.add(new Pair<>(host.getId(), score));
         }
 
