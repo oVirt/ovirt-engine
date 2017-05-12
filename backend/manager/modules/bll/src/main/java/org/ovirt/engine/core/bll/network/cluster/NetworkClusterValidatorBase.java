@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.IsRoleNetworkIpConfigurationValid;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -71,22 +71,17 @@ public abstract class NetworkClusterValidatorBase {
     }
 
     private VdsNetworkInterface findMissingIpNic(final String networkName) {
+        IsRoleNetworkIpConfigurationValid isRoleNetworkIpConfigurationValid =
+                new IsRoleNetworkIpConfigurationValid(networkCluster);
         final List<VdsNetworkInterface> interfacesByClusterId =
                 interfaceDao.getAllInterfacesByClusterId(networkCluster.getClusterId());
         final VdsNetworkInterface missingIpNic =
                 interfacesByClusterId.stream()
                         .filter(nic -> networkName.equals(nic.getNetworkName()))
-                        .filter(this::isIpAddressMissingForRole)
+                        .filter(isRoleNetworkIpConfigurationValid::isIpAddressMissingForRole)
                         .findFirst()
                         .orElse(null);
         return missingIpNic;
-    }
-
-    private boolean isIpAddressMissingForRole(VdsNetworkInterface nic) {
-        if (networkCluster.isMigration()) {
-            return StringUtils.isEmpty(nic.getIpv4Address()) && StringUtils.isEmpty(nic.getIpv6Address());
-        }
-        return StringUtils.isEmpty(nic.getIpv4Address());
     }
 
     /**

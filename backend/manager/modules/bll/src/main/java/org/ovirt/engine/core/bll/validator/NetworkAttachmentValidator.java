@@ -6,9 +6,6 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
-import org.ovirt.engine.core.common.businessentities.network.Ipv4BootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -19,7 +16,6 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class NetworkAttachmentValidator {
@@ -113,42 +109,13 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult bootProtocolSetForRoleNetwork() {
+        NetworkCluster networkCluster = getNetworkCluster();
+        IsRoleNetworkIpConfigurationValid isRoleNetworkIpConfigurationValid = new IsRoleNetworkIpConfigurationValid(networkCluster);
         return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL,
                 ReplacementUtils.createSetVariableString(
                         VAR_ACTION_TYPE_FAILED_ROLE_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY,
                         getNetwork().getName()))
-                .unless(validBootProtocolForRoleNetwork());
-    }
-
-    private boolean validBootProtocolForRoleNetwork() {
-        if (!NetworkUtils.isRoleNetwork(getNetworkCluster())) {
-            return true;
-        }
-
-        IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        if (ipConfiguration == null) {
-            return false;
-        }
-
-        if (getNetworkCluster().isMigration()) {
-            return hasBootProtocol(ipConfiguration);
-        }
-
-        return hasIpv4BootProtocol(ipConfiguration);
-    }
-
-    private boolean hasBootProtocol(IpConfiguration ipConfiguration) {
-        return hasIpv4BootProtocol(ipConfiguration) || hasIpv6BootProtocol(ipConfiguration);
-    }
-
-    private boolean hasIpv6BootProtocol(IpConfiguration ipConfiguration) {
-        return ipConfiguration.hasIpv6PrimaryAddressSet()
-                && (ipConfiguration.getIpv6PrimaryAddress().getBootProtocol() != Ipv6BootProtocol.NONE);
-    }
-
-    private boolean hasIpv4BootProtocol(IpConfiguration ipConfiguration) {
-        return ipConfiguration.hasIpv4PrimaryAddressSet()
-                && (ipConfiguration.getIpv4PrimaryAddress().getBootProtocol() != Ipv4BootProtocol.NONE);
+                .unless(isRoleNetworkIpConfigurationValid.validate(attachment));
     }
 
     public ValidationResult nicNameIsSet() {
