@@ -25,6 +25,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -479,6 +481,30 @@ public class AffinityRulesEnforcerTest {
         assertThat(conflicts.getVms())
                 .isEqualTo(new HashSet<>(Arrays.asList(vm1.getId())));
 
+    }
+
+    @Test
+    public void shouldNotMigrateFromHostedEngineHost() {
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm5, vm6));
+
+        vm6.setOrigin(OriginType.HOSTED_ENGINE);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+
+        vm6.setOrigin(OriginType.RHEV);
+        vm3.setOrigin(OriginType.HOSTED_ENGINE);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
+    }
+
+    @Test
+    public void shouldNotMigrateFromHostWithPinnedVM() {
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm5, vm6));
+
+        vm6.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
+
+        vm6.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        vm3.setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
     }
 
     private Cluster createCluster() {
