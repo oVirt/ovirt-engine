@@ -935,7 +935,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 inQuery = StringFormat.format("%1$s and  %2$s >  %3$s", inQuery, primeryKey, syntax.getSearchFrom());
             }
             retval =
-                    StringFormat.format(Config.<String> getValue(ConfigValues.DBSearchTemplate),
+                    StringFormat.format(Config.getValue(ConfigValues.DBSearchTemplate),
                             sortExpr.toString(),
                             inQuery,
                             pagePhrase);
@@ -970,7 +970,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
         PagingType pagingType = getPagingType();
         if (pagingType != null) {
-            String pagingSyntax = Config.<String> getValue(ConfigValues.DBPagingSyntax);
+            String pagingSyntax = Config.getValue(ConfigValues.DBPagingSyntax);
             BigInteger bigPage = BigInteger.valueOf(page);
             BigInteger bigCount = BigInteger.valueOf(syntax.getMaxCount());
             BigInteger bigX = bigPage.subtract(BigInteger.ONE).multiply(bigCount).add(BigInteger.ONE);
@@ -991,7 +991,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private PagingType getPagingType() {
-        String val = Config.<String> getValue(ConfigValues.DBPagingType);
+        String val = Config.getValue(ConfigValues.DBPagingType);
         PagingType type = null;
         try {
             type = PagingType.valueOf(val);
