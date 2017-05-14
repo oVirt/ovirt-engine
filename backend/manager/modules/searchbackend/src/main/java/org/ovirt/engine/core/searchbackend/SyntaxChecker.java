@@ -21,9 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SyntaxChecker implements ISyntaxChecker {
-
-    public static final String TAG_COLUMN_NAME_IN_CRITERIA = "tag_name";
-
     private static final Logger log = LoggerFactory.getLogger(SyntaxChecker.class);
 
     public static final String SORTBY = "SORTBY";
