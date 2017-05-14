@@ -944,6 +944,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
             xhr.open('PUT', address);
             xhr.timeout = xhrTimeoutSec * 1000;  // Must be set after xhr.open()
+            xhr.ontimeout = xhrTimeout;
             xhr.setRequestHeader('Cache-Control', 'no-cache');
             xhr.setRequestHeader('Pragma', 'no-cache');
             xhr.setRequestHeader('Content-Range', contentRange);
@@ -1030,6 +1031,13 @@ public class UploadImageModel extends Model implements ICommandTarget {
                 setAuditLogMessageByXhrError();
                 finalizeUpload();
             }
+        }
+
+        function xhrTimeout(e) {
+            log.ERROR('xhrTimeout: ' + xhr.status + ' ' + xhr.statusText);
+            setUploadStateByString(UploadStates.CLIENT_ERROR);
+            setAuditLogMessageByXhrError();
+            finalizeUpload();
         }
 
         function updateProgress() {
