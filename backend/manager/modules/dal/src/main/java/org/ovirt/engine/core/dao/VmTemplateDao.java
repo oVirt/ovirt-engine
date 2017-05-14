@@ -237,4 +237,13 @@ public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return the list of Templates
      */
     List<VmTemplate> getAllForDiskProfile(Guid diskProfileId);
+
+    /**
+     * Retrieves a list of templates with a lease on the given storage domain.
+     *
+     * @param storageDomainId
+     *            the storage domain id
+     * @return the list of templates with a lease on the storage domain
+     */
+    List<VmTemplate> getAllWithLeaseOnStorageDomain(Guid storageDomainId);
 }

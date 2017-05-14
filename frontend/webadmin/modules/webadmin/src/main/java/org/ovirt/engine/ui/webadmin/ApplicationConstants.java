@@ -348,6 +348,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String storageDRSubTabLabel();
 
+    String storageLeaseSubTabLabel();
+
     String storagePermissionSubTabLabel();
 
     String storageEventSubTabLabel();

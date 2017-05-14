@@ -546,7 +546,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         List<Guid> vmAndTemplatesWithLeasesIds = dao.getAllWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS2_1)
                 .stream().map(t -> t.getId()).collect(Collectors.toList());
         assertThat(vmAndTemplatesWithLeasesIds,
-                Matchers.containsInAnyOrder(FixturesTool.VM_RHEL5_POOL_57, FixturesTool.VM_TEMPLATE_RHEL5_2));
+                Matchers.contains(FixturesTool.VM_RHEL5_POOL_57));
     }
 
     @Test

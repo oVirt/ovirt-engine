@@ -134,6 +134,9 @@ public class WebAdminApplicationPlaces {
     public static final String storageDRSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "dr"; //$NON-NLS-1$
 
+    public static final String storageLeaseSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
+            + "leases"; //$NON-NLS-1$
+
     public static final String storagePermissionSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

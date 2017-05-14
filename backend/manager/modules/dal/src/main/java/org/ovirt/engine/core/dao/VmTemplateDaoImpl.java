@@ -272,6 +272,14 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
                         .addValue("disk_profile_id", diskProfileId));
     }
 
+    @Override
+    public List<VmTemplate> getAllWithLeaseOnStorageDomain(Guid storageDomainId) {
+        return getCallsHandler().executeReadList("GetTemplatesWithLeaseOnStorageDomain",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainId));
+    }
+
+
     private static final class VMTemplateRowMapper extends AbstractVmRowMapper<VmTemplate> {
         public static final VMTemplateRowMapper instance = new VMTemplateRowMapper();
 

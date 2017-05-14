@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -139,6 +140,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageLeaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskImageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskListModel;
@@ -295,6 +297,8 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<DiskProfile, StorageListModel, DiskProfileListModel> getSubTabStorageDiskProfileModelProvider();
 
     SearchableDetailModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel> getSubTabStorageDRModelProvider();
+
+    SearchableDetailModelProvider<VmBase, StorageListModel, StorageLeaseListModel> getSubTabStorageLeaseModelProvider();
 
     // Cluster
 

@@ -241,6 +241,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabSto
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageLeasePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStoragePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterDiskImagePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterDiskPresenter;
@@ -522,6 +523,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageD
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageIsoView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageLeaseView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStoragePermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageRegisterDiskImageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageRegisterDiskView;
@@ -803,6 +805,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageDRPresenter.ViewDef.class,
                 SubTabStorageDRView.class,
                 SubTabStorageDRPresenter.ProxyDef.class);
+        bindPresenter(SubTabStorageLeasePresenter.class,
+                SubTabStorageLeasePresenter.ViewDef.class,
+                SubTabStorageLeaseView.class,
+                SubTabStorageLeasePresenter.ProxyDef.class);
         bindPresenter(SubTabStoragePermissionPresenter.class,
                 SubTabStoragePermissionPresenter.ViewDef.class,
                 SubTabStoragePermissionView.class,

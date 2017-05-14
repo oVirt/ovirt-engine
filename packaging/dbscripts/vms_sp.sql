@@ -2104,13 +2104,14 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsAndTemplatesWithLeaseOnStorageDomain(v_storage_domain_id UUID)
+Create or replace FUNCTION GetVmsWithLeaseOnStorageDomain(v_storage_domain_id UUID)
 RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
     FROM vm_static
-    WHERE lease_sd_id = v_storage_domain_id;
+    WHERE lease_sd_id = v_storage_domain_id
+        AND entity_type = 'VM';
 END; $procedure$
 LANGUAGE plpgsql;
 

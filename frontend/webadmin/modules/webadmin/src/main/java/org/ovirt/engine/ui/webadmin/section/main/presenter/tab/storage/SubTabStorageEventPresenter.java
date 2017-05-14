@@ -38,7 +38,7 @@ public class SubTabStorageEventPresenter
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.storageEventSubTabLabel(), 12, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.storageEventSubTabLabel(), 14, modelProvider, Align.RIGHT);
     }
 
     @Inject

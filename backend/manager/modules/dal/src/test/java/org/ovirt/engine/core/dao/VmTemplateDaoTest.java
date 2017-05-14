@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
@@ -454,4 +456,11 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         assertEquals(1, result.size());
     }
 
+    @Test
+    public void testGetAllWithLeaseOnStorageDomain() {
+        List<Guid> vmAndTemplatesWithLeasesIds = dao.getAllWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS2_1)
+                .stream().map(t -> t.getId()).collect(Collectors.toList());
+        assertThat(vmAndTemplatesWithLeasesIds,
+                Matchers.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
+    }
 }

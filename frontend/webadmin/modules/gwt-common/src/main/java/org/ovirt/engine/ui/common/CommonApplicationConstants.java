@@ -51,6 +51,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String template();
 
+    String vm();
+
     String latest();
 
     String baseTemplate();
