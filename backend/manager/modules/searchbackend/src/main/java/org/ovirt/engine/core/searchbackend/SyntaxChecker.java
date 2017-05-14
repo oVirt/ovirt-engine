@@ -28,6 +28,8 @@ public class SyntaxChecker implements ISyntaxChecker {
     public static final String SORTDIR_ASC = "ASC";
     public static final String SORTDIR_DESC = "DESC";
 
+    private static final List<Character> DISALLOWED_CHARS = Arrays.asList('\'', ';');
+
     private final SearchObjectAutoCompleter searchObjectAC;
     private final BaseAutoCompleter colonAC;
     private final BaseAutoCompleter pluralAC;
@@ -41,7 +43,6 @@ public class SyntaxChecker implements ISyntaxChecker {
 
     private final Regex firstDQRegexp;
     private final Regex nonSpaceRegexp;
-    private final List<Character> disAllowedChars;
     private SqlInjectionChecker sqlInjectionChecker;
 
     public SyntaxChecker() {
@@ -55,7 +56,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         andAC = new BaseAutoCompleter("AND");
         orAC = new BaseAutoCompleter("OR");
         dotAC = new BaseAutoCompleter(".");
-        disAllowedChars = new ArrayList<>(Arrays.asList(new Character[]{'\'', ';'}));
 
         firstDQRegexp = new Regex("^\\s*\"$");
         nonSpaceRegexp = new Regex("^\\S+$");
@@ -199,7 +199,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         for (int idx = 0; idx < searchCharArr.length; idx++) {
             final SyntaxObjectType curState = syntaxContainer.getState();
             final char curChar = searchCharArr[idx];
-            if (disAllowedChars.contains(curChar)) {
+            if (DISALLOWED_CHARS.contains(curChar)) {
                 syntaxContainer.setErr(SyntaxError.INVALID_CHARECTER, curStartPos, idx + 1);
                 return syntaxContainer;
             }
