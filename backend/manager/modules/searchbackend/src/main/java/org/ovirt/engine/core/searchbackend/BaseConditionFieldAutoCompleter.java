@@ -164,9 +164,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         }
         // Sort according to the value (real column name) in order not to rely on random access from map
         SortedSet<Map.Entry<String, String>> sortedEntrySet = new TreeSet<>(new ColNameMapEntryComparator());
-        for (Map.Entry<String, String> entry : columnNameDict.entrySet()) {
-            sortedEntrySet.add(entry);
-        }
+        sortedEntrySet.addAll(columnNameDict.entrySet());
         for (Map.Entry<String, String> columnNameEntry : sortedEntrySet) {
             if (typeDict.get(columnNameEntry.getKey()) == String.class && !notFreeTextSearchableFieldsList.contains(columnNameEntry.getKey())) {
                 if (firstTime) {
