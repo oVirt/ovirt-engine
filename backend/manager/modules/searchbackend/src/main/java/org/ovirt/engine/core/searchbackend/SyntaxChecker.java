@@ -44,7 +44,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     private final List<Character> disAllowedChars;
     private SqlInjectionChecker sqlInjectionChecker;
 
-    public SyntaxChecker(int searchReasultsLimit) {
+    public SyntaxChecker() {
 
         searchObjectAC = new SearchObjectAutoCompleter();
         colonAC = new BaseAutoCompleter(":");

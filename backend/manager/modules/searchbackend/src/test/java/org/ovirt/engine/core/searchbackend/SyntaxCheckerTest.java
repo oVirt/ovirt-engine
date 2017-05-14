@@ -26,7 +26,6 @@ public class SyntaxCheckerTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.SearchResultsLimit, 100),
             mockConfig(ConfigValues.DBPagingType, "Range"),
             mockConfig(ConfigValues.DBSearchTemplate, "SELECT * FROM (%2$s) %1$s) as T1 %3$s"),
             mockConfig(ConfigValues.DBPagingSyntax, "OFFSET (%1$s -1) LIMIT %2$s"),
@@ -53,7 +52,7 @@ public class SyntaxCheckerTest {
      */
     @Test
     public void testVMCompletion() {
-        SyntaxChecker chkr = new SyntaxChecker(20);
+        SyntaxChecker chkr = new SyntaxChecker();
         SyntaxContainer res = chkr.getCompletion("");
         assertTrue("Vms", contains(res, "Vms"));
         res = chkr.getCompletion("V");
@@ -72,7 +71,7 @@ public class SyntaxCheckerTest {
      */
     @Test
     public void testHostCompletion() {
-        SyntaxChecker chkr = new SyntaxChecker(20);
+        SyntaxChecker chkr = new SyntaxChecker();
         SyntaxContainer res = chkr.getCompletion("");
         assertTrue("Hosts", contains(res, "Hosts"));
         res = chkr.getCompletion("H");
@@ -91,7 +90,7 @@ public class SyntaxCheckerTest {
     public void testGetPagPhrase() {
         mcr.mockConfigValue(ConfigValues.DBPagingType, "wrongPageType");
         mcr.mockConfigValue(ConfigValues.DBPagingSyntax, "wrongPageSyntax");
-        SyntaxChecker chkr = new SyntaxChecker(20);
+        SyntaxChecker chkr = new SyntaxChecker();
         SyntaxContainer res = new SyntaxContainer("");
         res.setMaxCount(0);
 
@@ -457,7 +456,7 @@ public class SyntaxCheckerTest {
     }
 
     private void testValidSql(String dynamicQuery, String exepctedSQLResult) {
-        SyntaxChecker chkr = new SyntaxChecker(20);
+        SyntaxChecker chkr = new SyntaxChecker();
         ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
         SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState(dynamicQuery, true);
         assertTrue("Invalid syntax: " + dynamicQuery, res.getvalid());

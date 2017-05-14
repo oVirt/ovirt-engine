@@ -3,15 +3,9 @@ package org.ovirt.engine.core.searchbackend;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SyntaxCheckerFactoryTest {
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     @Test
     public void createUISyntaxChecker() {
         ISyntaxChecker checker = SyntaxCheckerFactory.createUISyntaxChecker("foo");
