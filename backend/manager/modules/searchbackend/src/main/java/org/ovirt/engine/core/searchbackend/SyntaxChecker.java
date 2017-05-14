@@ -910,7 +910,7 @@ public class SyntaxChecker implements ISyntaxChecker {
             // adding a secondary default sort by entity name
             StringBuilder sortExpr = new StringBuilder();
             sortExpr.append(sortByPhrase);
-            if ( sortByPhrase.indexOf(searchObjectAC.getDefaultSort(searchObjStr)) < 0) {
+            if (!sortByPhrase.contains(searchObjectAC.getDefaultSort(searchObjStr))) {
                 sortExpr.append(",");
                 sortExpr.append(searchObjectAC.getDefaultSort(searchObjStr));
             }
