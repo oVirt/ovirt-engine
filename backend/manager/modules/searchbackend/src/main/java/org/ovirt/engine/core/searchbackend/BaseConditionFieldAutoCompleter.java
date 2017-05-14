@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -163,7 +162,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             relations = "NOT " + getLikeSyntax(caseSensitive);
         }
         // Sort according to the value (real column name) in order not to rely on random access from map
-        SortedSet<Map.Entry<String, String>> sortedEntrySet = new TreeSet<>(new ColNameMapEntryComparator());
+        SortedSet<Map.Entry<String, String>> sortedEntrySet = new TreeSet<>(Map.Entry.comparingByValue());
         sortedEntrySet.addAll(columnNameDict.entrySet());
         for (Map.Entry<String, String> columnNameEntry : sortedEntrySet) {
             if (typeDict.get(columnNameEntry.getKey()) == String.class && !notFreeTextSearchableFieldsList.contains(columnNameEntry.getKey())) {
@@ -381,13 +380,4 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public String getWildcard(String fieldName) {
         return verbsWithMultipleValues.contains(fieldName) ? ".*" : "%";
     }
-
-    public static class ColNameMapEntryComparator implements Comparator<Map.Entry<String, String>> {
-
-        @Override
-        public int compare(Map.Entry<String, String> e1, Map.Entry<String, String> e2) {
-            return e1.getValue().compareTo(e2.getValue());
-        }
-    }
-
 }
