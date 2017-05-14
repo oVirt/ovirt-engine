@@ -56,7 +56,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         if (Config.getConfigUtils() == null || caseSensitive) {
             return "LIKE";
         } else {
-            return Config.<String>getValue(ConfigValues.DBLikeSyntax);
+            return Config.getValue(ConfigValues.DBLikeSyntax);
         }
     }
 
@@ -75,7 +75,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         if (Config.getConfigUtils() == null) {
             return "";
         } else {
-            return Config.<String>getValue(ConfigValues.DBI18NPrefix);
+            return Config.getValue(ConfigValues.DBI18NPrefix);
         }
 
     }
