@@ -51,9 +51,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
      * @return the LIKE syntax according to current DBEngine.
      */
     public static String getLikeSyntax(boolean caseSensitive) {
-        // for tests we don't have the Config class initialized
-        // also if caseSensitive flag is set we will use LIKE
-        if (Config.getConfigUtils() == null || caseSensitive) {
+        // If caseSensitive flag is set we will use LIKE
+        if (caseSensitive) {
             return "LIKE";
         } else {
             return Config.getValue(ConfigValues.DBLikeSyntax);
@@ -71,13 +70,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
      * Gets the I18N prefix used for value compare.
      */
     public static String getI18NPrefix() {
-        // for tests we don't have the Config class initialized
-        if (Config.getConfigUtils() == null) {
-            return "";
-        } else {
-            return Config.getValue(ConfigValues.DBI18NPrefix);
-        }
-
+        return Config.getValue(ConfigValues.DBI18NPrefix);
     }
 
     public static ITagsHandler tagsHandler = null;
