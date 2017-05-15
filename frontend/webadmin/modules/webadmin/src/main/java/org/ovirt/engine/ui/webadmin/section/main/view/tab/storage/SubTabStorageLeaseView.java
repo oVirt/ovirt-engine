@@ -34,8 +34,8 @@ public class SubTabStorageLeaseView extends AbstractSubTabTableView<StorageDomai
     private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationResources resources = AssetProvider.getResources();
 
-    private static AbstractTextColumn<VmBase> aliasColumn;
-    private static AbstractColumn<VmBase, VmBase> typeColumn;
+    private AbstractTextColumn<VmBase> aliasColumn;
+    private AbstractColumn<VmBase, VmBase> typeColumn;
 
     @Inject
     public SubTabStorageLeaseView(SearchableDetailModelProvider<VmBase, StorageListModel, StorageLeaseListModel> modelProvider) {
