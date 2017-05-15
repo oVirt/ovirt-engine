@@ -60,6 +60,7 @@
   <LUNS physical_volume_id="" lun_id="1IET_00180004" volume_group_id="G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ" serial="SOME-LUN-DISK" lun_mapping="1" vendor_id="IET" product_id="VIRTUAL-DISK" discard_max_size="2147450880" discard_zeroes_data="false"/>
   <LUNS physical_volume_id="" lun_id="1IET_00180005" volume_group_id="G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsR" serial="ORPHAN_LUN" lun_mapping="1" vendor_id="IET" product_id="ORPHAN_PRODUCT" discard_max_size="2147450880" discard_zeroes_data="false"/>
   <LUNS physical_volume_id="" lun_id="1IET_00180006" volume_group_id="G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsS" serial="ORPHAN_LUN" lun_mapping="1" vendor_id="IET" product_id="ORPHAN_PRODUCT" discard_max_size="2147450880" discard_zeroes_data="false"/>
+  <LUNS physical_volume_id="" lun_id="1IET_00180007" volume_group_id="" serial="VIRTUAL-DISK-2" lun_mapping="1" vendor_id="IET" product_id="VIRTUAL-DISK" discard_max_size="1024" discard_zeroes_data="true"/>
 
   <LUN_storage_server_connection_map lun_id="1IET_00180001" storage_server_connection="0cc146e8-e5ed-482c-8814-270bc48c297e"/>
   <LUN_storage_server_connection_map lun_id="DOMAIN_METADATA_LUN-1" storage_server_connection="0cc146e8-e5ed-482c-8814-270bc48c297e"/>
@@ -426,12 +427,14 @@
   <base_disks disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a40" wipe_after_delete="4" propagate_errors="Off" disk_alias="false" disk_description="New Description" shareable="false" disk_storage_type="1" disk_content_type="0"/>
   <base_disks disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a41" wipe_after_delete="4" propagate_errors="Off" disk_alias="false" disk_description="New Description" shareable="false" disk_storage_type="1" disk_content_type="0"/>
   <base_disks disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a45" wipe_after_delete="4" propagate_errors="Off" disk_alias="false" disk_description="New Description" shareable="false" disk_storage_type="2" disk_content_type="0"/>
+  <base_disks disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a46" wipe_after_delete="true" propagate_errors="Off" disk_alias="direct_lun" disk_description="Direct lun attached to a vm in storage pool 386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" shareable="false" disk_storage_type="1" disk_content_type="0"/>
 
   <disk_vm_element disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a34" vm_id="1b85420c-b84c-4f29-997e-0eb674b40b79" is_boot="false" pass_discard="false" disk_interface="VirtIO" is_using_scsi_reservation="false"/>
   <disk_vm_element disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a35" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4355" is_boot="false" pass_discard="false" disk_interface="VirtIO" is_using_scsi_reservation="false"/>
   <disk_vm_element disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a38" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4355" is_boot="false" pass_discard="false" disk_interface="VirtIO" is_using_scsi_reservation="true"/>
   <disk_vm_element disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a40" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4355" is_boot="true" pass_discard="false" disk_interface="VirtIO" is_using_scsi_reservation="false"/>
   <disk_vm_element disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a41" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4355" is_boot="false" pass_discard="true" disk_interface="VirtIO" is_using_scsi_reservation="false"/>
+  <disk_vm_element disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a46" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4360" is_boot="false" pass_discard="true" disk_interface="VirtIO" is_using_scsi_reservation="false"/>
 
   <storage_domains_ovf_info storage_domain_id="d9ede37f-e6c3-4bf9-a984-19174070aa31" status="1" ovf_disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a34"/>
   <storage_domains_ovf_info storage_domain_id="d9ede37f-e6c3-4bf9-a984-19174070aa32" status="1" ovf_disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a35"/>
@@ -439,6 +442,7 @@
   <disk_lun_map disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a41" lun_id="1IET_00180002"/>
   <disk_lun_map disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a37" lun_id="1IET_00180003"/>
   <disk_lun_map disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a40" lun_id="1IET_00180004"/>
+  <disk_lun_map disk_id="1b26a52b-b60f-44cb-9f46-3ef333b04a46" lun_id="1IET_00180007"/>
   <engine_sessions engine_session_id="9ee57fd0-6f67-11e4-9e67-3c970e14c386" user_id="9bf7c640-b620-456f-a550-0348f366544a" user_name="userportal2" authz_name="example.com-authz" source_ip="10.18.16.144" group_ids="35487601-05ef-43b0-932d-8663ea4c9495,fa63c7e0-d9d4-492f-9e4e-6ed8c4719364"/>
 
   <engine_sessions engine_session_id="c6f975b2-6f67-11e4-8455-3c970e14c386" user_id="9bf7c640-b620-456f-a550-0348f366544b" user_name="userportal3" authz_name="example.com-authz" source_ip="fe80::56ee:75ff:fe5c:6cc7" group_ids="26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7"/>
@@ -635,6 +639,7 @@
   <vm_device device_id="1b26a52b-b60f-44cb-9f46-3ef333b04a42" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4355" type="hostdev" device="pci_0000_00_1f_0" address="sample" spec_params="{}" is_managed="true" is_plugged="true" is_readonly="false" alias="alias"/>
   <vm_device device_id="1b26a52b-b60f-44cb-9f46-3ef333b04a43" vm_id="1b85420c-b84c-4f29-997e-0eb674b40b79" type="hostdev" device="pci_0000_00_1f_2" address="sample" spec_params="{}" is_managed="true" is_plugged="true" is_readonly="false" alias="alias"/>
   <vm_device device_id="1b26a52b-b60f-44cb-9f46-3ef333b04a44" vm_id="77296e00-0cad-4e5a-9299-008a7b6f5002" type="hostdev" device="pci_0000_00_1f_2" address="sample" spec_params="{}" is_managed="true" is_plugged="true" is_readonly="false" alias="alias"/>
+  <vm_device device_id="1b26a52b-b60f-44cb-9f46-3ef333b04a46" vm_id="77296e00-0cad-4e5a-9299-008a7b6f4360" type="disk" device="disk" address="sample" spec_params="{}" is_managed="true" is_plugged="true" is_readonly="false" alias="alias"/>
 
   <job job_id="54947df8-0e9e-4471-a2f9-9af509fb5889" engine_session_seq_id="137" status="STARTED" owner_id="9bf7c640-b620-456f-a550-0348f366544a" action_type="AddVm" description="AddVm" visible="true" start_time="2012-01-08 10:49:24" last_update_time="2012-01-08 10:49:24" correlation_id="54947df8-job1" is_external="false" is_auto_cleared="true"/>
   <job job_id="54947df8-0e9e-4471-a2f9-9af509fb5111" engine_session_seq_id="137" status="STARTED" owner_id="9bf7c640-b620-456f-a550-0348f3665111" action_type="UpdateVds" description="UpdateVds" visible="true" start_time="2012-01-01 10:49:24" last_update_time="2012-01-01 10:49:24" correlation_id="54947df8-job2" is_external="false" is_auto_cleared="true"/>

@@ -69,4 +69,23 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetDiskLunMapsForVmsInPool (v_storage_pool_id UUID)
+RETURNS SETOF disk_lun_map STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
 
+    SELECT *
+    FROM disk_lun_map
+    WHERE EXISTS (
+        SELECT *
+        FROM disk_vm_element
+        INNER JOIN vm_static
+            ON disk_vm_element.vm_id = vm_static.vm_guid
+        INNER JOIN cluster
+            ON vm_static.cluster_id = cluster.cluster_id
+        INNER JOIN storage_pool
+            ON cluster.storage_pool_id = storage_pool.id
+        WHERE disk_lun_map.disk_id = disk_vm_element.disk_id
+            AND storage_pool.id = v_storage_pool_id);
+END;$PROCEDURE$
+LANGUAGE plpgsql;

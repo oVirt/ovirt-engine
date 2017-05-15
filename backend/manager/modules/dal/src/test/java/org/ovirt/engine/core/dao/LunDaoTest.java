@@ -42,7 +42,7 @@ public class LunDaoTest extends BaseGenericDaoTestCase<String, LUNs, LunDao> {
 
     @Override
     protected int getEntitiesTotalCount() {
-        return 10;
+        return 11;
     }
 
     /**

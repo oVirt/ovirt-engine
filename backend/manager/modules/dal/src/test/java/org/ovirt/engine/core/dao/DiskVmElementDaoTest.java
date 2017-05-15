@@ -121,6 +121,6 @@ public class DiskVmElementDaoTest extends BaseReadDaoTestCase<VmDeviceId, DiskVm
 
     @Override
     protected int getEntitiesTotalCount() {
-        return 5;
+        return 6;
     }
 }

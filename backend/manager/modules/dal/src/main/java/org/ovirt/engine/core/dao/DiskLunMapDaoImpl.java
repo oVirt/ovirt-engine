@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.List;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
+import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -50,5 +53,14 @@ public class DiskLunMapDaoImpl extends DefaultGenericDao<DiskLunMap, DiskLunMapI
                 .addValue("lun_id", lunId);
 
         return getCallsHandler().executeRead("GetDiskLunMapByLunId", createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
+    public List<DiskLunMap> getDiskLunMapsForVmsInPool(Guid storagePoolId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_pool_id", storagePoolId);
+
+        return getCallsHandler().executeReadList("GetDiskLunMapsForVmsInPool", createEntityRowMapper(),
+                parameterSource);
     }
 }

@@ -1,6 +1,12 @@
 package org.ovirt.engine.core.dao;
 
+import static org.apache.commons.collections.CollectionUtils.isEqualCollection;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
@@ -15,7 +21,7 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
 
     private static final DiskLunMapId EXISTING_DISK_LUN_MAP_ID =
             new DiskLunMapId(FixturesTool.LUN_DISK_ID, FixturesTool.LUN_ID_FOR_DISK);
-    protected static final int TOTAL_DISK_LUN_MAPS = 3;
+    protected static final int TOTAL_DISK_LUN_MAPS = 4;
 
     @Override
     protected DiskLunMapId generateNonExistingId() {
@@ -57,5 +63,13 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
     public void testGetDiskIdByLunId() {
         assertEquals(dao.getDiskIdByLunId(EXISTING_DISK_LUN_MAP_ID.getLunId()),
                 new DiskLunMap(EXISTING_DISK_LUN_MAP_ID.getDiskId(), EXISTING_DISK_LUN_MAP_ID.getLunId()));
+    }
+
+    @Test
+    public void getDiskLunMapForVmsInPool() {
+        List<DiskLunMap> diskLunMapsForVmsInPool = dao.getDiskLunMapsForVmsInPool(FixturesTool.DATA_CENTER);
+        assertTrue(isEqualCollection(
+                Arrays.asList(FixturesTool.LUN_ID_FOR_DISK, FixturesTool.LUN_ID_FOR_DISK2),
+                diskLunMapsForVmsInPool.stream().map(DiskLunMap::getLunId).collect(Collectors.toList())));
     }
 }
