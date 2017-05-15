@@ -2047,6 +2047,8 @@ public interface UIConstants extends Constants {
 
     String vmLeasesSupported();
 
+    String vmLeasesNotSupportedWithoutHA();
+
     String storageDomainDRTitle();
 
     String storageDomainLeaseTitle();
