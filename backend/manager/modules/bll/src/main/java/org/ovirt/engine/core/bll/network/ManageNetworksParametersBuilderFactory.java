@@ -10,13 +10,13 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.di.Injector;
 
 @Singleton
-public class ManageLabeledNetworksParametersBuilderFactory {
+public class ManageNetworksParametersBuilderFactory {
 
-    public ManageLabeledNetworksParametersBuilder create(CommandContext commandContext,
+    public ManageNetworksParametersBuilder create(CommandContext commandContext,
             InterfaceDao interfaceDao,
             VdsStaticDao vdsStaticDao,
             NetworkClusterDao networkClusterDao,
             NetworkAttachmentDao networkAttachmentDao) {
-        return Injector.get(ManageLabeledNetworksParametersBuilderImpl.class);
+        return Injector.get(ManageNetworksParametersBuilderImpl.class);
     }
 }

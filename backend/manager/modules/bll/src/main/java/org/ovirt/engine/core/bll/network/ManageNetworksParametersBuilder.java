@@ -8,9 +8,10 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface ManageLabeledNetworksParametersBuilder {
+public interface ManageNetworksParametersBuilder {
     PersistentHostSetupNetworksParameters buildParameters(Guid vdsId,
             List<Network> labeledNetworksToBeAdded,
             List<Network> labeledNetworksToBeRemoved,
-            Map<String, VdsNetworkInterface> nicsByLabel);
+            Map<String, VdsNetworkInterface> nicsByLabel,
+            List<Network> updatedNetworks);
 }

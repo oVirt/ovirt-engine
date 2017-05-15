@@ -115,7 +115,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     }
 
     private void propagateLabeledNetworksChanges() {
-        runInternalAction(ActionType.PropagateLabeledNetworksToClusterHosts, getParameters());
+        runInternalAction(ActionType.PropagateNetworksToClusterHosts, getParameters());
     }
 
     private boolean runNetworkClusterCommands(

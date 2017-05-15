@@ -124,7 +124,7 @@ public enum ActionType {
     UnlabelNetwork(164, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
     LabelNic(165, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
     UnlabelNic(166, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
-    PropagateLabeledNetworksToClusterHosts(167, false, QuotaDependency.NONE),
+    PropagateNetworksToClusterHosts(167, false, QuotaDependency.NONE),
 
     // SR-IOV
     UpdateHostNicVfsConfig(175, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),

@@ -30,12 +30,12 @@ import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<ManageNetworkClustersParameters> {
+public class PropagateNetworksToClusterHostsCommand extends CommandBase<ManageNetworkClustersParameters> {
     @Inject
     private NetworkClustersToSetupNetworksParametersTransformerFactory
             networkClustersToSetupNetworksParametersTransformerFactory;
 
-    public PropagateLabeledNetworksToClusterHostsCommand(ManageNetworkClustersParameters parameters, CommandContext cmdContext) {
+    public PropagateNetworksToClusterHostsCommand(ManageNetworkClustersParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
 
@@ -55,7 +55,8 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
         final List<ActionParametersBase> setupNetworksParams = new ArrayList<>(
                 createNetworkClustersToSetupNetworksParametersTransformer().transform(
                         param.getAttachments(),
-                        param.getDetachments())
+                        param.getDetachments(),
+                        param.getUpdates())
         );
 
         HostSetupNetworksParametersBuilder.updateParametersSequencing(setupNetworksParams);
@@ -71,8 +72,9 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
         ManageNetworkClustersParameters parameters = getParameters();
         Map<Guid, List<NetworkCluster>> attachmentByClusterId = groupByClusterId(parameters.getAttachments());
         Map<Guid, List<NetworkCluster>> detachmentByClusterId = groupByClusterId(parameters.getDetachments());
+        Map<Guid, List<NetworkCluster>> updatesByClusterId = groupByClusterId(parameters.getUpdates());
 
-        Set<Guid> clusterIds = Stream.of(attachmentByClusterId, detachmentByClusterId)
+        Set<Guid> clusterIds = Stream.of(attachmentByClusterId, detachmentByClusterId, updatesByClusterId)
                 .flatMap(e -> e.keySet().stream())
                 .collect(Collectors.toSet());
 
@@ -80,7 +82,8 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
                 .stream()
                 .collect(Collectors.toMap(Function.identity(), clusterId -> new ManageNetworkClustersParameters(
                         nullToEmptyList(attachmentByClusterId.get(clusterId)),
-                        nullToEmptyList(detachmentByClusterId.get(clusterId)))));
+                        nullToEmptyList(detachmentByClusterId.get(clusterId)),
+                        nullToEmptyList(updatesByClusterId.get(clusterId)))));
     }
 
     private Map<Guid, List<NetworkCluster>> groupByClusterId(Collection<NetworkCluster> attachments) {

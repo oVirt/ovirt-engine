@@ -562,7 +562,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             HostNetwork networkToConfigure = new HostNetwork(network, attachment);
             networkToConfigure.setBonding(isBonding(attachment, nics));
 
-            if (defaultRouteSupported() && networkCluster.isDefaultRoute()) {
+            boolean isDefaultRoute = defaultRouteSupported() && networkCluster.isDefaultRoute();
+            if (isDefaultRoute) {
                 DnsResolverConfiguration dnsResolverConfiguration =
                         getDnsConfigurationFromNetworkOrItsAttachment(attachment, network);
 
@@ -570,9 +571,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                     networkToConfigure.setNameServers(dnsResolverConfiguration.getNameServers());
                 }
 
-                // TODO: YZ - should default route be set separately for IPv4 and IPv6
-                networkToConfigure.setDefaultRoute(true);
             }
+
+            // TODO: YZ - should default route be set separately for IPv4 and IPv6
+            networkToConfigure.setDefaultRoute(isDefaultRoute);
 
             if (NetworkUtils.qosConfiguredOnInterface(attachment, network)) {
                 networkToConfigure.setQosConfiguredOnInterface(true);

@@ -10,5 +10,6 @@ public interface NetworkClustersToSetupNetworksParametersTransformer {
 
     List<PersistentHostSetupNetworksParameters> transform(
             Collection<NetworkCluster> attachments,
-            Collection<NetworkCluster> detachments);
+            Collection<NetworkCluster> detachments,
+            Collection<NetworkCluster> updates);
 }

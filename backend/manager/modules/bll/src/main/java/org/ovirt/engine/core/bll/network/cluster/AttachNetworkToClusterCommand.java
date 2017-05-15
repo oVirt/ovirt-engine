@@ -51,7 +51,7 @@ public class AttachNetworkToClusterCommand extends NetworkClusterCommandBase<Att
         final AttachNetworkToClusterParameter attachNetworkToClusterParameter = getParameters();
 
         runInternalAction(
-                ActionType.PropagateLabeledNetworksToClusterHosts,
+                ActionType.PropagateNetworksToClusterHosts,
                 new ManageNetworkClustersParameters(new ArrayList<>(Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster()))));
     }
 

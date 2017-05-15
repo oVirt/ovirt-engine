@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll.network;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -17,8 +19,8 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
-final class ManageLabeledNetworksParametersBuilderImpl extends HostSetupNetworksParametersBuilder
-        implements ManageLabeledNetworksParametersBuilder {
+final class ManageNetworksParametersBuilderImpl extends HostSetupNetworksParametersBuilder
+        implements ManageNetworksParametersBuilder {
 
     @Inject
     private AddNetworksByLabelParametersBuilder addNetworksByLabelParametersBuilder;
@@ -27,7 +29,7 @@ final class ManageLabeledNetworksParametersBuilderImpl extends HostSetupNetworks
     private RemoveNetworksByLabelParametersBuilder removeNetworksByLabelParametersBuilder;
 
     @Inject
-    ManageLabeledNetworksParametersBuilderImpl(InterfaceDao interfaceDao,
+    ManageNetworksParametersBuilderImpl(InterfaceDao interfaceDao,
             VdsStaticDao vdsStaticDao,
             NetworkClusterDao networkClusterDao,
             NetworkAttachmentDao networkAttachmentDao) {
@@ -38,26 +40,46 @@ final class ManageLabeledNetworksParametersBuilderImpl extends HostSetupNetworks
     public PersistentHostSetupNetworksParameters buildParameters(Guid vdsId,
             List<Network> labeledNetworksToBeAdded,
             List<Network> labeledNetworksToBeRemoved,
-            Map<String, VdsNetworkInterface> nicsByLabel) {
+            Map<String, VdsNetworkInterface> nicsByLabel,
+            List<Network> updatedNetworks) {
 
         final PersistentHostSetupNetworksParameters addSetupNetworksParameters =
                 addNetworksByLabelParametersBuilder.buildParameters(vdsId, labeledNetworksToBeAdded, nicsByLabel);
         final PersistentHostSetupNetworksParameters removeSetupNetworksParameters =
                 removeNetworksByLabelParametersBuilder.buildParameters(vdsId, labeledNetworksToBeRemoved);
 
-        final PersistentHostSetupNetworksParameters combinedParams =
-                combine(addSetupNetworksParameters, removeSetupNetworksParameters);
+        PersistentHostSetupNetworksParameters updatedNetworksParams = createHostSetupNetworksParameters(vdsId);
 
-        combinedParams.setNetworkNames(commaSeparateNetworkNames(labeledNetworksToBeAdded, labeledNetworksToBeRemoved));
+        Map<Guid, NetworkAttachment> networkIdToAttachmentMap = getNetworkIdToAttachmentMap(vdsId);
+
+        List<NetworkAttachment> updatedNetworkAttachments =
+                updatedNetworks.stream()
+                        .map(Network::getId)
+                        .map(networkIdToAttachmentMap::get)
+                        .collect(Collectors.toList());
+
+        updatedNetworkAttachments.forEach(networkAttachment->networkAttachment.setOverrideConfiguration(true));
+        updatedNetworksParams.getNetworkAttachments().addAll(updatedNetworkAttachments);
+
+        final PersistentHostSetupNetworksParameters combinedParams =
+                combine(
+                    combine(addSetupNetworksParameters, removeSetupNetworksParameters),
+                    updatedNetworksParams);
+
+        combinedParams.setNetworkNames(commaSeparateNetworkNames(Arrays.asList(
+                labeledNetworksToBeAdded.stream(),
+                labeledNetworksToBeRemoved.stream(),
+                updatedNetworks.stream())));
+
         return combinedParams;
     }
 
-    private String commaSeparateNetworkNames(List<Network> labeledNetworksToBeAdded,
-            List<Network> labeledNetworksToBeRemoved) {
+    private String commaSeparateNetworkNames(List<Stream<Network>> networks) {
+        return commaSeparateNetworkNames(networks.stream().flatMap(Function.identity()));
+    }
 
-        return Stream.of(labeledNetworksToBeAdded, labeledNetworksToBeRemoved)
-                .flatMap(Collection::stream)
-                .map(Network::getName)
+    private String commaSeparateNetworkNames(Stream<Network> networks) {
+        return networks.map(Network::getName)
                 .distinct()
                 .collect(Collectors.joining(", "));
     }

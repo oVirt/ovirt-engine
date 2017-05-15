@@ -54,7 +54,7 @@ public class DetachNetworkToClusterCommand<T extends AttachNetworkToClusterParam
         final AttachNetworkToClusterParameter attachNetworkToClusterParameter = getParameters();
 
         runInternalAction(
-                ActionType.PropagateLabeledNetworksToClusterHosts,
+                ActionType.PropagateNetworksToClusterHosts,
                 new ManageNetworkClustersParameters(
                         Collections.emptyList(),
                         new ArrayList<>(Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster()))));
