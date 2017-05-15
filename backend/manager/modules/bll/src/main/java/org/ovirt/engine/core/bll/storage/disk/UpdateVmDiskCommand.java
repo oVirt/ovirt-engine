@@ -61,7 +61,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -264,6 +263,9 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         if (resizeDiskImageRequested() && amendDiskRequested()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
         }
+        if (amendDiskRequested() && isAllDiskVolumesRaw()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
+        }
 
         DiskVmElementValidator diskVmElementValidator = getDiskVmElementValidator(getNewDisk(), getDiskVmElement());
         return validateCanUpdateShareable() && validateCanUpdateReadOnly() &&
@@ -272,6 +274,11 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 (!isDiskInterfaceUpdated || validate(diskVmElementValidator.isDiskInterfaceSupported(getVm()))) &&
                 setAndValidateDiskProfiles() &&
                 validatePassDiscardSupported(diskVmElementValidator);
+    }
+
+    private boolean isAllDiskVolumesRaw() {
+        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getOldDisk().getId());
+        return images.stream().noneMatch(DiskImage::isQcowFormat);
     }
 
     private boolean validatePassDiscardSupported(DiskVmElementValidator diskVmElementValidator) {
@@ -801,9 +808,8 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     protected boolean amendDiskRequested() {
         if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage oldDisk = (DiskImage) getOldDisk();
-            return (oldDisk.getVolumeFormat() == VolumeFormat.COW)
-                    && !Objects.equals(oldDisk.getQcowCompat().getCompatValue(),
-                            ((DiskImage) getNewDisk()).getQcowCompat().getCompatValue());
+            return !Objects.equals(oldDisk.getQcowCompat().getCompatValue(),
+                    ((DiskImage) getNewDisk()).getQcowCompat().getCompatValue());
         }
         return false;
     }

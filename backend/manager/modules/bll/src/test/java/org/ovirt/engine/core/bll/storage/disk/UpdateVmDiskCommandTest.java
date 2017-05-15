@@ -542,6 +542,20 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void testFailedAmendWithNoQcowVolumes() {
+        // Creating a RAW disk
+        DiskImage oldDisk = createDiskImage();
+        oldDisk.setQcowCompat(QcowCompat.QCOW2_V2);
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+        DiskImage newDisk = DiskImage.copyOf(oldDisk);
+        newDisk.setQcowCompat(QcowCompat.QCOW2_V3);
+        command.getParameters().setDiskInfo(newDisk);
+        initializeCommand();
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
+        verify(command, never()).amendDiskImage();
+    }
+
+    @Test
     public void testFaultyResize() {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
 
