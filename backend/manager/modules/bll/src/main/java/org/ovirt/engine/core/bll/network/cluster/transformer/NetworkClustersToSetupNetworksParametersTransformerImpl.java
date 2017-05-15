@@ -1,13 +1,17 @@
 package org.ovirt.engine.core.bll.network.cluster.transformer;
 
+import static org.ovirt.engine.core.utils.CollectionUtils.nullToEmptyList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ManageLabeledNetworksParametersBuilder;
@@ -118,34 +122,21 @@ final class NetworkClustersToSetupNetworksParametersTransformerImpl
                         vdsStaticDao,
                         networkClusterDao,
                         networkAttachmentDao);
-        for (Entry<Guid, List<Network>> entry : attachNetworksByHost.entrySet()) {
-            final Guid hostId = entry.getKey();
-            final List<Network> attachHostNetworks = entry.getValue();
-            final List<Network> detachHostNetworks;
-            if (detachNetworksByHost.containsKey(hostId)) {
-                detachHostNetworks = detachNetworksByHost.get(hostId);
-            } else {
-                detachHostNetworks = Collections.emptyList();
-            }
+
+        Set<Guid> hostIds = Stream.of(attachNetworksByHost, detachNetworksByHost)
+                .flatMap(e -> e.keySet().stream())
+                .collect(Collectors.toSet());
+
+        for (Guid hostId : hostIds) {
             final Map<String, VdsNetworkInterface> nicsByLabel = labelsToNicsByHost.get(hostId);
+
             parameters.add(builder.buildParameters(
                     hostId,
-                    attachHostNetworks,
-                    detachHostNetworks,
-                    nicsByLabel));
+                    nullToEmptyList(attachNetworksByHost.get(hostId)),
+                    nullToEmptyList(detachNetworksByHost.get(hostId)),
+                    nicsByLabel == null ? Collections.emptyMap() : nicsByLabel));
         }
 
-        for (Entry<Guid, List<Network>> entry : detachNetworksByHost.entrySet()) {
-            final Guid hostId = entry.getKey();
-            if (!attachNetworksByHost.containsKey(hostId)) {
-                final List<Network> detachHostNetworks = entry.getValue();
-                parameters.add(builder.buildParameters(
-                        hostId,
-                        Collections.emptyList(),
-                        detachHostNetworks,
-                        Collections.emptyMap()));
-            }
-        }
         return parameters;
     }
 }

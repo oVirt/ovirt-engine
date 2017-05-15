@@ -39,19 +39,27 @@ final class ManageLabeledNetworksParametersBuilderImpl extends HostSetupNetworks
             List<Network> labeledNetworksToBeAdded,
             List<Network> labeledNetworksToBeRemoved,
             Map<String, VdsNetworkInterface> nicsByLabel) {
+
         final PersistentHostSetupNetworksParameters addSetupNetworksParameters =
                 addNetworksByLabelParametersBuilder.buildParameters(vdsId, labeledNetworksToBeAdded, nicsByLabel);
         final PersistentHostSetupNetworksParameters removeSetupNetworksParameters =
-                removeNetworksByLabelParametersBuilder.buildParameters(vdsId,
-                        labeledNetworksToBeRemoved);
+                removeNetworksByLabelParametersBuilder.buildParameters(vdsId, labeledNetworksToBeRemoved);
+
         final PersistentHostSetupNetworksParameters combinedParams =
                 combine(addSetupNetworksParameters, removeSetupNetworksParameters);
-        final Collection<Network> affectedNetworks =
-                Stream.concat(labeledNetworksToBeAdded.stream(), labeledNetworksToBeRemoved.stream())
-                        .collect(Collectors.toList());
-        combinedParams.setNetworkNames
-                (affectedNetworks.stream().map(Network::getName).collect(Collectors.joining(", ")));
+
+        combinedParams.setNetworkNames(commaSeparateNetworkNames(labeledNetworksToBeAdded, labeledNetworksToBeRemoved));
         return combinedParams;
+    }
+
+    private String commaSeparateNetworkNames(List<Network> labeledNetworksToBeAdded,
+            List<Network> labeledNetworksToBeRemoved) {
+
+        return Stream.of(labeledNetworksToBeAdded, labeledNetworksToBeRemoved)
+                .flatMap(Collection::stream)
+                .map(Network::getName)
+                .distinct()
+                .collect(Collectors.joining(", "));
     }
 
     private PersistentHostSetupNetworksParameters combine(PersistentHostSetupNetworksParameters addSetupNetworksParameters,

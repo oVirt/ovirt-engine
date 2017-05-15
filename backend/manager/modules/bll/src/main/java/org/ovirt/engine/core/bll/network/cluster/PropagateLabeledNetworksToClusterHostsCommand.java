@@ -1,12 +1,16 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import static org.ovirt.engine.core.utils.CollectionUtils.nullToEmptyList;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -48,54 +52,39 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
     }
 
     private void processSingleClusterChanges(ManageNetworkClustersParameters param) {
-        final NetworkClustersToSetupNetworksParametersTransformer
-                networkClustersToSetupNetworksParametersTransformer =
-                networkClustersToSetupNetworksParametersTransformerFactory.
-                        createNetworkClustersToSetupNetworksParametersTransformer(getContext());
-        final List<VdcActionParametersBase> setupNetworksParams = new ArrayList<>();
-        setupNetworksParams.addAll(networkClustersToSetupNetworksParametersTransformer.transform(
-                param.getAttachments(),
-                param.getDetachments()));
+        final List<VdcActionParametersBase> setupNetworksParams = new ArrayList<>(
+                createNetworkClustersToSetupNetworksParametersTransformer().transform(
+                        param.getAttachments(),
+                        param.getDetachments())
+        );
 
         HostSetupNetworksParametersBuilder.updateParametersSequencing(setupNetworksParams);
         runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, setupNetworksParams);
     }
 
+    private NetworkClustersToSetupNetworksParametersTransformer createNetworkClustersToSetupNetworksParametersTransformer() {
+        return networkClustersToSetupNetworksParametersTransformerFactory.
+                createNetworkClustersToSetupNetworksParametersTransformer(getContext());
+    }
+
     private Map<Guid, ManageNetworkClustersParameters> mapParametersByClusterId() {
-        final Map<Guid, ManageNetworkClustersParameters> paramsByClusterId = new HashMap<>();
-        final Map<Guid, List<NetworkCluster>> attachmentByClusterId =
-                getParameters().getAttachments().stream().collect(Collectors.groupingBy(NetworkCluster::getClusterId));
-        final Map<Guid, List<NetworkCluster>> detachmentByClusterId =
-                getParameters().getDetachments().stream().collect(Collectors.groupingBy(NetworkCluster::getClusterId));
-        for (Entry<Guid, List<NetworkCluster>> singleClusterAttachments: attachmentByClusterId.entrySet()) {
-            final Guid clusterId = singleClusterAttachments.getKey();
-            final List<NetworkCluster> networkAttachments = singleClusterAttachments.getValue();
-            final List<NetworkCluster> networkDetachments;
-            if (detachmentByClusterId.containsKey(clusterId)) {
-                networkDetachments = detachmentByClusterId.get(clusterId);
-            } else {
-                networkDetachments = Collections.emptyList();
-            }
-            paramsByClusterId.put(clusterId, new ManageNetworkClustersParameters(
-                    networkAttachments,
-                    networkDetachments,
-                    Collections.emptyList()));
-        }
+        ManageNetworkClustersParameters parameters = getParameters();
+        Map<Guid, List<NetworkCluster>> attachmentByClusterId = groupByClusterId(parameters.getAttachments());
+        Map<Guid, List<NetworkCluster>> detachmentByClusterId = groupByClusterId(parameters.getDetachments());
 
-        for (Entry<Guid, List<NetworkCluster>> singleClusterAttachments: detachmentByClusterId.entrySet()) {
-            final Guid clusterId = singleClusterAttachments.getKey();
-            final List<NetworkCluster> networkDetachments = singleClusterAttachments.getValue();
-            if (!attachmentByClusterId.containsKey(clusterId)) {
-                paramsByClusterId.put(
-                        clusterId,
-                        new ManageNetworkClustersParameters(
-                                Collections.emptyList(),
-                                networkDetachments,
-                                Collections.emptyList()));
-            }
-        }
+        Set<Guid> clusterIds = Stream.of(attachmentByClusterId, detachmentByClusterId)
+                .flatMap(e -> e.keySet().stream())
+                .collect(Collectors.toSet());
 
-        return paramsByClusterId;
+        return clusterIds
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), clusterId -> new ManageNetworkClustersParameters(
+                        nullToEmptyList(attachmentByClusterId.get(clusterId)),
+                        nullToEmptyList(detachmentByClusterId.get(clusterId)))));
+    }
+
+    private Map<Guid, List<NetworkCluster>> groupByClusterId(Collection<NetworkCluster> attachments) {
+        return attachments.stream().collect(Collectors.groupingBy(NetworkCluster::getClusterId));
     }
 
     @Override

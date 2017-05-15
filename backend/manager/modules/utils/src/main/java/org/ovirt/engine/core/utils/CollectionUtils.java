@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,4 +17,10 @@ public class CollectionUtils {
         }
         return res;
     }
+
+    public static <T> List<T> nullToEmptyList(List<T> list) {
+        return list == null ? Collections.emptyList() : list;
+    }
+
+
 }
