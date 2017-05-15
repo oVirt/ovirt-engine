@@ -61,7 +61,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
             TransactionSupport.executeInNewTransaction(() -> {
                 updateLunsInDb(lunsToUpdateInDb);
                 refreshLunsConnections(lunsFromVgInfo);
-                cleanupLunsFromDb(lunsFromVgInfo, lunsFromDb);
                 return null;
             });
         }
@@ -100,16 +99,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         }
     }
 
-    private void cleanupLunsFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
-        Set<String> lunIdsFromVgInfo = lunsFromVgInfo.stream().map(LUNs::getLUNId).collect(Collectors.toSet());
-        List<LUNs> lunsToRemove = lunsFromDb.stream()
-                .filter(lun -> !lun.getLUNId().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX))
-                .filter(lun -> !lunIdsFromVgInfo.contains(lun.getLUNId()))
-                .peek(lun -> log.info("Removing LUN ID '{}'", lun.getLUNId()))
-                .collect(Collectors.toList());
-        lunDao.removeAllInBatch(lunsToRemove);
-    }
-
     /**
      * Gets a list of up to date luns from vdsm and a list of the existing luns from the db,
      * and returns the luns from vdsm separated into three groups:
@@ -123,31 +112,43 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         Map<String, LUNs> lunsFromDbMap =
                 lunsFromDb.stream().collect(Collectors.toMap(LUNs::getLUNId, Function.identity()));
 
-        return lunsFromVgInfo.stream().collect(Collectors.groupingBy(lunFromVgInfo -> {
-            LUNs lunFromDb = lunsFromDbMap.get(lunFromVgInfo.getLUNId());
+        Map<LunHandler, List<LUNs>> lunsToUpdateInDb =
+                lunsFromVgInfo.stream().collect(Collectors.groupingBy(lunFromVgInfo -> {
+                    LUNs lunFromDb = lunsFromDbMap.get(lunFromVgInfo.getLUNId());
 
-            if (lunFromDb == null) {
-                // One of the following:
-                // 1. There's no lun in the db with the same lun id and pv id -> new lun.
-                // 2. lunFromDb has the same pv id and a different lun id -> using storage from backup.
-                return saveLunsHandler;
-            }
-            boolean lunFromDbHasSamePvId = Objects.equals(
-                    lunFromDb.getPhysicalVolumeId(),
-                    lunFromVgInfo.getPhysicalVolumeId());
-            if (lunFromDbHasSamePvId) {
-                // Existing lun, check if it should be updated.
-                if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize() ||
-                        !Objects.equals(lunFromDb.getDiscardMaxSize(), lunFromVgInfo.getDiscardMaxSize()) ||
-                        !Objects.equals(lunFromDb.getDiscardZeroesData(), lunFromVgInfo.getDiscardZeroesData())) {
+                    if (lunFromDb == null) {
+                        // One of the following:
+                        // 1. There's no lun in the db with the same lun id and pv id -> new lun.
+                        // 2. lunFromDb has the same pv id and a different lun id -> using storage from backup.
+                        return saveLunsHandler;
+                    }
+                    boolean lunFromDbHasSamePvId = Objects.equals(
+                            lunFromDb.getPhysicalVolumeId(),
+                            lunFromVgInfo.getPhysicalVolumeId());
+                    if (lunFromDbHasSamePvId) {
+                        // Existing lun, check if it should be updated.
+                        if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize() ||
+                                !Objects.equals(lunFromDb.getDiscardMaxSize(), lunFromVgInfo.getDiscardMaxSize()) ||
+                                !Objects.equals(lunFromDb.getDiscardZeroesData(),
+                                        lunFromVgInfo.getDiscardZeroesData())) {
+                            return updateLunsHandler;
+                        }
+                        // Existing lun is up to date.
+                        return noOp;
+                    }
+                    // lunFromDb has the same lun id and a different pv id -> old pv id.
                     return updateLunsHandler;
-                }
-                // Existing lun is up to date.
-                return noOp;
-            }
-            // lunFromDb has the same lun id and a different pv id -> old pv id.
-            return updateLunsHandler;
-        }));
+                }));
+        lunsToUpdateInDb.put(removeLunsHandler, getLunsToRemoveFromDb(lunsFromVgInfo, lunsFromDb));
+        return lunsToUpdateInDb;
+    }
+
+    protected List<LUNs> getLunsToRemoveFromDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
+        Set<String> lunIdsFromVgInfo = lunsFromVgInfo.stream().map(LUNs::getLUNId).collect(Collectors.toSet());
+        return lunsFromDb.stream()
+                .filter(lun -> !lun.getLUNId().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX))
+                .filter(lun -> !lunIdsFromVgInfo.contains(lun.getLUNId()))
+                .collect(Collectors.toList());
     }
 
     private static String getLunsIdsList(List<LUNs> luns) {
@@ -211,6 +212,20 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
         @Override
         public boolean affectsDiscardFunctionality() {
+            return true;
+        }
+    };
+
+    protected final LunHandler removeLunsHandler = new LunHandler() {
+
+        @Override
+        public void accept(List<LUNs> luns) {
+            lunDao.removeAllInBatch(luns);
+            log.info("Removed LUNs, IDs '{}'", getLunsIdsList(luns));
+        }
+
+        @Override
+        public boolean requiresDbUpdate() {
             return true;
         }
     };
