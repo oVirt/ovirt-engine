@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -17,6 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.Ticketing;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VmManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +28,11 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
     // The log:
     private static final Logger log = LoggerFactory.getLogger(SetVmTicketCommand.class);
+
+    @Inject
+    private ResourceManager resourceManager;
+
+    protected VmManager vmManager;
 
     private String ticket;
 
@@ -131,38 +140,43 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             ticket = Ticketing.generateOTP();
         }
 
-        // Update the dynamic information of the virtual machine in memory (we need it
-        // to update the database later):
-        final VM vm = getVm();
-        final DbUser user = getCurrentUser();
-        vm.setConsoleUserId(user.getId());
-        vm.setConsoleCurrentUserName(getConsoleUserName());
+        vmManager = resourceManager.getVmManager(getParameters().getVmId());
+        vmManager.lock();
 
-        // If the virtual machine has the allow reconnect flag or the user
-        // needed additional permissions to connect to the console then we just
-        // have to save the user id to the database, regardless of what was
-        // there before and without locking.
-        //
-        // Note that the fact that the user needed permissions actually means
-        // that it has them, otherwise we will not be here, performing the
-        // operation.
-        //
-        // In any other situation we try to save the new user to the database
-        // and proceed only if the previous user in the database is null. This
-        // is needed to prevent races between different users trying to access
-        // the console of the same virtual machine simultaneously.
-        if (vm.getAllowConsoleReconnect() || neededPermissions) {
-            vmDynamicDao.update(vm.getDynamicData());
-            sendTicket();
-        }
-        else {
-            final boolean saved = vmDynamicDao.updateConsoleUserWithOptimisticLocking(vm.getDynamicData());
-            if (saved) {
+        try {
+            // Update the dynamic information of the virtual machine in memory (we need it
+            // to update the database later):
+            final VM vm = getVm();
+            final DbUser user = getCurrentUser();
+            vm.setConsoleUserId(user.getId());
+            vm.setConsoleCurrentUserName(getConsoleUserName());
+
+            // If the virtual machine has the allow reconnect flag or the user
+            // needed additional permissions to connect to the console then we just
+            // have to save the user id to the database, regardless of what was
+            // there before and without locking.
+            //
+            // Note that the fact that the user needed permissions actually means
+            // that it has them, otherwise we will not be here, performing the
+            // operation.
+            //
+            // In any other situation we try to save the new user to the database
+            // and proceed only if the previous user in the database is null. This
+            // is needed to prevent races between different users trying to access
+            // the console of the same virtual machine simultaneously.
+            if (vm.getAllowConsoleReconnect() || neededPermissions) {
+                vmManager.update(vm.getDynamicData());
                 sendTicket();
+            } else {
+                final boolean saved = vmDynamicDao.updateConsoleUserWithOptimisticLocking(vm.getDynamicData());
+                if (saved) {
+                    sendTicket();
+                } else {
+                    dontSendTicket();
+                }
             }
-            else {
-                dontSendTicket();
-            }
+        } finally {
+            vmManager.unlock();
         }
     }
 
