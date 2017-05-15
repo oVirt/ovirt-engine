@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator.storage;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -165,6 +166,13 @@ public class StorageDomainValidator {
         });
     }
 
+    private double getTotalSizeForMerge(Collection<SubchainInfo> subchains, VdcActionType vdcActionType) {
+        return subchains
+                .stream()
+                .mapToDouble(subchain -> getRequiredSizeForMerge(subchain, vdcActionType))
+                .sum();
+    }
+
     /**
      * Validate space for new, empty disks. Used for a new Active Image.
      */
@@ -191,12 +199,12 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
-    public ValidationResult hasSpaceForMerge(SubchainInfo subchain, VdcActionType snapshotActionType) {
+    public ValidationResult hasSpaceForMerge(List<SubchainInfo> subchains, VdcActionType snapshotActionType) {
         if (storageDomain.getStorageType().isCinderDomain()) {
             return ValidationResult.VALID;
         }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
-        double totalSizeForDisks = getRequiredSizeForMerge(subchain, snapshotActionType);
+        double totalSizeForDisks = getTotalSizeForMerge(subchains, snapshotActionType);
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
@@ -340,7 +348,6 @@ public class StorageDomainValidator {
     private static interface SizeAssessment {
         public double getSizeForDisk(DiskImage diskImage);
     }
-
 
     public ValidationResult isInProcess() {
         StoragePoolIsoMap domainIsoMap = storageDomain.getStoragePoolIsoMapData();

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -106,11 +105,11 @@ public class MultipleStorageDomainsValidator {
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
     public ValidationResult allDomainsHaveSpaceForMerge(List<SubchainInfo> snapshots, VdcActionType snapshotActionType) {
-        final Map<Guid, SubchainInfo> storageToSnapshots = getDomainsToSnapshotsMap(snapshots);
+        final Map<Guid, List<SubchainInfo>> storageToSnapshots = getDomainsToSnapshotsMap(snapshots);
 
         return validOrFirstFailure(entry -> {
             Guid sdId = entry.getKey();
-            SubchainInfo subchain = storageToSnapshots.get(sdId);
+            List<SubchainInfo> subchain = storageToSnapshots.get(sdId);
             return getStorageDomainValidator(entry).hasSpaceForMerge(subchain, snapshotActionType);
         });
     }
@@ -175,10 +174,11 @@ public class MultipleStorageDomainsValidator {
                 .orElse(ValidationResult.VALID);
     }
 
-    private Map<Guid, SubchainInfo> getDomainsToSnapshotsMap(List<SubchainInfo> snapshots) {
-        return snapshots
-                .stream()
-                .collect(Collectors.toMap(SubchainInfo::getStorageDomainId,
-                                            Function.identity()));
+    private Map<Guid, List<SubchainInfo>> getDomainsToSnapshotsMap(List<SubchainInfo> snapshots) {
+        Map<Guid, List<SubchainInfo>> domainsDisksMap = new HashMap<>();
+        for (SubchainInfo subchain : snapshots) {
+            MultiValueMapUtils.addToMap(subchain.getStorageDomainId(), subchain, domainsDisksMap);
+        }
+        return domainsDisksMap;
     }
 }
