@@ -50,18 +50,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     @Inject
     private LunDao lunDao;
 
-    protected final Consumer<List<LUNs>> updateExistingLuns = luns -> {
-        lunDao.updateAll(luns);
-        log.info("Updated LUNs information, IDs '{}'.", getLunsIdsList(luns));
-    };
-
-    protected final Consumer<List<LUNs>> saveNewLuns = luns -> {
-        lunDao.saveAll(luns);
-        log.info("New LUNs discovered, IDs '{}'", getLunsIdsList(luns));
-    };
-
-    protected final Consumer<List<LUNs>> noOp = luns -> {};
-
     public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());
@@ -76,10 +64,8 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         final List<LUNs> lunsFromVgInfo = getLunsFromVgInfo();
         final List<LUNs> lunsFromDb = lunDao.getAllForVolumeGroup(getStorageDomain().getStorage());
 
-        Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
-        boolean dbShouldBeUpdated =
-                lunsToUpdateInDb.containsKey(updateExistingLuns) || // There are existing luns that should be updated.
-                        lunsToUpdateInDb.containsKey(saveNewLuns); // There are new luns that should be saved.
+        Map<LunHandler, List<LUNs>> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
+        boolean dbShouldBeUpdated = lunsToUpdateInDb.keySet().stream().anyMatch(LunHandler::requiresDbUpdate);
         if (dbShouldBeUpdated) {
             TransactionSupport.executeInNewTransaction(() -> {
                 updateLunsInDb(lunsToUpdateInDb);
@@ -142,7 +128,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
      * The return value is a map from the consumer of the luns to the luns themselves.
      * The consumer takes the list of luns and saves/updates/does nothing with them.
      */
-    protected Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
+    protected Map<LunHandler, List<LUNs>> getLunsToUpdateInDb(List<LUNs> lunsFromVgInfo, List<LUNs> lunsFromDb) {
         Map<String, LUNs> lunsFromDbMap =
                 lunsFromDb.stream().collect(Collectors.toMap(LUNs::getLUNId, Function.identity()));
 
@@ -153,7 +139,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 // One of the following:
                 // 1. There's no lun in the db with the same lun id and pv id -> new lun.
                 // 2. lunFromDb has the same pv id and a different lun id -> using storage from backup.
-                return saveNewLuns;
+                return saveLunsHandler;
             }
             boolean lunFromDbHasSamePvId = Objects.equals(
                     lunFromDb.getPhysicalVolumeId(),
@@ -163,13 +149,13 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 if (lunFromDb.getDeviceSize() != lunFromVgInfo.getDeviceSize() ||
                         !Objects.equals(lunFromDb.getDiscardMaxSize(), lunFromVgInfo.getDiscardMaxSize()) ||
                         !Objects.equals(lunFromDb.getDiscardZeroesData(), lunFromVgInfo.getDiscardZeroesData())) {
-                    return updateExistingLuns;
+                    return updateLunsHandler;
                 }
                 // Existing lun is up to date.
                 return noOp;
             }
             // lunFromDb has the same lun id and a different pv id -> old pv id.
-            return updateExistingLuns;
+            return updateLunsHandler;
         }));
     }
 
@@ -180,13 +166,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     /**
      * Saves the new or updates the existing luns in the DB.
      */
-    protected void updateLunsInDb(Map<Consumer<List<LUNs>>, List<LUNs>> lunsToUpdateInDbMap) {
+    protected void updateLunsInDb(Map<LunHandler, List<LUNs>> lunsToUpdateInDbMap) {
         lunsToUpdateInDbMap.entrySet().forEach(entry -> entry.getKey().accept(entry.getValue()));
 
-        if (lunsToUpdateInDbMap.containsKey(saveNewLuns) || lunsToUpdateInDbMap.containsKey(updateExistingLuns)) {
+        if (lunsToUpdateInDbMap.keySet().stream().anyMatch(LunHandler::affectsDiscardFunctionality)) {
             Collection<LUNs> lunsToUpdateInDb = lunsToUpdateInDbMap.entrySet().stream()
-                    .filter(entry -> entry.getKey().equals(saveNewLuns) ||
-                            entry.getKey().equals(updateExistingLuns))
+                    .filter(entry -> entry.getKey().affectsDiscardFunctionality())
                     .map(Map.Entry::getValue)
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
@@ -199,5 +184,63 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.SYNC_LUNS,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    protected final LunHandler updateLunsHandler = new LunHandler() {
+
+        @Override
+        public void accept(List<LUNs> luns) {
+            lunDao.updateAll(luns);
+            log.info("Updated LUNs information, IDs '{}'.", getLunsIdsList(luns));
+        }
+
+        @Override
+        public boolean requiresDbUpdate() {
+            return true;
+        }
+
+        @Override
+        public boolean affectsDiscardFunctionality() {
+            return true;
+        }
+    };
+
+    protected final LunHandler saveLunsHandler = new LunHandler() {
+
+        @Override
+        public void accept(List<LUNs> luns) {
+            lunDao.saveAll(luns);
+            log.info("New LUNs discovered, IDs '{}'", getLunsIdsList(luns));
+        }
+
+        @Override
+        public boolean requiresDbUpdate() {
+            return true;
+        }
+
+        @Override
+        public boolean affectsDiscardFunctionality() {
+            return true;
+        }
+    };
+
+    protected final LunHandler noOp = luns -> {};
+
+    protected interface LunHandler extends Consumer<List<LUNs>> {
+
+        /**
+         * Indicates whether a lun should be updated in the db.
+         */
+        default boolean requiresDbUpdate() {
+            return false;
+        }
+
+        /**
+         * Indicates whether updating the lun can affect
+         * its storage domain's discard functionality.
+         */
+        default boolean affectsDiscardFunctionality() {
+            return false;
+        }
     }
 }

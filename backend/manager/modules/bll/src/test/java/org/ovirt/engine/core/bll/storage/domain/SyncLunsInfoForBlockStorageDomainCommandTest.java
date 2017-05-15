@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -43,7 +43,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         Guid lunFromVgLunId = Guid.newGuid();
         List<LUNs> newLunsToSaveInDb =
                 getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), Guid.newGuid(), Guid.newGuid()).
-                        get(command.saveNewLuns);
+                        get(command.saveLunsHandler);
 
         assertLunIdInList(newLunsToSaveInDb, lunFromVgLunId);
     }
@@ -52,7 +52,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     public void testGetLunsToUpdateInDbSameLunIdDiffPvId() {
         Guid lunId = Guid.newGuid();
         List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb(lunId, lunId, Guid.newGuid(), Guid.newGuid()).
-                get(command.updateExistingLuns);
+                get(command.updateLunsHandler);
 
         assertLunIdInList(existingLunsToUpdateInDb, lunId);
     }
@@ -62,12 +62,12 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         Guid pvID = Guid.newGuid();
         Guid lunFromVgLunId = Guid.newGuid();
         List<LUNs> newLunsToSaveInDb = getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), pvID, pvID).
-                get(command.saveNewLuns);
+                get(command.saveLunsHandler);
 
         assertLunIdInList(newLunsToSaveInDb, lunFromVgLunId);
     }
 
-    private Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb(Guid lunFromVgLunId, Guid lunFromDbLunId,
+    private Map<LunHandler, List<LUNs>> getLunsToUpdateInDb(Guid lunFromVgLunId, Guid lunFromDbLunId,
             Guid lunFromVgPvId, Guid lunFromDbPvId) {
         setLunsIds(lunFromVgLunId, lunFromDbLunId, lunFromVgPvId, lunFromDbPvId);
         return getLunsToUpdateInDb();
@@ -121,7 +121,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
      */
     private void assertLunShouldBeUpdatedDueToFieldChange() {
         setLunsSameLunAndPvIds();
-        List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb().get(command.updateExistingLuns);
+        List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb().get(command.updateLunsHandler);
         assertLunIdInList(existingLunsToUpdateInDb, lunFromVg.getLUNId());
     }
 
@@ -139,7 +139,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         assertEquals(luns.stream().map(LUNs::getLUNId).findAny().orElse(null), requestedLunId);
     }
 
-    private Map<Consumer<List<LUNs>>, List<LUNs>> getLunsToUpdateInDb() {
+    private Map<LunHandler, List<LUNs>> getLunsToUpdateInDb() {
         List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVg);
         List<LUNs> lunsFromDb = Collections.singletonList(lunFromDb);
         return command.getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
