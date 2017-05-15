@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -107,6 +109,26 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         lunFromVg.setDiscardZeroesData(true);
         lunFromDb.setDiscardZeroesData(false);
         assertLunShouldBeUpdatedDueToFieldChange();
+    }
+
+    @Test
+    public void testGetLunsToUpdateInDbLunExistsInDbButNotInVgInfo() {
+        Guid lunFromDbId = Guid.newGuid();
+        List<LUNs> lunsToRemoveFromDb = getLunsToUpdateInDb(Guid.newGuid(), lunFromDbId, Guid.newGuid(), Guid.newGuid())
+                .get(command.removeLunsHandler);
+        assertLunIdInList(lunsToRemoveFromDb, lunFromDbId);
+    }
+
+    @Test
+    public void testGetLunsToRemoveFromDb() {
+        lunFromVg.setLUNId(Guid.newGuid().toString());
+        lunFromDb.setLUNId(Guid.newGuid().toString());
+        LUNs dummyLun = new LUNs();
+        dummyLun.setId(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX + Guid.newGuid().toString());
+        List<LUNs> lunsFromVgInfo = Collections.singletonList(lunFromVg);
+        List<LUNs> lunsFromDb = Arrays.asList(lunFromDb, dummyLun);
+        assertEquals(command.getLunsToRemoveFromDb(lunsFromVgInfo, lunsFromDb),
+                Collections.singletonList(lunFromDb));
     }
 
     private StorageDomainParametersBase createParameters() {
