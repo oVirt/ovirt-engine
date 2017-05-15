@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +54,6 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
     private VmDao vmDao;
 
     private DiskImage diskImage;
-    private List<Pair<VM, VmDevice>> vmsForDisk = new ArrayList<>();
 
     public AmendImageGroupVolumesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -71,8 +69,11 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
     @Override
     protected boolean validate() {
         DiskValidator diskValidator = new DiskValidator(getDiskImage());
-        if (!validate(diskValidator.isDiskExists()) &&
-                !validate(diskValidator.isDiskPluggedToVmsThatAreNotDown(false, vmsForDisk))) {
+        if (!validate(diskValidator.isDiskExists())) {
+            return false;
+        }
+        List<Pair<VM, VmDevice>> vmsForDisk = vmDao.getVmsWithPlugInfo(getDiskImage().getId());
+        if (!validate(diskValidator.isDiskPluggedToVmsThatAreNotDown(false, vmsForDisk))) {
             return false;
         }
         setStoragePoolId(getDiskImage().getStoragePoolId());
