@@ -345,6 +345,7 @@ public enum VdcActionType {
 
     // Sync luns
     SyncStorageDomainsLuns(1042, QuotaDependency.NONE),
+    SyncAttachedDirectLuns(1043, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
