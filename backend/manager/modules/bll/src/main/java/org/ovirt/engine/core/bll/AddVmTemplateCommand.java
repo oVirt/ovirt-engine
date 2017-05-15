@@ -981,6 +981,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void checkTrustedService() {
+        if (!isVmInDb) {
+            return;
+        }
         if (getVm().isTrustedService() && !getVmTemplate().isTrustedService()) {
             auditLogDirector.log(this, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         }
@@ -1178,7 +1181,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public Map<String, String> getJobMessageProperties() {
-        jobProperties.put("phase", getParameters().getPhase().name());
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put("phase", getParameters().getPhase().name());
+        }
         return jobProperties;
     }
 
@@ -1256,9 +1262,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE,
                             EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_VERSION_IS_BEING_CREATED));
         }
-        locks.put(getParameters().getVm().getId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
-                        EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED_FROM_VM));
+        if (!Guid.isNullOrEmpty(getParameters().getVm().getId())) {
+            locks.put(getParameters().getVm().getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
+                            EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_CREATED_FROM_VM));
+        }
 
         return locks;
     }
