@@ -2405,17 +2405,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return persistedCommandContext;
     }
 
-    protected void removeCommand() {
-        Transaction transaction = TransactionSupport.suspend();
-        try {
-            CommandCoordinatorUtil.removeCommand(getCommandId());
-        } finally {
-            if (transaction != null) {
-                TransactionSupport.resume(transaction);
-            }
-        }
-    }
-
     public long getSessionSeqId() {
         if (sessionSeqId == null) {
             String sessionId = getContext().getEngineContext().getSessionId();
