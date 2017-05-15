@@ -327,6 +327,7 @@ public class ResourceManager implements BackendService {
         vm.setGuestCurrentUserName(null);
         vm.setConsoleCurrentUserName(null);
         vm.setConsoleUserId(null);
+        vm.setClientIp(null);
         vm.setGuestOs(null);
         vm.setIp(null);
         vm.setFqdn(null);
