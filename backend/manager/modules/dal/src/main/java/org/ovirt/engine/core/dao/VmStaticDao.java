@@ -125,7 +125,7 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
     List<VmStatic> getAllRunningWithLeaseOnStorageDomain(Guid storageDomain);
 
     /**
-     * Retrieves a list of VMs and templates with a lease on the given storage domain.
+     * Retrieves a list of VMs with a lease on the given storage domain.
      *
      * @param storageDomain
      *            the storage domain id

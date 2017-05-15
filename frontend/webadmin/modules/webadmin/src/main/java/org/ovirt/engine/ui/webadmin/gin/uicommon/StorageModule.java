@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -31,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageLeaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskImageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskListModel;
@@ -538,7 +540,6 @@ public class StorageModule extends AbstractGinModule {
         return result;
     }
 
-
     @Override
     protected void configure() {
         bind(StorageListModel.class).in(Singleton.class);
@@ -558,6 +559,7 @@ public class StorageModule extends AbstractGinModule {
         bind(StorageEventListModel.class).in(Singleton.class);
         bind(DiskProfileListModel.class).in(Singleton.class);
         bind(StorageDRListModel.class).in(Singleton.class);
+        bind(StorageLeaseListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<StorageDomain>>(){}).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<DiskProfile>>(){}).in(Singleton.class);
         bind(StorageMainTabSelectedItems.class).asEagerSingleton();
@@ -572,6 +574,9 @@ public class StorageModule extends AbstractGinModule {
         bind(new TypeLiteral<SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
            .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>(){})
+                .to(new TypeLiteral<SearchableDetailTabModelProvider<VmBase, StorageListModel, StorageLeaseListModel>>(){})
+                .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, StorageListModel, PermissionListModel<StorageDomain>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<StorageDomain, StorageListModel>>(){}).in(Singleton.class);

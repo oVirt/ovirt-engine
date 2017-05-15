@@ -773,3 +773,17 @@ BEGIN
         WHERE image_storage_domain_map.disk_profile_id = v_disk_profile_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+
+
+Create or replace FUNCTION GetTemplatesWithLeaseOnStorageDomain(v_storage_domain_id UUID)
+RETURNS SETOF vm_templates_based_view STABLE
+   AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM vm_templates_based_view
+    WHERE lease_sd_id = v_storage_domain_id
+        AND entity_type = 'TEMPLATE';
+END; $procedure$
+LANGUAGE plpgsql;

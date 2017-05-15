@@ -485,6 +485,8 @@ public enum VdcQueryType implements Serializable {
     GetLabelById,
     GetLabelByEntityId,
 
+    GetEntitiesWithLeaseByStorageId,
+
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 

@@ -132,6 +132,8 @@ public enum HelpTag {
 
     disks("disks", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    leases("leases", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
     editConsole("editConsole", HelpTagType.USERPORTAL), //$NON-NLS-1$
 
     edit_affinity_group("edit_affinity_group", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Groups sub-tab -> Edit"), //$NON-NLS-1$ //$NON-NLS-2$

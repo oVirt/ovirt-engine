@@ -38,7 +38,7 @@ public class SubTabStorageDRPresenter extends AbstractSubTabStoragePresenter<Sto
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(SearchableDetailModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel> modelProvider) {
-        return new ModelBoundTabData(constants.storageDRSubTabLabel(), 11, modelProvider);
+        return new ModelBoundTabData(constants.storageDRSubTabLabel(), 12, modelProvider);
     }
 
     @Inject
