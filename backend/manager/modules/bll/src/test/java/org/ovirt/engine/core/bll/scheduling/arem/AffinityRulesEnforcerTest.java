@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.arem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -269,6 +271,34 @@ public class AffinityRulesEnforcerTest {
                 anyList());
         verify(schedulingManager).canSchedule(eq(cluster), eq(vm6), anyList(), anyList(),
                 anyList());
+    }
+
+    @Test
+    public void shouldTryVMsFromAllHosts() {
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm5, vm6));
+
+        // vm1 cannot be scheduled
+        when(schedulingManager.canSchedule(eq(cluster), eq(vm1), anyList(), anyList(), anyList()))
+                .thenReturn(false);
+
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm5, vm6);
+
+        affinityGroups.clear();
+        affinityGroups.add(createAffinityGroup(cluster, EntityAffinityRule.POSITIVE, vm1, vm2, vm3, vm4, vm5, vm6));
+
+        // cannot schedule vm4, vm5 and vm6
+        when(schedulingManager.canSchedule(eq(cluster),
+                argThat(new ArgumentMatcher<VM>() {
+                    @Override
+                    public boolean matches(Object argument) {
+                        return Arrays.asList(vm4, vm5, vm6).contains(argument);
+                    }
+                }),
+                anyList(),
+                anyList(),
+                anyList())).thenReturn(false);
+
+        assertThat(enforcer.chooseNextVmToMigrate(cluster)).isIn(vm1, vm2, vm3);
     }
 
     @Test

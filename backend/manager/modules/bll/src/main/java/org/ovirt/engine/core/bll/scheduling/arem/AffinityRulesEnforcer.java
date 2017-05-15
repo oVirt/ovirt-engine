@@ -5,7 +5,6 @@ import static java.util.Collections.min;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,7 +41,6 @@ public class AffinityRulesEnforcer {
     private VmDao vmDao;
     @Inject
     private SchedulingManager schedulingManager;
-    private final Random random = new Random();
 
     protected enum FailMode {
         IMMEDIATELY, // Fail when first violation is detected
@@ -237,7 +234,12 @@ public class AffinityRulesEnforcer {
             allVms.addAll(group.getVmIds());
         }
 
-        Map<Guid, Guid> vmToHost = createMapOfVmToHost(allVms);
+        Map<Guid, VM> vmsMap = vmDao.getVmsByIds(new ArrayList<>(allVms)).stream()
+                .collect(Collectors.toMap(VM::getId, vm -> vm));
+
+        Map<Guid, Guid> vmToHost = vmsMap.values().stream()
+                .filter(vm -> vm.getRunOnVds() != null)
+                .collect(Collectors.toMap(VM::getId, VM::getRunOnVds));
 
         // There is no need to migrate when no collision was detected
         Set<AffinityGroup> violatedAffinityGroups =
@@ -253,25 +255,28 @@ public class AffinityRulesEnforcer {
         Collections.sort(affGroupsBySize, Collections.reverseOrder(new AffinityGroupComparator()));
 
         for (AffinityGroup affinityGroup : affGroupsBySize) {
-            final List<VM> candidateVms;
+            final List<List<Guid>> candidateVmGroups;
 
             if (affinityGroup.isVmPositive()) {
-                candidateVms = vmDao.getVmsByIds(findVmViolatingPositiveAg(affinityGroup, vmToHost));
+                candidateVmGroups = groupVmsViolatingPositiveAg(affinityGroup, vmsMap);
                 log.info("Positive affinity group violation detected");
             } else if (affinityGroup.isVmNegative()) {
-                candidateVms = vmDao.getVmsByIds(findVmViolatingNegativeAg(affinityGroup, vmToHost));
+                candidateVmGroups = groupVmsViolatingNegativeAg(affinityGroup, vmsMap);
                 log.info("Negative affinity group violation detected");
             } else {
                 continue;
             }
 
-            while (!candidateVms.isEmpty()) {
-                final int index = random.nextInt(candidateVms.size());
-                final VM candidateVm = candidateVms.get(index);
-                if (isVmMigrationValid(cluster, candidateVm)) {
-                    return candidateVm;
+            // Look for a valid VM to migrate on all hosts
+            for(List<Guid> group : candidateVmGroups) {
+                Collections.shuffle(group);
+
+                for(Guid vmId : group) {
+                    VM vm = vmsMap.get(vmId);
+                    if (isVmMigrationValid(cluster, vm)) {
+                        return vm;
+                    }
                 }
-                candidateVms.remove(index);
             }
 
         }
@@ -315,109 +320,50 @@ public class AffinityRulesEnforcer {
         return false;
     }
 
-    private Map<Guid, Guid> createMapOfVmToHost(Set<Guid> allVms) {
-        Map<Guid, Guid> outputMap = new HashMap<>();
-
-        for (VM vm : vmDao.getVmsByIds(new ArrayList<>(allVms))) {
-            Guid hostId = vm.getRunOnVds();
-
-            if (hostId != null) {
-                outputMap.put(vm.getId(), hostId);
-            }
-        }
-
-        return outputMap;
-    }
-
     /**
-     * Select VMs from the broken affinity group that are running on the same host.
+     * Group VMs violating a negative affinity group by host
+     * and sort groups by size from largest to smallest
      *
      * @param affinityGroup broken affinity rule
-     * @param vmToHost      vm to host assignments
-     * @return a list of vms which are candidates for migration
+     * @param vmsMap        VM id to VM assignments
+     * @return a list of groups of vms which are candidates for migration
      */
-    private List<Guid> findVmViolatingNegativeAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
-        Map<Guid, Guid> firstAssignment = new HashMap<>();
-        Set<Guid> violatingVms = new HashSet<>();
-
-        // When a VM runs on an already occupied host, report both
-        // the vm and the previous occupant as candidates for migration
-        for (Guid vm : affinityGroup.getVmIds()) {
-            Guid host = vmToHost.get(vm);
-
-            // Ignore stopped VMs
-            if (host == null) {
-                continue;
-            }
-
-            if (firstAssignment.containsKey(host)) {
-                violatingVms.add(vm);
-                violatingVms.add(firstAssignment.get(host));
-            } else {
-                firstAssignment.put(host, vm);
-            }
-        }
-
-        List<Guid> violatingVmsArray = new ArrayList<>(violatingVms);
-        return violatingVmsArray;
+    private List<List<Guid>> groupVmsViolatingNegativeAg(AffinityGroup affinityGroup, Map<Guid, VM> vmsMap) {
+        return groupVmsByHost(vmsMap, affinityGroup.getVmIds()).values().stream()
+                .filter(s -> s.size() > 1)
+                .sorted(Comparator.<List>comparingInt(List::size).reversed())
+                .collect(Collectors.toList());
     }
 
     /**
-     * Select VMs from the broken affinity group that are running on the host with the minimal amount
-     * of VMs from the broken affinity group.
-     * <p>
-     * Ex.: Host1: A, B, C, D  Host2: E, F  -> select E or F
+     * Group VMs violating a positive affinity group by host
+     * and sort groups by size
+     *
+     * Ex.: Host1: [A, B, C, D]  Host2: [E, F]  -> returns [[E,F],[A,B,C,D]]
      *
      * @param affinityGroup broken affinity group
-     * @param vmToHost      vm to host assignments
-     * @return a list of vms which are candidates for migration
+     * @param vmsMap        VM id to VM assignments
+     * @return a list of groups of vms which are candidates for migration
      */
-    private List<Guid> findVmViolatingPositiveAg(AffinityGroup affinityGroup, Map<Guid, Guid> vmToHost) {
-        Map<Guid, List<Guid>> hostCount = new HashMap<>();
+    private List<List<Guid>> groupVmsViolatingPositiveAg(AffinityGroup affinityGroup, Map<Guid, VM> vmsMap) {
+        return groupVmsByHost(vmsMap, affinityGroup.getVmIds()).values().stream()
+                .sorted(Comparator.comparingInt(List::size))
+                .collect(Collectors.toList());
+    }
 
-        // Prepare affinity group related host counts
-        for (Guid vm : affinityGroup.getVmIds()) {
-            Guid host = vmToHost.get(vm);
 
-            // Ignore stopped VMs
+    private Map<Guid, List<Guid>> groupVmsByHost(Map<Guid, VM> vmsMap, List<Guid> vms) {
+        Map<Guid, List<Guid>> res = new HashMap<>();
+        for(Guid vmId : vms) {
+            Guid host = vmsMap.get(vmId).getRunOnVds();
             if (host == null) {
                 continue;
             }
 
-            if (hostCount.containsKey(host)) {
-                hostCount.get(host).add(vm);
-            } else {
-                hostCount.put(host, new ArrayList<>());
-                hostCount.get(host).add(vm);
-            }
+            res.putIfAbsent(host, new ArrayList<>());
+            res.get(host).add(vmId);
         }
-
-        // Select the host with the least amount of VMs
-        Guid host = chooseCandidateHostForMigration(hostCount);
-        if (host == null) {
-            return Collections.emptyList();
-        }
-
-        return hostCount.get(host);
-    }
-
-    /**
-     * Select a host to source a VM belonging to the Affinity Group. The assumption here is that
-     * the host with the lowest amount of VMs from the affinity group is the best source,
-     * because the number of needed migrations will be minimal when compared to other solutions.
-     */
-    protected Guid chooseCandidateHostForMigration(Map<Guid, ? extends Collection<Guid>> mapOfHostsToVms) {
-        int maxNumberOfVms = Integer.MAX_VALUE;
-        Guid bestHost = null;
-
-        for (Map.Entry<Guid, ? extends Collection<Guid>> entry : mapOfHostsToVms.entrySet()) {
-            if (entry.getValue().size() < maxNumberOfVms) {
-                maxNumberOfVms = entry.getValue().size();
-                bestHost = entry.getKey();
-            }
-        }
-
-        return bestHost;
+        return res;
     }
 
     /**
