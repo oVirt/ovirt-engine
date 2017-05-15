@@ -182,7 +182,7 @@ class Plugin(plugin.PluginBase):
                 str('\n'.join(stdout))
             )
 
-        encrypted_password = _getRSA().private_encrypt(
+        encrypted_password = _getRSA().public_encrypt(
             data=password,
             padding=RSA.pkcs1_padding,
         )
