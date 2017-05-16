@@ -668,14 +668,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected AuditLogType getAuditLogForMigrationFailure() {
-        if (getVds().getStatus() == VDSStatus.PreparingForMaintenance) {
-            return AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE;
-        }
-
         if (getDestinationVds() == null) {
             auditLogDirector.log(this, AuditLogType.VM_MIGRATION_NO_VDS_TO_MIGRATE_TO);
         }
 
+        if (getVds().getStatus() == VDSStatus.PreparingForMaintenance) {
+            return getDestinationVds() != null ?
+                    AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE
+                    : AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE_NO_DESTINATION_VDS;
+        }
         return AuditLogType.VM_MIGRATION_FAILED;
     }
 
