@@ -100,7 +100,10 @@ public class BackendDiskAttachmentsResource
         params.setPlugUnPlug(isDiskActive);
 
         boolean isDiskReadOnly = false;
-        if (disk.isSetReadOnly()) {
+        // In case read only is set both on the attachment and on the disk the attachment takes precedence
+        if (attachment.isSetReadOnly()) {
+            isDiskReadOnly = BooleanUtils.toBoolean(attachment.isReadOnly());
+        } else if (disk.isSetReadOnly()) {
             isDiskReadOnly = BooleanUtils.toBoolean(disk.isReadOnly());
         }
         params.setReadOnly(isDiskReadOnly);
