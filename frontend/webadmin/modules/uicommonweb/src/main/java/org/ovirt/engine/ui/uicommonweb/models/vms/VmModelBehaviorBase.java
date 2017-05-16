@@ -177,6 +177,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     private void setVmLeasesAvailability() {
         TModel model = getModel();
+        if (model.getSelectedCluster() == null) {
+            return;
+        }
+
         Version compVer = model.getSelectedCluster().getCompatibilityVersion();
         if (model.getCustomCompatibilityVersion().getSelectedItem() != null) {
             compVer = model.getCustomCompatibilityVersion().getSelectedItem();
@@ -1309,10 +1313,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             }
                         }
                         getModel().getLease().setItems(domains);
-                        if (!getModel().getLease().getIsChangable() || selectedStorageDomainId == null) {
-                            getModel().getLease().setSelectedItem(null);
-                        }
-                        else {
+                        if (selectedStorageDomainId != null) {
                             for (StorageDomain domain : domains) {
                                 if (domain != null && selectedStorageDomainId.equals(domain.getId())) {
                                     getModel().getLease().setSelectedItem(domain);
