@@ -2051,6 +2051,8 @@ public interface UIConstants extends Constants {
 
     String vmLeasesSupported();
 
+    String vmLeasesNotSupportedWithoutHA();
+
     String discardIsNotSupportedByUnderlyingStorage();
 
     String theUnderlyingStorageDoesNotSupportDiscardWhenWipeAfterDeleteIsEnabled();

@@ -142,7 +142,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean ha = getModel().getIsHighlyAvailable().getEntity();
-                getModel().getLease().setIsChangeable(ha);
+                setVmLeasesAvailability();
                 if (!ha) {
                     getModel().getLease().setSelectedItem(null);
                 }
@@ -181,9 +181,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (model.getCustomCompatibilityVersion().getSelectedItem() != null) {
             compVer = model.getCustomCompatibilityVersion().getSelectedItem();
         }
-        model.getLease().setIsChangeable(
-                AsyncDataProvider.getInstance().isVmLeasesFeatureSupported(compVer),
-                constants.vmLeasesSupported());
+        boolean vmLeasesSupported = AsyncDataProvider.getInstance().isVmLeasesFeatureSupported(compVer);
+        if (!vmLeasesSupported) {
+            model.getLease().setIsChangeable(false, constants.vmLeasesSupported());
+        }
+        else {
+            model.getLease().setIsChangeable(model.getIsHighlyAvailable().getEntity());
+            if (!model.getIsHighlyAvailable().getEntity()) {
+                model.getLease().setChangeProhibitionReason(constants.vmLeasesNotSupportedWithoutHA());
+            }
+        }
     }
 
     private void setRngAvailability() {
