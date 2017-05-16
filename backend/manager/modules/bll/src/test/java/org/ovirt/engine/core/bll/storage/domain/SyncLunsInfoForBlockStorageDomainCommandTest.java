@@ -10,11 +10,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
-import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -30,9 +28,6 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
             new SyncLunsInfoForBlockStorageDomainCommand<>(parameters, null);
     private LUNs lunFromVg;
     private LUNs lunFromDb;
-
-    @Mock
-    private BlockStorageDiscardFunctionalityHelper discardHelper;
 
     @Before
     public void setUp() {
