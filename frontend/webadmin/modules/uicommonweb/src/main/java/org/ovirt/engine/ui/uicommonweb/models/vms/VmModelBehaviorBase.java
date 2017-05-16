@@ -1256,12 +1256,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     }
                     getModel().getLease().setItems(domains);
                     if (selectedStorageDomainId != null) {
-                        for (StorageDomain domain : domains) {
-                            if (domain != null && selectedStorageDomainId.equals(domain.getId())) {
-                                getModel().getLease().setSelectedItem(domain);
-                                break;
-                            }
-                        }
+                        domains.stream().filter(d -> d != null && selectedStorageDomainId.equals(d.getId())).findFirst().
+                                ifPresent(d -> getModel().getLease().setSelectedItem(d));
                     }
                 }), getModel().getSelectedDataCenter().getId());
     }
