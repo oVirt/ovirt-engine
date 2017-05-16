@@ -126,8 +126,9 @@ public class AttachDiskToVmCommandTest {
     }
 
     private AttachDetachVmDiskParameters createParameters() {
-        AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(new DiskVmElement(diskId, vmId));
-        parameters.setReadOnly(true);
+        DiskVmElement dve = new DiskVmElement(diskId, vmId);
+        dve.setReadOnly(true);
+        AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(dve);
         return parameters;
     }
 

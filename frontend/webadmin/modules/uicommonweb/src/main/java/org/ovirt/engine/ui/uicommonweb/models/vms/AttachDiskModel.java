@@ -232,11 +232,8 @@ public class AttachDiskModel extends NewDiskModel {
             DiskVmElement dve = new DiskVmElement(disk.getDisk().getId(), getVm().getId());
             dve.setBoot(disk.getIsBootable().getEntity());
             dve.setDiskInterface(disk.getDiskInterface().getSelectedItem());
-
-            // Disk is attached to VM as read only or not, null is applicable only for floating disks
-            // but this is not a case here.
-            AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(dve , activate,
-                    Boolean.TRUE.equals(disk.isReadOnly()));
+            dve.setReadOnly(disk.isReadOnly());
+            AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(dve , activate);
 
             actionTypes.add(VdcActionType.AttachDiskToVm);
             paramerterList.add(parameters);

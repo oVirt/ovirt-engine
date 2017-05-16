@@ -117,7 +117,6 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
     private AttachDetachVmDiskParameters buildDetachDetachVmDiskParameters(DiskImage activeDiskSnapshot) {
         return new AttachDetachVmDiskParameters(
                 new DiskVmElement(activeDiskSnapshot.getId(), getVmId()),
-                false,
                 false);
     }
 

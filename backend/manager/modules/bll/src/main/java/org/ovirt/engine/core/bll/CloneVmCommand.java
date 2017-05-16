@@ -234,9 +234,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
                 actionType,
                 new AttachDetachVmDiskParameters(
                         new DiskVmElement(disk.getId(), getParameters().getNewVmGuid()),
-                        oldDve.isPlugged(),
-                        oldDve.isReadOnly()
-                )
+                        oldDve.isPlugged())
         );
     }
 

@@ -99,11 +99,9 @@ public class BackendDiskAttachmentsResource
         }
         params.setPlugUnPlug(isDiskActive);
 
-        boolean isDiskReadOnly = false;
         if (disk.isSetReadOnly()) {
-            isDiskReadOnly = BooleanUtils.toBoolean(disk.isReadOnly());
+            dve.setReadOnly(BooleanUtils.toBoolean(disk.isReadOnly()));
         }
-        params.setReadOnly(isDiskReadOnly);
 
         if (disk.isSetSnapshot()) {
             validateParameters(disk, "snapshot.id");

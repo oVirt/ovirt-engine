@@ -46,6 +46,9 @@ public class DiskAttachmentMapper {
         if (model.isSetUsesScsiReservation()) {
             entity.setUsingScsiReservation(model.isUsesScsiReservation());
         }
+        if (model.isSetReadOnly()) {
+            entity.setReadOnly(model.isReadOnly());
+        }
         return entity;
     }
 
