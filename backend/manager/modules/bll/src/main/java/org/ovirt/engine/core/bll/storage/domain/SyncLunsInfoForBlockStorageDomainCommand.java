@@ -191,7 +191,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
         @Override
         public void accept(List<LUNs> luns) {
-            lunDao.updateAll(luns);
+            lunDao.updateAllInBatch(luns);
             log.info("Updated LUNs information, IDs '{}'.", getLunsIdsList(luns));
         }
 
@@ -210,7 +210,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
         @Override
         public void accept(List<LUNs> luns) {
-            lunDao.saveAll(luns);
+            lunDao.saveAllInBatch(luns);
             log.info("New LUNs discovered, IDs '{}'", getLunsIdsList(luns));
         }
 
