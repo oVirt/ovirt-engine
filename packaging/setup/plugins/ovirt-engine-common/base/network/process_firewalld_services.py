@@ -21,6 +21,7 @@ Process firewalld services
 Parse the result
 """
 
+import logging
 import os
 
 import libxml2
@@ -41,6 +42,7 @@ class Process(object):
     def __init__(self, environment):
         self._processed = False
         self._environment = environment
+        self._logger = logging.getLogger(__name__)
 
     @classmethod
     def getInstance(clz, environment):
@@ -57,15 +59,29 @@ class Process(object):
             for service in self.environment[
                 osetupcons.NetEnv.FIREWALLD_SERVICES
             ]:
+                abs_path = service.get('absolute_path')
+                directory = service.get('directory')
+                name = service['name']
+
+                if abs_path:
+                    template_path = abs_path
+                    if directory:
+                        self._logger.debug(
+                            'both absolute_path and directory provided for %s,'
+                            ' using absolute_path' % (name,)
+                        )
+                else:
+                    template_path = os.path.join(
+                        osetupcons.FileLocations.OVIRT_FIREWALLD_CONFIG,
+                        directory,
+                        '%s.xml.in' % name,
+                    )
+
                 self.environment[
                     otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX +
-                    service['name']
+                    name
                 ] = outil.processTemplate(
-                    template=os.path.join(
-                        osetupcons.FileLocations.OVIRT_FIREWALLD_CONFIG,
-                        service['directory'],
-                        '%s.xml.in' % service['name'],
-                    ),
+                    template=template_path,
                     subst=self.environment[osetupcons.NetEnv.FIREWALLD_SUBST],
                 )
             self._processed = True
