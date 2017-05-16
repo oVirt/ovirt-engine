@@ -36,8 +36,6 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     @Inject
     private ResourceManager resourceManager;
 
-    protected VmManager vmManager;
-
     private String ticket;
     // This flag is calculated during the authorization phase and indicates if
     // the user needed additional permission in order to connect to the console
@@ -143,7 +141,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             ticket = Ticketing.generateOTP();
         }
 
-        vmManager = resourceManager.getVmManager(getParameters().getVmId());
+        VmManager vmManager = resourceManager.getVmManager(getParameters().getVmId());
         vmManager.lock();
 
         try {
