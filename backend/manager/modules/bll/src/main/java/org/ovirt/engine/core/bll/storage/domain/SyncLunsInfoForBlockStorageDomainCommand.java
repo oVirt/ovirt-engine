@@ -167,7 +167,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     /**
      * Saves the new or updates the existing luns in the DB.
      */
-    protected void updateLunsInDb(Map<LunHandler, List<LUNs>> lunsToUpdateInDbMap) {
+    private void updateLunsInDb(Map<LunHandler, List<LUNs>> lunsToUpdateInDbMap) {
         lunsToUpdateInDbMap.entrySet().forEach(entry -> entry.getKey().accept(entry.getValue()));
 
         if (lunsToUpdateInDbMap.keySet().stream().anyMatch(LunHandler::affectsDiscardFunctionality)) {
