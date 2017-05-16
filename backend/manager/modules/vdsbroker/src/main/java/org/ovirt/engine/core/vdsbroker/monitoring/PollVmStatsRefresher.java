@@ -38,9 +38,9 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
             if (fetcher.fetch()) {
                 getVmsMonitoring().perform(fetcher.getChangedVms(), fetchTime, vdsManager, true);
                 //we only want to monitor vm devices for vms that already exist in the db
-                Stream<VdsmVm> vdsmVmsToMonitor = fetcher.getChangedVms().stream().
-                        filter(monitoredVm -> monitoredVm.getFirst() != null).
-                        map(Pair::getSecond);
+                Stream<VdsmVm> vdsmVmsToMonitor = fetcher.getChangedVms().stream()
+                        .filter(monitoredVm -> monitoredVm.getFirst() != null && monitoredVm.getSecond() != null)
+                        .map(Pair::getSecond);
                 processDevices(vdsmVmsToMonitor, fetchTime);
             } else {
                 log.info("Failed to fetch vms info for host '{}' - skipping VMs monitoring.", vdsManager.getVdsName());
