@@ -137,18 +137,26 @@ public class BackendExportDomainDiskResourceTest
         when(queryResult.getSucceeded()).thenReturn(failure == null);
         if (failure == null) {
             when(queryResult.getReturnValue()).thenReturn(queryReturn);
+            when(backend.runQuery(eq(query),
+                    eqParams(queryClass,
+                            addSession(queryNames),
+                            addSession(queryValues)))).thenReturn(queryResult);
         } else {
             if (failure instanceof String) {
                 when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String) failure);
+                when(backend.runQuery(eq(query),
+                        eqParams(queryClass,
+                                addSession(queryNames),
+                                addSession(queryValues)))).thenReturn(queryResult);
             } else if (failure instanceof Exception) {
-                when(queryResult.getExceptionString()).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(query),
+                        eqParams(queryClass,
+                                addSession(queryNames),
+                                addSession(queryValues)))).thenThrow((Exception) failure);
             }
         }
-        when(backend.runQuery(eq(query),
-            eqParams(queryClass,
-                    addSession(queryNames),
-                    addSession(queryValues)))).thenReturn(queryResult);
+
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {

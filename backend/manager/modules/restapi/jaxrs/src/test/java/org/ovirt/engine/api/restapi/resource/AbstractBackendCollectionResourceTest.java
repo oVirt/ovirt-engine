@@ -186,16 +186,18 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                 entities.add(getEntity(i));
             }
             when(queryResult.getReturnValue()).thenReturn(entities);
+            when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
+                    queryResult);
         } else {
             if (failure instanceof String) {
                 when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String)failure);
+                when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
+                        queryResult);
             } else if (failure instanceof Exception) {
-                when(queryResult.getExceptionString()).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenThrow((Exception) failure);
             }
         }
-        when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
-                queryResult);
         enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.Search), eqSearchParams(params)));
     }
 

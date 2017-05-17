@@ -299,20 +299,21 @@ public abstract class AbstractBackendBaseTest extends Assert {
         when(queryResult.getSucceeded()).thenReturn(failure == null);
         if (failure == null) {
             when(queryResult.getReturnValue()).thenReturn(queryReturn);
+            when(backend.runQuery(eq(query),
+                    eqParams(queryClass, addSession(queryNames), addSession(queryValues)))).thenReturn(queryResult);
         } else {
             if (failure instanceof String) {
                 when(queryResult.getExceptionString()).thenReturn((String) failure);
                 setUpL10nExpectations((String) failure);
+                when(backend.runQuery(eq(query),
+                        eqParams(queryClass, addSession(queryNames), addSession(queryValues)))).thenReturn(queryResult);
             } else if (failure instanceof Exception) {
-                when(queryResult.getExceptionString()).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(query), eqParams(queryClass, addSession(queryNames), addSession(queryValues))))
+                        .thenThrow((Exception) failure);
             }
         }
-        if (queryClass == GetPermissionsForObjectParameters.class) {
-            when(backend.runQuery(eq(query),
-                    eqParams(queryClass, addSession(queryNames), addSession(queryValues)))).thenReturn(queryResult);
-        } else {
-            when(backend.runQuery(eq(query),
-                    eqParams(queryClass, addSession(queryNames), addSession(queryValues)))).thenReturn(queryResult);
+
+        if (queryClass != GetPermissionsForObjectParameters.class) {
             enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(query),
                     eqParams(queryClass, addSession(queryNames), addSession(queryValues))));
         }
