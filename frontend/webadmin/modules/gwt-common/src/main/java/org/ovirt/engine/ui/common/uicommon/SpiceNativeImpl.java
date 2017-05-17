@@ -12,11 +12,12 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
 
     @Override
     public void invokeClient() {
-        AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(returnValue -> { // todo avoid code duplication with vnc
-            ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
-                    "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
-                    returnValue.<String>getReturnValue());
-        });
+        // todo avoid code duplication with vnc
+        AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(returnValue ->
+                ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
+                "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
+                returnValue.<String>getReturnValue())
+        );
 
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetConsoleDescriptorFile,
