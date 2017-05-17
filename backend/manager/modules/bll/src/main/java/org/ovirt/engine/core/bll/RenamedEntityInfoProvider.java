@@ -4,8 +4,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 
 public interface RenamedEntityInfoProvider {
 
-    public String getEntityType();
-    public String getEntityOldName();
-    public String getEntityNewName();
-    public void setEntityId(AuditLogable logable);
+    String getEntityType();
+    String getEntityOldName();
+    String getEntityNewName();
+    void setEntityId(AuditLogable logable);
 }
