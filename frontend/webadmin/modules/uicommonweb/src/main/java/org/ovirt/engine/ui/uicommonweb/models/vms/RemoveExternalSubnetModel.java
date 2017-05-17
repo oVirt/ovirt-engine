@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class RemoveExternalSubnetModel extends ConfirmationModel {
 
@@ -19,6 +20,7 @@ public class RemoveExternalSubnetModel extends ConfirmationModel {
     private final SearchableListModel<?, ?> sourceListModel;
 
     public RemoveExternalSubnetModel(SearchableListModel<?, ?> sourceListModel, List<ExternalSubnet> subnets) {
+        setTitle(ConstantsManager.getInstance().getConstants().removeExternalSubnetTitle());
         setHelpTag(HelpTag.remove_external_subnet);
         setHashName("remove_external_subnet"); //$NON-NLS-1$
 

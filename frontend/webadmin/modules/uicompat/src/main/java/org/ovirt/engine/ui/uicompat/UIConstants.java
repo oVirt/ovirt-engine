@@ -291,6 +291,8 @@ public interface UIConstants extends Constants {
 
     String removeVnicProfileTitle();
 
+    String removeExternalSubnetTitle();
+
     String copyTemplateTitle();
 
     String backupTemplateTitle();
