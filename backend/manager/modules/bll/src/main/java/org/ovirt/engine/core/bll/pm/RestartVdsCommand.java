@@ -8,13 +8,12 @@ import static org.ovirt.engine.core.common.errors.EngineMessage.VAR__ACTION__RES
 import static org.ovirt.engine.core.common.errors.EngineMessage.VAR__TYPE__HOST;
 import static org.ovirt.engine.core.common.errors.EngineMessage.VDS_FENCE_OPERATION_FAILED;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AuditLogDao;
@@ -56,6 +54,8 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     private PreviousHostedEngineHost previousHostedEngineHost;
     @Inject
     private AuditLogDao auditLogDao;
+    @Inject
+    private HostLocking hostLocking;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -208,13 +208,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return createFenceExclusiveLocksMap(getVdsId());
+        return hostLocking.getPowerManagementLock(getVdsId());
     }
-
-    public static Map<String, Pair<String, String>> createFenceExclusiveLocksMap(Guid vdsId) {
-        return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
-                LockingGroup.VDS_FENCE,
-                EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
-    }
-
 }

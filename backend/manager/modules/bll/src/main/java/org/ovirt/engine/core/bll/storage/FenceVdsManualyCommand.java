@@ -6,8 +6,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.pm.FenceVdsBaseCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -48,6 +48,8 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     private StorageDomainDao storageDomainDao;
     @Inject
     private AlertDirector alertDirector;
+    @Inject
+    private HostLocking hostLocking;
 
     private VDS problematicVds;
 
@@ -185,7 +187,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return FenceVdsBaseCommand.createFenceExclusiveLocksMap(getProblematicVdsId());
+        return hostLocking.getPowerManagementLock(getProblematicVdsId());
     }
 
     @Override

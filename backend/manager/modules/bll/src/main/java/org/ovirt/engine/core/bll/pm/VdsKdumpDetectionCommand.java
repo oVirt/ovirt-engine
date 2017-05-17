@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RestartVdsVmsOperation;
 import org.ovirt.engine.core.bll.VdsCommand;
@@ -42,6 +43,8 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
     private VdsKdumpStatusDao vdsKdumpStatusDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private HostLocking hostLocking;
 
     /**
      * Name of external variable to store fence_kdump listener heartbeat
@@ -99,7 +102,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return FenceVdsBaseCommand.createFenceExclusiveLocksMap(getVdsId());
+        return hostLocking.getPowerManagementLock(getVdsId());
     }
 
     private void executeFenceVdsManuallyAction() {

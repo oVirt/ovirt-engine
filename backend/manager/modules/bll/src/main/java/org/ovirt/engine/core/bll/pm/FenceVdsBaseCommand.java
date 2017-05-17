@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll.pm;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
@@ -27,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Sta
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AuditLogDao;
@@ -45,6 +43,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private VdsDynamicDao vdsDynamicDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private HostLocking hostLocking;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -174,13 +174,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return createFenceExclusiveLocksMap(getVdsId());
-    }
-
-    public static Map<String, Pair<String, String>> createFenceExclusiveLocksMap(Guid vdsId) {
-        return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
-                LockingGroup.VDS_FENCE,
-                EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
+        return hostLocking.getPowerManagementLock(getVdsId());
     }
 
     protected List<VM> getVmList() {

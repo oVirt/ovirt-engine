@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.pm;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.HostLocking;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -32,10 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -66,6 +62,8 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     private ClusterDao clusterDao;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private HostLocking hostLocking;
 
     public VdsNotRespondingTreatmentCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -273,12 +271,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return createFenceExclusiveLocksMap(getVdsId());
-    }
-
-    public static Map<String, Pair<String, String>> createFenceExclusiveLocksMap(Guid vdsId) {
-        return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
-                LockingGroup.VDS_FENCE,
-                EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
+        return hostLocking.getPowerManagementLock(getVdsId());
     }
 }

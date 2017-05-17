@@ -52,6 +52,12 @@ public class HostLocking {
                         EngineMessage.ACTION_TYPE_FAILED_SETUP_NETWORKS_OR_REFRESH_IN_PROGRESS));
     }
 
+    public Map<String, Pair<String, String>> getPowerManagementLock(Guid vdsId) {
+        return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
+                LockingGroup.VDS_FENCE,
+                EngineMessage.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
+    }
+
     private static class HostEngineLock extends EngineLock implements AutoCloseable {
         public final String closingMessage;
         private final Logger log;
