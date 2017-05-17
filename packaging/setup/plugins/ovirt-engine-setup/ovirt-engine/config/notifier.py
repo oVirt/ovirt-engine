@@ -79,7 +79,7 @@ class Plugin(plugin.PluginBase):
                     'order to get notified on cluster related events.\n Do '
                     'you want to continue?\n'
                     '(Answering "no" will stop the upgrade '
-                    '(@VALUES@) [@DEFAULT@]:'
+                    '(@VALUES@) [@DEFAULT@]: '
                 ).format(
                     conf=(
                         oenginecons.FileLocations.

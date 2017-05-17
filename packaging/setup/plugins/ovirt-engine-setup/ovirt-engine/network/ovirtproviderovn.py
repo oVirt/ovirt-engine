@@ -277,7 +277,7 @@ class Plugin(plugin.PluginBase):
             dialog=self.dialog,
             name='ovirt-provider-ovn',
             note=_(
-                'Install ovirt-provider-ovn(@VALUES@) [@DEFAULT@]?:'
+                'Install ovirt-provider-ovn(@VALUES@) [@DEFAULT@]?: '
             ),
             prompt=True,
             default=True

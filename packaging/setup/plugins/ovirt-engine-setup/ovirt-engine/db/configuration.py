@@ -62,7 +62,7 @@ class Plugin(plugin.PluginBase):
                 'The database requires these configurations values to be '
                 'changed. Setup can fix them for you or abort.'
                 ' Fix automatically? ('
-                '@VALUES@) [@DEFAULT@]:'
+                '@VALUES@) [@DEFAULT@]: '
             ),
             prompt=True,
             default=True,
