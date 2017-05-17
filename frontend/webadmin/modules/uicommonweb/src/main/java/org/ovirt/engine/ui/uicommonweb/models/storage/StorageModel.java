@@ -640,7 +640,6 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             boolean isStorageDomainUnattached = getDataCenter().getSelectedItem().getId().equals(Guid.Empty);
             if (!isBlockDomain || isStorageDomainUnattached) {
                 getDiscardAfterDelete().setIsAvailable(false);
-                getDiscardAfterDelete().setEntity(false);
                 return;
             }
 
