@@ -16,7 +16,7 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
         AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(returnValue ->
                 ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
                 "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
-                returnValue.<String>getReturnValue())
+                returnValue.getReturnValue())
         );
 
         Frontend.getInstance().runQuery(
