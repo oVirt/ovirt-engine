@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.vdscommands.SetStorageDomainDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 
@@ -162,7 +162,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     }
 
     @Override
-    public void setEntityId(AuditLogableBase logable) {
+    public void setEntityId(AuditLogable logable) {
         logable.setStorageDomainId(oldDomain.getId());
     }
 }

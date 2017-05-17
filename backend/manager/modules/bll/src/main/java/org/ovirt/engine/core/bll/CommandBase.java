@@ -91,6 +91,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.EntityDao;
@@ -759,7 +760,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
             String newEntityName = renameable.getEntityNewName();
             if (!StringUtils.equals(oldEntityName, newEntityName)) {
                 // log entity rename details
-                AuditLogableBase logable = new AuditLogableBase();
+                AuditLogable logable = new AuditLogableImpl();
                 String entityType = renameable.getEntityType();
                 logable.addCustomValue("EntityType", entityType);
                 logable.addCustomValue("OldEntityName", oldEntityName);

@@ -49,7 +49,7 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -466,7 +466,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
      }
 
     @Override
-    public void setEntityId(AuditLogableBase logable) {
+    public void setEntityId(AuditLogable logable) {
         logable.setVmTemplateId(oldTemplate.getId());
     }
 

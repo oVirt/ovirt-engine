@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
@@ -85,7 +85,7 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
     }
 
     @Override
-    public void setEntityId(AuditLogableBase logable) {
+    public void setEntityId(AuditLogable logable) {
     }
 
     private VnicProfile getOldVnicProfile() {
