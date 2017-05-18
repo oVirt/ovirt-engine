@@ -53,7 +53,7 @@ public class LocalStorageModel extends FileStorageModel {
 
     public LocalStorageModel() {
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
-        setPath(new EntityModel<String>());
+        setPath(new EntityModel<>());
     }
 
     @Override
