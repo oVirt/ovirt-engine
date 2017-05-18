@@ -148,13 +148,13 @@ public class NfsStorageModel extends FileStorageModel {
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
 
-        setPath(new EntityModel<String>());
+        setPath(new EntityModel<>());
         getPath().getEntityChangedEvent().addListener(this);
 
         UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         // Initialize version list.
-        setVersion(new ListModel<EntityModel<NfsVersion>>());
+        setVersion(new ListModel<>());
 
         List<EntityModel<NfsVersion>> versionItems = new ArrayList<>();
         // Items are shown in the UI in the order added; Auto negotiate is the default
@@ -166,9 +166,9 @@ public class NfsStorageModel extends FileStorageModel {
         versionItems.add(new EntityModel<>(constants.nfsVersion42(), NfsVersion.V4_2));
         getVersion().setItems(versionItems);
 
-        setRetransmissions(new EntityModel<Short>());
-        setTimeout(new EntityModel<Short>());
-        setMountOptions(new EntityModel<String>());
+        setRetransmissions(new EntityModel<>());
+        setTimeout(new EntityModel<>());
+        setMountOptions(new EntityModel<>());
 
     }
 
