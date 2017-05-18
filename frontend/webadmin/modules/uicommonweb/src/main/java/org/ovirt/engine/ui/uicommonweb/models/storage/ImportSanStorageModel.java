@@ -41,7 +41,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase {
         Set<StorageDomain> allStorageDomains = new HashSet<>();
         allStorageDomains.addAll(getStorageDomains().getItems());
         allStorageDomains.addAll(storageDomains);
-        getStorageDomains().setItems(new ArrayList<StorageDomain>(allStorageDomains));
+        getStorageDomains().setItems(new ArrayList<>(allStorageDomains));
     }
 
     protected void postGetUnregisteredStorageDomains(List<StorageDomain> storageDomains, List<StorageServerConnections> connections) {
