@@ -242,12 +242,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setLoginCommand(tempVar);
         setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this)); //$NON-NLS-1$
 
-        setAddress(new EntityModel<String>());
+        setAddress(new EntityModel<>());
         EntityModel<String> tempVar2 = new EntityModel<>();
         tempVar2.setEntity("3260"); //$NON-NLS-1$
         setPort(tempVar2);
-        setUserName(new EntityModel<String>());
-        setPassword(new EntityModel<String>());
+        setUserName(new EntityModel<>());
+        setPassword(new EntityModel<>());
         EntityModel<Boolean> tempVar3 = new EntityModel<>();
         tempVar3.setEntity(false);
         setUseUserAuth(tempVar3);
@@ -381,7 +381,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             Object result = returnValue.getReturnValue();
             model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
-                    : new ArrayList<StorageServerConnections>());
+                    : new ArrayList<>());
         }, true);
         Frontend.getInstance().runQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
@@ -394,7 +394,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             model.setAddress(a.getConnection());
             model.setPort(a.getPort());
             model.setName(a.getIqn());
-            model.setLuns(new ObservableCollection<LunModel>());
+            model.setLuns(new ObservableCollection<>());
             model.getLoggedInEvent().addListener(this);
 
             newItems.add(model);
@@ -695,7 +695,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                 model.setName(b.getIqn());
                 model.setIsSelected(true);
                 model.setIsLoggedIn(true);
-                model.setLuns(new ObservableCollection<LunModel>());
+                model.setLuns(new ObservableCollection<>());
                 model.getLoginCommand().setIsExecutionAllowed(false);
 
                 targetModelList.add(model);
