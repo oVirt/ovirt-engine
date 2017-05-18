@@ -16,14 +16,14 @@ public class ImportFcpStorageModel extends ImportSanStorageModel {
     }
 
     public ImportFcpStorageModel() {
-        setStorageDomains(new ListModel<StorageDomain>());
-        getStorageDomains().setItems(new ArrayList<StorageDomain>());
+        setStorageDomains(new ListModel<>());
+        getStorageDomains().setItems(new ArrayList<>());
     }
 
     @Override
     protected void update() {
         setMessage(null);
-        getStorageDomains().setItems(new ArrayList<StorageDomain>());
+        getStorageDomains().setItems(new ArrayList<>());
         getUnregisteredStorageDomains(null);
     }
 
