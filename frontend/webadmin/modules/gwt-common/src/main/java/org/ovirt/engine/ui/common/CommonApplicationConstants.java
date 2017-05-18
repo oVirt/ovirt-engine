@@ -1667,6 +1667,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String vmHasToBeUp();
 
+    String deviceCantBeHotUnplugged();
+
     String headlessModeVmPopup();
 
     String headlessModeExplanation();

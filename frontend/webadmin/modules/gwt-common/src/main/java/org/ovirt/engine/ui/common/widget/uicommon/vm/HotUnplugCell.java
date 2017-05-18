@@ -6,6 +6,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.CellClickHandler;
 import org.ovirt.engine.ui.common.widget.HasCellClickHandlers;
@@ -101,7 +102,18 @@ public class HotUnplugCell extends AbstractCell<VmDeviceFeEntity>
             sb.append(cellTemplate.disabledButton(id, AssetProvider.getConstants().unplugging(), ""));
             return;
         }
+        // This `if` branch can be removed together with support of snapshots created in 4.1, see BZ#1452631
+        if (specParamsMissing(deviceEntity.getVmDevice())) {
+            sb.append(cellTemplate.disabledButton(id, AssetProvider.getConstants().hotUnplug(),
+                    AssetProvider.getConstants().deviceCantBeHotUnplugged()));
+            return;
+        }
         sb.append(cellTemplate.button(id, AssetProvider.getConstants().hotUnplug()));
+    }
+
+    private boolean specParamsMissing(VmDevice vmDevice) {
+        return !VmDeviceCommonUtils.getSpecParamsIntValue(vmDevice, VmDeviceCommonUtils.SPEC_PARAM_SIZE).isPresent()
+                || !VmDeviceCommonUtils.getSpecParamsIntValue(vmDevice, VmDeviceCommonUtils.SPEC_PARAM_NODE).isPresent();
     }
 
     public static boolean isHotUnpluggable(VmDevice vmDevice) {
