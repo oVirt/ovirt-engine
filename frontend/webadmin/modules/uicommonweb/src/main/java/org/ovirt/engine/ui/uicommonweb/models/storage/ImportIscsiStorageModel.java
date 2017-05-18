@@ -19,11 +19,11 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
     protected ListModel<SanTargetModel> targets;
 
     public ImportIscsiStorageModel() {
-        setStorageDomains(new ListModel<StorageDomain>());
-        getStorageDomains().setItems(new ArrayList<StorageDomain>());
+        setStorageDomains(new ListModel<>());
+        getStorageDomains().setItems(new ArrayList<>());
 
-        setTargets(new ListModel<SanTargetModel>());
-        getTargets().setItems(new ArrayList<SanTargetModel>());
+        setTargets(new ListModel<>());
+        getTargets().setItems(new ArrayList<>());
 
         addListeners();
     }
@@ -53,8 +53,8 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
 
     @Override
     protected void update() {
-        getStorageDomains().setItems(new ArrayList<StorageDomain>());
-        getTargets().setItems(new ArrayList<SanTargetModel>());
+        getStorageDomains().setItems(new ArrayList<>());
+        getTargets().setItems(new ArrayList<>());
         proposeDiscover();
     }
 
@@ -123,7 +123,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
             targetModel.setIsLoggedIn(true);
             targetModel.setIsChangeable(false);
         }
-        getTargets().setSelectedItems(new ArrayList<SanTargetModel>());
+        getTargets().setSelectedItems(new ArrayList<>());
     }
 
     @Override
