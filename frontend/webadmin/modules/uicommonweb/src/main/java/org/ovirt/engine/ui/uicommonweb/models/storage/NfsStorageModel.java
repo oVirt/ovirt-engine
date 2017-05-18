@@ -86,10 +86,9 @@ public class NfsStorageModel extends FileStorageModel {
         getTimeout().setEntity(connection.getNfsTimeo());
         getMountOptions().setEntity(connection.getMountOptions());
         for (EntityModel<NfsVersion> item : getVersion().getItems()) {
-            EntityModel itemModel = item;
-            boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
-            boolean foundNfsVersion = itemModel.getEntity() != null &&
-                    itemModel.getEntity().equals(connection.getNfsVersion());
+            boolean noNfsVersion = item.getEntity() == null && connection.getNfsVersion() == null;
+            boolean foundNfsVersion = item.getEntity() != null &&
+                    item.getEntity().equals(connection.getNfsVersion());
 
             if (noNfsVersion || foundNfsVersion) {
                 getVersion().setSelectedItem(item);
