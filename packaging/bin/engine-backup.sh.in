@@ -453,7 +453,10 @@ etc/ovirt-engine-setup.conf.d/*packaging*
 etc/ovirt-engine-reports
 var/lib/ovirt-engine-reports
 etc/httpd/conf.d/z-ovirt-engine-reports-proxy.conf
-etc/ovirt-engine/engine.conf.d/10-setup-reports-access.conf"
+etc/ovirt-engine/engine.conf.d/10-setup-reports-access.conf
+etc/pki/ovirt-engine/cacert.template.in
+etc/pki/ovirt-engine/cert.template.in
+etc/pki/ovirt-engine/openssl.conf"
 
 source_d defaults
 
