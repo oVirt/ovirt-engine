@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -49,6 +50,10 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
     @Inject
     private LunDao lunDao;
+    @Inject
+    private BlockStorageDomainHelper blockStorageDomainHelper;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -74,6 +79,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
             });
         }
 
+        // When a domain is created it has a vg metadata device and a metadata lv which may be created on multiple
+        // devices. On a regular basis, those devices should be never changing.
+        // However, in some user environments in case of disaster the block sd may be restored manually in a way that
+        // will change its metadata devices - therefore when syncing the luns info we refresh the metadata devices
+        // information as well.
+        refreshMetadataDevicesInfo();
         setSucceeded(true);
     }
 
@@ -106,6 +117,19 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                 }
             }
         }
+    }
+
+    private void refreshMetadataDevicesInfo() {
+        String oldVgMetadataDevice = getStorageDomain().getVgMetadataDevice();
+        String oldFirstMetadataDevice = getStorageDomain().getFirstMetadataDevice();
+        blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
+                getParameters().getVdsId());
+        if (!Objects.equals(oldVgMetadataDevice, getStorageDomain().getVgMetadataDevice()) ||
+                !Objects.equals(oldFirstMetadataDevice, getStorageDomain().getFirstMetadataDevice())) {
+            storageDomainStaticDao.update(getStorageDomain().getStorageStaticData());
+        }
+
+        blockStorageDomainHelper.checkDomainMetadataDevices(getStorageDomain());
     }
 
     /**

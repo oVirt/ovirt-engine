@@ -118,9 +118,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
     }
 
     private void validateRetrievedMetadataDevices() {
-        if (getStorageDomain().getVgMetadataDevice() == null || getStorageDomain().getFirstMetadataDevice() == null) {
-            auditLogDirector.log(this,
-                    AuditLogType.USER_REDUCE_DOMAIN_DEVICES_FAILED_DETERMINE_METADATA_DEVICES);
+        if (!blockStorageDomainHelper.checkDomainMetadataDevices(getStorageDomain())) {
             throw new EngineException(EngineError.GeneralException, "Couldn't determine the domain metadata devices");
         }
     }
