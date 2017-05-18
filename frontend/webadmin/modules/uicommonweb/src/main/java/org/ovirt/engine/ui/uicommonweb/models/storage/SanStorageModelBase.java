@@ -266,10 +266,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(SanTargetModel.loggedInEventDefinition)) {
-            sanTargetModel_LoggedIn(sender, args);
+            sanTargetModel_LoggedIn(sender);
         }
         else if (ev.matchesDefinition(entityChangedEventDefinition)) {
-            useUserAuth_EntityChanged(sender, args);
+            useUserAuth_EntityChanged();
         }
     }
 
@@ -333,7 +333,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Frontend.getInstance().runMultipleActions(actionTypes, parameters, callbacks, null, target);
     }
 
-    private void sanTargetModel_LoggedIn(Object sender, EventArgs args) {
+    private void sanTargetModel_LoggedIn(Object sender) {
         SanTargetModel model = (SanTargetModel) sender;
         targetsToConnect = new ArrayList<>();
         targetsToConnect.add(model);
@@ -439,7 +439,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         return getIsValid();
     }
 
-    private void useUserAuth_EntityChanged(Object sender, EventArgs args) {
+    private void useUserAuth_EntityChanged() {
         updateUserAuthFields();
     }
 
