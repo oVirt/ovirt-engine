@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
@@ -493,7 +494,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 null,
                 getCompensationContext(),
                 getCurrentUser(),
-                new VmInterfaceManager(getMacPool()));
+                new VmInterfaceManager(getMacPool()),
+                StringUtils.isNotEmpty(targetSnapshot.getMemoryVolume()));
         snapshotDao.remove(targetSnapshot.getId());
         // add active snapshot with status locked, so that other commands that depend on the VM's snapshots won't run in parallel
         getSnapshotsManager().addActiveSnapshot(targetSnapshot.getId(),

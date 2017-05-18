@@ -392,7 +392,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             moveOrCopyAllImageGroups(getVmTemplateId(), getImages());
         }
 
-        getVmDeviceUtils().addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity());
+        getVmDeviceUtils().addImportedDevices(getVmTemplate(), getParameters().isImportAsNewEntity(), false);
 
         if (!doesVmTemplateContainImages || getParameters().isImagesExistOnTargetStorageDomain()) {
             endMoveOrCopyCommand();

@@ -175,7 +175,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 getImagesToPreview(),
                 getCompensationContext(),
                 getCurrentUser(),
-                new VmInterfaceManager(getMacPool()));
+                new VmInterfaceManager(getMacPool()),
+                isRestoreMemory());
     }
 
     @Override

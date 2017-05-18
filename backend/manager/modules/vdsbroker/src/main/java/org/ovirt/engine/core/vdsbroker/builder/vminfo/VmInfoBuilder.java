@@ -37,7 +37,7 @@ public interface VmInfoBuilder {
 
     void buildVmConsoleDevice();
 
-    void buildUnmanagedDevices();
+    void buildUnmanagedDevices(String hibernationVolHandle);
 
     void buildVmBootSequence();
 

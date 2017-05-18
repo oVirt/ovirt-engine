@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -655,8 +656,26 @@ public class VmDevicesMonitoring {
                 null,
                 null,
                 logicalName);
+        if (VmDeviceCommonUtils.isMemory(newDevice)) {
+            fixMemorySpecParamsTypes(newDevice);
+        }
         log.debug("New device was marked for adding to VM '{}' Device : '{}'", vmId, newDevice);
         return newDevice;
+    }
+
+    /**
+     * Fix of wrong type of spec params.
+     *
+     * @see BZ#1452631
+     */
+    private void fixMemorySpecParamsTypes(VmDevice newDevice) {
+        Stream.of(VmDeviceCommonUtils.SPEC_PARAM_NODE, VmDeviceCommonUtils.SPEC_PARAM_SIZE)
+                .forEach(specParam -> {
+                    final Object value = newDevice.getSpecParams().get(specParam);
+                    if (value instanceof Integer) {
+                        newDevice.getSpecParams().put(specParam, String.valueOf(value));
+                    }
+                });
     }
 
     private void saveDevicesToDb(Change change) {

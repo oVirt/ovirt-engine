@@ -275,7 +275,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
         vmStatic.setImages(new ArrayList<>());
         vmStatic.setInterfaces(new ArrayList<>());
         ImportUtils.updateGraphicsDevices(vmStatic, getStoragePool().getCompatibilityVersion());
-        getVmDeviceUtils().addImportedDevices(vmStatic, false);
+        getVmDeviceUtils().addImportedDevices(vmStatic, false, false);
         saveDiskVmElements(vm);
     }
 

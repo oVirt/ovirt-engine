@@ -1629,8 +1629,10 @@ public class VmDeviceUtils {
 
     /**
      * Add devices to an imported VM or template.
+     *
+     * @param withMemory true ~ VM is imported from snapshot with memory, false otherwise
      */
-    public void addImportedDevices(VmBase vmBase, boolean isImportAsNewEntity) {
+    public void addImportedDevices(VmBase vmBase, boolean isImportAsNewEntity, boolean withMemory) {
         if (isImportAsNewEntity) {
             setNewIdInImportedCollections(vmBase);
         }
@@ -1640,7 +1642,7 @@ public class VmDeviceUtils {
 
         addImportedDiskDevices(vmBase, vmDevicesToUpdate);
         addImportedInterfaces(vmBase, vmDevicesToUpdate);
-        addImportedOtherDevices(vmBase, vmDevicesToAdd);
+        addImportedOtherDevices(vmBase, vmDevicesToAdd, withMemory);
 
         vmDeviceDao.saveAll(vmDevicesToAdd);
         vmDeviceDao.updateAll(vmDevicesToUpdate);
@@ -1686,9 +1688,10 @@ public class VmDeviceUtils {
     /**
      * Add other managed and unmanaged devices to imported VM or template.
      *
-     * @param vmDeviceToAdd     list of devices to be added to the DB
+     * @param vmDeviceToAdd list of devices to be added to the DB
+     * @param withMemory true ~ devices are being added to a VM that is imported from snapshot with memory
      */
-    private void addImportedOtherDevices(VmBase vmBase, List<VmDevice> vmDeviceToAdd) {
+    private void addImportedOtherDevices(VmBase vmBase, List<VmDevice> vmDeviceToAdd, boolean withMemory) {
         boolean hasCd = false;
 
         for (VmDevice vmDevice : vmBase.getManagedDeviceMap().values()) {
@@ -1724,7 +1727,12 @@ public class VmDeviceUtils {
         }
 
         // add unmanaged devices
-        vmDeviceToAdd.addAll(vmBase.getUnmanagedDeviceList());
+
+        final List<VmDevice> unmanagedDevicesToAdd = vmBase.getUnmanagedDeviceList().stream()
+                // preserve memory device only if importing from snapshot with memory
+                .filter(device -> !VmDeviceCommonUtils.isMemory(device) || withMemory)
+                .collect(Collectors.toList());
+        vmDeviceToAdd.addAll(unmanagedDevicesToAdd);
     }
 
     /**

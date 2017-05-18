@@ -107,7 +107,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
         builder.buildVmVirtioScsi();
         builder.buildVmVirtioSerial();
         builder.buildVmRngDevice();
-        builder.buildUnmanagedDevices();
+        builder.buildUnmanagedDevices(getParameters().getHibernationVolHandle());
         builder.buildVmSerialNumber();
         builder.buildVmNumaProperties();
         builder.buildVmHostDevices();

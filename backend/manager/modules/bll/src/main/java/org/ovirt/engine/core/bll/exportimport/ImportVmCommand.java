@@ -714,7 +714,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             if (useCopyImages) {
                 moveOrCopyAllImageGroups();
             }
-            getVmDeviceUtils().addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
+            getVmDeviceUtils().addImportedDevices(
+                    getVm().getStaticData(), getParameters().isImportAsNewEntity(), false);
             if (getParameters().isImportAsNewEntity()) {
                 getParameters().setVm(getVm());
                 setVmId(getVm().getId());

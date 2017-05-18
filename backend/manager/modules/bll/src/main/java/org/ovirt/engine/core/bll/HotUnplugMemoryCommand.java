@@ -63,7 +63,7 @@ public class HotUnplugMemoryCommand<P extends HotUnplugMemoryParameters> extends
     }
 
     protected int getUnpluggedDeviceSize() {
-        return VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(getDeviceToHotUnplug());
+        return VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(getDeviceToHotUnplug()).get();
     }
 
     @Override

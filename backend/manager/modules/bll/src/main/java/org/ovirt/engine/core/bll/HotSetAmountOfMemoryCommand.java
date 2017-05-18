@@ -114,8 +114,8 @@ public class HotSetAmountOfMemoryCommand<T extends HotSetAmountOfMemoryParameter
 
     private VmDevice createMemoryDevice() {
         Map<String, Object> specParams = new HashMap<>();
-        specParams.put(DEVICE_SIZE_FIELD_KEY, getParameters().getMemoryDeviceSizeMb());
-        specParams.put(DEVICE_NODE_FIELD_KEY, getParameters().getNumaNode());
+        specParams.put(DEVICE_SIZE_FIELD_KEY, String.valueOf(getParameters().getMemoryDeviceSizeMb()));
+        specParams.put(DEVICE_NODE_FIELD_KEY, String.valueOf(getParameters().getNumaNode()));
         return new VmDevice(new VmDeviceId(Guid.newGuid(), getVmId()),
                 VmDeviceGeneralType.MEMORY,
                 VmDeviceType.MEMORY.getName(),

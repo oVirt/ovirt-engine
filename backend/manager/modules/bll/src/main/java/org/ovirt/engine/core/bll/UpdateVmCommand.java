@@ -480,7 +480,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         final int minimalHotPlugDeviceSizeMb = getVm().getClusterArch().getHotplugMemorySizeFactorMb();
         final List<VmDevice> memoryDevices = getVmDeviceUtils().getMemoryDevices(getVmId());
         final boolean minimalMemoryDevicePresent = memoryDevices.stream()
-                .anyMatch(device -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(device) == minimalHotPlugDeviceSizeMb);
+                .anyMatch(device -> VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(device)
+                        .map(size -> size == minimalHotPlugDeviceSizeMb).orElse(false));
         final int secondPartSizeMb = (newAmountOfMemoryMb - currentMemoryMb) - minimalHotPlugDeviceSizeMb;
         if (minimalMemoryDevicePresent || secondPartSizeMb == 0) {
             hotPlugMemoryDevice(currentMemoryMb, newAmountOfMemoryMb);

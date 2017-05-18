@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -29,6 +30,7 @@ public class VmDeviceCommonUtils {
     static final String CDROM_CHAR = "D";
     static final String DRIVE_CHAR = "C";
     public static final String SPEC_PARAM_SIZE = "size";
+    public static final String SPEC_PARAM_NODE = "node";
 
     public static boolean isNetwork(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE;
@@ -50,6 +52,11 @@ public class VmDeviceCommonUtils {
 
     public static boolean isMemoryBalloon(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.BALLOON;
+    }
+
+    public static boolean isMemory(VmDevice device) {
+        return VmDeviceGeneralType.MEMORY == device.getType()
+                && VmDeviceType.MEMORY.getName().equals(device.getDevice());
     }
 
     public static boolean isGraphics(VmDevice device) {
@@ -417,14 +424,31 @@ public class VmDeviceCommonUtils {
         }
     }
 
-    public static Integer getSizeOfMemoryDeviceMb(VmDevice memoryDevice) {
-        if (memoryDevice.getType() != VmDeviceGeneralType.MEMORY) {
+    /**
+     * Spec param "size" may not always be present. See BZ#1452631.
+     *
+     * @return size of memory device in MB
+     */
+    public static Optional<Integer> getSizeOfMemoryDeviceMb(VmDevice memoryDevice) {
+        if (!isMemory(memoryDevice)) {
             throw new RuntimeException("Memory device expected but device "
                     + memoryDevice
                     + " passed of type "
                     + memoryDevice.getType());
         }
-        return (Integer) memoryDevice.getSpecParams().get(SPEC_PARAM_SIZE);
+        return getSpecParamsIntValue(memoryDevice, SPEC_PARAM_SIZE);
+    }
+
+    public static Optional<Integer> getSpecParamsIntValue(VmDevice device, String specParamsKey) {
+        final Object value = device.getSpecParams().get(specParamsKey);
+        if (!(value instanceof String)) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Integer.parseInt((String) value));
+        } catch (NumberFormatException ex) {
+            return Optional.empty();
+        }
     }
 
 }

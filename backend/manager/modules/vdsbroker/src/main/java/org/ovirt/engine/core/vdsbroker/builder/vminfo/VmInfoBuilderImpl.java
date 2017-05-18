@@ -59,6 +59,7 @@ import org.ovirt.engine.core.utils.collections.ComparatorUtils;
 import org.ovirt.engine.core.vdsbroker.architecture.CreateAdditionalControllers;
 import org.ovirt.engine.core.vdsbroker.architecture.GetBootableDiskIndex;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
+import org.ovirt.engine.core.vdsbroker.architecture.MemoryUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.NumaSettingFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VmSerialNumberBuilder;
@@ -463,7 +464,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
     }
 
     @Override
-    public void buildUnmanagedDevices() {
+    public void buildUnmanagedDevices(String hibernationVolHandle) {
         @SuppressWarnings("unchecked")
         Map<String, String> customMap =
                 (Map<String, String>) createInfo.getOrDefault(VdsProperties.Custom, new HashMap<>());
@@ -475,6 +476,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                 id.append(VdsProperties.Device);
                 id.append("_");
                 id.append(vmDevice.getDeviceId());
+                if (VmDeviceCommonUtils.isMemory(vmDevice)) {
+                    handleMemoryDevice(vmDevice, hibernationVolHandle, devices);
+                    continue;
+                }
                 if (VmDeviceCommonUtils.isInWhiteList(vmDevice.getType(), vmDevice.getDevice())) {
                     struct.put(VdsProperties.Type, vmDevice.getType().getValue());
                     struct.put(VdsProperties.Device, vmDevice.getDevice());
@@ -489,6 +494,21 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
         createInfo.put(VdsProperties.Custom, customMap);
         createInfo.put(DEVICES, devices);
+    }
+
+    /**
+     * Memory devices (originates from hotplugs) are sent to VDSM only if VM is being resumed
+     * from a snapshot with memory.
+     *
+     * @param vmDevice memory device
+     * @param hibernationVolHandle memory volume identifier if exists, empty string otherwise
+     * @param devices devices to be sent to VDSM
+     */
+    private void handleMemoryDevice(VmDevice vmDevice, String hibernationVolHandle, List<Map<String, Object>> devices) {
+        if (StringUtils.isEmpty(hibernationVolHandle)) {
+            return;
+        }
+        devices.add(MemoryUtils.createVmMemoryDeviceMap(vmDevice, true));
     }
 
     @Override

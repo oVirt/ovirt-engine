@@ -16,7 +16,7 @@ public class HotUnplugMemoryVDSCommand<P extends HotUnplugMemoryVDSCommand.Param
     protected void executeVdsBrokerCommand() {
         try {
             status = getBroker().hotUnplugMemory(
-                    MemoryUtils.createVmMemoryDeviceMap(getParameters().getMemoryDeviceToUnplug(), true));
+                    MemoryUtils.createHotplugMemoryParamsMap(getParameters().getMemoryDeviceToUnplug(), true));
             proceedProxyReturnValue();
         } catch (RuntimeException e) {
             setVdsRuntimeErrorAndReport(e);

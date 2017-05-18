@@ -34,7 +34,14 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
     @TransientField
     private int bootOrder;
 
-    /** The device special parameters. */
+    /**
+     * The device special parameters.
+     *
+     * <p>Map has to be of type Map{String, String|Map} where "Map" in value type follows
+     * the same restrictions recursively. This ensures specParams to be serializable to OVF
+     * in snapshots.
+     * See {@link org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter#writeMap}</p>
+     */
     private Map<String, Object> specParams;
 
     /** The device managed/unmanaged flag */
@@ -151,6 +158,7 @@ public class VmDevice implements IVdcQueryable, BusinessEntity<VmDeviceId>, Comp
         this.bootOrder = bootOrder;
     }
 
+    /** @see #specParams */
     public Map<String, Object> getSpecParams() {
         return specParams;
     }

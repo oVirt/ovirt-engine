@@ -469,7 +469,8 @@ public class SnapshotsManager {
             List<DiskImage> images,
             CompensationContext compensationContext,
             DbUser user,
-            VmInterfaceManager vmInterfaceManager) {
+            VmInterfaceManager vmInterfaceManager,
+            boolean withMemory) {
         boolean vmUpdatedFromConfiguration = false;
         if (snapshot.getVmConfiguration() != null) {
             vmUpdatedFromConfiguration = updateVmFromConfiguration(vm, snapshot.getVmConfiguration());
@@ -500,7 +501,7 @@ public class SnapshotsManager {
                 }
             }
 
-            vmDeviceUtils.addImportedDevices(vm.getStaticData(), false);
+            vmDeviceUtils.addImportedDevices(vm.getStaticData(), false, withMemory);
         }
     }
 
