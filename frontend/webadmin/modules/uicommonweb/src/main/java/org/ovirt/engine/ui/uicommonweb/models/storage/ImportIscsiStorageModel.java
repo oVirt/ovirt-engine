@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -106,11 +107,7 @@ public class ImportIscsiStorageModel extends ImportSanStorageModel {
     }
 
     private List<StorageServerConnections> getStorageServerConnections(List<SanTargetModel> targetModels) {
-        List<StorageServerConnections> connections = new ArrayList<>();
-        for (SanTargetModel targetModel : targetModels) {
-            connections.add(targetModel.getEntity());
-        }
-        return connections;
+        return targetModels.stream().map(SanTargetModel::getEntity).collect(Collectors.toList());
     }
 
     @Override
