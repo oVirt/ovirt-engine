@@ -270,7 +270,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
 
         case END_SUCCESS:
-            return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
+            if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+                return getSucceeded() ? AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_SUCCESS : getAuditLogFailureType();
+            }
+            return AuditLogType.UNASSIGNED;
 
         default:
             return getAuditLogFailureType();
