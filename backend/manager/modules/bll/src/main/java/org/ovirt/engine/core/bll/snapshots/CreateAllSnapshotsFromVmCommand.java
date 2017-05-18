@@ -65,6 +65,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -657,8 +658,22 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             return false;
         }
 
-        if (!isSpecifiedDisksExist(getParameters().getDiskIds())) {
-            return false;
+        Set<Guid> specifiedDiskIds = getParameters().getDiskIds();
+        if (specifiedDiskIds != null && !specifiedDiskIds.isEmpty()) {
+            if (!isSpecifiedDisksExist(specifiedDiskIds)) {
+                return false;
+            }
+
+            String notAllowSnapshot = diskDao.getAllForVm(getVm().getId()).stream()
+                    .filter(disk -> specifiedDiskIds.contains(disk.getId()))
+                    .filter(disk -> !disk.isAllowSnapshot())
+                    .map(BaseDisk::getDiskAlias)
+                    .collect(Collectors.joining(", "));
+
+            if (!notAllowSnapshot.isEmpty()) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_SNAPSHOT_NOT_SUPPORTED, String
+                        .format("$diskAliases %s", notAllowSnapshot));
+            }
         }
 
         // Initialize validators.
@@ -713,10 +728,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private boolean isSpecifiedDisksExist(Set<Guid> disks) {
-        if (disks == null || disks.isEmpty()) {
-            return true;
-        }
-
         DiskExistenceValidator diskExistenceValidator = createDiskExistenceValidator(disks);
         if (!validate(diskExistenceValidator.diskImagesNotExist())) {
             return false;
