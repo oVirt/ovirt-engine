@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,8 +28,6 @@ public class BackendSnapshotResourceTest
 
     private static final Guid VM_ID = GUIDS[0];
     private static final Guid SNAPSHOT_ID = GUIDS[1];
-    private static final Guid JOB_ID = GUIDS[2];
-    protected static final String BASE_HREF = "vms/" + VM_ID + "/snapshots/" + SNAPSHOT_ID;
 
     public BackendSnapshotResourceTest() {
         super(new BackendSnapshotResource(SNAPSHOT_ID.toString(), VM_ID, null));
@@ -167,13 +164,8 @@ public class BackendSnapshotResourceTest
                 new Object[] { VM_ID, SNAPSHOT_ID },
                 true,
                 true,
-                null,
-                null,
-                null,
-                JOB_ID,
-                JobExecutionStatus.FINISHED,
-                BASE_HREF + "/action",
-                false);
+                null
+        );
     }
 
     protected UriInfo setUpRestoreExpectations() {
