@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -24,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
                 + " on the same hypervisor host (positive) or on independent hypervisor hosts (negative)",
         type = PolicyUnitType.WEIGHT
 )
-public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
+public class VmAffinityWeightPolicyUnit extends VmAffinityPolicyUnit {
     private static final int DEFAULT_SCORE = 1;
 
     public VmAffinityWeightPolicyUnit(PolicyUnit policyUnit,
@@ -36,12 +35,11 @@ public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<Pair<Guid, Integer>> score(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters) {
         // reuse filter functionality with soft constraint
-        List<VDS> acceptableHostsList =
-                VmAffinityFilterPolicyUnit.getAcceptableHosts(false,
+        List<VDS> acceptableHostsList = getAcceptableHosts(false,
                         hosts,
                         vm,
-                        new PerHostMessages(),
-                        getPendingResourceManager());
+                        new PerHostMessages());
+
         Map<Guid, VDS> acceptableHostsMap = new HashMap<>();
         if (acceptableHostsList != null) {
             for (VDS acceptableHost : acceptableHostsList) {
