@@ -1083,6 +1083,8 @@ public interface UIConstants extends Constants {
 
     String storageDomainMustBeSpecifiedInvalidReason();
 
+    String atLeastOneDnsServerHasToBeConfigured();
+
     String theFieldMustContainTimeValueInvalidReason();
 
     String noteThisActionWillRemoveTemplatePermanentlyFromStorageDomains();

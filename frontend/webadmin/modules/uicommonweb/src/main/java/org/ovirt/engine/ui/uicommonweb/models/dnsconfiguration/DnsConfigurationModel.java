@@ -9,12 +9,16 @@ import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfigur
 import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class DnsConfigurationModel extends EntityModel<DnsResolverConfiguration> {
+
+    protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private final EntityModel<Boolean> shouldSetDnsConfiguration = new EntityModel<>();
     private final ListModel<NameServerModel> nameServerModelListModel = new ListModel<>();
@@ -105,23 +109,40 @@ public class DnsConfigurationModel extends EntityModel<DnsResolverConfiguration>
     }
 
     public boolean validate() {
-        if (!this.getShouldSetDnsConfiguration().getEntity()) {
+        if (!getShouldSetDnsConfiguration().getEntity()) {
+            setShouldSetDnsConfigurationValidity(true);
             setIsValid(true);
             return true;
         }
 
         Collection<NameServerModel> items = this.nameServerModelListModel.getItems();
-        boolean exceedingNumberOfAddresses =
-                items.size() > BusinessEntitiesDefinitions.MAX_SUPPORTED_DNS_CONFIGURATIONS;
+        int numberOfAddresses = items.size();
 
-        boolean isValid = !exceedingNumberOfAddresses;
+        boolean atLeastOneAddress = numberOfAddresses > 0;
+        boolean exceedingNumberOfAddresses =
+                numberOfAddresses > BusinessEntitiesDefinitions.MAX_SUPPORTED_DNS_CONFIGURATIONS;
+        boolean isValid = atLeastOneAddress && !exceedingNumberOfAddresses && validateNameserverAddresses(items);
+
+        setShouldSetDnsConfigurationValidity(atLeastOneAddress);
+        setIsValid(isValid);
+        return isValid;
+    }
+
+    private void setShouldSetDnsConfigurationValidity(boolean valid) {
+        List<String> invalidityReasons = getShouldSetDnsConfiguration().getInvalidityReasons();
+        if (!valid) {
+            invalidityReasons.add(constants.atLeastOneDnsServerHasToBeConfigured());
+        }
+        getShouldSetDnsConfiguration().setIsValid(valid);
+    }
+
+    private boolean validateNameserverAddresses(Collection<NameServerModel> items) {
+        boolean isValid = true;
         for (NameServerModel nameServerModel : items) {
             if (!nameServerModel.validate()) {
-                isValid = false;
+                 isValid = false;
             }
-
         }
-        setIsValid(isValid);
         return isValid;
     }
 }
