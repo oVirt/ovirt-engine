@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -230,7 +231,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
-    private ArrayList<SanTargetModel> targetsToConnect;
+    private List<SanTargetModel> targetsToConnect;
 
     protected SanStorageModelBase() {
         setHelpTag(HelpTag.SanStorageModelBase);
@@ -348,13 +349,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         // Cast to list of SanTargetModel because we get call
         // to this method only from target/LUNs mode.
         List<SanTargetModel> items = (List<SanTargetModel>) getItems();
-        targetsToConnect = new ArrayList<>();
-
-        for (SanTargetModel item : items) {
-            if (!item.getIsLoggedIn()) {
-                targetsToConnect.add(item);
-            }
-        }
+        targetsToConnect = items.stream().filter(item -> !item.getIsLoggedIn()).collect(Collectors.toList());
 
         connectTargets();
     }
@@ -809,12 +804,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     private void addLunModelSelectionEventListeners(List<LunModel> luns) {
-        for (LunModel lun : luns) {
-            // Adding PropertyEventListener to LunModel if needed
-            if (!lun.getPropertyChangedEvent().getListeners().contains(lunModelEventListener)) {
-                lun.getPropertyChangedEvent().addListener(lunModelEventListener);
-            }
-        }
+        // Adding PropertyEventListener to LunModel if needed
+        luns.stream().filter(lun -> !lun.getPropertyChangedEvent().getListeners().contains(lunModelEventListener))
+                .forEach(lun -> lun.getPropertyChangedEvent().addListener(lunModelEventListener));
     }
 
     private void mergeLunsToTargets(List<LunModel> newLuns, List<SanTargetModel> targets) {
@@ -917,11 +909,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
 
         // Merge with last discovered targets list.
-        for (SanTargetModel target : lastDiscoveredTargets) {
-            if (Linq.firstOrNull(list, new Linq.TargetPredicate(target)) == null) {
-                list.add(target);
-            }
-        }
+        lastDiscoveredTargets.stream().filter(target -> Linq.firstOrNull(list, new Linq.TargetPredicate(target)) == null)
+                .forEach(list::add);
 
         isTargetModelList = true;
 
@@ -956,12 +945,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     protected void isAllLunsSelectedChanged() {
         if (!getIsGrouppedByTarget()) {
-            List<LunModel> items = (List<LunModel>) getItems();
-            for (LunModel lun : items) {
-                if (!lun.getIsIncluded() && lun.getIsAccessible()) {
-                    lun.setIsSelected(getIsAllLunsSelected());
-                }
-            }
+            ((List<LunModel>) getItems()).stream().filter(lun -> !lun.getIsIncluded() && lun.getIsAccessible())
+                    .forEach(lun -> lun.setIsSelected(getIsAllLunsSelected()));
         }
     }
 
