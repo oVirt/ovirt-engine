@@ -16,9 +16,9 @@
     <module>frontend</module>
     <module>uicommonweb</module>
     <module>gwt-common</module>
+    <module>frontend-assemblies</module>
     <module>webadmin</module>
     <module>userportal-gwtp</module>
-    <module>frontend-symbols</module>
   </modules>
   <properties>
     <animal.sniffer.gwt.skip>false</animal.sniffer.gwt.skip>
@@ -33,7 +33,6 @@
     <gwtbootstrap3.version>0.8.1</gwtbootstrap3.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
     <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
-    <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
     <!-- Using older maven-processor-plugin version for Maven 2 compatibility -->
     <maven-processor-plugin.version>1.3.7</maven-processor-plugin.version>
     <!-- Activate load time weaving of aspects via AspectJ JVM agent -->

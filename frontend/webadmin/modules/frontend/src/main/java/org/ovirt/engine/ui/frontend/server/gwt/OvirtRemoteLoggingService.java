@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.logging.LogRecord;
 
 import javax.servlet.ServletConfig;
@@ -33,50 +37,52 @@ public class OvirtRemoteLoggingService extends RemoteServiceServlet implements R
      */
     private static final String APP_NAME = "applicationName"; //$NON-NLS-1$
 
-    // No de-obfuscator by default
-    private StackTraceDeobfuscator deobfuscator = null;
+    private StackTraceDeobfuscator deobfuscator;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-      super.init(config);
-      final String applicationName = getServletContext().getInitParameter(APP_NAME);
-      if (applicationName == null) {
-          throw new ServletException("Application name not specified"); //$NON-NLS-1$
-      }
-      File symbolMapDirectory = new File(EngineLocalConfig.getInstance().getUsrDir(),
-              "/gwt-symbols/" + applicationName + "/symbolMaps"); //$NON-NLS-1$ $NON-NLS-2$
-      boolean symbolMapsDirectoryExists = symbolMapDirectory.exists() && symbolMapDirectory.isDirectory();
-      File[] files = symbolMapDirectory.listFiles(new FilenameFilter() {
-          @Override
-          public boolean accept(File dir, String name) {
-              return name != null && name.toLowerCase().endsWith("symbolmap"); //$NON-NLS-1$
-          }
-      });
-      if(!symbolMapsDirectoryExists || files == null || files.length == 0) {
-          log.info("GWT symbolmaps are not installed, " //$NON-NLS-1$
-                  + "please install them to de-obfuscate the UI stack traces"); //$NON-NLS-1$
-      } else {
-          //Only set the symbolMaps directory if it passed the tests.
-          setSymbolMapsDirectory(symbolMapDirectory.getAbsolutePath()); //$NON-NLS-1$
-      }
+        super.init(config);
+
+        String applicationName = getServletContext().getInitParameter(APP_NAME);
+        if (applicationName == null) {
+            throw new ServletException("Application name not specified"); //$NON-NLS-1$
+        }
+
+        Path symbolMapDirectory = EngineLocalConfig.getInstance().getUsrDir().toPath().resolve("gwt-symbols"); //$NON-NLS-1$
+        Path symbolMapZipFile = symbolMapDirectory.resolve(applicationName + "/symbolMaps.zip"); //$NON-NLS-1$
+
+        try {
+            initDeobfuscator(FileSystems.newFileSystem(symbolMapZipFile, null));
+        } catch (Exception e) {
+            log.warn("Cannot read GWT symbol maps: " + symbolMapZipFile, e); //$NON-NLS-1$
+        }
+    }
+
+    private void initDeobfuscator(final FileSystem zipFs) {
+        deobfuscator = new StackTraceDeobfuscator() {
+            protected InputStream openInputStream(String fileName) throws IOException {
+                return Files.newInputStream(zipFs.getPath("/" + fileName)); //$NON-NLS-1$
+            }
+        };
     }
 
     /**
-     * Logs a Log Record which has been serialized using GWT RPC on the server.
+     * Logs a {@link LogRecord} on the server.
      *
-     * @return either an error message, or null if logging is successful.
+     * @return Either an error message, or null if logging was successful.
      */
     public final String logOnServer(LogRecord logRecord) {
         logOnServer(logRecord, getPermutationStrongName(), deobfuscator);
-        //Return something to satisfy the interface contract. consider returning de-obfuscated stack trace.
+        // Return null to indicate that remote logging operation was successful.
         return null;
     }
 
     /**
-     * Log a potentially de-obfuscated Log Record.
+     * Logs a potentially de-obfuscated {@link LogRecord}.
+     *
      * @param logRecord The log record to log.
-     * @param strongName The permutation name used to generate the obfuscated Log Record.
-     * @param deobfuscator The de-obfuscated, can be null.
+     * @param strongName GWT permutation strong name.
+     * @param deobfuscator Stack trace de-obfuscator, can be null.
      */
     private void logOnServer(LogRecord logRecord, String strongName, StackTraceDeobfuscator deobfuscator) {
         if (deobfuscator != null) {
@@ -86,11 +92,4 @@ public class OvirtRemoteLoggingService extends RemoteServiceServlet implements R
         log.error(logRecord.getMessage(), logRecord.getThrown());
     }
 
-    /**
-     * Set the file system location one can find the symbol maps at.
-     * @param symbolMapsDir The directory the symbol maps can be found at.
-     */
-    public void setSymbolMapsDirectory(String symbolMapsDir) {
-        deobfuscator = StackTraceDeobfuscator.fromFileSystem(symbolMapsDir);
-    }
 }
