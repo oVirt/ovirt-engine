@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -16,6 +17,9 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +30,9 @@ public class BlockStorageDomainHelper {
 
     @Inject
     private ResourceManager resourceManager;
+
+    @Inject
+    protected AuditLogDirector auditLogDirector;
 
     private BlockStorageDomainHelper() {
     }
@@ -42,7 +49,9 @@ public class BlockStorageDomainHelper {
             storageDomainStatic.setFirstMetadataDevice(domainFromIrs.getFirstMetadataDevice());
             storageDomainStatic.setVgMetadataDevice(domainFromIrs.getVgMetadataDevice());
         } catch (Exception e) {
-            log.info("Failed to get the domain info, ignoring");
+            storageDomainStatic.setFirstMetadataDevice(null);
+            storageDomainStatic.setVgMetadataDevice(null);
+            log.info("Failed to get the domain info");
         }
     }
 
@@ -64,5 +73,17 @@ public class BlockStorageDomainHelper {
         }
 
         return null;
+    }
+
+    public boolean checkDomainMetadataDevices(StorageDomain domain) {
+        if (domain.getVgMetadataDevice() == null || domain.getFirstMetadataDevice() == null) {
+            AuditLogableBase logable = Injector.injectMembers(new AuditLogableBase());
+            logable.addCustomValue("StorageDomainName", domain.getName());
+            logable.setStorageDomainId(domain.getId());
+            auditLogDirector.log(logable, AuditLogType.FAILED_DETERMINE_STORAGE_DOMAIN_METADATA_DEVICES);
+            return false;
+        }
+
+        return true;
     }
 }
