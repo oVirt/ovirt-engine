@@ -10,6 +10,9 @@
   <packaging>war</packaging>
   <name>WebAdmin</name>
   <description>oVirt Web based Administration GUI</description>
+  <properties>
+    <gwt.symbolMapDirectory>${project.build.directory}/generated-gwt/WEB-INF/deploy/webadmin/symbolMaps</gwt.symbolMapDirectory>
+  </properties>
   <dependencies>
     <!-- Google Web Toolkit dependencies -->
     <dependency>
@@ -252,7 +255,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
-        <version>${build-helper-maven-plugin.version}</version>
         <executions>
           <execution>
             <id>add-apt-sources</id>
@@ -298,16 +300,42 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
             <configuration>
-                <packagingExcludes>WEB-INF/deploy/**,WEB-INF/classes/**</packagingExcludes>
-                <webResources>
-                    <resource>
-                        <directory>${project.build.directory}/generated-gwt/webadmin</directory>
-                    </resource>
-                </webResources>
-                <archive>
-                    <addMavenDescriptor>false</addMavenDescriptor>
-                </archive>
+              <packagingExcludes>WEB-INF/deploy/**,WEB-INF/classes/**</packagingExcludes>
+              <webResources>
+                <resource>
+                  <directory>${project.build.directory}/generated-gwt/webadmin</directory>
+                </resource>
+              </webResources>
+              <archive>
+                <addMavenDescriptor>false</addMavenDescriptor>
+              </archive>
             </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>${engine.groupId}</groupId>
+                <artifactId>frontend-assemblies</artifactId>
+                <version>${engine.version}</version>
+              </dependency>
+            </dependencies>
+            <executions>
+              <execution>
+                <id>assemble-gwt-symbols</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptorRefs>
+                    <descriptorRef>gwt-symbols</descriptorRef>
+                  </descriptorRefs>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>
@@ -319,7 +347,6 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
-            <version>${build-helper-maven-plugin.version}</version>
             <executions>
               <execution>
                 <id>add-source</id>
