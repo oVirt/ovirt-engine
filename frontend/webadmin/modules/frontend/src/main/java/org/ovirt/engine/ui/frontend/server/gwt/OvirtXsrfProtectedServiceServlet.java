@@ -42,7 +42,7 @@ public class OvirtXsrfProtectedServiceServlet extends XsrfProtectedServiceServle
         List<String> header =
                 Collections.list(getThreadLocalRequest().getHeaders(XsrfRpcRequestBuilder.XSRF_TOKEN_HEADER));
         XsrfToken result = null;
-        if (header != null && header.size() == 1) {
+        if (header.size() == 1) {
             result = new XsrfToken(header.get(0));
         }
         return result;

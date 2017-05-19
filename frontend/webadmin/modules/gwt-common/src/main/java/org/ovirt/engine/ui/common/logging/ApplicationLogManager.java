@@ -28,7 +28,7 @@ public class ApplicationLogManager {
     @Inject
     public ApplicationLogManager(EventBus eventBus,
             ApplicationFocusManager applicationFocusManager,
-            final LocalStorageLogHandler localStorageLogHandler) {
+            LocalStorageLogHandler localStorageLogHandler) {
         this.rootLogger = Logger.getLogger(""); //$NON-NLS-1$
         this.remoteLogger = Logger.getLogger("remote"); //$NON-NLS-1$
         this.applicationFocusManager = applicationFocusManager;
