@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gwtbootstrap3.client.shared.event.AlertClosedEvent;
+import org.gwtbootstrap3.client.shared.event.AlertClosedHandler;
 import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Badge;
 import org.gwtbootstrap3.client.ui.constants.AlertType;
@@ -21,11 +22,13 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
 /**
  * Renders a PatternFly alert panel. @see https://www.patternfly.org/widgets/#alerts
@@ -62,6 +65,8 @@ public class AlertPanel extends Composite {
     private int count = 1;
     private List<SafeHtml> messagesList = new ArrayList<>();
 
+    private final HandlerRegistration closedHandlerReg;
+
     /**
      * The types of PatternFly alerts (currently 4).
      *
@@ -96,18 +101,32 @@ public class AlertPanel extends Composite {
      * Create a new alert panel of type 'info'.
      */
     public AlertPanel() {
-        //Need to override onClosed, this is called from JS code when closing the alert panel. The problem is that
-        //the Alert parent, is the AlertPanel, which doesn't implement HasWidgets. Since AlertPanel is a composite
-        //it is nearly impossible to have it implement HasWidget, and we also want to clean up the AlertPanel anyway
-        //So we override onClosed, and detach the AlertPanel from the DOM to clean it up.
         alert = new Alert() {
+            /**
+             * Need to override this method to avoid an exception thrown when
+             * the parent widget doesn't implement the HasWidgets interface.
+             */
             @Override
-            protected void onClosed(final Event evt) {
-                ElementTooltipUtils.hideAllTooltips();
-                RootPanel.detachNow(this);
-                fireEvent(new AlertClosedEvent(evt));
+            public void removeFromParent() {
+                Widget parent = getParent();
+                if (parent instanceof HasWidgets) {
+                    ((HasWidgets) parent).remove(this);
+                } else {
+                    if (RootPanel.isInDetachList(this)) {
+                        RootPanel.detachNow(this);
+                    }
+                }
             }
         };
+
+        closedHandlerReg = alert.addClosedHandler(new AlertClosedHandler() {
+            @Override
+            public void onClosed(AlertClosedEvent evt) {
+                ElementTooltipUtils.hideAllTooltips();
+                closedHandlerReg.removeHandler();
+            }
+        });
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this).asWidget());
         setType(Type.INFO);
         setWidgetColumnSize(ColumnSize.SM_11);
