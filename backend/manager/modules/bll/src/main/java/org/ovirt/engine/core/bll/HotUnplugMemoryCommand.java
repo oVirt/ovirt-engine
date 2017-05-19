@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll;
 
+import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.SPEC_PARAM_NODE;
+import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.SPEC_PARAM_SIZE;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,6 +89,20 @@ public class HotUnplugMemoryCommand<P extends HotUnplugMemoryParameters> extends
                     EngineMessage.ACTION_TYPE_FAILED_VM_MEMORY_DEVICE_DOESNT_EXIST,
                     ReplacementUtils.createSetVariableString(
                             "deviceId", getParameters().getDeviceId()));
+        }
+        if (!VmDeviceCommonUtils.getSpecParamsIntValue(getDeviceToHotUnplug(), SPEC_PARAM_SIZE)
+                .isPresent()) {
+            return failValidation(
+                    EngineMessage.ACTION_TYPE_FAILED_REQUIRED_SPEC_PARAM_IS_MISSING,
+                    ReplacementUtils.createSetVariableString("deviceId", getDeviceToHotUnplug().getId()),
+                    ReplacementUtils.createSetVariableString("specParamName", SPEC_PARAM_SIZE));
+        }
+        if (!VmDeviceCommonUtils.getSpecParamsIntValue(getDeviceToHotUnplug(), SPEC_PARAM_NODE)
+                .isPresent()) {
+            return failValidation(
+                    EngineMessage.ACTION_TYPE_FAILED_REQUIRED_SPEC_PARAM_IS_MISSING,
+                    ReplacementUtils.createSetVariableString("deviceId", getDeviceToHotUnplug().getId()),
+                    ReplacementUtils.createSetVariableString("specParamName", SPEC_PARAM_NODE));
         }
         return true;
     }
