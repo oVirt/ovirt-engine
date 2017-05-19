@@ -488,13 +488,13 @@ class Plugin(plugin.PluginBase):
         ]
 
         modified_parameters = {
-            'cert-file':
+            'ssl-cert-file':
                 oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_CERT,
-            'key-file':
+            'ssl-key-file':
                 oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_HTTPS_KEY,
-            'cacert-file':
+            'ssl-cacert-file':
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-            'ssl_enabled':
+            'https-enabled':
                 'true',
             'ovn-remote':
                 '%s:127.0.0.1:%s' % (
