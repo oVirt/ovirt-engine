@@ -38,10 +38,8 @@ from ovirt_engine import configfile
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine.constants import Defaults
 from ovirt_engine_setup.engine.constants import FileLocations
 from ovirt_engine_setup.engine.constants import OvnEnv
-from ovirt_engine_setup.engine.constants import OvnFileLocations
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 from ovirt_setup_lib import dialog
@@ -106,19 +104,6 @@ class Plugin(plugin.PluginBase):
         self._manual_commands = []
         self._failed_commands = []
 
-    @plugin.event(
-        stage=plugin.Stages.STAGE_INIT,
-    )
-    def _init(self):
-        self.environment.setdefault(
-            OvnEnv.FIREWALLD_SERVICES_DIR,
-            OvnFileLocations.DEFAULT_FIREWALLD_SERVICES_DIR
-        )
-        self.environment.setdefault(
-            OvnEnv.OVN_FIREWALLD_SERVICES,
-            Defaults.DEFAULT_OVN_FIREWALLD_SERVICES
-        )
-
     def _add_provider_to_db(self):
         auth_required = self._user is not None
         fqdn = self.environment[osetupcons.ConfigEnv.FQDN]
@@ -170,30 +155,6 @@ class Plugin(plugin.PluginBase):
                 'packages': self.OVN_PACKAGES
             },
         )
-
-    def _setup_firewalld_services(self):
-        services = [
-            s.strip()
-            for s in self.environment[
-                OvnEnv.OVN_FIREWALLD_SERVICES
-            ].split(',')
-        ]
-
-        # TODO: handle services that were copied over to
-        # /etc/firewalld/services
-        services_dir = self.environment[
-            OvnEnv.FIREWALLD_SERVICES_DIR
-        ]
-
-        for service in services:
-            self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
-                {
-                    'name': service,
-                    'absolute_path': os.path.join(
-                        services_dir, '%s.xml' % (service,)
-                    )
-                },
-            ])
 
     def _prompt_for_credentials(self):
         user = self._query_ovn_user()
@@ -509,7 +470,6 @@ class Plugin(plugin.PluginBase):
         if not self._enabled:
             return
         self._setup_packages()
-        self._setup_firewalld_services()
 
     def _print_commands(self, message, commands):
         self.dialog.note(
