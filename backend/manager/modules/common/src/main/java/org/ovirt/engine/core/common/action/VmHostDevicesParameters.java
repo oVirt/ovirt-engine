@@ -20,7 +20,7 @@ public class VmHostDevicesParameters extends VmOperationParameterBase {
     }
 
     public VmHostDevicesParameters() {
-        this(Guid.Empty, Collections.<String>emptyList());
+        this(Guid.Empty, Collections.emptyList());
     }
 
     public List<String> getDeviceNames() {
