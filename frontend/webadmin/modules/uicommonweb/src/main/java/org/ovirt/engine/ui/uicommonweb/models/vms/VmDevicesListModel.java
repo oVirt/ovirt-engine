@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 import org.ovirt.engine.core.common.action.HotUnplugMemoryParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -86,10 +88,14 @@ public class VmDevicesListModel<E extends VM>
         if (deviceEntity == null || deviceEntity.getVmDevice().getType() != VmDeviceGeneralType.MEMORY) {
             return;
         }
-        final Integer memorySizeMb = (Integer) deviceEntity.getVmDevice().getSpecParams().get("size"); //$NON-NLS-1$
-        if (memorySizeMb == null) {
+
+        final Optional<Integer> memorySizeOptional =
+                VmDeviceCommonUtils.getSizeOfMemoryDeviceMb(deviceEntity.getVmDevice());
+        if (!memorySizeOptional.isPresent()) {
             return;
         }
+        final int memorySizeMb = memorySizeOptional.get();
+
         setSelectedItem(deviceEntity);
         ConfirmationModel confirmationModel = new ConfirmationModel();
 
