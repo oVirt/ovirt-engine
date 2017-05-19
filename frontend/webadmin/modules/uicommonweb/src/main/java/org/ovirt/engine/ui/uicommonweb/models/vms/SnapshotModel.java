@@ -367,8 +367,9 @@ public class SnapshotModel extends EntityModel<Snapshot> {
 
         VM vm = getVm();
         ArrayList<VdcActionParametersBase> params = new ArrayList<>();
-        Set<Guid> snapshotDisksIds =
-                getSnapshotDisks().getSelectedItems().stream()
+        Set<Guid> snapshotDisksIds = getSnapshotDisks().getSelectedItems() == null
+                ? Collections.emptySet()
+                : getSnapshotDisks().getSelectedItems().stream()
                         .map(BaseDisk::getId)
                         .collect(Collectors.toSet());
 
