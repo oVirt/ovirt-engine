@@ -92,7 +92,7 @@ public class NlsCheck extends AbstractCheck {
                 if (matchNum != 1) {
                     log(i, "String on line " + i + " (at index " + str.startIndex + ") is non-localized.\n" +
                             "Please localize it via Constants/Messages interface " +
-                            "or use //$NON-NLS-" + j + "$" + " comment to indicate that it shouldn't be localized.");
+                            "or use //$NON-NLS-" + j + "$" + " comment to indicate that it shouldn''t be localized.");
                 }
             }
         }
