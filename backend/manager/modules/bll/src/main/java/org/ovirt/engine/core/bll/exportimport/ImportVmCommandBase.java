@@ -17,6 +17,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockMessage;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.PredefinedRoles;
+import org.ovirt.engine.core.bll.UniquePermissionsSet;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
@@ -35,9 +38,11 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -441,9 +446,35 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             addVmDynamic();
             addVmStatistics();
             addVmInterfaces();
+            addVmPermission();
             getCompensationContext().stateChanged();
             return null;
         });
+    }
+
+    private void addVmPermission() {
+        UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
+        if (isMakeCreatorExplicitOwner()) {
+            permissionsToAdd.addPermission(
+                    getCurrentUser().getId(),
+                    PredefinedRoles.VM_OPERATOR.getId(),
+                    getVmId(), VdcObjectType.VM);
+        }
+
+        if (!permissionsToAdd.isEmpty()) {
+            List<Permission> permissionsList = permissionsToAdd.asPermissionList();
+            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
+
+            getCompensationContext().snapshotNewEntities(permissionsList);
+        }
+    }
+
+    private boolean isMakeCreatorExplicitOwner() {
+        return getCurrentUser() != null && !checkUserAuthorization(
+                getCurrentUser().getId(),
+                ActionGroup.MANIPULATE_PERMISSIONS,
+                getVmId(),
+                VdcObjectType.VM);
     }
 
     protected void addVmStatic() {
