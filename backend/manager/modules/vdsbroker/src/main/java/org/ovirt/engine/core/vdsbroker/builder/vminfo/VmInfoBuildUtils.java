@@ -689,7 +689,7 @@ public class VmInfoBuildUtils {
     }
 
     public void addVmGraphicsOptions(Map<GraphicsType, GraphicsInfo> infos, Map<String, Object> params, VM vm) {
-        if (infos != null && infos.containsKey(GraphicsType.SPICE)) {
+        if (infos.containsKey(GraphicsType.SPICE)) {
             params.put(VdsProperties.spiceFileTransferEnable,
                     Boolean.toString(vm.isSpiceFileTransferEnabled()));
             params.put(VdsProperties.spiceCopyPasteEnable,
@@ -701,7 +701,7 @@ public class VmInfoBuildUtils {
             }
         }
 
-        if (infos != null && infos.containsKey(GraphicsType.VNC)) {
+        if (infos.containsKey(GraphicsType.VNC)) {
             String keyboardLayout = vm.getDynamicData().getVncKeyboardLayout();
             if (keyboardLayout == null) {
                 keyboardLayout = vm.getDefaultVncKeyboardLayout();

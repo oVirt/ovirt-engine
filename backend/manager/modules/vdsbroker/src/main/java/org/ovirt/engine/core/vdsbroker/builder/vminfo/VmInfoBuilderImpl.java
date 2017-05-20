@@ -132,14 +132,10 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         }
 
         Map<GraphicsType, GraphicsInfo> infos = vm.getGraphicsInfos();
+        Map<String, Object> specParamsFromVm = new HashMap<>();
+        vmInfoBuildUtils.addVmGraphicsOptions(infos, specParamsFromVm, vm);
 
-        Map<String, Object> specParamsFromVm = null;
-        if (infos != null) {
-            specParamsFromVm = new HashMap<>();
-            vmInfoBuildUtils.addVmGraphicsOptions(infos, specParamsFromVm, vm);
-        }
-
-        if (vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty()) {
+        if (vm.isRunOnce() && !infos.isEmpty()) {
             // graphics devices that are in the database are overridden
             // by those specified in the run once configuration
             buildVmGraphicsDevicesOverridden(infos, specParamsFromVm);
