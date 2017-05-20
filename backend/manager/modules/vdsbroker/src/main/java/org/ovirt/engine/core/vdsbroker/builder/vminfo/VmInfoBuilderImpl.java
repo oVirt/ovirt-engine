@@ -126,10 +126,8 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
 
     @Override
     public void buildVmGraphicsDevices() {
-        boolean graphicsOverridden = vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty();
-        boolean isHeadlessMode = vm.getDefaultDisplayType() == DisplayType.none;
-
-        if (isHeadlessMode) {
+        if (vm.getDefaultDisplayType() == DisplayType.none) {
+            // headless mode, no graphics device is needed
             return;
         }
 
@@ -141,7 +139,9 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             vmInfoBuildUtils.addVmGraphicsOptions(infos, specParamsFromVm, vm);
         }
 
-        if (graphicsOverridden) {
+        if (vm.isRunOnce() && vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty()) {
+            // graphics devices that are in the database are overridden
+            // by those specified in the run once configuration
             buildVmGraphicsDevicesOverridden(infos, specParamsFromVm);
         } else {
             buildVmGraphicsDevicesFromDb(specParamsFromVm);
