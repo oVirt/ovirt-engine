@@ -270,7 +270,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             sanTargetModel_LoggedIn(sender);
         }
         else if (ev.matchesDefinition(entityChangedEventDefinition)) {
-            useUserAuth_EntityChanged();
+            updateUserAuthFields();
         }
     }
 
@@ -432,10 +432,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setIsValid(isValid);
 
         return getIsValid();
-    }
-
-    private void useUserAuth_EntityChanged() {
-        updateUserAuthFields();
     }
 
     private void updateUserAuthFields() {
