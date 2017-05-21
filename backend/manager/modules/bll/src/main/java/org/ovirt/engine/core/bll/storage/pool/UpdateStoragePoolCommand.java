@@ -1,11 +1,7 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -15,7 +11,6 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
@@ -24,10 +19,11 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.action.SyncLunsParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -38,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -47,7 +42,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -82,7 +76,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
         updateStoragePoolFormatType();
         updateAllClustersMacPool();
-        syncLunsForBlockStorageDomains();
+        syncAllUsedLunsInStoragePool();
         setSucceeded(true);
     }
 
@@ -97,49 +91,20 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
     }
 
-    private void syncLunsForBlockStorageDomains() {
+    /**
+     * Synchronizes all the direct luns that are attached to a vm in the storage pool,
+     * and all the active block storage domains' luns.
+     */
+    private void syncAllUsedLunsInStoragePool() {
         if (!FeatureSupported.discardAfterDeleteSupported(getOldStoragePool().getCompatibilityVersion()) &&
                 FeatureSupported.discardAfterDeleteSupported(getStoragePool().getCompatibilityVersion())) {
-            // Discard was not supported, and now it should be.
-            Collection<Guid> unSyncedStorageDomains =
-                    syncLunsForStorageDomains(storageDomainDao.getAllForStoragePool(getStoragePoolId()));
-            if (!unSyncedStorageDomains.isEmpty()) {
-                String unSyncedStorageDomainsList = unSyncedStorageDomains.stream()
-                        .map(Guid::toString)
-                        .collect(Collectors.joining(", "));
-                addCustomValue("StorageDomainsIds", unSyncedStorageDomainsList);
-                auditLogDirector.log(this, AuditLogType.STORAGE_DOMAINS_COULD_NOT_BE_SYNCED);
-            }
+            /*
+            - Discard was not supported, and now it should be.
+            - We don't want to fail the whole storage pool upgrade because some of the
+              luns could not be synced, so SyncAllUsedLuns only logs errors on such cases.
+             */
+            runInternalAction(VdcActionType.SyncAllUsedLuns, new SyncLunsParameters(getStoragePoolId()));
         }
-    }
-
-    /**
-     * Gets a collection of storage domains and calls
-     * SyncLunsInfoForBlockStorageDomainCommand for each active block
-     * domain with a random active host in the dc.
-     * @param storageDomains a collection of storage domains to sync.
-     * @return the storage domains that could not be synced.
-     */
-    protected Collection<Guid> syncLunsForStorageDomains(Collection<StorageDomain> storageDomains) {
-        List<Callable<Pair<Boolean, Guid>>> syncLunsCommands = storageDomains.stream()
-                .filter(storageDomain -> StorageDomainStatus.Active == storageDomain.getStatus())
-                .filter(storageDomain -> storageDomain.getStorageType().isBlockDomain())
-                .map(storageDomain -> (Callable<Pair<Boolean, Guid>>) () -> syncDomainLuns(storageDomain))
-                .collect(Collectors.toList());
-        if (syncLunsCommands.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return ThreadPoolUtil.invokeAll(syncLunsCommands).stream()
-                .filter(domainSyncedPair -> !domainSyncedPair.getFirst())
-                .map(Pair::getSecond)
-                .collect(Collectors.toList());
-    }
-
-    protected Pair<Boolean, Guid> syncDomainLuns(StorageDomain storageDomain) {
-        return new Pair<>(
-                StorageHelperDirector.getInstance()
-                        .getItem(storageDomain.getStorageType()).syncDomainInfo(storageDomain, null),
-                storageDomain.getId());
     }
 
     private void updateQuotaCache() {
