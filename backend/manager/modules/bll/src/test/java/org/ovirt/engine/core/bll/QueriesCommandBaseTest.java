@@ -31,25 +31,28 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     @Mock
     private DbUser mockDbUser;
 
+    @Mock
+    private VdcQueryParametersBase params;
+
     /* Getters and Setters tests */
 
     /** Test {@link QueriesCommandBase#isInternalExecution()} and {@link QueriesCommandBase#setInternalExecution(boolean)} */
     @Test
     public void testIsInternalExecutionDefault() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
         assertFalse("By default, a query should not be marked for internal execution", query.isInternalExecution());
     }
 
     @Test
     public void testIsInternalExecutionTrue() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
         query.setInternalExecution(true);
         assertTrue("Query should be marked for internal execution", query.isInternalExecution());
     }
 
     @Test
     public void testIsInternalExecutionFalse() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
 
         // Set as true, then override with false
         query.setInternalExecution(true);
@@ -61,7 +64,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     /** Test that an "oddly" typed query will be considered unknown */
     @Test
     public void testUnknownQuery() throws Exception {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
         assertEquals("Wrong type for 'ThereIsNoSuchQuery' ",
                 VdcQueryType.Unknown,
                 TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
@@ -87,7 +90,6 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
                         String sessionId = getClass().getSimpleName();
 
                         // Mock parameters
-                        VdcQueryParametersBase params = mock(VdcQueryParametersBase.class);
                         when(params.isFiltered()).thenReturn(isFiltered);
                         when(params.getSessionId()).thenReturn(sessionId);
 
@@ -99,7 +101,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
                         when(mockSessionDataContainer.getUser(sessionId, false)).thenReturn(mockDbUser);
 
                         // Mock-Set the query as admin/user
-                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
+                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
                         TestHelperQueriesCommandType.setQueryTypeFieldValue(query, queryType);
 
                         query.setInternalExecution(isInternalExecution);
@@ -120,16 +122,16 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
         when(mockDbUser.getId()).thenReturn(Guid.EVERYONE);
         String session = UUID.randomUUID().toString();
         when(mockSessionDataContainer.getUser(session, false)).thenReturn(mockDbUser);
-        VdcQueryParametersBase params = new VdcQueryParametersBase(session);
-        params.setRefresh(false);
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(params);
+        when(params.getSessionId()).thenReturn(session);
+        when(params.getRefresh()).thenReturn(false);
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
 
         assertEquals("wrong guid", Guid.EVERYONE, query.getUserID());
     }
 
     @Test
     public void testGetUserIDWithNoUser() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(new VdcQueryParametersBase());
+        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
 
         assertNull("wrong guid", query.getUserID());
     }
@@ -145,8 +147,8 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     /** A stub class that will cause the {@link VdcQueryType#Unknown} to be used */
     private class ThereIsNoSuchQuery extends QueriesCommandBase<VdcQueryParametersBase> {
 
-        public ThereIsNoSuchQuery(VdcQueryParametersBase parameters) {
-            super(parameters);
+        public ThereIsNoSuchQuery() {
+            super(params);
             postConstruct();
         }
 
