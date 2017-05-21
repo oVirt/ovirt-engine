@@ -4,13 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import org.jgroups.util.UUID;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -39,20 +42,20 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     /** Test {@link QueriesCommandBase#isInternalExecution()} and {@link QueriesCommandBase#setInternalExecution(boolean)} */
     @Test
     public void testIsInternalExecutionDefault() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
+        QueriesCommandBase<?> query = mockQuery();
         assertFalse("By default, a query should not be marked for internal execution", query.isInternalExecution());
     }
 
     @Test
     public void testIsInternalExecutionTrue() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
+        QueriesCommandBase<?> query = mockQuery();
         query.setInternalExecution(true);
         assertTrue("Query should be marked for internal execution", query.isInternalExecution());
     }
 
     @Test
     public void testIsInternalExecutionFalse() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
+        QueriesCommandBase<?> query = mockQuery();
 
         // Set as true, then override with false
         query.setInternalExecution(true);
@@ -64,7 +67,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     /** Test that an "oddly" typed query will be considered unknown */
     @Test
     public void testUnknownQuery() throws Exception {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
+        QueriesCommandBase<?> query = mockQuery();
         assertEquals("Wrong type for 'ThereIsNoSuchQuery' ",
                 VdcQueryType.Unknown,
                 TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
@@ -101,7 +104,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
                         when(mockSessionDataContainer.getUser(sessionId, false)).thenReturn(mockDbUser);
 
                         // Mock-Set the query as admin/user
-                        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
+                        QueriesCommandBase<?> query = mockQuery();
                         TestHelperQueriesCommandType.setQueryTypeFieldValue(query, queryType);
 
                         query.setInternalExecution(isInternalExecution);
@@ -124,16 +127,24 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
         when(mockSessionDataContainer.getUser(session, false)).thenReturn(mockDbUser);
         when(params.getSessionId()).thenReturn(session);
         when(params.getRefresh()).thenReturn(false);
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
+        QueriesCommandBase<?> query = mockQuery();
 
         assertEquals("wrong guid", Guid.EVERYONE, query.getUserID());
     }
 
     @Test
     public void testGetUserIDWithNoUser() {
-        ThereIsNoSuchQuery query = new ThereIsNoSuchQuery();
+        QueriesCommandBase<?> query = mockQuery();
 
         assertNull("wrong guid", query.getUserID());
+    }
+
+    private QueriesCommandBase<?> mockQuery() {
+        QueriesCommandBase<?> query = mock(QueriesCommandBase.class,
+                withSettings().useConstructor(params).defaultAnswer(Answers.CALLS_REAL_METHODS));
+        doReturn(mockSessionDataContainer).when(query).getSessionDataContainer();
+        query.postConstruct();
+        return query;
     }
 
     /* Test Utilities */
@@ -142,24 +153,5 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     @After
     public void clearSession() {
         CorrelationIdTracker.clean();
-    }
-
-    /** A stub class that will cause the {@link VdcQueryType#Unknown} to be used */
-    private class ThereIsNoSuchQuery extends QueriesCommandBase<VdcQueryParametersBase> {
-
-        public ThereIsNoSuchQuery() {
-            super(params);
-            postConstruct();
-        }
-
-        @Override
-        protected void executeQueryCommand() {
-            // Stub method, do nothing
-        }
-
-        @Override
-        protected SessionDataContainer getSessionDataContainer() {
-            return mockSessionDataContainer;
-        }
     }
 }
