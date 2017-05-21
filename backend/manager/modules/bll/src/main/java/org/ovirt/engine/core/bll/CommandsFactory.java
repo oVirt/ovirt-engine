@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 public final class CommandsFactory {
     private static final Logger log = LoggerFactory.getLogger(CommandsFactory.class);
-    private static final String CLASS_NAME_FORMAT = "%1$s.%2$s%3$s";
+    private static final String CLASS_NAME_FORMAT = "%1$s.%2$s";
     private static final String COMMAND_SUFFIX = "Command";
     private static final String QUERY_SUFFIX = "Query";
     private static final String CTOR_MISMATCH =
@@ -169,24 +169,21 @@ public final class CommandsFactory {
     }
 
     private static Class<?> getCommandClass(String name, String suffix) {
-        // try the cache first
         String key = name + suffix;
-        Class<?> clazz = commandsCache.get(key);
-        if (clazz != null) {
-            return clazz;
-        }
+        return commandsCache.computeIfAbsent(key, CommandsFactory::findClass);
+    }
 
+    private static Class<?> findClass(String simpleName) {
         for (String commandPackage : COMMAND_PACKAGES) {
-            String className = String.format(CLASS_NAME_FORMAT, commandPackage, name, suffix);
+            String className = String.format(CLASS_NAME_FORMAT, commandPackage, simpleName);
             Class<?> type = loadClass(className);
             if (type != null) {
-                Class<?> cachedType = commandsCache.putIfAbsent(key, type); // update cache
-                return cachedType == null ? type : cachedType;
+                return type;
             }
         }
 
         // nothing found
-        log.warn("Unable to find class for action '{}'", key);
+        log.warn("Unable to find class for action '{}'", simpleName);
         return null;
     }
 
