@@ -44,6 +44,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String CUSTOM_CPU_TYPE = "CUSTOM_CPU_TYPE";
     public static final String COMPATIBILITY_LEVEL = "COMPATIBILITY_LEVEL";
     public static final String CREATED_BY_USER_ID = "CREATED_BY_USER_ID";
+    public static final String NEXT_RUN_CONFIG_EXISTS = "NEXT_RUN_CONFIG_EXISTS";
     private static final int MILISECOND = 1000;
 
     public VmConditionFieldAutoCompleter() {
@@ -78,6 +79,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         verbs.add(CUSTOM_CPU_TYPE);
         verbs.add(COMPATIBILITY_LEVEL);
         verbs.add(CREATED_BY_USER_ID);
+        verbs.add(NEXT_RUN_CONFIG_EXISTS);
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -112,6 +114,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(CUSTOM_CPU_TYPE, String.class);
         getTypeDictionary().put(COMPATIBILITY_LEVEL, String.class);
         getTypeDictionary().put(CREATED_BY_USER_ID, UUID.class);
+        getTypeDictionary().put(NEXT_RUN_CONFIG_EXISTS, Boolean.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vm_name");
@@ -144,6 +147,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(CUSTOM_CPU_TYPE, "custom_cpu_name");
         columnNameDict.put(COMPATIBILITY_LEVEL, "cluster_compatibility_version");
         columnNameDict.put(CREATED_BY_USER_ID, "created_by_user_id");
+        columnNameDict.put(NEXT_RUN_CONFIG_EXISTS, "next_run_config_exists");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put(IP, Collections.singletonList(
@@ -184,6 +188,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
             return new NullableStringAutoCompleter();
         } else if (ARCHITECTURE.equals(fieldName)) {
             return new EnumValueAutoCompleter(ArchitectureType.class);
+        } else if (NEXT_RUN_CONFIG_EXISTS.equals(fieldName)) {
+            return new BitValueAutoCompleter();
         }
         return null;
     }
