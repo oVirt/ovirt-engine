@@ -37,14 +37,14 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     @Test
     public void testIsInternalExecutionDefault() {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
-        assertFalse("By default, a query should not be marked for internel execution", query.isInternalExecution());
+        assertFalse("By default, a query should not be marked for internal execution", query.isInternalExecution());
     }
 
     @Test
     public void testIsInternalExecutionTrue() {
         ThereIsNoSuchQuery query = new ThereIsNoSuchQuery(mock(VdcQueryParametersBase.class));
         query.setInternalExecution(true);
-        assertTrue("Query should be marked for internel execution", query.isInternalExecution());
+        assertTrue("Query should be marked for internal execution", query.isInternalExecution());
     }
 
     @Test
@@ -55,7 +55,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
         query.setInternalExecution(true);
         query.setInternalExecution(false);
 
-        assertFalse("Query should not be marked for internel execution", query.isInternalExecution());
+        assertFalse("Query should not be marked for internal execution", query.isInternalExecution());
     }
 
     /** Test that an "oddly" typed query will be considered unknown */
