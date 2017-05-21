@@ -75,7 +75,7 @@ public final class CommandsFactory {
     }
 
     private static ConcurrentMap<String, Class<CommandBase<? extends VdcActionParametersBase>>> commandsCache =
-            new ConcurrentHashMap<>(VdcActionType.values().length);
+            new ConcurrentHashMap<>();
 
     public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
         return createCommand(action, parameters, null);
