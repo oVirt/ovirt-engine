@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -85,16 +86,8 @@ public class NfsStorageModel extends FileStorageModel {
         getRetransmissions().setEntity(connection.getNfsRetrans());
         getTimeout().setEntity(connection.getNfsTimeo());
         getMountOptions().setEntity(connection.getMountOptions());
-        for (EntityModel<NfsVersion> item : getVersion().getItems()) {
-            boolean noNfsVersion = item.getEntity() == null && connection.getNfsVersion() == null;
-            boolean foundNfsVersion = item.getEntity() != null &&
-                    item.getEntity().equals(connection.getNfsVersion());
-
-            if (noNfsVersion || foundNfsVersion) {
-                getVersion().setSelectedItem(item);
-                break;
-            }
-        }
+        getVersion().getItems().stream().filter(i -> Objects.equals(i.getEntity(), connection.getNfsVersion()))
+                .findFirst().ifPresent(i -> getVersion().setSelectedItem(i));
     }
 
     private ListModel<EntityModel<NfsVersion>> version;
