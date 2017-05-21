@@ -6,9 +6,12 @@ import static org.ovirt.engine.core.bll.storage.disk.image.DisksFilter.ONLY_SNAP
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.common.action.CreateAllTemplateDisksParameters;
@@ -20,6 +23,9 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class CreateAllTemplateDisksFromSnapshotCommand<T extends CreateAllTemplateDisksParameters> extends CreateAllTemplateDisksCommand<T> {
 
+    @Inject
+    protected VmHandler vmHandler;
+
     public CreateAllTemplateDisksFromSnapshotCommand(Guid commandId) {
         super(commandId);
     }
@@ -30,6 +36,7 @@ public class CreateAllTemplateDisksFromSnapshotCommand<T extends CreateAllTempla
 
     @Override
     protected List<DiskImage> getVmDisksFromDb() {
+        vmHandler.updateDisksFromDb(getVm());
         List<DiskImage> disksFromDb =
                 DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_SNAPABLE, ONLY_ACTIVE);
         disksFromDb.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
