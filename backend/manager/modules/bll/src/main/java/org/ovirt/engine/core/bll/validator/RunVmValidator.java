@@ -235,7 +235,7 @@ public class RunVmValidator {
     }
 
     private Set<GraphicsType> getVmActiveGraphics() {
-        if (vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty()) { // graphics overriden in runonce
+        if (!vm.getGraphicsInfos().isEmpty()) { // graphics overriden in runonce
             return vm.getGraphicsInfos().keySet();
         } else {
             List<VmDevice> graphicDevices =
