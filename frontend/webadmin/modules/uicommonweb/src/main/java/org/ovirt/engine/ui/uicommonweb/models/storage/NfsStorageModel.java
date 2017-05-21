@@ -33,7 +33,7 @@ public class NfsStorageModel extends FileStorageModel {
     //timeo nfs option max value
     private static final short TIMEOUT_MAX = 6000;
 
-    public static final EventDefinition pathChangedEventDefinition;
+    public static final EventDefinition pathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class); //$NON-NLS-1$;
     private Event<EventArgs> pathChangedEvent;
 
     public Event<EventArgs> getPathChangedEvent() {
@@ -128,11 +128,6 @@ public class NfsStorageModel extends FileStorageModel {
 
     private void setMountOptions(EntityModel<String> value) {
         mountOptions = value;
-    }
-
-    static {
-
-        pathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class); //$NON-NLS-1$
     }
 
     public NfsStorageModel() {
