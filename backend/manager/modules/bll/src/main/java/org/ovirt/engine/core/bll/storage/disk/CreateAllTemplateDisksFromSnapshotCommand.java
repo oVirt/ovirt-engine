@@ -30,6 +30,7 @@ public class CreateAllTemplateDisksFromSnapshotCommand<T extends CreateAllTempla
 
     @Override
     protected List<DiskImage> getVmDisksFromDb() {
+        vmHandler.updateDisksFromDb(getVm());
         List<DiskImage> disksFromDb =
                 DisksFilter.filterImageDisks(getVm().getDiskMap().values(), ONLY_SNAPABLE, ONLY_ACTIVE);
         disksFromDb.addAll(DisksFilter.filterCinderDisks(getVm().getDiskMap().values(), ONLY_PLUGGED));
