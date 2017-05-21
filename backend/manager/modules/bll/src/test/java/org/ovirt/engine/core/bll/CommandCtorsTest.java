@@ -26,7 +26,7 @@ import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public class CommandCtorsTest {
 
-    private static Collection<Class<CommandBase<? extends VdcActionParametersBase>>> commandClasses;
+    private static Collection<Class<?>> commandClasses;
 
     private static Predicate<Constructor<?>> parametersAndContextConstructorSignature;
 
@@ -156,10 +156,10 @@ public class CommandCtorsTest {
                         constructor.getDeclaringClass().getAnnotation(NonTransactiveCommandAttribute.class)
                                 .forceCompensation();
 
-        Predicate<Class<CommandBase<? extends VdcActionParametersBase>>> classLacksParamsAndContextCtor =
+        Predicate<Class<?>> classLacksParamsAndContextCtor =
                 getPredicateForNoCtorMatchesGivenPredicate(parametersAndContextConstructorSignature);
 
-        Predicate<Class<CommandBase<? extends VdcActionParametersBase>>> classLacksGuidCtor =
+        Predicate<Class<?>> classLacksGuidCtor =
                 getPredicateForNoCtorMatchesGivenPredicate(classForcesCompensation.negate().or(guidConstructorSignature));
 
         List<String> commandsWithoutMandatoryConstructor =
@@ -175,7 +175,7 @@ public class CommandCtorsTest {
                 "attribute is set to true.", commandsWithoutMandatoryConstructor, empty());
     }
 
-    private Predicate<Class<CommandBase<? extends VdcActionParametersBase>>> getPredicateForNoCtorMatchesGivenPredicate(
+    private Predicate<Class<?>> getPredicateForNoCtorMatchesGivenPredicate(
             Predicate<Constructor<?>> constructorPredicate) {
         return commandClass -> Arrays.stream(commandClass.getDeclaredConstructors()).noneMatch(constructorPredicate);
     }

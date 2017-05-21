@@ -74,8 +74,7 @@ public final class CommandsFactory {
         return COMMAND_PACKAGES;
     }
 
-    private static ConcurrentMap<String, Class<CommandBase<? extends VdcActionParametersBase>>> commandsCache =
-            new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, Class<?>> commandsCache = new ConcurrentHashMap<>();
 
     public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
         return createCommand(action, parameters, null);
@@ -84,7 +83,7 @@ public final class CommandsFactory {
     public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters,
             CommandContext commandContext) {
         try {
-            Constructor<CommandBase<? extends VdcActionParametersBase>> commandConstructor =
+            Constructor<?> commandConstructor =
                     findCommandConstructor(getCommandClass(action.name()), parameters.getClass(), CommandContext.class);
 
             if (commandContext == null) {
@@ -161,27 +160,27 @@ public final class CommandsFactory {
         }
     }
 
-    public static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name) {
+    public static Class<?> getCommandClass(String name) {
         return getCommandClass(name, COMMAND_SUFFIX);
     }
 
-    public static Class<CommandBase<? extends VdcActionParametersBase>> getQueryClass(String name) {
+    public static Class<?> getQueryClass(String name) {
         return getCommandClass(name, QUERY_SUFFIX);
     }
 
-    private static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name, String suffix) {
+    private static Class<?> getCommandClass(String name, String suffix) {
         // try the cache first
         String key = name + suffix;
-        Class<CommandBase<? extends VdcActionParametersBase>> clazz = commandsCache.get(key);
+        Class<?> clazz = commandsCache.get(key);
         if (clazz != null) {
             return clazz;
         }
 
         for (String commandPackage : COMMAND_PACKAGES) {
             String className = String.format(CLASS_NAME_FORMAT, commandPackage, name, suffix);
-            Class<CommandBase<? extends VdcActionParametersBase>> type = loadClass(className);
+            Class<?> type = loadClass(className);
             if (type != null) {
-                Class<CommandBase<? extends VdcActionParametersBase>> cachedType = commandsCache.putIfAbsent(key, type); // update cache
+                Class<?> cachedType = commandsCache.putIfAbsent(key, type); // update cache
                 return cachedType == null ? type : cachedType;
             }
         }
@@ -191,10 +190,9 @@ public final class CommandsFactory {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    private static Class<CommandBase<? extends VdcActionParametersBase>> loadClass(String className) {
+    private static Class<?> loadClass(String className) {
         try {
-            return (Class<CommandBase<? extends VdcActionParametersBase>>) Class.forName(className);
+            return Class.forName(className);
         } catch (ClassNotFoundException e) {
             return null;
         }

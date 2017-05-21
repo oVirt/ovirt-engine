@@ -548,8 +548,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             logExecution(sessionId,
                     String.format("query %s with isFiltered : %s", actionType, parameters.isFiltered()));
         }
-        Class<CommandBase<? extends VdcActionParametersBase>> clazz =
-                CommandsFactory.getQueryClass(actionType.name());
+        Class<?> clazz = CommandsFactory.getQueryClass(actionType.name());
         if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
             String mode = vdcOptionDao.getByNameAndVersion
                     (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion).getOptionValue();
@@ -691,8 +690,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private VdcReturnValueBase notAllowedInPrepForMaintMode(VdcActionType action) {
-        Class<CommandBase<? extends VdcActionParametersBase>> clazz =
-                CommandsFactory.getCommandClass(action.name());
+        Class<?> clazz = CommandsFactory.getCommandClass(action.name());
         if (clazz.isAnnotationPresent(DisableInPrepareMode.class)) {
             return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_PREPARE_MODE);
         }
