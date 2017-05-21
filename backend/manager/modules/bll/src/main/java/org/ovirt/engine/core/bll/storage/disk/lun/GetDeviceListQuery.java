@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.storage.disk.lun;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -36,10 +38,8 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
         // Get LUNs from DB
         List<LUNs> lunsFromDb = lunDao.getAll();
-        HashMap<String, LUNs> lunsFromDbById = new HashMap<>();
-        for (LUNs lun : lunsFromDb) {
-            lunsFromDbById.put(lun.getLUNId(), lun);
-        }
+        Map<String, LUNs> lunsFromDbById = lunsFromDb.stream()
+                .collect(Collectors.toMap(LUNs::getLUNId, Function.identity()));
 
         for (LUNs lun : luns) {
             if (lunsFromDbById.containsKey(lun.getLUNId())) {
