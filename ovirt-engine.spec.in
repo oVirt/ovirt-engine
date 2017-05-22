@@ -1316,6 +1316,9 @@ fi
 %{engine_data}/bin/engine-backup.sh
 
 %changelog
+* Mon May 22 2017 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.11.2-1
+- Bump version to 3.6.11.2
+
 * Wed Apr 05 2017 Lev Veyde <lveyde@redhat.com> - 3.6.11.1-1
 - Bump version to 3.6.11.1
 
