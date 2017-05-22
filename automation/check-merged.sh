@@ -103,7 +103,7 @@ rpmbuild \
 [[ -d exported-artifacts ]] || mkdir -p exported-artifacts
 # Move find bugs to a dedicated directory under exported-artifacts
 mkdir -p exported-artifacts/find-bugs
-find * -name "*findbugs.xml" -o -name "*findbugsxml.xml" | \
+find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
     while read source_file; do
         destination_file=$(
             sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"

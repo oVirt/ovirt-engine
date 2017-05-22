@@ -143,7 +143,7 @@ find output -iname \*rpm -exec mv "{}" exported-artifacts/ \;
 
 # Collect any mvn findbugs artifacts
 mkdir -p exported-artifacts/find-bugs
-find * -name "*findbugs.xml" -o -name "*findbugsxml.xml" | \
+find * -name "*findbugs.xml" -o -name "findbugsXml.xml" | \
     while read source_file; do
         destination_file=$(
             sed -e 's#/#-#g' -e 's#\(.*\)-#\1.#' <<< "$source_file"
