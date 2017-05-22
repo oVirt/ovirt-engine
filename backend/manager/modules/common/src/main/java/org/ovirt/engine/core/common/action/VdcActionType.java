@@ -343,6 +343,9 @@ public enum VdcActionType {
     AddVmLease(1040, QuotaDependency.NONE),
     RemoveVmLease(1041, QuotaDependency.NONE),
 
+    // Sync luns
+    SyncStorageDomainsLuns(1042, QuotaDependency.NONE),
+
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
     RemoveEventSubscription(1101, false, QuotaDependency.NONE),
