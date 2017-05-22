@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,8 +50,8 @@ public class ValidateVmMacsQueryTest {
     @Mock
     private VmMacsValidation vmMacsValidation;
 
-    private final HashMap<Guid, List<VM>> vmsByCluster = new HashMap<>();
     private final List<VM> vms = new ArrayList<>();
+    private final Map<Guid, List<VM>> vmsByCluster = Collections.singletonMap(CLUSTER_ID, vms);
     private ValidateVmMacsParameters params = new ValidateVmMacsParameters(vmsByCluster);
 
     @InjectMocks
@@ -60,8 +59,6 @@ public class ValidateVmMacsQueryTest {
 
     @Before
     public void setUp() {
-        vmsByCluster.put(CLUSTER_ID, vms);
-
         when(macPoolPerCluster.getMacPoolForCluster(CLUSTER_ID)).thenReturn(readMacPool);
         when(vmMacsValidationsFactory.createVmMacsValidationList(CLUSTER_ID, readMacPool))
                 .thenReturn(Collections.singletonList(vmMacsValidation));
