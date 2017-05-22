@@ -16,9 +16,9 @@ import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
@@ -31,7 +31,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ValidateVmMacsQueryTest {
+public class ValidateVmMacsQueryTest extends
+        AbstractQueryTest<ValidateVmMacsParameters, ValidateVmMacsQuery<ValidateVmMacsParameters>> {
 
     private static final Guid CLUSTER_ID = Guid.newGuid();
     private static final Guid VM_ID1 = Guid.newGuid();
@@ -52,16 +53,14 @@ public class ValidateVmMacsQueryTest {
 
     private final List<VM> vms = new ArrayList<>();
     private final Map<Guid, List<VM>> vmsByCluster = Collections.singletonMap(CLUSTER_ID, vms);
-    private ValidateVmMacsParameters params = new ValidateVmMacsParameters(vmsByCluster);
-
-    @InjectMocks
-    private ValidateVmMacsQuery<ValidateVmMacsParameters> underTest = new ValidateVmMacsQuery<>(params);
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
         when(macPoolPerCluster.getMacPoolForCluster(CLUSTER_ID)).thenReturn(readMacPool);
         when(vmMacsValidationsFactory.createVmMacsValidationList(CLUSTER_ID, readMacPool))
                 .thenReturn(Collections.singletonList(vmMacsValidation));
+        when(getQueryParameters().getVmsByCluster()).thenReturn(vmsByCluster);
     }
 
     @Test
@@ -74,8 +73,8 @@ public class ValidateVmMacsQueryTest {
         when(vmMacsValidation.validate(vm2))
                 .thenReturn(new ValidationResult(EngineMessage.Unassigned, REPLACEMENT1, REPLACEMENT2));
 
-        underTest.executeQueryCommand();
-        final VdcQueryReturnValue queryReturnValue = underTest.getQueryReturnValue();
+        getQuery().executeQueryCommand();
+        final VdcQueryReturnValue queryReturnValue = getQuery().getQueryReturnValue();
         final Map<Guid, List<List<String>>> actual = queryReturnValue.getReturnValue();
 
         assertValidVmInOutput(actual, VM_ID1);
