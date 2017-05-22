@@ -142,16 +142,9 @@ public final class CommandsFactory {
         Class<?> type = null;
         try {
             type = getQueryClass(query.name());
-            QueriesCommandBase<?> result;
-            if (engineContext == null) {
-                result =
-                        (QueriesCommandBase<?>) findCommandConstructor(type, parameters.getClass()).newInstance(parameters);
-            } else {
-                result =
-                        (QueriesCommandBase<?>) findCommandConstructor(type, parameters.getClass(), EngineContext.class).newInstance(parameters,
-                                engineContext);
-
-            }
+            QueriesCommandBase<?> result =
+                    (QueriesCommandBase<?>) findCommandConstructor(type, parameters.getClass(), EngineContext.class)
+                            .newInstance(parameters, engineContext);
             return Injector.injectMembers(result);
         } catch (Exception e) {
             log.error("Command Factory: Failed to create command '{}' using reflection: {}", type, e.getMessage());
