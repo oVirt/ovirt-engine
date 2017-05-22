@@ -1570,30 +1570,6 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeMemory(VmDevice device) {
-        // <memory model='dimm'>
-        //   <target>
-        //     <size unit='KiB'>524287</size>
-        //     <node>1</node>
-        //   </target>
-        // </memory>
-        writer.writeStartElement("memory");
-        writer.writeAttributeString("model", "dimm");
-
-        writer.writeStartElement("target");
-
-        writer.writeStartElement("size");
-        writer.writeAttributeString("unit", "KiB");
-        writer.writeRaw(String.valueOf(vm.getMemSizeMb() * 1000));
-        writer.writeEndElement();
-
-        writer.writeElement("node", "1"); // TODO
-
-        writer.writeEndElement();
-
-        writer.writeEndElement();
-    }
-
     private void writeVideo(VmDevice device) {
         writer.writeStartElement("video");
 
