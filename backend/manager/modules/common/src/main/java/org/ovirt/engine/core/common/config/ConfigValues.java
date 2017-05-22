@@ -675,7 +675,8 @@ public enum ConfigValues {
     @DefaultValueAttribute("sap_agent=^(true|false)$;" +
             "sndbuf=^[0-9]+$;" +
             "vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;" +
-            "viodiskcache=^(none|writeback|writethrough)$")
+            "viodiskcache=^(none|writeback|writethrough)$;" +
+            "mdev_type=^.*$")
     PredefinedVMProperties,
 
     @TypeConverterAttribute(Integer.class)
