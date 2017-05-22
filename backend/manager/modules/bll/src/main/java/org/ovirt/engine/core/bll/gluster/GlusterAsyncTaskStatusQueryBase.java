@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTaskUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
@@ -36,8 +37,8 @@ public abstract class GlusterAsyncTaskStatusQueryBase<P extends GlusterVolumeQue
     @Inject
     protected GlusterTaskUtils glusterTaskUtils;
 
-    public GlusterAsyncTaskStatusQueryBase(P params) {
-        super(params);
+    public GlusterAsyncTaskStatusQueryBase(P params, EngineContext engineContext) {
+        super(params, engineContext);
     }
 
     @Override

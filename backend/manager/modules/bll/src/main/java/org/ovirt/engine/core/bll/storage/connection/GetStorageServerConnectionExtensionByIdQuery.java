@@ -11,10 +11,6 @@ public class GetStorageServerConnectionExtensionByIdQuery<P extends IdQueryParam
     @Inject
     private StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;
 
-    public GetStorageServerConnectionExtensionByIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetStorageServerConnectionExtensionByIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

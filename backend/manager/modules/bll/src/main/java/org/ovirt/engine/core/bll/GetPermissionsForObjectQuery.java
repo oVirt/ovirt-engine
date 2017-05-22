@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -13,8 +14,8 @@ public class GetPermissionsForObjectQuery<P extends GetPermissionsForObjectParam
     @Inject
     private PermissionDao dao;
 
-    public GetPermissionsForObjectQuery(P parameters) {
-        super(parameters);
+    public GetPermissionsForObjectQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

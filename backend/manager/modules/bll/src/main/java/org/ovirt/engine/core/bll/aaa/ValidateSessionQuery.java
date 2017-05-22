@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.slf4j.Logger;
@@ -12,8 +13,8 @@ import org.slf4j.LoggerFactory;
 public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     private static final Logger log = LoggerFactory.getLogger(ValidateSessionQuery.class);
 
-    public ValidateSessionQuery(P parameters) {
-        super(parameters);
+    public ValidateSessionQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 
 public class GetAllVmsForUserAndActionGroupQuery<P extends GetEntitiesWithPermittedActionParameters> extends GetAllVmsQueryBase<P> {
-    public GetAllVmsForUserAndActionGroupQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetAllVmsForUserAndActionGroupQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

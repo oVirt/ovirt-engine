@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -18,9 +19,8 @@ public abstract class GetAllTemplateBasedEntityQuery<P extends VdcQueryParameter
 
     private final VmEntityType entityType;
 
-    public GetAllTemplateBasedEntityQuery(P parameters, VmEntityType entityType) {
-        super(parameters);
-
+    public GetAllTemplateBasedEntityQuery(P parameters, EngineContext engineContext, VmEntityType entityType) {
+        super(parameters, engineContext);
         this.entityType = entityType;
     }
 

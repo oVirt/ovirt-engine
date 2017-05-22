@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -21,8 +22,8 @@ public class GetManagementNetworkCandidatesQuery<P extends IdQueryParameters> ex
     @Named
     private Predicate<Network> managementNetworkCandidatePredicate;
 
-    public GetManagementNetworkCandidatesQuery(P parameters) {
-        super(parameters);
+    public GetManagementNetworkCandidatesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

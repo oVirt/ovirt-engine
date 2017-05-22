@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,8 +21,8 @@ public abstract class StoragePoolQueryBase<P extends VdcQueryParametersBase>  ex
     @Inject
     private DcSingleMacPoolFinder dcSingleMacPoolFinder;
 
-    public StoragePoolQueryBase(P parameters) {
-        super(parameters);
+    public StoragePoolQueryBase(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

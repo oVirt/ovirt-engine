@@ -23,10 +23,6 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
     @Inject
     private OvfHelper ovfHelper;
 
-    public GetTemplatesFromExportDomainQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetTemplatesFromExportDomainQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

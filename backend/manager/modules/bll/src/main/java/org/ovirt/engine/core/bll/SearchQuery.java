@@ -26,6 +26,7 @@ import org.ovirt.engine.core.aaa.QueryData;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.pool.DcSingleMacPoolFinder;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -154,8 +155,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     @Inject
     private DcSingleMacPoolFinder dcSingleMacPoolFinder;
 
-    public SearchQuery(P parameters) {
-        super(parameters);
+    public SearchQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

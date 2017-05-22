@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.PermissionDao;
 
@@ -11,8 +12,8 @@ public class GetPermissionByRoleIdQuery<P extends IdQueryParameters>
     @Inject
     private PermissionDao permissionDao;
 
-    public GetPermissionByRoleIdQuery(P parameters) {
-        super(parameters);
+    public GetPermissionByRoleIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

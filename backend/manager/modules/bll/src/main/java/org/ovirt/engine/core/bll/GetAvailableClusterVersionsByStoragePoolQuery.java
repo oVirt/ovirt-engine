@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -17,8 +18,8 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends IdQueryPara
     @Inject
     private StoragePoolDao storagePoolDao;
 
-    public GetAvailableClusterVersionsByStoragePoolQuery(P parameters) {
-        super(parameters);
+    public GetAvailableClusterVersionsByStoragePoolQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

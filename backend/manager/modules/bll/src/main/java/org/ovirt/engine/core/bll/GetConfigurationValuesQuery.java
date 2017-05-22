@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -17,8 +18,8 @@ import org.ovirt.engine.core.compat.Version;
 public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     private static final List<String> versions = getVersionsList();
 
-    public GetConfigurationValuesQuery(P parameters) {
-        super(parameters);
+    public GetConfigurationValuesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     private static List<String> getVersionsList() {

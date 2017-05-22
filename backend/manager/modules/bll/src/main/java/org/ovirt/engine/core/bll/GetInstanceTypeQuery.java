@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -11,8 +12,8 @@ public class GetInstanceTypeQuery<P extends GetVmTemplateParameters> extends Que
     @Inject
     private VmTemplateDao vmTemplateDao;
 
-    public GetInstanceTypeQuery(P parameters) {
-        super(parameters);
+    public GetInstanceTypeQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -2,13 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import java.util.HashMap;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 public class GetAgentFenceOptionsQuery<P extends GetAgentFenceOptionsQueryParameters> extends FenceQueryBase<P> {
 
-    public GetAgentFenceOptionsQuery(P parameters) {
-        super(parameters);
+    public GetAgentFenceOptionsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

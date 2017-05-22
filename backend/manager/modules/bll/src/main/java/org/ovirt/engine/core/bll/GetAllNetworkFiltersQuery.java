@@ -14,10 +14,6 @@ public class GetAllNetworkFiltersQuery extends QueriesCommandBase<VdcQueryParame
     @Inject
     private NetworkFilterDao networkFilterDao;
 
-    public GetAllNetworkFiltersQuery(VdcQueryParametersBase parameters) {
-        super(parameters);
-    }
-
     public GetAllNetworkFiltersQuery(VdcQueryParametersBase parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

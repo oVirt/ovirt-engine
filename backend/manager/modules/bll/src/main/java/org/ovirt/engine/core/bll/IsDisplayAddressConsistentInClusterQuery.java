@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -20,8 +21,8 @@ public class IsDisplayAddressConsistentInClusterQuery<P extends IdQueryParameter
     @Inject
     private VdsDao vdsDao;
 
-    public IsDisplayAddressConsistentInClusterQuery(P parameters) {
-        super(parameters);
+    public IsDisplayAddressConsistentInClusterQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

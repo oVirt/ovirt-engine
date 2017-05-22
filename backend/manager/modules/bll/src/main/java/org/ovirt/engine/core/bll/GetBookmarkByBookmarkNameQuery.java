@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.dao.BookmarkDao;
 
@@ -9,8 +10,8 @@ public class GetBookmarkByBookmarkNameQuery<P extends NameQueryParameters> exten
     @Inject
     private BookmarkDao bookmarkDao;
 
-    public GetBookmarkByBookmarkNameQuery(P parameters) {
-        super(parameters);
+    public GetBookmarkByBookmarkNameQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

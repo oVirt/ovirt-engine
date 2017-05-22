@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
@@ -30,8 +31,8 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     @Inject
     private GlusterDBUtils glusterDBUtils;
 
-    public GetAddedGlusterServersQuery(P params) {
-        super(params);
+    public GetAddedGlusterServersQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

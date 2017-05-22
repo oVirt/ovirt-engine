@@ -42,10 +42,6 @@ public class GetNetworkAttachmentsByHostIdQuery<P extends IdQueryParameters> ext
     @Inject
     private NetworkIdNetworkNameCompleter networkIdNetworkNameCompleter;
 
-    public GetNetworkAttachmentsByHostIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetNetworkAttachmentsByHostIdQuery(P parameters, EngineContext commandContext) {
         super(parameters, commandContext);
     }

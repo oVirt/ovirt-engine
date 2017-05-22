@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -20,8 +21,8 @@ public class GetAllVmsWithNumaByClusterIdQuery<P extends IdQueryParameters> exte
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
 
-    public GetAllVmsWithNumaByClusterIdQuery(P parameters) {
-        super(parameters);
+    public GetAllVmsWithNumaByClusterIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

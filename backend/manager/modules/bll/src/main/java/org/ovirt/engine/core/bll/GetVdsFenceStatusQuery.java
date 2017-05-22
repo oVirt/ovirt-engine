@@ -13,10 +13,6 @@ public class GetVdsFenceStatusQuery<P extends IdQueryParameters> extends FenceQu
     @Inject
     private VdsDao vdsDao;
 
-    public GetVdsFenceStatusQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetVdsFenceStatusQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

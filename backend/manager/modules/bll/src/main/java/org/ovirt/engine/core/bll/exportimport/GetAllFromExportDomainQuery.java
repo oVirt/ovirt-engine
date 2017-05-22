@@ -25,10 +25,6 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
     @Inject
     private StorageDomainDao storageDomainDao;
 
-    public GetAllFromExportDomainQuery(P parameters) {
-        this(parameters, null);
-    }
-
     public GetAllFromExportDomainQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

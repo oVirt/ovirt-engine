@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dao.PermissionDao;
 
@@ -10,8 +11,8 @@ public class IsUserApplicationContainerManagerQuery<P extends VdcQueryParameters
     @Inject
     private PermissionDao permissionDao;
 
-    public IsUserApplicationContainerManagerQuery(P parameters) {
-        super(parameters);
+    public IsUserApplicationContainerManagerQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

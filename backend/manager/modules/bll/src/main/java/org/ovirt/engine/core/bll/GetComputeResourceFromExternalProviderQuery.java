@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
@@ -9,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 
 public class GetComputeResourceFromExternalProviderQuery<P extends ProviderQueryParameters> extends QueriesCommandBase<P> {
-    public GetComputeResourceFromExternalProviderQuery(P parameters) {
-        super(parameters);
+    public GetComputeResourceFromExternalProviderQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

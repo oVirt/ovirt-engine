@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
@@ -14,8 +15,8 @@ public class GetVmOvfByVmIdQuery<P extends GetVmOvfByVmIdParameters> extends Que
     @Inject
     private OvfHelper ovfHelper;
 
-    public GetVmOvfByVmIdQuery(P parameters) {
-        super(parameters);
+    public GetVmOvfByVmIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -29,8 +30,8 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
     @Inject
     private DiskImageDao diskImageDao;
 
-    public GetUnregisteredDisksQuery(P parameters) {
-        super(parameters);
+    public GetUnregisteredDisksQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

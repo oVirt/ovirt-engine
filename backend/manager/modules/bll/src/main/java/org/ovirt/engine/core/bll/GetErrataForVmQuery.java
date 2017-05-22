@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
@@ -19,8 +20,8 @@ public class GetErrataForVmQuery<P extends GetErrataCountsParameters> extends Qu
     @Inject
     private ProviderDao providerDao;
 
-    public GetErrataForVmQuery(P parameters) {
-        super(parameters);
+    public GetErrataForVmQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

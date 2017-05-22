@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetDomainListQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
-    public GetDomainListQuery(P parameters) {
-        super(parameters);
+    public GetDomainListQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

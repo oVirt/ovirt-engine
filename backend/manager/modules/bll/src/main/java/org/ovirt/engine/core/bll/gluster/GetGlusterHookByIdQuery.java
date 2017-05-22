@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
 
@@ -8,8 +9,8 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
  */
 public class GetGlusterHookByIdQuery<P extends GlusterHookQueryParameters> extends GlusterQueriesCommandBase<P> {
 
-    public GetGlusterHookByIdQuery(P parameters) {
-        super(parameters);
+    public GetGlusterHookByIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

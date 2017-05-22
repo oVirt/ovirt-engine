@@ -17,10 +17,6 @@ public class GetRngDeviceQuery<P extends IdQueryParameters> extends QueriesComma
     @Inject
     private VmDeviceDao vmDeviceDao;
 
-    public GetRngDeviceQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetRngDeviceQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

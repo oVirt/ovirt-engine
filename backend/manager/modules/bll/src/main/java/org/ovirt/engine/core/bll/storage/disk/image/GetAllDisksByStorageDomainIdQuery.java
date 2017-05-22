@@ -23,10 +23,6 @@ public class GetAllDisksByStorageDomainIdQuery<P extends IdQueryParameters> exte
     @Inject
     private DiskImageDao diskImageDao;
 
-    public GetAllDisksByStorageDomainIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetAllDisksByStorageDomainIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

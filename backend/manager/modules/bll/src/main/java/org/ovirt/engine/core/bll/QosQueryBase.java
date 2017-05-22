@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
@@ -27,8 +28,8 @@ public abstract class QosQueryBase extends QueriesCommandBase<QosQueryParameterB
     @Inject
     private HostNetworkQosDao hostNetworkQosDao;
 
-    public QosQueryBase(QosQueryParameterBase parameters) {
-        super(parameters);
+    public QosQueryBase(QosQueryParameterBase parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     protected QosDao<?> getQosDao() {

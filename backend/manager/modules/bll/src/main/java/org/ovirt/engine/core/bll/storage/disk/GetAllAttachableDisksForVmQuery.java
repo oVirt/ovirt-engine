@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
 import org.ovirt.engine.core.dao.DiskDao;
 
@@ -10,8 +11,8 @@ public class GetAllAttachableDisksForVmQuery<P extends GetAllAttachableDisksForV
     @Inject
     private DiskDao diskDao;
 
-    public GetAllAttachableDisksForVmQuery(P parameters) {
-        super(parameters);
+    public GetAllAttachableDisksForVmQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

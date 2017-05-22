@@ -17,10 +17,6 @@ public class GetVmNextRunConfigurationQuery<P extends IdQueryParameters> extends
     @Inject
     private SnapshotDao snapshotDao;
 
-    public GetVmNextRunConfigurationQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetVmNextRunConfigurationQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

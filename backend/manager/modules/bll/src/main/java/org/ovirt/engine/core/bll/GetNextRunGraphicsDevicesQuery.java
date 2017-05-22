@@ -15,10 +15,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 
 public class GetNextRunGraphicsDevicesQuery<P extends IdQueryParameters> extends GetGraphicsDevicesQuery<P> {
 
-    public GetNextRunGraphicsDevicesQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetNextRunGraphicsDevicesQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

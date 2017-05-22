@@ -20,10 +20,6 @@ public class GetGraphicsDevicesMultipleQuery<P extends IdsQueryParameters> exten
     @Inject
     private VmDeviceDao vmDeviceDao;
 
-    public GetGraphicsDevicesMultipleQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetGraphicsDevicesMultipleQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

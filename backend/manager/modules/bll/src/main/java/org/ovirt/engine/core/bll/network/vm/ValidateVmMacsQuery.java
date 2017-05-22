@@ -13,6 +13,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.network.vm.mac.VmMacsValidation;
@@ -42,8 +43,8 @@ public class ValidateVmMacsQuery<P extends ValidateVmMacsParameters> extends Que
     @Inject
     private VmMacsValidationsFactory vmMacsValidationsFactory;
 
-    public ValidateVmMacsQuery(P parameters) {
-        super(parameters);
+    public ValidateVmMacsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

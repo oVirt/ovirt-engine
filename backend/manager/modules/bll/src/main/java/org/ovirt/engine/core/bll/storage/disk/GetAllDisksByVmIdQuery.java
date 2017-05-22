@@ -29,10 +29,6 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
     @Inject
     DiskImageDao diskImageDao;
 
-    public GetAllDisksByVmIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetAllDisksByVmIdQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

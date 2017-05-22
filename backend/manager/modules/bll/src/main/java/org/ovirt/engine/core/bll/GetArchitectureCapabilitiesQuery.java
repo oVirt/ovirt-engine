@@ -4,6 +4,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
@@ -12,8 +13,8 @@ import org.ovirt.engine.core.compat.Version;
 
 public class GetArchitectureCapabilitiesQuery<P extends ArchCapabilitiesParameters> extends QueriesCommandBase<P> {
 
-    public GetArchitectureCapabilitiesQuery(P parameters) {
-        super(parameters);
+    public GetArchitectureCapabilitiesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

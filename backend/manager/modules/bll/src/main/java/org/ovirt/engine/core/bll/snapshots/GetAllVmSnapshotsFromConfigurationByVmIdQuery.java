@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -21,8 +22,8 @@ public class GetAllVmSnapshotsFromConfigurationByVmIdQuery<P extends IdQueryPara
     @Inject
     private SnapshotDao snapshotDao;
 
-    public GetAllVmSnapshotsFromConfigurationByVmIdQuery(P parameters) {
-        super(parameters);
+    public GetAllVmSnapshotsFromConfigurationByVmIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

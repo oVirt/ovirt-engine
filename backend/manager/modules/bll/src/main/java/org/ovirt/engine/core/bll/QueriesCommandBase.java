@@ -53,10 +53,6 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     @Inject
     protected BackendInternal backend;
 
-    public QueriesCommandBase(P parameters) {
-        this(parameters, null);
-    }
-
     public QueriesCommandBase(P parameters, EngineContext engineContext) {
         if (parameters.getCorrelationId() == null) {
             parameters.setCorrelationId(CorrelationIdTracker.getCorrelationId());

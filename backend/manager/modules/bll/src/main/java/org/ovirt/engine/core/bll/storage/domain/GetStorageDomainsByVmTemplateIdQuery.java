@@ -29,10 +29,6 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
 
     private VmTemplate vmTemplate = null;
 
-    public GetStorageDomainsByVmTemplateIdQuery(P parameters) {
-        this(parameters, null);
-    }
-
     public GetStorageDomainsByVmTemplateIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

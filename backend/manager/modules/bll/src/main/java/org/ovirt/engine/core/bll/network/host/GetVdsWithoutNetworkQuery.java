@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.host;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -14,8 +15,8 @@ public class GetVdsWithoutNetworkQuery<P extends IdQueryParameters> extends Quer
     @Inject
     private VdsDao vdsDao;
 
-    public GetVdsWithoutNetworkQuery(P parameters) {
-        super(parameters);
+    public GetVdsWithoutNetworkQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

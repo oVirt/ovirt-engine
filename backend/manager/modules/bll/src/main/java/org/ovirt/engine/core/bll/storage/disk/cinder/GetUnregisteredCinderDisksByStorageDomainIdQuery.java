@@ -19,10 +19,6 @@ public class GetUnregisteredCinderDisksByStorageDomainIdQuery<P extends IdQueryP
     @Inject
     private DiskDao diskDao;
 
-    public GetUnregisteredCinderDisksByStorageDomainIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetUnregisteredCinderDisksByStorageDomainIdQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

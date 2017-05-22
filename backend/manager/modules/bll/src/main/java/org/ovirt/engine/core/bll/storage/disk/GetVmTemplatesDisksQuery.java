@@ -22,10 +22,6 @@ public class GetVmTemplatesDisksQuery<P extends IdQueryParameters> extends Queri
     @Inject
     private DiskVmElementDao diskVmElementDao;
 
-    public GetVmTemplatesDisksQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetVmTemplatesDisksQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

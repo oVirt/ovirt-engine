@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -18,8 +19,8 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
     @Inject
     private SystemStatisticsDao systemStatisticsDao;
 
-    public GetSystemStatisticsQuery(P parameters) {
-        super(parameters);
+    public GetSystemStatisticsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     private static final char COMMA_DELIMITER = ',';

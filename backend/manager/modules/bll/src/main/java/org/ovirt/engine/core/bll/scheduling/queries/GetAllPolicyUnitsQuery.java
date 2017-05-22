@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -14,8 +15,8 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllPolicyUnitsQuery extends QueriesCommandBase<VdcQueryParametersBase> {
-    public GetAllPolicyUnitsQuery(VdcQueryParametersBase parameters) {
-        super(parameters);
+    public GetAllPolicyUnitsQuery(VdcQueryParametersBase parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Inject

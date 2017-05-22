@@ -4,14 +4,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 
 public class GetHostDevicesByHostIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
-    public GetHostDevicesByHostIdQuery(P parameters) {
-        super(parameters);
+    public GetHostDevicesByHostIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Inject

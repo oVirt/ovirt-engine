@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.SignStringParameters;
@@ -12,8 +13,8 @@ public class SignStringQuery<P extends SignStringParameters> extends QueriesComm
 
     private static final Logger log = LoggerFactory.getLogger(SignStringQuery.class);
 
-    public SignStringQuery(P parameters) {
-        super(parameters);
+    public SignStringQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.domain.GetUnregisteredEntitiesQuery;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -11,8 +12,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 public class GetUnregisteredVmTemplatesQuery<P extends IdQueryParameters> extends GetUnregisteredEntitiesQuery<P> {
-    public GetUnregisteredVmTemplatesQuery(P parameters) {
-        super(parameters);
+    public GetUnregisteredVmTemplatesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

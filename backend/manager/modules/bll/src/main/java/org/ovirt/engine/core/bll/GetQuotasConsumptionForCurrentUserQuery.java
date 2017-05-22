@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -17,8 +18,8 @@ public class GetQuotasConsumptionForCurrentUserQuery<P extends VdcQueryParameter
     @Inject
     private QuotaDao quotaDao;
 
-    public GetQuotasConsumptionForCurrentUserQuery(P parameters) {
-        super(parameters);
+    public GetQuotasConsumptionForCurrentUserQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

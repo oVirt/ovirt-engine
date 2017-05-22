@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -8,8 +9,8 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
 
     private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
-    public OsRepositoryQuery(P parameters) {
-        super(parameters);
+    public OsRepositoryQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

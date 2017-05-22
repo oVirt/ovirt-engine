@@ -17,10 +17,6 @@ public class GetVmHostDevicesQuery<P extends IdQueryParameters> extends QueriesC
     @Inject
     VmDeviceDao vmDeviceDao;
 
-    public GetVmHostDevicesQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetVmHostDevicesQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

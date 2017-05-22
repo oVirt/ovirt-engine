@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
@@ -22,8 +23,8 @@ public class GetProviderCertificateChainQuery<P extends ProviderQueryParameters>
 
     private static Logger log = LoggerFactory.getLogger(GetProviderCertificateChainQuery.class);
 
-    public GetProviderCertificateChainQuery(P parameters) {
-        super(parameters);
+    public GetProviderCertificateChainQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     private Provider<?> getProvider() {

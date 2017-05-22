@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -17,8 +18,8 @@ public class GetLatestTemplateInChainQuery<P extends IdQueryParameters> extends 
     @Inject
     private VmTemplateHandler vmTemplateHandler;
 
-    public GetLatestTemplateInChainQuery(P parameters) {
-        super(parameters);
+    public GetLatestTemplateInChainQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

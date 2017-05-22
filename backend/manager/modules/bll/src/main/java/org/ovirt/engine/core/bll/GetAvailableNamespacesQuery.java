@@ -10,14 +10,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetAvailableNamespacesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
-    public GetAvailableNamespacesQuery(P parameters) {
-        this(parameters, null);
-    }
-
     public GetAvailableNamespacesQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
-
 
     @Override
     protected void executeQueryCommand() {

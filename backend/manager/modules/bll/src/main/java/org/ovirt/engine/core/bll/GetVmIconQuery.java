@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmIconDao;
 
@@ -13,8 +14,8 @@ public class GetVmIconQuery extends QueriesCommandBase<IdQueryParameters> {
     @Inject
     private VmIconDao vmIconDao;
 
-    public GetVmIconQuery(IdQueryParameters parameters) {
-        super(parameters);
+    public GetVmIconQuery(IdQueryParameters parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

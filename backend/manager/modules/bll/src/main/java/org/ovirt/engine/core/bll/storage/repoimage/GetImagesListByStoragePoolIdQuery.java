@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.repoimage;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,8 +21,8 @@ public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStorageP
     @Inject
     private StoragePoolDao storagePoolDao;
 
-    public GetImagesListByStoragePoolIdQuery(P parameters) {
-        super(parameters);
+    public GetImagesListByStoragePoolIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     /**

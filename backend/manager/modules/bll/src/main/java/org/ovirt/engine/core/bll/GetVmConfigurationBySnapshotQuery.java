@@ -20,10 +20,6 @@ public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> exte
     @Inject
     private SnapshotDao snapshotDao;
 
-    public GetVmConfigurationBySnapshotQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetVmConfigurationBySnapshotQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

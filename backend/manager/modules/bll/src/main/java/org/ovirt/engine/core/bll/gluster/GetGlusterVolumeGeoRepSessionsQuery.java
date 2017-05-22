@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
@@ -11,8 +12,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GetGlusterVolumeGeoRepSessionsQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<P>{
 
-    public GetGlusterVolumeGeoRepSessionsQuery(P parameters) {
-        super(parameters);
+    public GetGlusterVolumeGeoRepSessionsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

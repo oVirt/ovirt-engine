@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProfileDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
@@ -15,8 +16,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeProfileInfo
  */
 public class GetGlusterVolumeProfileInfoQuery<P extends GlusterVolumeProfileParameters> extends GlusterQueriesCommandBase<P> {
 
-    public GetGlusterVolumeProfileInfoQuery(P parameters) {
-        super(parameters);
+    public GetGlusterVolumeProfileInfoQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

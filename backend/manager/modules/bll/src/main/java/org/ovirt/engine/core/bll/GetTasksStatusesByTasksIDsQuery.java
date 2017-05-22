@@ -2,14 +2,15 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collection;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetTasksStatusesByTasksIDsQuery<P extends GetTasksStatusesByTasksIDsParameters>
         extends QueriesCommandBase<P> {
-    public GetTasksStatusesByTasksIDsQuery(P parameters) {
-        super(parameters);
+    public GetTasksStatusesByTasksIDsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -15,10 +15,6 @@ public class GetAllVmPoolsAttachedToUserQuery<P extends VdcQueryParametersBase> 
         super(parameters, engineContext);
     }
 
-    public GetAllVmPoolsAttachedToUserQuery(P parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void executeQueryCommand() {
         setReturnValue(vmPoolDao.getAllForUser(getUserID()));

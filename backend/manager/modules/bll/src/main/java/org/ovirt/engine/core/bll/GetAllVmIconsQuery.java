@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dao.VmIconDao;
 
@@ -10,8 +11,8 @@ public class GetAllVmIconsQuery extends QueriesCommandBase<VdcQueryParametersBas
     @Inject
     private VmIconDao vmIconDao;
 
-    public GetAllVmIconsQuery(VdcQueryParametersBase parameters) {
-        super(parameters);
+    public GetAllVmIconsQuery(VdcQueryParametersBase parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

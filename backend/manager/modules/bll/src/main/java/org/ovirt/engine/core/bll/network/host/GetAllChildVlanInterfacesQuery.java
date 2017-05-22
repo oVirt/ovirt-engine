@@ -21,10 +21,6 @@ public class GetAllChildVlanInterfacesQuery<P extends InterfaceAndIdQueryParamet
     @Inject
     private InterfaceDao interfaceDao;
 
-    public GetAllChildVlanInterfacesQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetAllChildVlanInterfacesQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

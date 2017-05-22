@@ -28,10 +28,6 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     @Inject
     private VdsDao vdsDao;
 
-    public GetVmsFromExternalProviderQuery(T parameters) {
-        this(parameters, null);
-    }
-
     public GetVmsFromExternalProviderQuery(T parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

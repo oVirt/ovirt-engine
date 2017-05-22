@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VdsDao;
 
@@ -10,8 +11,8 @@ public class GetAllVdsByStoragePoolQuery<P extends IdQueryParameters> extends Qu
     @Inject
     private VdsDao vdsDao;
 
-    public GetAllVdsByStoragePoolQuery(P parameters) {
-        super(parameters);
+    public GetAllVdsByStoragePoolQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

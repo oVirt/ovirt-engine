@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
@@ -14,8 +15,8 @@ public class GetConnectionsByDataCenterAndStorageTypeQuery<P extends GetConnecti
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
 
-    public GetConnectionsByDataCenterAndStorageTypeQuery(P parameters) {
-        super(parameters);
+    public GetConnectionsByDataCenterAndStorageTypeQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

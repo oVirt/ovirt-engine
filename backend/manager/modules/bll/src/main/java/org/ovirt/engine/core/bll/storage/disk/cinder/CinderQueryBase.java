@@ -9,10 +9,6 @@ public abstract class CinderQueryBase<P extends IdQueryParameters> extends Queri
 
     private OpenStackVolumeProviderProxy volumeProviderProxy;
 
-    public CinderQueryBase(P parameters) {
-        this(parameters, null);
-    }
-
     public CinderQueryBase(P parameters, EngineContext context) {
         super(parameters, context);
     }

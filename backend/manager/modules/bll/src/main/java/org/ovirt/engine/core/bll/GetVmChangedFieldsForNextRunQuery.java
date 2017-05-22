@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -21,8 +22,8 @@ public class GetVmChangedFieldsForNextRunQuery<P extends GetVmChangedFieldsForNe
     @Inject
     private VmHandler vmHandler;
 
-    public GetVmChangedFieldsForNextRunQuery(P parameters) {
-        super(parameters);
+    public GetVmChangedFieldsForNextRunQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
@@ -15,8 +16,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters
  */
 public class GetGlusterHookContentQuery<P extends GlusterHookContentQueryParameters> extends GlusterQueriesCommandBase<P> {
 
-    public GetGlusterHookContentQuery(P parameters) {
-        super(parameters);
+    public GetGlusterHookContentQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

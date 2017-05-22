@@ -21,9 +21,6 @@ public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesComma
     public GetVmPayloadQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
-    public GetVmPayloadQuery(P parameters) {
-        super(parameters);
-    }
 
     @Override
     protected void executeQueryCommand() {

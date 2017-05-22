@@ -8,6 +8,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -18,8 +19,8 @@ public class GetNetworkLabelsByHostNicIdQuery<P extends IdQueryParameters> exten
     @Inject
     private InterfaceDao interfaceDao;
 
-    public GetNetworkLabelsByHostNicIdQuery(P parameters) {
-        super(parameters);
+    public GetNetworkLabelsByHostNicIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

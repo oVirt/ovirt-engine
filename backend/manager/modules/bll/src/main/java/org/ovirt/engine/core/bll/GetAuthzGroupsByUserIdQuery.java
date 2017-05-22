@@ -13,6 +13,7 @@ import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -25,8 +26,8 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
     @Inject
     private DirectoryUtils directoryUtils;
 
-    public GetAuthzGroupsByUserIdQuery(P parameters) {
-        super(parameters);
+    public GetAuthzGroupsByUserIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 
@@ -9,8 +10,8 @@ public class GetVnicProfilesByNetworkQosIdQuery<P extends IdQueryParameters> ext
     @Inject
     private VnicProfileViewDao vnicProfileViewDao;
 
-    public GetVnicProfilesByNetworkQosIdQuery(P parameters) {
-        super(parameters);
+    public GetVnicProfilesByNetworkQosIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

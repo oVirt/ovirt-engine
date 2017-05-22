@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -13,8 +14,8 @@ import org.ovirt.engine.core.di.Injector;
 
 public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQuery<P extends GlusterVolumeGeoRepEligibilityParameters> extends GlusterQueriesCommandBase<P> {
 
-    public GetNonEligibilityReasonsOfVolumeForGeoRepSessionQuery(P parameters) {
-        super(parameters);
+    public GetNonEligibilityReasonsOfVolumeForGeoRepSessionQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -37,8 +38,8 @@ public class GetGeoRepSessionsForStorageDomainQuery<P extends IdQueryParameters>
     @Inject
     InterfaceDao interfaceDao;
 
-    public GetGeoRepSessionsForStorageDomainQuery(P parameters) {
-        super(parameters);
+    public GetGeoRepSessionsForStorageDomainQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -19,8 +20,8 @@ public class GetGlusterStorageDevicesQuery<P extends IdQueryParameters> extends 
     @Inject
     private StorageDeviceDao storageDeviceDao;
 
-    public GetGlusterStorageDevicesQuery(P parameters) {
-        super(parameters);
+    public GetGlusterStorageDevicesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

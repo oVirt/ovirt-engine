@@ -17,10 +17,6 @@ public class GetGraphicsDevicesQuery <P extends IdQueryParameters> extends Queri
     @Inject
     private VmDeviceDao vmDeviceDao;
 
-    public GetGraphicsDevicesQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetGraphicsDevicesQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

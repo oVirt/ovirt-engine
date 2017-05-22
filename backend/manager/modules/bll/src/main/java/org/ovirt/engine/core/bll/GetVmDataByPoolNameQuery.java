@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -15,8 +16,8 @@ public class GetVmDataByPoolNameQuery<P extends NameQueryParameters> extends Que
     @Inject
     private VmPoolDao vmPoolDao;
 
-    public GetVmDataByPoolNameQuery(P parameters) {
-        super(parameters);
+    public GetVmDataByPoolNameQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

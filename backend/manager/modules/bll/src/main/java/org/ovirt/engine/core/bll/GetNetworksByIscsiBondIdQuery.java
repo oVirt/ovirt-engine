@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,8 +19,8 @@ public class GetNetworksByIscsiBondIdQuery<P extends IdQueryParameters> extends 
     @Inject
     private IscsiBondDao iscsiBondDao;
 
-    public GetNetworksByIscsiBondIdQuery(P parameters) {
-        super(parameters);
+    public GetNetworksByIscsiBondIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

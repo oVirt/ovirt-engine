@@ -11,10 +11,6 @@ public class GetDiskByDiskIdQuery <P extends IdQueryParameters> extends QueriesC
     @Inject
     private DiskDao diskDao;
 
-    public GetDiskByDiskIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetDiskByDiskIdQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

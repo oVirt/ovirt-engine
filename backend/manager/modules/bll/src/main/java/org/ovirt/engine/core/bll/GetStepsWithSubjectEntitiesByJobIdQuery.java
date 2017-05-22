@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.GetStepsWithSubjectEntitiesByJobIdQueryParameters;
 import org.ovirt.engine.core.dao.StepDao;
@@ -16,8 +17,8 @@ public class GetStepsWithSubjectEntitiesByJobIdQuery<P extends GetStepsWithSubje
     @Inject
     private StepSubjectEntityDao stepSubjectEntityDao;
 
-    public GetStepsWithSubjectEntitiesByJobIdQuery(P parameters) {
-        super(parameters);
+    public GetStepsWithSubjectEntitiesByJobIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

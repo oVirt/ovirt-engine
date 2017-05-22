@@ -7,6 +7,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
@@ -17,8 +18,8 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
     @Inject
     private LunDao lunDao;
 
-    public GetDeviceListQuery(P parameters) {
-        super(parameters);
+    public GetDeviceListQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

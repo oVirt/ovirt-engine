@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 
@@ -8,8 +9,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
  */
 public class GetAllGlusterVolumesForStorageDomainQuery<P extends VdcQueryParametersBase> extends GlusterQueriesCommandBase<P> {
 
-    public GetAllGlusterVolumesForStorageDomainQuery(P parameters) {
-        super(parameters);
+    public GetAllGlusterVolumesForStorageDomainQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

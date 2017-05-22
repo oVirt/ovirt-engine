@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -41,8 +42,8 @@ public class GetGlusterVolumeAdvancedDetailsQuery<P extends GlusterVolumeAdvance
     @Inject
     private GlusterDBUtils glusterDBUtils;
 
-    public GetGlusterVolumeAdvancedDetailsQuery(P params) {
-        super(params);
+    public GetGlusterVolumeAdvancedDetailsQuery(P params, EngineContext engineContext) {
+        super(params, engineContext);
     }
 
     @Override

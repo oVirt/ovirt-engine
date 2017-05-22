@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -29,8 +30,8 @@ public class GetInterfacesByLabelForNetworkQuery<P extends IdQueryParameters> ex
     @Inject
     private InterfaceDao interfaceDao;
 
-    public GetInterfacesByLabelForNetworkQuery(P parameters) {
-        super(parameters);
+    public GetInterfacesByLabelForNetworkQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -5,14 +5,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetGlusterVolumeSnapshotConfigQuery<P extends GlusterVolumeQueriesParameters> extends GlusterQueriesCommandBase<P> {
-    public GetGlusterVolumeSnapshotConfigQuery(P parameters) {
-        super(parameters);
+    public GetGlusterVolumeSnapshotConfigQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Inject

@@ -13,6 +13,7 @@ import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
@@ -20,8 +21,8 @@ public class GetDirectoryGroupsForUserQuery<P extends VdcQueryParametersBase> ex
     @Inject
     private DirectoryUtils directoryUtils;
 
-    public GetDirectoryGroupsForUserQuery(P parameters) {
-        super(parameters);
+    public GetDirectoryGroupsForUserQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

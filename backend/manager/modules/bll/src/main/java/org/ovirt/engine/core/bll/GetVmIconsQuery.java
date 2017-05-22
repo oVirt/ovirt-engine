@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.queries.GetVmIconsParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -18,8 +19,8 @@ public class GetVmIconsQuery extends QueriesCommandBase<GetVmIconsParameters> {
     @Inject
     private VmIconDao vmIconDao;
 
-    public GetVmIconsQuery(GetVmIconsParameters parameters) {
-        super(parameters);
+    public GetVmIconsQuery(GetVmIconsParameters parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
@@ -13,8 +14,8 @@ public class GetVmIconDefaultsQuery extends QueriesCommandBase<VdcQueryParameter
     @Inject
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
-    public GetVmIconDefaultsQuery(VdcQueryParametersBase parameters) {
-        super(parameters);
+    public GetVmIconDefaultsQuery(VdcQueryParametersBase parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     /**

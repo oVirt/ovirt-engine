@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParametersBase;
@@ -18,8 +19,8 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
     @Inject
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
 
-    public GetImagesListQueryBase(P parameters) {
-        super(parameters);
+    public GetImagesListQueryBase(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

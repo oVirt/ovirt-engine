@@ -5,10 +5,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
-    protected FenceQueryBase(P parameters) {
-        super(parameters);
-    }
-
     public FenceQueryBase(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

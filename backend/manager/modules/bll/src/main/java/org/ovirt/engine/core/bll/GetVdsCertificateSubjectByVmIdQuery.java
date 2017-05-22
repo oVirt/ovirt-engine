@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -18,8 +19,8 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> e
     @Inject
     private VdsStaticDao vdsStaticDao;
 
-    public GetVdsCertificateSubjectByVmIdQuery(P parameters) {
-        super(parameters);
+    public GetVdsCertificateSubjectByVmIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

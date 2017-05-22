@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -14,8 +15,8 @@ public class GetConsoleDevicesQuery<P extends IdQueryParameters> extends Queries
     @Inject
     private VmDeviceDao vmDeviceDao;
 
-    public GetConsoleDevicesQuery(P parameters) {
-        super(parameters);
+    public GetConsoleDevicesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

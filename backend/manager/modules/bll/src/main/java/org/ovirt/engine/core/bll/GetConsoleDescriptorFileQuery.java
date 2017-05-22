@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.console.ConsoleDescriptorGenerator;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
@@ -12,8 +13,8 @@ import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
  */
 public class GetConsoleDescriptorFileQuery<P extends ConsoleOptionsParams> extends QueriesCommandBase<P> {
 
-    public GetConsoleDescriptorFileQuery(P parameters) {
-        super(parameters);
+    public GetConsoleDescriptorFileQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

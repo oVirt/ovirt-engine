@@ -16,10 +16,6 @@ public abstract class GetAllVmsQueryBase<P extends VdcQueryParametersBase> exten
     @Inject
     private VmHandler vmHandler;
 
-    public GetAllVmsQueryBase(P parameters) {
-        super(parameters);
-    }
-
     public GetAllVmsQueryBase(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

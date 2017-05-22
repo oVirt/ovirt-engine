@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
@@ -20,8 +21,8 @@ public class GetGlusterGeoReplicationEligibleVolumesQuery<P extends IdQueryParam
         return Injector.get(GlusterGeoRepUtil.class);
     }
 
-    public GetGlusterGeoReplicationEligibleVolumesQuery(IdQueryParameters parameters) {
-        super(parameters);
+    public GetGlusterGeoReplicationEligibleVolumesQuery(IdQueryParameters parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

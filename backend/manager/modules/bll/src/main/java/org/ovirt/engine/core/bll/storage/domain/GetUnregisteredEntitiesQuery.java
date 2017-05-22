@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -18,8 +19,8 @@ public abstract class GetUnregisteredEntitiesQuery<P extends IdQueryParameters> 
     @Inject
     protected OvfHelper ovfHelper;
 
-    public GetUnregisteredEntitiesQuery(P parameters) {
-        super(parameters);
+    public GetUnregisteredEntitiesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     protected List<OvfEntityData> getOvfEntityList(VmEntityType vmEntityType) {

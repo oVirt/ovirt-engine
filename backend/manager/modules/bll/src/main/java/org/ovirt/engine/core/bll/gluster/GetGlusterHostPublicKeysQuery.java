@@ -10,10 +10,6 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 @NonTransactiveCommandAttribute
 public class GetGlusterHostPublicKeysQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<P> {
 
-    protected GetGlusterHostPublicKeysQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetGlusterHostPublicKeysQuery(P params, EngineContext engineContext) {
         super(params, engineContext);
     }

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.DisableInMaintenanceMode;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -86,8 +87,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         validChars.set('_');
     }
 
-    public RegisterVdsQuery(P parameters) {
-        super(parameters);
+    public RegisterVdsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
         logable = Injector.injectMembers(new AuditLogableBase(parameters.getVdsId()));
     }
 

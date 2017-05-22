@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 public class GetAllPoolVmsQuery<P extends IdQueryParameters> extends GetAllVmsQueryBase<P> {
-    public GetAllPoolVmsQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetAllPoolVmsQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

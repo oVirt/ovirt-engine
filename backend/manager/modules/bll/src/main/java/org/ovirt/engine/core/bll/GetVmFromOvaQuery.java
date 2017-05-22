@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
 public class GetVmFromOvaQuery<T extends GetVmFromOvaQueryParameters> extends QueriesCommandBase<T> {
 
-    public GetVmFromOvaQuery(T parameters) {
-        this(parameters, null);
-    }
-
     public GetVmFromOvaQuery(T parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

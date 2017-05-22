@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -22,8 +23,8 @@ public class GetProductVersionQuery<P extends VdcQueryParametersBase> extends Qu
     public static final Pattern rpmRegEx = Pattern.compile(RPM_REG_EX);
     public static final Pattern vdcVersionRegEx = Pattern.compile(VDC_VERSION_REG_EX);
 
-    public GetProductVersionQuery(P parameters) {
-        super(parameters);
+    public GetProductVersionQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

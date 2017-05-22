@@ -8,6 +8,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetDefaultAllowedOriginsQueryParameters;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -29,8 +30,8 @@ public class GetDefaultAllowedOriginsQuery<P extends GetDefaultAllowedOriginsQue
     @Inject
     private VdsDao vdsDao;
 
-    public GetDefaultAllowedOriginsQuery(P parameters) {
-        super(parameters);
+    public GetDefaultAllowedOriginsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     private List<String> getHostOrigins(String host, Set<String> suffixes) {

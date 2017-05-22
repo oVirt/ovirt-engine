@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 
@@ -13,8 +14,8 @@ public class GetDeviceCustomPropertiesQuery<P extends GetDeviceCustomPropertiesP
     /**
      * {@inheritDoc}
      */
-    public GetDeviceCustomPropertiesQuery(P parameters) {
-        super(parameters);
+    public GetDeviceCustomPropertiesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     /**

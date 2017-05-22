@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dao.AuditLogDao;
@@ -12,8 +13,8 @@ public class GetAllEventMessagesQuery<P extends VdcQueryParametersBase> extends 
     @Inject
     private AuditLogDao auditLogDao;
 
-    public GetAllEventMessagesQuery(P parameters) {
-        super(parameters);
+    public GetAllEventMessagesQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

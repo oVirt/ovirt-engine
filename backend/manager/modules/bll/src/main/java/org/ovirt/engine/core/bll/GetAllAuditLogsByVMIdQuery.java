@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.AuditLogDao;
 
@@ -10,8 +11,8 @@ public class GetAllAuditLogsByVMIdQuery<P extends IdQueryParameters> extends Que
     @Inject
     private AuditLogDao auditLogDao;
 
-    public GetAllAuditLogsByVMIdQuery(P parameters) {
-        super(parameters);
+    public GetAllAuditLogsByVMIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     /** Actually executes the query, and stores the result in {@link #getQueryReturnValue()} */

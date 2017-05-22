@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,8 +15,8 @@ public class GetIscsiBondsByStoragePoolIdQuery <P extends IdQueryParameters> ext
     @Inject
     private IscsiBondDao iscsiBondDao;
 
-    public GetIscsiBondsByStoragePoolIdQuery(P parameters) {
-        super(parameters);
+    public GetIscsiBondsByStoragePoolIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

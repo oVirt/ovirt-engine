@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -45,8 +46,8 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
     @Inject
     private NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
 
-    public GetVdsAndNetworkInterfacesByNetworkIdQuery(P parameters) {
-        super(parameters);
+    public GetVdsAndNetworkInterfacesByNetworkIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

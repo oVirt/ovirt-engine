@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.VersionQueryParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.compat.Version;
@@ -14,8 +15,8 @@ public class GetAllSupportedNetworkFiltersByVersionQuery extends QueriesCommandB
     @Inject
     private NetworkFilterDao networkFilterDao;
 
-    public GetAllSupportedNetworkFiltersByVersionQuery(VersionQueryParameters parameters) {
-        super(parameters);
+    public GetAllSupportedNetworkFiltersByVersionQuery(VersionQueryParameters parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

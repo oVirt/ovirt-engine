@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.dao.ClusterDao;
 
@@ -9,8 +10,8 @@ public class GetClusterByNameQuery<P extends NameQueryParameters> extends Querie
     @Inject
     private ClusterDao clusterDao;
 
-    public GetClusterByNameQuery(P parameters) {
-        super(parameters);
+    public GetClusterByNameQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

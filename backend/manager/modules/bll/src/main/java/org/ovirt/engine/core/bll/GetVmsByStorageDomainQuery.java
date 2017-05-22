@@ -23,10 +23,6 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
     @Inject
     private VmDao vmDao;
 
-    public GetVmsByStorageDomainQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetVmsByStorageDomainQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

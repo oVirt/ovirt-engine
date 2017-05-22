@@ -20,10 +20,6 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
     @Inject
     private OvfHelper ovfHelper;
 
-    public GetVmsFromExportDomainQuery(P parameters) {
-        this(parameters, null);
-    }
-
     public GetVmsFromExportDomainQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

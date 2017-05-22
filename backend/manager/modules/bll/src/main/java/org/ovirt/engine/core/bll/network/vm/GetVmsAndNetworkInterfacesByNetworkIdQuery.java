@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -27,8 +28,8 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetwo
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
-    public GetVmsAndNetworkInterfacesByNetworkIdQuery(P parameters) {
-        super(parameters);
+    public GetVmsAndNetworkInterfacesByNetworkIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -16,10 +16,6 @@ public class GetHostBondsByHostIdQuery<P extends IdQueryParameters> extends Quer
     @Inject
     private InterfaceDao interfaceDao;
 
-    public GetHostBondsByHostIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetHostBondsByHostIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

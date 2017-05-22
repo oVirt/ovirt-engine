@@ -8,12 +8,13 @@ import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetAAAProfileListQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
 
-    public GetAAAProfileListQuery(P parameters) {
-        super(parameters);
+    public GetAAAProfileListQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

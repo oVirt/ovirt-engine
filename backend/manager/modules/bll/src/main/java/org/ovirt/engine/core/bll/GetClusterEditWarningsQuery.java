@@ -10,6 +10,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ClusterEditWarnings;
 import org.ovirt.engine.core.common.businessentities.Nameable;
@@ -40,8 +41,8 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
     @Inject
     private BackendLocal backend;
 
-    public GetClusterEditWarningsQuery(P parameters) {
-        super(parameters);
+    public GetClusterEditWarningsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

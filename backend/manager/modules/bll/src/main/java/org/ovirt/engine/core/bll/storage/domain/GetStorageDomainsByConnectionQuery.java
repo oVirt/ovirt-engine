@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,8 +21,8 @@ public class GetStorageDomainsByConnectionQuery<P extends GetStorageDomainsByCon
     @Inject
     private StorageDomainDao storageDomainDao;
 
-    public GetStorageDomainsByConnectionQuery(P parameters) {
-        super(parameters);
+    public GetStorageDomainsByConnectionQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

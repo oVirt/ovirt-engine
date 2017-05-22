@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 
 /**
@@ -7,8 +8,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
  */
 public class GetGlusterVolumeByIdQuery<P extends IdQueryParameters> extends GlusterQueriesCommandBase<P> {
 
-    public GetGlusterVolumeByIdQuery(P parameters) {
-        super(parameters);
+    public GetGlusterVolumeByIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

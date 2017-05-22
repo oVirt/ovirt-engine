@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
@@ -33,8 +34,8 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
 
-    public GetLunsByVgIdQuery(P parameters) {
-        super(parameters);
+    public GetLunsByVgIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

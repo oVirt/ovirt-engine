@@ -16,10 +16,6 @@ public class GetWatchdogQuery<P extends IdQueryParameters> extends QueriesComman
     @Inject
     private VmDeviceDao vmDeviceDao;
 
-    public GetWatchdogQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetWatchdogQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

@@ -7,6 +7,7 @@ import java.util.Random;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -37,8 +38,8 @@ public class GetStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Storage
     @Inject
     private StorageDomainDao storageDomainDao;
 
-    public GetStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters) {
-        super(parameters);
+    public GetStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.Job;
@@ -17,8 +18,8 @@ public class GetJobsByOffsetQuery<P extends GetJobsByOffsetQueryParameters> exte
     @Inject
     private JobDao jobDao;
 
-    public GetJobsByOffsetQuery(P parameters) {
-        super(parameters);
+    public GetJobsByOffsetQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

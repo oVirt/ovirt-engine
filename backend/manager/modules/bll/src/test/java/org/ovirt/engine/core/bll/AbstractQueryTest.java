@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -59,8 +60,8 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
 
     private Q createQuery() {
         try {
-            Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType());
-            return con.newInstance(getQueryParameters());
+            Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType(), EngineContext.class);
+            return con.newInstance(getQueryParameters(), null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,8 +18,8 @@ public class GetAncestorImagesByImagesIdsQuery<P extends IdsQueryParameters>
     @Inject
     private DiskImageDao diskImageDao;
 
-    public GetAncestorImagesByImagesIdsQuery(P parameters) {
-        super(parameters);
+    public GetAncestorImagesByImagesIdsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

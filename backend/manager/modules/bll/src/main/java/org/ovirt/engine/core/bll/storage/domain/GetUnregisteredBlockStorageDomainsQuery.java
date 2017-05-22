@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -40,8 +41,8 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
     @Inject
     private LunDao lunDao;
 
-    public GetUnregisteredBlockStorageDomainsQuery(P parameters) {
-        super(parameters);
+    public GetUnregisteredBlockStorageDomainsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

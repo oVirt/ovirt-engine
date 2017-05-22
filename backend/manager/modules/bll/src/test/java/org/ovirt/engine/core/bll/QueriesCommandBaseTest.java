@@ -141,7 +141,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
 
     private QueriesCommandBase<?> mockQuery() {
         QueriesCommandBase<?> query = mock(QueriesCommandBase.class,
-                withSettings().useConstructor(params).defaultAnswer(Answers.CALLS_REAL_METHODS));
+                withSettings().useConstructor(params, null).defaultAnswer(Answers.CALLS_REAL_METHODS));
         doReturn(mockSessionDataContainer).when(query).getSessionDataContainer();
         query.postConstruct();
         return query;

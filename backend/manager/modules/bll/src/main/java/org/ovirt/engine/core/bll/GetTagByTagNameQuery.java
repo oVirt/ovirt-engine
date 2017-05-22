@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 
 public class GetTagByTagNameQuery<P extends NameQueryParameters> extends QueriesCommandBase<P> {
@@ -9,8 +10,8 @@ public class GetTagByTagNameQuery<P extends NameQueryParameters> extends Queries
     @Inject
     private TagsDirector tagsDirector;
 
-    public GetTagByTagNameQuery(P parameters) {
-        super(parameters);
+    public GetTagByTagNameQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

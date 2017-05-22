@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 
 public class GetFenceConfigurationValueQuery<P extends GetConfigurationValueParameters> extends QueriesCommandBase<P> {
-    public GetFenceConfigurationValueQuery(P parameters) {
-        super(parameters);
+    public GetFenceConfigurationValueQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

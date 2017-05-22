@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.naming.AuthenticationException;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.dao.VdsStaticDao;
@@ -29,8 +30,8 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
     @Inject
     private VdsStaticDao vdsStaticDao;
 
-    public GetGlusterServersForImportQuery(P parameters) {
-        super(parameters);
+    public GetGlusterServersForImportQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

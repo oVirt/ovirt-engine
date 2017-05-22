@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.queries.GetJobsByCorrelationIdQueryParameters;
@@ -20,8 +21,8 @@ public class GetJobsByCorrelationIdQuery<P extends GetJobsByCorrelationIdQueryPa
     @Inject
     protected JobDao jobDao;
 
-    public GetJobsByCorrelationIdQuery(P parameters) {
-        super(parameters);
+    public GetJobsByCorrelationIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

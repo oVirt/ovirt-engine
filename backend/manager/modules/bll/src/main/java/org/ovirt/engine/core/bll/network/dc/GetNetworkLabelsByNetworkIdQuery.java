@@ -7,6 +7,7 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -17,8 +18,8 @@ public class GetNetworkLabelsByNetworkIdQuery<P extends IdQueryParameters> exten
     @Inject
     private NetworkDao networkDao;
 
-    public GetNetworkLabelsByNetworkIdQuery(P parameters) {
-        super(parameters);
+    public GetNetworkLabelsByNetworkIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

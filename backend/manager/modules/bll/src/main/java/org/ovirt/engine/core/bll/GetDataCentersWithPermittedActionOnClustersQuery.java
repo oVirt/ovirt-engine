@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
@@ -11,8 +12,8 @@ public class GetDataCentersWithPermittedActionOnClustersQuery<P extends GetDataC
     @Inject
     private StoragePoolDao storagePoolDao;
 
-    public GetDataCentersWithPermittedActionOnClustersQuery(P parameters) {
-        super(parameters);
+    public GetDataCentersWithPermittedActionOnClustersQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

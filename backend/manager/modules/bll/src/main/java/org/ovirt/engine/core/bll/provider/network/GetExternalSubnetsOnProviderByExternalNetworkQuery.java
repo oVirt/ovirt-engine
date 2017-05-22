@@ -19,6 +19,7 @@ package org.ovirt.engine.core.bll.provider.network;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
@@ -30,8 +31,8 @@ public class GetExternalSubnetsOnProviderByExternalNetworkQuery
     @Inject
     private ProviderDao providerDao;
 
-    public GetExternalSubnetsOnProviderByExternalNetworkQuery(P parameters) {
-        super(parameters);
+    public GetExternalSubnetsOnProviderByExternalNetworkQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

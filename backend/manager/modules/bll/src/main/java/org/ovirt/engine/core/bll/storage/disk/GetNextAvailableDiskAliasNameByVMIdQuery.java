@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.VmHandler;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -21,8 +22,8 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends IdQueryParameter
     @Inject
     private VmHandler vmHandler;
 
-    public GetNextAvailableDiskAliasNameByVMIdQuery(P parameters) {
-        super(parameters);
+    public GetNextAvailableDiskAliasNameByVMIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

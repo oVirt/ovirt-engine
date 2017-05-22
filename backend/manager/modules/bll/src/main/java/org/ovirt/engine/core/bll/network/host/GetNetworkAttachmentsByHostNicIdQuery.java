@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -23,8 +24,8 @@ public class GetNetworkAttachmentsByHostNicIdQuery<P extends IdQueryParameters> 
     @Inject
     private ReportedConfigurationsFiller reportedConfigurationsFiller;
 
-    public GetNetworkAttachmentsByHostNicIdQuery(P parameters) {
-        super(parameters);
+    public GetNetworkAttachmentsByHostNicIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.host.provider.foreman.EngineForemanProviderFinder;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
@@ -13,8 +14,8 @@ public class GetErrataForEngineQuery<P extends GetErrataCountsParameters> extend
     @Inject
     private EngineForemanProviderFinder engineProviderFinder;
 
-    public GetErrataForEngineQuery(P parameters) {
-        super(parameters);
+    public GetErrataForEngineQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

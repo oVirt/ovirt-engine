@@ -19,10 +19,6 @@ public class GetDirectoryUserByPrincipalQuery<P extends GetDirectoryUserByPrinci
         super(parameters, engineContext);
     }
 
-    public GetDirectoryUserByPrincipalQuery(P parameters) {
-        this(parameters, null);
-    }
-
     @Override
     protected void executeQueryCommand() {
         Map<String, Object> response = SsoOAuthServiceUtils.fetchPrincipalRecord(

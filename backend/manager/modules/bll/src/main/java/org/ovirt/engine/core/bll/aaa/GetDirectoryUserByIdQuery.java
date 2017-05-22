@@ -9,14 +9,15 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 
 public class GetDirectoryUserByIdQuery<P extends DirectoryIdQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private DirectoryUtils directoryUtils;
 
-    public GetDirectoryUserByIdQuery(P parameters) {
-        super(parameters);
+    public GetDirectoryUserByIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

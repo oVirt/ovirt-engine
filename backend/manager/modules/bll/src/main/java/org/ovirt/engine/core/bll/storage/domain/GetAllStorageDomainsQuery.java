@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage.domain;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
@@ -10,8 +11,8 @@ public class GetAllStorageDomainsQuery<P extends VdcQueryParametersBase> extends
     @Inject
     private StorageDomainDao storageDomainDao;
 
-    public GetAllStorageDomainsQuery(P parameters) {
-        super(parameters);
+    public GetAllStorageDomainsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

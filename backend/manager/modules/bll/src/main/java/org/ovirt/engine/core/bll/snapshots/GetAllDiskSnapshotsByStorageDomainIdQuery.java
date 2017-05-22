@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -23,8 +24,8 @@ public class GetAllDiskSnapshotsByStorageDomainIdQuery<P extends IdQueryParamete
     @Inject
     private SnapshotDao snapshotDao;
 
-    public GetAllDiskSnapshotsByStorageDomainIdQuery(P parameters) {
-        super(parameters);
+    public GetAllDiskSnapshotsByStorageDomainIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

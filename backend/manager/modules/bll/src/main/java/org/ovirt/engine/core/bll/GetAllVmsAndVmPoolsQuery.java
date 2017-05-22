@@ -12,10 +12,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
-    public GetAllVmsAndVmPoolsQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetAllVmsAndVmPoolsQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

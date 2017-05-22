@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.FenceAgentDao;
 
@@ -11,8 +12,8 @@ public class GetFenceAgentsByVdsIdQuery<P extends IdQueryParameters>
     @Inject
     private FenceAgentDao fenceAgentDao;
 
-    public GetFenceAgentsByVdsIdQuery(P parameters) {
-        super(parameters);
+    public GetFenceAgentsByVdsIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

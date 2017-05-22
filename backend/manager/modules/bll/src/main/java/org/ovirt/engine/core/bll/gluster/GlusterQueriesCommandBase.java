@@ -58,10 +58,6 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
     @Inject
     protected GlusterUtil glusterUtil;
 
-    protected GlusterQueriesCommandBase(P parameters) {
-        super(parameters);
-    }
-
     public GlusterQueriesCommandBase(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

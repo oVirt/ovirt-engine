@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
@@ -39,8 +40,8 @@ public class GetoVirtISOsQuery<P extends IdQueryParameters> extends QueriesComma
     @Inject
     private VdsDao hostDao;
 
-    public GetoVirtISOsQuery(P parameters) {
-        super(parameters);
+    public GetoVirtISOsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

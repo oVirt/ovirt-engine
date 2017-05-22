@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
@@ -10,8 +11,8 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeRemoveBrick
 
 public class GetGlusterVolumeRemoveBricksStatusQuery<P extends GlusterVolumeRemoveBricksQueriesParameters> extends GlusterAsyncTaskStatusQueryBase<P> {
 
-    public GetGlusterVolumeRemoveBricksStatusQuery(P params) {
-        super(params);
+    public GetGlusterVolumeRemoveBricksStatusQuery(P params, EngineContext engineContext) {
+        super(params, engineContext);
     }
 
     @Override

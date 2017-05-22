@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmDao;
@@ -16,8 +17,8 @@ public class GetVmsRunningOnOrMigratingToVdsQuery<P extends IdQueryParameters> e
     @Inject
     private VmDao vmDao;
 
-    public GetVmsRunningOnOrMigratingToVdsQuery(P parameters) {
-        super(parameters);
+    public GetVmsRunningOnOrMigratingToVdsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

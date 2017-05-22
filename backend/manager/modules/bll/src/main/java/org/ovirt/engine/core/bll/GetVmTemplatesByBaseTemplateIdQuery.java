@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -21,8 +22,8 @@ public class GetVmTemplatesByBaseTemplateIdQuery<P extends GetVmTemplateParamete
     @Inject
     private VmTemplateHandler vmTemplateHandler;
 
-    public GetVmTemplatesByBaseTemplateIdQuery(P parameters) {
-        super(parameters);
+    public GetVmTemplatesByBaseTemplateIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -15,10 +15,6 @@ public class GetVmByVmIdQuery<P extends IdQueryParameters> extends QueriesComman
     @Inject
     private VmDao vmDao;
 
-    public GetVmByVmIdQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetVmByVmIdQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

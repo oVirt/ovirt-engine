@@ -35,10 +35,6 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
     @Inject
     private StoragePoolDao storagePoolDao;
 
-    public GetUnregisteredDiskQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetUnregisteredDiskQuery(P parameters, EngineContext context) {
         super(parameters, context);
     }

@@ -9,10 +9,6 @@ import org.ovirt.engine.core.common.queries.ServerParameters;
  */
 public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends QueriesCommandBase<P> {
 
-    public GetServerSSHKeyFingerprintQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetServerSSHKeyFingerprintQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }

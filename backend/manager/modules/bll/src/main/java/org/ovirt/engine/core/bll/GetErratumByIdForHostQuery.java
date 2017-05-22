@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -18,8 +19,8 @@ public class GetErratumByIdForHostQuery<P extends HostErratumQueryParameters> ex
     @Inject
     private ProviderDao providerDao;
 
-    public GetErratumByIdForHostQuery(P parameters) {
-        super(parameters);
+    public GetErratumByIdForHostQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

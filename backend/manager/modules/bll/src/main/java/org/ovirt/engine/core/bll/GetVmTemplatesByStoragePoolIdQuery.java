@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -17,8 +18,8 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
     @Inject
     private VmTemplateDao vmTemplateDao;
 
-    public GetVmTemplatesByStoragePoolIdQuery(P parameters) {
-        super(parameters);
+    public GetVmTemplatesByStoragePoolIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

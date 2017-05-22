@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dao.UserProfileDao;
@@ -12,8 +13,8 @@ public class GetUserProfileAsListQuery<P extends VdcQueryParametersBase> extends
     @Inject
     private UserProfileDao userProfileDao;
 
-    public GetUserProfileAsListQuery(P parameters) {
-        super(parameters);
+    public GetUserProfileAsListQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

@@ -7,10 +7,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class GetAllVmsForUserQuery<P extends VdcQueryParametersBase> extends GetAllVmsQueryBase<P> {
-    public GetAllVmsForUserQuery(P parameters) {
-        super(parameters);
-    }
-
     public GetAllVmsForUserQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
