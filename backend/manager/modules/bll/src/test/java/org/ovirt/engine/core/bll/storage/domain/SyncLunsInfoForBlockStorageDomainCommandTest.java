@@ -15,18 +15,18 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
-import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTest {
 
-    private StorageDomainParametersBase parameters = createParameters();
+    private SyncLunsInfoForBlockStorageDomainParameters parameters = createParameters();
 
     @Spy
     @InjectMocks
-    private SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase> command =
+    private SyncLunsInfoForBlockStorageDomainCommand<SyncLunsInfoForBlockStorageDomainParameters> command =
             new SyncLunsInfoForBlockStorageDomainCommand<>(parameters, null);
     private LUNs lunFromVg;
     private LUNs lunFromDb;
@@ -131,8 +131,9 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
                 Collections.singletonList(lunFromDb));
     }
 
-    private StorageDomainParametersBase createParameters() {
-        StorageDomainParametersBase params = new StorageDomainParametersBase(Guid.newGuid());
+    private SyncLunsInfoForBlockStorageDomainParameters createParameters() {
+        SyncLunsInfoForBlockStorageDomainParameters params =
+                new SyncLunsInfoForBlockStorageDomainParameters(Guid.newGuid());
         params.setVdsId(Guid.newGuid());
         return params;
     }

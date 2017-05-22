@@ -38,8 +38,8 @@ import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
-import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -270,7 +270,8 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void syncLunsInfoForBlockStorageDomain(final Guid storageDomainId, final Guid vdsId) {
         ThreadPoolUtil.execute(() -> {
-            StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomainId);
+            SyncLunsInfoForBlockStorageDomainParameters parameters = new SyncLunsInfoForBlockStorageDomainParameters(
+                    storageDomainId);
             parameters.setVdsId(vdsId);
             backend.runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters);
         });

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityH
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
@@ -38,7 +38,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
+public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForBlockStorageDomainParameters>
+        extends StorageDomainCommandBase<T> {
 
     @Inject
     private BlockStorageDiscardFunctionalityHelper discardHelper;
@@ -57,7 +58,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
     @Override
     protected void executeCommand() {
-        final List<LUNs> lunsFromVgInfo = getLunsFromVgInfo();
+        final List<LUNs> lunsFromVgInfo = getVgInfo();
         final List<LUNs> lunsFromDb = lunDao.getAllForVolumeGroup(getStorageDomain().getStorage());
 
         Map<LunHandler, List<LUNs>> lunsToUpdateInDb = getLunsToUpdateInDb(lunsFromVgInfo, lunsFromDb);
@@ -75,7 +76,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     }
 
     @SuppressWarnings("unchecked")
-    private List<LUNs> getLunsFromVgInfo() {
+    private List<LUNs> getVgInfo() {
+        if (getParameters().getVgInfo() != null) {
+            log.debug("Using the virtual group's information from the command's parameters rather "
+                    + "than calling getVgInfo and getting the information directly from vdsm.");
+            return getParameters().getVgInfo();
+        }
         GetVGInfoVDSCommandParameters params = new GetVGInfoVDSCommandParameters(getParameters().getVdsId(),
                 getStorageDomain().getStorage());
         if (getParameters().getVdsId() == null) {
