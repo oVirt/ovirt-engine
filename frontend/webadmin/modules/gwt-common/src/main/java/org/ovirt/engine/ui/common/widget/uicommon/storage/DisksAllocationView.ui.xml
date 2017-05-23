@@ -2,7 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 
@@ -24,13 +25,20 @@
         .autoselect {
             padding-bottom: 10px;
         }
-    </ui:style>
 
+        .noMargin {
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+    </ui:style>
     <g:FlowPanel>
-        <g:Label ui:field="diskAllocationLabel" visible="false" addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
-        <ge:EntityModelCheckBoxEditor visible="false" ui:field="diskAllocationTargetEnabled" label="{constants.diskAllocationTargetEnabled}" addStyleNames="{style.autoselect}"/>
-        <g:SimplePanel ui:field="diskListHeaderPanel" />
+        <b:Row addStyleNames="{style.noMargin}">
+            <g:Label ui:field="diskAllocationLabel" visible="false" addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
+            <ge:EntityModelCheckBoxEditor visible="false" ui:field="diskAllocationTargetEnabled" label="{constants.diskAllocationTargetEnabled}" addStyleNames="{style.autoselect}"/>
+        </b:Row>
+        <b:Row addStyleNames="{style.noMargin}">
+            <g:SimplePanel ui:field="diskListHeaderPanel" />
+        </b:Row>
         <g:FlowPanel ui:field="diskListPanel" addStyleNames="{style.diskListPanel} {style.overflow}" />
     </g:FlowPanel>
-
 </ui:UiBinder>

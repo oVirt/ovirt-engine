@@ -4,7 +4,8 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
     xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
+    xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationItemView.WidgetStyle">
         .editorLabel {
@@ -33,25 +34,34 @@
         .labelContainer {
             overflow: hidden;
         }
+
+        .noMargin {
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+
+        .noWrap {
+            white-space: nowrap;
+        }
     </ui:style>
-
-    <g:FlowPanel addStyleNames="{style.tableStyle}">
-        <g:FlowPanel ui:field="diskAliasLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
-            <l:EnableableFormLabel ui:field="diskAliasLabel" />
+    <b:Row addStyleNames="{style.noMargin}">
+        <g:FlowPanel addStyleNames="{style.tableStyle}">
+            <g:FlowPanel ui:field="diskAliasLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
+                <l:EnableableFormLabel ui:field="diskAliasLabel" addStyleNames="{style.noWrap}" />
+            </g:FlowPanel>
+            <ge:StringEntityModelTextBoxEditor ui:field="diskAliasEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+            <g:FlowPanel ui:field="diskSizeLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
+                <l:EnableableFormLabel ui:field="diskSizeLabel" addStyleNames="{style.noWrap}" />
+            </g:FlowPanel>
+            <g:FlowPanel ui:field="sourceStorageLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
+                <l:EnableableFormLabel ui:field="sourceStorageLabel" addStyleNames="{style.noWrap}" />
+            </g:FlowPanel>
+            <e:ListModelListBoxEditor ui:field="volumeTypeListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+            <e:ListModelListBoxEditor ui:field="volumeFormatListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+            <e:ListModelListBoxEditor ui:field="sourceStorageListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+            <e:ListModelListBoxEditor ui:field="storageListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+            <e:ListModelListBoxEditor ui:field="diskProfileListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
+            <e:ListModelListBoxEditor ui:field="quotaListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
         </g:FlowPanel>
-        <ge:StringEntityModelTextBoxEditor ui:field="diskAliasEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
-        <g:FlowPanel ui:field="diskSizeLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
-            <l:EnableableFormLabel ui:field="diskSizeLabel" />
-        </g:FlowPanel>
-        <g:FlowPanel ui:field="sourceStorageLabelContainer" addStyleNames="{style.labelContainer} {style.column}">
-            <l:EnableableFormLabel ui:field="sourceStorageLabel" />
-        </g:FlowPanel>
-        <e:ListModelListBoxEditor ui:field="volumeTypeListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
-        <e:ListModelListBoxEditor ui:field="volumeFormatListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
-        <e:ListModelListBoxEditor ui:field="sourceStorageListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
-        <e:ListModelListBoxEditor ui:field="storageListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
-        <e:ListModelListBoxEditor ui:field="diskProfileListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
-        <e:ListModelListBoxEditor ui:field="quotaListEditor" usePatternFly="true" addStyleNames="{style.column}" removeFormGroup="true" />
-    </g:FlowPanel>
-
+    </b:Row>
 </ui:UiBinder>
