@@ -38,7 +38,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
@@ -157,7 +158,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     }
 
     private void addRegisterInitatedAuditLog() {
-        AuditLogableBase logable = new AuditLogableBase();
+        AuditLogable logable = new AuditLogableImpl();
         logable.addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
         auditLogDirector.log(logable, AuditLogType.USER_REGISTER_DISK_INITIATED);
     }
