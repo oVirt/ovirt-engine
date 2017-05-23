@@ -10,8 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -150,36 +149,30 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             String relations,
             String value,
             boolean caseSensitive) {
-        StringBuilder sb = new StringBuilder(" ( ");
-        boolean firstTime = true;
+        String val;
         if (!StringHelper.isNullOrEmpty(value) && !"''".equals(value)) {
-            value = StringFormat.format(getI18NPrefix() + "'%%%1$s%%'", StringHelper.trim(value, '\''));
+            val= StringFormat.format(getI18NPrefix() + "'%%%1$s%%'", StringHelper.trim(value, '\''));
+        } else {
+            val = value;
+        }
 
+        String rel;
+        switch (relations) {
+        case "d":
+            rel = getLikeSyntax(caseSensitive);
+            break;
+        case "!=":
+            rel = "NOT " + getLikeSyntax(caseSensitive);
+            break;
+        default:
+            rel = relations;
         }
-        if ("=".equals(relations)) {
-            relations = getLikeSyntax(caseSensitive);
-        } else if ("!=".equals(relations)) {
-            relations = "NOT " + getLikeSyntax(caseSensitive);
-        }
-        // Sort according to the value (real column name) in order not to rely on random access from map
-        SortedSet<Map.Entry<String, String>> sortedEntrySet = new TreeSet<>(Map.Entry.comparingByValue());
-        sortedEntrySet.addAll(columnNameDict.entrySet());
-        for (Map.Entry<String, String> columnNameEntry : sortedEntrySet) {
-            if (typeDict.get(columnNameEntry.getKey()) == String.class && !notFreeTextSearchableFieldsList.contains(columnNameEntry.getKey())) {
-                if (firstTime) {
-                    firstTime = false;
-                } else {
-                    sb.append(" OR ");
-                }
-                sb.append(StringFormat.format(" %1$s.%2$s %3$s %4$s",
-                        tableName,
-                        columnNameEntry.getValue(),
-                        relations,
-                        value));
-            }
-        }
-        sb.append(" ) ");
-        return sb.toString();
+
+        return columnNameDict.entrySet().stream().sorted(Map.Entry.comparingByValue())
+                .filter(e -> typeDict.get(e.getKey()) == String.class && !notFreeTextSearchableFieldsList.contains(e.getKey()))
+                .map(e -> StringFormat.format(" %1$s.%2$s %3$s %4$s", tableName, e.getValue(), rel, val))
+                .distinct()
+                .collect(Collectors.joining(" OR ", " ( ", " ) "));
     }
 
     static final Regex validChar = new Regex("^[^\\<\\>&^!']*$");
