@@ -112,6 +112,14 @@ public class StorageDomain implements Queryable, BusinessEntityWithStatus<Guid, 
         getStorageStaticData().setVgMetadataDevice(vgMetadataDevice);
     }
 
+    public boolean isBackup() {
+        return getStorageStaticData().isBackup();
+    }
+
+    public void setBackup(boolean backup) {
+        getStorageStaticData().setBackup(backup);
+    }
+
     @JsonIgnore
     @Override
     public String getName() {

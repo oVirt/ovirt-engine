@@ -181,6 +181,7 @@ public class StorageDomainDaoImpl extends BaseDao implements StorageDomainDao {
         entity.setWarningLowSpaceIndicator(rs.getInt("warning_low_space_indicator"));
         entity.setCriticalSpaceActionBlocker(rs.getInt("critical_space_action_blocker"));
         entity.setHostedEngineStorage(rs.getBoolean("is_hosted_engine_storage"));
+        entity.setBackup(rs.getBoolean("backup"));
         return entity;
     };
 

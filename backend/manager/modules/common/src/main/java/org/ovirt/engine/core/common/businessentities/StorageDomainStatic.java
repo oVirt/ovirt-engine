@@ -64,6 +64,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private Boolean discardAfterDelete;
 
+    private boolean backup;
+
     @Min(value = 0, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_SPACE_INDICATOR_RANGE")
     @Max(value = 100, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_SPACE_INDICATOR_RANGE")
     private Integer warningLowSpaceIndicator;
@@ -227,6 +229,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         this.vgMetadataDevice = vgMetadataDevice;
     }
 
+    public boolean isBackup() {
+        return backup;
+    }
+
+    public void setBackup(boolean backup) {
+        this.backup = backup;
+    }
+
     @Override
     public String getName() {
         return getStorageName();
@@ -250,7 +260,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 firstMetadataDevice,
                 vgMetadataDevice,
                 warningLowSpaceIndicator,
-                criticalSpaceActionBlocker
+                criticalSpaceActionBlocker,
+                backup
         );
     }
 
@@ -278,7 +289,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && Objects.equals(vgMetadataDevice, other.vgMetadataDevice)
                 && Objects.equals(description, other.description)
                 && Objects.equals(warningLowSpaceIndicator, other.warningLowSpaceIndicator)
-                && Objects.equals(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker);
+                && Objects.equals(criticalSpaceActionBlocker, other.criticalSpaceActionBlocker)
+                && Objects.equals(backup, other.backup);
     }
 
     @Override

@@ -213,6 +213,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
                 result.getFirstMetadataDevice());
         assertEquals("Wrong vg metadata device", FixturesTool.LUN_ID_OF_DOMAIN_VG_METADATA, result.getVgMetadataDevice());
         assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, result.getStorageDomainSharedStatus());
+        assertEquals("Wrong backup flag status", false, result.isBackup());
     }
 
     /**

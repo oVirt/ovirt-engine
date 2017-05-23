@@ -491,7 +491,8 @@ CREATE OR REPLACE FUNCTION Insertstorage_domain_static (
     v_first_metadata_device VARCHAR(100),
     v_vg_metadata_device VARCHAR(100),
     v_warning_low_space_indicator INT,
-    v_critical_space_action_blocker INT
+    v_critical_space_action_blocker INT,
+    v_backup BOOLEAN
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -510,7 +511,8 @@ BEGIN
         first_metadata_device,
         vg_metadata_device,
         warning_low_space_indicator,
-        critical_space_action_blocker
+        critical_space_action_blocker,
+        backup
         )
     VALUES (
         v_id,
@@ -527,7 +529,8 @@ BEGIN
         v_first_metadata_device,
         v_vg_metadata_device,
         v_warning_low_space_indicator,
-        v_critical_space_action_blocker
+        v_critical_space_action_blocker,
+        v_backup
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -562,7 +565,8 @@ CREATE OR REPLACE FUNCTION Updatestorage_domain_static (
     v_first_metadata_device VARCHAR(100),
     v_vg_metadata_device VARCHAR(100),
     v_warning_low_space_indicator INT,
-    v_critical_space_action_blocker INT
+    v_critical_space_action_blocker INT,
+    v_backup BOOLEAN
     )
 RETURNS VOID
     --The [storage_domain_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -583,7 +587,8 @@ BEGIN
         storage_description = v_storage_description,
         storage_comment = v_storage_comment,
         warning_low_space_indicator = v_warning_low_space_indicator,
-        critical_space_action_blocker = v_critical_space_action_blocker
+        critical_space_action_blocker = v_critical_space_action_blocker,
+        backup = v_backup
     WHERE id = v_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;

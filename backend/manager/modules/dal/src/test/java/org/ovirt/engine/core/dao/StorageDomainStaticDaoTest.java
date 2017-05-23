@@ -47,6 +47,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
         newStaticDomain.setCriticalSpaceActionBlocker(9);
         newStaticDomain.setFirstMetadataDevice(FixturesTool.LUN_ID2);
         newStaticDomain.setVgMetadataDevice(FixturesTool.LUN_ID2);
+        newStaticDomain.setBackup(false);
     }
 
     /**
@@ -177,6 +178,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
         existingDomain.setCriticalSpaceActionBlocker(8);
         existingDomain.setFirstMetadataDevice(FixturesTool.LUN_ID1);
         existingDomain.setVgMetadataDevice(FixturesTool.LUN_ID1);
+        existingDomain.setBackup(true);
         dao.update(existingDomain);
 
         StorageDomainStatic after = dao.get(existingDomain.getId());

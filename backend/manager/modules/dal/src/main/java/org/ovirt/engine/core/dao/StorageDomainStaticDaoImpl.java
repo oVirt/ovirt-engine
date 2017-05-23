@@ -88,7 +88,8 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
                 .addValue("first_metadata_device", domain.getFirstMetadataDevice())
                 .addValue("vg_metadata_device", domain.getVgMetadataDevice())
                 .addValue("warning_low_space_indicator", domain.getWarningLowSpaceIndicator())
-                .addValue("critical_space_action_blocker", domain.getCriticalSpaceActionBlocker());
+                .addValue("critical_space_action_blocker", domain.getCriticalSpaceActionBlocker())
+                .addValue("backup", domain.isBackup());
     }
 
     @Override
@@ -113,6 +114,7 @@ public class StorageDomainStaticDaoImpl extends DefaultGenericDao<StorageDomainS
         entity.setVgMetadataDevice(rs.getString("vg_metadata_device"));
         entity.setWarningLowSpaceIndicator((Integer) rs.getObject("warning_low_space_indicator"));
         entity.setCriticalSpaceActionBlocker((Integer) rs.getObject("critical_space_action_blocker"));
+        entity.setBackup(rs.getBoolean("backup"));
         return entity;
     };
 }
