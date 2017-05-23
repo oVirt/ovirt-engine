@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.InjectorRule;
 
@@ -57,7 +57,7 @@ public class ExternalNetworkManagerTest {
     private NetworkProviderProxy networkProviderProxy;
 
     @Captor
-    private ArgumentCaptor<AuditLogableBase> auditLogableBaseCaptor;
+    private ArgumentCaptor<AuditLogable> auditLogableCaptor;
 
     private ExternalNetworkManager underTest;
 
@@ -107,10 +107,10 @@ public class ExternalNetworkManagerTest {
         underTest.deallocateIfExternal();
 
         verify(auditLogDirector).log(
-                auditLogableBaseCaptor.capture(),
+                auditLogableCaptor.capture(),
                 same(AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED));
 
-        final Map<String, String> capturedCustomValues = auditLogableBaseCaptor.getValue().getCustomValues();
+        final Map<String, String> capturedCustomValues = auditLogableCaptor.getValue().getCustomValues();
         assertThat(capturedCustomValues, hasEntry("nicname", NIC_NAME));
         assertThat(capturedCustomValues, hasEntry("nicid", NIC_ID.toString()));
         assertThat(capturedCustomValues, hasEntry("providername", PROVIDER_NAME));

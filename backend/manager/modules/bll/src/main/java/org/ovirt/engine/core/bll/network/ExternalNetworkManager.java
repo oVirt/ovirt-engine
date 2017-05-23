@@ -9,7 +9,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
 
@@ -65,7 +66,7 @@ public class ExternalNetworkManager {
             try {
                 providerProxy.deallocate(nic);
             } catch (EngineException e) {
-                AuditLogableBase removePortFailureEvent = new AuditLogableBase();
+                AuditLogable removePortFailureEvent = new AuditLogableImpl();
                 removePortFailureEvent.addCustomValue("NicName", nic.getName());
                 removePortFailureEvent.addCustomValue("NicId", nic.getId().toString());
                 removePortFailureEvent.addCustomValue("ProviderName", provider.getName());
