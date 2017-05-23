@@ -1115,7 +1115,7 @@ public class SyntaxChecker implements ISyntaxChecker {
 
         return buildCondition(caseSensitive,
                 conditionFieldAC,
-                customizedValue,
+                escapeUnderScore(customizedValue, customizedRelation),
                 customizedRelation,
                 fieldName,
                 objName,
@@ -1192,7 +1192,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         case FreeTextSpecificObj:
             conditionData.setConditionText(conditionFieldAC.buildFreeTextConditionSql(tableName,
                     customizedRelation,
-                    escapeUnderScore(customizedValue, customizedRelation),
+                    customizedValue,
                     caseSensitive));
             conditionData.setFullTableRequired(true);
             break;
