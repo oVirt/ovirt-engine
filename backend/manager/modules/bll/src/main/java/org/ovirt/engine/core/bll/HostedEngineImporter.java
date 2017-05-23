@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -99,20 +99,20 @@ public class HostedEngineImporter {
                     resourceManager.getVmManager(vm.getId()).update(vm.getStaticData());
 
                     log.info("Successfully imported the Hosted Engine VM");
-                    auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_VM_IMPORT_SUCCEEDED);
+                    auditLogDirector.log(new AuditLogableImpl(), AuditLogType.HOSTED_ENGINE_VM_IMPORT_SUCCEEDED);
                 } else {
                     log.error("Failed importing the Hosted Engine VM");
-                    auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_VM_IMPORT_FAILED);
+                    auditLogDirector.log(new AuditLogableImpl(), AuditLogType.HOSTED_ENGINE_VM_IMPORT_FAILED);
                 }
             }
         } else {
             if (sd == null) {
                 log.debug("Skip trying to import the Hosted Engine VM. Storage Domain '{}' doesn't exist",
                         storageDomainId);
-                auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_SD_NOT_EXIT);
+                auditLogDirector.log(new AuditLogableImpl(), AuditLogType.HOSTED_ENGINE_SD_NOT_EXIT);
             } else {
                 log.debug("Skip trying to import the Hosted Engine VM. Storage Domain '{}' isn't ACTIVE", sd);
-                auditLogDirector.log(new AuditLogableBase(), AuditLogType.HOSTED_ENGINE_SD_NOT_ACTIVE);
+                auditLogDirector.log(new AuditLogableImpl(), AuditLogType.HOSTED_ENGINE_SD_NOT_ACTIVE);
             }
         }
     }
