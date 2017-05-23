@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasEntry;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -40,7 +41,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.di.InjectorRule;
@@ -71,7 +72,7 @@ public class VmInterfaceManagerTest {
     private TransactionManager transactionManager;
 
     @Captor
-    private ArgumentCaptor<AuditLogableBase> auditLogableBaseCaptor;
+    private ArgumentCaptor<AuditLogable> auditLogableCaptor;
 
     private VmInterfaceManager vmInterfaceManager;
 
@@ -145,17 +146,17 @@ public class VmInterfaceManagerTest {
 
         vmInterfaceManager.auditLogMacInUseUnplug(iface, VM_NAME);
 
-        final Map<String, String> capturedCustomValues =
-                verifyCommonAuditLogFilledProperly(AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG, iface);
-        assertThat(capturedCustomValues, hasEntry("vmname", VM_NAME));
+        verifyCommonAuditLogFilledProperly(AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG, iface);
+        assertEquals(auditLogableCaptor.getValue().getVmName(), VM_NAME);
     }
 
     private Map<String, String> verifyCommonAuditLogFilledProperly(AuditLogType auditLogType, VmNic iface) {
-        verify(auditLogDirector).log(auditLogableBaseCaptor.capture(), same(auditLogType));
-        final Map<String, String> capturedCustomValues = auditLogableBaseCaptor.getValue().getCustomValues();
+        verify(auditLogDirector).log(auditLogableCaptor.capture(), same(auditLogType));
+        final Map<String, String> capturedCustomValues = auditLogableCaptor.getValue().getCustomValues();
         assertThat(capturedCustomValues, allOf(
                 hasEntry("macaddr", iface.getMacAddress()),
                 hasEntry("ifacename", iface.getName())));
+        assertEquals(auditLogableCaptor.getValue().getVmId(), iface.getVmId());
         return capturedCustomValues;
     }
 
