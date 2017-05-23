@@ -29,7 +29,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -210,7 +211,7 @@ public class VmPoolMonitor implements BackendService {
         boolean prestartingVmSucceeded = vdcReturnValue.getSucceeded();
 
         if (!prestartingVmSucceeded) {
-            AuditLogableBase log = new AuditLogableBase();
+            AuditLogable log = new AuditLogableImpl();
             log.addCustomValue("VmPoolName", poolName);
             Injector.get(AuditLogDirector.class).log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
         }
