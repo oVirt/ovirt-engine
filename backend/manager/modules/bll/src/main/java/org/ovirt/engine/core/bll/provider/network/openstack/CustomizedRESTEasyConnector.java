@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll.provider.network.openstack;
 
 import static java.lang.Math.toIntExact;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.security.KeyStore;
 import java.util.concurrent.TimeUnit;
 
@@ -14,9 +12,9 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.jboss.resteasy.client.ClientExecutor;
 import org.jboss.resteasy.client.core.executors.ApacheHttpClient4Executor;
+import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +49,8 @@ public class CustomizedRESTEasyConnector extends RESTEasyConnector {
     }
 
     private void registerExternalProvidersTrustStore(DefaultHttpClient httpClient) {
-        try (FileInputStream inputStream = new FileInputStream(
-                new File(EngineLocalConfig.getInstance().getExternalProvidersTrustStore().getAbsolutePath()));) {
-            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(inputStream,
-                    EngineLocalConfig.getInstance().getExternalProvidersTrustStorePassword().toCharArray());
+        try {
+            KeyStore trustStore = ExternalTrustStoreInitializer.getTrustStore();
             SSLSocketFactory socketFactory = new SSLSocketFactory(trustStore);
             Scheme scheme = new Scheme("https", 443, socketFactory);
             httpClient.getConnectionManager().getSchemeRegistry().register(scheme);
