@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.provider;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -21,6 +23,8 @@ import org.ovirt.engine.core.compat.Guid;
  */
 @NonTransactiveCommandAttribute
 public class TestProviderConnectivityCommand<P extends ProviderParameters> extends CommandBase<P> {
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     public TestProviderConnectivityCommand(Guid commandId) {
         super(commandId);
@@ -32,7 +36,7 @@ public class TestProviderConnectivityCommand<P extends ProviderParameters> exten
 
     @Override
     protected void executeCommand() {
-        ProviderProxy proxy = ProviderProxyFactory.getInstance().create(getParameters().getProvider());
+        ProviderProxy proxy = providerProxyFactory.create(getParameters().getProvider());
 
         proxy.testConnection();
         setSucceeded(true);

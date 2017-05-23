@@ -24,6 +24,8 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
     private ProviderDao providerDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     private Provider<?> provider;
 
@@ -53,7 +55,7 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
 
     @Override
     protected void executeCommand() {
-        NetworkProviderProxy proxy = ProviderProxyFactory.getInstance().create(getProvider());
+        NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
         getNetwork().getProvidedBy().setExternalId(proxy.add(getNetwork()));
         getNetwork().setVlanId(null);
         getNetwork().setLabel(null);

@@ -19,6 +19,9 @@ public class GetErratumByIdForVmQuery<P extends HostErratumQueryParameters> exte
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public GetErratumByIdForVmQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -32,7 +35,7 @@ public class GetErratumByIdForVmQuery<P extends HostErratumQueryParameters> exte
 
         Provider<?> provider = providerDao.get(vm.getProviderId());
         if (provider != null) {
-            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
+            HostProviderProxy proxy = providerProxyFactory.create(provider);
             getQueryReturnValue().setReturnValue(proxy.getErratumForHost(vm.getDynamicData().getVmHost(), getParameters().getErratumId()));
         }
     }

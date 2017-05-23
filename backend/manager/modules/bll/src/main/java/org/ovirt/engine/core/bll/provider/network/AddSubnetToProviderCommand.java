@@ -29,6 +29,10 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
+
     public AddSubnetToProviderCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -57,7 +61,7 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
 
     @Override
     protected void executeCommand() {
-        NetworkProviderProxy proxy = ProviderProxyFactory.getInstance().create(getProvider());
+        NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
         getSubnet().setExternalNetwork(getExternalNetwork());
         proxy.addSubnet(getSubnet());
         setSucceeded(true);

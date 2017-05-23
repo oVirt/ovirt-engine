@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderConnectionInfo;
@@ -308,7 +309,8 @@ public class CinderBroker {
 
     private OpenStackVolumeProviderProxy getVolumeProviderProxy(Guid storageDomainId) {
         if (proxy == null) {
-            proxy = OpenStackVolumeProviderProxy.getFromStorageDomainId(storageDomainId);
+            proxy = OpenStackVolumeProviderProxy.getFromStorageDomainId(storageDomainId,
+                    Injector.get(ProviderProxyFactory.class));
         }
         return proxy;
     }

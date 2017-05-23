@@ -22,6 +22,9 @@ public class GetErrataCountsForVmQuery<P extends GetErrataCountsParameters> exte
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public GetErrataCountsForVmQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -57,7 +60,7 @@ public class GetErrataCountsForVmQuery<P extends GetErrataCountsParameters> exte
     }
 
     HostProviderProxy getHostProviderProxy(Provider<?> provider) {
-        return (HostProviderProxy) ProviderProxyFactory.getInstance().create(provider);
+        return (HostProviderProxy) providerProxyFactory.create(provider);
     }
 
     private Provider<?> getHostProvider(VM vm) {

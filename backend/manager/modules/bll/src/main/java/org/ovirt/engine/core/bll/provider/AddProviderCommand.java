@@ -22,6 +22,8 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     @Inject
     private ProviderDao providerDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     public AddProviderCommand(Guid commandId) {
         super(commandId);
@@ -43,7 +45,7 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     public ProviderProxy getProviderProxy() {
         if (providerProxy == null) {
-            providerProxy = ProviderProxyFactory.getInstance().create(getProvider());
+            providerProxy = providerProxyFactory.create(getProvider());
         }
         return providerProxy;
     }

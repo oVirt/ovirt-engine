@@ -25,6 +25,9 @@ public class GetHostListFromExternalProviderQuery<P extends GetHostListFromExter
     @Inject
     private VdsDao vdsDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public GetHostListFromExternalProviderQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -55,7 +58,7 @@ public class GetHostListFromExternalProviderQuery<P extends GetHostListFromExter
     }
 
     protected List<VDS> getProviderHosts(Provider hostProvider, String searchFilter) {
-        HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(hostProvider);
+        HostProviderProxy proxy = providerProxyFactory.create(hostProvider);
         if (StringUtils.isEmpty(searchFilter)) {
             return proxy.getAll();
         } else {

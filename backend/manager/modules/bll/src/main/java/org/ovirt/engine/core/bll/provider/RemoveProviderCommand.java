@@ -36,6 +36,8 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     private NetworkDao networkDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     public RemoveProviderCommand(Guid commandId) {
         super(commandId);
@@ -68,7 +70,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     public ProviderProxy getProviderProxy() {
         if (providerProxy == null) {
-            providerProxy = ProviderProxyFactory.getInstance().create(getParameters().getProvider());
+            providerProxy = providerProxyFactory.create(getParameters().getProvider());
         }
         return providerProxy;
     }

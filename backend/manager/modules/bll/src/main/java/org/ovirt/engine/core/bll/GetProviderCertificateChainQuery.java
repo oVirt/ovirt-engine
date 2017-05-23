@@ -7,6 +7,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.collections.CollectionUtils;
@@ -31,11 +33,14 @@ public class GetProviderCertificateChainQuery<P extends ProviderQueryParameters>
         return getParameters().getProvider();
     }
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     @Override
     protected void executeQueryCommand() {
         Provider<?> provider = getProvider();
         try {
-            ProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
+            ProviderProxy proxy = providerProxyFactory.create(provider);
             List<? extends Certificate> chain = proxy.getCertificateChain();
             List<CertificateInfo> results = new ArrayList<>();
             if (CollectionUtils.isNotEmpty(chain)) {

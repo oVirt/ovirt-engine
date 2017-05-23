@@ -20,6 +20,9 @@ public class GetErrataCountsForHostQuery<P extends GetErrataCountsParameters> ex
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public GetErrataCountsForHostQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -49,7 +52,7 @@ public class GetErrataCountsForHostQuery<P extends GetErrataCountsParameters> ex
     }
 
     HostProviderProxy getHostProviderProxy(Provider<?> provider) {
-        return (HostProviderProxy) ProviderProxyFactory.getInstance().create(provider);
+        return (HostProviderProxy) providerProxyFactory.create(provider);
     }
 
     private Provider<?> getHostProvider(VdsStatic host) {

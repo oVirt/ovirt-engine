@@ -104,6 +104,9 @@ public class IsoDomainListSynchronizer implements BackendService {
     @Inject
     private VmHandler vmHandler;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     private List<RepoImage> problematicRepoFileList = new ArrayList<>();
     private final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
     private int isoDomainRefreshRate;
@@ -228,7 +231,7 @@ public class IsoDomainListSynchronizer implements BackendService {
 
     private boolean refreshImageDomain(final StorageDomain storageDomain, final ImageFileType imageType) {
         Provider provider = providerDao.get(new Guid(storageDomain.getStorage()));
-        final OpenStackImageProviderProxy client = ProviderProxyFactory.getInstance().create(provider);
+        final OpenStackImageProviderProxy client = providerProxyFactory.create(provider);
 
         Lock syncObject = getSyncObject(storageDomain.getId(), imageType);
         try {

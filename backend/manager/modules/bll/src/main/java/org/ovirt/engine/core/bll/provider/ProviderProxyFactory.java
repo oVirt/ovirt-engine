@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.provider;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.host.provider.foreman.ForemanHostProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.ExternalNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.OpenstackNetworkProviderProxy;
@@ -20,14 +22,8 @@ import org.ovirt.engine.core.di.Injector;
 /**
  * The provider proxy factory can create a provider proxy according to the provider definition.
  */
+@Singleton
 public class ProviderProxyFactory {
-
-    private static final ProviderProxyFactory INSTANCE = new ProviderProxyFactory();
-
-    private ProviderProxyFactory() {
-        // Singleton private c'tor
-    }
-
     /**
      * Create the proxy used to communicate with the given provider.
      *
@@ -65,14 +61,5 @@ public class ProviderProxyFactory {
         default:
             return null;
         }
-    }
-
-    /**
-     * Return the {@link ProviderProxyFactory} for using as a dependency.
-     *
-     * @return The {@link ProviderProxyFactory}
-     */
-    public static ProviderProxyFactory getInstance() {
-        return INSTANCE;
     }
 }

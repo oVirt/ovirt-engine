@@ -135,6 +135,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private VmPoolDao vmPoolDao;
     @Inject
     private VmDynamicDao vmDynamicDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -609,7 +611,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
             if (network != null && network.isExternal() && vmDevice.isPlugged()) {
                 Provider<?> provider = providerDao.get(network.getProvidedBy().getProviderId());
-                NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
+                NetworkProviderProxy providerProxy = providerProxyFactory.create(provider);
                 Map<String, String> deviceProperties = providerProxy.allocate(network, vnicProfile, iface, getVds());
 
                 getVm().getRuntimeDeviceCustomProperties().put(vmDevice.getId(), deviceProperties);

@@ -20,6 +20,9 @@ public class GetErrataForHostQuery<P extends GetErrataCountsParameters> extends 
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public GetErrataForHostQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -34,7 +37,7 @@ public class GetErrataForHostQuery<P extends GetErrataCountsParameters> extends 
 
         Provider<?> provider = providerDao.get(host.getHostProviderId());
         if (provider != null) {
-            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
+            HostProviderProxy proxy = providerProxyFactory.create(provider);
             ErrataData errataForHost = proxy.getErrataForHost(host.getHostName(),
                     getParameters().getErrataFilter());
             getQueryReturnValue().setReturnValue(errataForHost);

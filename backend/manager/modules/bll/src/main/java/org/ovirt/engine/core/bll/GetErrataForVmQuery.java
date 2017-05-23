@@ -20,6 +20,9 @@ public class GetErrataForVmQuery<P extends GetErrataCountsParameters> extends Qu
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public GetErrataForVmQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -34,7 +37,7 @@ public class GetErrataForVmQuery<P extends GetErrataCountsParameters> extends Qu
 
         Provider<?> provider = providerDao.get(vm.getProviderId());
         if (provider != null) {
-            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
+            HostProviderProxy proxy = providerProxyFactory.create(provider);
             ErrataData errataForVm = proxy.getErrataForHost(vm.getDynamicData().getVmHost(),
                     getParameters().getErrataFilter());
             getQueryReturnValue().setReturnValue(errataForVm);

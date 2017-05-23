@@ -91,6 +91,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private ProviderDao providerDao;
     @Inject
     private InterfaceDao interfaceDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -379,7 +381,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private NetworkProviderProxy getProviderProxy() {
         if (providerProxy == null) {
             Provider<?> provider = providerDao.get(getNetwork().getProvidedBy().getProviderId());
-            providerProxy = ProviderProxyFactory.getInstance().create(provider);
+            providerProxy = providerProxyFactory.create(provider);
         }
 
         return providerProxy;

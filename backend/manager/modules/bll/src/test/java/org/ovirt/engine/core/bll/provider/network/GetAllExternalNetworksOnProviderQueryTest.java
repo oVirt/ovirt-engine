@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
@@ -45,12 +46,14 @@ public class GetAllExternalNetworksOnProviderQueryTest
     @Mock
     private NetworkProviderProxy client;
 
+    @InjectMocks
+    private GetAllExternalNetworksOnProviderQuery<IdQueryParameters> query;
+
     @Test
     @SuppressWarnings("unchecked")
     public void testExecuteQueryCommand() {
         when(params.getId()).thenReturn(mock(Guid.class));
         when((Provider<AdditionalProperties>) providerDao.get(any(Guid.class))).thenReturn(networkProvider);
-        when(getQuery().getProviderProxyFactory()).thenReturn(providerProxyFactory);
         when(providerProxyFactory.create(networkProvider)).thenReturn(client);
 
         Network network = mock(Network.class);
@@ -65,7 +68,7 @@ public class GetAllExternalNetworksOnProviderQueryTest
         Map<Network, Set<Guid>> expected = new HashMap<>();
         expected.put(network, Collections.singleton(id));
 
-        GetAllExternalNetworksOnProviderQuery<IdQueryParameters> query = getQuery();
+        query = getQuery();
         query.executeQueryCommand();
 
         assertEquals("Wrong result returned", expected, getQuery().getQueryReturnValue().getReturnValue());

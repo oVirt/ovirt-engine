@@ -26,6 +26,8 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
 
     @Inject
     private ProviderDao providerDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     private Provider<?> oldProvider;
 
@@ -75,7 +77,7 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
     protected void executeCommand() {
         providerDao.update(getProvider());
 
-        ProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(getProvider());
+        ProviderProxy providerProxy = providerProxyFactory.create(getProvider());
         if (providerProxy != null) {
             providerProxy.onModification();
         }

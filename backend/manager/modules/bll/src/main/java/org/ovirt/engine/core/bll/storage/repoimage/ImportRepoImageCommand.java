@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageException;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -75,6 +76,8 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     private DiskVmElementDao diskVmElementDao;
     @Inject
     private ImageDao imageDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     private OpenStackImageProviderProxy providerProxy;
 
@@ -190,7 +193,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     protected OpenStackImageProviderProxy getProviderProxy() {
         if (providerProxy == null) {
             providerProxy = OpenStackImageProviderProxy
-                    .getFromStorageDomainId(getParameters().getSourceStorageDomainId());
+                    .getFromStorageDomainId(getParameters().getSourceStorageDomainId(), providerProxyFactory);
         }
         return providerProxy;
     }

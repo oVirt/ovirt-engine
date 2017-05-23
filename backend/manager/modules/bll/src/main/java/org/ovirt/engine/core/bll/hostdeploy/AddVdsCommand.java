@@ -85,6 +85,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private VdsStatisticsDao vdsStatisticsDao;
     @Inject
     private FenceAgentDao fenceAgentDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -131,7 +133,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         });
 
         if (getParameters().isProvisioned()) {
-            HostProviderProxy proxy = ProviderProxyFactory.getInstance().create(getHostProvider());
+            HostProviderProxy proxy = providerProxyFactory.create(getHostProvider());
             proxy.provisionHost(
                     getParameters().getvds(),
                     getParameters().getHostGroup(),

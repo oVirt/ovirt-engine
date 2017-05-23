@@ -22,6 +22,9 @@ public class EngineForemanProviderFinder {
     @Inject
     private DbFacade dbFacade;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public HostProviderProxy findEngineProvider() {
         engineHostName = resolveEngineHostName();
         if (engineHostName == null) {
@@ -31,7 +34,7 @@ public class EngineForemanProviderFinder {
         List<Provider<?>> hostProviders = dbFacade.getProviderDao().getAllByTypes(ProviderType.FOREMAN);
         HostProviderProxy proxy;
         for (Provider<?> provider : hostProviders) {
-            proxy = ProviderProxyFactory.getInstance().create(provider);
+            proxy = providerProxyFactory.create(provider);
             if (proxy.isContentHostExist(engineHostName)) {
                 return proxy;
             }

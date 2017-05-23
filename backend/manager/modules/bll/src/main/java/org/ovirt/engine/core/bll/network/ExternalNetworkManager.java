@@ -76,7 +76,7 @@ public class ExternalNetworkManager {
     }
 
     ProviderProxyFactory getProviderProxyFactory() {
-        return ProviderProxyFactory.getInstance();
+        return Injector.get(ProviderProxyFactory.class);
     }
 
     private ProviderDao getProviderDao() {

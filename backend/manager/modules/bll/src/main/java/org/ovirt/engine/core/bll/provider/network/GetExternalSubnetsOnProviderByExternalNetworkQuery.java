@@ -30,6 +30,8 @@ public class GetExternalSubnetsOnProviderByExternalNetworkQuery
         <P extends GetExternalSubnetsOnProviderByExternalNetworkQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private ProviderDao providerDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     public GetExternalSubnetsOnProviderByExternalNetworkQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
@@ -42,14 +44,10 @@ public class GetExternalSubnetsOnProviderByExternalNetworkQuery
             return;
         }
 
-        NetworkProviderProxy client = getProviderProxyFactory().create(provider);
+        NetworkProviderProxy client = providerProxyFactory.create(provider);
         ProviderNetwork providedBy = new ProviderNetwork();
         providedBy.setProviderId(getParameters().getProviderId());
         providedBy.setExternalId(getParameters().getNetworkId());
         getQueryReturnValue().setReturnValue(client.getAllSubnets(providedBy));
-    }
-
-    protected ProviderProxyFactory getProviderProxyFactory() {
-        return ProviderProxyFactory.getInstance();
     }
 }

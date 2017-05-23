@@ -28,6 +28,9 @@ public class RemoveSubnetFromProviderCommand<T extends ExternalSubnetParameters>
     @Inject
     private ProviderDao providerDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     private Provider<?> provider;
 
     public RemoveSubnetFromProviderCommand(T parameters, CommandContext cmdContext) {
@@ -63,7 +66,7 @@ public class RemoveSubnetFromProviderCommand<T extends ExternalSubnetParameters>
 
     @Override
     protected void executeCommand() {
-        NetworkProviderProxy proxy = ProviderProxyFactory.getInstance().create(getProvider());
+        NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
         proxy.removeSubnet(getSubnet().getId());
         setSucceeded(true);
     }

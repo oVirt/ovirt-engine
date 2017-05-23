@@ -25,6 +25,9 @@ public class GetAllExternalNetworksOnProviderQuery<P extends IdQueryParameters> 
     @Inject
     private StoragePoolDao storagePoolDao;
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+
     public GetAllExternalNetworksOnProviderQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -36,7 +39,7 @@ public class GetAllExternalNetworksOnProviderQuery<P extends IdQueryParameters> 
             return;
         }
 
-        NetworkProviderProxy client = getProviderProxyFactory().create(provider);
+        NetworkProviderProxy client = providerProxyFactory.create(provider);
         List<Network> externalNetworks = client.getAll();
 
         Map<Network, Set<Guid>> externalNetworkToDcId = new HashMap<>();
@@ -46,9 +49,5 @@ public class GetAllExternalNetworksOnProviderQuery<P extends IdQueryParameters> 
         }
 
         getQueryReturnValue().setReturnValue(externalNetworkToDcId);
-    }
-
-    protected ProviderProxyFactory getProviderProxyFactory() {
-        return ProviderProxyFactory.getInstance();
     }
 }

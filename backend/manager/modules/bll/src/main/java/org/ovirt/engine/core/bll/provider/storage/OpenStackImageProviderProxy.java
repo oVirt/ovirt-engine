@@ -74,11 +74,12 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
         addStorageDomain(StorageType.GLANCE, StorageDomainType.Image);
     }
 
-    public static OpenStackImageProviderProxy getFromStorageDomainId(Guid storageDomainId) {
+    public static OpenStackImageProviderProxy getFromStorageDomainId(Guid storageDomainId,
+            ProviderProxyFactory providerProxyFactory) {
         StorageDomainStatic storageDomainStatic = getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
         if (storageDomainStatic != null) {
             Provider<?> provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
-            return ProviderProxyFactory.getInstance().create(provider);
+            return providerProxyFactory.create(provider);
         }
         return null;
     }

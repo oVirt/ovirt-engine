@@ -38,6 +38,8 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     private NetworkClusterDao networkClusterDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     private Network network;
     private Provider<?> provider;
@@ -107,7 +109,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
     }
 
     private void removeExternalNetwork() {
-        NetworkProviderProxy proxy = ProviderProxyFactory.getInstance().create(getProvider());
+        NetworkProviderProxy proxy = providerProxyFactory.create(getProvider());
         proxy.remove(getNetwork().getProvidedBy().getExternalId());
     }
 

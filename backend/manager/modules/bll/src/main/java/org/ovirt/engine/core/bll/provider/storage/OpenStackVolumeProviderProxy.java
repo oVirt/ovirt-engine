@@ -142,26 +142,31 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
         getDbFacade().getStorageDomainDao().remove(storageDomainEntry.getId());
     }
 
-    public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId) {
+    public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId,
+            ProviderProxyFactory providerProxyFactory) {
         StorageDomainStatic storageDomainStatic = getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
         if (storageDomainStatic != null) {
-            return getProviderFromStorageDomainStatic(storageDomainStatic);
+            return getProviderFromStorageDomainStatic(storageDomainStatic, providerProxyFactory);
         }
         return null;
     }
 
-    public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId, Guid userID, boolean isFiltered) {
+    public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId,
+            Guid userID,
+            boolean isFiltered,
+            ProviderProxyFactory providerProxyFactory) {
         StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(storageDomainId, userID, isFiltered);
         if (storageDomain != null) {
             Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomain.getStorage()));
-            return ProviderProxyFactory.getInstance().create(provider);
+            return providerProxyFactory.create(provider);
         }
         return null;
     }
 
-    private static OpenStackVolumeProviderProxy getProviderFromStorageDomainStatic(StorageDomainStatic storageDomainStatic) {
+    private static OpenStackVolumeProviderProxy getProviderFromStorageDomainStatic(
+            StorageDomainStatic storageDomainStatic, ProviderProxyFactory providerProxyFactory) {
         Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
-        return ProviderProxyFactory.getInstance().create(provider);
+        return providerProxyFactory.create(provider);
     }
 
     @Override

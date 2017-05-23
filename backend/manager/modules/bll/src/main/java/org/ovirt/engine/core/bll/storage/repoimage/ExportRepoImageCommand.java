@@ -54,6 +54,8 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     private StorageDomainDao storageDomainDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
 
     private DiskImage diskImage;
 
@@ -69,14 +71,10 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         return lockProperties.withScope(Scope.Execution);
     }
 
-    protected ProviderProxyFactory getProviderProxyFactory() {
-        return ProviderProxyFactory.getInstance();
-    }
-
     protected OpenStackImageProviderProxy getProviderProxy() {
         if (providerProxy == null) {
             providerProxy = OpenStackImageProviderProxy
-                    .getFromStorageDomainId(getParameters().getDestinationDomainId());
+                    .getFromStorageDomainId(getParameters().getDestinationDomainId(), providerProxyFactory);
         }
         return providerProxy;
     }
