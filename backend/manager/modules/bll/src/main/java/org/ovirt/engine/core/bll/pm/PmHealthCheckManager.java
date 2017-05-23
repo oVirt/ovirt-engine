@@ -32,7 +32,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ThreadUtils;
@@ -163,9 +163,11 @@ public class PmHealthCheckManager implements BackendService {
     }
 
     private void addAlert(VDS host, AuditLogType auditMessage) {
-        AuditLogable alert = new AuditLogableBase();
+        AuditLogable alert = new AuditLogableImpl();
         alert.setVdsId(host.getId());
         alert.setVdsName(host.getName());
+        alert.setClusterId(host.getClusterId());
+        alert.setClusterName(host.getClusterName());
         auditLogDirector.log(alert, auditMessage);
     }
 
