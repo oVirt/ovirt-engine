@@ -79,12 +79,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
             });
         }
 
-        // When a domain is created it has a vg metadata device and a metadata lv which may be created on multiple
-        // devices. On a regular basis, those devices should be never changing.
-        // However, in some user environments in case of disaster the block sd may be restored manually in a way that
-        // will change its metadata devices - therefore when syncing the luns info we refresh the metadata devices
-        // information as well.
-        refreshMetadataDevicesInfo();
+        refreshMetadataDevicesInfoIfNeeded();
         setSucceeded(true);
     }
 
@@ -119,7 +114,23 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         }
     }
 
-    private void refreshMetadataDevicesInfo() {
+    private void refreshMetadataDevicesInfoIfNeeded() {
+        // When a domain is created it has a vg metadata device and a metadata lv which may be created on multiple
+        // devices. On a regular basis, those devices should be never changing.
+        // However, in some user environments in case of disaster the block sd may be restored manually in a way that
+        // will change its metadata devices - therefore when syncing the luns info we refresh the metadata devices
+        // information as well.
+
+        // Note: the refresh is currently performed only when the vds id is passed in the parameters as
+        // BlockStorageDomainHelper.fillMetadataDevicesInfo() doesn't support randomizing a host for the execution.
+        // Currently all the flows the needs that functionality do pass the vds id, while the command should obviously
+        // not be aware to the parameters passed by it's callers -  as this patch is intended to be backported
+        // to the 4.1 branch the change here is minimal - skips the execution if no vds id was passed. Once
+        // fillMetadataDevicesInfo() will support randomizing a host that may be changed.
+        if (Guid.isNullOrEmpty(getParameters().getVdsId())) {
+            log.info("vds id wasn't passed to the command, skipping metadata devices refresh");
+            return;
+        }
         String oldVgMetadataDevice = getStorageDomain().getVgMetadataDevice();
         String oldFirstMetadataDevice = getStorageDomain().getFirstMetadataDevice();
         blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
