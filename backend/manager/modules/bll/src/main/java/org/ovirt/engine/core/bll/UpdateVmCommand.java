@@ -90,7 +90,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
@@ -146,7 +146,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VM oldVm;
     private boolean quotaSanityOnly = false;
     private VmStatic newVmStatic;
-    private VdcReturnValueBase setNumberOfCpusResult;
     private List<GraphicsDevice> cachedGraphics;
     private boolean isUpdateVmTemplateVersion = false;
 
@@ -407,7 +406,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     new HotSetNumberOfCpusParameters(
                             newVmStatic,
                             currentSockets < newNumOfSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
-            setNumberOfCpusResult =
+            VdcReturnValueBase setNumberOfCpusResult =
                     runInternalAction(
                             VdcActionType.HotSetNumberOfCpus,
                             params, cloneContextAndDetachFromParent());
@@ -416,7 +415,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (!getVm().isHostedEngine()) {
                 newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newNumOfSockets : currentSockets);
             }
-            hotSetCpusLog(params);
+            logHotSetActionEvent(setNumberOfCpusResult, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }
     }
 
@@ -510,34 +509,23 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!getVm().isHostedEngine()) {
             newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemoryMb : currentMemoryMb);
         }
-        hotSetMemlog(params, setAmountOfMemoryResult);
+        logHotSetActionEvent(setAmountOfMemoryResult, AuditLogType.FAILED_HOT_SET_MEMORY);
     }
 
     /**
      * add audit log msg for failed hot set in case error was in CDA
      * otherwise internal command will audit log the result
      */
-    private void hotSetCpusLog(HotSetNumberOfCpusParameters params) {
-        if (!setNumberOfCpusResult.isValid()) {
-            AuditLogableBase logable = CommandsFactory.createCommand(VdcActionType.HotSetNumberOfCpus, params);
-            List<String> validationMessages = getBackend().getErrorsTranslator().
-                    translateErrorText(setNumberOfCpusResult.getValidationMessages());
-            logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
-            auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
-        }
-    }
-
-    /**
-     * add audit log msg for failed hot set in case error was in CDA
-     * otherwise internal command will audit log the result
-     */
-    private void hotSetMemlog(HotSetAmountOfMemoryParameters params, VdcReturnValueBase setAmountOfMemoryResult) {
-        if (!setAmountOfMemoryResult.isValid()) {
-            AuditLogableBase logable = CommandsFactory.createCommand(VdcActionType.HotSetAmountOfMemory, params);
-            List<String> validationMessages = getBackend().getErrorsTranslator().
-                    translateErrorText(setAmountOfMemoryResult.getValidationMessages());
-            logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(validationMessages, ","));
-            auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_MEMORY);
+    private void logHotSetActionEvent(VdcReturnValueBase setActionResult, AuditLogType logType) {
+        if (!setActionResult.isValid()) {
+            AuditLogable logable = new AuditLogableImpl();
+            logable.setVmId(getVmId());
+            logable.setVmName(getVmName());
+            List<String> validationMessages = getBackend().getErrorsTranslator()
+                    .translateErrorText(setActionResult.getValidationMessages());
+            logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE,
+                    StringUtils.join(validationMessages, ","));
+            auditLogDirector.log(logable, logType);
         }
     }
 
