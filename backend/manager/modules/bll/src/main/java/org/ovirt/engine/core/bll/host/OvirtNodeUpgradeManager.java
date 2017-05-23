@@ -17,7 +17,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 
 @Singleton
 public class OvirtNodeUpgradeManager implements UpdateAvailable {
@@ -37,8 +38,11 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
         HostUpgradeManagerResult hostUpgradeManagerResult = new HostUpgradeManagerResult();
         hostUpgradeManagerResult.setUpdatesAvailable(updateAvailable);
         if (updateAvailable) {
-            AuditLogableBase auditLog = new AuditLogableBase();
+            AuditLogable auditLog = new AuditLogableImpl();
             auditLog.setVdsName(host.getName());
+            auditLog.setVdsId(host.getId());
+            auditLog.setClusterName(host.getClusterName());
+            auditLog.setClusterId(host.getClusterId());
             auditLogDirector.log(auditLog, AuditLogType.HOST_UPDATES_ARE_AVAILABLE);
         }
 
