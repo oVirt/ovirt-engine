@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -61,7 +61,7 @@ public class DisplayNetworkClusterHelperTest {
     private AuditLogDirector mockAuditLogDirector;
 
     @Captor
-    private ArgumentCaptor<AuditLogableBase> auditLogableBaseCaptor;
+    private ArgumentCaptor<AuditLogable> auditLogableCaptor;
 
     private DisplayNetworkClusterHelper underTest;
 
@@ -151,12 +151,12 @@ public class DisplayNetworkClusterHelperTest {
 
         testWarnOnActiveVmInner(true);
 
-        verify(mockAuditLogDirector).log(auditLogableBaseCaptor.capture(),
+        verify(mockAuditLogDirector).log(auditLogableCaptor.capture(),
                 same(AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM));
 
-        final AuditLogableBase actualLoggable = auditLogableBaseCaptor.getValue();
+        final AuditLogable actualLoggable = auditLogableCaptor.getValue();
         assertEquals(TEST_CLUSTER_NAME, actualLoggable.getClusterName());
-        assertEquals(TEST_NETWORK_NAME, actualLoggable.getCustomValue("networkname"));
+        assertEquals(TEST_NETWORK_NAME, actualLoggable.getCustomValues().get("networkname"));
     }
 
     @Test

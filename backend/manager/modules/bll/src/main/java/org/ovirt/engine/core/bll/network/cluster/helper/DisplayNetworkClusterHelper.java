@@ -7,7 +7,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -46,13 +47,13 @@ public final class DisplayNetworkClusterHelper {
 
     public void warnOnActiveVm() {
         if (activeVmAttachedToClusterPredicate.test(networkCluster.getClusterId())) {
-            AuditLogableBase loggable = createLoggable();
+            AuditLogable loggable = createLoggable();
             auditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM);
         }
     }
 
-    private AuditLogableBase createLoggable() {
-        AuditLogableBase loggable = new AuditLogableBase();
+    private AuditLogable createLoggable() {
+        AuditLogable loggable = new AuditLogableImpl();
         loggable.setClusterName(getClusterName());
         loggable.addCustomValue("NetworkName", networkName);
         return loggable;
