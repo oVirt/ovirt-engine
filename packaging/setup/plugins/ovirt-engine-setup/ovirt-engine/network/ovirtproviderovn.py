@@ -303,7 +303,7 @@ class Plugin(plugin.PluginBase):
                 '[@DEFAULT@]: '
             ),
             prompt=True,
-            default='admin',
+            default='admin@internal',
         )
 
     def _query_ovn_password(self):
