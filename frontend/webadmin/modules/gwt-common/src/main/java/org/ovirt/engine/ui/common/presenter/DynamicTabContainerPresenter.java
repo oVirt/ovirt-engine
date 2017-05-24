@@ -65,6 +65,7 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
     // When moving to new GWTP slot API, make sure to override setInSlot(IsSlot<T>, T) instead.
     // Also, check all overrides of legacy setInSlot(Object, PresenterWidget<?>) as well as other
     // deprecated methods and replace them with non-deprecated method overrides.
+    // Related GWTP forum post: https://groups.google.com/forum/#!topic/gwt-platform/eDpwOubUCmE
     public void setInSlot(Object slot, PresenterWidget<?> content) {
         super.setInSlot(slot, content);
 
