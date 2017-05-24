@@ -6,6 +6,8 @@ import java.util.List;
 
 public class ErrataData implements Serializable {
 
+    private static final long serialVersionUID = 3438998117712211584L;
+
     private List<Erratum> errata;
     private ErrataCounts errataCounts;
 
