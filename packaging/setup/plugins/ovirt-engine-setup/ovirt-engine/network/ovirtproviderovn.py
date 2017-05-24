@@ -310,11 +310,10 @@ class Plugin(plugin.PluginBase):
         return self.dialog.queryString(
             name='ovirt-provider-ovn-password',
             note=_(
-                'oVirt OVN provider password[empty]: '
+                'oVirt OVN provider password: '
             ),
             prompt=True,
             hidden=True,
-            default='',
         )
 
     def _get_provider_credentials(self):
