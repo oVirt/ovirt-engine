@@ -334,6 +334,7 @@ Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-extensions-api-impl >= %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	aopalliance >= 1.0
+Requires:	curl
 Requires:	ebay-cors-filter
 Requires:	httpd
 Requires:	java-headless

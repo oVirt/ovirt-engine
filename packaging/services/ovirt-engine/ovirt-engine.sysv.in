@@ -52,6 +52,16 @@ case "$1" in
 				RETVAL=0
 			fi
 		fi
+		while :
+		do
+			if HTTP_STATUS=$(curl -kIs 'https://localhost/ovirt-engine/services/host-register?version=1&command=get-pki-trust') ; then
+				HTTP_STATUS_CODE=$(echo ${HTTP_STATUS} | head -1 | cut -d ' ' -f 2)
+				if [ "${HTTP_STATUS_CODE}" == '200' ]; then
+					break
+				fi
+			fi
+			sleep 1
+		done
 		[ $RETVAL -ne 0 -a ! -s "${PIDFILE}" ] && rm -f "${PIDFILE}"
 		;;
 	stop)
