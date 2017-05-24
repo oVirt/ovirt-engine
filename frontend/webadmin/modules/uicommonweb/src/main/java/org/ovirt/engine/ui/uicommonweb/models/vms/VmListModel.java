@@ -1208,7 +1208,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.setVmsOnSameCluster(true);
         model.setIsAutoSelect(true);
         model.setVmList(new ArrayList<>(getSelectedItems()));
-        model.setVm(vm);
         model.initializeModel();
     }
 

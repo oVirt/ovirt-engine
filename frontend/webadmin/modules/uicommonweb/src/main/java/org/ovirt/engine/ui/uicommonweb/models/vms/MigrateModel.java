@@ -23,7 +23,6 @@ public class MigrateModel extends Model {
 
     private ListModel<VDS> privateHosts;
     private VmListModel<?> parentModel;
-    private VM vm;
 
     public ListModel<VDS> getHosts() {
         return privateHosts;
@@ -248,9 +247,5 @@ public class MigrateModel extends Model {
                 setIsAutoSelect(!getSelectDestinationHost_IsSelected().getEntity());
             }
         }
-    }
-
-    public void setVm(VM vm) {
-        this.vm = vm;
     }
 }
