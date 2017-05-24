@@ -30,7 +30,7 @@ public class ErrataData implements Serializable {
 
     public static ErrataData emptyData() {
         ErrataData emptyData = new ErrataData();
-        emptyData.setErrata(Collections.<Erratum> emptyList());
+        emptyData.setErrata(Collections.emptyList());
         emptyData.setErrataCounts(new ErrataCounts());
         return emptyData;
     }
