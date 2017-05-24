@@ -194,31 +194,42 @@ class Plugin(plugin.PluginBase):
 
                 if self.environment[
                     osetupcons.ConfigEnv.FIREWALL_CHANGES_REVIEW
-                ] and interactive:
-                    confirmed = dialog.queryBoolean(
-                        dialog=self.plugin.dialog,
-                        name='OVESETUP_CONFIRM_IPTABLES_CHANGES',
-                        note=_(
-                            'Please review the changes:\n\n'
-                            '{diff}\n\n'
-                            'Do you want to proceed with firewall '
-                            'configuration? '
-                            '(@VALUES@) [@DEFAULT@]: '
-                        ).format(
-                            diff=diff_lines
-                        ),
-                        prompt=True,
-                        true=_('Yes'),
-                        false=_('No'),
-                        default=True,
-                    )
-                    if not confirmed:
-                        raise RuntimeError(
-                            _(
-                                'iptables proposed configuration '
-                                'was rejected by user'
+                ]:
+                    if not interactive:
+                        self.plugin.dialog.note(
+                            text=_(
+                                'These are the changes that will be applied to'
+                                ' iptables configuration:\n'
+                                '{diff}\n\n'
+                            ).format(
+                                diff=diff_lines,
                             )
                         )
+                    else:
+                        confirmed = dialog.queryBoolean(
+                            dialog=self.plugin.dialog,
+                            name='OVESETUP_CONFIRM_IPTABLES_CHANGES',
+                            note=_(
+                                'Please review the changes:\n\n'
+                                '{diff}\n\n'
+                                'Do you want to proceed with firewall '
+                                'configuration? '
+                                '(@VALUES@) [@DEFAULT@]: '
+                            ).format(
+                                diff=diff_lines
+                            ),
+                            prompt=True,
+                            true=_('Yes'),
+                            false=_('No'),
+                            default=True,
+                        )
+                        if not confirmed:
+                            raise RuntimeError(
+                                _(
+                                    'iptables proposed configuration '
+                                    'was rejected by user'
+                                )
+                            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
