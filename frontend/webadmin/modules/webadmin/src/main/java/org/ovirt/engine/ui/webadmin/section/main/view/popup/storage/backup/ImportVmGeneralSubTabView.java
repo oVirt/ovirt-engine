@@ -50,4 +50,9 @@ public class ImportVmGeneralSubTabView  extends AbstractSubTabFormView<VM, Impor
     public void setMainTabSelectedItem(VM selectedItem) {
         form.update();
     }
+
+    public void cleanup() {
+        form.cleanup();
+    }
+
 }
