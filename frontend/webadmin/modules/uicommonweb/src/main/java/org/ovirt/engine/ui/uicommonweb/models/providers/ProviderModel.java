@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.UrlValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -405,7 +406,10 @@ public class ProviderModel extends Model {
 
     private boolean validateConnectionSettings() {
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getPassword().validateEntity(new IValidation[] {
+            new NotEmptyValidation(),
+            new LengthValidation(200)
+        });
         if (getType().getSelectedItem().isTenantRequired()) {
             getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
         }
