@@ -13,6 +13,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.slf4j.Logger;
@@ -333,7 +334,7 @@ public class LoggedUtilsTest {
         Exception e = new Exception();
         LoggedUtils.logError(log, id, new LoggedOverridingSubclass(), e);
         verify(log).warn(eq(LoggedUtils.ERROR_LOG), any(), any(), eq(id));
-        verify(log).error(eq("Exception"), eq(e));
+        verify(log).error(eq("Exception"), eq(ExceptionUtils.getRootCauseMessage(e)));
     }
 
     /* --- Helper methods --- */

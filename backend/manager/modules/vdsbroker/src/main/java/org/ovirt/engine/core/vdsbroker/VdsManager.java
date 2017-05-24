@@ -18,6 +18,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SELinuxMode;
@@ -319,7 +320,8 @@ public class VdsManager {
                     updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
                 }
             } catch (Exception e) {
-                log.error("Timer update runtime info failed. Exception:", e);
+                log.error("Timer update runtime info failed. Exception:", ExceptionUtils.getRootCauseMessage(e));
+                log.debug("Exception:", e);
             } finally {
                 lockManager.releaseLock(monitoringLock);
             }
@@ -371,7 +373,8 @@ public class VdsManager {
     }
 
     private void logException(final RuntimeException ex) {
-        log.error("ResourceManager::refreshVdsRunTimeInfo", ex);
+        log.error("ResourceManager::refreshVdsRunTimeInfo", ExceptionUtils.getRootCauseMessage(ex));
+        log.debug("Exception", ex);
     }
 
     private void logAfterRefreshFailureMessage(RuntimeException ex) {

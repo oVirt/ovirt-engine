@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +106,8 @@ public class SSHDialog implements Closeable {
         try {
             close();
         } catch (IOException e) {
-            log.error("Finalize exception", e);
+            log.error("Finalize exception", ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception", e);
         }
     }
 
@@ -323,7 +325,8 @@ public class SSHDialog implements Closeable {
 
                     log.error(
                             "Swallowing exception as preferring stderr",
-                            e);
+                            ExceptionUtils.getRootCauseMessage(e));
+                    log.debug("Exception", e);
                 } finally {
                     if (stderr.size() > 0) {
                         throw new RuntimeException(
@@ -337,8 +340,8 @@ public class SSHDialog implements Closeable {
                         "SSH error running command {}:'{}': {}",
                         client.getDisplayHost(),
                         command,
-                        e.getMessage());
-                log.error("Exception", e);
+                        ExceptionUtils.getRootCauseMessage(e));
+                log.debug("Exception", e);
                 throw e;
             } finally {
                 sink.stop();

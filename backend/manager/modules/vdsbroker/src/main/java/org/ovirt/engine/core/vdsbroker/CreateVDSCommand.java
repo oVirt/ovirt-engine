@@ -51,7 +51,7 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
             }
         } catch (Exception e) {
             log.error("Failed to create VM: {}", e.getMessage());
-            log.error("Exception", e);
+            log.debug("Exception", e);
             if (vdsReturnValue != null && !vdsReturnValue.getSucceeded()) {
                 resourceManager.removeAsyncRunningVm(getParameters().getVmId());
             }
