@@ -276,7 +276,7 @@ public class CreateAllSnapshotsFromVmCommandTest extends BaseCommandTest {
 
         cmd.getParameters().setDiskIds(guidsForDiskImages);
 
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST)).when(diskExistenceValidator).diskImagesNotExist();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST)).when(diskExistenceValidator).disksNotExist();
 
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST);
     }

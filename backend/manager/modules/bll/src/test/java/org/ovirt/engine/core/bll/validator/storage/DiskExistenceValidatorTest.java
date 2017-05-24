@@ -39,14 +39,14 @@ public class DiskExistenceValidatorTest {
     public void diskImagesExist() {
         doReturn(true).when(baseDiskDao).exists(disk1);
         doReturn(true).when(baseDiskDao).exists(disk2);
-        assertThat(diskExistenceValidator.diskImagesNotExist(), isValid());
+        assertThat(diskExistenceValidator.disksNotExist(), isValid());
     }
 
     @Test
     public void bothDiskImagesDontExist() {
         doReturn(false).when(baseDiskDao).exists(disk1);
         doReturn(false).when(baseDiskDao).exists(disk2);
-        assertThat(diskExistenceValidator.diskImagesNotExist(),
+        assertThat(diskExistenceValidator.disksNotExist(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST,
                         "$diskIds " + disk1.toString() + ", " + disk2.toString()));
     }
@@ -55,7 +55,7 @@ public class DiskExistenceValidatorTest {
     public void oneDiskImagesDoesntExist() {
         doReturn(false).when(baseDiskDao).exists(disk1);
         doReturn(true).when(baseDiskDao).exists(disk2);
-        assertThat(diskExistenceValidator.diskImagesNotExist(),
+        assertThat(diskExistenceValidator.disksNotExist(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_EXIST, "$diskIds " + disk1.toString()));
     }
 }

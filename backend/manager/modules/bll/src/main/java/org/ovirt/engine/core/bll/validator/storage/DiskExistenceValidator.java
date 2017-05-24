@@ -30,7 +30,7 @@ public class DiskExistenceValidator {
      *
      * @return A {@link ValidationResult} with the validation information.
      */
-    public ValidationResult diskImagesNotExist() {
+    public ValidationResult disksNotExist() {
         String disksNotExistInDbIds =
                 diskGuids.stream()
                         .filter(guid -> !isDiskExists(guid))

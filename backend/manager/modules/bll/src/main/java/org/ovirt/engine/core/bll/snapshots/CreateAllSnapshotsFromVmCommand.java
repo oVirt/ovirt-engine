@@ -747,7 +747,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private boolean isSpecifiedDisksExist(Set<Guid> disks) {
         DiskExistenceValidator diskExistenceValidator = createDiskExistenceValidator(disks);
-        if (!validate(diskExistenceValidator.diskImagesNotExist())) {
+        if (!validate(diskExistenceValidator.disksNotExist())) {
             return false;
         }
 
