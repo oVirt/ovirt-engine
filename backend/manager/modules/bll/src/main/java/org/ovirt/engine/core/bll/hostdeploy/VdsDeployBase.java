@@ -25,6 +25,7 @@ import java.util.logging.Level;
 
 import javax.naming.TimeLimitExceededException;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
@@ -174,7 +175,8 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 throw e;
             }
             catch (Exception e) {
-                log.error("Unexpected exception", e);
+                log.error("Unexpected exception", ExceptionUtils.getRootCauseMessage(e));
+                log.debug("Exception", e);
                 throw new RuntimeException(e);
             }
             return true;
@@ -358,12 +360,14 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
         }
         catch (Exception e) {
             _failException = e;
-            log.error("Error during deploy dialog", e);
+            log.error("Error during deploy dialog", ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception", e);
             try {
                 _control.close();
             }
             catch (IOException ee) {
-                log.error("Error during close", e);
+                log.error("Error during close", ExceptionUtils.getRootCauseMessage(e));
+                log.debug("Exception", e);
             }
         }
     }
@@ -404,7 +408,8 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             close();
         }
         catch (IOException e) {
-            log.error("Exception during finalize", e);
+            log.error("Exception during finalize", ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception", e);
         }
     }
 
@@ -595,8 +600,9 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
             log.error(
                 "Error during host {} install",
                 _vds.getHostName(),
-                e
+                ExceptionUtils.getRootCauseMessage(e)
             );
+            log.debug("Exception", e);
             if (_failException == null) {
                 throw e;
             }
@@ -607,7 +613,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 );
 
                 log.error(
-                    "Error during host {} install, prefering first exception: {}",
+                    "Error during host {} install, preferring first exception: {}",
                     _vds.getHostName(),
                     _failException.getMessage()
                 );
@@ -702,7 +708,8 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 _thread.join(THREAD_JOIN_TIMEOUT);
             }
             catch (InterruptedException e) {
-                log.error("interrupted", e);
+                log.error("interrupted", ExceptionUtils.getRootCauseMessage(e));
+                log.debug("Exception", e);
             }
             if (_thread.isAlive()) {
                 _thread.interrupt();

@@ -26,6 +26,7 @@ import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
 import org.apache.sshd.SshClient;
@@ -107,7 +108,8 @@ public class SSHClient implements Closeable {
         try {
             close();
         } catch (IOException e) {
-            log.error("Finalize exception", e);
+            log.error("Finalize exception", ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception", e);
         }
     }
 
@@ -394,7 +396,8 @@ public class SSHClient implements Closeable {
                 client = null;
             }
         } catch (Exception e) {
-            log.error("Failed to close session", e);
+            log.error("Failed to close session", ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception", e);
             throw new IOException(e);
         }
     }
@@ -523,7 +526,8 @@ public class SSHClient implements Closeable {
             out.flush();
             err.flush();
         } catch (RuntimeException e) {
-            log.debug("Execute failed", e);
+            log.error("Execute failed", ExceptionUtils.getRootCauseMessage(e));
+            log.debug("Exception", e);
             throw e;
         } finally {
             if (channel != null) {
