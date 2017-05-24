@@ -176,7 +176,8 @@ class Plugin(plugin.PluginBase):
                     'cleanly.\n'
                     '\n'
                     'More details can be found at the following address:\n'
-                    'http://www.ovirt.org/Changing_Engine_Hostname\n'
+                    'http://www.ovirt.org/documentation/how-to/networking'
+                    '/changing-engine-hostname/\n'
                 ).format(
                     aia=authorityInfoAccess,
                 ),
