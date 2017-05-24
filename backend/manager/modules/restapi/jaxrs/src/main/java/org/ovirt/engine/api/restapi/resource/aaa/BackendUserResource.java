@@ -60,7 +60,7 @@ public class BackendUserResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsByAdElementId,
+                                                             VdcQueryType.GetPermissionsOnBehalfByAdElementId,
                                                              new IdQueryParameters(guid),
                                                              User.class));
     }

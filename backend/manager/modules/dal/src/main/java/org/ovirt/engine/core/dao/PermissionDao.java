@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -58,7 +59,7 @@ public interface PermissionDao extends GenericDao<Permission, Guid> {
     List<Permission> getAllForAdElement(Guid id);
 
     /**
-     * Gets all permissions for the specified AD element, including permissions of groups that it is in,
+     * Gets all permissions for the specified AD element, including permissions of groups currently logged in user
      * with optional filtering according to the permissions of the issuing user.
      *
      * @param id
@@ -70,6 +71,20 @@ public interface PermissionDao extends GenericDao<Permission, Guid> {
      * @return the list of permissions
      */
     List<Permission> getAllForAdElement(Guid id, long engineSessionSeqId, boolean isFiltered);
+
+    /**
+     * Gets all permissions for the specified AD element, including permissions of groups that it is in,
+     * with optional filtering according to the permissions of the issuing user.
+     *
+     * @param id
+     *            the AD element
+     * @param groupIds
+     *            the collection of the groups ids, the user is member of
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+     * @return the list of permissions
+     */
+    List<Permission> getAllForAdElementAndGroups(Guid id, Collection<Guid> groupIds, boolean isFiltered);
 
     /**
      * Gets all permissions for the specified AD element only, excluding permissions of groups that it is in.

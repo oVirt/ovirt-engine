@@ -33,7 +33,7 @@ public class BackendAssignedRolesResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetPermissionsByAdElementId,
+        setUpEntityQueryExpectations(VdcQueryType.GetPermissionsOnBehalfByAdElementId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },

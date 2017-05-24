@@ -8,15 +8,21 @@ public class AuthzGroup implements IVdcQueryable {
     private String authz;
     private String namespace;
     private String name;
+    private String id;
 
     public AuthzGroup() {
         super();
     }
 
     public AuthzGroup(String authz, String namespace, String name) {
+        this(authz, namespace, name, null);
+    }
+
+    public AuthzGroup(String authz, String namespace, String name, String id) {
         this.authz = authz;
         this.namespace = namespace;
         this.name = name;
+        this.id = id;
     }
 
     public String getAuthz() {
@@ -41,6 +47,14 @@ public class AuthzGroup implements IVdcQueryable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

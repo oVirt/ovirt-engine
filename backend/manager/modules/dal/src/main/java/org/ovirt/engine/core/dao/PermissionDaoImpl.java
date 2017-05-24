@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
-
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -83,6 +83,21 @@ public class PermissionDaoImpl extends BaseDao implements PermissionDao {
         return getCallsHandler().executeReadList("GetPermissionsByAdElementId",
                 permissionRowMapper,
                 parameterSource);
+    }
+
+    @Override
+    public List<Permission> getAllForAdElementAndGroups(Guid id, Collection<Guid> groupIds, boolean isFiltered) {
+        int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
+
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+            .addValue("ad_element_id", id)
+            .addValue("user_groups", createArrayOf("uuid", groupIds.toArray()))
+            .addValue("is_filtered", isFiltered)
+            .addValue("app_mode", appMode);
+
+        return getCallsHandler().executeReadList("GetPermissionsByAdElementIdAndGroupIds",
+            permissionRowMapper,
+            parameterSource);
     }
 
     @Override

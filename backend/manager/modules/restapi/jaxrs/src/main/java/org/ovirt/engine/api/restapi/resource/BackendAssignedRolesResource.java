@@ -34,7 +34,7 @@ public class BackendAssignedRolesResource
 
     @Override
     public Roles list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetPermissionsByAdElementId,
+        return mapCollection(getBackendCollection(VdcQueryType.GetPermissionsOnBehalfByAdElementId,
                                                   new IdQueryParameters(principalId)));
     }
 
