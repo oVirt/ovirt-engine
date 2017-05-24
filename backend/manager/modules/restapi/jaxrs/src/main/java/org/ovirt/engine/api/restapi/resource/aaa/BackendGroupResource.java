@@ -61,7 +61,7 @@ public class BackendGroupResource
         return inject(
             new BackendAssignedPermissionsResource(
                 guid,
-                VdcQueryType.GetPermissionsByAdElementId,
+                VdcQueryType.GetPermissionsOnBehalfByAdElementId,
                 new IdQueryParameters(guid),
                 Group.class
             )

@@ -38,7 +38,8 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
     private Collection<AuthzGroup> getDirectoryUser(DbUser dbUser) {
 
         Collection<AuthzGroup> groups = new ArrayList<>();
-        Map<String, Object> response = SsoOAuthServiceUtils.findPrincipalsByIds(
+        if (dbUser != null) {
+            Map<String, Object> response = SsoOAuthServiceUtils.findPrincipalsByIds(
                 getSessionDataContainer().getSsoAccessToken(getParameters().getSessionId()),
                 dbUser.getDomain(),
                 dbUser.getNamespace(),
@@ -46,16 +47,24 @@ public class GetAuthzGroupsByUserIdQuery<P extends IdQueryParameters> extends Qu
                 true,
                 true);
 
-        Collection<ExtMap> principalRecords = Collections.emptyList();
-        if (response.containsKey("result")) {
-            principalRecords = (Collection<ExtMap>) response.get("result");
-        }
+            Collection<ExtMap> principalRecords = Collections.emptyList();
+            if (response.containsKey("result")) {
+                principalRecords = (Collection<ExtMap>) response.get("result");
+            }
 
-        if (!principalRecords.isEmpty()) {
-            ExtMap principalRecord = principalRecords.iterator().next();
-            directoryUtils.flatGroups(principalRecord);
-            for (ExtMap group : principalRecord.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-                groups.add(new AuthzGroup(dbUser.getDomain(), group.get(GroupRecord.NAMESPACE), group.get(GroupRecord.NAME)));
+            if (!principalRecords.isEmpty()) {
+                ExtMap principalRecord = principalRecords.iterator().next();
+                directoryUtils.flatGroups(principalRecord);
+                for (ExtMap group : principalRecord.<Collection<ExtMap>>get(PrincipalRecord.GROUPS, Collections.<ExtMap>emptyList())) {
+                    groups.add(
+                        new AuthzGroup(
+                            dbUser.getDomain(),
+                            group.get(GroupRecord.NAMESPACE),
+                            group.get(GroupRecord.NAME),
+                            group.get(GroupRecord.ID)
+                        )
+                    );
+                }
             }
         }
 

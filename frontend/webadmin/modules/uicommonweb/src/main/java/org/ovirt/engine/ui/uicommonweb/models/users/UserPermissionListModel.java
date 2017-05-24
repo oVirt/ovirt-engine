@@ -63,7 +63,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
         IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getId());
         mlaParams.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId, mlaParams, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsOnBehalfByAdElementId, mlaParams, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
             ArrayList<Permission> list = returnValue.getReturnValue();
             ArrayList<Permission> newList = new ArrayList<>();
             for (Permission permission : list) {

@@ -116,6 +116,27 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetPermissionsByAdElementIdAndGroupIds(
+    v_ad_element_id UUID,
+    v_user_groups UUID[],
+    v_is_filtered BOOLEAN,
+    v_app_mode INT
+    )
+RETURNS SETOF permissions_view STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM permissions_view
+    WHERE (permissions_view.app_mode & v_app_mode) > 0
+        AND (
+            permissions_view.ad_element_id = v_ad_element_id
+            OR ad_element_id = ANY(array_append(v_user_groups, 'EEE00000-0000-0000-0000-123456789EEE'))
+            )
+        AND NOT v_is_filtered;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetPermissionsByAdElementId (
     v_ad_element_id UUID,
     v_engine_session_seq_id INT,
