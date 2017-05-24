@@ -23,11 +23,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class SyncImageGroupDataCommand<T extends SyncImageGroupDataCommandParameters> extends CommandBase<T> {
     public SyncImageGroupDataCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroup()));
     }
 
     @Override
     protected void executeCommand() {
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroup()));
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.SyncImageGroupData,
                 new SyncImageGroupDataVDSCommandParameters(

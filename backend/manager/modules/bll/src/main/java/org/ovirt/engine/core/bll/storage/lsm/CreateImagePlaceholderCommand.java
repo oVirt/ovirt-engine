@@ -32,11 +32,11 @@ public class CreateImagePlaceholderCommand<T extends CreateImagePlaceholderComma
         super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
         setStorageDomainId(getParameters().getStorageDomainId());
-        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroup()));
     }
 
     @Override
     protected void executeCommand() {
+        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroup()));
         Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CloneImageGroupStructure,
                 new TargetDomainImageGroupVDSCommandParameters(
