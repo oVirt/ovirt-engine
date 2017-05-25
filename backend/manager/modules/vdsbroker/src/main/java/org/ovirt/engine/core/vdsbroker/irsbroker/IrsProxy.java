@@ -884,6 +884,7 @@ public class IrsProxy {
             AuditLogable logable = new AuditLogableImpl();
             logable.setVdsName(selectedVds.argvalue.getHostName());
             logable.addCustomValue("ServerIp", returnValue);
+            logable.addCustomValue("StoragePoolName", storagePool.getName());
             new AuditLogDirector().log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
         }
         return returnValue;
