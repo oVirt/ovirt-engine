@@ -208,8 +208,8 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
             List<String> ovfConfigurationsInfo = proccessedOvfConfigurationsInfo.subList(i, i + sizeToUpdate);
             vmAndTemplatesGenerationsDao.updateOvfGenerations(guidsForUpdate, ovfGenerationsForUpdate, ovfConfigurationsInfo);
             i += sizeToUpdate;
-            initProcessedInfoLists();
         }
+        initProcessedInfoLists();
     }
 
     /**
