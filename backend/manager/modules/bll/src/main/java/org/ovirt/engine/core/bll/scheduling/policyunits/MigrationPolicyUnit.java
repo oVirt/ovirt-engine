@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingUnit;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -16,7 +18,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,9 @@ import org.slf4j.LoggerFactory;
 )
 public class MigrationPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(MigrationPolicyUnit.class);
+
+    @Inject
+    private VdsDao vdsDao;
 
     public MigrationPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -79,7 +83,7 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
 
         if (vm.getRunOnVds() != null) {
             List<VDS> hostsToRunOn = new ArrayList<>();
-            VDS srcVds = getVdsDao().get(vm.getRunOnVds());
+            VDS srcVds = vdsDao.get(vm.getRunOnVds());
 
             for (VDS host : hosts) {
                 if (host.getId().equals(vm.getRunOnVds())) {
@@ -103,9 +107,5 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
         }
 
         return hosts;
-    }
-
-    protected VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
     }
 }

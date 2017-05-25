@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -40,8 +39,11 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(CpuAndMemoryBalancingPolicyUnit.class);
 
     @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
     private VmDao vmDao;
-
     @Inject
     private VmStatisticsDao vmStatisticsDao;
 
@@ -135,7 +137,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
             final List<VDS> overUtilizedHosts,
             final List<VDS> underUtilizedHosts) {
 
-        return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, getVmDao(), getVmStatisticsDao())
+        return findVmAndDestinations.invoke(overUtilizedHosts, underUtilizedHosts, vmDao, vmStatisticsDao)
                 .map(res -> new BalanceResult(res.getVmToMigrate().getId(),
                         res.getDestinationHosts().stream()
                                 .map(VDS::getId)
@@ -256,7 +258,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         if (overUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
-            Cluster cluster = getClusterDao().get(overUtilizedHosts.get(0).getClusterId());
+            Cluster cluster = clusterDao.get(overUtilizedHosts.get(0).getClusterId());
             Collections.sort(overUtilizedHosts, new VdsCpuUsageComparator(
                     cluster != null && cluster.getCountThreadsAsCores(), slaValidator).reversed());
         }
@@ -294,7 +296,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
 
         if (underUtilizedHosts.size() > 1) {
             // Assume all hosts belong to the same cluster
-            Cluster cluster = getClusterDao().get(underUtilizedHosts.get(0).getClusterId());
+            Cluster cluster = clusterDao.get(underUtilizedHosts.get(0).getClusterId());
             Collections.sort(underUtilizedHosts, new VdsCpuUsageComparator(
                     cluster != null && cluster.getCountThreadsAsCores(),
                     slaValidator));
@@ -309,20 +311,8 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
                 * Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage) / vds.getCpuCores();
     }
 
-    protected VdsDao getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
-    }
-
     protected VmDao getVmDao() {
         return vmDao;
-    }
-
-    protected VmStatisticsDao getVmStatisticsDao() {
-        return vmStatisticsDao;
-    }
-
-    protected ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
     }
 
     protected Date getTime() {

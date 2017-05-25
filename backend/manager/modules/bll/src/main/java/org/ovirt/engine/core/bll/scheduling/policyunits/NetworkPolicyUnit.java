@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.host.VfScheduler;
@@ -27,7 +29,6 @@ import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
@@ -45,6 +46,13 @@ import org.slf4j.LoggerFactory;
 public class NetworkPolicyUnit extends PolicyUnitImpl {
     private static final Logger log = LoggerFactory.getLogger(NetworkPolicyUnit.class);
 
+    @Inject
+    private InterfaceDao interfaceDao;
+    @Inject
+    private NetworkDao networkDao;
+    @Inject
+    private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+
     public NetworkPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -57,11 +65,11 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         }
 
         List<VDS> toRemoveHostList = new ArrayList<>();
-        List<VmNetworkInterface> vmNICs = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+        List<VmNetworkInterface> vmNICs = vmNetworkInterfaceDao.getAllForVm(vm.getId());
         Guid clusterId = hosts.get(0).getClusterId();
-        List<Network> clusterNetworks = getNetworkDao().getAllForCluster(clusterId);
+        List<Network> clusterNetworks = networkDao.getAllForCluster(clusterId);
         Map<String, Network> networksByName = Entities.entitiesByName(clusterNetworks);
-        Map<Guid, List<String>> hostNics = getInterfaceDao().getHostNetworksByCluster(clusterId);
+        Map<Guid, List<String>> hostNics = interfaceDao.getHostNetworksByCluster(clusterId);
         Network displayNetwork = NetworkUtils.getDisplayNetwork(clusterNetworks);
         Map<Guid, VdsNetworkInterface> hostDisplayNics = getDisplayNics(displayNetwork);
 
@@ -92,7 +100,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
     public Map<Guid, VdsNetworkInterface> getDisplayNics(Network displayNetwork) {
         Map<Guid, VdsNetworkInterface> displayNics = new HashMap<>();
         if (displayNetwork != null) {
-            List<VdsNetworkInterface> nics = getInterfaceDao().getVdsInterfacesByNetworkId(displayNetwork.getId());
+            List<VdsNetworkInterface> nics = interfaceDao.getVdsInterfacesByNetworkId(displayNetwork.getId());
             for (VdsNetworkInterface nic : nics) {
                 displayNics.put(nic.getVdsId(), nic);
             }
@@ -240,17 +248,5 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         }
 
         return ValidationResult.VALID;
-    }
-
-    private VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDao();
-    }
-
-    private InterfaceDao getInterfaceDao() {
-        return DbFacade.getInstance().getInterfaceDao();
-    }
-
-    private NetworkDao getNetworkDao() {
-        return DbFacade.getInstance().getNetworkDao();
     }
 }

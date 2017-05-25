@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
@@ -18,7 +20,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 
 /**
@@ -44,6 +45,10 @@ import org.ovirt.engine.core.dao.VmDao;
         }
 )
 public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImpl {
+
+    @Inject
+    private VmDao vmDao;
+
     public HostedEngineMemoryReservationFilterPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
@@ -69,7 +74,7 @@ public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImp
         }
 
         // Get the instance of hosted engine VM so we can get the amount of memory that is needed
-        VM hostedEngine = vmDao().getHostedEngineVm();
+        VM hostedEngine = vmDao.getHostedEngineVm();
 
         // Not a hosted engine deployment, ignore this unit
         if (hostedEngine == null) {
@@ -126,9 +131,5 @@ public class HostedEngineMemoryReservationFilterPolicyUnit extends PolicyUnitImp
         }
 
         return new ArrayList<>(candidateHosts);
-    }
-
-    protected VmDao vmDao() {
-        return DbFacade.getInstance().getVmDao();
     }
 }

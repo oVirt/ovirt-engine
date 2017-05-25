@@ -36,6 +36,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,9 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
     private static final Logger log = LoggerFactory.getLogger(PowerSavingBalancePolicyUnit.class);
 
     @Inject
+    private VdsDao vdsDao;
+
+    @Inject
     private SlaValidator slaValidator;
 
     public PowerSavingBalancePolicyUnit(PolicyUnit policyUnit,
@@ -74,7 +78,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             ArrayList<String> messages) {
         final Optional<BalanceResult> migrationRule =  super.balance(cluster, hosts, parameters, messages);
 
-        List<VDS> allHosts = getVdsDao().getAllForCluster(cluster.getId());
+        List<VDS> allHosts = vdsDao.getAllForCluster(cluster.getId());
 
         List<VDS> emptyHosts = new ArrayList<>();
         List<VDS> maintenanceHosts = new ArrayList<>();
@@ -362,5 +366,9 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
                 Long.MAX_VALUE;
 
         return getNormallyUtilizedMemoryHosts(candidateHosts, notEnoughMemory, tooMuchMemory);
+    }
+
+    protected VdsDao getVdsDao() {
+        return vdsDao;
     }
 }

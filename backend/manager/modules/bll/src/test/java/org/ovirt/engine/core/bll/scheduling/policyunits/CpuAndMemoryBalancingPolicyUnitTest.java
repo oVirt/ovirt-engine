@@ -2,9 +2,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
-import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,41 +11,35 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.mockito.Mock;
 import org.ovirt.engine.core.bll.scheduling.external.BalanceResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
-import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 
 public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest {
-    protected  <T extends CpuAndMemoryBalancingPolicyUnit> T mockUnit(
-            T unit,
-            Cluster cluster,
-            Map<Guid, VDS> hosts,
-            Map<Guid, VM> vms)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
-            InstantiationException, ParseException {
 
-        // mock current time
+    @Mock
+    protected ClusterDao clusterDao;
+    @Mock
+    protected VmDao vmDao;
+    @Mock
+    protected VmStatisticsDao vmStatisticsDao;
+
+    protected Cluster cluster = new Cluster();
+
+    protected void initMocks(CpuAndMemoryBalancingPolicyUnit unit,
+            Map<Guid, VDS> hosts,
+            Map<Guid, VM> vms) throws ParseException {
+
         doReturn(TIME_FORMAT.parse("2015-01-01 12:00:00")).when(unit).getTime();
 
-        // mock cluster Dao
-        ClusterDao clusterDao = mock(ClusterDao.class);
-        doReturn(clusterDao).when(unit).getClusterDao();
         doReturn(cluster).when(clusterDao).get(any());
 
-        // mock host Dao
-        VdsDao vdsDao = mock(VdsDao.class);
-        doReturn(vdsDao).when(unit).getVdsDao();
-        doReturn(new ArrayList<>(hosts.values())).when(vdsDao).getAllForCluster(any());
-
-        // mock VM Dao
-        VmDao vmDao = mock(VmDao.class);
-        doReturn(vmDao).when(unit).getVmDao();
         for (Guid guid: hosts.keySet()) {
             doReturn(vmsOnAHost(vms.values(), guid)).when(vmDao).getAllRunningForVds(guid);
         }
@@ -55,13 +47,9 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
             doReturn(vm.getValue()).when(vmDao).get(vm.getKey());
         }
 
-        VmStatisticsDao vmStatisticsDao = mock(VmStatisticsDao.class);
-        doReturn(vmStatisticsDao).when(unit).getVmStatisticsDao();
         for (Map.Entry<Guid, VM> entry : vms.entrySet()) {
             doReturn(entry.getValue().getStatisticsData()).when(vmStatisticsDao).get(entry.getKey());
         }
-
-        return unit;
     }
 
     private List<VM> vmsOnAHost(Collection<VM> vms, Guid host) {
@@ -74,8 +62,8 @@ public class CpuAndMemoryBalancingPolicyUnitTest extends AbstractPolicyUnitTest 
         return result;
     }
 
-    protected List<Guid> validMigrationTargets(CpuAndMemoryBalancingPolicyUnit unit, Optional<BalanceResult> result) {
-        VM vm = unit.getVmDao().get(result.get().getVmToMigrate());
+    protected List<Guid> validMigrationTargets(Optional<BalanceResult> result) {
+        VM vm = vmDao.get(result.get().getVmToMigrate());
         return result.get().getCandidateHosts()
                 .stream()
                 .filter(h -> !h.equals(vm.getRunOnVds()))

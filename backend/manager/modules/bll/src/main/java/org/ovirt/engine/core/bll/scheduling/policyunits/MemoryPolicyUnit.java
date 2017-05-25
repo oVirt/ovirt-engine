@@ -25,7 +25,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsNumaNodeDao;
+import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +41,10 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
 
     @Inject
     SlaValidator slaValidator;
+    @Inject
+    private VmNumaNodeDao vmNumaNodeDao;
+    @Inject
+    private VdsNumaNodeDao vdsNumaNodeDao;
 
     public MemoryPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
@@ -52,7 +57,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         if (vm.getStatus() == VMStatus.Paused) {
             return hosts;
         }
-        List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDao().getAllVmNumaNodeByVmId(vm.getId());
+        List<VmNumaNode> vmNumaNodes = vmNumaNodeDao.getAllVmNumaNodeByVmId(vm.getId());
         boolean vmNumaPinned = isVmNumaPinned(vmNumaNodes);
 
         List<VDS> filteredList = new ArrayList<>();
@@ -146,7 +151,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
     }
 
     private boolean canVmNumaPinnedToVds(VM vm, List<VmNumaNode> nodes, VDS vds) {
-        List<VdsNumaNode> pNodes = DbFacade.getInstance().getVdsNumaNodeDao().getAllVdsNumaNodeByVdsId(vds.getId());
+        List<VdsNumaNode> pNodes = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(vds.getId());
         if (pNodes == null || pNodes.isEmpty()) {
             return false;
         }

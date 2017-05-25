@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitParameter;
@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -38,13 +37,14 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
     private List<VDS> hosts;
     private VM vm;
     private VM hostedEngine;
-    private PendingResourceManager pendingResourceManager;
 
     private Map<String, String> parameters;
     private PerHostMessages messages;
 
     // Unit under test
-    HostedEngineMemoryReservationFilterPolicyUnit policyUnit;
+    @InjectMocks
+    private HostedEngineMemoryReservationFilterPolicyUnit policyUnit =
+            new HostedEngineMemoryReservationFilterPolicyUnit(null, new PendingResourceManager());
 
     @Mock
     private VmDao vmDao;
@@ -54,8 +54,6 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         Cluster cluster = new Cluster();
         clusterId = Guid.newGuid();
         cluster.setId(clusterId);
-
-        pendingResourceManager = new PendingResourceManager();
 
         vm = new VM();
         vm.setId(Guid.newGuid());
@@ -76,12 +74,10 @@ public class HostedEngineMemoryReservationFilterPolicyUnitTest extends DbDepende
         hostedEngine.setClusterId(clusterId);
         hostedEngine.setRunOnVds(hosts.get(0).getId());
 
-        policyUnit = new HostedEngineMemoryReservationFilterPolicyUnit(null, pendingResourceManager);
         parameters = new HashMap<>();
         parameters.put(PolicyUnitParameter.HE_SPARES_COUNT.getDbName(), "0");
         messages = new PerHostMessages();
 
-        when(DbFacade.getInstance().getVmDao()).thenReturn(vmDao);
         doReturn(hostedEngine).when(vmDao).getHostedEngineVm();
     }
 
