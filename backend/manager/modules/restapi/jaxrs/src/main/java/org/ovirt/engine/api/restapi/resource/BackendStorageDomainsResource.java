@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -467,10 +468,18 @@ public class BackendStorageDomainsResource
     }
 
     private StorageServerConnections getStorageServerConnection(String id) {
-        return getEntity(StorageServerConnections.class,
+        VdcQueryReturnValue result = runQuery(
                 VdcQueryType.GetStorageServerConnectionById,
-                new StorageServerConnectionQueryParametersBase(id),
-                "Storage server connection: id=" + id);
+                new StorageServerConnectionQueryParametersBase(id)
+        );
+        if (result.getSucceeded() && result.getReturnValue() != null) {
+            return (StorageServerConnections) result.getReturnValue();
+        }
+        throw new WebFaultException(
+                null,
+                "Can't find storage server connection for id '" + id + "'.",
+                Status.INTERNAL_SERVER_ERROR
+        );
     }
 
     private List<LUNs> getLunsByVgId(String vgId) {
