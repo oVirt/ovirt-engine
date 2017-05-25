@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll.scheduling.pending;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -58,15 +59,16 @@ public class PendingResourceManager {
             /* Remove all resources associated with the VM from the global set
              * and from the byHost index
              */
-            for (PendingResource resource : resourcesByVm.get(vm.getId())) {
-                if (resourcesByHost.containsKey(resource.getHost())) {
-                    modifiedHosts.add(resource.getHost());
-                    resourcesByHost.get(resource.getHost()).remove(resource);
-                }
-                pendingResources.remove(resource);
-            }
+            resourcesByVm.compute(vm.getId(), (vmId, resources) -> {
+                resources.stream()
+                        .peek(pendingResources::remove)
+                        .filter(r -> removeFromSetMap(resourcesByHost, r.getHost(), r))
+                        .map(PendingResource::getHost)
+                        .forEach(modifiedHosts::add);
 
-            resourcesByVm.get(vm.getId()).clear();
+                resources.clear();
+                return resources;
+            });
         }
 
         for (Guid hostId: modifiedHosts) {
@@ -96,14 +98,14 @@ public class PendingResourceManager {
             /* Remove all resources associated with the host from the global set
              *  and from the byVm index
              */
-            for (PendingResource resource : resourcesByHost.get(host.getId())) {
-                if (resourcesByVm.containsKey(resource.getVm())) {
-                    resourcesByVm.get(resource.getVm()).remove(resource);
-                }
-                pendingResources.remove(resource);
-            }
+            resourcesByHost.compute(host.getId(), (hostId, resources) -> {
+                resources.stream()
+                        .peek(pendingResources::remove)
+                        .forEach(r -> removeFromSetMap(resourcesByVm, r.getVm(), r));
 
-            resourcesByHost.get(host.getId()).clear();
+                resources.clear();
+                return resources;
+            });
         }
 
         notifyHostManagers(host.getId());
@@ -127,25 +129,17 @@ public class PendingResourceManager {
                 PendingResource old = pendingResources.get(resource);
                 log.warn("Clearing stale pending resource {} (host: {}, vm: {})",
                         old, old.getHost(), old.getVm());
-                resourcesByVm.get(old.getVm()).remove(old);
-                resourcesByHost.get(old.getHost()).remove(old);
+
+                removeFromSetMap(resourcesByVm, old.getVm(), old);
+                removeFromSetMap(resourcesByHost, old.getHost(), old);
             }
 
             log.debug("Adding pending resource {} (host: {}, vm: {})",
                     resource, resource.getHost(), resource.getVm());
 
-            /* Make sure the index lists exist */
-            if (!resourcesByVm.containsKey(resource.getVm())) {
-                resourcesByVm.put(resource.getVm(), ConcurrentHashMap.newKeySet());
-            }
-
-            if (!resourcesByHost.containsKey(resource.getHost())) {
-                resourcesByHost.put(resource.getHost(), ConcurrentHashMap.newKeySet());
-            }
-
             /* Update indexes */
-            resourcesByVm.get(resource.getVm()).add(resource);
-            resourcesByHost.get(resource.getHost()).add(resource);
+            addToSetMap(resourcesByVm, resource.getVm(), resource);
+            addToSetMap(resourcesByHost, resource.getHost(), resource);
             pendingResources.put(resource, resource);
         }
     }
@@ -156,19 +150,10 @@ public class PendingResourceManager {
      * @param type Class object identifying the type of pending resources we are interested in
      * @return Iterable object with the requested resources
      */
-    public <T extends PendingResource> Iterable<T> pendingHostResources(Guid host, Class<T> type) {
-        if (!resourcesByHost.containsKey(host)) {
-            return Collections.emptyList();
-        }
-
-        List<T> list = new ArrayList<>();
-        for (PendingResource resource: resourcesByHost.get(host)) {
-            if (resource.getClass().equals(type)) {
-                list.add((T)resource);
-            }
-        }
-
-        return list;
+    public <T extends PendingResource> List<T> pendingHostResources(Guid host, Class<T> type) {
+        return collectResources(resourcesByHost, host, res -> res.getClass().equals(type)).stream()
+                .map(r -> (T)r)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -177,18 +162,24 @@ public class PendingResourceManager {
      * @param type Class object identifying the type of pending resources we are interested in
      * @return Iterable object with the requested resources
      */
-    public <T extends PendingResource> Iterable<T> pendingVmResources(Guid vm, Class<T> type) {
-        if (!resourcesByVm.containsKey(vm)) {
-            return Collections.emptyList();
-        }
+    public <T extends PendingResource> List<T> pendingVmResources(Guid vm, Class<T> type) {
+        return collectResources(resourcesByVm, vm, res -> res.getClass().equals(type)).stream()
+                .map(r -> (T)r)
+                .collect(Collectors.toList());
+    }
 
-        List<T> list = new ArrayList<>();
-        for (PendingResource resource: resourcesByVm.get(vm)) {
-            if (resource.getClass().equals(type)) {
-                list.add((T)resource);
-            }
-        }
+    private static List<PendingResource> collectResources(Map<Guid, Set<PendingResource>> map,
+            Guid id,
+            Predicate<PendingResource> predicate) {
 
+        List<PendingResource> list = new ArrayList<>();
+        map.computeIfPresent(id, (k, resourceSet) -> {
+            resourceSet.stream()
+                    .filter(predicate)
+                    .forEach(list::add);
+
+            return resourceSet;
+        });
         return list;
     }
 
@@ -234,5 +225,45 @@ public class PendingResourceManager {
         int pendingMemory = PendingOvercommitMemory.collectForHost(this, hostId);
 
         vdsManager.updatePendingData(pendingMemory, pendingCpus);
+    }
+
+    /**
+     * Atomically removes an element from a set that is a value in a map.
+     *
+     * @param map Map that contains sets of elements
+     * @param id Key to the map
+     * @param resource Element to be removed from the set
+     *
+     * @return True if an element was removed
+     */
+    private static boolean removeFromSetMap(Map<Guid, Set<PendingResource>> map, Guid id, PendingResource resource) {
+        boolean[] res = {false};
+
+        map.computeIfPresent(id, (k, resourceSet) -> {
+            res[0] = resourceSet.remove(resource);
+            return resourceSet;
+        });
+
+        return res[0];
+    }
+
+    /**
+     * Atomically adds an element to a set that is a value in a map.
+     *
+     * If there is no value for the key, a new set is created.
+     *
+     * @param map Map that contains sets of elements
+     * @param id Key to the map
+     * @param resource Element to be added to the set
+     */
+    private static void addToSetMap(Map<Guid, Set<PendingResource>> map, Guid id, PendingResource resource) {
+        map.compute(id, (k, resourceSet) -> {
+            if (resourceSet == null) {
+                resourceSet = new HashSet<>();
+            }
+
+            resourceSet.add(resource);
+            return resourceSet;
+        });
     }
 }
