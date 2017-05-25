@@ -234,7 +234,6 @@ Requires:	java-openjdk-headless >= 1:1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.0.0
-Requires:	postgresql-jdbc >= 9.2.1002
 Requires:	postgresql-server >= 9.2.15
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
@@ -253,6 +252,11 @@ Requires:	rubygem-fluent-plugin-rewrite-tag-filter
 Requires:	rubygem-fluent-plugin-secure-forward
 
 %if 0%{?rhel}
+# JDBC drivers newer than 9.2 break engine DAL, so we cannot depend on it
+# until fixed
+Requires:	postgresql-jdbc >= 9.2.1002
+Conflicts:	postgresql-jdbc >= 9.3
+
 Requires:	yum-plugin-versionlock
 %endif
 
@@ -789,9 +793,14 @@ common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-fil
 common/org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
 common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
-common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
+
+%if 0%{?rhel}
+# JDBC drivers newer than 9.2 break engine DAL, so we cannot depend on it
+# until fixed
+common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
+%endif
 
 %if 0%{?fedora}
 common/com/mchange/c3p0/main/c3p0.jar c3p0/c3p0.jar
