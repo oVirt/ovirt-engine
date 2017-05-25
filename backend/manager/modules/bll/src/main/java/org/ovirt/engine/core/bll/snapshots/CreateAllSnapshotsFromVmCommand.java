@@ -88,6 +88,7 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -664,7 +665,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 return false;
             }
 
-            String notAllowSnapshot = diskDao.getAllForVm(getVm().getId()).stream()
+            List<Disk> allDisksForVm = diskDao.getAllForVm(getVm().getId());
+            String notAllowSnapshot = allDisksForVm.stream()
                     .filter(disk -> specifiedDiskIds.contains(disk.getId()))
                     .filter(disk -> !disk.isAllowSnapshot())
                     .map(BaseDisk::getDiskAlias)
@@ -673,6 +675,22 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             if (!notAllowSnapshot.isEmpty()) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_SNAPSHOT_NOT_SUPPORTED, String
                         .format("$diskAliases %s", notAllowSnapshot));
+            }
+
+            Set<Guid> guidsOfVmDisks = allDisksForVm.stream()
+                    .map(BaseDisk::getId)
+                    .collect(Collectors.toSet());
+
+            String notAttachedToVm = specifiedDiskIds.stream()
+                    .filter(guid -> !guidsOfVmDisks.contains(guid))
+                    .map(guid -> diskDao.get(guid))
+                    .map(BaseDisk::getDiskAlias)
+                    .collect(Collectors.joining(", "));
+
+            if (!notAttachedToVm.isEmpty()) {
+                String[] replacements = { ReplacementUtils.createSetVariableString("VmName", getVm().getName()),
+                        ReplacementUtils.createSetVariableString("diskAliases", notAttachedToVm)};
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISKS_NOT_ATTACHED_TO_VM, replacements);
             }
         }
 
