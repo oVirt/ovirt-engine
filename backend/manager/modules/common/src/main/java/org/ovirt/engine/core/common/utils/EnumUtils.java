@@ -14,7 +14,7 @@ public class EnumUtils {
         name = name.trim();
 
         if (!ignorecase) {
-            return Enum.<E> valueOf(c, name);
+            return Enum.valueOf(c, name);
         }
 
         E[] universe = c.getEnumConstants();
