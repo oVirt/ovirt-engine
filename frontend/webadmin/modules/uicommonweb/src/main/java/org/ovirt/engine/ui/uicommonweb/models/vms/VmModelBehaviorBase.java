@@ -198,20 +198,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         TModel model = getModel();
         Set<VmRngDevice.Source> requiredRngSources = model.getSelectedCluster().getRequiredRngSources();
 
-        boolean requiredRngSourcesEmpty = requiredRngSources.isEmpty();
         boolean urandomSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.URANDOM)
                 || requiredRngSources.contains(VmRngDevice.Source.RANDOM);
         boolean hwrngSourceAvailable = requiredRngSources.contains(VmRngDevice.Source.HWRNG);
-
-        model.getIsRngEnabled().setIsChangeable(!requiredRngSourcesEmpty);
-        model.getRngPeriod().setIsChangeable(!requiredRngSourcesEmpty);
-        model.getRngBytes().setIsChangeable(!requiredRngSourcesEmpty);
-
-        if (requiredRngSourcesEmpty) {
-            model.getIsRngEnabled().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
-            model.getRngPeriod().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
-            model.getRngBytes().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
-        }
 
         model.getRngSourceUrandom().setIsChangeable(urandomSourceAvailable);
         if (!urandomSourceAvailable) {
@@ -1359,10 +1348,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateRngDevice(Guid templateId) {
-        if (!getModel().getIsRngEnabled().getIsChangable()) {
-            return;
-        }
-
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetRngDevice,
                 new IdQueryParameters(templateId),

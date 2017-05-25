@@ -1821,8 +1821,6 @@ public interface UIConstants extends Constants {
 
     String rngRateInvalid();
 
-    String rngNotSupportedByCluster();
-
     String rngNotSupportedByClusterCV();
 
     String rngNotSupported();
