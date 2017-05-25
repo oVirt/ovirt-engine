@@ -82,7 +82,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
                     null);
 
     @Test
-    public void validateImageNotFound() throws Exception {
+    public void validateImageNotFound() {
         initializeCommand(new DiskImage());
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()
@@ -91,7 +91,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateWrongDiskImageTypeTemplate() throws Exception {
+    public void validateWrongDiskImageTypeTemplate() {
         initializeCommand(new DiskImage());
         initTemplateDiskImage();
         assertFalse(command.validate());
@@ -134,7 +134,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateSameSourceAndDest() throws Exception {
+    public void validateSameSourceAndDest() {
         destStorageId = srcStorageId;
         initializeCommand(new DiskImage());
         command.getParameters().setStorageDomainId(destStorageId);
@@ -149,7 +149,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateVmIsNotDown() throws Exception {
+    public void validateVmIsNotDown() {
         initializeCommand(new DiskImage());
         initVmDiskImage(false);
         mockGetVmsListForDisk();
@@ -163,7 +163,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateDiskIsLocked() throws Exception {
+    public void validateDiskIsLocked() {
         initializeCommand(new DiskImage());
         initVmDiskImage(false);
         mockGetVmsListForDisk();
@@ -174,7 +174,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateDiskIsOvfStore() throws Exception {
+    public void validateDiskIsOvfStore() {
         initializeCommand(new DiskImage());
         initVmDiskImage(false);
         command.getImage().setContentType(DiskContentType.OVF_STORE);
@@ -183,7 +183,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateTemplateImageIsLocked() throws Exception {
+    public void validateTemplateImageIsLocked() {
         initializeCommand(new DiskImage());
         command.getParameters().setOperation(ImageOperation.Copy);
         command.init();
@@ -198,7 +198,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateNotEnoughSpace() throws Exception {
+    public void validateNotEnoughSpace() {
         initializeCommand(new DiskImage());
         initVmForSpace();
         initVmDiskImage(false);
@@ -209,7 +209,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateEnoughSpace() throws Exception {
+    public void validateEnoughSpace() {
         initializeCommand(new DiskImage());
         initVmForSpace();
         initVmDiskImage(false);
