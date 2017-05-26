@@ -60,4 +60,11 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
         clustersTable.asEditor().edit(networkClusterList);
     }
 
+    @Override
+    public int setTabIndexes(int nextTabIndex) {
+        nextTabIndex = createSubnetEditor.setTabIndexes(nextTabIndex);
+        nextTabIndex = this.subnetWidget.setTabIndexes(nextTabIndex);
+        return nextTabIndex;
+    }
+
 }
