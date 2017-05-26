@@ -8,9 +8,7 @@
     <version>4.2.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.ovirt.engine</groupId>
   <artifactId>benchmarks</artifactId>
-  <version>4.2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>oVirt Engine Microbenchmarks</name>
