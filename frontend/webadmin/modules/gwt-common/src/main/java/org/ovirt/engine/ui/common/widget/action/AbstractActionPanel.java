@@ -1,75 +1,67 @@
 package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.AnchorListItem;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Divider;
+import org.gwtbootstrap3.client.ui.DropDown;
+import org.gwtbootstrap3.client.ui.DropDownHeader;
+import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.gwtbootstrap3.client.ui.constants.Toggle;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
-import org.ovirt.engine.ui.common.widget.MenuBar;
-import org.ovirt.engine.ui.common.widget.PopupPanel;
-import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
-import com.google.gwt.event.logical.shared.InitializeEvent;
-import com.google.gwt.event.logical.shared.InitializeHandler;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.MenuItem;
-import com.google.gwt.user.client.ui.MenuItemSeparator;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base class used to implement action panel widgets.
- * <p>
- * Subclasses are free to style the UI, given that they declare:
- * <ul>
- * <li>{@link #actionPanel} widget into which action button widgets will be rendered
- * </ul>
  *
- * @param <T>
- *            Action panel item type.
+ * @param <T> Action panel item type.
  */
 public abstract class AbstractActionPanel<T> extends Composite implements ActionPanel<T>, HasElementId,
         ProvidesElementId {
+
+    private static final String ARIA_EXPANDED = "aria-expanded"; // $NON-NLS-1$
+    private static final String OPEN = "open";  // $NON-NLS-1$
 
     // List of action buttons that show in the tool-bar and context menu
     private final List<ActionButtonDefinition<T>> actionButtonList = new ArrayList<>();
     // List of buttons that only show in the tool-bar.
     private final List<ActionButtonDefinition<T>> toolbarOnlyActionButtonList = new ArrayList<>();
-    // List of original visibility state for each button
-    private final Map<Widget, Boolean> originallyVisible = new HashMap<>();
 
     private final SearchableModelProvider<T, ?> dataProvider;
 
-    private final PopupPanel contextPopupPanel;
-    private final MenuBar contextMenuBar;
-
-    private final MenuPanelPopup actionPanelPopupPanel;
+    @UiField
+    public DropDown menuContainer = new DropDown();
+    @UiField
+    public Button clickButton = new Button();
+    @UiField
+    public DropDownMenu menu = new DropDownMenu();
 
     private String elementId = DOM.createUniqueId();
 
     /**
      * Constructor.
      * @param dataProvider The data provider.
-     * @param eventBus The GWT event bus.
      */
     public AbstractActionPanel(SearchableModelProvider<T, ?> dataProvider) {
         this.dataProvider = dataProvider;
-        contextPopupPanel = new PopupPanel(true);
-        contextMenuBar = new MenuBar(true);
-        actionPanelPopupPanel = new MenuPanelPopup(true);
     }
 
     /**
@@ -83,7 +75,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     @Override
     protected void initWidget(Widget widget) {
         super.initWidget(widget);
-        contextPopupPanel.setWidget(contextMenuBar);
+        // Hide the button, we need it to set the attributes on so jquery can manipulate it.
+        clickButton.setDataToggle(Toggle.DROPDOWN);
+        clickButton.setVisible(false);
     }
 
     @Override
@@ -97,44 +91,34 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     }
 
     @Override
-    public ActionButton addMenuListItem(final ActionButtonDefinition<T> buttonDef) {
-        ActionAnchorListItem result = new ActionAnchorListItem(buttonDef.getText());
-        // Set button element ID for better accessibility
-        String buttonId = buttonDef.getUniqueId();
-        if (buttonId != null) {
+    public ActionButton addMenuListItem(final ActionButtonDefinition<T> menuItemDef) {
+        ActionAnchorListItem result = new ActionAnchorListItem(menuItemDef.getText());
+        // Set menu item ID for better accessibility
+        String menuItemId = menuItemDef.getUniqueId();
+        if (menuItemId != null) {
             result.asWidget().getElement().setId(
-                    ElementIdUtils.createElementId(elementId, buttonId));
+                    ElementIdUtils.createElementId(elementId, menuItemId));
         }
 
-        // Add the button to the context menu
-        if (buttonDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
-                || buttonDef.getCommandLocation().equals(CommandLocation.OnlyFromContext)) {
-            actionButtonList.add(buttonDef);
+        // Add the menu item to the context menu
+        if (menuItemDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
+                || menuItemDef.getCommandLocation().equals(CommandLocation.OnlyFromContext)) {
+            actionButtonList.add(menuItemDef);
         }
 
-        // Add button widget click handler
-        result.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                    actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(((UIObject) result).getElement());
-                } else {
-                    buttonDef.onClick(getSelectedItems());
-                }
-            }
+        // Add menu item widget click handler
+        result.addClickHandler(e -> {
+            menuItemDef.onClick(getSelectedItems());
         });
 
-        registerSelectionChangeHandler(buttonDef);
+        registerSelectionChangeHandler(menuItemDef);
 
-        // Update button whenever its definition gets re-initialized
-        buttonDef.addInitializeHandler(new InitializeHandler() {
-            @Override
-            public void onInitialize(InitializeEvent event) {
-                updateActionButton(result, buttonDef);
-            }
+        // Update menu item whenever its definition gets re-initialized
+        menuItemDef.addInitializeHandler(e -> {
+            updateActionButton(result, menuItemDef);
         });
 
-        updateActionButton(result, buttonDef);
+        updateActionButton(result, menuItemDef);
         return result;
     }
 
@@ -172,12 +156,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
 
         // Add button widget click handler
         newActionButton.addClickHandler(event -> {
-                if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                    actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(((UIObject) newActionButton).getElement());
-                } else {
-                    actionPanelPopupPanel.asPopupPanel().hide();
-                }
-                buttonDef.onClick(getSelectedItems());
+            buttonDef.onClick(getSelectedItems());
         });
 
         registerSelectionChangeHandler(buttonDef);
@@ -230,62 +209,60 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         Scheduler.get().scheduleDeferred(() -> {
             // Avoid showing empty context menu
             if (hasActionButtons()) {
-                updateContextMenu(contextMenuBar, actionButtonList, contextPopupPanel);
-                contextPopupPanel.showAndFitToScreen(eventX, eventY);
+                updateContextMenu(menu, actionButtonList);
+                styleAndPositionMenuContainer(eventX, eventY);
             }
         });
     }
 
-    MenuBar updateContextMenu(MenuBar menuBar, List<ActionButtonDefinition<T>> actions, final PopupPanel popupPanel) {
-        return updateContextMenu(menuBar, actions, popupPanel, true);
+    private void styleAndPositionMenuContainer(final int eventX, final int eventY) {
+        menuContainer.addStyleName(OPEN);
+        clickButton.getElement().setAttribute(ARIA_EXPANDED, Boolean.TRUE.toString());
+        menuContainer.getElement().getStyle().setPosition(Position.ABSOLUTE);
+        menuContainer.getElement().getStyle().setTop(Window.getScrollTop() + eventY, Unit.PX);
+        menuContainer.getElement().getStyle().setLeft(eventX, Unit.PX);
+    }
+
+    DropDownMenu updateContextMenu(DropDownMenu menuBar, List<ActionButtonDefinition<T>> actions) {
+        return updateContextMenu(menuBar, actions, true);
     }
 
     /**
      * Rebuilds context menu items to match the action button list.
-     * @param menuBar The menu bar to populate.
+     * @param dropDownMenu The menu bar to populate.
      * @param actions A list of {@code ActionButtonDefinition}s used to populate the {@code MenuBar}.
      * @param popupPanel The pop-up panel containing the {@code MenuBar}.
      * @param removeOldItems A flag to indicate if we should remove old items.
      * @return A {@code MenuBar} containing all the action buttons as menu items.
      */
-    MenuBar updateContextMenu(MenuBar menuBar,
+    DropDownMenu updateContextMenu(DropDownMenu dropDownMenu,
             List<ActionButtonDefinition<T>> actions,
-            final PopupPanel popupPanel,
             boolean removeOldItems) {
         if (removeOldItems) {
-            ElementTooltipUtils.destroyMenuItemTooltips(menuBar);
-            menuBar.clearItems();
+            ElementTooltipUtils.destroyMenuItemTooltips(dropDownMenu);
+            dropDownMenu.clear();
         }
 
         for (final ActionButtonDefinition<T> buttonDef : actions) {
             if (buttonDef instanceof UiMenuBarButtonDefinition) {
                 UiMenuBarButtonDefinition<T> menuBarDef = (UiMenuBarButtonDefinition<T>) buttonDef;
-                if (menuBarDef.isAsTitle()) {
-                    MenuItemSeparator titleItem = new TitleMenuItemSeparator(buttonDef.getText());
-                    menuBar.addSeparator(titleItem);
-                    titleItem.setVisible(buttonDef.isVisible(getSelectedItems()));
-                    updateContextMenu(menuBar, menuBarDef.getSubActions(), popupPanel, false);
-                } else {
-                    MenuItem newMenu = new MenuItem(buttonDef.getText(),
-                            updateContextMenu(new MenuBar(true),
-                                    menuBarDef.getSubActions(),
-                                    popupPanel));
-
-                    updateMenuItem(newMenu, buttonDef);
-                    menuBar.addItem(newMenu);
-                }
+                DropDownHeader subMenuHeader = new DropDownHeader(buttonDef.getText());
+                dropDownMenu.add(new Divider());
+                subMenuHeader.setVisible(buttonDef.isVisible(getSelectedItems()));
+                dropDownMenu.add(subMenuHeader);
+                updateContextMenu(dropDownMenu, menuBarDef.getSubActions(), false);
             } else {
-                MenuItem item = new MenuItem(buttonDef.getText(), () -> {
-                    popupPanel.hide();
+                AnchorListItem item = new AnchorListItem(buttonDef.getText());
+                item.addClickHandler(e -> {
                     buttonDef.onClick(getSelectedItems());
                 });
 
                 updateMenuItem(item, buttonDef);
-                menuBar.addItem(item);
+                dropDownMenu.add(item);
             }
         }
 
-        return menuBar;
+        return dropDownMenu;
     }
 
     /**
@@ -302,8 +279,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
             // hard to read with the default TOP placement.
             button.setTooltip(buttonDef.getTooltip(), Placement.BOTTOM);
         }
-        originallyVisible.put(button.asWidget(), buttonDef.isAccessible(getSelectedItems())
-                && buttonDef.isVisible(getSelectedItems()));
     }
 
     /**
@@ -311,7 +286,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
      * @param item The {@code MenuItem} to enabled/disable/hide based on the {@code ActionButtonDefinition}
      * @param buttonDef The button definition to use to change the menu item.
      */
-    protected void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef) {
+    protected void updateMenuItem(AnchorListItem item, ActionButtonDefinition<T> buttonDef) {
         item.setVisible(buttonDef.isAccessible(getSelectedItems()) && buttonDef.isVisible(getSelectedItems()));
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
 

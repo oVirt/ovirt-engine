@@ -6,6 +6,12 @@
     xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:style>
+        .inheritPosition {
+            position: inherit;
+        }
+    </ui:style>
+
     <g:FlowPanel>
         <b:Container fluid="true" addStyleNames="obrand_main_tab">
             <b:Row>
@@ -16,7 +22,7 @@
                 </b:Column>
             </b:Row>
             <b:Row>
-                <b:Column size="SM_12">
+                <b:Column size="SM_12" addStyleNames="{style.inheritPosition}">
                     <g:FlowPanel ui:field="tabContainer" />
                     <g:SimplePanel ui:field="tabContentContainer" />
                 </b:Column>

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table;
 
+import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -19,7 +20,6 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -82,8 +82,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         refreshPanel.setVisible(false);
-        prevPageButton.setVisible(false);
-        nextPageButton.setVisible(false);
 
         refreshManager.setManualRefreshCallback(() -> {
             //Do any special refresh options.
@@ -127,7 +125,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     @Override
-    protected void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef) {
+    protected void updateMenuItem(AnchorListItem item, ActionButtonDefinition<T> buttonDef) {
         super.updateMenuItem(item, buttonDef);
 
         if (buttonDef.isSubTitledAction()) {

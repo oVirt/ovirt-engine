@@ -68,6 +68,10 @@
                 </b:ButtonGroup>
             </b:FormGroup>
         </g:FlowPanel>
+        <b:DropDown ui:field="menuContainer">
+            <b:Button ui:field="clickButton" />
+            <b:DropDownMenu ui:field="menu" />
+        </b:DropDown>
     </g:FlowPanel>
 
 </ui:UiBinder>

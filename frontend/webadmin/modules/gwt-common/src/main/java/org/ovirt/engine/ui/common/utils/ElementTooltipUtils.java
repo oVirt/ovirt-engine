@@ -8,8 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.Placement;
-import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
@@ -297,9 +297,9 @@ public final class ElementTooltipUtils {
 
     // -- Menu widget utilities --
 
-    public static void destroyMenuItemTooltips(MenuBar menuBar) {
-        for (int i = 0; i < menuBar.getItemCount(); ++i) {
-            destroyTooltip(menuBar.getItem(i).getElement());
+    public static void destroyMenuItemTooltips(DropDownMenu dropdownMenu) {
+        for (int i = 0; i < dropdownMenu.getWidgetCount(); ++i) {
+            destroyTooltip(dropdownMenu.getWidget(i).getElement());
         }
     }
 
