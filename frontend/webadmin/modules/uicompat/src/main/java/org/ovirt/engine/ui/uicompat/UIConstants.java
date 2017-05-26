@@ -1541,6 +1541,8 @@ public interface UIConstants extends Constants {
 
     String portMirroringNotSupportedExternalNetworks();
 
+    String passthroughNotSupportedExternalNetworks();
+
     String portMirroringNotChangedIfUsedByVms();
 
     String portMirroringNotChangedIfPassthrough();
