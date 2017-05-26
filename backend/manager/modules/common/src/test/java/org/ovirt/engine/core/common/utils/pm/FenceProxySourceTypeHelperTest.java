@@ -94,7 +94,7 @@ public class FenceProxySourceTypeHelperTest {
      */
     @Test
     public void saveEmptyList() {
-        String result = FenceProxySourceTypeHelper.saveAsString(Collections.<FenceProxySourceType>emptyList());
+        String result = FenceProxySourceTypeHelper.saveAsString(Collections.emptyList());
 
         assertNull(result);
     }
