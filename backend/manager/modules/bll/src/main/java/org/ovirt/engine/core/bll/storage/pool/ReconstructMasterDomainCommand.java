@@ -20,8 +20,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -136,9 +134,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
         boolean commandSucceeded = stopSpm();
 
-        final List<String> disconnectPoolFormats = Config.getValue(ConfigValues.DisconnectPoolOnReconstruct);
-
-        if (commandSucceeded && disconnectPoolFormats.contains(getNewMasterStorageDomain().getStorageFormat().getValue())) {
+        if (commandSucceeded) {
             commandSucceeded = runVdsCommand(
                     VDSCommandType.DisconnectStoragePool,
                     new DisconnectStoragePoolVDSCommandParameters(getVds().getId(),

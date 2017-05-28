@@ -1038,11 +1038,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     CpuPinMigrationEnabled,
 
-    @TypeConverterAttribute(List.class)
-    @DefaultValueAttribute("0,2")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    DisconnectPoolOnReconstruct,
-
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
     NetworkConnectivityCheckTimeoutInSeconds,

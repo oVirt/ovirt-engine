@@ -190,7 +190,6 @@ select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86
 select fn_db_add_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 -- suspend support per architecture
 select fn_db_add_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
-select fn_db_add_config_value('DisconnectPoolOnReconstruct','0,2','general');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
@@ -810,7 +809,6 @@ select fn_db_update_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_
 select fn_db_update_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,rsa,rsb,wti','4.1');
 select fn_db_update_config_value('VdsRefreshRate','3','general');
 select fn_db_update_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
-select fn_db_update_config_value('DisconnectPoolOnReconstruct','0,2,3,4','general');
 select fn_db_update_config_value('AgentAppName','ovirt-guest-agent-common,ovirt-guest-agent','general');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','3.6');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','4.0');
