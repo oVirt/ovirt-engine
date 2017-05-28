@@ -18,6 +18,8 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
+import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -220,6 +222,11 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.SYNC_LUNS,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(Scope.Execution);
     }
 
     protected final LunHandler updateLunsHandler = new LunHandler() {
