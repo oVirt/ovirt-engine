@@ -34,6 +34,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -506,4 +507,16 @@ public class RunVmCommandTest extends BaseCommandTest {
         List<String> candidates = Arrays.asList("pc-i440fx-2.1", original, "pseries-rhel7.2.0");
         assertEquals(original, command.findBestMatchForEmulatedMachine(original, candidates));
     }
+
+    @Test
+    public void auditLogRunStatelessVmCreateImages() {
+        doReturn(RunVmFlow.CREATE_STATELESS_IMAGES).when(command).getFlow();
+        command.setVm(new VM());
+        command.setInternalExecution(false);
+        command.setSucceeded(true);
+        command.setActionReturnValue(VMStatus.Down);
+        doReturn(false).when(command).isStatelessSnapshotExistsForVm();
+        assertEquals(AuditLogType.USER_INITIATED_RUN_VM, command.getAuditLogTypeValue());
+    }
+
 }
