@@ -731,9 +731,7 @@ public class VmHandler implements BackendService {
      */
     private static int getMaxNumberOfMonitors() {
         int max = 0;
-        String numOfMonitorsStr =
-                Config.getValue(ConfigValues.ValidNumOfMonitors).toString().replaceAll("[\\[\\]]", "");
-        String[] values = numOfMonitorsStr.split(",");
+        List<String> values = Config.getValue(ConfigValues.ValidNumOfMonitors);
         for (String text : values) {
             text = text.trim();
             int val = Integer.parseInt(text);
