@@ -98,7 +98,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Command);
+        return lockProperties.withScope(Scope.Execution);
     }
 
     @Override
