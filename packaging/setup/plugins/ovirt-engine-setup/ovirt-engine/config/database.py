@@ -28,6 +28,7 @@ from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 
 
@@ -54,8 +55,9 @@ class Plugin(plugin.PluginBase):
                     oenginecons.FileLocations.
                     OVIRT_ENGINE_SERVICE_CONFIG_DATABASE
                 ),
-                mode=0o600,
-                owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
+                mode=0o640,
+                owner=self.environment[oengcommcons.SystemEnv.USER_ROOT],
+                group=self.environment[osetupcons.SystemEnv.GROUP_ENGINE],
                 enforcePermissions=True,
                 content=database.OvirtUtils(
                     plugin=self,

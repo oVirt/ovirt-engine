@@ -72,8 +72,9 @@ class Plugin(plugin.PluginBase):
                     oenginecons.FileLocations.
                     OVIRT_ENGINE_SERVICE_CONFIG_PKI
                 ),
-                mode=0o600,
-                owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
+                mode=0o640,
+                owner=self.environment[oengcommcons.SystemEnv.USER_ROOT],
+                group=self.environment[osetupcons.SystemEnv.GROUP_ENGINE],
                 enforcePermissions=True,
                 content=(
                     'ENGINE_PKI="{pki_dir}"\n'
