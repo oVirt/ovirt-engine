@@ -369,8 +369,8 @@ public class StorageDomain implements IVdcQueryable, BusinessEntityWithStatus<Gu
         staticData.setWipeAfterDelete(wipeAfterDelete);
     }
 
-    public boolean isDiscardAfterDelete() {
-        return staticData.isDiscardAfterDelete();
+    public Boolean getDiscardAfterDelete() {
+        return staticData.getDiscardAfterDelete();
     }
 
     public void setDiscardAfterDelete(boolean discardAfterDelete) {

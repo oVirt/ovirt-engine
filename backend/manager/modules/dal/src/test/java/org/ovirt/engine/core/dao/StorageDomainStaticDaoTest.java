@@ -42,6 +42,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
         newStaticDomain.setStorageFormat(StorageFormatType.V1);
         newStaticDomain.setWipeAfterDelete(true);
+        newStaticDomain.setDiscardAfterDelete(false);
         newStaticDomain.setWarningLowSpaceIndicator(3);
         newStaticDomain.setCriticalSpaceActionBlocker(9);
         newStaticDomain.setFirstMetadataDevice(FixturesTool.LUN_ID2);

@@ -42,7 +42,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
-        boolean discardAfterDelete = storageDomainDao.get(guids.get(0)).isDiscardAfterDelete();
+        boolean discardAfterDelete = storageDomainDao.get(guids.get(0)).getDiscardAfterDelete();
         return postDeleteActionHandler.fixParameters(
                 new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
                         isPostZero(), discardAfterDelete, false));
@@ -50,7 +50,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
-        boolean discardAfterDelete = storageDomainDao.get(guids.get(0)).isDiscardAfterDelete();
+        boolean discardAfterDelete = storageDomainDao.get(guids.get(0)).getDiscardAfterDelete();
         return postDeleteActionHandler.fixParameters(
                 new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
                         isPostZero(), discardAfterDelete, false));

@@ -67,6 +67,12 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         super(parameters, commandContext);
     }
 
+    @Override
+    public void init() {
+        super.init();
+        initStorageDomainDiscardAfterDelete(getTargetStoragePool().getCompatibilityVersion());
+    }
+
     protected void initializeStorageDomain() {
         getStorageDomain().setId(Guid.newGuid());
         updateStaticDataDefaults();
@@ -269,6 +275,14 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     public StorageDomainValidator getStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
     }
+
+    private void initStorageDomainDiscardAfterDelete(Version compatibilityVersion) {
+        if (getStorageDomain().getDiscardAfterDelete() == null) {
+            getStorageDomain().setDiscardAfterDelete(getDefaultDiscardAfterDelete(compatibilityVersion));
+        }
+    }
+
+    protected abstract boolean getDefaultDiscardAfterDelete(Version compatibilityVersion);
 
     protected abstract boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator,
             Version compatibilityVersion);

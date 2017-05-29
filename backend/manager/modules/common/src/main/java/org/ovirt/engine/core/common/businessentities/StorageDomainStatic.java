@@ -62,7 +62,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private Boolean wipeAfterDelete;
 
-    private boolean discardAfterDelete;
+    private Boolean discardAfterDelete;
 
     @Min(value = 0, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_SPACE_INDICATOR_RANGE")
     @Max(value = 100, message = "VALIDATION_STORAGE_DOMAIN_WARNING_LOW_SPACE_INDICATOR_RANGE")
@@ -162,11 +162,11 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         this.wipeAfterDelete = wipeAfterDelete;
     }
 
-    public boolean isDiscardAfterDelete() {
+    public Boolean getDiscardAfterDelete() {
         return discardAfterDelete;
     }
 
-    public void setDiscardAfterDelete(boolean discardAfterDelete) {
+    public void setDiscardAfterDelete(Boolean discardAfterDelete) {
         this.discardAfterDelete = discardAfterDelete;
     }
 
@@ -273,7 +273,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && storageType == other.storageType
                 && sanState == other.sanState
                 && Objects.equals(wipeAfterDelete, other.wipeAfterDelete)
-                && discardAfterDelete == other.discardAfterDelete
+                && Objects.equals(discardAfterDelete, other.discardAfterDelete)
                 && Objects.equals(firstMetadataDevice, other.firstMetadataDevice)
                 && Objects.equals(vgMetadataDevice, other.vgMetadataDevice)
                 && Objects.equals(description, other.description)

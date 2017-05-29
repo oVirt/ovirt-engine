@@ -72,13 +72,18 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
     }
 
     @Override
+    protected boolean getDefaultDiscardAfterDelete(Version compatibilityVersion) {
+        return false;
+    }
+
+    @Override
     protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator,
             Version compatibilityVersion) {
         /*
         Discard after delete is only relevant for block storage domains.
         Therefore, if it is enabled for a non block storage domain, the validation should fail.
          */
-        if (getStorageDomain().isDiscardAfterDelete()) {
+        if (getStorageDomain().getDiscardAfterDelete()) {
             return failValidation(
                     EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_SUPPORTED_ONLY_BY_BLOCK_DOMAINS);
         }

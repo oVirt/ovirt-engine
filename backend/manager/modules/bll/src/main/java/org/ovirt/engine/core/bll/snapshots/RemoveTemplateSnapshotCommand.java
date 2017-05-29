@@ -42,7 +42,7 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
                         new DeleteImageGroupVDSCommandParameters(getParameters().getStoragePoolId(),
                                 getParameters().getStorageDomainId(), getParameters().getImageGroupID(),
                                 getParameters().getWipeAfterDelete(),
-                                storageDomainDao.get(getParameters().getStorageDomainId()).isDiscardAfterDelete(),
+                                storageDomainDao.get(getParameters().getStorageDomainId()).getDiscardAfterDelete(),
                                 false)));
 
         if (vdsReturnValue.getSucceeded()) {

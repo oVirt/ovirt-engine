@@ -69,7 +69,7 @@ public class PostDeleteActionHandler {
      */
     protected <T extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters & PostDeleteAction> T fixDiscardField(
             T parameters, StorageDomain storageDomain) {
-        if (storageDomain.isDiscardAfterDelete()) {
+        if (storageDomain.getDiscardAfterDelete()) {
             if (!Boolean.TRUE.equals(storageDomain.getSupportsDiscard())) {
                 parameters.setDiscard(false);
                 AuditLogable auditLog = new AuditLogableImpl();

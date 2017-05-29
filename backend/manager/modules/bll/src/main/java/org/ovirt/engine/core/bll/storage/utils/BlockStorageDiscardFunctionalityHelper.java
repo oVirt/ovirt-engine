@@ -113,7 +113,7 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     protected boolean isExistingDiscardAfterDeleteFunctionalityPreserved(Collection<LUNs> lunsToAdd,
             StorageDomain storageDomain) {
-        if (!storageDomain.isDiscardAfterDelete()) {
+        if (!storageDomain.getDiscardAfterDelete()) {
             // The storage domain's discard after delete property is already false so there's
             // no need to check if the new luns break the discard after delete functionality.
             return true;
@@ -198,7 +198,7 @@ public class BlockStorageDiscardFunctionalityHelper {
 
     protected Collection<LUNs> getLunsThatBreakDiscardAfterDeleteSupport(Collection<LUNs> luns, Guid storageDomainId) {
         StorageDomain storageDomain = storageDomainDao.get(storageDomainId);
-        if (storageDomain.isDiscardAfterDelete()) {
+        if (storageDomain.getDiscardAfterDelete()) {
             return luns.stream()
                     .filter(lun -> !lun.supportsDiscard())
                     .collect(Collectors.toList());

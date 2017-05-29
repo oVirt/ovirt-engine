@@ -639,9 +639,9 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             getDiscardAfterDelete().setIsAvailable(discardAfterDeleteSupported);
             if (getDiscardAfterDelete().getIsAvailable()) {
                 if (isNewStorage()) {
-                    getDiscardAfterDelete().setEntity(false);
+                    getDiscardAfterDelete().setEntity(true);
                 } else {
-                    getDiscardAfterDelete().setEntity(getStorage().isDiscardAfterDelete());
+                    getDiscardAfterDelete().setEntity(getStorage().getDiscardAfterDelete());
                 }
             } else {
                 getDiscardAfterDelete().setEntity(false);

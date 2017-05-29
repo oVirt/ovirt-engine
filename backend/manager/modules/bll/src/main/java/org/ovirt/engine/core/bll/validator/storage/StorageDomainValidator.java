@@ -409,7 +409,7 @@ public class StorageDomainValidator {
     }
 
     protected ValidationResult isDiscardAfterDeleteLegal(Supplier<Boolean> supportsDiscardSupplier) {
-        if (!storageDomain.isDiscardAfterDelete()) {
+        if (!storageDomain.getDiscardAfterDelete()) {
             return ValidationResult.VALID;
         }
 
@@ -426,7 +426,7 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult isDiscardAfterDeleteSupportedByDcVersion(Version version) {
-        if (storageDomain.isDiscardAfterDelete() && !FeatureSupported.discardAfterDeleteSupported(version)) {
+        if (storageDomain.getDiscardAfterDelete() && !FeatureSupported.discardAfterDeleteSupported(version)) {
             return new ValidationResult(
                     EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_NOT_SUPPORTED_BY_DC_VERSION,
                     String.format("$dataCenterVersion %s", version.toString()));

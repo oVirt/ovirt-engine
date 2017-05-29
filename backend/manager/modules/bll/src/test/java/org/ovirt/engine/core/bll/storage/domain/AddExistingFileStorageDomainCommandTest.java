@@ -64,6 +64,7 @@ public class AddExistingFileStorageDomainCommandTest extends BaseCommandTest {
 
         doNothing().when(command).addStorageDomainInDb();
         doNothing().when(command).updateStorageDomainDynamicFromIrs();
+        command.init();
 
         when(vdsDao.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(getHosts());
         when(storagePoolDao.get(any(Guid.class))).thenReturn(getStoragePool());

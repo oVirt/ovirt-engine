@@ -133,7 +133,7 @@ public class PostDeleteActionHandlerTest {
         storageDomain.setSupportsDiscard(supportsDiscard);
 
         ParametersWithPostDeleteAction params =
-                new ParametersWithPostDeleteAction(false, storageDomain.isDiscardAfterDelete());
+                new ParametersWithPostDeleteAction(false, storageDomain.getDiscardAfterDelete());
 
         injectorRule.bind(AuditLogableBase.class, auditLogableBase);
         doReturn(diskAttachedToAtLeastOneVmWithEnableDiscard)

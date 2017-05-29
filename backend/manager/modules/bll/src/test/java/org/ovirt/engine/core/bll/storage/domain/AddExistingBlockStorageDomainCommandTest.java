@@ -20,9 +20,11 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -47,6 +49,8 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
         doNothing().when(command).updateStorageDomainDynamicFromIrs();
         doNothing().when(command).saveLUNsInDB(anyList());
         doNothing().when(command).updateMetadataDevices();
+        command.setStoragePool(getStoragePool());
+        command.init();
     }
 
     @Test
@@ -86,5 +90,12 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
         LUNs lun = new LUNs();
         lun.setId(Guid.newGuid().toString());
         return Collections.singletonList(lun);
+    }
+
+    private static StoragePool getStoragePool() {
+        StoragePool storagePool = new StoragePool();
+        storagePool.setId(Guid.newGuid());
+        storagePool.setCompatibilityVersion(Version.getLast());
+        return storagePool;
     }
 }

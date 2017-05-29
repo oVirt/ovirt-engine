@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -96,6 +97,11 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected boolean getDefaultDiscardAfterDelete(Version compatibilityVersion) {
+        return FeatureSupported.discardAfterDeleteSupported(compatibilityVersion);
     }
 
     @Override

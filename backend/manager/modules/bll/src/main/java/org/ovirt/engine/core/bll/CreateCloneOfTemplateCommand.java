@@ -95,7 +95,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                                         "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
                                         newDiskImage.getVolumeFormat(), newDiskImage.getVolumeType(),
                                         getDiskImage().isWipeAfterDelete(),
-                                        storageDomainDao.get(getDestinationStorageDomainId()).isDiscardAfterDelete(),
+                                        storageDomainDao.get(getDestinationStorageDomainId()).getDiscardAfterDelete(),
                                         false)));
 
             } catch (EngineException e) {

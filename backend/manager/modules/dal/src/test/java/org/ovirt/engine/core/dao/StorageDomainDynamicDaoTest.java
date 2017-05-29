@@ -36,6 +36,7 @@ public class StorageDomainDynamicDaoTest extends BaseDaoTestCase {
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
         newStaticDomain.setStorageFormat(StorageFormatType.V1);
         newStaticDomain.setWipeAfterDelete(true);
+        newStaticDomain.setDiscardAfterDelete(false);
         newDynamicDomain = new StorageDomainDynamic();
         newDynamicDomain.setAvailableDiskSize(USED_DISK_SIZE);
     }
