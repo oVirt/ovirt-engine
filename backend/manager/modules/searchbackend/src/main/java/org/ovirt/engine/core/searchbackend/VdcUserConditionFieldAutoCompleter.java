@@ -70,7 +70,6 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         String customizedRelation,
         String tableName,
         boolean caseSensitive) {
-        customizedValue = SyntaxChecker.escapeUnderScore(customizedValue, customizedRelation);
         if (USER_NAME.equals(fieldName) && customizedValue.contains("@")) {
             // When the given user name contains the at sign, we need to split it and compare it to two columns in the
             // database: the column containing the login name of the user and the column containg the name of the

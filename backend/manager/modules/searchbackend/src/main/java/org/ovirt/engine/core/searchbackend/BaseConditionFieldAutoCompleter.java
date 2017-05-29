@@ -397,13 +397,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             // Check if value is comma delimited list, this apply for example to shared disk or shared ISO domain
             if (info.commaDelimitedListColumns != null && info.commaDelimitedListColumns.contains(fieldName.toLowerCase())) {
                 return StringFormat.format("%1$s %2$s ANY(string_to_array(%3$s.%4$s, ','))",
-                        pair.getSecond(),
+                        pair.getSecond().replace("\\_", "_"), // if the value is on the left of LIKE/ILIKE it should be without "_"
                         pair.getFirst(),
                         tableName,
                         getDbFieldName(fieldName));
             }
             return StringFormat.format(" %1$s.%2$s %3$s %4$s ", tableName, getDbFieldName(fieldName),
-                    pair.getFirst(), SyntaxChecker.escapeUnderScore(pair.getSecond(), customizedRelation));
+                    pair.getFirst(), pair.getSecond());
         }
     }
 
