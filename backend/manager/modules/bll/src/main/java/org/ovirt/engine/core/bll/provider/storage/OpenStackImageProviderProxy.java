@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -61,8 +62,6 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     private static final String API_VERSION = "/v1";
 
     private static final int QCOW2_SIGNATURE = 0x514649fb;
-
-    private static final int QCOW2_VERSION = 2;
 
     private static final int QCOW2_SIZE_OFFSET = 24;
 
@@ -208,7 +207,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
         return retGlanceImage.getId();
     }
 
-    private void setCowVirtualSize(DiskImage diskImage, Image glanceImage) {
+    private void setCowVirtualSizeAndQcowCompat(DiskImage diskImage, Image glanceImage) {
         // For the qcow2 format we need to download the image header and read the virtual size from there
         byte[] imgContent = new byte[72];
         ImageDownload downloadImage = getClient().images().download(glanceImage.getId()).execute();
@@ -228,9 +227,13 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
 
         ByteBuffer b = ByteBuffer.wrap(imgContent);
 
-        if (b.getInt() == QCOW2_SIGNATURE && b.getInt() == QCOW2_VERSION) {
+        int qcow2Signature = b.getInt();
+        int qcow2Version = b.getInt();
+        QcowCompat qcowCompat = QcowCompat.forQcowHeaderVersion(qcow2Version);
+        if (qcow2Signature == QCOW2_SIGNATURE && qcowCompat != null && qcowCompat != QcowCompat.Undefined) {
             b.position(QCOW2_SIZE_OFFSET);
             diskImage.setSize(b.getLong());
+            diskImage.setQcowCompat(qcowCompat);
         } else {
             throw new OpenStackImageException(
                     OpenStackImageException.ErrorType.UNRECOGNIZED_IMAGE_FORMAT,
@@ -239,18 +242,18 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     }
 
     protected void setDiskAttributes(DiskImage diskImage, Image glanceImage) {
-        setImageVirtualSize(diskImage, glanceImage);
+        setImageVirtualSizeAndCompat(diskImage, glanceImage);
         diskImage.setActualSizeInBytes(glanceImage.getSize());
     }
 
-    protected void setImageVirtualSize(DiskImage diskImage, Image glanceImage) {
+    protected void setImageVirtualSizeAndCompat(DiskImage diskImage, Image glanceImage) {
         validateContainerFormat(glanceImage);
 
         if (glanceImage.getDiskFormat().equals(GlanceImageFormat.RAW.getValue())
                 || glanceImage.getDiskFormat().equals(GlanceImageFormat.ISO.getValue())) {
             diskImage.setSize(glanceImage.getSize());
         } else if (glanceImage.getDiskFormat().equals(GlanceImageFormat.COW.getValue())) {
-            setCowVirtualSize(diskImage, glanceImage);
+            setCowVirtualSizeAndQcowCompat(diskImage, glanceImage);
         } else {
             throw new OpenStackImageException(
                     OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,
