@@ -49,6 +49,8 @@ public class UrlValidationTest {
                 { "192.168.0.1", false }, //$NON-NLS-1$
                 { "ftp://www.redhat.com", false }, //$NON-NLS-1$
                 { "ftp://192.168.0.1", false }, //$NON-NLS-1$
+                { "http://www.redhat.com:/main", false }, //$NON-NLS-1$
+                { "http://www.redhat.com:123456/main", false }, //$NON-NLS-1$
 
                 { "http://1.2.3.4:666", true }, //$NON-NLS-1$
                 { "http://1.2.3.4", true }, //$NON-NLS-1$

@@ -15,7 +15,7 @@ public class UriAuthority {
     private static final String IPV6_ADDRESS_PATTERN = "\\[.+\\]"; //$NON-NLS-1$
     private static final String AUTHORITY_PATTERN =
             "^(" + NON_IPV6_ADDRESS_PATTERN + //$NON-NLS-1$
-                    "|" + IPV6_ADDRESS_PATTERN + ")(?::(\\d*))?$"; //$NON-NLS-1$ $NON-NLS-2$
+                    "|" + IPV6_ADDRESS_PATTERN + ")(?::(\\d{1,5}))?$"; //$NON-NLS-1$ $NON-NLS-2$
     private static final String EMPTY_STRING = ""; //$NON-NLS-1$
     private static final String COLON = ":"; //$NON-NLS-1$
     private static final RegExp AUTHORITY_REGEXP = RegExp.compile(AUTHORITY_PATTERN, "i"); //$NON-NLS-1$
