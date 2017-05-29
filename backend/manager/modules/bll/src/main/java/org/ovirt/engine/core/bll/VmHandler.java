@@ -730,16 +730,8 @@ public class VmHandler implements BackendService {
      * get max of allowed monitors from config config value is a comma separated list of integers
      */
     private static int getMaxNumberOfMonitors() {
-        int max = 0;
         List<String> values = Config.getValue(ConfigValues.ValidNumOfMonitors);
-        for (String text : values) {
-            text = text.trim();
-            int val = Integer.parseInt(text);
-            if (val > max) {
-                max = val;
-            }
-        }
-        return max;
+        return values.stream().map(String::trim).mapToInt(Integer::parseInt).max().orElse(0);
     }
 
     /**
