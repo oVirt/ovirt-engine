@@ -66,13 +66,6 @@ public class DiskValidator {
 
     }
 
-    public ValidationResult isDiskUsedAsOvfStore() {
-        if (disk.isOvfStore()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
-        }
-        return ValidationResult.VALID;
-    }
-
     protected VmDao getVmDao() {
         return DbFacade.getInstance().getVmDao();
     }

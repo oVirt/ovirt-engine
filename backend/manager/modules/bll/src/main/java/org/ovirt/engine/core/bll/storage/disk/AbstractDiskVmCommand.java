@@ -179,14 +179,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return validate(diskValidator.isDiskExists()) && validate(diskValidator.isDiskAttachedToVm(getVm()));
     }
 
-    protected boolean checkDiskUsedAsOvfStore(Disk disk) {
-        return checkDiskUsedAsOvfStore(getDiskValidator(disk));
-    }
-
-    protected boolean checkDiskUsedAsOvfStore(DiskValidator diskValidator) {
-        return validate(diskValidator.isDiskUsedAsOvfStore());
-    }
-
     protected boolean checkOperationAllowedOnDiskContentType(Disk disk) {
         return validate(new DiskOperationsValidator(disk).isOperationAllowedOnDisk(getActionType()));
     }
