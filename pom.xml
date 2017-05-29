@@ -747,58 +747,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>hudson</id>
-      <activation>
-        <property>
-          <name>BUILD_NUMBER</name>
-        </property>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <!-- ====================================================================== -->
-            <!-- temporary comment until we revisit cobertura coverage reports          -->
-            <!-- currently this causes duplicate class errros in GenericApi project     -->
-            <!-- which fails only when running it from hudson, but not from cmdline     -->
-            <!-- ====================================================================== -->
-            <!--
-	    <plugin>
-	      <groupId>org.codehaus.mojo</groupId>
-	      <artifactId>cobertura-maven-plugin</artifactId>
-	      <version>2.3</version>
-	      <configuration>
-		<formats>
-		  <format>xml</format>
-		</formats>
-	      </configuration>
-	      <executions>
-		<execution>
-		  <phase>package</phase>
-		  <goals>
-		    <goal>cobertura</goal>
-		  </goals>
-		</execution>
-	      </executions>
-	    </plugin>
-	    <plugin>
-	      <artifactId>maven-surefire-plugin</artifactId>
-	      <configuration>
-		<excludes>
-		  <exclude>**/SchedulerUtilQuartsImplTest.java</exclude>
-                  <exclude>**/DbFacadeTest.java</exclude>
-		  <exclude>**/bll/*Test.java</exclude>
-		  <exclude>**/dal/adbroker/AdBrokerTest.java</exclude>
-		  <exclude>**/publicapi/**</exclude>
-		</excludes>
-	      </configuration>
-	    </plugin>
-            -->
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-
   </profiles>
 
   <!-- ====================================================================== -->
