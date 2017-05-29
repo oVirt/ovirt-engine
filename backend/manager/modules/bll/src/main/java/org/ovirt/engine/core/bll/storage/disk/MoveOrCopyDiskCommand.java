@@ -277,7 +277,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * vm should be down
      */
     protected boolean checkCanBeMoveInVm() {
-        return validate(createDiskValidator().isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
+        return validate(new DiskValidator(getImage()).isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
     }
 
     /**
@@ -610,10 +610,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected StorageDomainValidator createStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
-    }
-
-    protected DiskValidator createDiskValidator() {
-        return new DiskValidator(getImage());
     }
 
     protected MultipleDiskVmElementValidator createMultipleDiskVmElementValidator() {
