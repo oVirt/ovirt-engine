@@ -220,7 +220,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.SYNC_LUNS,
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
                         EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
