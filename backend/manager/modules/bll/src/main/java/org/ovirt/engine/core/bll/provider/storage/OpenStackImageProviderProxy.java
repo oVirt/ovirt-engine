@@ -171,8 +171,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
             diskImage.setDiskDescription("Glance disk: " + shortHash);
         }
 
-        diskImage.setSize(getImageVirtualSize(glanceImage));
-        diskImage.setActualSizeInBytes(glanceImage.getSize());
+        setDiskAttributes(diskImage, glanceImage);
 
         if (glanceImage.getDiskFormat().equals(GlanceImageFormat.RAW.getValue())) {
             diskImage.setVolumeFormat(VolumeFormat.RAW);
@@ -209,10 +208,10 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
         return retGlanceImage.getId();
     }
 
-    private long getCowVirtualSize(String id) {
+    private void setCowVirtualSize(DiskImage diskImage, Image glanceImage) {
         // For the qcow2 format we need to download the image header and read the virtual size from there
         byte[] imgContent = new byte[72];
-        ImageDownload downloadImage = getClient().images().download(id).execute();
+        ImageDownload downloadImage = getClient().images().download(glanceImage.getId()).execute();
 
         try (InputStream inputStream = downloadImage.getInputStream()) {
             int bytesRead = inputStream.read(imgContent, 0, imgContent.length);
@@ -231,27 +230,32 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
 
         if (b.getInt() == QCOW2_SIGNATURE && b.getInt() == QCOW2_VERSION) {
             b.position(QCOW2_SIZE_OFFSET);
-            return b.getLong();
+            diskImage.setSize(b.getLong());
+        } else {
+            throw new OpenStackImageException(
+                    OpenStackImageException.ErrorType.UNRECOGNIZED_IMAGE_FORMAT,
+                    "Unable to recognize QCOW2 format");
         }
-
-        throw new OpenStackImageException(
-                OpenStackImageException.ErrorType.UNRECOGNIZED_IMAGE_FORMAT,
-                "Unable to recognize QCOW2 format");
     }
 
-    protected long getImageVirtualSize(Image glanceImage) {
+    protected void setDiskAttributes(DiskImage diskImage, Image glanceImage) {
+        setImageVirtualSize(diskImage, glanceImage);
+        diskImage.setActualSizeInBytes(glanceImage.getSize());
+    }
+
+    protected void setImageVirtualSize(DiskImage diskImage, Image glanceImage) {
         validateContainerFormat(glanceImage);
 
         if (glanceImage.getDiskFormat().equals(GlanceImageFormat.RAW.getValue())
                 || glanceImage.getDiskFormat().equals(GlanceImageFormat.ISO.getValue())) {
-            return glanceImage.getSize();
+            diskImage.setSize(glanceImage.getSize());
         } else if (glanceImage.getDiskFormat().equals(GlanceImageFormat.COW.getValue())) {
-            return getCowVirtualSize(glanceImage.getId());
+            setCowVirtualSize(diskImage, glanceImage);
+        } else {
+            throw new OpenStackImageException(
+                    OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,
+                    "Unknown disk format: " + glanceImage.getDiskFormat());
         }
-
-        throw new OpenStackImageException(
-                OpenStackImageException.ErrorType.UNSUPPORTED_DISK_FORMAT,
-                "Unknown disk format: " + glanceImage.getDiskFormat());
     }
 
     public Map<String, String> getDownloadHeaders() {
