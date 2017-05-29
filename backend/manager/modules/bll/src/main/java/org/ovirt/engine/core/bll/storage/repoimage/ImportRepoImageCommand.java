@@ -44,7 +44,9 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -54,11 +56,23 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
+import org.ovirt.engine.core.dao.ImageDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 
 public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T> implements SerialChildExecutingCommand, QuotaStorageDependent {
 
     @Inject
     private VmDeviceUtils vmDeviceUtils;
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
+    private ImageDao imageDao;
 
     private OpenStackImageProviderProxy providerProxy;
 
@@ -183,6 +197,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     @Override
     public void endSuccessfully() {
         super.endSuccessfully();
+        setQcowCompatForQcowImage();
         if (getParameters().getImportAsTemplate()) {
             Guid newTemplateId = createTemplate();
             // No reason for this to happen, but checking just to make sure
@@ -192,6 +207,15 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         }
         updateDiskStatus(ImageStatus.OK);
         setSucceeded(true);
+    }
+
+    private void setQcowCompatForQcowImage() {
+        Image image = imageDao.get(getDiskImage().getImageId());
+        if (getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE
+                && getDiskImage().getVolumeFormat() == VolumeFormat.COW) {
+            image.setQcowCompat(getDiskImage().getQcowCompat());
+            imageDao.update(image);
+        }
     }
 
     @Override
