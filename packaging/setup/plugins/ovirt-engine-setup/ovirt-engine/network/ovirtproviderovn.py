@@ -501,18 +501,18 @@ class Plugin(plugin.PluginBase):
                     self.OVN_NORTH_DB_CONFIG.protocol,
                     self.OVN_NORTH_DB_CONFIG.port,
                 ),
-            'sso-client-id':
+            'ovirt-sso-client-id':
                 Const.OVIRT_PROVIDER_OVN_CLIENT_ID_VALUE,
-            'sso-client-secret':
+            'ovirt-sso-client-secret':
                 self.environment[
                     OvnEnv.OVIRT_PROVIDER_OVN_SECRET
                 ],
-            'host':
+            'ovirt-host':
                 'https://%s:%s' % (
                     self.environment[osetupcons.ConfigEnv.FQDN],
                     engine_port
                 ),
-            'ca-file':
+            'ovirt-ca-file':
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
         }
         if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
