@@ -17,11 +17,12 @@ public class NumberOfMonitorsConstraint implements ConstraintValidator<NumberOfM
 
     @Override
     public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        // Is fetched every time to support the reloadability of the config value
-        final List<String> validValues = Config.getValue(ConfigValues.ValidNumOfMonitors);
-        if (value == null || validValues == null) {
+        if (value == null) {
             return false;
         }
+
+        // Is fetched every time to support the reloadability of the config value
+        final List<String> validValues = Config.getValue(ConfigValues.ValidNumOfMonitors);
         return validValues.contains(value.toString());
     }
 
