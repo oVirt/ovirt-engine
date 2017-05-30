@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 public class VDSParametersBase {
 
     private boolean runAsync;
-    private Set<EngineError> expectedEngineErrors = Collections.<EngineError>emptySet();
+    private Set<EngineError> expectedEngineErrors = Collections.emptySet();
 
     public VDSParametersBase() {
         runAsync = true;
