@@ -21,8 +21,14 @@ public class EditAffinityGroupModel extends AffinityGroupModel {
 
         getName().setEntity(getAffinityGroup().getName());
         getDescription().setEntity(getAffinityGroup().getDescription());
+
+        // Get VM details
         getVmAffinityRule().setSelectedItem(getAffinityGroup().getVmAffinityRule());
-        getEnforcing().setEntity(getAffinityGroup().isVmEnforcing());
+        getVmAffinityEnforcing().setEntity(getAffinityGroup().isVmEnforcing());
+
+        // Get host details
+        getHostAffinityRule().setSelectedItem(getAffinityGroup().getVdsAffinityRule());
+        getHostAffinityEnforcing().setEntity(getAffinityGroup().isVdsEnforcing());
     }
 
 }

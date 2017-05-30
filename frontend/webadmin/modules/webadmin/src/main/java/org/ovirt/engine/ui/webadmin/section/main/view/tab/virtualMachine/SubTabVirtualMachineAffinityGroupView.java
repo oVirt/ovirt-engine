@@ -33,8 +33,8 @@ public class SubTabVirtualMachineAffinityGroupView extends AbstractSubTabAffinit
     }
 
     @Override
-    protected List<String> getEntityNames(AffinityGroup object) {
-        List<String> entityNames = super.getEntityNames(object);
+    protected List<String> getVmNames(AffinityGroup group) {
+        List<String> entityNames = super.getVmNames(group);
         String vmName = getDetailModel().getEntity().getName();
         for (int i = 0; i < entityNames.size(); i++) {
             if (entityNames.get(i).equals(vmName)) {

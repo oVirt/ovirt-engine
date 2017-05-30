@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.HostsSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.AffinityGroupModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -58,21 +59,44 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     @UiField(provided=true)
     InfoIcon vmAffinityRuleEditorInfoIcon;
 
-    @Path(value = "enforcing.entity")
-    @WithElementId("enforcing")
+    @Path(value = "vmAffinityEnforcing.entity")
+    @WithElementId("vmAffinityEnforcing")
     @UiField(provided=true)
-    EntityModelCheckBoxEditor enforcingEditor;
+    EntityModelCheckBoxEditor vmAffinityEnforcingEditor;
 
     @UiField(provided=true)
-    InfoIcon enforcingEditorInfoIcon;
+    InfoIcon vmAffinityEnforcingEditorInfoIcon;
 
     @UiField
     @Ignore
-    EnableableFormLabel enforcingEditorLabel;
+    EnableableFormLabel vmAffinityEnforcingEditorLabel;
+
+    @Path(value = "hostAffinityRule.selectedItem")
+    @UiField(provided=true)
+    ListModelListBoxEditor<EntityAffinityRule> hostAffinityRuleEditor;
+
+    @UiField(provided=true)
+    InfoIcon hostAffinityRuleEditorInfoIcon;
+
+    @Path(value = "hostAffinityEnforcing.entity")
+    @WithElementId("hostAffinityEnforcing")
+    @UiField(provided=true)
+    EntityModelCheckBoxEditor hostAffinityEnforcingEditor;
+
+    @UiField(provided=true)
+    InfoIcon hostAffinityEnforcingEditorInfoIcon;
+
+    @UiField
+    @Ignore
+    EnableableFormLabel hostAffinityEnforcingEditorLabel;
 
     @UiField
     @Ignore
     protected KeyWidget<VmsSelectionModel> addRemoveVmWidget;
+
+    @UiField
+    @Ignore
+    protected KeyWidget<HostsSelectionModel> addRemoveHostWidget;
 
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
@@ -89,16 +113,25 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     private void initEditors() {
         vmAffinityRuleEditor = new ListModelListBoxEditor<>(new EnumRenderer<EntityAffinityRule>());
         vmAffinityRuleEditor.hideLabel();
-        vmAffinityRuleEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupPolarityInfo()));
+        vmAffinityRuleEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupVmPolarityInfo()));
 
-        enforcingEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        enforcingEditor.hideLabel();
-        enforcingEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupEnforcInfo()));
+        vmAffinityEnforcingEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        vmAffinityEnforcingEditor.hideLabel();
+        vmAffinityEnforcingEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupEnforceInfo()));
+
+        hostAffinityRuleEditor = new ListModelListBoxEditor<>(new EnumRenderer<EntityAffinityRule>());
+        hostAffinityRuleEditor.hideLabel();
+        hostAffinityRuleEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupHostPolarityInfo()));
+
+        hostAffinityEnforcingEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        hostAffinityEnforcingEditor.hideLabel();
+        hostAffinityEnforcingEditorInfoIcon = new InfoIcon(templates.italicText(constants.affinityGroupEnforceInfo()));
     }
 
     public void edit(final AffinityGroupModel model) {
         driver.edit(model);
         addRemoveVmWidget.edit(model.getVmsSelectionModel());
+        addRemoveHostWidget.edit(model.getHostsSelectionModel());
     }
 
     @Override

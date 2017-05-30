@@ -8,66 +8,66 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public class VmsSelectionModel extends KeyModel {
+public class HostsSelectionModel extends KeyModel {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private boolean initialized;
 
-    public VmsSelectionModel() {
-        super(constants.selectVm(), constants.noAvailableVms());
+    public HostsSelectionModel() {
+        super(constants.selectHost(), constants.noAvailableHosts());
     }
 
-    final Map<String, VM> allVmNamesMap = new HashMap<>();
+    final Map<String, VDS> allHostNamesMap = new HashMap<>();
 
-    public void init(List<VM> vms, List<Guid> usedVms) {
-        if (vms == null) {
+    public void init(List<VDS> hosts, List<Guid> usedHosts) {
+        if (hosts == null) {
             return;
         }
 
-        // Create maps for identifying VMs by name or id
-        Map<Guid, VM> allVmIdsMap = new HashMap<>();
-        populateVmMaps(vms, allVmNamesMap, allVmIdsMap);
+        // Create maps for identifying hosts by name or id
+        Map<Guid, VDS> allHostIdsMap = new HashMap<>();
+        populateHostMaps(hosts, allHostNamesMap, allHostIdsMap);
 
-        Set<String> usedVmNames = getUsedVmNamesFromIds(usedVms, allVmIdsMap);
+        Set<String> usedHostNames = getUsedHostNamesFromIds(usedHosts, allHostIdsMap);
 
-        super.init(allVmNamesMap.keySet(), usedVmNames);
+        super.init(allHostNamesMap.keySet(), usedHostNames);
 
         setInitialized();
     }
 
-    private void populateVmMaps(List<VM> vms, Map<String, VM> allVmNamesMap, Map<Guid, VM> allVmIdsMap) {
-        vms.forEach(vm -> {
-            allVmNamesMap.put(vm.getName(), vm);
-            allVmIdsMap.put(vm.getId(), vm);
+    private void populateHostMaps(List<VDS> hosts, Map<String, VDS> allHostNamesMap, Map<Guid, VDS> allHostIdsMap) {
+        hosts.forEach(host -> {
+            allHostNamesMap.put(host.getName(), host);
+            allHostIdsMap.put(host.getId(), host);
         });
     }
 
-    private Set<String> getUsedVmNamesFromIds(List<Guid> usedVms, Map<Guid, VM> allVmIdsMap) {
-        return usedVms
+    private Set<String> getUsedHostNamesFromIds(List<Guid> usedHosts, Map<Guid, VDS> allHostIdsMap) {
+        return usedHosts
                 .stream()
-                .map(guid -> allVmIdsMap.get(guid).getName())
+                .map(guid -> allHostIdsMap.get(guid).getName())
                 .sorted()
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
-    protected void initLineModel(KeyLineModel keyValueLineModel, String key) {
+    protected void initLineModel(KeyLineModel keyLineModel, String key) {
         // no implementation
     }
 
-    public List<Guid> getSelectedVmIds() {
+    public List<Guid> getSelectedHostIds() {
         List<Guid> list = new ArrayList<>();
         for (KeyLineModel keyModel : getItems()) {
             String selectedItem = keyModel.getKeys().getSelectedItem();
             if (isKeyValid(selectedItem)) {
-                list.add(allVmNamesMap.get(selectedItem).getId());
+                list.add(allHostNamesMap.get(selectedItem).getId());
             }
         }
         return list;

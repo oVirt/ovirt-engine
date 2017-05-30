@@ -68,18 +68,31 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         enforceColumn.makeSortable();
         getTable().addColumn(enforceColumn, constants.enforceAffinityGroup(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<AffinityGroup> membersColumn = new AbstractTextColumn<AffinityGroup>() {
+        AbstractTextColumn<AffinityGroup> vmMembersColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
-            public String getValue(AffinityGroup object) {
-                String join = join(getEntityNames(object), ", "); //$NON-NLS-1$
-                if (join.isEmpty()) {
+            public String getValue(AffinityGroup group) {
+                String vmNames = join(getVmNames(group), ", "); //$NON-NLS-1$
+                if (vmNames.isEmpty()) {
                     return constants.noMembersAffinityGroup();
                 }
-                return join;
+                return vmNames;
             }
         };
-        membersColumn.makeSortable();
-        getTable().addColumn(membersColumn, constants.membersAffinityGroup(), "500px"); //$NON-NLS-1$
+        vmMembersColumn.makeSortable();
+        getTable().addColumn(vmMembersColumn, constants.vmMembersAffinityGroup(), "500px"); //$NON-NLS-1$
+
+        AbstractTextColumn<AffinityGroup> hostMembersColumn = new AbstractTextColumn<AffinityGroup>() {
+            @Override
+            public String getValue(AffinityGroup group) {
+                String hostNames = join(getHostNames(group), ", "); //$NON-NLS-1$
+                if (hostNames.isEmpty()) {
+                    return constants.noMembersAffinityGroup();
+                }
+                return hostNames;
+            }
+        };
+        hostMembersColumn.makeSortable();
+        getTable().addColumn(hostMembersColumn, constants.hostMembersAffinityGroup(), "500px"); //$NON-NLS-1$
 
         addButtonToActionGroup(
         getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.newAffinityGroupLabel()) {
@@ -106,8 +119,12 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         }));
     }
 
-    protected List<String> getEntityNames(AffinityGroup object) {
-        return object.getVmEntityNames();
+    protected List<String> getVmNames(AffinityGroup group) {
+        return group.getVmEntityNames();
+    }
+
+    protected List<String> getHostNames(AffinityGroup group) {
+        return group.getVdsEntityNames();
     }
 
     protected String join(List<String> strings, String separator) {
