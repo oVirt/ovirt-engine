@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.commands;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -131,11 +132,18 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
                                     .collect(Collectors.joining(",")))
                     );
                 } else {
-                    return failValidation(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_HOSTS_RULES_COLLISION,
-                            String.format("AffinityGroups: %1$s", affinityGroupsNames),
-                            String.format("Hosts: %1$s", hosts),
-                            String.format("Vms: %1$s", vms)
-                    );
+                    List<EngineMessage> engineMessages = new ArrayList<>();
+                    engineMessages.add(EngineMessage.ACTION_TYPE_FAILED_AFFINITY_HOSTS_RULES_COLLISION);
+                    engineMessages.add(EngineMessage.AFFINITY_GROUPS_LIST);
+                    engineMessages.add(EngineMessage.HOSTS_LIST);
+                    engineMessages.add(EngineMessage.VMS_LIST);
+
+                    List<String> variableReplacements = new ArrayList<>();
+                    variableReplacements.add(String.format("$affinityGroups %1$s", affinityGroupsNames));
+                    variableReplacements.add(String.format("$hostsList %1$s", hosts));
+                    variableReplacements.add(String.format("$vmsList %1$s", vms));
+
+                    return failValidation(engineMessages, variableReplacements);
                 }
             }
         }

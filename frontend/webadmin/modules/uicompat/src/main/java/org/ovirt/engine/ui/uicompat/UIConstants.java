@@ -1745,6 +1745,8 @@ public interface UIConstants extends Constants {
 
     String removeAffinityGroupsTitle();
 
+    String selectHost();
+
     String selectVm();
 
     String noAvailableVms();
@@ -1752,6 +1754,8 @@ public interface UIConstants extends Constants {
     String noAffinityLabelsSelected();
 
     String selectedAffinityLabels();
+
+    String noAvailableHosts();
 
     String iscsiBondsTitle();
 

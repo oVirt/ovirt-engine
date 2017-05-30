@@ -2791,7 +2791,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String enforceAffinityGroup();
 
-    String membersAffinityGroup();
+    String hostMembersAffinityGroup();
+
+    String vmMembersAffinityGroup();
 
     String noMembersAffinityGroup();
 
@@ -2805,11 +2807,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String affinityGroupPolarityLabel();
 
+    String affinityGroupEnforceInfo();
+
     String affinityGroupEnforceTypeLabel();
 
-    String affinityGroupPolarityInfo();
+    String affinityGroupHostPolarityInfo();
 
-    String affinityGroupEnforcInfo();
+    String affinityGroupVmPolarityInfo();
 
     String affinityDescriptionLabel();
 
@@ -2817,7 +2821,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String negativeAffinity();
 
-    String affinityRuleLabel();
+    String vmAffinityRuleLabel();
+
+    String hostAffinityRuleLabel();
+
+    String vmsAffinitySelectionLabel();
+
+    String hostsAffinitySelectionLabel();
 
     String hardEnforcingAffinity();
 

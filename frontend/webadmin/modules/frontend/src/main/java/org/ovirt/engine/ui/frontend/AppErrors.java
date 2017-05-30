@@ -2539,6 +2539,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String ACTION_TYPE_FAILED_AFFINITY_HOSTS_RULES_COLLISION();
 
+    String AFFINITY_GROUPS_LIST();
+
+    String HOSTS_LIST();
+
+    String VMS_LIST();
+
     String VALIDATION_ISCSI_BOND_NAME_MAX();
 
     String VALIDATION_ISCSI_BOND_NAME_NOT_NULL();

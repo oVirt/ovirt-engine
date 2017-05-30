@@ -14,6 +14,7 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
     <ui:style>
+
         .container {
             width: 100%;
         }
@@ -24,7 +25,7 @@
 
        .patternFlyRadio {
             padding-left: 10px;
-            padding-right: 10px;
+            padding-right: 5px;
             position: relative;
         }
 
@@ -37,37 +38,64 @@
            padding-left: 2px;
        }
 
+        .affinityRuleLabel {
+            padding-right: 5px;
+        }
+
     </ui:style>
 
-    <d:SimpleDialogPanel width="420px" height="345px">
+    <d:SimpleDialogPanel width="685px" height="450px">
         <d:content>
             <g:ScrollPanel>
                 <b:Container addStyleNames="{style.container}">
                     <b:Row addStyleNames="{style.firstRow}">
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.affinityGroupNameLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" label="{constants.affinityGroupNameLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.affinityDescriptionLabel}" usePatternFly="true" labelColSize="LG_6" widgetColSize="LG_6" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" label="{constants.affinityDescriptionLabel}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_6">
-                            <g:Label text="{constants.affinityRuleLabel}" addStyleNames="{style.floatLeft}" />
-                            <d:InfoIcon ui:field="vmAffinityRuleEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
+                        <b:Column size="SM_3">
+                            <g:Label text="{constants.vmAffinityRuleLabel}" addStyleNames="{style.floatLeft} {style.affinityRuleLabel}" />
+                            <d:InfoIcon ui:field="vmAffinityRuleEditorInfoIcon" addStyleNames="{style.infoIcon} {style.patternFlyRadio}"/>
                         </b:Column>
-                        <b:Column size="LG_6">
+                        <b:Column size="SM_3">
                             <e:ListModelListBoxEditor ui:field="vmAffinityRuleEditor" usePatternFly="true" />
                         </b:Column>
-                    </b:Row>
-                    <b:Row>
-                        <b:Column size="LG_12">
-                            <ge:EntityModelCheckBoxEditor ui:field="enforcingEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
-                            <l:EnableableFormLabel ui:field="enforcingEditorLabel" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.affinityGroupEnforceTypeLabel}" />
-                            <d:InfoIcon ui:field="enforcingEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
+                        <b:Column size="SM_6">
+                            <ge:EntityModelCheckBoxEditor ui:field="vmAffinityEnforcingEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
+                            <l:EnableableFormLabel ui:field="vmAffinityEnforcingEditorLabel" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.affinityGroupEnforceTypeLabel}" />
+                            <d:InfoIcon ui:field="vmAffinityEnforcingEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
                         </b:Column>
                     </b:Row>
                     <b:Row>
-                        <b:Column size="LG_12">
+                        <b:Column size="SM_3" paddingRight="10">
+                            <g:Label text="{constants.hostAffinityRuleLabel}" addStyleNames="{style.floatLeft} {style.affinityRuleLabel}" />
+                            <d:InfoIcon ui:field="hostAffinityRuleEditorInfoIcon" addStyleNames="{style.infoIcon} {style.patternFlyRadio}"/>
+                        </b:Column>
+                        <b:Column size="SM_3">
+                            <e:ListModelListBoxEditor ui:field="hostAffinityRuleEditor" usePatternFly="true" />
+                        </b:Column>
+                        <b:Column size="SM_6">
+                            <ge:EntityModelCheckBoxEditor ui:field="hostAffinityEnforcingEditor" addStyleNames="{style.floatLeft} " usePatternFly="true" removeFormGroup="true" />
+                            <l:EnableableFormLabel ui:field="hostAffinityEnforcingEditorLabel" addStyleNames="{style.floatLeft} {style.patternFlyRadio}" text="{constants.affinityGroupEnforceTypeLabel}" />
+                            <d:InfoIcon ui:field="hostAffinityEnforcingEditorInfoIcon" addStyleNames="{style.infoIcon}"/>
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_6">
+                            <g:Label text="{constants.vmsAffinitySelectionLabel}" addStyleNames="form-group" />
+                        </b:Column>
+                        <b:Column size="SM_6">
+                            <g:Label text="{constants.hostsAffinitySelectionLabel}" />
+                        </b:Column>
+                    </b:Row>
+                    <b:Row>
+                        <b:Column size="SM_6">
                             <k:KeyWidget ui:field="addRemoveVmWidget" usePatternFly="true" />
+                        </b:Column>
+                        <b:Column size="SM_6">
+                            <k:KeyWidget ui:field="addRemoveHostWidget" usePatternFly="true" />
                         </b:Column>
                     </b:Row>
                 </b:Container>
