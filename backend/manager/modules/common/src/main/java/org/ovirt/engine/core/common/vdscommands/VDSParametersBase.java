@@ -8,20 +8,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 public class VDSParametersBase {
 
-    private boolean runAsync;
     private Set<EngineError> expectedEngineErrors = Collections.emptySet();
-
-    public VDSParametersBase() {
-        runAsync = true;
-    }
-
-    public boolean getRunAsync() {
-        return runAsync;
-    }
-
-    public void setRunAsync(boolean value) {
-        runAsync = value;
-    }
 
     public Set<EngineError> getExpectedEngineErrors() {
         return expectedEngineErrors;
@@ -35,7 +22,7 @@ public class VDSParametersBase {
         if (!getExpectedEngineErrors().isEmpty()) {
             tsb.append("expectedEngineErrors", getExpectedEngineErrors());
         }
-        return tsb.append("runAsync", runAsync);
+        return tsb;
     }
 
     @Override
