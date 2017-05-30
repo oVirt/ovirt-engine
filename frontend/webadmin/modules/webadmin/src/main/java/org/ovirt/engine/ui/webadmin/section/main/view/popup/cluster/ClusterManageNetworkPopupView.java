@@ -454,7 +454,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
             return clusterNetworkModel.isAttached()
                     && !clusterNetworkModel.isExternal()
-                    && !clusterNetworkModel.isManagement();
+                    && (!isMultipleSelectionAllowed() || !clusterNetworkModel.isManagement());
         }
     }
 
