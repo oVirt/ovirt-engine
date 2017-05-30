@@ -432,6 +432,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostHookSubTabLabel();
 
+    String hostHugePages();
+
     String hostGlusterSwiftSubTabLabel();
 
     String hostBricksSubTabLabel();

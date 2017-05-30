@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -31,6 +32,7 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel<VDS> {
@@ -496,6 +498,19 @@ public class HostGeneralModel extends EntityModel<VDS> {
         }
     }
 
+    private String hugePages;
+
+    public String getHugePages() {
+        return hugePages;
+    }
+
+    public void setHugePages(String value) {
+        if (!Objects.equals(hugePages, value)) {
+            hugePages = value;
+            onPropertyChanged(new PropertyChangedEventArgs("HugePages")); //$NON-NLS-1$
+        }
+    }
+
     private String kdumpStatus;
 
     public String getKdumpStatus() {
@@ -869,6 +884,16 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setSharedMemory(vds.getMemSharedPercent());
         setMemoryPageSharing(vds.getKsmState());
         setAutomaticLargePage(vds.getTransparentHugePagesState());
+        if (vds.getHugePages() != null) {
+            setHugePages(
+                    StringUtils.join(
+                            vds.getHugePages().stream().map(
+                                    page -> messages.hugePages(String.valueOf(page.getSizeKB()), String.valueOf(page.getAmount()))
+                            ).collect(Collectors.toList()),
+                            ", ")); //$NON-NLS-1$
+        } else {
+            setHugePages(constants.notAvailableLabel());
+        }
         setBootTime(vds.getBootTime());
 
         setKdumpStatus(EnumTranslator.getInstance().translate(vds.getKdumpStatus()));

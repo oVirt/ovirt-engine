@@ -28,7 +28,8 @@ CREATE OR REPLACE FUNCTION InsertVdsStatistics (
     v_ha_active BOOLEAN,
     v_ha_global_maintenance BOOLEAN,
     v_ha_local_maintenance BOOLEAN,
-    v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE
+    v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE,
+    v_hugepages TEXT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -57,7 +58,8 @@ BEGIN
             ha_active,
             ha_global_maintenance,
             ha_local_maintenance,
-            cpu_over_commit_time_stamp
+            cpu_over_commit_time_stamp,
+            hugepages
             )
         VALUES (
             v_cpu_idle,
@@ -83,7 +85,8 @@ BEGIN
             v_ha_active,
             v_ha_global_maintenance,
             v_ha_local_maintenance,
-            v_cpu_over_commit_time_stamp
+            v_cpu_over_commit_time_stamp,
+            v_hugepages
             );
     END;
 
@@ -115,7 +118,8 @@ CREATE OR REPLACE FUNCTION UpdateVdsStatistics (
     v_ha_active BOOLEAN,
     v_ha_global_maintenance BOOLEAN,
     v_ha_local_maintenance BOOLEAN,
-    v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE
+    v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE,
+    v_hugepages TEXT
     )
 RETURNS VOID
     --The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -146,7 +150,8 @@ BEGIN
             ha_global_maintenance = v_ha_global_maintenance,
             ha_local_maintenance = v_ha_local_maintenance,
             _update_date = LOCALTIMESTAMP,
-            cpu_over_commit_time_stamp = v_cpu_over_commit_time_stamp
+            cpu_over_commit_time_stamp = v_cpu_over_commit_time_stamp,
+            hugepages = v_hugepages
         WHERE vds_id = v_vds_id;
     END;
 

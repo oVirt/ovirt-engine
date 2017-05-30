@@ -2,10 +2,12 @@ package org.ovirt.engine.core.utils.serialization.json;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.CollectionType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -92,6 +94,14 @@ public class JsonObjectDeserializer implements Deserializer {
         return readJsonString(source, type, unformattedMapper);
     }
 
+    public <T extends Serializable> List<T> deserializeUnformattedList(String source, Class<T> contentType) {
+        try {
+            CollectionType type = unformattedMapper.getTypeFactory().constructCollectionType(List.class, contentType);
+            return unformattedMapper.readValue(source, type);
+        } catch (IOException e) {
+            throw new SerializationException(e);
+        }
+    }
 
     private <T> T readJsonString(Object source, Class<T> type, ObjectMapper mapper) {
         try {

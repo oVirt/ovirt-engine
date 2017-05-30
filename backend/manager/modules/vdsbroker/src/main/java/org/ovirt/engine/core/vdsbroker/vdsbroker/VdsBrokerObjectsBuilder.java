@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.LeaseStatus;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
@@ -1241,6 +1242,22 @@ public class VdsBrokerObjectsBuilder {
         }
         if (struct.containsKey(VdsProperties.anonymous_transparent_huge_pages)) {
             vds.setAnonymousHugePages(assignIntValue(struct, VdsProperties.anonymous_transparent_huge_pages));
+        }
+
+        if (struct.containsKey(VdsProperties.hugepages)) {
+            Object hugepages = struct.get(VdsProperties.hugepages);
+            if (hugepages instanceof Map) {
+                Map<String, Map<String, String>> hugepagesMap = (Map<String, Map<String, String>>) hugepages;
+
+                List<HugePage> parsedHugePages = hugepagesMap.entrySet().stream().map(entry ->
+                        new HugePage(
+                                Integer.parseInt(entry.getKey()),
+                                assignIntValue(entry.getValue(), VdsProperties.free_hugepages)
+                        )
+                ).collect(Collectors.toList());
+
+                vds.setHugePages(parsedHugePages);
+            }
         }
         vds.setNetConfigDirty(assignBoolValue(struct, VdsProperties.netConfigDirty));
 

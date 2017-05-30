@@ -11,6 +11,7 @@
         <!-- Business entities -->
         <include name="common/businessentities/HasStoragePool.java" />
         <include name="common/businessentities/BusinessEntity.java" />
+        <include name="common/businessentities/HasVdsStatistics.java" />
         <include name="common/businessentities/BusinessEntityWithStatus.java" />
         <include name="common/businessentities/ProgressEntity.java" />
         <include name="common/businessentities/BusinessEntitiesDefinitions.java" />
@@ -69,6 +70,7 @@
         <include name="common/businessentities/ChipsetType.java" />
         <include name="common/businessentities/GuestContainer.java" />
         <include name="common/businessentities/VmWithStatusForExclusiveLock.java" />
+        <include name="common/businessentities/HugePage.java" />
 
         <!-- Network business entities -->
         <include name="common/businessentities/network/VdsNetworkInterface.java" />

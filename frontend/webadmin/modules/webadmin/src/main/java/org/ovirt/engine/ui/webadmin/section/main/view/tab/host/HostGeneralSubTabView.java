@@ -72,6 +72,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
     StringValueLabel kdumpStatus = new StringValueLabel();
     StringValueLabel selinuxEnforceMode = new StringValueLabel();
     StringValueLabel clusterCompatibilityVersion = new StringValueLabel();
+    StringValueLabel hugePages = new StringValueLabel();
 
     MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<>();
     MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<>();
@@ -259,6 +260,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
         generalFormBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 0, 2, virtSupported).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
+        generalFormBuilder.addFormItem(new FormItem(constants.hostHugePages(), hugePages, 2).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
         generalFormBuilder.addFormItem(new FormItem(constants.clusterCompatibilityVersion(), clusterCompatibilityVersion, 2).withAutoPlacement());
     }

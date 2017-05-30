@@ -272,6 +272,8 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
 
     private final RowMapper<VDS> vdsRowMapper = (rs, rowNum) -> {
         final VDS entity = new VDS();
+        entity.setStatisticsData(VdsStatisticsDaoImpl.getRowMapper().mapRow(rs, rowNum));
+
         entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
         entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
         entity.setClusterName(rs.getString("cluster_name"));
@@ -290,14 +292,10 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
         entity.setCpuModel(rs.getString("cpu_model"));
         entity.setOnlineCpus(rs.getString("online_cpus"));
-        entity.setCpuUser(rs.getDouble("cpu_user"));
         entity.setCpuSpeedMh(rs.getDouble("cpu_speed_mh"));
         entity.setIfTotalSpeed(rs.getString("if_total_speed"));
         entity.setKvmEnabled((Boolean) rs.getObject("kvm_enabled"));
         entity.setPhysicalMemMb((Integer) rs.getObject("physical_mem_mb"));
-        entity.setCpuIdle(rs.getDouble("cpu_idle"));
-        entity.setCpuLoad(rs.getDouble("cpu_load"));
-        entity.setCpuSys(rs.getDouble("cpu_sys"));
         entity.setMemCommited((Integer) rs.getObject("mem_commited"));
         entity.setVmActive((Integer) rs.getObject("vm_active"));
         entity.setVmCount((Integer) rs.getObject("vm_count"));
@@ -305,18 +303,12 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
         entity.setIncomingMigrations(rs.getInt("incoming_migrations"));
         entity.setOutgoingMigrations(rs.getInt("outgoing_migrations"));
-        entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
-        entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
-        entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
         entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
         entity.setGuestOverhead((Integer) rs.getObject("guest_overhead"));
         entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
         entity.setSoftwareVersion(rs.getString("software_version"));
         entity.setVersionName(rs.getString("version_name"));
         entity.setPreviousStatus(VDSStatus.forValue(rs.getInt("previous_status")));
-        entity.setMemAvailable(rs.getLong("mem_available"));
-        entity.setMemShared(rs.getLong("mem_shared"));
-        entity.setMemFree(rs.getLong("mem_free"));
         entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
         entity.setCpuFlags(rs.getString("cpu_flags"));
         entity.setClusterCpuName(rs.getString("cluster_cpu_name"));
@@ -334,11 +326,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setFenceProxySources(FenceProxySourceTypeHelper.parseFromString(rs.getString("pm_proxy_preferences")));
         entity.setPmKdumpDetection(rs.getBoolean("pm_detect_kdump"));
         entity.setSpmStatus(VdsSpmStatus.forValue(rs.getInt("spm_status")));
-        entity.setSwapFree(rs.getLong("swap_free"));
-        entity.setSwapTotal(rs.getLong("swap_total"));
-        entity.setKsmCpuPercent((Integer) rs.getObject("ksm_cpu_percent"));
-        entity.setKsmPages(rs.getLong("ksm_pages"));
-        entity.setKsmState((Boolean) rs.getObject("ksm_state"));
         entity.setSupportedClusterLevels(rs.getString("supported_cluster_levels"));
 
         Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
@@ -359,7 +346,6 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setIScsiInitiatorName(rs.getString("iscsi_initiator_name"));
         entity.setTransparentHugePagesState(VdsTransparentHugePagesState
                 .forValue(rs.getInt("transparent_hugepages_state")));
-        entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
         entity.setHooksStr(rs.getString("hooks"));
         entity.setNonOperationalReason(NonOperationalReason.forValue(rs.getInt("non_operational_reason")));
         entity.setOtpValidity(rs.getLong("otp_validity"));
@@ -376,16 +362,10 @@ public class VdsDaoImpl extends BaseDao implements VdsDao {
         entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
         entity.setConsoleAddress(rs.getString("console_address"));
         entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
-        entity.setHighlyAvailableScore(rs.getInt("ha_score"));
         entity.setDisablePowerManagementPolicy(rs.getBoolean("disable_auto_pm"));
         entity.setPowerManagementControlledByPolicy(rs.getBoolean("controlled_by_pm_policy"));
-        entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
-        entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
-        entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
-        entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
         entity.setKdumpStatus(KdumpStatus.valueOfNumber(rs.getInt("kdump_status")));
         entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
-        entity.setBootTime((Long) rs.getObject("boot_time"));
         entity.setSELinuxEnforceMode((Integer) rs.getObject("selinux_enforce_mode"));
         entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
         entity.setNumaSupport(rs.getBoolean("is_numa_supported"));

@@ -293,6 +293,8 @@ public interface UIMessages extends Messages {
 
     String haActive(int score);
 
+    String hugePages(String size, String amount);
+
     String volumeProfilingStatsTitle(String volumeName);
 
     String networkLabelConflict(String nicName, String labelName);

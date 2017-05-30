@@ -29,6 +29,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Long ksmPages;
     private Boolean ksmState;
     private int anonymousHugePages;
+    private List<HugePage> hugePages;
     private Long bootTime;
     // The following values store the state of the Hosted Engine HA environment
     // for each host and allow the user to see/change that state through the
@@ -62,6 +63,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         highlyAvailableGlobalMaintenance = false;
         highlyAvailableLocalMaintenance = false;
         cpuCoreStatistics = new ArrayList<>();
+        hugePages = new ArrayList<>();
     }
 
     @Override
@@ -83,6 +85,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 swapTotal,
                 swapFree,
                 anonymousHugePages,
+                hugePages,
                 bootTime,
                 highlyAvailableScore,
                 highlyAvailableIsConfigured,
@@ -119,6 +122,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && Objects.equals(swapTotal, other.swapTotal)
                 && Objects.equals(swapFree, other.swapFree)
                 && (anonymousHugePages == other.anonymousHugePages)
+                && Objects.equals(hugePages, other.hugePages)
                 && Objects.equals(bootTime, other.bootTime)
                 && (highlyAvailableScore == other.highlyAvailableScore)
                 && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
@@ -135,6 +139,14 @@ public class VdsStatistics implements BusinessEntity<Guid> {
 
     public void setAnonymousHugePages(int value) {
         anonymousHugePages = value;
+    }
+
+    public List<HugePage> getHugePages() {
+        return hugePages;
+    }
+
+    public void setHugePages(List<HugePage> hugePages) {
+        this.hugePages = hugePages;
     }
 
     public Double getCpuIdle() {

@@ -1081,6 +1081,14 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vdsStatistics.setAnonymousHugePages(value);
     }
 
+    public List<HugePage> getHugePages() {
+        return vdsStatistics.getHugePages();
+    }
+
+    public void setHugePages(List<HugePage> value) {
+        vdsStatistics.setHugePages(value);
+    }
+
     public VdsStatic getStaticData() {
         return vdsStatic;
     }
