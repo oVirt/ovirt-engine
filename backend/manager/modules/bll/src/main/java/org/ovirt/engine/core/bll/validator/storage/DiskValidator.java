@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -86,10 +84,6 @@ public class DiskValidator {
                     String.format("$diskStorageType %s", disk.getDiskStorageType()));
         }
         return ValidationResult.VALID;
-    }
-
-    protected VDSBrokerFrontend getVdsBroker() {
-        return Backend.getInstance().getResourceManager();
     }
 
     public ValidationResult validateNotHostedEngineDisk() {
