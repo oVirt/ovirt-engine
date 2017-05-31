@@ -19,7 +19,10 @@
         <d:content>
             <g:ScrollPanel>
                 <b:Container addStyleNames="{style.container}">
-                    <ge:StringEntityModelLabelEditor ui:field="networkEditor" />
+                    <b:Row>
+                        <ge:StringEntityModelLabelEditor ui:field="networkEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                    </b:Row>
+
                     <p:ExternalSubnetWidget ui:field="subnetWidget" />
                 </b:Container>
             </g:ScrollPanel>
