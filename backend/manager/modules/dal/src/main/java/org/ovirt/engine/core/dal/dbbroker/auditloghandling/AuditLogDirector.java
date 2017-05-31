@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +93,10 @@ public class AuditLogDirector {
             setPropertiesFromAuditLogableBase(auditLogable, auditLog);
             // truncate user name
             auditLog.setUserName(StringUtils.abbreviate(auditLog.getUserName(), USERNAME_LENGTH));
-            getDbFacadeInstance().getAuditLogDao().save(auditLog);
+            TransactionSupport.executeInNewTransaction(() -> {
+                getDbFacadeInstance().getAuditLogDao().save(auditLog);
+                return null;
+            });
             logMessage(severity, getMessageToLog(loggerString, auditLog));
         }
     }
