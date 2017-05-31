@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 import javax.naming.TimeLimitExceededException;
 
@@ -90,7 +91,14 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
         _iso = iso;
 
         _messages = new InstallerMessages(_vds);
-        _dialog = new EngineSSHDialog();
+        // Install/Upgrade of host can take longer than other SSH operation so we should use longer timeout,
+        // but it's not worth to introduce standalone configuration option for that
+        _dialog = new EngineSSHDialog(
+                2 * TimeUnit.SECONDS.toMillis(
+                        Config.<Integer>getValue(ConfigValues.SSHInactivityTimeoutSeconds)),
+                TimeUnit.SECONDS.toMillis(
+                        Config.<Integer>getValue(ConfigValues.SSHInactivityHardTimeoutSeconds)));
+
         _thread = new Thread(
                 this::threadMain,
                 "OVirtNodeUpgrade"
