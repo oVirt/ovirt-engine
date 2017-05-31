@@ -70,8 +70,8 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     @UiField
     AnchorListItem tasks;
 
-    @UiField (provided=true)
-    AnchorListItem tagsLink;
+    @UiField
+    AnchorListItem tags;
 
     @UiField (provided=true)
     EventsListPopover events;
@@ -93,7 +93,6 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         this.optionsLink = new AnchorListItem(constants.optionsLinkLabel());
         this.aboutLink = new AnchorListItem(constants.aboutLinkLabel());
         this.bookmarkLink = new AnchorListItem(constants.bookmarksMainSection());
-        this.tagsLink = new AnchorListItem(constants.tagsMainSection());
         this.guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
         events = new EventsListPopover(constants.notificationDrawer(), IconType.BELL);
         eventsWidget = new NotificationListWidget(constants.eventsEventFooter());
@@ -111,6 +110,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         AnchorElement.as(this.help.getElement()).addClassName(NAV_ITEM_ICONIC);
         AnchorElement.as(this.settings.getElement()).addClassName(NAV_ITEM_ICONIC);
         this.tasks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
+        this.tags.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
         setUserIcon();
     }
 
@@ -121,7 +121,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
 
     @Override
     public HasClickHandlers getTagsLink() {
-        return tagsLink;
+        return tags;
     }
 
     @Override

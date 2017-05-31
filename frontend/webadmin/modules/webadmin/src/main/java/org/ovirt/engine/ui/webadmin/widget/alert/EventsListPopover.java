@@ -15,10 +15,14 @@ import org.gwtbootstrap3.client.ui.constants.Trigger;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.tooltip.OvirtPopover;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.dom.client.Style.Overflow;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -28,11 +32,14 @@ public class EventsListPopover extends OvirtPopover {
             + "<div class=\"popover-content\" style=\"padding: 0px\"></div>" //$NON-NLS-1$
             + "</div>"; //$NON-NLS-1$
 
+    private static final ApplicationConstants constants = AssetProvider.getConstants();
+
     private static final String EVENT_ACCORDION = "event_notification_accordion"; // $NON-NLS-1$
     private static final String CONTENT = "event_notification_content"; // $NON-NLS-1$
 
     private AnchorListItem eventListButton = new AnchorListItem();
     private boolean expanded = false;
+    private WidgetTooltip eventListButtonTooltip;
 
     private Anchor titleAnchor;
 
@@ -43,6 +50,9 @@ public class EventsListPopover extends OvirtPopover {
     public EventsListPopover(String title, HasCssName iconType) {
         eventListButton.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER);
         eventListButton.addStyleName(Styles.DROPDOWN);
+        eventListButtonTooltip = new WidgetTooltip(eventListButton);
+        eventListButtonTooltip.setHtml(SafeHtmlUtils.fromSafeConstant(constants.eventsAndTasks()));
+        eventListButtonTooltip.setPlacement(Placement.BOTTOM);
         Anchor anchor = (Anchor) eventListButton.getWidget(0);
         anchor.addStyleName(PatternflyConstants.NAV_ITEM_ICONIC);
         anchor.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER_ICON);

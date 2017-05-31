@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -23,6 +24,9 @@ public abstract class AbstractHeaderView extends AbstractView {
     @UiField
     @WithElementId("userName")
     public AnchorButton userName;
+
+    @UiField
+    public WidgetTooltip userNameTooltip;
 
     @UiField
     public NavbarBrand logoLink;
@@ -48,7 +52,7 @@ public abstract class AbstractHeaderView extends AbstractView {
     }
 
     public void setUserName(String userName) {
-        this.userName.setTitle(userName);
+        userNameTooltip.setText(userName);
         // Put PF user icon on the drop down instead of the FA one.
         Widget userNameWidget = this.userName.getWidget(0);
         userNameWidget.removeStyleName(Styles.FONT_AWESOME_BASE);
