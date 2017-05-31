@@ -65,6 +65,10 @@ public class OvirtPopover extends Popover {
         return isVisible;
     }
 
+    public void addTitle(IsWidget titleWidget) {
+        contentContainer.add(titleWidget);
+    }
+
     public void addContent(IsWidget content, String contentId) {
         contentContainer.add(content);
         contentContainer.getElement().setId(contentId + CONTAINER);

@@ -30,7 +30,6 @@
         <b:NavbarCollapse>
             <b:NavbarNav addStyleNames="navbar-right navbar-iconic">
                 <b:AnchorListItem ui:field="tasks" icon="TASKS" />
-                <w:EventsListPopover ui:field="alerts" />
                 <w:EventsListPopover ui:field="events" />
                 <b:ListDropDown>
                     <b:AnchorButton ui:field="userName" dataToggle="DROPDOWN" icon="USER" />

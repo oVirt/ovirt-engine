@@ -3274,5 +3274,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String deactivateTag();
 
     String activateTag();
+
+    String notificationDrawer();
 }
 

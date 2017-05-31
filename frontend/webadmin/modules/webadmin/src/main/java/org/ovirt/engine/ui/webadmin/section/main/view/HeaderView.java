@@ -22,7 +22,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.alert.ActionWidget;
 import org.ovirt.engine.ui.webadmin.widget.alert.EventsListPopover;
+import org.ovirt.engine.ui.webadmin.widget.alert.NotificationListWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.AnchorElement;
@@ -74,15 +76,14 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     @UiField (provided=true)
     EventsListPopover events;
 
-    @UiField (provided=true)
-    EventsListPopover alerts;
-
     @UiField
     ListGroup mainNavbarNavContainer;
 
     @UiField
     Navbar mainNavBar;
 
+    private NotificationListWidget eventsWidget;
+    private NotificationListWidget alertsWidget;
     ActionAnchorListItem alertDismissAction;
 
     @Inject
@@ -94,8 +95,13 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         this.bookmarkLink = new AnchorListItem(constants.bookmarksMainSection());
         this.tagsLink = new AnchorListItem(constants.tagsMainSection());
         this.guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
-        events = new EventsListPopover(IconType.BELL, constants.eventsEventFooter());
-        alerts = new EventsListPopover(PatternflyIconType.PF_FLAG, constants.alertsEventFooter());
+        events = new EventsListPopover(constants.notificationDrawer(), IconType.BELL);
+        eventsWidget = new NotificationListWidget(constants.eventsEventFooter());
+        eventsWidget.setStartCollapse(false);
+        events.addNotificationListWidget(eventsWidget);
+        alertsWidget = new NotificationListWidget(constants.alertsEventFooter());
+        alertsWidget.setStartCollapse(true);
+        events.addNotificationListWidget(alertsWidget);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         this.logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));
@@ -334,16 +340,14 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         return result;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public HasData<AuditLog> getEventDropdown() {
-        return (HasData<AuditLog>) events.getContentWidget();
+        return eventsWidget;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public HasData<AuditLog> getAlertDropdown() {
-        return (HasData<AuditLog>) alerts.getContentWidget();
+        return alertsWidget;
     }
 
     @Override
@@ -357,22 +361,22 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     }
 
     @Override
-    public void setAlertCount(int count) {
-        alerts.setBadgeText(String.valueOf(count));
-    }
-
-    @Override
     public HasClickHandlers getBookmarkLink() {
         return bookmarkLink;
     }
 
     @Override
-    public EventsListPopover getAlertPopover() {
-        return alerts;
+    public ActionWidget getEventActionWidget() {
+        return eventsWidget;
     }
 
     @Override
-    public EventsListPopover getEventPopover() {
-        return events;
+    public ActionWidget getAlertActionWidget() {
+        return alertsWidget;
+    }
+
+    @Override
+    public void setAlertCount(int count) {
+        events.setBadgeText(String.valueOf(count));
     }
 }

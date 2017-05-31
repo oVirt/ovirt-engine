@@ -40,6 +40,8 @@ public class PatternflyConstants {
     public static final String PF_DRAWER_TRIGGER = "drawer-pf-trigger"; // $NON-NLS-1$
     public static final String PF_DRAWER_TRIGGER_ICON = "drawer-pf-trigger-icon"; // $NON-NLS-1$
     public static final String PF_DRAWER_ACTION = "drawer-pf-action"; // $NON-NLS-1$
+    public static final String PF_DRAWER_TITLE = "drawer-pf-title"; // $NON-NLS-1$
+    public static final String PF_DRAWER_TOGGLE_EXPAND = "drawer-pf-toggle-expand"; // $NON-NLS-1$
 
     public static final String PF_DATE = "date"; // $NON-NLS-1$
     public static final String PF_TIME = "time"; // $NON-NLS-1$
@@ -75,5 +77,10 @@ public class PatternflyConstants {
     public static final String PF_PROGRESS_LABEL_TOP_RIGHT = "progress-label-top-right"; // $NON-NLS-1$
 
     public static final String PF_LABEL_INFO = "label-info"; // $NON-NLS-1$
+    public static final String CENTER_TEXT = "text-center"; // $NON-NLS-1$
+
+    public static final String PF_PANEL_TITLE = "panel-title"; // $NON-NLS-1$
+    public static final String PF_PANEL_COUNTER = "panel-counter"; // $NON-NLS-1$
+    public static final String COLLAPSED = "collapsed"; // $NON-NLS-1$
 
 }

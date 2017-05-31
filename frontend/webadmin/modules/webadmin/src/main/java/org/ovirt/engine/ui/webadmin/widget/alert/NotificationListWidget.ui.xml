@@ -9,10 +9,6 @@
     </ui:style>
 
     <g:FlowPanel>
-        <g:FlowPanel addStyleNames="drawer-pf-title">
-            <b:Anchor ui:field="toggleAnchor" addStyleNames="drawer-pf-toggle-expand" />
-            <b:Heading size="H3" ui:field="title" />
-        </g:FlowPanel>
-        <b:PanelGroup ui:field="contentPanel" />
+        <b:Panel ui:field="content" />
     </g:FlowPanel>
 </ui:UiBinder>

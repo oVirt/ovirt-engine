@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.Confi
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.alert.EventsListPopover;
+import org.ovirt.engine.ui.webadmin.widget.alert.ActionWidget;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -70,9 +70,9 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         void setAlertCount(int count);
 
-        EventsListPopover getAlertPopover();
+        ActionWidget getEventActionWidget();
 
-        EventsListPopover getEventPopover();
+        ActionWidget getAlertActionWidget();
     }
 
     private final ApplicationConstants constants = AssetProvider.getConstants();
@@ -122,7 +122,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         registerHandler(getView().getTagsLink().addClickHandler(event ->
                 UpdateMainContentLayoutEvent.fire(HeaderPresenterWidget.this, ContentDisplayType.OVERLAY, OverlayType.TAGS)));
 
-        getView().getAlertPopover().addAction(constants.dismissAlert(),
+        getView().getAlertActionWidget().addAction(constants.dismissAlert(),
                 this.alertModelProvider.getModel().getDismissCommand(), (command, log) -> {
                 AlertListModel model = alertModelProvider.getModel();
                 if (log != null) {
@@ -130,12 +130,12 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                     model.executeCommand(command);
                 }
         });
-        getView().getAlertPopover().addAllAction(constants.clearAllDismissedAlerts(),
+        getView().getAlertActionWidget().addAllAction(constants.clearAllDismissedAlerts(),
                 this.alertModelProvider.getModel().getDismissCommand(), (command, log) -> {
                 alertModelProvider.getModel().clearAllAlerts();
         });
 
-        getView().getEventPopover().addAction(constants.dismissEvent(),
+        getView().getEventActionWidget().addAction(constants.dismissEvent(),
                 this.eventModelProvider.getModel().getDismissCommand(), (command, log) -> {
                 EventListModel<?> model = eventModelProvider.getModel();
                 if (log != null) {
@@ -143,7 +143,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                     model.executeCommand(command);
                 }
         });
-        getView().getEventPopover().addAllAction(constants.clearAllDismissedEvents(),
+        getView().getEventActionWidget().addAllAction(constants.clearAllDismissedEvents(),
                 this.eventModelProvider.getModel().getDismissCommand(), (command, log) -> {
                 eventModelProvider.getModel().executeCommand(command);
         });
