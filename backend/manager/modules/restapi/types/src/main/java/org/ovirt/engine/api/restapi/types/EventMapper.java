@@ -25,6 +25,7 @@ public class EventMapper {
     public static Event map(AuditLog entity, Event event) {
         Event model = event != null ? event : new Event();
         model.setId(String.valueOf(entity.getAuditLogId()));
+        model.setIndex((int) entity.getAuditLogId());
         model.setCode(entity.getLogType().getValue());
         model.setSeverity(map(entity.getSeverity(), null));
         model.setTime(TypeConversionHelper.toXMLGregorianCalendar(entity
