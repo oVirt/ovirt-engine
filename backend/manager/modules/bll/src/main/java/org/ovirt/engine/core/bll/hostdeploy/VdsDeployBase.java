@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import javax.naming.TimeLimitExceededException;
@@ -381,7 +382,14 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
         _entryPoint = entryPoint;
         _vds = vds;
 
-        _dialog = new EngineSSHDialog();
+        // Install/Upgrade of host can take longer than other SSH operation so we should use longer timeout,
+        // but it's not worth to introduce standalone configuration option for that
+        _dialog = new EngineSSHDialog(
+                2 * TimeUnit.SECONDS.toMillis(
+                        Config.<Integer>getValue(ConfigValues.SSHInactivityTimeoutSeconds)),
+                TimeUnit.SECONDS.toMillis(
+                        Config.<Integer>getValue(ConfigValues.SSHInactivityHardTimeoutSeconds)));
+
         _parser = new MachineDialogParser();
         _thread = new Thread(
                 () -> threadMain(),

@@ -3,8 +3,11 @@ package org.ovirt.engine.core.bll.utils;
 import java.net.ConnectException;
 import java.security.KeyPair;
 import java.security.KeyStore;
+import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.ssh.SSHClient;
 import org.ovirt.engine.core.uutils.ssh.SSHDialog;
@@ -15,6 +18,16 @@ import org.ovirt.engine.core.uutils.ssh.SSHDialog;
 public class EngineSSHDialog extends SSHDialog {
 
     VDS _vds;
+
+    public EngineSSHDialog() {
+        this(TimeUnit.SECONDS.toMillis(Config.<Integer>getValue(ConfigValues.SSHInactivityTimeoutSeconds)),
+                TimeUnit.SECONDS.toMillis(Config.<Integer>getValue(ConfigValues.SSHInactivityHardTimeoutSeconds)));
+    }
+
+    public EngineSSHDialog(long softTimeout, long hardTimeout) {
+        setSoftTimeout(softTimeout);
+        setHardTimeout(softTimeout > hardTimeout ? softTimeout : hardTimeout);
+    }
 
     @Override
     protected SSHClient getSSHClient() {
