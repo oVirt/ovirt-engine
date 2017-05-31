@@ -24,8 +24,6 @@ import com.google.inject.Inject;
 
 public class SystemPermissionView extends Composite {
 
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
-
     interface ViewUiBinder extends UiBinder<FlowPanel, SystemPermissionView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -66,7 +64,6 @@ public class SystemPermissionView extends Composite {
         tabContent.add(actionPanel);
         table = new SimpleActionTable<>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
-        table.removeStyleName(OBRAND_MAIN_TAB);
         tabContent.add(table);
         table.enableColumnResizing();
 

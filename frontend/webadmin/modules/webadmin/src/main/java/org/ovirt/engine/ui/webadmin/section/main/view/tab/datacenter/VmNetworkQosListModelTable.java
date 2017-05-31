@@ -16,7 +16,6 @@ import com.google.gwt.event.shared.EventBus;
 
 public class VmNetworkQosListModelTable extends AbstractModelBoundTableWidget<NetworkQoS, DataCenterNetworkQoSListModel> {
 
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public VmNetworkQosListModelTable(SearchableDetailModelProvider<NetworkQoS,
@@ -24,7 +23,6 @@ public class VmNetworkQosListModelTable extends AbstractModelBoundTableWidget<Ne
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
         initTable();
-        getTable().removeStyleName(OBRAND_MAIN_TAB);
     }
 
     @Override

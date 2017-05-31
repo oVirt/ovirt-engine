@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListView;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItemCreator;
-import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
@@ -31,8 +30,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends AbstractModelBoundTableWidget<Snapshot, L>
     implements PatternflyListViewItemCreator<Snapshot> {
-
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     interface WidgetUiBinder extends UiBinder<Widget, VmSnapshotListModelTable<?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -50,9 +47,6 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
 
-        // Create Snapshots table
-        SimpleActionTable<Snapshot> table = getTable();
-        table.removeStyleName(OBRAND_MAIN_TAB);
         snapshotsTableContainer.add(actionPanel);
         snapshotListView.setModel(modelProvider.getModel());
         snapshotListView.setSelectionModel(getTable().getSelectionModel());

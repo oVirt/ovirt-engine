@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.common.widget.action;
 
-import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.FormGroup;
-import org.gwtbootstrap3.client.ui.Row;
-import org.gwtbootstrap3.client.ui.constants.ColumnSize;
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.Kebab;
 
@@ -11,19 +9,19 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
-public class PatternflyActionPanel extends Row {
+public class PatternflyActionPanel extends FlowPanel {
     private FormGroup searchFormGroup;
     private FormGroup actionFormGroup;
-    private Column column;
+    private FlowPanel container;
     private Kebab actionKebab;
 
     public PatternflyActionPanel() {
         FlowPanel actionToolbarColumn = new FlowPanel();
         addStyleName(PatternflyConstants.PF_TOOLBAR);
 
-        column = new Column(ColumnSize.SM_12);
-        column.add(actionToolbarColumn);
-        add(column);
+        container = new FlowPanel();
+        container.add(actionToolbarColumn);
+        add(container);
         FlowPanel actionContainer = new FlowPanel();
         actionContainer.addStyleName(PatternflyConstants.PF_TOOLBAR_ACTIONS);
         actionToolbarColumn.add(actionContainer);
@@ -35,6 +33,7 @@ public class PatternflyActionPanel extends Row {
         actionContainer.add(searchFormGroup);
 
         actionFormGroup = new FormGroup();
+        actionFormGroup.addStyleName(Styles.ROW);
         actionContainer.add(actionFormGroup);
 
         actionKebab = new Kebab();
@@ -47,11 +46,12 @@ public class PatternflyActionPanel extends Row {
         searchFormGroup.clear();
         if (searchPanel != null) {
             searchFormGroup.add(searchPanel);
+            actionFormGroup.removeStyleName(Styles.ROW);
         }
     }
 
     public void addResult(IsWidget result) {
-        column.add(result);
+        container.add(result);
     }
 
     public void addButtonToActionGroup(ActionButton button) {

@@ -29,8 +29,6 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
 public class ClusterPolicyView extends Composite {
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
-
     interface ViewUiBinder extends UiBinder<SimplePanel, ClusterPolicyView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -91,7 +89,6 @@ public class ClusterPolicyView extends Composite {
         policyActionPanel = new PatternflyActionPanel();
         table = new SimpleActionTable<>(clusterPolicyModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
-        table.removeStyleName(OBRAND_MAIN_TAB);
 
         table.addColumn(new AbstractImageResourceColumn<ClusterPolicy>() {
             @Override

@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListView;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItemCreator;
-import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -23,8 +22,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmNetworkInterface, VmInterfaceListModel>
     implements PatternflyListViewItemCreator<VmNetworkInterface> {
-
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     interface WidgetUiBinder extends UiBinder<Widget, VmInterfaceListModelTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -43,9 +40,6 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
-
-        SimpleActionTable<VmNetworkInterface> table = getTable();
-        table.removeStyleName(OBRAND_MAIN_TAB);
 
         interfaceTableContainer.add(this.actionPanel);
 

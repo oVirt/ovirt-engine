@@ -41,6 +41,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithDetailsModel> extends AbstractMainTabTableView<T, M>
         implements AbstractMainTabWithDetailsPresenter.ViewDef<T> {
 
+    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
+
     protected DetailsTransitionHandler<T> transitionHandler;
 
     private Column breadCrumbsColumn;
@@ -69,6 +71,7 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
             FlowPanel tableContainer = (FlowPanel) result.getOuterWidget();
             addBreadCrumbs(tableContainer);
             addActionPanel(tableContainer);
+            result.addStyleName(OBRAND_MAIN_TAB);
             addResultPanel();
             tableInitialized = true;
         }

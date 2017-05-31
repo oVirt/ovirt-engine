@@ -26,8 +26,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<DiskProfile, DiskProfileListModel> {
 
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
-
     interface WidgetUiBinder extends UiBinder<Widget, DiskProfilesListModelTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
@@ -47,7 +45,6 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
         this.diskProfilePermissionModelProvider = diskProfilePermissionModelProvider;
-        getTable().removeStyleName(OBRAND_MAIN_TAB);
         // Create disk profile table
         tableContainer.add(getContainer());
 

@@ -37,7 +37,6 @@ import com.google.inject.Inject;
 
 public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDomain, VM, StorageListModel, VmBackupModel>
         implements SubTabStorageVmBackupPresenter.ViewDef {
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabStorageVmBackupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -68,7 +67,6 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         vmTableContainer.add(getTableContainer());
-        getTable().removeStyleName(OBRAND_MAIN_TAB);
         applicationsTableContainer.add(applicationsTable);
     }
 

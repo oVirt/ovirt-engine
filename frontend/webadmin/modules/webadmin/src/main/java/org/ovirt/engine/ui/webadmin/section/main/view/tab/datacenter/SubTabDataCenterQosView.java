@@ -31,8 +31,6 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
         StorageQos, DataCenterListModel, DataCenterStorageQosListModel>
         implements SubTabDataCenterQosPresenter.ViewDef {
 
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
-
     interface ViewIdHandler extends ElementIdHandler<SubTabDataCenterQosView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
@@ -63,7 +61,6 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
         this.cpuModelProvider = cpuModelProvider;
         initTable();
         initWidget(getTableContainer());
-        getTable().removeStyleName(OBRAND_MAIN_TAB);
         vmNetworkTable = new VmNetworkQosListModelTable(vmNetworkModelProvider, eventBus, clientStorage);
         hostNetworkTable = new HostNetworkQosListModelTable(hostNetworkModelProvider, eventBus, clientStorage);
         cpuTable = new CpuQosListModelTable(cpuModelProvider, eventBus, clientStorage);

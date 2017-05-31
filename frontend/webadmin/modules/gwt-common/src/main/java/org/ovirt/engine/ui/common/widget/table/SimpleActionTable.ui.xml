@@ -46,7 +46,7 @@
         }
     </ui:style>
 
-    <g:FlowPanel addStyleNames="{style.panel} obrand_main_tab">
+    <g:FlowPanel addStyleNames="{style.panel}">
         <g:SimplePanel ui:field="tableOverhead" addStyleNames="{style.tableOverhead}" />
         <g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
         <g:FlowPanel ui:field="tableContainer" />
