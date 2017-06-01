@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -74,6 +75,7 @@ public class VmDeviceUtils {
     private final VmTemplateDao vmTemplateDao;
     private final VmHandler vmHandler;
     private final MacPoolPerCluster macPoolPerCluster;
+    private final RngDeviceUtils rngDeviceUtils;
 
     private OsRepository osRepository;
 
@@ -84,7 +86,8 @@ public class VmDeviceUtils {
             ClusterDao clusterDao,
             VmTemplateDao vmTemplateDao,
             VmHandler vmHandler,
-            MacPoolPerCluster macPoolPerCluster) {
+            MacPoolPerCluster macPoolPerCluster,
+            RngDeviceUtils rngDeviceUtils) {
         this.vmDao = vmDao;
         this.vmDeviceDao = vmDeviceDao;
         this.diskDao = diskDao;
@@ -92,6 +95,7 @@ public class VmDeviceUtils {
         this.vmTemplateDao = vmTemplateDao;
         this.vmHandler = vmHandler;
         this.macPoolPerCluster = macPoolPerCluster;
+        this.rngDeviceUtils = rngDeviceUtils;
         init();
     }
 
@@ -1293,11 +1297,33 @@ public class VmDeviceUtils {
      *
      * This method is executed before running the VM.
      */
-    public void updateVmDevicesOnRun(VmBase vmBase) {
-        if (vmBase != null) {
-            updateUsbSlots(vmBase, vmBase);
-            removeLeftOverDevices(vmBase);
+    public void updateVmDevicesOnRun(VM vm) {
+        if (vm != null) {
+            updateUsbSlots(vm.getStaticData(), vm.getStaticData());
+            removeLeftOverDevices(vm.getStaticData());
+            updateRngDevice(vm);
         }
+    }
+
+    private void updateRngDevice(VM vm) {
+        // is it random and should be urandom?
+        final Optional<VmRngDevice> rngDevices = getRngDevices(vm.getId())
+                .stream()
+                .map(VmRngDevice::new)
+                .findFirst();
+
+        if (!rngDevices.isPresent()) {
+            return;
+        }
+
+        Optional<VmRngDevice> rngDeviceToUpdate =
+                rngDeviceUtils.updateRngDevice(vm.getCompatibilityVersion(), rngDevices.get());
+
+        if (!rngDeviceToUpdate.isPresent()) {
+            return;
+        }
+
+        vmDeviceDao.update(rngDeviceToUpdate.get());
     }
 
     /**

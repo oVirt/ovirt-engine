@@ -46,7 +46,10 @@ public class RngDeviceUtils {
         if (rngDevices.isEmpty()) {
             return Optional.empty();
         }
-        final VmRngDevice rngDevice = rngDevices.get(0);
+        return updateRngDevice(newCompatibilityVersion, rngDevices.get(0));
+    }
+
+    public Optional<VmRngDevice> updateRngDevice(Version newCompatibilityVersion, VmRngDevice rngDevice) {
         final VmRngDevice.Source oldSource = rngDevice.getSource();
         rngDevice.updateSourceByVersion(newCompatibilityVersion);
         if (rngDevice.getSource().equals(oldSource)) {
