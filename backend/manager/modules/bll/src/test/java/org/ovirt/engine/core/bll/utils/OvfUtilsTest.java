@@ -23,15 +23,11 @@ public class OvfUtilsTest {
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
 
     @Test
-    public void testFetchVmDisks() throws IOException {
-        try {
-            XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
-            Set<Guid> disks = OvfUtils.fetchVmDisks(xmlDocument);
-            assertNotNull("The list of disks should not be null", disks);
-            assertTrue("The list of disks should not be empty", !disks.isEmpty());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void testFetchVmDisks() throws Exception {
+        XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
+        Set<Guid> disks = OvfUtils.fetchVmDisks(xmlDocument);
+        assertNotNull("The list of disks should not be null", disks);
+        assertTrue("The list of disks should not be empty", !disks.isEmpty());
     }
 
     @Test
@@ -41,33 +37,25 @@ public class OvfUtilsTest {
     }
 
     @Test
-    public void testUpdateUnregisteredDisksWithVMsWithEmptyUnregDisks() throws IOException {
-        try {
-            XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
-            List<UnregisteredDisk> unregDisks = new ArrayList<>();
-            OvfUtils.updateUnregisteredDisksWithVMs(unregDisks, Guid.newGuid(), "TestVM", xmlDocument);
-            assertTrue("The list of disks should not be empty", unregDisks.isEmpty());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void testUpdateUnregisteredDisksWithVMsWithEmptyUnregDisks() throws Exception {
+        XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
+        List<UnregisteredDisk> unregDisks = new ArrayList<>();
+        OvfUtils.updateUnregisteredDisksWithVMs(unregDisks, Guid.newGuid(), "TestVM", xmlDocument);
+        assertTrue("The list of disks should not be empty", unregDisks.isEmpty());
     }
 
     @Test
-    public void testUpdateUnregisteredDisksWithVMsWithInitializedUnregDisks() throws IOException {
-        try {
-            XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
-            List<UnregisteredDisk> unregDisks = new ArrayList<>();
-            UnregisteredDisk unregDisk = new UnregisteredDisk();
-            unregDisk.getDiskImage().setId(Guid.createGuidFromString("8c634412-1e8b-4ef3-bc40-b67a456e9d2f"));
-            unregDisk.getDiskImage()
-                    .setStorageIds(new ArrayList<>(Collections.singletonList(Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588"))));
-            unregDisks.add(unregDisk);
-            OvfUtils.updateUnregisteredDisksWithVMs(unregDisks, Guid.newGuid(), "TestVM", xmlDocument);
-            assertTrue("The list of disks should not be empty", !unregDisks.isEmpty());
-            assertTrue("The VMs id is set in the unregisteterd disks", !unregDisks.get(0).getVms().isEmpty());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void testUpdateUnregisteredDisksWithVMsWithInitializedUnregDisks() throws Exception {
+        XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
+        List<UnregisteredDisk> unregDisks = new ArrayList<>();
+        UnregisteredDisk unregDisk = new UnregisteredDisk();
+        unregDisk.getDiskImage().setId(Guid.createGuidFromString("8c634412-1e8b-4ef3-bc40-b67a456e9d2f"));
+        unregDisk.getDiskImage()
+                .setStorageIds(new ArrayList<>(Collections.singletonList(Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588"))));
+        unregDisks.add(unregDisk);
+        OvfUtils.updateUnregisteredDisksWithVMs(unregDisks, Guid.newGuid(), "TestVM", xmlDocument);
+        assertTrue("The list of disks should not be empty", !unregDisks.isEmpty());
+        assertTrue("The VMs id is set in the unregisteterd disks", !unregDisks.get(0).getVms().isEmpty());
     }
 
     private String getXmlOvfData() throws IOException {
