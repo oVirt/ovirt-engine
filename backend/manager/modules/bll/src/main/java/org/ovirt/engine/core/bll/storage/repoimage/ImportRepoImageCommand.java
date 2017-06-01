@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.repoimage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -125,7 +127,6 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         storageIds.add(getParameters().getStorageDomainId());
         diskImage.setDiskAlias(getParameters().getDiskAlias());
         diskImage.setStorageIds(storageIds);
-        diskImage.setStoragePoolId(getParameters().getStoragePoolId());
         diskImage.setId(getParameters().getImageGroupID());
         diskImage.setDiskProfileId(getParameters().getDiskProfileId());
         diskImage.setImageId(getParameters().getDestinationImageId());
@@ -417,7 +418,10 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         if (diskImage == null) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
-
+        diskImage.setStoragePoolId(getStoragePoolId());
+        if (!validate(createDiskImagesValidator(diskImage).isQcowVersionSupportedForDcVersion())) {
+            return false;
+        }
         return validateSpaceRequirements(diskImage);
     }
 
@@ -433,6 +437,10 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     protected StorageDomainValidator createStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
+    }
+
+    protected DiskImagesValidator createDiskImagesValidator(DiskImage diskImage) {
+        return new DiskImagesValidator(Collections.singletonList(diskImage));
     }
 
     private void addAuditLogCustomValues() {

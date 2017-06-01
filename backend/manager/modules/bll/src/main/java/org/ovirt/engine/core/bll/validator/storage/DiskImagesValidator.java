@@ -14,10 +14,12 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -29,6 +31,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -254,6 +257,20 @@ public class DiskImagesValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult isQcowVersionSupportedForDcVersion() {
+        // If storage pool format type is less than V4 and the disk is with QCOW compatibility level of 1.1 (QCOW2_V3)
+        // then the engine should fail the operation.
+        for (DiskImage diskImage : diskImages) {
+            StorageFormatType storagePoolFormatType =
+                    getStoragePoolDao().get(diskImage.getStoragePoolId()).getStoragePoolFormatType();
+            if (storagePoolFormatType.compareTo(StorageFormatType.V4) < 0
+                    && diskImage.getQcowCompat() == QcowCompat.QCOW2_V3) {
+                return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QCOW_COMPAT_DOES_NOT_MATCH_DC_VERSION);
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
     /**
      * Checks that each of the disks has at least one domain in valid status in the given map
      * @param validDomainsForDisk Map containing valid domains for each disk
@@ -327,6 +344,10 @@ public class DiskImagesValidator {
 
     protected DiskImageDao getDiskImageDao() {
         return getDbFacade().getDiskImageDao();
+    }
+
+    protected StoragePoolDao getStoragePoolDao() {
+        return getDbFacade().getStoragePoolDao();
     }
 
     protected StorageDomainStaticDao getStorageDomainStaticDao() {

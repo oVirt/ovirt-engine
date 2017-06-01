@@ -8,10 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ImportExportRepoImageCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -21,6 +24,9 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 /** A test case for {@link ImportRepoImageCommand} */
 @RunWith(MockitoJUnitRunner.class)
 public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest {
+
+    @Mock
+    protected DiskImagesValidator diskImagesValidator;
 
     @Spy
     @InjectMocks
@@ -38,10 +44,14 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         cmd.getParameters().setStorageDomainId(getStorageDomainId());
 
         doReturn(true).when(cmd).validateSpaceRequirements(any(DiskImage.class));
+        doReturn(diskImagesValidator).when(cmd).createDiskImagesValidator(any(DiskImage.class));
+
     }
 
     @Test
     public void testValidateSuccess() {
+        doReturn(ValidationResult.VALID).when(diskImagesValidator)
+                .isQcowVersionSupportedForDcVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
@@ -50,6 +60,14 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         when(getProviderProxy().getImageAsDiskImage(getRepoImageId())).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+    }
+
+    @Test
+    public void testValidateImageQcowVersionNotMatchingDcVersion() {
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QCOW_COMPAT_DOES_NOT_MATCH_DC_VERSION)).when(diskImagesValidator)
+                .isQcowVersionSupportedForDcVersion();
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_QCOW_COMPAT_DOES_NOT_MATCH_DC_VERSION);
     }
 
     @Test
