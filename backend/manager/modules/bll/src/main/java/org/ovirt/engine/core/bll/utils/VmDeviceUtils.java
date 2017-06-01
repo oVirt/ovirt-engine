@@ -759,6 +759,8 @@ public class VmDeviceUtils {
         if (oldNumberOfSlots < newNumberOfUsbSlots) {
             // Add slots and controllers
             if (oldNumberOfSlots == 0) {
+                // there may be remaining of unmanaged controllers from previous versions
+                removeUsbControllers(vmId);
                 addSpiceUsbControllers(vmId, getNeededNumberOfUsbControllers(newNumberOfUsbSlots));
             }
             addUsbSlots(vmId, newNumberOfUsbSlots - oldNumberOfSlots);
