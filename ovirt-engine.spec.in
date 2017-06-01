@@ -276,8 +276,10 @@ Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
 Requires:	python-dnf-plugins-extras-versionlock
 Requires:	python3-dnf-plugins-extras-versionlock
 Requires:	quartz
-# On Fedora slf4j package is split and we need also jdk14 part
+# On Fedora slf4j package is split and we need also jdk14 and jcl-over-slf4j
+# parts
 Requires:	slf4j-jdk14 >= 1.7.0
+Requires:	jcl-over-slf4j >= 1.7.0
 Requires:	snmp4j >= 2.4.1
 %endif
 
@@ -795,6 +797,7 @@ common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
 tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
+tools/org/slf4j/jcl-over-slf4j/main/jcl-over-slf4j.jar slf4j/jcl-over-slf4j.jar
 
 %if 0%{?rhel}
 # JDBC drivers newer than 9.2 break engine DAL, so we cannot depend on it
