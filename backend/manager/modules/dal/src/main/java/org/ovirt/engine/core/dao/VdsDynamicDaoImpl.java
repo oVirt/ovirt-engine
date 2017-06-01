@@ -137,9 +137,13 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
 
     @Override
     public void update(VdsDynamic vds) {
-        DnsResolverConfiguration reportedDnsResolverConfiguration = vds.getReportedDnsResolverConfiguration();
+        updateDnsResolverConfiguration(vds.getId(), vds.getReportedDnsResolverConfiguration());
+        getCallsHandler().executeModification("UpdateVdsDynamic", createFullParametersMapper(vds));
+    }
+
+    public void updateDnsResolverConfiguration(Guid vdsId, DnsResolverConfiguration reportedDnsResolverConfiguration) {
         if (reportedDnsResolverConfiguration == null) {
-            dnsResolverConfigurationDao.removeByVdsDynamicId(vds.getId());
+            dnsResolverConfigurationDao.removeByVdsDynamicId(vdsId);
         } else {
             if (reportedDnsResolverConfiguration.getId() == null) {
                 dnsResolverConfigurationDao.save(reportedDnsResolverConfiguration);
@@ -147,7 +151,6 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 dnsResolverConfigurationDao.update(reportedDnsResolverConfiguration);
             }
         }
-        getCallsHandler().executeModification("UpdateVdsDynamic", createFullParametersMapper(vds));
     }
 
     @Override

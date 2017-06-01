@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -62,4 +63,12 @@ public interface VdsDynamicDao extends GenericDao<VdsDynamic, Guid>, StatusAware
      * @return <code>true</code> if such a host exists, otherwise <code>false</code>.
      */
     boolean checkIfExistsHostWithStatusInCluster(Guid clusterId, VDSStatus hostStatus);
+
+    /**
+     * Updates {@link DnsResolverConfiguration} belonging to host of given {@code vdsId}
+     * @param vdsId id of host
+     * @param reportedDnsResolverConfiguration dns resolver configuration to update existing {@link VdsDynamic} record.
+     */
+    void updateDnsResolverConfiguration(Guid vdsId, DnsResolverConfiguration reportedDnsResolverConfiguration);
+
 }

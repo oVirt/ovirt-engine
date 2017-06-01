@@ -29,6 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
@@ -50,6 +51,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     private final AuditLogDirector auditLogDirector;
     private final NetworkAttachmentDao networkAttachmentDao;
     private final NetworkImplementationDetailsUtils networkImplementationDetailsUtils;
+    private final VdsDynamicDao vdsDynamicDao;
 
     @Inject
     HostNetworkTopologyPersisterImpl(VmDynamicDao vmDynamicDao,
@@ -59,7 +61,8 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                      Instance<ResourceManager> resourceManager,
                                      NetworkImplementationDetailsUtils networkImplementationDetailsUtils,
                                      ManagementNetworkUtil managementNetworkUtil,
-                                     AuditLogDirector auditLogDirector) {
+                                     AuditLogDirector auditLogDirector,
+                                     VdsDynamicDao vdsDynamicDao) {
         Validate.notNull(networkDao, "networkAttachmentDao can not be null");
         Validate.notNull(networkDao, "networkDao can not be null");
         Validate.notNull(interfaceDao, "interfaceDao can not be null");
@@ -68,6 +71,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         Validate.notNull(networkImplementationDetailsUtils, "networkImplementationDetailsUtils can not be null");
         Validate.notNull(managementNetworkUtil, "managementNetworkUtil can not be null");
         Validate.notNull(auditLogDirector, "auditLogDirector can not be null");
+        Validate.notNull(vdsDynamicDao, "vdsDynamicDao can not be null");
 
         this.vmDynamicDao = vmDynamicDao;
         this.interfaceDao = interfaceDao;
@@ -77,6 +81,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         this.networkAttachmentDao = networkAttachmentDao;
         this.networkImplementationDetailsUtils = networkImplementationDetailsUtils;
         this.auditLogDirector = auditLogDirector;
+        this.vdsDynamicDao = vdsDynamicDao;
     }
 
     @Override
@@ -273,6 +278,8 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
             List<VdsNetworkInterface> dbNics,
             List<Network> clusterNetworks,
             UserConfiguredNetworkData userConfiguredData) {
+
+        vdsDynamicDao.updateDnsResolverConfiguration(host.getId(), host.getReportedDnsResolverConfiguration());
 
         final HostNetworkInterfacesPersister networkInterfacesPersister = new HostNetworkInterfacesPersisterImpl(
                 interfaceDao,
