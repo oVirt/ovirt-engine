@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     This module provided original commons-logging API provided by
+     jakarta-commons-logging over slf4j library. We need it to be able to use
+     apache-commons libraries, which require commons-logging, in command line
+     tools and notifier, which are executed outside running WildFly.
+  -->
+<module xmlns="urn:jboss:module:1.3" name="org.apache.commons.logging">
+  <dependencies>
+    <module name="org.slf4j.jcl-over-slf4j" export="true"/>
+  </dependencies>
+</module>
+
