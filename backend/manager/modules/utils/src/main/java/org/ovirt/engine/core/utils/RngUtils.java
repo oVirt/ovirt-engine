@@ -24,7 +24,6 @@ public class RngUtils {
 
         // This can be dropped when we stop to support 4.0 compatibility level
         if (cluster.getCompatibilityVersion() != null
-                && !cluster.getCompatibilityVersion().equals(effectiveVersion)
                 && EnumSet.of(VmRngDevice.Source.URANDOM, VmRngDevice.Source.RANDOM).contains(source)
                 && containsAtLeastOne(cluster.getRequiredRngSources(), VmRngDevice.Source.URANDOM, VmRngDevice.Source.RANDOM)
                 && !cluster.getRequiredRngSources().contains(source)) {
