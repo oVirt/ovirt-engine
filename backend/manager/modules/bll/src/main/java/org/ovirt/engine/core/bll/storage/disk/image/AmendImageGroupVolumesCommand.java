@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -102,7 +103,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         List<DiskImage> images = diskImageDao
                 .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images.stream()
-                .filter(disk -> disk.isQcowFormat())
+                .filter(DiskImageBase::isQcowFormat)
                 .collect(Collectors.toList())));
         persistCommand(getActionType(), getCallback() != null);
         setSucceeded(true);
