@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -207,18 +206,12 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
     }
 
     private Map<String, Pair<String, String>> getSharedLocksForVmDisk() {
-        Map<String, Pair<String, String>> lockMap = new HashMap<>();
         if (getDiskImage() != null) {
-            List<Pair<VM, VmDevice>> vmsForDisk = vmDao.getVmsWithPlugInfo(getDiskImage().getId());
-            if (!vmsForDisk.isEmpty()) {
-                for (Pair<VM, VmDevice> pair : vmsForDisk) {
-                    lockMap.put(pair.getFirst().getId().toString(),
-                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
-                                    EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED));
-                }
-            }
+            return vmDao.getVmsWithPlugInfo(getDiskImage().getId()).stream()
+                    .collect(Collectors.toMap(p -> p.getFirst().getId().toString(),
+                            p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
         }
-        return lockMap;
+        return Collections.emptyMap();
     }
 
     @Override
