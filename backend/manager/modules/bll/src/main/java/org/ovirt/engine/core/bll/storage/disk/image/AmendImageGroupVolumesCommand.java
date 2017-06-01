@@ -207,12 +207,9 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
     }
 
     private Map<String, Pair<String, String>> getSharedLocksForVmDisk() {
-        if (getDiskImage() != null) {
-            return vmDao.getVmsWithPlugInfo(getDiskImage().getId()).stream()
-                    .collect(Collectors.toMap(p -> p.getFirst().getId().toString(),
-                            p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
-        }
-        return Collections.emptyMap();
+        return vmDao.getVmsWithPlugInfo(getParameters().getImageGroupID()).stream()
+                .collect(Collectors.toMap(p -> p.getFirst().getId().toString(),
+                        p -> LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_VM_IS_LOCKED)));
     }
 
     @Override
