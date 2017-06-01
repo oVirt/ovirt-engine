@@ -828,11 +828,11 @@ public class VmDeviceUtils {
                     unmanagedControllers));
         }
 
-        final UsbControllerModel controllerModel = getUsbControllerModel(vmBase);
-
         if (unmanagedControllers.isEmpty()) {
             return;
         }
+
+        UsbControllerModel controllerModel = getUsbControllerModel(vmBase);
 
         // should not be here but due to https://bugzilla.redhat.com/1438188 can appear one
         // remove it
