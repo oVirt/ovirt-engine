@@ -57,23 +57,28 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     @WithElementId
     AnchorListItem configureLink;
 
-    @UiField(provided = true)
+    @UiField
     @WithElementId
-    AnchorListItem bookmarkLink;
+    AnchorListItem bookmarks;
 
     @UiField
+    @WithElementId
     AnchorButton help;
 
     @UiField
+    @WithElementId
     AnchorButton settings;
 
     @UiField
+    @WithElementId
     AnchorListItem tasks;
 
     @UiField
+    @WithElementId
     AnchorListItem tags;
 
     @UiField (provided=true)
+    @WithElementId
     EventsListPopover events;
 
     @UiField
@@ -92,7 +97,6 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         this.logoutLink = new AnchorListItem(constants.logoutLinkLabel());
         this.optionsLink = new AnchorListItem(constants.optionsLinkLabel());
         this.aboutLink = new AnchorListItem(constants.aboutLinkLabel());
-        this.bookmarkLink = new AnchorListItem(constants.bookmarksMainSection());
         this.guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
         events = new EventsListPopover(constants.notificationDrawer(), IconType.BELL);
         eventsWidget = new NotificationListWidget(constants.eventsEventFooter());
@@ -107,10 +111,11 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
 
         mainNavBar.removeStyleName(PatternflyStyles.NAVBAR_DEFAULT);
 
-        AnchorElement.as(this.help.getElement()).addClassName(NAV_ITEM_ICONIC);
-        AnchorElement.as(this.settings.getElement()).addClassName(NAV_ITEM_ICONIC);
-        this.tasks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
-        this.tags.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
+        AnchorElement.as(help.getElement()).addClassName(NAV_ITEM_ICONIC);
+        AnchorElement.as(settings.getElement()).addClassName(NAV_ITEM_ICONIC);
+        tasks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
+        tags.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
+        bookmarks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
         setUserIcon();
     }
 
@@ -362,7 +367,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
 
     @Override
     public HasClickHandlers getBookmarkLink() {
-        return bookmarkLink;
+        return bookmarks;
     }
 
     @Override
