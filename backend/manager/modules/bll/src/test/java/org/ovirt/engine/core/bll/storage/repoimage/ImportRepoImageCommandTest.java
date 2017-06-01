@@ -12,7 +12,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -30,6 +32,9 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @Mock
     private OpenStackImageProviderProxy providerProxy;
+
+    @Mock
+    protected DiskImagesValidator diskImagesValidator;
 
     @Spy
     @InjectMocks
@@ -50,10 +55,14 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         cmd.getParameters().setStorageDomainId(storageDomainId);
 
         doReturn(true).when(cmd).validateSpaceRequirements(any(DiskImage.class));
+        doReturn(diskImagesValidator).when(cmd).createDiskImagesValidator(any(DiskImage.class));
+
     }
 
     @Test
     public void testValidateSuccess() {
+        doReturn(ValidationResult.VALID).when(diskImagesValidator)
+                .isQcowVersionSupportedForDcVersion();
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
 
@@ -62,6 +71,14 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         when(providerProxy.getImageAsDiskImage(repoImageId)).thenReturn(null);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
+    }
+
+    @Test
+    public void testValidateImageQcowVersionNotMatchingDcVersion() {
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_QCOW_COMPAT_DOES_NOT_MATCH_DC_VERSION)).when(diskImagesValidator)
+                .isQcowVersionSupportedForDcVersion();
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_QCOW_COMPAT_DOES_NOT_MATCH_DC_VERSION);
     }
 
     @Test

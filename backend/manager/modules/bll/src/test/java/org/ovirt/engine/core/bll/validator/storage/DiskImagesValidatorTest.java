@@ -33,16 +33,21 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -69,17 +74,23 @@ public class DiskImagesValidatorTest {
     @Mock
     private DiskImageDao diskImageDao;
 
+    @Mock
+    private StoragePoolDao storagePoolDao;
+
     @Before
     public void setUp() {
         disk1 = createDisk();
         disk1.setDiskAlias("disk1");
+        disk1.setStoragePoolId(Guid.newGuid());
         disk2 = createDisk();
         disk2.setDiskAlias("disk2");
+        disk2.setStoragePoolId(Guid.newGuid());
         validator = spy(new DiskImagesValidator(Arrays.asList(disk1, disk2)));
         doReturn(vmDao).when(validator).getVmDao();
         doReturn(vmDeviceDao).when(validator).getVmDeviceDao();
         doReturn(snapshotDao).when(validator).getSnapshotDao();
         doReturn(diskImageDao).when(validator).getDiskImageDao();
+        doReturn(storagePoolDao).when(validator).getStoragePoolDao();
     }
 
     private static DiskImage createDisk() {
@@ -339,6 +350,47 @@ public class DiskImagesValidatorTest {
                 storageDomainMap,
                 EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS,
                 EnumSet.of(StorageDomainStatus.Active)), failsWith(EngineMessage.ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS));
+    }
+
+    @Test
+    public void testIsQcowV3SupportedForDcVersionV4() {
+        disk1.setVolumeFormat(VolumeFormat.COW);
+        disk1.setQcowCompat(QcowCompat.QCOW2_V3);
+        StoragePool sp = new StoragePool();
+        sp.setStoragePoolFormatType(StorageFormatType.V4);
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        assertThat(validator.isQcowVersionSupportedForDcVersion(), isValid());
+    }
+
+    @Test
+    public void testIsQcowV2SupportedForDcVersionV4() {
+        disk1.setVolumeFormat(VolumeFormat.COW);
+        disk1.setQcowCompat(QcowCompat.QCOW2_V2);
+        StoragePool sp = new StoragePool();
+        sp.setStoragePoolFormatType(StorageFormatType.V4);
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        assertThat(validator.isQcowVersionSupportedForDcVersion(), isValid());
+    }
+
+    @Test
+    public void testIsQcowV3SupportedForDcVersionV3() {
+        disk1.setVolumeFormat(VolumeFormat.COW);
+        disk1.setQcowCompat(QcowCompat.QCOW2_V3);
+        StoragePool sp = new StoragePool();
+        sp.setStoragePoolFormatType(StorageFormatType.V3);
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        assertThat(validator.isQcowVersionSupportedForDcVersion(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_QCOW_COMPAT_DOES_NOT_MATCH_DC_VERSION));
+    }
+
+    @Test
+    public void testIsQcowV2SupportedForDcVersionV3() {
+        disk1.setVolumeFormat(VolumeFormat.COW);
+        disk1.setQcowCompat(QcowCompat.QCOW2_V2);
+        StoragePool sp = new StoragePool();
+        sp.setStoragePoolFormatType(StorageFormatType.V3);
+        when(storagePoolDao.get(any(Guid.class))).thenReturn(sp);
+        assertThat(validator.isQcowVersionSupportedForDcVersion(), isValid());
     }
 
     private VmDevice createVmDeviceForDisk(DiskImage disk) {
