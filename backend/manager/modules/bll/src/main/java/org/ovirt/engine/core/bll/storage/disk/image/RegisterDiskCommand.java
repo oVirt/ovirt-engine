@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -122,7 +123,9 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             addValidationMessage(EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
             return false;
         }
-
+        if (!validate(createDiskImagesValidator(getDiskImage()).isQcowVersionSupportedForDcVersion())) {
+            return false;
+        }
         if (getDiskImage().getDiskStorageType() == DiskStorageType.IMAGE &&
                 !setAndValidateDiskProfiles()) {
             return false;
@@ -215,6 +218,10 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 getDiskImage().getActualSize()));
 
         return list;
+    }
+
+    protected DiskImagesValidator createDiskImagesValidator(DiskImage diskImage) {
+        return new DiskImagesValidator(Collections.singletonList(diskImage));
     }
 
     @Override
