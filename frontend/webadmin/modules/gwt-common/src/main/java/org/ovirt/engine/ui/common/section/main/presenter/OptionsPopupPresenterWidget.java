@@ -27,13 +27,15 @@ public class OptionsPopupPresenterWidget
     public void init(EditOptionsModel model) {
         super.init(model);
 
-        registerHandler(getView().getPublicKeyEditor().addChangeHandler(new ChangeHandler() {
+        // TODO-GWT work around https://github.com/gwtproject/gwt/issues/9476
+        registerHandler(((/*required-cast*/HasChangeHandlers) getView().getPublicKeyEditor()).addChangeHandler(new ChangeHandler() {
             /**
              * It replaces arbitrary number of '\n' by '\n\n' to visually separate lines.
              */
             @Override
             public void onChange(ChangeEvent event) {
-                final String originalValue = getView().getPublicKeyEditor().getValue();
+                // TODO-GWT work around https://github.com/gwtproject/gwt/issues/9476
+                final String originalValue = ((/*required-cast*/HasValue<String>) getView().getPublicKeyEditor()).getValue();
                 String valueWithoutEmptyLines = originalValue;
                 if (valueWithoutEmptyLines == null) {
                     return;
