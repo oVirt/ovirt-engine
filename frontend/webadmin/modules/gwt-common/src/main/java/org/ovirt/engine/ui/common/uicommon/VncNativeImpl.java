@@ -12,11 +12,11 @@ public class VncNativeImpl extends AbstractVnc implements IVncNative {
 
     @Override
     public void invokeClient() {
-        AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(returnValue -> { // todo avoid code duplication with spice
-            ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
-                    "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
-                    returnValue.getReturnValue());
-        });
+        // todo avoid code duplication with spice
+        AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(returnValue ->
+                ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
+                "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
+                returnValue.getReturnValue()));
         Frontend.getInstance().runQuery(
                 VdcQueryType.GetConsoleDescriptorFile,
                 new ConsoleOptionsParams(getOptions()), callback);
