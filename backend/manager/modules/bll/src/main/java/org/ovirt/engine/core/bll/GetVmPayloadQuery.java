@@ -28,7 +28,7 @@ public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesComma
             List<VmDevice> disks = dao.getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.DISK);
 
             for (VmDevice disk : disks) {
-                if (VmPayload.isPayload(disk.getSpecParams())) {
+                if (disk.isManaged() && VmPayload.isPayload(disk.getSpecParams())) {
                     VmPayload payload = new VmPayload(disk);
                     for (Map.Entry<String, String> entry : payload.getFiles().entrySet()) {
                         entry.setValue(new String(Base64.decodeBase64(entry.getValue())));
