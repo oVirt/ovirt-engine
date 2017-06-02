@@ -842,6 +842,13 @@ class OvnEnv(object):
         return 'OVESETUP_OVN/ovirtProviderOvn'
 
     @osetupattrs(
+        description=_('ovirt-provider-ovn id'),
+        postinstallfile=True,
+    )
+    def OVIRT_PROVIDER_ID(self):
+        return 'OVESETUP_OVN/ovirtProviderOvnId'
+
+    @osetupattrs(
         answerfile=True,
         description=_('oVirt OVN provider user name'),
     )

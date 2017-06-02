@@ -120,6 +120,7 @@ class Plugin(plugin.PluginBase):
     def _add_provider_to_db(self):
         auth_required = self._user is not None
         fqdn = self.environment[osetupcons.ConfigEnv.FQDN]
+        provider_id = str(uuid.uuid4())
 
         self.environment[
             oenginecons.EngineDBEnv.STATEMENT
@@ -139,7 +140,7 @@ class Plugin(plugin.PluginBase):
                 )
             """,
             args=dict(
-                provider_id=str(uuid.uuid4()),
+                provider_id=provider_id,
                 provider_name='ovirt-provider-ovn',
                 provider_description='oVirt network provider for OVN',
                 provider_url='https://%s:9696' % fqdn,
@@ -153,6 +154,7 @@ class Plugin(plugin.PluginBase):
         )
 
         self.logger.info(_('Default OVN provider added to database'))
+        return provider_id
 
     def _generate_client_secret(self):
 
@@ -686,7 +688,17 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc_db_entries(self):
-        self._add_provider_to_db()
+        provider_id = self._add_provider_to_db()
+        if self.environment.get(OvnEnv.OVIRT_PROVIDER_ID) is not None:
+            raise Exception(_(
+                'Attempting to set ovirt-provider-ovn id, but'
+                ' the id has already been set. Overwriting'
+                ' an already existing provider id is not allowed.'
+            ))
+
+        self.environment[
+            OvnEnv.OVIRT_PROVIDER_ID
+        ] = provider_id
         self._add_client_secret_to_db()
 
     @plugin.event(
