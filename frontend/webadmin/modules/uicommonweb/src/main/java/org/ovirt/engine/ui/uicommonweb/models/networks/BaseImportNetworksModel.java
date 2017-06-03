@@ -23,9 +23,13 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -44,6 +48,7 @@ public class BaseImportNetworksModel extends Model {
 
     private static final String CMD_IMPORT = "OnImport"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
+
 
     private final SearchableListModel sourceListModel;
 
@@ -126,44 +131,65 @@ public class BaseImportNetworksModel extends Model {
             return;
         }
 
-        final List<StoragePool> dataCenters = new LinkedList<>();
-
         startProgress();
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(returnValue -> {
-            dataCenters.addAll(returnValue);
+        AsyncQuery<List<StoragePool>> dataCenterQuery = new AsyncQuery<>(returnValue -> {
+            final List<StoragePool> dataCenters = new LinkedList<>(returnValue);
             Collections.sort(dataCenters, new NameableComparator());
 
-            AsyncDataProvider.getInstance().getExternalNetworkMap(new AsyncQuery<>(externalNetworkToDataCenters -> {
-                List<ExternalNetwork> items = new LinkedList<>();
-                for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
-                    Network network = entry.getKey();
-                    Set<Guid> attachedDataCenters = entry.getValue();
-
-                    ExternalNetwork externalNetwork = new ExternalNetwork();
-                    externalNetwork.setNetwork(network);
-                    externalNetwork.setDisplayName(network.getName());
-                    externalNetwork.setPublicUse(true);
-
-                    List<StoragePool> availableDataCenters = new LinkedList<>();
-                    for (StoragePool dc : dataCenters) {
-                        if (!attachedDataCenters.contains(dc.getId())) {
-                            availableDataCenters.add(dc);
-                        }
-                    }
-                    externalNetwork.getDataCenters().setItems(availableDataCenters);
-                    externalNetwork.getDataCenters().setSelectedItem(treeSelectedDc != null
-                            && availableDataCenters.contains(treeSelectedDc) ? treeSelectedDc
-                            : Linq.firstOrNull(availableDataCenters));
-
-                    items.add(externalNetwork);
+            AsyncQuery<VdcQueryReturnValue> externalNetworksQuery = new AsyncQuery<>(vdcQueryReturnValue -> {
+                if (vdcQueryReturnValue.getSucceeded()) {
+                    Map<Network, Set<Guid>> externalNetworkToDataCenters = vdcQueryReturnValue.getReturnValue();
+                    providerNetworks.setItems(getExternalNetworks(externalNetworkToDataCenters, dataCenters));
+                    importedNetworks.setItems(new LinkedList<ExternalNetwork>());
+                } else {
+                    final ErrorPopupManager popupManager =
+                            (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
+                    popupManager.show(ConstantsManager.getInstance().getMessages().failedToListExternalNetworks(
+                            vdcQueryReturnValue.getExceptionMessage()));
                 }
-                Collections.sort(items, Comparator.comparing(ExternalNetwork::getNetwork, new NameableComparator()));
-                providerNetworks.setItems(items);
-                importedNetworks.setItems(new LinkedList<ExternalNetwork>());
-
                 stopProgress();
-            }), provider.getId());
-        }));
+            }, true);
+
+            AsyncDataProvider.getInstance().getExternalNetworksByProviderId(externalNetworksQuery, provider.getId());
+        });
+
+        AsyncDataProvider.getInstance().getDataCenterList(dataCenterQuery);
+    }
+
+    private List<ExternalNetwork> getExternalNetworks(Map<Network, Set<Guid>> externalNetworkToDataCenters,
+                                                      List<StoragePool> dataCenters) {
+        List<ExternalNetwork> items = new LinkedList<>();
+        for (Map.Entry<Network, Set<Guid>> entry : externalNetworkToDataCenters.entrySet()) {
+            items.add(getExternalNetwork(entry.getKey(), entry.getValue(), dataCenters));
+        }
+        Collections.sort(items,
+                Comparator.comparing(ExternalNetwork::getNetwork, new NameableComparator()));
+        return items;
+    }
+
+    private ExternalNetwork getExternalNetwork(Network network, Set<Guid> attachedDataCenters,
+                                               List<StoragePool> dataCenters) {
+        ExternalNetwork externalNetwork = new ExternalNetwork();
+        externalNetwork.setNetwork(network);
+        externalNetwork.setDisplayName(network.getName());
+        externalNetwork.setPublicUse(true);
+
+        List<StoragePool> availableDataCenters = getAvailableDataCenters(dataCenters, attachedDataCenters);
+        externalNetwork.getDataCenters().setItems(availableDataCenters);
+        StoragePool dataCenterToSelect = treeSelectedDc != null && availableDataCenters.contains(treeSelectedDc) ?
+                treeSelectedDc : Linq.firstOrNull(availableDataCenters);
+        externalNetwork.getDataCenters().setSelectedItem(dataCenterToSelect);
+        return externalNetwork;
+    }
+
+    private List<StoragePool> getAvailableDataCenters(List<StoragePool> dataCenters, Set<Guid> attachedDataCenters) {
+        List<StoragePool> availableDataCenters = new LinkedList<>();
+        for (StoragePool dc : dataCenters) {
+            if (!attachedDataCenters.contains(dc.getId())) {
+                availableDataCenters.add(dc);
+            }
+        }
+        return availableDataCenters;
     }
 
     private boolean validate() {

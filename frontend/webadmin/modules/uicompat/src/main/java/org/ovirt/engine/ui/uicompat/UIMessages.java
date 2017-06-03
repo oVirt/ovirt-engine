@@ -385,6 +385,8 @@ public interface UIMessages extends Messages {
 
     String failedToLoadOva(String ovaPath);
 
+    String failedToListExternalNetworks(String detailedErrorMessage);
+
     String errataForHost(String hostName);
 
     String errataForVm(String vmName);

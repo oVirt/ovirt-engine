@@ -2668,8 +2668,7 @@ public class AsyncDataProvider {
         }
     }
 
-    public void getExternalNetworkMap(AsyncQuery<Map<Network, Set<Guid>>> aQuery, Guid providerId) {
-        aQuery.converterCallback = new MapConverter<>();
+    public void getExternalNetworksByProviderId(AsyncQuery<VdcQueryReturnValue> aQuery, Guid providerId) {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllExternalNetworksOnProvider,
                 new IdQueryParameters(providerId),
                 aQuery);
