@@ -47,6 +47,7 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.TabbedView;
+import org.ovirt.engine.ui.common.widget.AffinityLabelSelectionWithListWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelDetachableWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
@@ -111,6 +112,7 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -937,10 +939,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     protected DialogTab affinityLabelsTab;
 
-    @UiField(provided = true)
-    @Path(value = "labelList.selectedItems")
+    @UiField
+    @Path(value = "labelList.selectedItem")
     @WithElementId("labelList")
-    public ListModelMultipleSelectListBoxEditor<org.ovirt.engine.core.common.businessentities.Label> labelEditor;
+    public AffinityLabelSelectionWithListWidget affinityLabelSelectionWidget;
 
     private UnitVmModel unitVmModel;
 
@@ -1326,8 +1328,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         vmTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<VmType>(), new ModeSwitchingVisibilityRenderer());
 
-        labelEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<org.ovirt.engine.core.common.businessentities.Label>(), new ModeSwitchingVisibilityRenderer());
-
         instanceTypesEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<InstanceType>() {
 
@@ -1524,6 +1524,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
         vmInitEditor.edit(model.getVmInitModel());
         serialNumberPolicyEditor.edit(model.getSerialNumberPolicy());
+        affinityLabelSelectionWidget.getListWidget().init(model.getLabelList());
         initTabAvailabilityListeners(model);
         initListeners(model);
         hideAlwaysHiddenFields();
@@ -1708,6 +1709,26 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 ssoMethodLabel.setEnabled(!isHeadlessEnabled);
                 monitorsLabel.setEnabled(!isHeadlessEnabled);
                 spiceProxyEnabledCheckboxWithInfoIcon.setEnabled(!isHeadlessEnabled);
+            }
+        });
+
+        object.getLabelList().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (object.getLabelList().getSelectedItems() == null) {
+                    object.getLabelList().setSelectedItems(new ArrayList<org.ovirt.engine.core.common.businessentities.Label>());
+                }
+
+                affinityLabelSelectionWidget.getListWidget().refreshItems();
+            }
+        });
+
+        object.getLabelList().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (object.getLabelList().getSelectedItems() != null) {
+                    affinityLabelSelectionWidget.getListWidget().refreshItems();
+                }
             }
         });
     }
@@ -1930,7 +1951,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vmIdEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         commentEditor.setTabIndex(nextTabIndex++);
-        labelEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
         isRunAndPauseEditor.setTabIndex(nextTabIndex++);
         isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
@@ -2311,5 +2331,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     public UnitVmModel getModel() {
         return unitVmModel;
+    }
+
+    public HasClickHandlers getAddAffinityLabelButton() {
+        return affinityLabelSelectionWidget.getSelectionWidget().getAddSelectedItemButton();
     }
 }

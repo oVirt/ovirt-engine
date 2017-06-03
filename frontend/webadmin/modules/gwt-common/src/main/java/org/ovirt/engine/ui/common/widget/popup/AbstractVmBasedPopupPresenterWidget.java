@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.HasAttachHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasVisibility;
@@ -40,6 +41,8 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         List<HasValidation> getInvalidWidgets();
 
         HasUiCommandClickHandlers getNumaSupportButton();
+
+        HasClickHandlers getAddAffinityLabelButton();
     }
 
     private final ClientStorage clientStorage;
@@ -128,6 +131,13 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
             @Override
             public void onClick(ClickEvent event) {
                 getView().getNumaSupportButton().getCommand().execute();
+            }
+        }));
+
+        registerHandler(getView().getAddAffinityLabelButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.addAffinityLabel();
             }
         }));
     }
