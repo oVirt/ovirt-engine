@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.gwtbootstrap3.client.ui.Button;
@@ -21,8 +22,8 @@ import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.AffinityLabelSelectionWithListWidget;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -31,7 +32,6 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBox;
 import org.ovirt.engine.ui.common.widget.editor.GroupedListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelMultipleSelectListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -420,10 +420,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Ignore
     Button kernelCmdlineResetButton;
 
-    @UiField(provided = true)
-    @Path(value = "labelList.selectedItems")
+    @UiField
+    @Path(value = "labelList.selectedItem")
     @WithElementId("labelList")
-    public ListModelMultipleSelectListBoxEditor<org.ovirt.engine.core.common.businessentities.Label> labelEditor;
+    AffinityLabelSelectionWithListWidget affinityLabelSelectionWidget;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -526,9 +526,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         externalHostGroupsEditor = getListModelTypeAheadListBoxEditor();
         externalComputeResourceEditor = getListModelTypeAheadListBoxEditor();
 
-        labelEditor = new ListModelMultipleSelectListBoxEditor<>(new NameRenderer<org.ovirt.engine.core.common.businessentities.Label>(),
-                new VisibilityRenderer.SimpleVisibilityRenderer());
-
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         pmEnabledEditor.setUsePatternFly(true);
@@ -584,7 +581,6 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         nameEditor.setLabel(constants.hostPopupNameLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         commentEditor.setLabel(constants.commentLabel());
-        labelEditor.setLabel(constants.affinityLabels());
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
@@ -762,6 +758,22 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                 hostedEngineWarningLabel.setVisible(entity.getIsAvailable());
+            }
+        });
+
+        affinityLabelSelectionWidget.getListWidget().init(object.getLabelList());
+
+        object.getLabelList().getItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getLabelList().getSelectedItems() == null) {
+                object.getLabelList().setSelectedItems(new ArrayList<>());
+            }
+
+            affinityLabelSelectionWidget.getListWidget().refreshItems();
+        });
+
+        object.getLabelList().getSelectedItemsChangedEvent().addListener((ev, sender, args) -> {
+            if (object.getLabelList().getSelectedItems() != null) {
+                affinityLabelSelectionWidget.getListWidget().refreshItems();
             }
         });
     }
@@ -1038,5 +1050,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Override
     public HasClickHandlers getKernelCmdlineResetButton() {
         return kernelCmdlineResetButton;
+    }
+
+    @Override
+    public HasClickHandlers getAddAffinityLabelButton() {
+        return affinityLabelSelectionWidget.getSelectionWidget().getAddSelectedItemButton();
     }
 }

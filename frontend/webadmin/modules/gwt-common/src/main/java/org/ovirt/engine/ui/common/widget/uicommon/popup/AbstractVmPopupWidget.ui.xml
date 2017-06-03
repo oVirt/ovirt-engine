@@ -70,7 +70,6 @@
        float: left;
        line-height: 30px;
      }
-
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -748,11 +747,7 @@
         <t:tab>
           <t:DialogTab ui:field="affinityLabelsTab" label="{constants.affinityLabels}">
             <t:content>
-              <b:Container addStyleNames="{style.container}" fluid="true">
-                <b:Row addStyleNames="{style.topElement}">
-                  <e:ListModelMultipleSelectListBoxEditor ui:field="labelEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
-                </b:Row>
-              </b:Container>
+              <w:AffinityLabelSelectionWithListWidget ui:field="affinityLabelSelectionWidget" />
             </t:content>
           </t:DialogTab>
         </t:tab>

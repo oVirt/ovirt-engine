@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -99,5 +100,10 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     @Override
     public HasUiCommandClickHandlers getNumaSupportButton() {
         return ((AbstractVmPopupWidget) getContentWidget()).getNumaSupportButton();
+    }
+
+    @Override
+    public HasClickHandlers getAddAffinityLabelButton() {
+        return ((AbstractVmPopupWidget) getContentWidget()).getAddAffinityLabelButton();
     }
 }

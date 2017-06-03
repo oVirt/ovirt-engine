@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.HasAttachHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasVisibility;
@@ -35,6 +36,8 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         List<HasValidation> getInvalidWidgets();
 
         HasUiCommandClickHandlers getNumaSupportButton();
+
+        HasClickHandlers getAddAffinityLabelButton();
     }
 
     private final ClientStorage clientStorage;
@@ -104,6 +107,8 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         model.getValid().getPropertyChangedEvent().addListener((ev, sender, args) -> switchToAdvancedIfNeeded(model));
 
         registerHandler(getView().getNumaSupportButton().addClickHandler(event -> getView().getNumaSupportButton().getCommand().execute()));
+
+        registerHandler(getView().getAddAffinityLabelButton().addClickHandler(event -> model.addAffinityLabel()));
     }
 
     private void switchToAdvancedIfNeeded(final UnitVmModel model) {

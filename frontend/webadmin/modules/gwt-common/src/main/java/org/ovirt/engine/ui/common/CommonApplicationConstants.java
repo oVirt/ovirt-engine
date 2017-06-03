@@ -1229,6 +1229,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String affinityLabels();
 
+    String affinityLabelsDropDownInstruction();
+
     String copyVmPermissions();
 
     String sealTemplate();

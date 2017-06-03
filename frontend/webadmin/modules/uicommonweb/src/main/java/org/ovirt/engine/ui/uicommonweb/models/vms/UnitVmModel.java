@@ -1861,6 +1861,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }));
     }
 
+    public void addAffinityLabel() {
+        Label label = labelList.getSelectedItem();
+
+        if (!labelList.getSelectedItems().contains(label)) {
+            labelList.getSelectedItems().add(label);
+            labelList.getSelectedItemsChangedEvent().raise(labelList, EventArgs.EMPTY);
+        }
+    }
+
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem) {
         super.initialize();
 

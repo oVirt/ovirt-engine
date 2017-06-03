@@ -1755,6 +1755,10 @@ public interface UIConstants extends Constants {
 
     String noAvailableVms();
 
+    String noAffinityLabelsSelected();
+
+    String selectedAffinityLabels();
+
     String iscsiBondsTitle();
 
     String addIscsiBondTitle();
