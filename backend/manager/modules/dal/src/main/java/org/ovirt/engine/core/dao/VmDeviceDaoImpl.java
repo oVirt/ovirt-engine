@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -103,6 +104,11 @@ public class VmDeviceDaoImpl extends
     @Override
     public List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmBaseId, VmDeviceGeneralType type, String device) {
         return getVmDeviceByVmIdTypeAndDevice(vmBaseId, type, device, null, false);
+    }
+
+    @Override
+    public List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmBaseId, VmDeviceGeneralType type, VmDeviceType device) {
+        return getVmDeviceByVmIdTypeAndDevice(vmBaseId, type, device.getName());
     }
 
     @Override

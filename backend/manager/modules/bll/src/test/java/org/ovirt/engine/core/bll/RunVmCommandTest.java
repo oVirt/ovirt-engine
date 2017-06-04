@@ -367,7 +367,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         rngDevice.setSource(vmRngSource);
         VmDevice rngAsDevice = new VmDevice();
         rngAsDevice.setSpecParams(rngDevice.getSpecParams());
-        when(deviceDao.getVmDeviceByVmIdTypeAndDevice(command.getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO.getName()))
+        when(deviceDao.getVmDeviceByVmIdTypeAndDevice(command.getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO))
                 .thenReturn(Collections.singletonList(rngAsDevice));
 
         assertThat(command.checkRngDeviceClusterCompatibility(), is(clusterReqSources.contains(vmRngSource)));

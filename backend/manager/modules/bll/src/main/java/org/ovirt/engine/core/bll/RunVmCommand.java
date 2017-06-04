@@ -1044,7 +1044,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     boolean checkRngDeviceClusterCompatibility() {
         List<VmDevice> rngDevs =
-                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO.getName());
+                vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(getVmId(), VmDeviceGeneralType.RNG, VmDeviceType.VIRTIO);
 
         if (rngDevs.isEmpty()) {
             return true;

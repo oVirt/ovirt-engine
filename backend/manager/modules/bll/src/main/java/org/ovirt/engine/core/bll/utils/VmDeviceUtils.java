@@ -150,7 +150,7 @@ public class VmDeviceUtils {
         return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.DISK,
-                VmDeviceType.CDROM.getName());
+                VmDeviceType.CDROM);
     }
 
     /**
@@ -225,7 +225,7 @@ public class VmDeviceUtils {
         return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.SMARTCARD,
-                VmDeviceType.SMARTCARD.getName());
+                VmDeviceType.SMARTCARD);
     }
 
     /**
@@ -295,7 +295,7 @@ public class VmDeviceUtils {
         return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.CONSOLE,
-                VmDeviceType.CONSOLE.getName());
+                VmDeviceType.CONSOLE);
     }
 
     /**
@@ -688,7 +688,7 @@ public class VmDeviceUtils {
         return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.CONTROLLER,
-                VmDeviceType.USB.getName());
+                VmDeviceType.USB);
     }
 
     /**
@@ -903,14 +903,14 @@ public class VmDeviceUtils {
         return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.REDIR,
-                VmDeviceType.SPICEVMC.getName());
+                VmDeviceType.SPICEVMC);
     }
 
     public List<VmDevice> getUsbChannels(Guid vmId) {
         return vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vmId,
                 VmDeviceGeneralType.REDIRDEV,
-                VmDeviceType.SPICEVMC.getName());
+                VmDeviceType.SPICEVMC);
     }
 
     /**
@@ -942,7 +942,7 @@ public class VmDeviceUtils {
             // remove spice channel if we are no longer using spice
             List<VmDevice> spiceChannels = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                     vmBase.getId(), VmDeviceGeneralType.CHANNEL,
-                    VmDeviceType.SPICEVMC.getName());
+                    VmDeviceType.SPICEVMC);
             removeVmDevices(spiceChannels);
         }
     }

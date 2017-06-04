@@ -248,7 +248,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     private boolean deviceExists(VmDeviceGeneralType generalType, VmDeviceType deviceType) {
         return !vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
-                getVmTemplateId(), generalType, deviceType.getName()).isEmpty();
+                getVmTemplateId(), generalType, deviceType).isEmpty();
     }
 
     private boolean deviceExists(VmDeviceGeneralType generalType) {

@@ -1110,7 +1110,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         List<VmDevice> disks =
                 vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmDisksSource.getId(),
                         VmDeviceGeneralType.DISK,
-                        VmDeviceType.DISK.getName());
+                        VmDeviceType.DISK);
         getVmDeviceUtils().copyDiskDevices(
                 getVmId(),
                 disks,

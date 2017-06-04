@@ -174,7 +174,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                     vm.getId(),
                     VmDeviceGeneralType.DISK,
-                    VmDeviceType.CDROM.getName());
+                    VmDeviceType.CDROM);
             for (VmDevice vmDevice : vmDevices) {
                 // skip unmanaged devices (handled separately)
                 if (!vmDevice.isManaged()) {
@@ -213,7 +213,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
             List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                     vm.getId(),
                     VmDeviceGeneralType.DISK,
-                    VmDeviceType.FLOPPY.getName());
+                    VmDeviceType.FLOPPY);
             for (VmDevice vmDevice : vmDevices) {
                 // skip unmanaged devices (handled separately)
                 if (!vmDevice.isManaged()) {
@@ -410,13 +410,13 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
                         vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                                 vm.getId(),
                                 VmDeviceGeneralType.INTERFACE,
-                                VmDeviceType.BRIDGE.getName()));
+                                VmDeviceType.BRIDGE));
 
         devicesByDeviceId.putAll(Entities.businessEntitiesById(
                 vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                         vm.getId(),
                         VmDeviceGeneralType.INTERFACE,
-                        VmDeviceType.HOST_DEVICE.getName())));
+                        VmDeviceType.HOST_DEVICE)));
 
         for (VmNic vmInterface : vm.getInterfaces()) {
             // get vm device for this nic from DB
@@ -539,7 +539,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(),
                 VmDeviceGeneralType.BALLOON,
-                VmDeviceType.MEMBALLOON.getName());
+                VmDeviceType.MEMBALLOON);
         for (VmDevice vmDevice : vmDevices) {
             // skip unamanged devices (handled separtely)
             if (!vmDevice.isManaged()) {
@@ -571,7 +571,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(),
                 VmDeviceGeneralType.CONTROLLER,
-                VmDeviceType.VIRTIOSCSI.getName());
+                VmDeviceType.VIRTIOSCSI);
 
         Map<DiskInterface, Integer> controllerIndexMap =
                 ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
@@ -597,7 +597,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(),
                 VmDeviceGeneralType.CONTROLLER,
-                VmDeviceType.VIRTIOSERIAL.getName());
+                VmDeviceType.VIRTIOSERIAL);
 
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
@@ -614,7 +614,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(),
                 VmDeviceGeneralType.RNG,
-                VmDeviceType.VIRTIO.getName());
+                VmDeviceType.VIRTIO);
 
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
@@ -964,7 +964,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(),
                 VmDeviceGeneralType.CONTROLLER,
-                VmDeviceType.USB.getName());
+                VmDeviceType.USB);
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
@@ -988,7 +988,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(),
                 VmDeviceGeneralType.REDIR,
-                VmDeviceType.SPICEVMC.getName());
+                VmDeviceType.SPICEVMC);
 
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();
@@ -1006,7 +1006,7 @@ final class VmInfoBuilderImpl implements VmInfoBuilder {
         List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
                 vm.getId(),
                 VmDeviceGeneralType.SMARTCARD,
-                VmDeviceType.SMARTCARD.getName());
+                VmDeviceType.SMARTCARD);
 
         for (VmDevice vmDevice : vmDevices) {
             Map<String, Object> struct = new HashMap<>();

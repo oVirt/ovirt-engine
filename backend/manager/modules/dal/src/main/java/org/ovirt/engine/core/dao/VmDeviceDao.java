@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface VmDeviceDao extends GenericDao<VmDevice, VmDeviceId>, MassOperationsDao<VmDevice, VmDeviceId> {
@@ -29,6 +30,8 @@ public interface VmDeviceDao extends GenericDao<VmDevice, VmDeviceId>, MassOpera
      * @param vmBaseId VM or template id
      */
     List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmBaseId, VmDeviceGeneralType type, String device);
+
+    List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmBaseId, VmDeviceGeneralType type, VmDeviceType device);
 
     List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId,
             VmDeviceGeneralType type,

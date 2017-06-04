@@ -727,7 +727,7 @@ public class SnapshotsManager {
      */
     private void removeDisksNotInSnapshot(Guid vmId, List<Guid> diskIdsFromSnapshot) {
         for (VmDevice vmDevice : vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(
-                vmId, VmDeviceGeneralType.DISK, VmDeviceType.DISK.getName())) {
+                vmId, VmDeviceGeneralType.DISK, VmDeviceType.DISK)) {
             if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId()) && vmDevice.getSnapshotId() == null) {
                 Disk disk = diskDao.get(vmDevice.getDeviceId());
                 if (disk != null && disk.isAllowSnapshot()) {

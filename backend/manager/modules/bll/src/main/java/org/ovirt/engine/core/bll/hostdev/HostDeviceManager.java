@@ -95,7 +95,7 @@ public class HostDeviceManager implements BackendService {
     private boolean checkVmNeedsHostDevices(Guid vmId) {
         List<VmDevice> vfs = vmDeviceDao.getVmDeviceByVmIdTypeAndDevice(vmId,
                 VmDeviceGeneralType.INTERFACE,
-                VmDeviceType.HOST_DEVICE.getName());
+                VmDeviceType.HOST_DEVICE);
 
         return !vfs.isEmpty() || checkVmNeedsDirectPassthrough(vmId);
     }
