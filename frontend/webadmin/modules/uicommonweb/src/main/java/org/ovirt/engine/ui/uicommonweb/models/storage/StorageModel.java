@@ -316,7 +316,9 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             nfsStorageModel_PathChanged(sender);
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getDiscardAfterDelete()) {
-                ((SanStorageModelBase) getCurrentStorageItem()).updateLunWarningForDiscardAfterDelete();
+                if (getDiscardAfterDelete().getIsAvailable()) {
+                    ((SanStorageModelBase) getCurrentStorageItem()).updateLunWarningForDiscardAfterDelete();
+                }
             }
         }
     }
@@ -626,6 +628,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
             boolean isStorageDomainUnattached = getDataCenter().getSelectedItem().getId().equals(Guid.Empty);
             if (!isBlockDomain || isStorageDomainUnattached) {
                 getDiscardAfterDelete().setIsAvailable(false);
+                getDiscardAfterDelete().setEntity(false);
                 return;
             }
 
@@ -640,6 +643,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                 } else {
                     getDiscardAfterDelete().setEntity(getStorage().isDiscardAfterDelete());
                 }
+            } else {
+                getDiscardAfterDelete().setEntity(false);
             }
         }
     }
