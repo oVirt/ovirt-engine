@@ -71,7 +71,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
     @Override
     public TakesConstrainedValueEditor<T> asEditor() {
         if (editor == null) {
-            editor = TakesConstrainedValueEditor.<T> of(this, this, this);
+            editor = TakesConstrainedValueEditor.of(this, this, this);
         }
         return editor;
     }
