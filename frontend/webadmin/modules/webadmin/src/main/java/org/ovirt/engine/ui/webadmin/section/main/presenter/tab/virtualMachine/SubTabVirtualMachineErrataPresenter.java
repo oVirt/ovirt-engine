@@ -57,7 +57,7 @@ public class SubTabVirtualMachineErrataPresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> errataCountModelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineErrataSubTabLabel(), 9, errataCountModelProvider);
+        return new ModelBoundTabData(constants.virtualMachineErrataSubTabLabel(), 10, errataCountModelProvider);
     }
 
     private final VmErrataCountModel errataCountModel;

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
@@ -37,7 +38,7 @@ public class SubTabVirtualMachineEventPresenter
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineEventSubTabLabel(), 10, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.virtualMachineEventSubTabLabel(), 11, modelProvider, Align.RIGHT);
     }
 
     @Inject

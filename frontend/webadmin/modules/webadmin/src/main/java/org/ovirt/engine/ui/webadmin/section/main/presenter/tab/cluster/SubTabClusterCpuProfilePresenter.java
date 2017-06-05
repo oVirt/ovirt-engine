@@ -38,7 +38,7 @@ public class SubTabClusterCpuProfilePresenter
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider) {
-        return new ModelBoundTabData(constants.cpuProfilesSubTabLabel(), 7,
+        return new ModelBoundTabData(constants.cpuProfilesSubTabLabel(), 8,
                 modelProvider);
     }
 
