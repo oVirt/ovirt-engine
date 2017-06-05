@@ -30,6 +30,7 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -170,8 +171,12 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private boolean canRemoveDiskBasedOnImageStorageCheck() {
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImage);
 
+        if (!validate(new DiskOperationsValidator(diskImage).isOperationAllowedOnDisk(getActionType()))) {
+            return false;
+        }
+
+        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImage);
         if (diskImage.isOvfStore()
                 && !validate(diskImagesValidator.disksInStatus(ImageStatus.ILLEGAL,
                         EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS))) {

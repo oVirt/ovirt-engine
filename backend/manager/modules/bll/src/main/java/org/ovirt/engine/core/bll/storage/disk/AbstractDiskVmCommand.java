@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.storage.connection.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
@@ -184,6 +185,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
 
     protected boolean checkDiskUsedAsOvfStore(DiskValidator diskValidator) {
         return validate(diskValidator.isDiskUsedAsOvfStore());
+    }
+
+    protected boolean checkOperationAllowedOnDiskContentType(Disk disk) {
+        return validate(new DiskOperationsValidator(disk).isOperationAllowedOnDisk(getActionType()));
     }
 
     public String getDiskAlias() {

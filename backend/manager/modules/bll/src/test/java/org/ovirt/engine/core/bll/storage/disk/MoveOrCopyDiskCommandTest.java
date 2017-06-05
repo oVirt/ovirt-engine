@@ -22,6 +22,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -175,11 +176,19 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
     @Test
     public void validateDiskIsOvfStore() {
+        testMoveOrCopyForContentTypeFails(DiskContentType.OVF_STORE);
+    }
+
+    @Test
+    public void testMoveOrCopyMemoryDiskFails() {
+        testMoveOrCopyForContentTypeFails(DiskContentType.MEMORY_DUMP_VOLUME);
+    }
+
+    private void testMoveOrCopyForContentTypeFails(DiskContentType contentType) {
         initializeCommand(new DiskImage());
         initVmDiskImage(false);
-        command.getImage().setContentType(DiskContentType.OVF_STORE);
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
+        command.getImage().setContentType(contentType);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
     }
 
     @Test
@@ -372,6 +381,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
+        doReturn(VdcActionType.MoveOrCopyDisk).when(command).getActionType();
     }
 
     private void initTemplateDiskImage() {

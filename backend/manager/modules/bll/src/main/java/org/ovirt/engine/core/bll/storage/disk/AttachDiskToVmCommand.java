@@ -100,9 +100,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return validate(isHostedEngineDisk);
         }
 
-        DiskValidator diskValidator = getDiskValidator(disk);
-
-        if (!checkDiskUsedAsOvfStore(diskValidator)) {
+        if (!checkOperationAllowedOnDiskContentType(disk)) {
             return false;
         }
 
@@ -143,7 +141,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
         updateDisksFromDb();
 
-        if (getDiskVmElement().isBoot() && !validate(diskValidator.isVmNotContainsBootDisk(getVm()))) {
+        if (getDiskVmElement().isBoot() && !validate(getDiskValidator(disk).isVmNotContainsBootDisk(getVm()))) {
             return false;
         }
 

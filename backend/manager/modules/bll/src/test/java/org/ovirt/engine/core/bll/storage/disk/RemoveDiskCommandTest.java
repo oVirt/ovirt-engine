@@ -15,6 +15,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -74,6 +75,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
 
         doReturn(disk).when(cmd).getDisk();
+        doReturn(VdcActionType.RemoveDisk).when(cmd).getActionType();
     }
 
     protected void setupDisk() {
@@ -165,4 +167,10 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK);
     }
 
+    @Test
+    public void testRemoveMemoryDiskFails() {
+        disk.setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
+        doReturn(disk).when(cmd).getDisk();
+        ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
+    }
 }

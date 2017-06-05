@@ -235,7 +235,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             return validate(isHostedEngineDisk);
         }
 
-        if (!checkDiskUsedAsOvfStore(getOldDisk())) {
+        if (!checkOperationAllowedOnDiskContentType(getOldDisk())) {
             return false;
         }
 

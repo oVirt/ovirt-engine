@@ -422,26 +422,6 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void testUpdateOvfDiskNotSupported() {
-        DiskImage updatedDisk = createDiskImage();
-        updatedDisk.setDiskAlias("Iron");
-
-        DiskImage diskFromDB = createDiskImage();
-        diskFromDB.setDiskAlias("Maiden");
-        diskFromDB.setContentType(DiskContentType.OVF_STORE);
-
-        when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
-
-        initializeCommand();
-
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED)).
-                when(diskValidator).isDiskUsedAsOvfStore();
-
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
-    }
-
-    @Test
     public void testResize() {
         DiskImage oldDisk = createDiskImage();
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
@@ -617,6 +597,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ret.setSucceeded(true);
         when(backend.runInternalAction(eq(VdcActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
         command.init();
+        doReturn(VdcActionType.UpdateVmDisk).when(command).getActionType();
     }
 
     @Test
@@ -770,6 +751,17 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         initializeCommand();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void testUpdateMemoryDiskFails() {
+        DiskImage diskFromDB = createDiskImage();
+        diskFromDB.setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
+        when(diskDao.get(diskImageGuid)).thenReturn(diskFromDB);
+
+        initializeCommand();
+
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
     }
 
     private void mockNullVm() {

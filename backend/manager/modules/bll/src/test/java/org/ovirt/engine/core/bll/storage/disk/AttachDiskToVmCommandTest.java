@@ -19,13 +19,14 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -40,6 +41,7 @@ public class AttachDiskToVmCommandTest {
     private Guid vmId = Guid.newGuid();
     private Guid diskId = Guid.newGuid();
     private Guid storageId = Guid.newGuid();
+    private DiskImage disk = createDiskImage();
 
     @Mock
     private VmDeviceDao vmDeviceDao;
@@ -49,9 +51,6 @@ public class AttachDiskToVmCommandTest {
 
     @Mock
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
-
-    @Mock
-    private DiskValidator diskValidator;
 
     @Mock
     private DiskVmElementValidator diskVmElementValidator;
@@ -82,12 +81,12 @@ public class AttachDiskToVmCommandTest {
         doNothing().when(command).updateDisksFromDb();
         doReturn(mockVm()).when(command).getVm();
 
-        doReturn(createDiskImage()).when(diskHandler).loadActiveDisk(any());
-        doReturn(createDiskImage()).when(diskHandler).loadDiskFromSnapshot(any(), any());
+        doReturn(disk).when(diskHandler).loadActiveDisk(any());
+        doReturn(disk).when(diskHandler).loadDiskFromSnapshot(any(), any());
 
         doReturn(true).when(command).isDiskPassPciAndIdeLimit();
-        doReturn(true).when(command).checkDiskUsedAsOvfStore(diskValidator);
         doReturn(false).when(command).isOperationPerformedOnDiskSnapshot();
+        doReturn(VdcActionType.AttachDiskToVm).when(command).getActionType();
 
         mockStoragePoolIsoMap();
     }
@@ -125,6 +124,13 @@ public class AttachDiskToVmCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
     }
 
+    @Test
+    public void testValidateFailsWhenContentTypeNotSupported() {
+        disk.setContentType(DiskContentType.OVF_STORE);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_DISK_CONTENT_TYPE_NOT_SUPPORTED_FOR_OPERATION);
+    }
+
     private AttachDetachVmDiskParameters createParameters() {
         DiskVmElement dve = new DiskVmElement(diskId, vmId);
         dve.setReadOnly(true);
@@ -145,14 +151,13 @@ public class AttachDiskToVmCommandTest {
         doReturn(storageDomainValidator).when(command).getStorageDomainValidator(any());
     }
 
-    private void mockDiskValidator() {
-        doReturn(diskValidator).when(command).getDiskValidator(any());
+    private void mockDiskVmElementValidator() {
         doReturn(diskVmElementValidator).when(command).getDiskVmElementValidator(any(), any());
     }
 
     private void mockValidators() {
         mockStorageDomainValidator();
-        mockDiskValidator();
+        mockDiskVmElementValidator();
     }
 
     private void mockStoragePoolIsoMap() {
@@ -161,7 +166,7 @@ public class AttachDiskToVmCommandTest {
     }
 
     private DiskImage createDiskImage() {
-        DiskImage disk = new DiskImage();
+        disk = new DiskImage();
         disk.setId(diskId);
         Collections.singletonList(storageId);
         disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageId)));
