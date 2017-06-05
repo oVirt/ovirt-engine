@@ -7,10 +7,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -31,12 +27,8 @@ public class ShellLikeConfdTest {
 
     @Test
     public void testValid() throws Exception {
-
-        List<String> res = new LinkedList<>();
-        for (Map.Entry<String, String> e : config.getProperties().entrySet()) {
-            res.add(String.format("%s=%s", e.getKey(), e.getValue()));
-        }
-        Collections.sort(res);
+        Object[] res = config.getProperties()
+                .entrySet().stream().map(e -> String.format("%s=%s", e.getKey(), e.getValue())).sorted().toArray();
 
         String reference;
         try (InputStream in =
@@ -46,7 +38,7 @@ public class ShellLikeConfdTest {
             int size = in.read(buffer);
             reference = new String(buffer, 0, size, StandardCharsets.UTF_8);
         }
-        assertArrayEquals(reference.split("\n"), res.toArray());
+        assertArrayEquals(reference.split("\n"), res);
     }
 
     @Test(expected = IllegalArgumentException.class)
