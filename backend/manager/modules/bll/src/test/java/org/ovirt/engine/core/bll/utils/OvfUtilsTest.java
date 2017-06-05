@@ -19,7 +19,7 @@ import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 
 public class OvfUtilsTest {
-    private static final String VM_OVF_XML_DATA = "backend/manager/modules/bll/src/test/resources/vmOvfData.xml";
+    private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
 
     @Test
     public void testFetchVmDisks() throws IOException {
