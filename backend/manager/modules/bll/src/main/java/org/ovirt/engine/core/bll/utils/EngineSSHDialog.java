@@ -17,7 +17,7 @@ import org.ovirt.engine.core.uutils.ssh.SSHDialog;
  */
 public class EngineSSHDialog extends SSHDialog {
 
-    VDS _vds;
+    private VDS vds;
 
     public EngineSSHDialog() {
         this(TimeUnit.SECONDS.toMillis(Config.<Integer>getValue(ConfigValues.SSHInactivityTimeoutSeconds)),
@@ -32,7 +32,7 @@ public class EngineSSHDialog extends SSHDialog {
     @Override
     protected SSHClient getSSHClient() {
         EngineSSHClient client = new EngineSSHClient();
-        client.setVds(_vds);
+        client.setVds(vds);
         return client;
     }
 
@@ -40,9 +40,9 @@ public class EngineSSHDialog extends SSHDialog {
      * Setting internal vds object
      */
     public void setVds(VDS vds) throws Exception {
-        _vds = vds;
-        setHost(_vds.getHostName(), _vds.getSshPort());
-        setUser(_vds.getSshUsername());
+        this.vds = vds;
+        setHost(this.vds.getHostName(), this.vds.getSshPort());
+        setUser(this.vds.getSshUsername());
     }
 
     /**

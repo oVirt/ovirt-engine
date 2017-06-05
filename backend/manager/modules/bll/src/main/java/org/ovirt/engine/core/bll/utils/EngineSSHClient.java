@@ -18,7 +18,7 @@ import org.ovirt.engine.core.uutils.ssh.SSHClient;
  */
 public class EngineSSHClient extends SSHClient {
 
-    private VDS _vds;
+    private VDS vds;
 
     /**
      * Constructor.
@@ -38,42 +38,42 @@ public class EngineSSHClient extends SSHClient {
     }
 
     public void setVds(VDS vds) {
-        _vds = vds;
-        if (_vds != null) {
-            setHost(_vds.getHostName(), _vds.getSshPort());
-            setUser(_vds.getSshUsername());
+        this.vds = vds;
+        if (this.vds != null) {
+            setHost(this.vds.getHostName(), this.vds.getSshPort());
+            setUser(this.vds.getSshUsername());
         }
     }
 
     public VDS getVds() {
-        return _vds;
+        return vds;
     }
 
     @Override
     public void connect() throws Exception {
         super.connect();
-        if (_vds != null) {
-            if (StringUtils.isEmpty(_vds.getSshKeyFingerprint())) {
-                _vds.setSshKeyFingerprint(getHostFingerprint());
+        if (vds != null) {
+            if (StringUtils.isEmpty(vds.getSshKeyFingerprint())) {
+                vds.setSshKeyFingerprint(getHostFingerprint());
                 try {
-                    DbFacade.getInstance().getVdsStaticDao().update(_vds.getStaticData());
+                    DbFacade.getInstance().getVdsStaticDao().update(vds.getStaticData());
                 } catch (Exception e) {
                     throw new SecurityException(
                             String.format(
                                 "Couldn't store fingerprint to db for host %s: %s",
-                                _vds.getHostName(),
+                                vds.getHostName(),
                                 e
                          )
                      );
                 }
             } else {
                 StringBuilder actual = new StringBuilder();
-                if (!OpenSSHUtils.checkKeyFingerprint(_vds.getSshKeyFingerprint(), getHostKey(), actual)) {
+                if (!OpenSSHUtils.checkKeyFingerprint(vds.getSshKeyFingerprint(), getHostKey(), actual)) {
                     throw new GeneralSecurityException(
                         String.format(
                             "Invalid fingerprint %s, expected %s",
                             actual,
-                            _vds.getSshKeyFingerprint()
+                            vds.getSshKeyFingerprint()
                         )
                     );
                 }
