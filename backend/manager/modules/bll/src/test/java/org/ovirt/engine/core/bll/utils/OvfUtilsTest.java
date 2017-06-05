@@ -51,7 +51,7 @@ public class OvfUtilsTest {
             XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
             List<UnregisteredDisk> unregDisks = new ArrayList<>();
             UnregisteredDisk unregDisk = new UnregisteredDisk();
-            unregDisk.getDiskImage().setId(Guid.createGuidFromString("f934b12c-1e22-4ad8-bbce-ec0b2a5defa4"));
+            unregDisk.getDiskImage().setId(Guid.createGuidFromString("8c634412-1e8b-4ef3-bc40-b67a456e9d2f"));
             unregDisk.getDiskImage()
                     .setStorageIds(new ArrayList<>(Collections.singletonList(Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588"))));
             unregDisks.add(unregDisk);
