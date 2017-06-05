@@ -80,11 +80,9 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
-import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
 import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipWidth;
@@ -956,8 +954,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // Contains a special parser/renderer
         memSizeEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
-        minAllocatedMemoryEditor = new EntityModelTextBoxEditor<>(
-                new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
+        minAllocatedMemoryEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
         numOfIoThreadsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
