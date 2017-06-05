@@ -73,6 +73,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
             getParameters().setVmId(vmToAttach);
             getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
             getParameters().setVmPrestarted(vmPrestarted);
+            getParameters().setNonPrestartedVmLocked(!vmPrestarted);
         }
 
         setVmId(getParameters().getVmId());
@@ -333,11 +334,13 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
     }
 
     @Override
-    protected void freeCustomLocks() {
+    protected void freeLock() {
+        super.freeLock();
         if (getCommandStatus() == CommandStatus.ENDED_WITH_FAILURE && !Guid.Empty.equals(getVmId())
-                && !getParameters().isVmPrestarted()) {
+                && getParameters().isNonPrestartedVmLocked()) {
             EngineLock runLock = vmPoolHandler.createLock(getVmId());
             lockManager.releaseLock(runLock);
+            getParameters().setNonPrestartedVmLocked(false);
             log.info("VM lock freed: {}", runLock);
         }
     }
