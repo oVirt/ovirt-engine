@@ -962,16 +962,17 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     private ArrayList<LunModel> getLuns(boolean selectedLuns, boolean includedLuns) {
         ArrayList<LunModel> luns = new ArrayList<>();
-        if (getIsGrouppedByTarget()) {
-            List<SanTargetModel> items = (List<SanTargetModel>) getItems();
-            for (SanTargetModel item : items) {
-                luns.addAll(getAddedLuns(item.getLuns(), selectedLuns, includedLuns));
+        if (getItems() != null) {
+            if (getIsGrouppedByTarget()) {
+                List<SanTargetModel> items = (List<SanTargetModel>) getItems();
+                for (SanTargetModel item : items) {
+                    luns.addAll(getAddedLuns(item.getLuns(), selectedLuns, includedLuns));
+                }
+            } else {
+                List<LunModel> items = (List<LunModel>) getItems();
+                luns.addAll(getAddedLuns(items, selectedLuns, includedLuns));
             }
-        } else {
-            List<LunModel> items = (List<LunModel>) getItems();
-            luns.addAll(getAddedLuns(items, selectedLuns, includedLuns));
         }
-
         return luns;
     }
 
