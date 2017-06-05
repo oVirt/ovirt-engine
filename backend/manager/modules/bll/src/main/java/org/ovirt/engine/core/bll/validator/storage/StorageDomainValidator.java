@@ -365,15 +365,17 @@ public class StorageDomainValidator {
         StorageDomainType storageDomainFunction = storageDomain.getStorageDomainType();
         boolean validationSucceeded = true;
 
+        if (storageFormat == null) {
+            validationSucceeded = false;
+        }
         // V2 is applicable only for block data storage domains
-        if (storageFormat == StorageFormatType.V2) {
+        if (validationSucceeded && storageFormat == StorageFormatType.V2) {
             if ( !(storageDomainFunction.isDataDomain() && storageType.isBlockDomain()) ) {
                 validationSucceeded = false;
             }
         }
-
-        // Above V3 is applicable only for data storage domains
-        if (storageFormat.compareTo(StorageFormatType.V3) >= 0) {
+        if (validationSucceeded && storageFormat.compareTo(StorageFormatType.V3) >= 0) {
+            // Above V3 is applicable only for data storage domains
             if (!storageDomainFunction.isDataDomain()) {
                 validationSucceeded = false;
             }
