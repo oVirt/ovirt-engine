@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.utils;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -26,15 +27,9 @@ public class EngineSSHClient extends SSHClient {
     public EngineSSHClient() {
         super();
         setHardTimeout(
-            Config.<Integer>getValue(
-                ConfigValues.SSHInactivityHardTimeoutSeconds
-            ) * 1000
-        );
+                TimeUnit.SECONDS.toMillis(Config.<Integer>getValue(ConfigValues.SSHInactivityHardTimeoutSeconds)));
         setSoftTimeout(
-            Config.<Integer>getValue(
-                ConfigValues.SSHInactivityTimeoutSeconds
-            ) * 1000
-        );
+                TimeUnit.SECONDS.toMillis(Config.<Integer>getValue(ConfigValues.SSHInactivityTimeoutSeconds)));
     }
 
     public void setVds(VDS vds) {
