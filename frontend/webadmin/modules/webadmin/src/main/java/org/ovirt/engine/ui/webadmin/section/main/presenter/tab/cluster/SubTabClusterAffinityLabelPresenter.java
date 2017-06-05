@@ -37,7 +37,7 @@ public class SubTabClusterAffinityLabelPresenter
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(SearchableDetailModelProvider<Label, ClusterListModel<Void>,
             ClusterAffinityLabelListModel> modelProvider) {
-        return new ModelBoundTabData(constants.affinityLabelsSubTabLabel(), 9, modelProvider);
+        return new ModelBoundTabData(constants.affinityLabelsSubTabLabel(), 7, modelProvider);
     }
 
     @Inject

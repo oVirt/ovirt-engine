@@ -37,7 +37,7 @@ public class SubTabVirtualMachineAffinityLabelPresenter
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<Label, VmListModel<Void>, VmAffinityLabelListModel> modelProvider) {
-        return new ModelBoundTabData(constants.affinityLabelsSubTabLabel(), 13, modelProvider);
+        return new ModelBoundTabData(constants.affinityLabelsSubTabLabel(), 8, modelProvider);
     }
 
     @Inject

@@ -37,7 +37,7 @@ public class SubTabClusterPermissionPresenter
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(
             SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>> modelProvider) {
-        return new ModelBoundTabData(constants.clusterPermissionSubTabLabel(), 8, modelProvider);
+        return new ModelBoundTabData(constants.clusterPermissionSubTabLabel(), 9, modelProvider);
     }
 
     @Inject
