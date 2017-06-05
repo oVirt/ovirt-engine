@@ -9,6 +9,7 @@ public class AttachUserToVmFromPoolAndRunParameters extends VmPoolUserParameters
     private static final long serialVersionUID = -5672324868972973061L;
 
     private boolean vmPrestarted;
+    private boolean nonPrestartedVmLocked;
 
     public AttachUserToVmFromPoolAndRunParameters() {
     }
@@ -23,6 +24,14 @@ public class AttachUserToVmFromPoolAndRunParameters extends VmPoolUserParameters
 
     public void setVmPrestarted(boolean vmPrestarted) {
         this.vmPrestarted = vmPrestarted;
+    }
+
+    public boolean isNonPrestartedVmLocked() {
+        return nonPrestartedVmLocked;
+    }
+
+    public void setNonPrestartedVmLocked(boolean nonPrestartedVmLocked) {
+        this.nonPrestartedVmLocked = nonPrestartedVmLocked;
     }
 
 }
