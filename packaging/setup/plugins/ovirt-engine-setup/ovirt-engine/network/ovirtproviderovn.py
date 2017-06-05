@@ -68,6 +68,7 @@ class Plugin(plugin.PluginBase):
     """ovirt-provider-ovn plugin."""
 
     OVN_PACKAGES = (
+        'pyOpenSSL',
         'openvswitch',
         'openvswitch-ovn-common',
         'openvswitch-ovn-central',
@@ -85,7 +86,7 @@ class Plugin(plugin.PluginBase):
     OVN_NORTH_DB_CONFIG = OvnDbConfig(
         'OVN NORTH DB',
         '6641',
-        CONNECTION_TCP,
+        CONNECTION_SSL,
         'ovn-nbctl',
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_KEY,
         oenginecons.OvnFileLocations.OVIRT_PROVIDER_OVN_NDB_CERT,
