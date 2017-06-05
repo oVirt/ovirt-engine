@@ -552,6 +552,18 @@ class Plugin(plugin.PluginBase):
             )
         )
 
+    def _is_provider_installed(self):
+        # TODO: we currently only check against installations done by
+        # engine-setup
+        # In the future we should also add a check against manual installation
+        if self.environment.get(
+            OvnEnv.OVIRT_PROVIDER_ID
+        ):
+            self.logger.info(_(
+                'ovirt-provider-ovn already installed, skipping.'))
+            return True
+        return False
+
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
@@ -562,12 +574,15 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _customization(self):
-        if self.environment.get(
+        do_install = self.environment.get(
             OvnEnv.OVIRT_PROVIDER_OVN
-        ) is not None:
+        )
+
+        if self._is_provider_installed() or do_install is False:
             self._enabled = False
             return
-        self._enabled = self._query_install_ovn()
+
+        self._enabled = do_install or self._query_install_ovn()
 
         self.environment[
             OvnEnv.OVIRT_PROVIDER_OVN

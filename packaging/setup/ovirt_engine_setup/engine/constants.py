@@ -835,8 +835,6 @@ class OvnEnv(object):
         answerfile=True,
         description=_('Set up ovirt-provider-ovn'),
         summary=True,
-        postinstallfile=True,
-        reconfigurable=True,
     )
     def OVIRT_PROVIDER_OVN(self):
         return 'OVESETUP_OVN/ovirtProviderOvn'
