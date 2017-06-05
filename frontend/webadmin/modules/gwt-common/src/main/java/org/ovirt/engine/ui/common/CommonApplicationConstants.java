@@ -1221,6 +1221,12 @@ public interface CommonApplicationConstants extends Constants {
 
     String optimizedFor();
 
+    String addItemButtonLabel();
+
+    String selectItemLabel();
+
+    String selectItemTooltip();
+
     String affinityLabels();
 
     String copyVmPermissions();
