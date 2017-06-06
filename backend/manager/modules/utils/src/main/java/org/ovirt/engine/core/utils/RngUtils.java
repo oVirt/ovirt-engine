@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.compat.Version;
 
 public class RngUtils {
 
@@ -15,7 +14,7 @@ public class RngUtils {
      * Checks whether it is ok to have {@code rngDevice} assigned to a VM / Template with {@code effectiveVersion}
      * in {@code cluster}.
      */
-    public static RngValidationResult validate(Cluster cluster, VmRngDevice rngDevice, Version effectiveVersion) {
+    public static RngValidationResult validate(Cluster cluster, VmRngDevice rngDevice) {
         VmRngDevice.Source source = rngDevice.getSource();
 
         if (cluster == null) {

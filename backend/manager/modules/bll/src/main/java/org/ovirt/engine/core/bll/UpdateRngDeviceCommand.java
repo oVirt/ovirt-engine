@@ -29,7 +29,7 @@ public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDevicePa
 
         if (getTemplateType() != VmEntityType.INSTANCE_TYPE && !isBlankTemplate()) {
             if (!validate(getVirtioRngValidator().canAddRngDevice(
-                    getCluster(), getParameters().getRngDevice(), getCachedEntity().getCustomCompatibilityVersion()))) {
+                    getCluster(), getParameters().getRngDevice()))) {
                 return false;
             }
         }

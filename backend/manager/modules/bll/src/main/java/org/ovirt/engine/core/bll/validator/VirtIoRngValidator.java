@@ -4,7 +4,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.RngUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +20,9 @@ public class VirtIoRngValidator {
      * valid even if not present in {@link Cluster#getRequiredRngSources()}. This exception allows to change rng source
      * according to custom compatibility level. Warning is printed in this case.</p>
      *
-     * @param effectiveVersion of vm-like entity the rng device will be assigned to
      */
-    public ValidationResult canAddRngDevice(Cluster cluster, VmRngDevice rngDevice, Version effectiveVersion) {
-        final RngUtils.RngValidationResult rngValidationResult = RngUtils.validate(cluster, rngDevice, effectiveVersion);
+    public ValidationResult canAddRngDevice(Cluster cluster, VmRngDevice rngDevice) {
+        final RngUtils.RngValidationResult rngValidationResult = RngUtils.validate(cluster, rngDevice);
         switch (rngValidationResult) {
             case VALID:
                 return ValidationResult.VALID;

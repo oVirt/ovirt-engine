@@ -1054,7 +1054,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         VmRngDevice rngDevice = new VmRngDevice(rngDevs.get(0));
         final RngUtils.RngValidationResult rngValidationResult =
-                RngUtils.validate(getCluster(), rngDevice, getVm().getCompatibilityVersion());
+                RngUtils.validate(getCluster(), rngDevice);
         switch (rngValidationResult) {
             case VALID:
                 return true;

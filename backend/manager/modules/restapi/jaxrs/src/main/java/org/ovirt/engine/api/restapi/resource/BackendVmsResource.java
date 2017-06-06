@@ -446,7 +446,7 @@ public class BackendVmsResource extends
             rngDevice.updateSourceByVersion(effectiveVersion);
             boolean supported = EnumSet.of(
                     RngUtils.RngValidationResult.VALID, RngUtils.RngValidationResult.UNSUPPORTED_URANDOM_OR_RANDOM)
-                    .contains(RngUtils.validate(cluster, rngDevice, effectiveVersion));
+                    .contains(RngUtils.validate(cluster, rngDevice));
             if (shouldCopyDevice(supported, templateId, instanceTypeId)) {
                 params.setUpdateRngDevice(true);
                 params.setRngDevice(rngDevice);
