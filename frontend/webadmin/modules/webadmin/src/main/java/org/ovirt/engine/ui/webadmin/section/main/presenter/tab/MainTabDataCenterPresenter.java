@@ -57,7 +57,7 @@ public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresen
     @Inject
     public MainTabDataCenterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<StoragePool, DataCenterListModel> modelProvider,
-            SearchPanelPresenterWidget<DataCenterListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<StoragePool, DataCenterListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<StoragePool, DataCenterListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

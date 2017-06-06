@@ -61,7 +61,7 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
             ProxyDef proxy,
             PlaceManager placeManager,
             MainModelProvider<NetworkView, NetworkListModel> modelProvider,
-            SearchPanelPresenterWidget<NetworkListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<NetworkView, NetworkListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<NetworkView, NetworkListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

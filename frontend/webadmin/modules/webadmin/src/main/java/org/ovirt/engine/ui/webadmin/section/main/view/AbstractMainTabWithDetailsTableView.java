@@ -81,7 +81,10 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
     @Override
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == AbstractMainTabWithDetailsPresenter.TYPE_SetSearchPanel) {
-            actionPanel.setSearchPanel(content);
+            if (content != null) {
+                actionPanel.setSearchPanel(content);
+                actionPanel.setVisible(true);
+            }
         } else {
             super.setInSlot(slot, content);
         }

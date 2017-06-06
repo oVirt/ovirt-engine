@@ -56,7 +56,7 @@ public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter
     @Inject
     public MainTabStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<StorageDomain, StorageListModel> dataProvider,
-            SearchPanelPresenterWidget<StorageListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<StorageDomain, StorageListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<StorageDomain, StorageListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, dataProvider, searchPanelPresenterWidget, breadCrumbs);
     }

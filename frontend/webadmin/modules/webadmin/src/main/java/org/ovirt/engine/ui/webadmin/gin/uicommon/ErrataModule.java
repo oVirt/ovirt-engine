@@ -54,6 +54,5 @@ public class ErrataModule extends AbstractGinModule {
     protected void configure() {
         bind(EngineErrataListModel.class).in(Singleton.class);
         bind(ErrataMainTabSelectedItems.class).asEagerSingleton();
-}
-
+    }
 }

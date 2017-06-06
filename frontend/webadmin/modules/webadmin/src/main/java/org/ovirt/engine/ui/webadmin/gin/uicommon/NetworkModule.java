@@ -343,7 +343,6 @@ public class NetworkModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<NetworkView, NetworkListModel>>(){}).in(Singleton.class);
-
     }
 
 }

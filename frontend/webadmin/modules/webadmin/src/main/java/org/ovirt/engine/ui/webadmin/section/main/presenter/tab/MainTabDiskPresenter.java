@@ -64,7 +64,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     @Inject
     public MainTabDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Disk, DiskListModel> modelProvider,
-            SearchPanelPresenterWidget<DiskListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<Disk, DiskListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<Disk, DiskListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

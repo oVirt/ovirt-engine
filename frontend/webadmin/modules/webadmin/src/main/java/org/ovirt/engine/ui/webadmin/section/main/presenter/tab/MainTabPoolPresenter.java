@@ -56,7 +56,7 @@ public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<Vm
     @Inject
     public MainTabPoolPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VmPool, PoolListModel> modelProvider,
-            SearchPanelPresenterWidget<PoolListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<VmPool, PoolListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<VmPool, PoolListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

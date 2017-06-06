@@ -487,6 +487,5 @@ public class DataCenterModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DataCenterListModel, PermissionListModel<StoragePool>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<StoragePool, DataCenterListModel>>(){}).in(Singleton.class);
-
     }
 }

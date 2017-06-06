@@ -313,12 +313,21 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
             if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
                 ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
                 String groupName = group.getElement().getAttribute(GROUP_NAME);
-                if (title != null && group.getWidgetCount() > 2) {
-                    FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
-                    if (markSecondaryMenuActive(title, href, (ListGroup) groupContainer.getWidget(1), groupName)) {
-                        group.addStyleName(Styles.ACTIVE);
-                    } else {
-                        group.removeStyleName(Styles.ACTIVE);
+                if (title != null) {
+                    if (group.getWidgetCount() > 2) {
+                        FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
+                        if (markSecondaryMenuActive(title, href, (ListGroup) groupContainer.getWidget(1), groupName)) {
+                            group.addStyleName(Styles.ACTIVE);
+                        } else {
+                            group.removeStyleName(Styles.ACTIVE);
+                        }
+                    } else if (group.getWidgetCount() > 1) {
+                        Anchor groupAnchor = (Anchor) group.getWidget(1);
+                        if (groupAnchor.getHref().endsWith(href)) {
+                            group.addStyleName(Styles.ACTIVE);
+                        } else {
+                            group.removeStyleName(Styles.ACTIVE);
+                        }
                     }
                 }
             }

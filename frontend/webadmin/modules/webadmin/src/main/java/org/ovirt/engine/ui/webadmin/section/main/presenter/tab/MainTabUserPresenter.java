@@ -58,7 +58,7 @@ public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<Db
     @Inject
     public MainTabUserPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<DbUser, UserListModel> modelProvider,
-            SearchPanelPresenterWidget<UserListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<DbUser, UserListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<DbUser, UserListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

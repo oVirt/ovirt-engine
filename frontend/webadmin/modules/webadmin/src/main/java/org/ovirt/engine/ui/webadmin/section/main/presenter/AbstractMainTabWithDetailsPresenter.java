@@ -2,17 +2,25 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
+import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
+import com.google.gwt.event.shared.HasHandlers;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -44,13 +52,16 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetSearchPanel = new Type<>();
 
-    private final SearchPanelPresenterWidget<M> searchPanelPresenterWidget;
+    private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
 
     private final OvirtBreadCrumbs<T, M> breadCrumbs;
 
+    @Inject
+    private SearchStringCollector searchStringCollector;
+
     public AbstractMainTabWithDetailsPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
-            SearchPanelPresenterWidget<M> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget,
             OvirtBreadCrumbs<T, M> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider);
         this.searchPanelPresenterWidget = searchPanelPresenterWidget;
@@ -78,7 +89,29 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
                         handlePlaceTransition();
                     }
                 }));
+        registerHandler(getEventBus().addHandler(ApplySearchStringEvent.getType(), event -> {
+            applySearchString(event.getSearchString());
+        }));
         getView().setDetailPlaceTransitionHandler(this);
+        String searchString = searchStringCollector.getSearchStringPrefix(modelProvider.getModel().getSearchString());
+        if (searchString != null) {
+            // Someone set search string before we were instantiated, update the search string.
+            applySearchString(searchString);
+        }
+    }
+
+    private void applySearchString(String searchString) {
+        if (modelProvider.getModel() instanceof SearchableListModel) {
+            @SuppressWarnings("unchecked")
+            SearchableListModel<?, ? extends EntityModel<?>> listModel = modelProvider.getModel();
+            if (!StringUtils.isEmpty(searchString)
+                    && searchString.startsWith(listModel.getDefaultSearchString())) {
+                // search string for this model found.
+                listModel.setSearchString(searchString);
+                listModel.getSearchCommand().execute();
+                MainModelSelectionChangeEvent.fire((HasHandlers) getEventBus(), listModel);
+            }
+        }
     }
 
     public void handlePlaceTransition() {
@@ -143,7 +176,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         getTable().getSelectionModel().clear();
     }
 
-    public SearchPanelPresenterWidget<?> getSearchPanelPresenterWidget() {
+    public SearchPanelPresenterWidget<?, ?> getSearchPanelPresenterWidget() {
         return searchPanelPresenterWidget;
     }
 

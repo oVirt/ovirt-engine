@@ -387,7 +387,6 @@ public class HostModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {}).in(Singleton.class);
-
     }
 
 }

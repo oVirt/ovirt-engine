@@ -57,7 +57,7 @@ public class MainTabProviderPresenter extends AbstractMainTabWithDetailsPresente
     @Inject
     public MainTabProviderPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Provider, ProviderListModel> modelProvider,
-            SearchPanelPresenterWidget<ProviderListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<Provider, ProviderListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<Provider, ProviderListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

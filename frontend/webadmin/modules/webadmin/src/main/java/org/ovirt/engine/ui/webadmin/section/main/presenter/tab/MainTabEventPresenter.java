@@ -57,16 +57,9 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
     @Inject
     public MainTabEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel<Void>> modelProvider,
-            SearchPanelPresenterWidget<EventListModel<Void>> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<AuditLog, EventListModel<Void>> searchPanelPresenterWidget,
             OvirtBreadCrumbs<AuditLog, EventListModel<Void>> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
-    }
-
-    @Override
-    protected void onReveal() {
-        super.onReveal();
-
-        setSubTabPanelVisible(false);
     }
 
     @Override

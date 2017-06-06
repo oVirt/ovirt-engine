@@ -50,7 +50,7 @@ public class MainTabSessionPresenter extends AbstractMainTabWithDetailsPresenter
             ProxyDef proxy,
             PlaceManager placeManager,
             MainModelProvider<UserSession, SessionListModel> modelProvider,
-            SearchPanelPresenterWidget<SessionListModel> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<UserSession, SessionListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbs<UserSession, SessionListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

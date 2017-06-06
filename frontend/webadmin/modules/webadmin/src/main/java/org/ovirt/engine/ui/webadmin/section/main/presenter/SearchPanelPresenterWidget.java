@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -20,7 +21,7 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
-public class SearchPanelPresenterWidget<M extends SearchableListModel> extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> {
+public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> {
 
     public interface ViewDef<M extends SearchableListModel> extends View {
 
@@ -53,10 +54,10 @@ public class SearchPanelPresenterWidget<M extends SearchableListModel> extends P
     private final BookmarkModelProvider bookmarkModelProvider;
 
     @Inject
-    public SearchPanelPresenterWidget(EventBus eventBus, ViewDef<M> view, M model,
+    public SearchPanelPresenterWidget(EventBus eventBus, ViewDef<M> view, MainModelProvider<T, M> modelProvider,
             BookmarkModelProvider bookmarkModelProvider) {
         super(eventBus, view);
-        this.model = model;
+        this.model = modelProvider.getModel();
         this.bookmarkModelProvider = bookmarkModelProvider;
         addModelListeners();
         updateViewSearchStringPrefix();
@@ -125,7 +126,9 @@ public class SearchPanelPresenterWidget<M extends SearchableListModel> extends P
             tagString.add(tagModel.getName().getEntity());
         }
         model.setTagStrings(tagString);
-        model.executeCommand(model.getSearchCommand());
+        if (isVisible()) {
+            model.executeCommand(model.getSearchCommand());
+        }
     }
 
 }

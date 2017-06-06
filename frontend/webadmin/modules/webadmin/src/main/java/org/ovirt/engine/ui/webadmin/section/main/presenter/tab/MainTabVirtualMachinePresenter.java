@@ -61,7 +61,7 @@ public class MainTabVirtualMachinePresenter
     @Inject
     public MainTabVirtualMachinePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VM, VmListModel<Void>> modelProvider,
-            SearchPanelPresenterWidget<VmListModel<Void>> searchPanelPresenterWidget,
+            SearchPanelPresenterWidget<VM, VmListModel<Void>> searchPanelPresenterWidget,
             OvirtBreadCrumbs<VM, VmListModel<Void>> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }

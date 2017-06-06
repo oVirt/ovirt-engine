@@ -24,8 +24,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -43,7 +43,10 @@ public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditL
     RadioButton advancedViewButton;
 
     @UiField
-    SimplePanel tablePanel;
+    FlowPanel radioButtonPanel;
+
+    @UiField
+    FlowPanel tablePanel;
 
     protected DetailsTransitionHandler<AuditLog> detailsTransitionHandler;
 
@@ -59,9 +62,10 @@ public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditL
         initTable();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        getTable().setTableOverhead(radioButtonPanel);
         localize();
 
-        tablePanel.setWidget(getTable());
+        tablePanel.add(getTable());
         basicViewButton.setValue(true);
     }
 

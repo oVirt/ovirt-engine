@@ -9,11 +9,11 @@
     </ui:style>
 
     <g:FlowPanel>
-        <g:FlowPanel>
+        <g:FlowPanel ui:field="radioButtonPanel">
             <g:RadioButton ui:field="basicViewButton" name="view" addStyleNames="{style.viewButton}" />
             <g:RadioButton ui:field="advancedViewButton" name="view" addStyleNames="{style.viewButton}" />
         </g:FlowPanel>
-        <g:SimplePanel ui:field="tablePanel" />
+        <g:FlowPanel ui:field="tablePanel" />
     </g:FlowPanel>
 
 </ui:UiBinder>
