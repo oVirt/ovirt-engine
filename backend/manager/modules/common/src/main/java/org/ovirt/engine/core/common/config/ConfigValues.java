@@ -676,7 +676,8 @@ public enum ConfigValues {
             "sndbuf=^[0-9]+$;" +
             "vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;" +
             "viodiskcache=^(none|writeback|writethrough)$;" +
-            "mdev_type=^.*$")
+            "mdev_type=^.*$;" +
+            "hugepages=^[0-9]+$")
     PredefinedVMProperties,
 
     @TypeConverterAttribute(Integer.class)
