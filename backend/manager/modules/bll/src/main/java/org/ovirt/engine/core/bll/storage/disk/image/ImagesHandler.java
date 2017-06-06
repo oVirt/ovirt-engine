@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -236,9 +235,7 @@ public final class ImagesHandler {
      * @return map object is the collection is not null
      */
     public static Map<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> diskImages) {
-        return Optional.ofNullable(diskImages)
-                .map(images -> images.stream().collect(Collectors.toMap(d -> d.getImageId(), Function.identity())))
-                .orElse(new HashMap<>());
+        return diskImages.stream().collect(Collectors.toMap(d -> d.getImageId(), Function.identity()));
     }
 
     /**
@@ -276,9 +273,7 @@ public final class ImagesHandler {
      * @return list of image IDs ordered by the order of the retrieved list.
      */
     public static List<Guid> getDiskImageIds(List<DiskImage> diskImages) {
-        return Optional.ofNullable(diskImages)
-                .map(images -> diskImages.stream().map(DiskImage::getImageId)
-                        .collect(Collectors.toList())).orElse(new ArrayList<>());
+        return diskImages.stream().map(DiskImage::getImageId).collect(Collectors.toList());
     }
 
     /**
