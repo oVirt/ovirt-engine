@@ -116,10 +116,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
-        boolean localFs = isLocalFs(dom);
-        if (getParameters().getDoFormat() && !localFs && isStorageDomainAttached(dom)) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
-        }
 
         VDS vds = getVds();
         StorageDomainToPoolRelationValidator domainPoolValidator = createDomainToPoolValidator(dom);
@@ -128,12 +124,17 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
+        boolean localFs = isLocalFs(dom);
         if (!localFs && !validate(domainPoolValidator.isStorageDomainNotInAnyPool())) {
             return false;
         }
 
         if (localFs && isDomainAttached(dom) && !canDetachDomain(getParameters().getDestroyingPool(), false)) {
             return false;
+        }
+
+        if (getParameters().getDoFormat() && !localFs && isStorageDomainAttached(dom)) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
         }
 
         if (vds == null) {
