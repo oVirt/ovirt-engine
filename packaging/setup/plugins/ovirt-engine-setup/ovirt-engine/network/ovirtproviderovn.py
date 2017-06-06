@@ -72,7 +72,7 @@ class Plugin(plugin.PluginBase):
     OVN_PACKAGES = (
         'openvswitch',
         'openvswitch-ovn-common',
-        'openvswitch-ovn-host',
+        'openvswitch-ovn-central',
         'python-openvswitch',
         'ovirt-provider-ovn',
     )
