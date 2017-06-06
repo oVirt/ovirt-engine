@@ -565,9 +565,7 @@ public final class ImagesHandler {
             images.remove(images.get(pos));
         }
 
-        for (DiskImage image : hold) {
-            images.add(image);
-        }
+        images.addAll(hold);
     }
 
     // function return the index of image that is its child
