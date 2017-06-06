@@ -9,7 +9,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -27,13 +30,11 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
@@ -85,17 +86,18 @@ public final class ImagesHandler {
         fillImagesMapBasedOnTemplate(template, domains, diskInfoDestinationMap, destStorages);
     }
 
+    private static boolean isDomainValidDestination(StorageDomain storageDomain) {
+        StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
+        return validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid();
+    }
+
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
             List<StorageDomain> domains,
             Map<Guid, DiskImage> diskInfoDestinationMap,
             Map<Guid, StorageDomain> destStorages) {
-        Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
-        for (StorageDomain storageDomain : domains) {
-            StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-            if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()) {
-                storageDomainsMap.put(storageDomain.getId(), storageDomain);
-            }
-        }
+        Map<Guid, StorageDomain> storageDomainsMap = domains.stream().filter(ImagesHandler::isDomainValidDestination)
+                .collect(Collectors.toMap(StorageDomain::getId, Function.identity()));
+
         for (DiskImage image : template.getDiskTemplateMap().values()) {
             for (Guid storageId : image.getStorageIds()) {
                 if (storageDomainsMap.containsKey(storageId)) {
@@ -109,10 +111,9 @@ public final class ImagesHandler {
         }
 
         if (destStorages != null) {
-            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-                Guid storageDomainId = diskImage.getStorageIds().get(0);
-                destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
-            }
+            destStorages.putAll(diskInfoDestinationMap.values().stream()
+                    .collect(Collectors.toMap(d -> d.getStorageIds().get(0),
+                            d -> storageDomainsMap.get(d.getStorageIds().get(0)))));
         }
     }
 
@@ -235,13 +236,9 @@ public final class ImagesHandler {
      * @return map object is the collection is not null
      */
     public static Map<Guid, DiskImage> getDiskImagesByIdMap(Collection<DiskImage> diskImages) {
-        Map<Guid, DiskImage> result = new HashMap<>();
-        if (diskImages != null) {
-            for (DiskImage diskImage : diskImages) {
-                result.put(diskImage.getImageId(), diskImage);
-            }
-        }
-        return result;
+        return Optional.ofNullable(diskImages)
+                .map(images -> images.stream().collect(Collectors.toMap(d -> d.getImageId(), Function.identity())))
+                .orElse(new HashMap<>());
     }
 
     /**
@@ -279,13 +276,9 @@ public final class ImagesHandler {
      * @return list of image IDs ordered by the order of the retrieved list.
      */
     public static List<Guid> getDiskImageIds(List<DiskImage> diskImages) {
-        List<Guid> result = new ArrayList<>();
-        if (diskImages != null) {
-            for (DiskImage diskImage : diskImages) {
-                result.add(diskImage.getImageId());
-            }
-        }
-        return result;
+        return Optional.ofNullable(diskImages)
+                .map(images -> diskImages.stream().map(DiskImage::getImageId)
+                        .collect(Collectors.toList())).orElse(new ArrayList<>());
     }
 
     /**
@@ -419,14 +412,8 @@ public final class ImagesHandler {
         return imageStorageDomainMap;
     }
 
-    public static boolean isImagesExists(Iterable<DiskImage> images, Guid storagePoolId) {
-        for (DiskImage image : images) {
-            DiskImage fromIrs = isImageExist(storagePoolId, image);
-            if (fromIrs == null) {
-                return false;
-            }
-        }
-        return true;
+    public static boolean isImagesExists(List<DiskImage> images, Guid storagePoolId) {
+        return images.stream().allMatch(image -> isImageExist(storagePoolId, image) != null);
     }
 
     private static DiskImage isImageExist(Guid storagePoolId, DiskImage image) {
@@ -469,17 +456,9 @@ public final class ImagesHandler {
     public static boolean checkImagesConfiguration(Guid storageDomainId,
             Collection<? extends Disk> disksConfigList,
             List<String> messages) {
-        boolean result = true;
         StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
-        for (Disk diskInfo : disksConfigList) {
-            if (DiskStorageType.IMAGE == diskInfo.getDiskStorageType()) {
-                result = checkImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);
-            }
-            if (!result) {
-                break;
-            }
-        }
-        return result;
+        return !disksConfigList.stream().filter(DisksFilter.ONLY_IMAGES)
+                .anyMatch(disk -> !checkImageConfiguration(storageDomain, (DiskImage) disk, messages));
     }
 
     public static Map<Guid, Set<Guid>> findDomainsInApplicableStatusForDisks(Iterable<DiskImage> diskImages,
@@ -504,22 +483,16 @@ public final class ImagesHandler {
      * @return A unique {@link Set} of all the storage domain IDs relevant to all the given images
      */
     public static Set<Guid> getAllStorageIdsForImageIds(Collection<DiskImage> images) {
-        Set<Guid> domainsIds = new HashSet<>();
-        for (DiskImage image : images) {
-            domainsIds.addAll(image.getStorageIds());
-        }
-        return domainsIds;
+        return images.stream().flatMap(image -> image.getStorageIds().stream()).collect(Collectors.toSet());
     }
 
     public static void fillImagesBySnapshots(VM vm) {
-        for (Disk disk : vm.getDiskMap().values()) {
-            if (disk.getDiskStorageType().isInternal()) {
-                DiskImage diskImage = (DiskImage) disk;
-                diskImage.getSnapshots().addAll(DbFacade.getInstance()
-                        .getDiskImageDao()
-                        .getAllSnapshotsForLeaf(diskImage.getImageId()));
-            }
-        }
+        vm.getDiskMap().values().stream().filter(disk -> disk.getDiskStorageType().isInternal()).forEach(disk -> {
+            DiskImage diskImage = (DiskImage) disk;
+            diskImage.getSnapshots().addAll(DbFacade.getInstance()
+                    .getDiskImageDao()
+                    .getAllSnapshotsForLeaf(diskImage.getImageId()));
+        });
     }
 
     public static void removeDiskImage(DiskImage diskImage, Guid vmId) {
@@ -561,13 +534,8 @@ public final class ImagesHandler {
     // the last image in each list is the leaf
     public static Map<Guid, List<DiskImage>> getImagesLeaf(List<DiskImage> images) {
         Map<Guid, List<DiskImage>> retVal = new HashMap<>();
-        for (DiskImage image : images) {
-            MultiValueMapUtils.addToMap(image.getId(), image, retVal);
-        }
-
-        for (List<DiskImage> list : retVal.values()) {
-            sortImageList(list);
-        }
+        images.forEach(image -> MultiValueMapUtils.addToMap(image.getId(), image, retVal));
+        retVal.values().forEach(ImagesHandler::sortImageList);
         return retVal;
     }
 
@@ -654,12 +622,7 @@ public final class ImagesHandler {
     }
 
     public static List<DiskImage> getCinderLeafImages(List<Disk> disks) {
-        List<DiskImage> leafCinderDisks = new ArrayList<>();
-        List<CinderDisk> cinderDisks = DisksFilter.filterCinderDisks(disks);
-        for (CinderDisk cinder : cinderDisks) {
-            leafCinderDisks.add(getSnapshotLeaf(cinder.getId()));
-        }
-        return leafCinderDisks;
+        return disks.stream().filter(DisksFilter.ONLY_CINDER).map(d -> getSnapshotLeaf(d.getId())).collect(Collectors.toList());
     }
 
     public static void updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(final Collection<Guid> diskIds,
@@ -667,40 +630,30 @@ public final class ImagesHandler {
                                                                          ImageStatus statusForCompensation,
                                                                          final CompensationContext compensationContext) {
         if (compensationContext != null) {
-            for (Guid diskId : diskIds) {
-                List<DiskImage> diskSnapshots =
-                        DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
-                for (DiskImage diskSnapshot : diskSnapshots) {
-                    diskSnapshot.setImageStatus(statusForCompensation);
-                    compensationContext.snapshotEntityStatus(diskSnapshot.getImage());
-                }
-            }
+            diskIds.stream()
+                    .flatMap(diskId -> DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForImageGroup(diskId).stream())
+                    .forEach(diskSnapshot -> {
+                        diskSnapshot.setImageStatus(statusForCompensation);
+                        compensationContext.snapshotEntityStatus(diskSnapshot.getImage());
+                    });
 
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                for (Guid diskId : diskIds) {
-                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
-                }
+                diskIds.forEach(diskId ->
+                        DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status));
                 compensationContext.stateChanged();
                 return null;
             });
         } else {
-
             TransactionSupport.executeInScope(TransactionScopeOption.Required, () -> {
-                for (Guid diskId : diskIds) {
-                    DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status);
-                }
+                diskIds.forEach(diskId ->
+                        DbFacade.getInstance().getImageDao().updateStatusOfImagesByImageGroupId(diskId, status));
                 return null;
             });
         }
     }
 
-    private static DiskImage getDiskImageById(Guid id, Iterable<DiskImage> diskImages) {
-        for (DiskImage diskImage : diskImages) {
-            if (diskImage.getId().equals(id)) {
-                return diskImage;
-            }
-        }
-        return null;
+    private static DiskImage getDiskImageById(Guid id, Collection<DiskImage> diskImages) {
+        return diskImages.stream().filter(disk -> disk.getId().equals(id)).findFirst().orElse(null);
     }
 
     /**
@@ -709,14 +662,10 @@ public final class ImagesHandler {
      * @param imagesToSubtract images to subtract list
      * @return the subtraction set
      */
-    public static List<DiskImage> imagesSubtract(Iterable<DiskImage> images, Iterable<DiskImage> imagesToSubtract) {
-        List<DiskImage> subtract = new ArrayList<>();
-        for (DiskImage image : images) {
-            if (getDiskImageById(image.getId(), imagesToSubtract) == null) {
-                subtract.add(image);
-            }
-        }
-        return subtract;
+    public static List<DiskImage> imagesSubtract(Collection<DiskImage> images, Collection<DiskImage> imagesToSubtract) {
+        return images
+                .stream()
+                .filter(image -> getDiskImageById(image.getId(), imagesToSubtract) == null).collect(Collectors.toList());
     }
 
     /**
@@ -725,14 +674,10 @@ public final class ImagesHandler {
      * @param images2 2nd list
      * @return the intersection set
      */
-    public static List<DiskImage> imagesIntersection(Iterable<DiskImage> images1, Iterable<DiskImage> images2) {
-        List<DiskImage> intersection = new ArrayList<>();
-        for (DiskImage image : images1) {
-            if (getDiskImageById(image.getId(), images2) != null) {
-                intersection.add(image);
-            }
-        }
-        return intersection;
+    public static List<DiskImage> imagesIntersection(Collection<DiskImage> images1, Collection<DiskImage> images2) {
+        return images1
+                .stream()
+                .filter(image -> getDiskImageById(image.getId(), images2) != null).collect(Collectors.toList());
     }
 
     /**
