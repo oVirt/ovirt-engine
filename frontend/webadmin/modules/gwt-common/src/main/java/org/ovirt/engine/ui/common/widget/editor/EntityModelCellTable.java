@@ -85,7 +85,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      * Create a new {@link EntityModelCellTable} with single selection mode.
      */
     public EntityModelCellTable() {
-        this(SelectionMode.SINGLE, (Resources) GWT.create(PopupTableResources.class));
+        this(SelectionMode.SINGLE, GWT.create(PopupTableResources.class));
     }
 
     /**
@@ -105,7 +105,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Table selection mode.
      */
     public EntityModelCellTable(SelectionMode selectionMode) {
-        this(selectionMode, (Resources) GWT.create(PopupTableResources.class));
+        this(selectionMode, GWT.create(PopupTableResources.class));
     }
 
     /**
@@ -115,7 +115,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to allow multiple ({@code true}) or single ({@code false}) selection mode.
      */
     public EntityModelCellTable(boolean isMultiple) {
-        this(isMultiple, (Resources) GWT.create(PopupTableResources.class));
+        this(isMultiple, GWT.create(PopupTableResources.class));
     }
 
     /**
@@ -127,7 +127,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to hide selection column or not.
      */
     public EntityModelCellTable(SelectionMode selectionMode, boolean hideCheckbox) {
-        this(selectionMode, (Resources) GWT.create(PopupTableResources.class), hideCheckbox, false);
+        this(selectionMode, GWT.create(PopupTableResources.class), hideCheckbox, false);
     }
 
     /**
@@ -139,7 +139,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to hide selection column or not.
      */
     public EntityModelCellTable(boolean isMultiple, boolean hideCheckbox) {
-        this(isMultiple, (Resources) GWT.create(PopupTableResources.class), hideCheckbox);
+        this(isMultiple, GWT.create(PopupTableResources.class), hideCheckbox);
     }
 
     /**
@@ -153,7 +153,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to show the SelectAll Checkbox in the header or not.
      */
     public EntityModelCellTable(boolean isMultiple, boolean hideCheckbox, boolean showSelectAllCheckbox) {
-        this(isMultiple, (Resources) GWT.create(PopupTableResources.class), hideCheckbox, showSelectAllCheckbox);
+        this(isMultiple, GWT.create(PopupTableResources.class), hideCheckbox, showSelectAllCheckbox);
     }
 
     /**
