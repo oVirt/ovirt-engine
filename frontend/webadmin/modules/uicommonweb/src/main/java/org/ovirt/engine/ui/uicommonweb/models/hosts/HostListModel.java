@@ -145,14 +145,14 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         privateRemoveCommand = value;
     }
 
-    private UICommand privateWebConsoleCommand;
+    private UICommand privateHostConsoleCommand;
 
-    public UICommand getWebConsoleCommand() {
-        return privateWebConsoleCommand;
+    public UICommand getHostConsoleCommand() {
+        return privateHostConsoleCommand;
     }
 
-    private void setWebConsoleCommand(UICommand value) {
-        privateWebConsoleCommand = value;
+    private void setHostConsoleCommand(UICommand value) {
+        privateHostConsoleCommand = value;
     }
 
     private UICommand selectAsSpmCommand;
@@ -447,7 +447,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         setEditWithPMemphasisCommand(new UICommand("EditWithPMemphasis", this)); //$NON-NLS-1$
         setSelectAsSpmCommand(new UICommand("SelectAsSpm", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
-        setWebConsoleCommand(new UICommand("WebConsole", this)); //$NON-NLS-1$
+        setHostConsoleCommand(new UICommand("HostConsole", this)); //$NON-NLS-1$
         setActivateCommand(new UICommand("Activate", this, true)); //$NON-NLS-1$
         setMaintenanceCommand(new UICommand("Maintenance", this, true)); //$NON-NLS-1$
         setApproveCommand(new UICommand("Approve", this)); //$NON-NLS-1$
@@ -1108,7 +1108,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 }, model);
     }
 
-    public void onWebConsole() {
+    public void onHostConsole() {
         String cockpitPort = (String) AsyncDataProvider.getInstance()
                 .getConfigValuePreConverted(ConfigurationValues.CockpitPort);
         for (VDS item : getSelectedItems()) { // open new browser-tab for every selected host
@@ -1999,8 +1999,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         else if (command == getDisableGlobalHaMaintenanceCommand()) {
             setGlobalHaMaintenance(false);
         }
-        else if (command == getWebConsoleCommand()) {
-            onWebConsole();
+        else if (command == getHostConsoleCommand()) {
+            onHostConsole();
         }
         else if ("OnAssignTags".equals(command.getName())) { //$NON-NLS-1$
             onAssignTags();

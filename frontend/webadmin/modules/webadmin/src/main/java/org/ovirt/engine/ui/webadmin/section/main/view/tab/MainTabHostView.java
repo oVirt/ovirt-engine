@@ -259,11 +259,11 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getRemoveCommand();
             }
         });
-        // Web Console link (Cockpit)
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.webConsole()) {
+        // Host Console (link to Cockpit)
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.hostConsole()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getWebConsoleCommand();
+                return getMainModel().getHostConsoleCommand();
             }
         });
 
