@@ -246,7 +246,7 @@ public enum VDSCommandType {
 
     String packageName;
 
-    private VDSCommandType(String packageName) {
+    VDSCommandType(String packageName) {
         this.packageName = packageName;
     }
 
