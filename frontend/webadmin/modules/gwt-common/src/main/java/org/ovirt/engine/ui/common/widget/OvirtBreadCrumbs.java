@@ -154,7 +154,7 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
         exchange.setBorder(true);
         exchange.getElement().getStyle().setColor("#0088CC"); // $NON-NLS-1$
         exchange.getElement().getStyle().setBorderColor("#0088CC"); // $NON-NLS-1$
-        exchange.getElement().getStyle().setProperty("borderRadius", "0.2em"); // $NON-NLS-1$ $NON-NLS-2$
+        exchange.getElement().getStyle().setProperty("borderRadius", 0.2 + Unit.EM.getType()); // $NON-NLS-1$
         exchange.getElement().getStyle().setMarginLeft(6, Unit.PX);
         exchange.getElement().getStyle().setCursor(Cursor.POINTER);
         Anchor anchor = new Anchor(currentName, HasHref.EMPTY_HREF);

@@ -57,7 +57,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
 
     public static final String lineEndDotColor = "#ff0000"; //$NON-NLS-1$
 
-    public static final String textColorNormal = "#808080"; //$NON-NLS-1$
+    public static final String textColorNormal = "inherit"; //$NON-NLS-1$
 
     public static final String textColorRed = "#ff0000"; //$NON-NLS-1$
 
@@ -116,9 +116,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
         return templates.lineChartWithoutImage(
                 textWidth,
                 textColor,
-                fontWeight,
-                getLastPoint(progressValues)
-
+                fontWeight
         );
     }
 

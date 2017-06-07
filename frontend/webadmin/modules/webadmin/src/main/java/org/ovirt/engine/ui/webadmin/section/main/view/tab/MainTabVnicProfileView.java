@@ -110,7 +110,7 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
                     }
                 };
         portMirroringColumn.makeSortable();
-        getTable().addColumn(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
+        getTable().addColumn(portMirroringColumn, constants.portMirroringVnicProfile(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<VnicProfileView> descriptionColumn = new AbstractTextColumn<VnicProfileView>() {
             @Override

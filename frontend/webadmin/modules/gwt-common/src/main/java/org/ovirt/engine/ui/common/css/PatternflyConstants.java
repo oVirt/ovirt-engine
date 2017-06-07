@@ -18,6 +18,14 @@ package org.ovirt.engine.ui.common.css;
  */
 public class PatternflyConstants {
 
+    public static final int ZINDEX_NAVBAR = 1000;
+    public static final int ZINDEX_DROPDOWN = 1000;
+    public static final int ZINDEX_POPOVER = 1060;
+    public static final int ZINDEX_TOOLTIP = 1070;
+    public static final int ZINDEX_NAVBAR_FIXED = 1030;
+    public static final int ZINDEX_MODAL_BACKGROUND = 1040;
+    public static final int ZINDEX_MODAL = 1050;
+
     // pficons
 
     // TODO insert all classes from PatternFly's less/icons.less

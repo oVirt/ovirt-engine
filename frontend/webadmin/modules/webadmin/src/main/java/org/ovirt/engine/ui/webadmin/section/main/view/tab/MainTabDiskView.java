@@ -132,11 +132,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         getTable().ensureColumnVisible(
                 aliasColumn, constants.aliasDisk(), all || images || luns || cinder,
-                "120px"); //$NON-NLS-1$
+                "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 idColumn, constants.idDisk(), all || images || luns || cinder,
-                "120px"); //$NON-NLS-1$
+                "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnVisible(
                 DisksViewColumns.shareableDiskColumn,

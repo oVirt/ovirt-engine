@@ -51,7 +51,7 @@ public class EventsListPopover extends OvirtPopover {
         eventListButton.addStyleName(PatternflyConstants.PF_DRAWER_TRIGGER);
         eventListButton.addStyleName(Styles.DROPDOWN);
         eventListButtonTooltip = new WidgetTooltip(eventListButton);
-        eventListButtonTooltip.setHtml(SafeHtmlUtils.fromSafeConstant(constants.eventsAndTasks()));
+        eventListButtonTooltip.setHtml(SafeHtmlUtils.fromSafeConstant(constants.eventsAndAlerts()));
         eventListButtonTooltip.setPlacement(Placement.BOTTOM);
         Anchor anchor = (Anchor) eventListButton.getWidget(0);
         anchor.addStyleName(PatternflyConstants.NAV_ITEM_ICONIC);

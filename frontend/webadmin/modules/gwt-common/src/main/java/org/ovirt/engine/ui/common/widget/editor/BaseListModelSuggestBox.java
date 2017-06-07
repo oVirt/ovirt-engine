@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 
 import com.google.gwt.dom.client.Style;
@@ -202,7 +203,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements
     class ListModelSuggestionDisplay extends DefaultSuggestionDisplay {
 
         public ListModelSuggestionDisplay(int maxSuggestionPanelHeightInPx) {
-            getPopupPanel().getElement().getStyle().setZIndex(1);
+            getPopupPanel().getElement().getStyle().setZIndex(PatternflyConstants.ZINDEX_MODAL + 1);
 
             Element popupPanelElement = getPopupPanel().getWidget().getElement();
             Style popupPanel = popupPanelElement.getStyle();

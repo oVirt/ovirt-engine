@@ -53,7 +53,7 @@ public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditL
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     private static final String BASIC_VIEW_MSG_COLUMN_WIDTH = "600px"; //$NON-NLS-1$
-    private static final String ADV_VIEW_MSG_COLUMN_WIDTH = "150px"; //$NON-NLS-1$
+    private static final String ADV_VIEW_MSG_COLUMN_WIDTH = "175px"; //$NON-NLS-1$
     private AbstractTextColumn<AuditLog> messageColumn;
 
     @Inject
@@ -89,7 +89,7 @@ public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditL
                 "100px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(AdvancedViewColumns.virtualMachineColumn, constants.vmEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
-                "100px"); //$NON-NLS-1$
+                "120px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(AdvancedViewColumns.templateColumn, constants.templateEvent(),
                 advancedViewEnabled && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly),
                 "100px"); //$NON-NLS-1$
@@ -107,13 +107,13 @@ public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditL
                 "120px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(AdvancedViewColumns.corrIdColumn, constants.eventCorrelationId(),
                 advancedViewEnabled,
-                "100px"); //$NON-NLS-1$
+                "120px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(AdvancedViewColumns.originColumn, constants.eventOrigin(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(AdvancedViewColumns.customEventIdColumn, constants.eventCustomEventId(),
                 advancedViewEnabled,
-                "100px"); //$NON-NLS-1$
+                "140px"); //$NON-NLS-1$
 
         getTable().setColumnWidth(messageColumn,
                 advancedViewEnabled ? ADV_VIEW_MSG_COLUMN_WIDTH : BASIC_VIEW_MSG_COLUMN_WIDTH);

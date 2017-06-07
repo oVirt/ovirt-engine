@@ -3277,7 +3277,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String notificationDrawer();
 
-    String eventsAndTasks();
+    String eventsAndAlerts();
 
     String help();
 }

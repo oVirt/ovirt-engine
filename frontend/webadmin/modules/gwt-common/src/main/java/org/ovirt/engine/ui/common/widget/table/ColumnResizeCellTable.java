@@ -67,6 +67,9 @@ import com.google.gwt.view.client.ProvidesKey;
 public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizableColumns<T>, ColumnController<T>,
     HasCleanup {
 
+    private static final String GRID_HIDDEN = "grid-hidden"; //$NON-NLS-1$
+    private static final String GRID_VISIBLE = "grid-visible"; //$NON-NLS-1$
+
     /**
      * {@link #emptyNoWidthColumn} header that supports handling context menu events.
      */
@@ -332,10 +335,11 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
         columnVisibleMap.put(column, visible);
 
-        column.setCellStyleNames(visible ? "grid-visible" : "grid-hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+        column.setCellStyleNames(visible ? GRID_VISIBLE : GRID_HIDDEN);
 
         int index = getColumnIndex(column);
-        addColumnStyleName(index, visible ? "grid-visible" : "grid-hidden"); //$NON-NLS-1$ //$NON-NLS-2$
+        removeColumnStyleName(index, visible ? GRID_HIDDEN : GRID_VISIBLE);
+        addColumnStyleName(index, visible ? GRID_VISIBLE : GRID_HIDDEN);
 
         if (columnResizePersistenceEnabled) {
             String persistedWidth = readColumnWidth(column);

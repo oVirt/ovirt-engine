@@ -99,12 +99,12 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         this.aboutLink = new AnchorListItem(constants.aboutLinkLabel());
         this.guideLink = new AnchorListItem(dynamicMessages.guideLinkLabel());
         events = new EventsListPopover(constants.notificationDrawer(), IconType.BELL);
-        eventsWidget = new NotificationListWidget(constants.eventsEventFooter());
-        eventsWidget.setStartCollapse(false);
-        events.addNotificationListWidget(eventsWidget);
         alertsWidget = new NotificationListWidget(constants.alertsEventFooter());
-        alertsWidget.setStartCollapse(true);
+        alertsWidget.setStartCollapse(false);
         events.addNotificationListWidget(alertsWidget);
+        eventsWidget = new NotificationListWidget(constants.eventsEventFooter());
+        eventsWidget.setStartCollapse(true);
+        events.addNotificationListWidget(eventsWidget);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         this.logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));

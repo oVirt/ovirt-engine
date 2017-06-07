@@ -346,11 +346,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             protected UICommand resolveCommand() {
                 return getMainModel().getRunCommand();
             }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.runVm());
-            }
         }));
         addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
@@ -358,11 +353,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getPauseCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
             }
         }));
         addButtonToActionGroup(
@@ -372,22 +362,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             protected UICommand resolveCommand() {
                 return getMainModel().getShutdownCommand();
             }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
-            }
         }));
         addButtonToActionGroup(
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(), IconType.POWER_OFF) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
             }
         }));
         addButtonToActionGroup(
@@ -396,11 +376,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRebootCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
             }
         }));
 
@@ -419,11 +394,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getConsoleConnectCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
             }
         }, new DropdownActionButton<>(consoleOptionsSubActions, new DropdownActionButton.SelectedItemsProvider<VM>() {
             @Override

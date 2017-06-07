@@ -77,23 +77,23 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         });
         searchBox.addKeyUpHandler(event -> {
             if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-                startSearch(searchBox.getText());
                 stopPropagation(event);
+                startSearch(searchBox.getText());
             } else if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_DOWN) {
+                stopPropagation(event);
                 currentFocusIndex = 0;
                 getAnchorListItem(currentFocusIndex).setFocus(true);
-                stopPropagation(event);
             } else if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_UP) {
+                stopPropagation(event);
                 currentFocusIndex = menu.getWidgetCount() - 1;
                 getAnchorListItem(currentFocusIndex).setFocus(true);
-                stopPropagation(event);
             } else if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB) {
+                stopPropagation(event);
                 currentFocusIndex = 0;
                 if (event.getNativeEvent().getShiftKey()) {
                     currentFocusIndex = menu.getWidgetCount() - 1;
                 }
                 getAnchorListItem(currentFocusIndex).setFocus(true);
-                stopPropagation(event);
             } else if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ESCAPE) {
                 for (ListModelSelectedCallback<T> callback: this.callbacks) {
                     callback.modelSelected(null);

@@ -28,7 +28,8 @@ public class VmEventListModel extends SubTabEventListModel<VM> {
     }
 
     protected void preSearchCalled(VM vm) {
-        setSearchString("events: vm.name=" + vm.getName()); //$NON-NLS-1$
+        // TODO: Find out why events: vm.name=XX is returning events without vm.name
+        setSearchString("events: vm.name=" + vm.getName() + " and vm.name != \"\""); //$NON-NLS-1$ $NON-NLS-2$
     }
 
     @Override

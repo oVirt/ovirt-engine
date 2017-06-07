@@ -203,7 +203,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         };
         memColumn.makeSortable(VdsConditionFieldAutoCompleter.MEM_USAGE);
-        getTable().addColumn(memColumn, constants.memoryHost(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(memColumn, constants.memoryHost(), "80px"); //$NON-NLS-1$
 
         AbstractPercentColumn<VDS> cpuColumn = new AbstractPercentColumn<VDS>() {
             @Override
@@ -212,7 +212,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         };
         cpuColumn.makeSortable(VdsConditionFieldAutoCompleter.CPU_USAGE);
-        getTable().addColumn(cpuColumn, constants.cpuHost(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(cpuColumn, constants.cpuHost(), "80px"); //$NON-NLS-1$
 
         AbstractPercentColumn<VDS> netColumn = new AbstractPercentColumn<VDS>() {
             @Override
@@ -221,7 +221,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         };
         netColumn.makeSortable(VdsConditionFieldAutoCompleter.NETWORK_USAGE);
-        getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(netColumn, constants.networkHost(), "80px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             AbstractTextColumn<VDS> spmColumn = new AbstractTextColumn<VDS>() {

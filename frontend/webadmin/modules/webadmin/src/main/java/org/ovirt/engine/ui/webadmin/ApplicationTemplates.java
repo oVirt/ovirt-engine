@@ -15,9 +15,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml lineChart(SafeUri chartData, int chartMarginRight, int textWidth, String textColor, String fontWeight, int percentage);
 
     @Template("<div>" +
-            "<div style='float:right; width: {0}px; color: {1}; font-weight: {2}'>{3}%</div>" +
+            "<div style='float:right; width: {0}px; color: {1}; font-weight: {2}'>--</div>" +
             "</div>")
-    SafeHtml lineChartWithoutImage(int textWidth, String textColor, String fontWeight, int percentage);
+    SafeHtml lineChartWithoutImage(int textWidth, String textColor, String fontWeight);
 
     @Template("<div id=\"{4}\" title='{3}' class='engine-progress-box'>" +
             "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
