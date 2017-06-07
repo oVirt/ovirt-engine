@@ -2256,4 +2256,31 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturn(response);
     }
 
+    @Override
+    public StatusOnlyReturn hotplugLease(Guid vmId, Guid storageDomainId) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.hotplugLease").withParameter("vmID", vmId.toString())
+                        .withParameter("lease", createLeaseDict(vmId, storageDomainId))
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
+    public StatusOnlyReturn hotunplugLease(Guid vmId, Guid storageDomainId) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.hotunplugLease").withParameter("vmID", vmId.toString())
+                        .withParameter("lease", createLeaseDict(vmId, storageDomainId))
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    private Map<String, Object> createLeaseDict(Guid vmId, Guid storageDomainId) {
+        Map<String, Object> lease = new HashMap<>();
+        lease.put("type", "lease");
+        lease.put("lease_id", vmId.toString());
+        lease.put("sd_id", storageDomainId.toString());
+        return lease;
+    }
 }
