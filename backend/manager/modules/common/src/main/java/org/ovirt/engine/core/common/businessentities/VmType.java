@@ -4,7 +4,8 @@ import java.util.HashMap;
 
 public enum VmType implements Identifiable {
     Desktop(0),
-    Server(1);
+    Server(1),
+    HighPerformance(2);
 
     private int intValue;
     private static final HashMap<Integer, VmType> mappings = new HashMap<>();

@@ -1545,7 +1545,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getCopyPermissions().setEntity(false);
         setVncKeyboardLayout(new NotChangableForVmInPoolListModel<String>());
         setVmType(new NotChangableForVmInPoolListModel<VmType>());
-        getVmType().setItems(Arrays.asList(VmType.Desktop, VmType.Server));
+        getVmType().setItems(Arrays.asList(VmType.values()));
         getVmType().setSelectedItem(VmType.Server);
         getVmType().setIsChangeable(false);
         getVmType().getSelectedItemChangedEvent().addListener(this);

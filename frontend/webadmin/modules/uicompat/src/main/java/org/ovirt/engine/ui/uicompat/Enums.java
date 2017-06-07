@@ -213,6 +213,12 @@ public interface Enums extends LocalizedEnums {
 
     String VmInterfaceType___pciPassthrough();
 
+    String VmType___Desktop();
+
+    String VmType___Server();
+
+    String VmType___HighPerformance();
+
     String VDSType___VDS();
 
     String VDSType___oVirtNode();

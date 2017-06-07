@@ -297,7 +297,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         // provisioning thin -> false
         // provisioning clone -> true
         if (getModel().getProvisioning().getIsAvailable()) {
-            getModel().getProvisioning().setEntity(vmType == VmType.Server);
+            getModel().getProvisioning().setEntity(vmType == VmType.Server || vmType == VmType.HighPerformance);
         }
 
         super.vmTypeChanged(vmType);

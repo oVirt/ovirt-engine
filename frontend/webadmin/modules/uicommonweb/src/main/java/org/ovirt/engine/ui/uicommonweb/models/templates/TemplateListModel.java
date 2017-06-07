@@ -861,6 +861,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             VmType vmType,
             List<UICommand> uiCommands) {
         super.setupNewVmModel(model, vmType, uiCommands);
-        model.getProvisioning().setEntity(vmType == VmType.Server);
+        model.getProvisioning().setEntity(vmType == VmType.Server || vmType == VmType.HighPerformance);
     }
 }

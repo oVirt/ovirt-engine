@@ -35,6 +35,8 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
         switch (vmType) {
             case Server:
                return nextRunConfigurationExists ? resources.manyServersChangesImage() : resources.manyServersImage();
+            case HighPerformance:
+               return nextRunConfigurationExists ? resources.manyHighPerformancesChangesImage() : resources.manyHighPerformancesImage();
             case Desktop:
             default:
                 return nextRunConfigurationExists ? resources.manyDesktopsChangesImage() : resources.manyDesktopsImage();
@@ -77,6 +79,8 @@ public class VmTypeColumn extends AbstractSafeHtmlColumn<VM> {
                 return constants.pooledServer();
             case Desktop:
                 return constants.pooledDesktop();
+            case HighPerformance:
+                return constants.pooledHighPerformance();
             default:
                 return constants.pooledDesktop();
         }
@@ -153,6 +157,30 @@ enum VmTypeConfig {
         }
     },
 
+    HIGH_PERFORMANCE_STATEFUL(VmType.HighPerformance, false, false) {
+        @Override
+        public ImageResource getImageResource() {
+            return resources.highPerformanceImage();
+        }
+
+        @Override
+        public String getTooltip() {
+            return constants.highPerformance();
+        }
+    },
+
+    HIGH_PERFORMANCE_STATELESS(VmType.HighPerformance, true, false) {
+        @Override
+        public ImageResource getImageResource() {
+            return resources.highPerformanceStateless();
+        }
+
+        @Override
+        public String getTooltip() {
+            return constants.statelessHighPerformance();
+        }
+    },
+
     DESKTOP_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.Desktop, true, true) {
         @Override
         public ImageResource getImageResource() {
@@ -198,6 +226,30 @@ enum VmTypeConfig {
         @Override
         public String getTooltip() {
             return constants.statelessServerChanges();
+        }
+    },
+
+    HIGH_PERFORMANCE_STATEFUL_WITH_NEXT_RUN_CONFIG(VmType.HighPerformance, false, true) {
+        @Override
+        public ImageResource getImageResource() {
+            return resources.highPerformanceChanges();
+        }
+
+        @Override
+        public String getTooltip() {
+            return constants.highPerformanceChanges();
+        }
+    },
+
+    HIGH_PERFORMANCE_STATELESS_WITH_NEXT_RUN_CONFIG(VmType.HighPerformance, true, true) {
+        @Override
+        public ImageResource getImageResource() {
+            return resources.highPerformanceStatelessChanges();
+        }
+
+        @Override
+        public String getTooltip() {
+            return constants.statelessHighPerformanceChanges();
         }
     },
 

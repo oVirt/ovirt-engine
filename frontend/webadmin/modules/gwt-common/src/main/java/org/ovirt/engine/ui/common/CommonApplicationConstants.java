@@ -501,6 +501,10 @@ public interface CommonApplicationConstants extends Constants {
 
     String highlyAvailableVmPopup();
 
+    String highPerformance();
+
+    String highPerformanceChanges();
+
     String watchdogAction();
 
     String watchdogModel();
@@ -1255,9 +1259,15 @@ public interface CommonApplicationConstants extends Constants {
 
     String statelessDesktopChanges();
 
+    String statelessHighPerformance();
+
+    String statelessHighPerformanceChanges();
+
     String pooledDesktop();
 
     String pooledServer();
+
+    String pooledHighPerformance();
 
     String runOnce();
 

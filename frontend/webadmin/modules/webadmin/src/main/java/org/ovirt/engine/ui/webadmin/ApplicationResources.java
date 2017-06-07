@@ -112,6 +112,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/many_servers_changes.png")
     ImageResource manyServersChangesImage();
 
+    @Source("images/many_high_performances.png")
+    ImageResource manyHighPerformancesImage();
+
+    @Source("images/many_high_performances_changes.png")
+    ImageResource manyHighPerformancesChangesImage();
+
     @Source("images/minus.png")
     ImageResource minusImage();
 
@@ -398,6 +404,18 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/vmType/vm_server_stateless_changes.png")
     ImageResource serverStatelessChanges();
+
+    @Source("images/vmType/high_performance.png")
+    ImageResource highPerformanceImage();
+
+    @Source("images/vmType/vm_high_performance_stateless.png")
+    ImageResource highPerformanceStateless();
+
+    @Source("images/vmType/high_performance_changes.png")
+    ImageResource highPerformanceChanges();
+
+    @Source("images/vmType/vm_high_performance_stateless_changes.png")
+    ImageResource highPerformanceStatelessChanges();
 
     @Source("images/vmStatus/vm_locked_overlay_icon.png")
     ImageResource vmLocked();
