@@ -33,6 +33,16 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
         throw new IllegalArgumentException("Use initWidget(PopupPanel) instead of initWidget(Widget)"); //$NON-NLS-1$
     }
 
+    /**
+     * Return false to work around GWT-P memory leak. The resize handler implementation is broken,
+     * so turn it off
+     * See: https://github.com/ArcBees/GWTP/issues/823
+     */
+    @Override
+    protected boolean repositionOnWindowResize() {
+        return false;
+    }
+
     protected void initWidget(T widget) {
         super.initWidget(widget);
 
