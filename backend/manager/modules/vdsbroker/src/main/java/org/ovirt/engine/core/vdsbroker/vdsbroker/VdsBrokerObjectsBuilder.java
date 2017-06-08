@@ -427,29 +427,29 @@ public class VdsBrokerObjectsBuilder {
 
     public static Map<String, LUNs> buildVmLunDisksData(Map<String, Object> struct) {
         Map<String, Object> disks = (Map<String, Object>) struct.get(VdsProperties.vm_disks);
-        Map<String, LUNs> lunsMap = new HashMap<>();
-
-        if (disks != null) {
-            for (Object diskAsObj : disks.values()) {
-                Map<String, Object> disk = (Map<String, Object>) diskAsObj;
-
-                String lunGuidString = assignStringValue(disk, VdsProperties.lun_guid);
-                if (!StringUtils.isEmpty(lunGuidString)) {
-                    LUNs lun = new LUNs();
-                    lun.setLUNId(lunGuidString);
-
-                    if (disk.containsKey(VdsProperties.disk_true_size)) {
-                        long sizeInBytes = assignLongValue(disk, VdsProperties.disk_true_size);
-                        int sizeInGB = SizeConverter.convert(
-                                sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue();
-                        lun.setDeviceSize(sizeInGB);
-                    }
-
-                    lunsMap.put(lunGuidString, lun);
-                }
-            }
+        if (disks == null) {
+            return Collections.emptyMap();
         }
 
+        Map<String, LUNs> lunsMap = new HashMap<>();
+        for (Object diskAsObj : disks.values()) {
+            Map<String, Object> disk = (Map<String, Object>) diskAsObj;
+
+            String lunGuidString = assignStringValue(disk, VdsProperties.lun_guid);
+            if (!StringUtils.isEmpty(lunGuidString)) {
+                LUNs lun = new LUNs();
+                lun.setLUNId(lunGuidString);
+
+                if (disk.containsKey(VdsProperties.disk_true_size)) {
+                    long sizeInBytes = assignLongValue(disk, VdsProperties.disk_true_size);
+                    int sizeInGB = SizeConverter.convert(
+                            sizeInBytes, SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue();
+                    lun.setDeviceSize(sizeInGB);
+                }
+
+                lunsMap.put(lunGuidString, lun);
+            }
+        }
         return lunsMap;
     }
 
