@@ -1817,7 +1817,7 @@ public class VdsBrokerObjectsBuilder {
                     String v4addr = extractAddress(effectiveProperties);
                     String v4Subnet = extractSubnet(effectiveProperties);
                     String v4gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
-                    boolean v4DefaultRoute = (Boolean) effectiveProperties.get(VdsProperties.IPV4_DEFAULT_ROUTE);
+                    boolean v4DefaultRoute = assignBoolValue(effectiveProperties, VdsProperties.IPV4_DEFAULT_ROUTE);
 
                     final String rawIpv6Address = getIpv6Address(effectiveProperties);
                     String v6Addr = extractIpv6Address(rawIpv6Address);
