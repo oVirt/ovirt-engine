@@ -330,7 +330,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         command.setVm(vm);
         command.setStoragePool(new StoragePool());
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
-        doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
+        doReturn(true).when(command).checkPayload(any(VmPayload.class));
         command.setCluster(new Cluster());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }

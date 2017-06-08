@@ -591,8 +591,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         // check for Vm Payload
         if (getParameters().getVmPayload() != null) {
-            if (!checkPayload(getParameters().getVmPayload(),
-                    getParameters().getVmStaticData().getIsoPath())) {
+            if (!checkPayload(getParameters().getVmPayload())) {
                 return false;
             }
 

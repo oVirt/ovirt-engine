@@ -842,7 +842,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // check for Vm Payload
         if (getParameters().getVmPayload() != null) {
-            if (!checkPayload(getParameters().getVmPayload(), vmFromParams.getIsoPath())) {
+            if (!checkPayload(getParameters().getVmPayload())) {
                 return false;
             }
             // we save the content in base64 string
