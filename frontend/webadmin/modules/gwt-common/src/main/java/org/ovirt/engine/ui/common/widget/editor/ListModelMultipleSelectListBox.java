@@ -121,7 +121,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
         }
         // Set a value in the super class, so calling setAcceptableValues doesn't add a null value and
         // potentially NPE if the renderer doesn't take kindly to getting a null value passed to it.
-        List<T> val = newValues.isEmpty() ? Collections.<T>emptyList() :  newValues.iterator().next();
+        List<T> val = newValues.isEmpty() ? Collections.emptyList() : newValues.iterator().next();
 
         //Clone selection.
         List<T> currentSelected = new ArrayList<>();
