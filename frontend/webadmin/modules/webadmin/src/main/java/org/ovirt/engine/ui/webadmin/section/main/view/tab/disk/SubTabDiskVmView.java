@@ -144,7 +144,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         AbstractTextColumn<VM> hostColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
-                return object.getRoundedElapsedTime();
+                return object.getElapsedTime();
             }
         };
         hostColumn.makeSortable();

@@ -787,14 +787,6 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
         this.vmStatistics.setElapsedTime(value);
     }
 
-    public Double getRoundedElapsedTime() {
-        return this.vmStatistics.getRoundedElapsedTime();
-    }
-
-    public void setRoundedElapsedTime(Double value) {
-        this.vmStatistics.setRoundedElapsedTime(value);
-    }
-
     public Integer getUsageNetworkPercent() {
         return this.vmStatistics.getUsageNetworkPercent();
     }

@@ -19,7 +19,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private Double cpuSys;
     private Double cpuUser;
     private Double elapsedTime;
-    private Double roundedElapsedTime;
     private Integer usageMemPercent;
     private Integer migrationProgressPercent;
     private String disksUsage;
@@ -34,7 +33,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         cpuSys = 0.0;
         cpuUser = 0.0;
         elapsedTime = 0.0;
-        roundedElapsedTime = 0.0;
         vmId = Guid.Empty;
     }
 
@@ -49,7 +47,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 cpuSys,
                 cpuUser,
                 elapsedTime,
-                roundedElapsedTime,
                 usageCpuPercent,
                 usageMemPercent,
                 usageNetworkPercent,
@@ -77,7 +74,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         return Objects.equals(cpuSys, other.cpuSys)
                 && Objects.equals(cpuUser, other.cpuUser)
                 && Objects.equals(elapsedTime, other.elapsedTime)
-                && Objects.equals(roundedElapsedTime, other.roundedElapsedTime)
                 && Objects.equals(usageCpuPercent, other.usageCpuPercent)
                 && Objects.equals(usageMemPercent, other.usageMemPercent)
                 && Objects.equals(migrationProgressPercent, other.migrationProgressPercent)
@@ -114,33 +110,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     public void setElapsedTime(Double elapsedTime) {
         this.elapsedTime = elapsedTime;
-        setRoundedElapsedTime(elapsedTime);
-    }
-
-    public Double getRoundedElapsedTime() {
-        return this.roundedElapsedTime;
-    }
-
-    public void setRoundedElapsedTime(Double value) {
-        final int SEC_IN_MIN = 60;
-        final int SEC_IN_HOUR = SEC_IN_MIN * 60;
-        final int SEC_IN_DAY = SEC_IN_HOUR * 24;
-        this.roundedElapsedTime = value;
-        if (value != null) {
-            if (getRoundedElapsedTime() == null) {
-                this.setRoundedElapsedTime(value);
-            } else {
-                // Notify each Min until 1 Hour,each Hour until 1 Day and from then on every day.
-                int val = value.intValue();
-                int lastVal = getRoundedElapsedTime().intValue();
-                if ((val > 0 && val < SEC_IN_MIN && val / SEC_IN_MIN > lastVal / SEC_IN_MIN) ||
-                        (val >= SEC_IN_HOUR && val < SEC_IN_DAY && val / SEC_IN_HOUR > lastVal / SEC_IN_HOUR) ||
-                        (val / SEC_IN_DAY > lastVal / SEC_IN_DAY)) {
-                    this.setRoundedElapsedTime(value);
-                }
-            }
-        }
-
     }
 
     public Integer getUsageCpuPercent() {

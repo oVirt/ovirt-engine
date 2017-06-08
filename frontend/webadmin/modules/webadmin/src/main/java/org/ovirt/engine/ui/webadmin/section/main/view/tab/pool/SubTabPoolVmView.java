@@ -101,7 +101,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
-                return object.getRoundedElapsedTime();
+                return object.getElapsedTime();
             }
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "200px"); //$NON-NLS-1$

@@ -76,7 +76,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<Cluster, VM, Cl
         AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
-                return object.getRoundedElapsedTime();
+                return object.getElapsedTime();
             }
         };
         uptimeColumn.makeSortable(VmConditionFieldAutoCompleter.UPTIME);

@@ -99,7 +99,6 @@ public class BackendVmsResourceTest
             vmStatistics.setCpuSys(0D);
             vmStatistics.setCpuUser(0D);
             vmStatistics.setElapsedTime(0D);
-            vmStatistics.setRoundedElapsedTime(0D);
             vmStatistics.setUsageCpuPercent(0);
             vmStatistics.setUsageMemPercent(0);
             vmStatistics.setUsageNetworkPercent(0);

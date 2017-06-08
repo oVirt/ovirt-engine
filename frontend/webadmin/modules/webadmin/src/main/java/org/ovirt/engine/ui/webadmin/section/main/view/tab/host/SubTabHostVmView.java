@@ -161,7 +161,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
-                return object.getRoundedElapsedTime();
+                return object.getElapsedTime();
             }
         };
         uptimeColumn.makeSortable();

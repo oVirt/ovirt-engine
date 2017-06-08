@@ -102,7 +102,6 @@ public final class Cloner {
         vm.getGraphicsInfos().putAll(instance.getGraphicsInfos());
         vm.getDynamicData().setVncKeyboardLayout(instance.getDynamicData().getVncKeyboardLayout());
         vm.setElapsedTime(instance.getElapsedTime());
-        vm.setRoundedElapsedTime(instance.getRoundedElapsedTime());
         vm.setExitMessage(instance.getExitMessage());
         vm.setExitStatus(instance.getExitStatus());
         vm.setExitReason(instance.getExitReason());

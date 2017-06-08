@@ -246,7 +246,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             public Double getRawValue(VM object) {
-                return object.getRoundedElapsedTime();
+                return object.getElapsedTime();
             }
         };
         uptimeColumn.makeSortable(VmConditionFieldAutoCompleter.UPTIME);
