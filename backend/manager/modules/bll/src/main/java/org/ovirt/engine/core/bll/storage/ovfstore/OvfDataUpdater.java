@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
+import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -54,7 +54,7 @@ public class OvfDataUpdater implements BackendService {
     }
 
     protected VdcReturnValueBase performOvfUpdateForStoragePool(Guid storagePoolId) {
-        ProcessOvfUpdateForStoragePoolParameters parameters = new ProcessOvfUpdateForStoragePoolParameters(storagePoolId);
+        StoragePoolParametersBase parameters = new StoragePoolParametersBase(storagePoolId);
         return backend.runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
 

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
+import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -51,7 +51,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
-public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateForStoragePoolParameters> extends StorageHandlingCommandBase<T> {
+public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
 
     @Inject
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
