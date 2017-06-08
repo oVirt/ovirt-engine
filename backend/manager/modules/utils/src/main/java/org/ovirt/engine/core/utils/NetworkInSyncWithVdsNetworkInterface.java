@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurationType;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.SubnetUtils;
 
 public class NetworkInSyncWithVdsNetworkInterface {
@@ -91,6 +89,8 @@ public class NetworkInSyncWithVdsNetworkInterface {
         }
 
         addDnsConfiguration(result);
+
+        result.add(DEFAULT_ROUTE, iface.isIpv4DefaultRoute(), isDefaultRouteNetwork );
 
         return result;
     }
@@ -207,33 +207,28 @@ public class NetworkInSyncWithVdsNetworkInterface {
     }
 
     private void addDnsConfiguration(ReportedConfigurations result) {
-        boolean dnsResolverConfigurationSupported =
-                FeatureSupported.supportedInConfig(ConfigValues.DnsResolverConfigurationSupported,
-                this.cluster.getCompatibilityVersion());
-
-        //DNS configuration is reported only on network having default_route role
-        if (!isDefaultRouteNetwork || !dnsResolverConfigurationSupported) {
-            return;
-        }
-
-        List<NameServer> nameServersOfNetworkAttachment = getNameServers(networkAttachment.getDnsResolverConfiguration());
-        List<NameServer> nameServersOfNetwork = getNameServers(network.getDnsResolverConfiguration());
         List<NameServer> nameServersOfHost = getNameServers(reportedDnsResolverConfiguration);
 
-        boolean engineDefineDnsConfiguration = nameServersOfNetworkAttachment != null || nameServersOfNetwork != null;
+        if (isDefaultRouteNetwork) {
+            List<NameServer> expectedNameServers = getExpectedNameServers();
+            boolean engineDefineDnsConfiguration = expectedNameServers != null;
 
-        List<NameServer> expectedNameServers = nameServersOfNetworkAttachment != null
-                ? nameServersOfNetworkAttachment
-                : nameServersOfNetwork;
+            if (engineDefineDnsConfiguration) {
+                result.add(DNS_CONFIGURATION,
+                        addressesAsString(nameServersOfHost),
+                        addressesAsString(expectedNameServers),
+                        Objects.equals(nameServersOfHost, expectedNameServers));
+            }
+        }
+    }
 
-        result.add(DNS_CONFIGURATION,
-                addressesAsString(nameServersOfHost),
-                engineDefineDnsConfiguration ? addressesAsString(expectedNameServers): "",
-                !(engineDefineDnsConfiguration && !Objects.equals(nameServersOfHost, expectedNameServers)));
+    private List<NameServer> getExpectedNameServers() {
+        List<NameServer> nameServersOfNetworkAttachment =
+                getNameServers(networkAttachment.getDnsResolverConfiguration());
 
-        result.add(DEFAULT_ROUTE, iface.isIpv4DefaultRoute(), isDefaultRouteNetwork);
+        List<NameServer> nameServersOfNetwork = getNameServers(network.getDnsResolverConfiguration());
 
-
+        return nameServersOfNetworkAttachment != null ? nameServersOfNetworkAttachment : nameServersOfNetwork;
     }
 
     private String addressesAsString(List<NameServer> nameServers) {
