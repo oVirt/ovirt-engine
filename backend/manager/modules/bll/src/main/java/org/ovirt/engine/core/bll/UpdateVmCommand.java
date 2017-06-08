@@ -451,6 +451,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             addCustomValue("memoryAdded", String.valueOf(memoryAddedMb));
             addCustomValue("requiredFactor", String.valueOf(factor));
             auditLogDirector.log(this, AuditLogType.FAILED_HOT_SET_MEMORY_NOT_DIVIDABLE);
+            newVmStatic.setMemSizeMb(currentMemory);
             return;
         }
 
