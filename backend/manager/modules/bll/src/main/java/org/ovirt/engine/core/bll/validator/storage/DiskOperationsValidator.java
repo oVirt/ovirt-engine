@@ -19,6 +19,7 @@ public class DiskOperationsValidator {
         allowedCommandsOnTypes.put(VdcActionType.UpdateVmDisk, Arrays.asList(DiskContentType.DATA));
         allowedCommandsOnTypes.put(VdcActionType.AttachDiskToVm, Arrays.asList(DiskContentType.DATA));
         allowedCommandsOnTypes.put(VdcActionType.MoveOrCopyDisk, Arrays.asList(DiskContentType.DATA));
+        allowedCommandsOnTypes.put(VdcActionType.LiveMigrateDisk, Arrays.asList(DiskContentType.DATA));
     }
 
     private Disk disk;
