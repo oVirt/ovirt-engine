@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStoragePoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
@@ -62,8 +62,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, getCompensationContext());
 
         if (shouldPerformOvfUpdate()) {
-            ProcessOvfUpdateForStoragePoolParameters parameters = new ProcessOvfUpdateForStoragePoolParameters(getStoragePoolId());
-            parameters.setUpdateStorage(false);
+            StoragePoolParametersBase parameters = new StoragePoolParametersBase(getStoragePoolId());
             runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters, null);
 
             runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
