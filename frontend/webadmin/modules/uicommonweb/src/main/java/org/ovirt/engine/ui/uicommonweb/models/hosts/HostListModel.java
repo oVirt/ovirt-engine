@@ -1796,6 +1796,9 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         getInstallCommand().setIsExecutionAllowed(installAvailability);
 
+        boolean webConsoleAvailability = singleHostSelected(items);
+        getHostConsoleCommand().setIsExecutionAllowed(webConsoleAvailability);
+
         boolean checkForUpgradeAvailability = false;
         if (singleHostSelected(items)) {
             VDS host = items.get(0);
