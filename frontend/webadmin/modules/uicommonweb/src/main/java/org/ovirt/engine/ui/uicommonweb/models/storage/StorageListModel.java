@@ -9,7 +9,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -587,10 +586,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     private void updateOvfs() {
         StorageDomain storage = getSelectedItem();
         if (storage != null) {
-            ProcessOvfUpdateForStorageDomainCommandParameters params = new ProcessOvfUpdateForStorageDomainCommandParameters();
-            params.setStorageDomainId(storage.getId());
-            params.setStoragePoolId(storage.getStoragePoolId());
-            Frontend.getInstance().runAction(VdcActionType.ProcessOvfUpdateForStorageDomain, params, null, this);
+            StorageDomainParametersBase params = new StorageDomainParametersBase(storage.getId());
+            Frontend.getInstance().runAction(VdcActionType.UpdateOvfStoreForStorageDomain, params, null, this);
         }
         cancel();
     }
