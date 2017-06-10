@@ -34,7 +34,6 @@ import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -108,9 +107,8 @@ public class BackendStorageDomainResource
 
     @Override
     public Response updateOvfStore(Action action) {
-        ProcessOvfUpdateForStorageDomainCommandParameters params = new ProcessOvfUpdateForStorageDomainCommandParameters();
-        params.setStorageDomainId(guid);
-        return performAction(VdcActionType.ProcessOvfUpdateForStorageDomain, params);
+        StorageDomainParametersBase params = new StorageDomainParametersBase(guid);
+        return performAction(VdcActionType.UpdateOvfStoreForStorageDomain, params);
     }
 
     @Override
