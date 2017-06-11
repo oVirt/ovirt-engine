@@ -52,6 +52,7 @@ def osetupattrs(
     reconfigurable=False,
     answerfile_condition=lambda env: True,
     summary_condition=lambda env: True,
+    is_secret=False,
 ):
     class decorator(classproperty):
         def __init__(self, o):
@@ -64,6 +65,7 @@ def osetupattrs(
                 reconfigurable=reconfigurable,
                 answerfile_condition=answerfile_condition,
                 summary_condition=summary_condition,
+                is_secret=is_secret,
             )
     return decorator
 
@@ -191,6 +193,8 @@ class Defaults(object):
 @util.export
 class Stages(object):
 
+    SECRETS_FILTERED_FROM_SETUP_ATTRS_MODULES = \
+        'osetup.secrets.filtered.from.setup.attrs.modules'
     NET_FIREWALL_MANAGER_AVAILABLE = 'osetup.net.firewallmanager.available'
     CONFIG_PROTOCOLS_CUSTOMIZATION = 'osetup.config.protocols.customization'
     CONFIG_APPLICATION_MODE_AVAILABLE = \

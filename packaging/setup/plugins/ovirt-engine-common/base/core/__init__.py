@@ -23,6 +23,7 @@ from otopi import util
 
 from . import answerfile
 from . import duplicated_constants_check
+from . import filter_secrets
 from . import misc
 from . import offlinepackager
 from . import postinstall
@@ -34,6 +35,7 @@ from . import uninstall
 def createPlugins(context):
     answerfile.Plugin(context=context)
     duplicated_constants_check.Plugin(context=context)
+    filter_secrets.Plugin(context=context)
     misc.Plugin(context=context)
     offlinepackager.Plugin(context=context)
     postinstall.Plugin(context=context)
