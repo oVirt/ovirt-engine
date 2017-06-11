@@ -63,8 +63,7 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
         if (!multiSelection) {
             setSelectionModel(new SingleSelectionModel<T>());
         } else {
-            setSelectionModel(new MultiSelectionModel<T>(),
-                    DefaultSelectionEventManager.<T> createCheckboxManager());
+            setSelectionModel(new MultiSelectionModel<T>(), DefaultSelectionEventManager.createCheckboxManager());
         }
 
         // Handle Selection
