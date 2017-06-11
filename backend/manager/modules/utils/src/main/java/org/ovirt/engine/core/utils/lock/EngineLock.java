@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.lock;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -48,9 +49,19 @@ public class EngineLock implements AutoCloseable {
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)
-                .append("exclusiveLocks", exclusiveLocks)
-                .append("sharedLocks", sharedLocks)
+                .append("exclusiveLocks", lockMapToString(exclusiveLocks))
+                .append("sharedLocks", lockMapToString(sharedLocks))
                 .build();
+    }
+
+    private static String lockMapToString(Map<String, Pair<String, String>> map) {
+        if (map == null) {
+            return "";
+        }
+        return map.entrySet()
+                .stream()
+                .map(e -> e.getKey() + '=' + e.getValue().getFirst())
+                .collect(Collectors.joining(", ", "[", "]"));
     }
 
     @Override
