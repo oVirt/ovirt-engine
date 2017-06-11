@@ -115,7 +115,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         if (!returnValue.getSucceeded()) {
             addValidationMessage(EngineMessage.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
 
-            ConnectAllHostsToLunResult result = (ConnectAllHostsToLunResult) getActionReturnValue();
+            ConnectAllHostsToLunResult result = returnValue.getActionReturnValue();
             if (result.getFailedVds() != null) {
                 getReturnValue().getValidationMessages().add(String.format("$hostName %1s",
                         result.getFailedVds().getName()));
