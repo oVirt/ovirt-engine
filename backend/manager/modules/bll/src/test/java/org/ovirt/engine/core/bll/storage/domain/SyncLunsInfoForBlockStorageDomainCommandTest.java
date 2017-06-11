@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -38,19 +40,23 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     @Test
     public void testGetLunsToUpdateInDbDiffLunIdDiffPvId() {
         Guid lunFromVgLunId = Guid.newGuid();
-        List<LUNs> newLunsToSaveInDb =
-                getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), Guid.newGuid(), Guid.newGuid()).
-                        get(command.saveLunsHandler);
+        Map<LunHandler, List<LUNs>> lunsToUpdateInDb =
+                getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
+        List<LUNs> newLunsToSaveInDb = lunsToUpdateInDb.get(command.saveLunsHandler);
 
+        assertEquals(Stream.of(command.saveLunsHandler, command.removeLunsHandler).collect(Collectors.toSet()),
+                lunsToUpdateInDb.keySet());
         assertLunIdInList(newLunsToSaveInDb, lunFromVgLunId);
     }
 
     @Test
     public void testGetLunsToUpdateInDbSameLunIdDiffPvId() {
         Guid lunId = Guid.newGuid();
-        List<LUNs> existingLunsToUpdateInDb = getLunsToUpdateInDb(lunId, lunId, Guid.newGuid(), Guid.newGuid()).
-                get(command.updateLunsHandler);
+        Map<LunHandler, List<LUNs>> lunsToUpdateInDb =
+                getLunsToUpdateInDb(lunId, lunId, Guid.newGuid(), Guid.newGuid());
+        List<LUNs> existingLunsToUpdateInDb = lunsToUpdateInDb.get(command.updateLunsHandler);
 
+        assertEquals(Collections.singleton(command.updateLunsHandler), lunsToUpdateInDb.keySet());
         assertLunIdInList(existingLunsToUpdateInDb, lunId);
     }
 
@@ -58,9 +64,11 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     public void testGetLunsToUpdateInDbDiffLunIdSamePvId() {
         Guid pvID = Guid.newGuid();
         Guid lunFromVgLunId = Guid.newGuid();
-        List<LUNs> newLunsToSaveInDb = getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), pvID, pvID).
-                get(command.saveLunsHandler);
+        Map<LunHandler, List<LUNs>> lunsToUpdateInDb = getLunsToUpdateInDb(lunFromVgLunId, Guid.newGuid(), pvID, pvID);
+        List<LUNs> newLunsToSaveInDb = lunsToUpdateInDb.get(command.saveLunsHandler);
 
+        assertEquals(Stream.of(command.saveLunsHandler, command.removeLunsHandler).collect(Collectors.toSet()),
+                lunsToUpdateInDb.keySet());
         assertLunIdInList(newLunsToSaveInDb, lunFromVgLunId);
     }
 
@@ -109,8 +117,12 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     @Test
     public void testGetLunsToUpdateInDbLunExistsInDbButNotInVgInfo() {
         Guid lunFromDbId = Guid.newGuid();
-        List<LUNs> lunsToRemoveFromDb = getLunsToUpdateInDb(Guid.newGuid(), lunFromDbId, Guid.newGuid(), Guid.newGuid())
-                .get(command.removeLunsHandler);
+        Map<LunHandler, List<LUNs>> lunsToUpdateInDb =
+                getLunsToUpdateInDb(Guid.newGuid(), lunFromDbId, Guid.newGuid(), Guid.newGuid());
+        List<LUNs> lunsToRemoveFromDb = lunsToUpdateInDb.get(command.removeLunsHandler);
+
+        assertEquals(Stream.of(command.saveLunsHandler, command.removeLunsHandler).collect(Collectors.toSet()),
+                lunsToUpdateInDb.keySet());
         assertLunIdInList(lunsToRemoveFromDb, lunFromDbId);
     }
 

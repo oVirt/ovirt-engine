@@ -191,7 +191,10 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
                     // lunFromDb has the same lun id and a different pv id -> old pv id.
                     return updateLunsHandler;
                 }));
-        lunsToUpdateInDb.put(removeLunsHandler, getLunsToRemoveFromDb(lunsFromVgInfo, lunsFromDb));
+        List<LUNs> lunsToRemoveFromDb = getLunsToRemoveFromDb(lunsFromVgInfo, lunsFromDb);
+        if (!lunsToRemoveFromDb.isEmpty()) {
+            lunsToUpdateInDb.put(removeLunsHandler, lunsToRemoveFromDb);
+        }
         return lunsToUpdateInDb;
     }
 
