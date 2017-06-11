@@ -80,10 +80,7 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
             if (selectionModel instanceof SingleSelectionModel) {
                 getListModel().setSelectedItem(((SingleSelectionModel<T>) selectionModel).getSelectedObject());
             } else if (selectionModel instanceof MultiSelectionModel) {
-                List<T> selectedItems = new ArrayList<>();
-                for (T entity : ((MultiSelectionModel<T>) selectionModel).getSelectedSet()) {
-                    selectedItems.add(entity);
-                }
+                List<T> selectedItems = new ArrayList<>(((MultiSelectionModel<T>) selectionModel).getSelectedSet());
                 getListModel().setSelectedItems(selectedItems);
             }
         });
