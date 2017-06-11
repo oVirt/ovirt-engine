@@ -29,6 +29,7 @@ from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
+from ovirt_engine_setup.provisiondb import constants as oprovisioncons
 
 
 def _(m):
@@ -41,6 +42,10 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self.environment.setdefault(
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES,
+            []
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
@@ -71,6 +76,20 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+        before=(
+            osetupcons.Stages.SECRETS_FILTERED_FROM_SETUP_ATTRS_MODULES,
+        )
+    )
+    def _boot(self):
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ].extend((
+            osetupcons,
+            oprovisioncons,
+        ))
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
@@ -87,9 +106,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.Const.PACKAGE_VERSION,
             osetupcons.Const.DISPLAY_VERSION,
         )
-        self.environment[
-            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-        ] = [osetupcons]
         self.environment.setdefault(
             oengcommcons.SystemEnv.USER_POSTGRES,
             oengcommcons.Defaults.DEFAULT_SYSTEM_USER_POSTGRES

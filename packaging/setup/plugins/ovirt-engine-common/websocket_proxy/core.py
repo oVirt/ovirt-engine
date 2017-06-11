@@ -40,6 +40,17 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+        before=(
+            osetupcons.Stages.SECRETS_FILTERED_FROM_SETUP_ATTRS_MODULES,
+        ),
+    )
+    def _boot(self):
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ].append(owspcons)
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
@@ -47,14 +58,6 @@ class Plugin(plugin.PluginBase):
             owspcons.ConfigEnv.WEBSOCKET_PROXY_STOP_NEEDED,
             False
         )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-    )
-    def _setup(self):
-        self.environment[
-            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-        ].append(owspcons)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,

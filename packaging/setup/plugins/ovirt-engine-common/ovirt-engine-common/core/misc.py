@@ -37,15 +37,18 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_BOOT,
+        before=(
+            osetupcons.Stages.SECRETS_FILTERED_FROM_SETUP_ATTRS_MODULES,
+        ),
     )
-    def _setup(self):
+    def _boot(self):
         self.environment[
             osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-        ].append(oengcommcons)
-        self.environment[
-            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-        ].append(oenginecons)
+        ].extend((
+            oengcommcons,
+            oenginecons,
+        ))
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

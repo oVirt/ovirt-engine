@@ -42,6 +42,10 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self.environment.setdefault(
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES,
+            []
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
@@ -59,6 +63,19 @@ class Plugin(plugin.PluginBase):
             )
         )
         logging.getLogger('ovirt').setLevel(logging.DEBUG)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+        before=(
+            osetupcons.Stages.SECRETS_FILTERED_FROM_SETUP_ATTRS_MODULES,
+        )
+    )
+    def _boot(self):
+        self.environment[
+            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
+        ].extend((
+            osetupcons,
+        ))
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -96,10 +113,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.Const.PACKAGE_VERSION,
             osetupcons.Const.DISPLAY_VERSION,
         )
-
-        self.environment[
-            osetupcons.CoreEnv.SETUP_ATTRS_MODULES
-        ] = [osetupcons]
 
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] is None:
             self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] = False
