@@ -501,4 +501,13 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         }
         setSucceeded(true);
     }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(), getVmName());
+        }
+        return jobProperties;
+    }
 }
