@@ -447,15 +447,15 @@ endif
 	fi
 
 install-gwt-symbols:
-	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/$(GWTAPP)"
-	find "$(SOURCEDIR)" -name '*-gwt-symbols.zip' -type f -exec install -m 0644 {} "$(DESTDIR)$(DATA_DIR)/gwt-symbols/$(GWTAPP)/symbolMaps.zip" \;
+	for gwt_app in webadmin userportal; do \
+		install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/$${gwt_app}"; \
+		find "$(MAVEN_OUTPUT_DIR)" -name "$${gwt_app}-*-gwt-symbols.zip" -type f | grep -v tmp.repos | head -n 1 | xargs -I{} cp {} "$(DESTDIR)$(DATA_DIR)/gwt-symbols/$${gwt_app}/symbolMaps.zip"; \
+	done
 
 install-layout: \
 		install-packaging-files \
+		install-gwt-symbols \
 		$(NULL)
-
-	$(MAKE) install-gwt-symbols GWTAPP="webadmin" SOURCEDIR="$(MAVEN_OUTPUT_DIR)/frontend/webadmin/modules/webadmin"
-	$(MAKE) install-gwt-symbols GWTAPP="userportal" SOURCEDIR="$(MAVEN_OUTPUT_DIR)/frontend/webadmin/modules/userportal-gwtp"
 
 	install -d -m 755 "$(DESTDIR)$(BIN_DIR)"
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-setup" "$(DESTDIR)$(BIN_DIR)/engine-setup"
