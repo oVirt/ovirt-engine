@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
@@ -68,9 +68,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         if (shouldPerformOvfUpdate()) {
             StoragePoolParametersBase parameters = new StoragePoolParametersBase(getStoragePoolId());
             runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters, null);
-
-            runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
-                    createProcessOvfUpdateForDomainParams(), null);
+            runInternalAction(VdcActionType.UpdateOvfStoreForStorageDomain, createUpdateOvfStoreParams(), getContext());
         }
 
         if (noAsyncOperations()) {
@@ -80,19 +78,18 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         setSucceeded(true);
     }
 
+    private StorageDomainParametersBase createUpdateOvfStoreParams() {
+        StorageDomainParametersBase params = new StorageDomainParametersBase(getStorageDomainId());
+        params.setParentCommand(getActionType());
+        params.setParentParameters(getParameters());
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        return params;
+    }
+
     protected boolean shouldPerformOvfUpdate() {
         return !getParameters().isInactive() &&
                 StorageConstants.monitoredDomainStatuses.contains(getStorageDomain().getStatus())
                 && getStorageDomain().getStorageDomainType().isDataDomain();
-    }
-
-    private ProcessOvfUpdateForStorageDomainCommandParameters createProcessOvfUpdateForDomainParams() {
-        ProcessOvfUpdateForStorageDomainCommandParameters params = new ProcessOvfUpdateForStorageDomainCommandParameters(getStoragePoolId(), getStorageDomainId());
-        params.setParentCommand(getActionType());
-        params.setParentParameters(getParameters());
-        params.setSkipDomainChecks(true);
-        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        return params;
     }
 
     private StoragePoolIsoMap loadStoragePoolIsoMap() {
