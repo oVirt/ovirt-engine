@@ -364,7 +364,9 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         // Stopping the image transfer session may fail so it's retried; the call is
         // idempotent and lightweight if the session is not in progress.
         periodicPauseLog(context.entity, context.iterationTimestamp);
-        stopImageTransferSession(context.entity);
+        if (context.entity.getImagedTicketId() != null) {
+            stopImageTransferSession(context.entity);
+        }
     }
 
     /**
