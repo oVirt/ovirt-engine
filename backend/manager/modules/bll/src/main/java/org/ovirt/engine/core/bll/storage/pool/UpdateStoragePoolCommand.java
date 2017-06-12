@@ -123,7 +123,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      * and all the active block storage domains' luns.
      */
     private void syncAllUsedLunsInStoragePool() {
-        if (discardInformationWasIntroduced()) {
+        if (discardInformationWasIntroduced() || reduceDeviceFromStorageDomainWasIntroduced()) {
             /*
             - We don't want to fail the whole storage pool upgrade because some of the
               luns could not be synced, so SyncAllUsedLuns only logs errors on such cases.
@@ -138,6 +138,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private boolean discardInformationWasIntroduced() {
         return !FeatureSupported.discardAfterDeleteSupported(getOldStoragePool().getCompatibilityVersion()) &&
                 FeatureSupported.discardAfterDeleteSupported(getStoragePool().getCompatibilityVersion());
+    }
+
+    /**
+     * Returns true iff the reduce device from storage domain was not supported in the old dc, and now it should be.
+     */
+    private boolean reduceDeviceFromStorageDomainWasIntroduced() {
+        return !FeatureSupported.reduceDeviceFromStorageDomain(getOldStoragePool().getCompatibilityVersion()) &&
+                FeatureSupported.reduceDeviceFromStorageDomain(getStoragePool().getCompatibilityVersion());
     }
 
     private void updateQuotaCache() {
