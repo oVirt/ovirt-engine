@@ -72,7 +72,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
             UpdateEntity.class })
     private String sshUsername;
 
-    @EditableVdsField(onStatuses = { VDSStatus.Maintenance })
+    @EditableVdsField(onStatuses = { VDSStatus.Maintenance, VDSStatus.PendingApproval })
     private Guid clusterId;
 
     private Boolean serverSslEnabled;
