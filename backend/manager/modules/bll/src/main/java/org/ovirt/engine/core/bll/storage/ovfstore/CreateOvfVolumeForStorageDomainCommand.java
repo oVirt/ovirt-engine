@@ -106,7 +106,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
     }
 
     private void logFailure() {
-        Guid createdDiskId = (Guid) getActionReturnValue();
+        Guid createdDiskId = getActionReturnValue();
         if (createdDiskId != null) {
             addCustomValue("DiskId", createdDiskId.toString());
             auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
@@ -126,7 +126,7 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
 
     @Override
     protected void endSuccessfully() {
-        Guid createdDiskId = (Guid) getActionReturnValue();
+        Guid createdDiskId = getActionReturnValue();
         endChildCommand(true);
         StorageDomainOvfInfo storageDomainOvfInfoDb = storageDomainOvfInfoDao.get(createdDiskId);
 

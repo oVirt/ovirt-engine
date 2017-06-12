@@ -210,7 +210,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
     @Override
     public AuditLogType getAuditLogTypeValue() {
         // this should return only error, if command succeeded no logging is required
-        ConnectAllHostsToLunResult result = (ConnectAllHostsToLunResult) getActionReturnValue();
+        ConnectAllHostsToLunResult result = getActionReturnValue();
 
         // For audit logging purposes in case of an error
         setVds(result.getFailedVds());

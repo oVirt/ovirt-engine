@@ -1219,7 +1219,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         getReturnValue().setActionReturnValue(value);
     }
 
-    protected Object getActionReturnValue() {
+    protected <R> R getActionReturnValue() {
         return getReturnValue().getActionReturnValue();
     }
 
