@@ -41,7 +41,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * Synchronize LUN details comprising the storage domain with the DB
  */
 @InternalCommandAttribute
-@NonTransactiveCommandAttribute(forceCompensation = true)
+@NonTransactiveCommandAttribute
 public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForBlockStorageDomainParameters>
         extends StorageDomainCommandBase<T> {
 
@@ -61,10 +61,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
     public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());
-    }
-
-    public SyncLunsInfoForBlockStorageDomainCommand(Guid commandId) {
-        super(commandId);
     }
 
     @Override
