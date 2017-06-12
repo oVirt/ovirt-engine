@@ -90,7 +90,7 @@ public class BackendStorageDomainResource
             switch (storageType) {
             case ISCSI:
             case FCP:
-                extendStorageDomain(incoming, model, storageType);
+                extendStorageDomain(incoming, model);
                 break;
             default:
                 break;
@@ -244,7 +244,7 @@ public class BackendStorageDomainResource
     /**
      * if user added new LUNs - extend the storage domain.
      */
-    private void extendStorageDomain(StorageDomain incoming, StorageDomain storageDomain, StorageType storageType) {
+    private void extendStorageDomain(StorageDomain incoming, StorageDomain storageDomain) {
         if (incoming.getStorage() == null) {
             // LUNs info was not supplied in the request so no need to check whether to extend
             return;
