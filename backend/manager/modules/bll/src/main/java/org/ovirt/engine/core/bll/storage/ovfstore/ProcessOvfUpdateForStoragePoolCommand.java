@@ -88,11 +88,6 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends ProcessOvfUpdateFo
     }
 
     @Override
-    protected Object getActionReturnValue() {
-        return super.getActionReturnValue();
-    }
-
-    @Override
     protected void executeCommand() {
         itemsCountPerUpdate = Config.getValue(ConfigValues.OvfItemsCountPerUpdate);
         proccessedDomains = new HashSet<>();

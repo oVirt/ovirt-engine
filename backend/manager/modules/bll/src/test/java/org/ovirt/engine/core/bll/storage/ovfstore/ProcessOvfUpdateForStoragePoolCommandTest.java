@@ -389,7 +389,7 @@ public class ProcessOvfUpdateForStoragePoolCommandTest extends BaseCommandTest {
 
     private void executeCommand() {
         command.executeCommand();
-        executedOvfUpdatedDomains = (Set<Guid>)command.getActionReturnValue();
+        executedOvfUpdatedDomains = command.getReturnValue().getActionReturnValue();
     }
 
     @Test
