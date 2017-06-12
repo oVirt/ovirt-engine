@@ -155,6 +155,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setTunnelMigration(entity.getTunnelMigration());
         staticVm.setMigrationSupport(entity.getMigrationSupport());
         staticVm.setMigrationDowntime(entity.getMigrationDowntime());
+        staticVm.setDedicatedVmForVdsList(entity.getDedicatedVmForVdsList());
         staticVm.setMinAllocatedMem(entity.getMinAllocatedMem());
         staticVm.setNumOfIoThreads(entity.getNumOfIoThreads());
 
