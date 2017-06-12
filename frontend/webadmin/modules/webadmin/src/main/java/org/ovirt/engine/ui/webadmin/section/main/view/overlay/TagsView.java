@@ -91,15 +91,10 @@ public class TagsView extends AbstractView implements TagsPresenter.ViewDef {
 
     private Button createActivateButton(final TagModel model) {
         final Button result = new Button(model.getSelection() ? constants.deactivateTag() : constants.activateTag());
-        result.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                model.setSelection(model.getSelection() != null ? !model.getSelection() : true);
-                tagModelProvider.getSelectionModel().setSelected(model, true);
-                updateTags(tagModelProvider.getModel().getItems());
-            }
-
+        result.addClickHandler(e -> {
+            model.setSelection(model.getSelection() != null ? !model.getSelection() : true);
+            tagModelProvider.getSelectionModel().setSelected(model, true);
+            updateTags(tagModelProvider.getModel().getItems());
         });
         return result;
     }

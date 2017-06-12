@@ -86,7 +86,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
 
     @Override
     protected SimpleActionPanel<Bookmark> createActionPanel(BookmarkModelProvider modelProvider) {
-        return new SimpleActionPanel<>(modelProvider, modelProvider.getSelectionModel());
+        return new SimpleActionPanel<>(modelProvider);
     }
 
     private void addActionButtons(final BookmarkModelProvider modelProvider) {

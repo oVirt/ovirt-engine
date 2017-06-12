@@ -17,6 +17,9 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvideCollectionChangedEvent;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
+import com.google.gwt.view.client.SelectionModel;
+import com.google.gwt.view.client.SingleSelectionModel;
+
 public class ListModel<T> extends Model {
 
     public static final EventDefinition selectedItemChangedEventDefinition;
@@ -328,5 +331,35 @@ public class ListModel<T> extends Model {
         }
 
         super.cleanup();
+    }
+
+    private SelectionModel<T> selectionModel;
+
+    public boolean isSingleSelectionOnly() {
+        return false;
+    }
+
+    public SingleSelectionModel<T> getSingleSelectionModel() {
+        if (selectionModel == null && isSingleSelectionOnly()) {
+            selectionModel = new SingleSelectionModel<>(new QueryableEntityKeyProvider<>());
+            return (SingleSelectionModel<T>) selectionModel;
+        }
+        return null;
+    }
+
+    public OrderedMultiSelectionModel<T> getOrderedMultiSelectionModel() {
+        if (selectionModel == null && !isSingleSelectionOnly()) {
+            selectionModel = new OrderedMultiSelectionModel<>(new QueryableEntityKeyProvider<>());
+            return (OrderedMultiSelectionModel<T>) selectionModel;
+        }
+        return null;
+    }
+
+    public SelectionModel<T> getSelectionModel() {
+        if (isSingleSelectionOnly()) {
+            return getSingleSelectionModel();
+        } else {
+            return getOrderedMultiSelectionModel();
+        }
     }
 }

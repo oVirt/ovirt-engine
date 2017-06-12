@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Bookmark;
@@ -22,8 +21,6 @@ import com.google.inject.Provider;
 
 public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, BookmarkListModel> {
 
-    private final SingleSelectionModel<Bookmark> selectionModel;
-
     private final Provider<BookmarkPopupPresenterWidget> popupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
@@ -35,16 +32,6 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         super(eventBus, defaultConfirmPopupProvider);
         this.popupProvider = bookmarkPopupPresenterWidgetProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
-
-        // Create selection model
-        selectionModel = new SingleSelectionModel<>();
-        selectionModel.addSelectionChangeHandler(event -> {
-            Bookmark selectedObject = selectionModel.getSelectedObject();
-            List<Bookmark> selectedItems = selectedObject != null
-                    ? new ArrayList<>(Arrays.asList(selectedObject))
-                    : new ArrayList<Bookmark>();
-            BookmarkModelProvider.this.setSelectedItems(selectedItems);
-        });
     }
 
     @Override
@@ -53,13 +40,15 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
 
         // Clear tag selection when a tag is saved/edited/deleted
         model.getItemSavedEvent().addListener((ev, sender, args) -> clearSelection());
+        getModel().getSelectionModel().addSelectionChangeHandler(event -> {
+            BookmarkModelProvider.this.setSelectedItems(Collections.singletonList(
+                    ((SingleSelectionModel<Bookmark>) getModel().getSelectionModel()).getSelectedObject()));
+        });
 
     }
 
     void clearSelection() {
-        if (selectionModel.getSelectedObject() != null && !getModel().getIsBookmarkInitiated()) {
-            selectionModel.setSelected(selectionModel.getSelectedObject(), false);
-        }
+        ((SingleSelectionModel<Bookmark>) getModel().getSelectionModel()).clear();
     }
 
     @Override
@@ -67,14 +56,10 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         super.updateDataProvider(items);
     }
 
-    public SingleSelectionModel<Bookmark> getSelectionModel() {
-        return selectionModel;
-    }
-
     @Override
     public void addDataDisplay(HasData<Bookmark> display) {
         super.addDataDisplay(display);
-        display.setSelectionModel(selectionModel);
+        display.setSelectionModel(getModel().getSelectionModel());
     }
 
     @Override

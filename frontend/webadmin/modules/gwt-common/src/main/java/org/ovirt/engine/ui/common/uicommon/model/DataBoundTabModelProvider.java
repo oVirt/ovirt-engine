@@ -3,14 +3,13 @@ package org.ovirt.engine.ui.common.uicommon.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ProvidesKey;
+import com.google.gwt.view.client.SelectionModel;
 import com.google.inject.Provider;
 
 /**
@@ -23,25 +22,11 @@ import com.google.inject.Provider;
  */
 public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel> extends TabModelProvider<M> implements SearchableTableModelProvider<T, M> {
 
-    private final AsyncDataProvider<T> dataProvider;
+    private AsyncDataProvider<T> dataProvider;
 
     public DataBoundTabModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        this(eventBus, defaultConfirmPopupProvider, null);
-    }
-
-    public DataBoundTabModelProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            ProvidesKey<T> keyProvider) {
         super(eventBus, defaultConfirmPopupProvider);
-
-        this.dataProvider = new AsyncDataProvider<T>(keyProvider) {
-            @Override
-            protected void onRangeChanged(HasData<T> display) {
-                // We might get here after the ItemsChangedEvent has been triggered
-                updateData();
-            }
-        };
     }
 
     @Override
@@ -65,6 +50,9 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         getDataProvider().updateRowCount(0, false);
     }
 
+    public SelectionModel<T> getSelectionModel() {
+        return getModel().getSelectionModel();
+    }
     /**
      * @return {@code true} when the ItemsChangedEvent of the model should trigger data update, {@code false} otherwise.
      */
@@ -86,10 +74,6 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
 
     @Override
     public Object getKey(T item) {
-        if (item instanceof IVdcQueryable) {
-            return ((IVdcQueryable) item).getQueryableId();
-        }
-
         return getDataProvider().getKey(item);
     }
 
@@ -149,17 +133,26 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
      * Updates the data provider with new data received from model.
      */
     protected void updateDataProvider(List<T> items) {
-        dataProvider.updateRowCount(items.size(), true);
-        dataProvider.updateRowData(0, items);
+        getDataProvider().updateRowCount(items.size(), true);
+        getDataProvider().updateRowData(0, items);
     }
 
     protected AsyncDataProvider<T> getDataProvider() {
+        if (dataProvider == null) {
+            dataProvider = new AsyncDataProvider<T>(getModel().getSelectionModel()) {
+                @Override
+                protected void onRangeChanged(HasData<T> display) {
+                    // We might get here after the ItemsChangedEvent has been triggered
+                    updateData();
+                }
+            };
+        }
         return dataProvider;
     }
 
     @Override
     public void addDataDisplay(HasData<T> display) {
-        dataProvider.addDataDisplay(display);
+        getDataProvider().addDataDisplay(display);
     }
 
 }

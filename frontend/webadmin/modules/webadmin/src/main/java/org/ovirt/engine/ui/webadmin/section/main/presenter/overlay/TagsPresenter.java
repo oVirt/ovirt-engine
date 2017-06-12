@@ -50,7 +50,7 @@ public class TagsPresenter extends AbstractOverlayPresenter<TagsPresenter.ViewDe
 
             @Override
             public void onClick(ClickEvent event) {
-                tagModelProvider.getSelectionModel().setSelected(tagModelProvider.getModel().getRootNode(), true);
+                tagModelProvider.getModel().getSelectionModel().setSelected(tagModelProvider.getModel().getRootNode(), true);
                 tagModelProvider.getModel().executeCommand(tagModelProvider.getModel().getNewCommand());
             }
 

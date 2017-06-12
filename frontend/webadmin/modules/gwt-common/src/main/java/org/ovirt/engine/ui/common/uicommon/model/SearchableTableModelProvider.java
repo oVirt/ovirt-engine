@@ -12,5 +12,4 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  *            List model type.
  */
 public interface SearchableTableModelProvider<T, M extends SearchableListModel> extends SearchableModelProvider<T, M>, ActionTableDataProvider<T> {
-
 }

@@ -79,7 +79,6 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
                     }
                 }));
         getView().setDetailPlaceTransitionHandler(this);
-        this.breadCrumbs.setSelectionModel(getTable().getSelectionModel());
     }
 
     public void handlePlaceTransition() {

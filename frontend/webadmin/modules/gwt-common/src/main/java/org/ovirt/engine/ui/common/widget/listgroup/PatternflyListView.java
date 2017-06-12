@@ -10,7 +10,7 @@ import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.dom.client.ClickEvent;

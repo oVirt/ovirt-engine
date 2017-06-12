@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.uicommon.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -33,8 +34,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
 
     }
 
-    private final SingleSelectionModel<TagModel> selectionModel;
-
     private final Provider<TagPopupPresenterWidget> popupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
@@ -46,11 +45,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
         super(eventBus, defaultConfirmPopupProvider);
         this.popupProvider = tagPopupPresenterWidgetProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
-
-        // Create selection model
-        selectionModel = new SingleSelectionModel<>();
-        selectionModel.addSelectionChangeHandler(event -> TagModelProvider.this.setSelectedItems(Arrays.asList(selectionModel.getSelectedObject())));
-
     }
 
     @Override
@@ -90,6 +84,11 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
             }
 
         });
+        getModel().getSelectionModel().addSelectionChangeHandler(event -> {
+            TagModelProvider.this.setSelectedItems(
+                    Collections.singletonList(
+                            ((SingleSelectionModel<TagModel>) getModel().getSelectionModel()).getSelectedObject()));
+        });
     }
 
     @Override
@@ -103,10 +102,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
     @Override
     public void setSelectedItems(List<TagModel> items) {
         getModel().setSelectedItem(items.size() > 0 ? items.get(0) : null);
-    }
-
-    public SingleSelectionModel<TagModel> getSelectionModel() {
-        return selectionModel;
     }
 
     @Override

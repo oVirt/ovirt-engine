@@ -127,6 +127,11 @@ public class BookmarkListModel extends SearchableListModel {
         updateActionAvailability();
     }
 
+    @Override
+    public boolean isSingleSelectionOnly() {
+        return true;
+    }
+
     public void executeBookmarksSearch() {
         setIsBookmarkInitiated(true);
         getSearchCommand().execute();

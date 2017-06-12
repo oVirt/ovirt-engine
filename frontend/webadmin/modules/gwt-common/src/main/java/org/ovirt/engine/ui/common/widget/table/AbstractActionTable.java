@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -126,7 +127,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, ClientStorage clientStorage) {
         super(dataProvider);
-        this.selectionModel = new OrderedMultiSelectionModel<>(dataProvider);
+        this.selectionModel = (OrderedMultiSelectionModel<T>) dataProvider.getModel().getSelectionModel();
         this.table = new ActionCellTable<T>(dataProvider, resources) {
 
             @Override

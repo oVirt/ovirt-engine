@@ -50,10 +50,11 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
     private final MenuLayout menuLayout;
     private final MainModelProvider<T, M> listModelProvider;
     private OvirtPopover popover;
-    private SelectionModel<T> selectionModel;
+    private final SelectionModel<T> selectionModel;
     private ListModelSearchBox<T, ?> searchBox;
     private boolean updateToFirstRow = false;
     private boolean updateToLastRow = false;
+    private boolean detailTabsShowing = false;
 
     @Inject
     public OvirtBreadCrumbs(EventBus eventBus, MainModelProvider<T, M> listModelProvider, MenuLayout menuLayout) {
@@ -62,6 +63,7 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
         M listModel = listModelProvider.getModel();
         listModel.getSelectedItemChangedEvent().addListener((ev, sender, args) -> updateSelectedRows());
         listModel.getSelectedItemsChangedEvent().addListener((ev, sender, args) -> updateSelectedRows());
+        selectionModel = listModelProvider.getModel().getSelectionModel();
         // Since the current selected item is set before this is instantiated, we need to look up the value
         // in the constructor.
         updateSelectedRows();
@@ -97,6 +99,9 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
                 }
             }
         }
+        if (listModelProvider.getModel().getSelectedItem() != null && detailTabsShowing) {
+            currentSelectedItemWidget = createSelectionDropDown(getName((T) listModelProvider.getModel().getSelectedItem()));
+        }
         buildCrumbs();
     }
 
@@ -110,10 +115,12 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
 
     public void clearActiveSubTab() {
         currentSelectedItemWidget = null;
+        detailTabsShowing = false;
         buildCrumbs();
     }
 
     public void setActiveSubTab(String title) {
+        detailTabsShowing = true;
         currentSelectedItemWidget = createSelectionDropDown(getName((T) listModelProvider.getModel().getSelectedItem()));
         buildCrumbs();
     }
@@ -175,13 +182,6 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
             searchBox.addModelSelectedCallback(this);
         }
         popover.addContent(searchBox, "searchPanel"); // $NON-NLS-1$
-    }
-
-    public void setSelectionModel(SelectionModel<T> selectionModel) {
-        this.selectionModel = selectionModel;
-        if (searchBox != null) {
-            searchBox.setSelectionModel(selectionModel);
-        }
     }
 
     @Override

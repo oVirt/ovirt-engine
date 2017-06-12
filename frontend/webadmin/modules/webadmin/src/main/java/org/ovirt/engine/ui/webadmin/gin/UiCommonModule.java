@@ -87,10 +87,10 @@ public class UiCommonModule extends BaseUiCommonModule {
         bindCommonModels();
 
         // BookmarkListModel
-        bind(BookmarkModelProvider.class).asEagerSingleton();
+        bind(BookmarkModelProvider.class).in(Singleton.class);
 
         // TagListModel
-        bind(TagModelProvider.class).asEagerSingleton();
+        bind(TagModelProvider.class).in(Singleton.class);
 
         // AlertListModel
         bind(AlertModelProvider.class).in(Singleton.class);

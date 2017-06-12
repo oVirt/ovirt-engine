@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table;
 
 import org.ovirt.engine.ui.common.widget.action.ActionPanel;
+import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
+
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
 /**

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.table;
+package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -112,7 +112,7 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
         resolveChanges();
     }
 
-    void resolveChanges() {
+    public void resolveChanges() {
         Set<Object> selectedKeys = selectedSet.keySet();
         List<Object> visibleKeys = new ArrayList<>();
         for (T visible : dataDisplay.getVisibleItems()) {
