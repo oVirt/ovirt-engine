@@ -123,15 +123,21 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      * and all the active block storage domains' luns.
      */
     private void syncAllUsedLunsInStoragePool() {
-        if (!FeatureSupported.discardAfterDeleteSupported(getOldStoragePool().getCompatibilityVersion()) &&
-                FeatureSupported.discardAfterDeleteSupported(getStoragePool().getCompatibilityVersion())) {
+        if (discardInformationWasIntroduced()) {
             /*
-            - Discard was not supported, and now it should be.
             - We don't want to fail the whole storage pool upgrade because some of the
               luns could not be synced, so SyncAllUsedLuns only logs errors on such cases.
              */
             runInternalAction(ActionType.SyncAllUsedLuns, new SyncLunsParameters(getStoragePoolId()));
         }
+    }
+
+    /**
+     * Returns true iff discard was not supported in the old dc, and now it should be.
+     */
+    private boolean discardInformationWasIntroduced() {
+        return !FeatureSupported.discardAfterDeleteSupported(getOldStoragePool().getCompatibilityVersion()) &&
+                FeatureSupported.discardAfterDeleteSupported(getStoragePool().getCompatibilityVersion());
     }
 
     private void updateQuotaCache() {
