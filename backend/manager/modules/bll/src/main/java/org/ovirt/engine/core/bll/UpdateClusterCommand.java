@@ -181,7 +181,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Override
     protected void executeCommand() {
         Guid newMacPoolId = getNewMacPoolId();
-        moveMacs.moveMacsOfUpdatedCluster(
+        moveMacs.migrateMacsToAnotherMacPool(
                 oldCluster,
                 newMacPoolId,
                 getContext());

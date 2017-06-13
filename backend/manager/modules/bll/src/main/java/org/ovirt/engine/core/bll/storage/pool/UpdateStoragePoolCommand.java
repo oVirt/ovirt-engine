@@ -118,7 +118,12 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if (shouldSetNewMacPoolOnAllClusters) {
             List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePoolId());
             for (Cluster cluster : clusters) {
-                moveMacs.updateClusterAndMoveMacs(cluster, newMacPoolId, getContext());
+                boolean macPoolChanged = !newMacPoolId.equals(cluster.getMacPoolId());
+                if (macPoolChanged) {
+                    moveMacs.migrateMacsToAnotherMacPool(cluster, newMacPoolId, getContext());
+                    cluster.setMacPoolId(newMacPoolId);
+                    clusterDao.update(cluster);
+                }
             }
         }
     }
