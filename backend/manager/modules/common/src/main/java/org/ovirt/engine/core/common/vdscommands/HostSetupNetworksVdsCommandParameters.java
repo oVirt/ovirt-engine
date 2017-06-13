@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -96,9 +95,9 @@ public class HostSetupNetworksVdsCommandParameters extends VdsIdAndVdsVDSCommand
         return super.appendAttributes(tsb)
                 .append("rollbackOnFailure", isRollbackOnFailure())
                 .append("connectivityTimeout", getConnectivityTimeout())
-                .append("networks", Entities.collectionToString(getNetworks(), "\t\t"))
+                .append("networks", getNetworks())
                 .append("removedNetworks", getRemovedNetworks())
-                .append("bonds", Entities.collectionToString(getCreateOrUpdateBonds(), "\t\t"))
+                .append("bonds", getCreateOrUpdateBonds())
                 .append("removedBonds", getRemovedBonds())
                 .append("clusterSwitchType", getClusterSwitchType());
     }
