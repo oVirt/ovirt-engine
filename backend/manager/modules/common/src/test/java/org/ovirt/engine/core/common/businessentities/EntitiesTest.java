@@ -1,12 +1,9 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,34 +39,5 @@ public class EntitiesTest {
         assertTrue(businessEntitiesById.containsKey(id2));
 
         assertFalse(businessEntitiesById.containsKey(new VmDeviceId(GUIDs[0], GUIDs[3])));
-    }
-
-    @Test
-    public void collectiontoStringNull() {
-        assertEquals("[]", Entities.collectionToString(null, ""));
-    }
-
-    @Test
-    public void collectiontoStringEmpty() {
-        assertEquals("[]", Entities.collectionToString(Collections.emptyList(), ""));
-    }
-
-    @Test
-    public void collectiontoStringOneElement() {
-        String s = "abc";
-        assertEquals("[" + s + "]", Entities.collectionToString(Collections.singletonList(s), ""));
-    }
-
-    @Test
-    public void collectiontoStringMultipleElements() {
-        String s = "abc";
-        assertEquals("[" + s + ",\n" + s + "]", Entities.collectionToString(Arrays.asList(s, s), ""));
-    }
-
-    @Test
-    public void collectiontoStringMultipleElementsWithPrefix() {
-        String s = "abc";
-        String p = "   ";
-        assertEquals("[" + s + ",\n" + p + s + "]", Entities.collectionToString(Arrays.asList(s, s), p));
     }
 }
