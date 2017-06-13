@@ -97,7 +97,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         if (macPoolChanged()) {
             ReadMacPool macPoolForTargetCluster = macPoolPerCluster.getMacPoolForCluster(newClusterId);
             ValidationResult validationResult =
-                    validator.validateCanMoveMacs(macPoolForTargetCluster, getMacsToMigrate());
+                    moveMacs.canMigrateMacsToAnotherMacPool(macPoolForTargetCluster, getMacsToMigrate());
 
             if (!validationResult.isValid()) {
                 return validate(validationResult);
@@ -184,7 +184,6 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             moveMacs.migrateMacsToAnotherMacPool(sourceMacPoolId,
                     targetMacPoolId,
                     getMacsToMigrate(),
-                    true,
                     getContext());
         }
     }

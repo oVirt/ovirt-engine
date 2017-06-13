@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.MoveMacs;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -113,9 +114,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     private void updateAllClustersMacPool() {
-        final Guid newMacPoolId = getParameters().getStoragePool().getMacPoolId();
-        final boolean shouldSetNewMacPoolOnAllClusters = newMacPoolId != null;
-        if (shouldSetNewMacPoolOnAllClusters) {
+        final Guid newMacPoolId = getNewMacPoolId();
+        if (shouldSetNewMacPoolOnAllClusters(newMacPoolId)) {
             List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePoolId());
             for (Cluster cluster : clusters) {
                 boolean macPoolChanged = !newMacPoolId.equals(cluster.getMacPoolId());
@@ -126,6 +126,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 }
             }
         }
+    }
+
+    private Guid getNewMacPoolId() {
+        return getParameters().getStoragePool().getMacPoolId();
+    }
+
+    private boolean shouldSetNewMacPoolOnAllClusters(Guid newMacPoolId) {
+        return newMacPoolId != null;
     }
 
     /**
@@ -318,7 +326,18 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
 
         StoragePoolValidator validator = createStoragePoolValidator();
-        return validate(validator.isNotLocalfsWithDefaultCluster());
+        return validate(validator.isNotLocalfsWithDefaultCluster())
+                && validate(allMacsInEveryClusterCanBeMigratedToAnotherPool());
+    }
+
+    private ValidationResult allMacsInEveryClusterCanBeMigratedToAnotherPool() {
+        Guid newMacPoolId = getNewMacPoolId();
+        if (!shouldSetNewMacPoolOnAllClusters(newMacPoolId)) {
+            return ValidationResult.VALID;
+        }
+
+        List<Cluster> clusters = clusterDao.getAllForStoragePool(getStoragePoolId());
+        return moveMacs.canMigrateMacsToAnotherMacPool(clusters, newMacPoolId);
     }
 
     private boolean isCompatibilityVersionChangeAllowedForDomains(List<StorageDomainStatic> poolDomains) {

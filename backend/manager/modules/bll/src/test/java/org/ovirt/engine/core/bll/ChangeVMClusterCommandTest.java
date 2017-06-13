@@ -100,7 +100,6 @@ public class ChangeVMClusterCommandTest {
         verify(moveMacs).migrateMacsToAnotherMacPool(oldCluster.getMacPoolId(),
                 newCluster.getMacPoolId(),
                 Collections.singletonList(macToMigrate),
-                true,
                 underTest.getContext());
     }
 

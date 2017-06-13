@@ -112,7 +112,8 @@ public class UpdateClusterCommandTest {
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
+    @Mock
+    private MoveMacs moveMacs;
     @Mock
     private SchedulingManager schedulingManager;
     @Mock
