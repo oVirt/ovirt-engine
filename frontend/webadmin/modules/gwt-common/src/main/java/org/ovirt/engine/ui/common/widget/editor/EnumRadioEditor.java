@@ -123,12 +123,10 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
          * holds the enum values that are disabled
          */
         private final Set<E> disabledSet;
-        private final EnumRadioCellTableResources resources;
         private final AbstractEnumColumn<E, E> nameColumn;
 
         public EnumRadioCellTable(Class<E> enumClass, final EnumRadioCellTableResources resources) {
             super(15, resources, new ListDataProvider<>(Arrays.asList(enumClass.getEnumConstants())));
-            this.resources = resources;
             disabledSet = new HashSet<>();
             RowStyles<E> rowStyles = (row, rowIndex) -> disabledSet.contains(row)
                     ? resources.cellTableStyle().cellTableDisabledRow()
