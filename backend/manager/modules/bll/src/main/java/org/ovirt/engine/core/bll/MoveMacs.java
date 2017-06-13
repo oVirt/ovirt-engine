@@ -38,23 +38,19 @@ public class MoveMacs {
      * @param commandContext {@link CommandContext} instance of calling command.
      *
      */
-    public void moveMacsOfUpdatedCluster(Cluster sourceCluster, Guid targetMacPoolId, CommandContext commandContext) {
+    public void migrateMacsToAnotherMacPool(Cluster sourceCluster, Guid targetMacPoolId, CommandContext commandContext) {
         Objects.requireNonNull(sourceCluster);
         Objects.requireNonNull(targetMacPoolId);
+        Objects.requireNonNull(commandContext);
 
-        Guid sourceMacPoolId = sourceCluster.getMacPoolId();
-        Guid clusterId = sourceCluster.getId();
-        Objects.requireNonNull(sourceMacPoolId);
-        Objects.requireNonNull(clusterId);
+        Guid sourceMacPoolId = Objects.requireNonNull(sourceCluster.getMacPoolId());
+        Guid clusterId = Objects.requireNonNull(sourceCluster.getId());
 
-        if (needToMigrateMacs(sourceMacPoolId, targetMacPoolId)) {
+        boolean macPoolChanged = !sourceMacPoolId.equals(targetMacPoolId);
+        if (macPoolChanged) {
             List<String> macsToMigrate = vmNicDao.getAllMacsByClusterId(clusterId);
             migrateMacsToAnotherMacPool(sourceMacPoolId, targetMacPoolId, macsToMigrate, false, commandContext);
         }
-    }
-
-    private boolean needToMigrateMacs(Guid oldMacPoolId, Guid newMacPoolId) {
-        return !oldMacPoolId.equals(newMacPoolId);
     }
 
     public void migrateMacsToAnotherMacPool(Guid sourceMacPoolId,
@@ -62,9 +58,13 @@ public class MoveMacs {
             List<String> macsToMigrate,
             boolean checkForDuplicity,
             CommandContext commandContext) {
-        Objects.requireNonNull(macsToMigrate);
 
-        if (macsToMigrate.isEmpty()) {
+        Objects.requireNonNull(sourceMacPoolId);
+        Objects.requireNonNull(targetMacPoolId);
+        Objects.requireNonNull(macsToMigrate);
+        Objects.requireNonNull(commandContext);
+
+        if (macsToMigrate.isEmpty() || sourceMacPoolId.equals(targetMacPoolId)) {
             return;
         }
 
@@ -88,15 +88,5 @@ public class MoveMacs {
 
     String createMessageCannotChangeClusterDueToDuplicatesInTargetPool(List<String> notAddedMacs) {
         return "Cannot change cluster, some mac is already used in target cluster Mac Pool: " + notAddedMacs.toString();
-    }
-
-    public void updateClusterAndMoveMacs(Cluster cluster, Guid newMacPoolId, CommandContext commandContext) {
-        Guid oldMacPoolId = cluster.getMacPoolId();
-        moveMacsOfUpdatedCluster(cluster, newMacPoolId, commandContext);
-
-        if (needToMigrateMacs(oldMacPoolId, newMacPoolId)) {
-            cluster.setMacPoolId(newMacPoolId);
-            clusterDao.update(cluster);
-        }
     }
 }
