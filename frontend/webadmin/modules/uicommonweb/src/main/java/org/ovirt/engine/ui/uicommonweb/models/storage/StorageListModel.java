@@ -1579,7 +1579,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
                     boolean force = sanStorageModelBase.isForce();
                     StorageDomain storageDomain1 = storageListModel.getSelectedItem();
-                    ArrayList<String> lunIds = new ArrayList<>();
+                    HashSet<String> lunIds = new HashSet<>();
 
                     for (LunModel lun : sanStorageModelBase.getAddedLuns()) {
                         lunIds.add(lun.getLunId());
@@ -1587,7 +1587,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
                     if (lunIds.size() > 0) {
                         Frontend.getInstance().runAction(VdcActionType.ExtendSANStorageDomain,
-                            new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunIds, force),
+                            new ExtendSANStorageDomainParameters(storageDomain1.getId(), new ArrayList<>(lunIds), force),
                             null, this);
                     }
 
