@@ -205,8 +205,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
      */
     public EnumRadioEditor(Class<E> enumClass) {
         this.handlerManager = new HandlerManager(this);
-        peer = new EnumRadioCellTable<>(enumClass,
-                GWT.<EnumRadioCellTableResources> create(EnumRadioCellTableResources.class));
+        peer = new EnumRadioCellTable<>(enumClass, GWT.create(EnumRadioCellTableResources.class));
 
         // Selection Model
         selectionModel = new SingleSelectionModel<E>() {
@@ -224,7 +223,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
         selectionModel.addSelectionChangeHandler(event -> {
             E selectedObject = selectionModel.getSelectedObject();
             setValue(selectedObject);
-            ValueChangeEvent.<E> fire(EnumRadioEditor.this, selectedObject);
+            ValueChangeEvent.fire(EnumRadioEditor.this, selectedObject);
         });
     }
 
