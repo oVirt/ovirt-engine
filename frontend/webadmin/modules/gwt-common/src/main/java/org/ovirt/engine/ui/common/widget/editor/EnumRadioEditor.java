@@ -158,19 +158,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
         @Override
         public boolean isEnabled() {
-            for (E item : getVisibleItems()) {
-                if (isEnabled(item)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         * Returns whether a specific enum value is enabled
-         */
-        public boolean isEnabled(E value) {
-            return true;
+            return getVisibleItemCount() > 0;
         }
 
         @Override
