@@ -1408,7 +1408,7 @@ LANGUAGE plpgsql;
 
 -- Get host names dedicated to vm
 CREATE OR REPLACE FUNCTION GetNamesOfHostsDedicatedToVm (v_vm_guid UUID)
-RETURNS SETOF VARCHAR AS $PROCEDURE$
+RETURNS SETOF VARCHAR STABLE AS $PROCEDURE$
 BEGIN
     BEGIN
         RETURN QUERY
@@ -1427,7 +1427,7 @@ CREATE OR REPLACE FUNCTION CheckIfExistsHostThatMissesNetworkInCluster(
     v_network_name VARCHAR(50),
     v_host_status  INT
     )
-RETURNS BOOLEAN AS $PROCEDURE$
+RETURNS BOOLEAN STABLE AS $PROCEDURE$
 BEGIN
     RETURN EXISTS (
         SELECT 1
@@ -1447,7 +1447,7 @@ CREATE OR REPLACE FUNCTION CheckIfExistsHostWithStatusInCluster(
     v_cluster_id   UUID,
     v_host_status  INT
     )
-RETURNS BOOLEAN AS $PROCEDURE$
+RETURNS BOOLEAN STABLE AS $PROCEDURE$
 BEGIN
     RETURN EXISTS (
         SELECT 1
