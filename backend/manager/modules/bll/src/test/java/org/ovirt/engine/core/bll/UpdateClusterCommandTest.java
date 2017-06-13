@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -119,7 +120,8 @@ public class UpdateClusterCommandTest {
     private UpdateClusterNetworkClusterValidator networkClusterValidator;
     @Mock
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
-
+    @Mock
+    private MoveMacs moveMacs;
     @Mock
     private SchedulingManager schedulingManager;
     @Mock
@@ -141,6 +143,12 @@ public class UpdateClusterCommandTest {
     @InjectMocks
     private UpdateClusterCommand<ManagementNetworkOnClusterOperationParameters> cmd =
             new UpdateClusterCommand<>(new ManagementNetworkOnClusterOperationParameters(), null);
+
+    @Before
+    public void setUp() throws Exception {
+        when(moveMacs.canMigrateMacsToAnotherMacPool(any(Cluster.class),
+                any(Guid.class))).thenReturn(ValidationResult.VALID);
+    }
 
     @Test
     public void nameInUse() {

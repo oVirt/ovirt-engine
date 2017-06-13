@@ -1,13 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
-import org.ovirt.engine.core.bll.network.macpool.ReadMacPool;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -25,7 +22,6 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class ChangeVmClusterValidator {
 
@@ -46,6 +42,12 @@ public class ChangeVmClusterValidator {
 
     @Inject
     private VmHandler vmHandler;
+
+    @Inject
+    private NetworkHelper networkHelper;
+
+    @Inject
+    private MoveMacs moveMacs;
 
     private VmCommand parentCommand;
     private final Guid targetClusterId;
@@ -139,26 +141,6 @@ public class ChangeVmClusterValidator {
 
         }
         return true;
-    }
-
-    public ValidationResult validateCanMoveMacs(ReadMacPool macPoolForTargetCluster, List<String> macsToMigrate) {
-        if (macPoolForTargetCluster.isDuplicateMacAddressesAllowed()) {
-            return ValidationResult.VALID;
-        }
-
-        List<String> nonMigratableMacs = macsToMigrate.stream()
-                .filter(macPoolForTargetCluster::isMacInUse)
-                .collect(Collectors.toList());
-
-        if (nonMigratableMacs.isEmpty()) {
-            return ValidationResult.VALID;
-        }
-
-        EngineMessage engineMessage =
-                EngineMessage.ACTION_TYPE_FAILED_CANNOT_UPDATE_VM_TARGET_CLUSTER_HAS_DUPLICATED_MACS;
-        Collection<String> replacements =
-                ReplacementUtils.getListVariableAssignmentString(engineMessage, nonMigratableMacs);
-        return new ValidationResult(engineMessage, replacements);
     }
 
     /**
