@@ -217,7 +217,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
                 } else {
                     super.setSelected(object, selected);
                 }
-            };
+            }
         };
         peer.setSelectionModel(selectionModel);
         selectionModel.addSelectionChangeHandler(event -> {
