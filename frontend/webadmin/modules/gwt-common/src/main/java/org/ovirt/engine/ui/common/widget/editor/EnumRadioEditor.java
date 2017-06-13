@@ -212,9 +212,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
             @Override
             public void setSelected(E object, boolean selected) {
                 // enforce disabled set
-                if (peer.getDisabledSet().contains(object)) {
-                    return;
-                } else {
+                if (!peer.getDisabledSet().contains(object)) {
                     super.setSelected(object, selected);
                 }
             }
