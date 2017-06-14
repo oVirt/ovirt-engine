@@ -1633,10 +1633,7 @@ public class VdsBrokerObjectsBuilder {
                 diskData.setReadRate(assignIntValue(disk, VdsProperties.vm_disk_read_rate));
                 diskData.setWriteRate(assignIntValue(disk, VdsProperties.vm_disk_write_rate));
 
-                if (disk.containsKey(VdsProperties.disk_actual_size)) {
-                    Long size = assignLongValue(disk, VdsProperties.disk_actual_size);
-                    diskData.setActualSize(size != null ? size * 512 : 0);
-                } else if (disk.containsKey(VdsProperties.disk_true_size)) {
+                if (disk.containsKey(VdsProperties.disk_true_size)) {
                     Long size = assignLongValue(disk, VdsProperties.disk_true_size);
                     diskData.setActualSize(size != null ? size : 0);
                 }
