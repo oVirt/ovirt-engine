@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.vdscommands.CreateVGVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -17,7 +17,7 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
     protected void executeVdsBrokerCommand() {
 
         String storageDomainId = getParameters().getStorageDomainId().toString();
-        List<String> deviceList = getParameters().getDeviceList();
+        Set<String> deviceList = getParameters().getDeviceList();
         String[] deviceArray = deviceList.toArray(new String[deviceList.size()]);
         boolean isForce = getParameters().isForce();
 

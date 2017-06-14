@@ -203,7 +203,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
     }
 
-    protected boolean isLunsAlreadyInUse(List<String> lunIds) {
+    protected boolean isLunsAlreadyInUse(Set<String> lunIds) {
         // Get LUNs from DB
         List<LUNs> lunsFromDb = lunDao.getAll();
         Set<LUNs> lunsUsedBySDs = new HashSet<>();

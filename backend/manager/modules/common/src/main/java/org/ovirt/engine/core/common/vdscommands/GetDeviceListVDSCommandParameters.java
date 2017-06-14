@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -11,7 +11,7 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
         this(vdsId, storageType, false, null);
     }
 
-    public GetDeviceListVDSCommandParameters(Guid vdsId, StorageType storageType, boolean checkStatus, List lunIds) {
+    public GetDeviceListVDSCommandParameters(Guid vdsId, StorageType storageType, boolean checkStatus, Set lunIds) {
         super(vdsId);
         setStorageType(storageType);
         setLunIds(lunIds);
@@ -28,13 +28,13 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
         privateStorageType = value;
     }
 
-    private List<String> privateLunIds;
+    private Set<String> privateLunIds;
 
-    public List<String> getLunIds() {
+    public Set<String> getLunIds() {
         return privateLunIds;
     }
 
-    public void setLunIds(List<String> value) {
+    public void setLunIds(Set<String> value) {
         privateLunIds = value;
     }
 

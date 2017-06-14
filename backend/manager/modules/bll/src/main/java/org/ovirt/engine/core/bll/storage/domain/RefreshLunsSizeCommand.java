@@ -76,7 +76,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         return true;
     }
 
-    private boolean checkLunsInStorageDomain(List<String> lunIds) {
+    private boolean checkLunsInStorageDomain(Set<String> lunIds) {
         // Get LUNs from DB
         getParameters().setLunsList(new ArrayList<>(lunDao.getAllForVolumeGroup(getStorageDomain().getStorage())));
         Set<String> lunsSet = new HashSet<>(lunIds);
@@ -96,7 +96,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
                 StorageDomainStatus.Locked);
 
         // Call GetDeviceList on specific LUNs on all Hosts
-        List<String> lunsToRefresh = getParameters().getLunIds();
+        Set<String> lunsToRefresh = getParameters().getLunIds();
         Map<String, List<Pair<VDS, LUNs>>> lunToVds = getDeviceListAllVds(lunsToRefresh);
 
         //Check if all hosts are seeing the same LUNs size.
@@ -140,7 +140,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         It returns a map of LUN ID to a list of Pair(VDS,LUNs)
         This map will help to check if all hosts are seeing the same size of the LUNs.
     **/
-    private Map<String, List<Pair<VDS, LUNs>>> getDeviceListAllVds(List<String> lunsToResize) {
+    private Map<String, List<Pair<VDS, LUNs>>> getDeviceListAllVds(Set<String> lunsToResize) {
         Map<String, List<Pair<VDS, LUNs>>> lunToVds = new HashMap<>();
         for (VDS vds : getAllRunningVdssInPool()) {
             GetDeviceListVDSCommandParameters parameters =
@@ -178,7 +178,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
         return failedVds;
     }
 
-    private void resizePVs(List<String> lunsToRefresh) {
+    private void resizePVs(Set<String> lunsToRefresh) {
         for (String lun : lunsToRefresh) {
             Long pvSizeInBytes = resizeStorageDomainPV(lun);
             log.debug("PV size after resize of LUN " + lun + " :" + pvSizeInBytes + " bytes");

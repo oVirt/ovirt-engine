@@ -1,22 +1,22 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 
 public class AddSANStorageDomainParameters extends StorageDomainManagementParameter {
     private static final long serialVersionUID = 6386931158747982426L;
-    private List<String> lunIds;
+    private Set<String> lunIds;
 
-    public List<String> getLunIds() {
+    public Set<String> getLunIds() {
         if (lunIds == null) {
-            lunIds = new ArrayList<>();
+            lunIds = new HashSet<>();
         }
         return lunIds;
     }
 
-    public void setLunIds(List<String> value) {
+    public void setLunIds(Set<String> value) {
         lunIds = value;
     }
 

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,7 +9,7 @@ public class GetDeviceListQueryParameters extends IdQueryParameters {
     private static final long serialVersionUID = -3909252459169512472L;
     private StorageType privateStorageType;
     private boolean checkStatus;
-    private List<String> lunIds;
+    private Set<String> lunIds;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -27,15 +27,15 @@ public class GetDeviceListQueryParameters extends IdQueryParameters {
         this.checkStatus = checkStatus;
     }
 
-    public List<String> getLunIds() {
+    public Set<String> getLunIds() {
         return lunIds;
     }
 
-    public void setLunIds(List<String> lunIds) {
+    public void setLunIds(Set<String> lunIds) {
         this.lunIds = lunIds;
     }
 
-    public GetDeviceListQueryParameters(Guid vdsId, StorageType storageType, boolean checkStatus, List<String> lunIds) {
+    public GetDeviceListQueryParameters(Guid vdsId, StorageType storageType, boolean checkStatus, Set<String> lunIds) {
         super(vdsId);
         setStorageType(storageType);
         setCheckStatus(checkStatus);

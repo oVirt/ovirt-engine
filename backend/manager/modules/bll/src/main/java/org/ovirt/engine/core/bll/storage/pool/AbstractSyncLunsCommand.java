@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,21 +34,20 @@ public abstract class AbstractSyncLunsCommand<T extends SyncLunsParameters> exte
         return getDeviceList(null);
     }
 
-    protected List<LUNs> getDeviceList(List<String> lunsIds) {
+    protected List<LUNs> getDeviceList(Set<String> lunsIds) {
         if (getParameters().getDeviceList() == null) {
             return runGetDeviceList(lunsIds);
         }
         if (lunsIds == null) {
             return getParameters().getDeviceList();
         }
-        Set<String> lunsIdsSet = new HashSet<>(lunsIds);
         return getParameters().getDeviceList().stream()
-                .filter(lun -> lunsIdsSet.contains(lun.getId()))
+                .filter(lun -> lunsIds.contains(lun.getId()))
                 .collect(Collectors.toList());
     }
 
     @SuppressWarnings("unchecked")
-    protected List<LUNs> runGetDeviceList(List<String> lunsIds) {
+    protected List<LUNs> runGetDeviceList(Set<String> lunsIds) {
         GetDeviceListVDSCommandParameters parameters = new GetDeviceListVDSCommandParameters(
                 getParameters().getVdsId(), StorageType.UNKNOWN, false, lunsIds);
         return (List<LUNs>) VdsCommandsHelper.runVdsCommandWithoutFailover(

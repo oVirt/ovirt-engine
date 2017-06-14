@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -131,7 +131,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
                         .collect(Collectors.toMap(DiskLunMap::getLunId, DiskLunMap::getDiskId)))
                 .orElse(getLunToDiskIdsOfDirectLunsAttachedToVmsInPool());
 
-        List<String> lunsIds = new ArrayList<>(lunToDirectLunIds.keySet());
+        Set<String> lunsIds = lunToDirectLunIds.keySet();
         return getDeviceList(lunsIds)
                 .stream()
                 .peek(lun -> lun.setVolumeGroupId(""))

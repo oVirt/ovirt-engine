@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
@@ -8,6 +7,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -322,7 +323,7 @@ public class BackendStorageDomainResource
             boolean force) {
         ExtendSANStorageDomainParameters params = new ExtendSANStorageDomainParameters();
         params.setStorageDomainId(storageDomainId);
-        ArrayList<String> lunIds = newLuns.stream().map(LogicalUnit::getId).collect(toCollection(ArrayList::new));
+        Set<String> lunIds = newLuns.stream().map(LogicalUnit::getId).collect(Collectors.toSet());
         params.setLunIds(lunIds);
         params.setForce(force);
         return params;

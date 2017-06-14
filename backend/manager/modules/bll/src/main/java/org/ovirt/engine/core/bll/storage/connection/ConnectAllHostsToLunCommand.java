@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -172,7 +173,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
      *
      * @throws EngineException If the underlying call to VDSM fails
      */
-    private boolean validateConnectedLuns(VDS vds, List<String> processedLunIds) {
+    private boolean validateConnectedLuns(VDS vds, Set<String> processedLunIds) {
         Map<String, Boolean> res;
 
         try {

@@ -2,8 +2,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -48,7 +48,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     @Override
     protected void executeVdsBrokerCommand() {
         int storageType = getParameters().getStorageType().getValue();
-        List<String> lunsIdList = getParameters().getLunIds();
+        Set<String> lunsIdList = getParameters().getLunIds();
         String[] lunsIdArray = lunsIdList != null ? lunsIdList.toArray(new String[lunsIdList.size()]) : null;
         _result = getBroker().getDeviceList(storageType, lunsIdArray, getParameters().isCheckStatus());
 

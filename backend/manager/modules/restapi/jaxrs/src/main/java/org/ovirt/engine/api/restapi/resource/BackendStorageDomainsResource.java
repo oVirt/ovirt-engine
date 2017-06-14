@@ -3,7 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendStorageDomainResource.getLinksToExclude;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -195,7 +197,7 @@ public class BackendStorageDomainsResource
                 "GetDeviceList", true);
     }
 
-    private ArrayList<String> getLunIds(HostStorage storage, StorageType storageType, Guid hostId) {
+    private Set<String> getLunIds(HostStorage storage, StorageType storageType, Guid hostId) {
         List<LogicalUnit> logicalUnits = new ArrayList<>();
 
         if (storage.isSetLogicalUnits() && storage.getLogicalUnits().isSetLogicalUnits()) {
@@ -205,7 +207,7 @@ public class BackendStorageDomainsResource
             logicalUnits = storage.getVolumeGroup().getLogicalUnits().getLogicalUnits();
         }
 
-        ArrayList<String> lunIds = new ArrayList<>();
+        Set<String> lunIds = new HashSet<>();
         for (LogicalUnit unit : logicalUnits) {
             validateParameters(unit, 4, "id");
             // if the address and target were not supplied, we understand from this that
@@ -515,7 +517,7 @@ public class BackendStorageDomainsResource
 
     private AddSANStorageDomainParameters getSanAddParams(StorageDomainStatic entity,
             Guid hostId,
-            ArrayList<String> lunIds,
+            Set<String> lunIds,
             boolean force) {
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(entity);
         params.setVdsId(hostId);

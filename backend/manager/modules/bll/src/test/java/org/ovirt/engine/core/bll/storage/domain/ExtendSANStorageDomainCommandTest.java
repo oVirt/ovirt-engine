@@ -2,11 +2,13 @@ package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
 import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateSuccess;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +33,7 @@ public class ExtendSANStorageDomainCommandTest {
     private StorageDomain storageDomain = createStorageDomain();
 
     private ExtendSANStorageDomainParameters parameters =
-            new ExtendSANStorageDomainParameters(storageDomain.getId(), new ArrayList<>());
+            new ExtendSANStorageDomainParameters(storageDomain.getId(), new HashSet<>());
 
     @Spy
     @InjectMocks
@@ -69,7 +71,7 @@ public class ExtendSANStorageDomainCommandTest {
     }
 
     private void passAllValidations() {
-        doReturn(false).when(command).isLunsAlreadyInUse(anyList());
+        doReturn(false).when(command).isLunsAlreadyInUse(anySet());
         doReturn(true).when(command).checkStorageDomain();
         doReturn(true).when(command).checkStorageDomainStatus(StorageDomainStatus.Active);
         storageDomain.setStorageType(StorageType.ISCSI);

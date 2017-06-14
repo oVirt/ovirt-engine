@@ -856,7 +856,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         final SanStorageModelBase sanStorageModelBase = (SanStorageModelBase) storageModel.getCurrentStorageItem();
 
         Guid hostId = sanStorageModelBase.getContainer().getHost().getSelectedItem().getId();
-        List<String> unkownStatusLuns = new ArrayList<>();
+        Set<String> unkownStatusLuns = new HashSet<>();
         for (LunModel lunModel : sanStorageModelBase.getAddedLuns()) {
             unkownStatusLuns.add(lunModel.getLunId());
         }
@@ -911,7 +911,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storageDomain);
         params.setVdsId(host.getId());
-        params.setLunIds(new ArrayList<>(lunIds));
+        params.setLunIds(new HashSet<>(lunIds));
         params.setForce(force);
         Frontend.getInstance().runAction(ActionType.AddSANStorageDomain, params,
                 result -> {

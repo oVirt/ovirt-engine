@@ -1,19 +1,21 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ExtendSANStorageDomainParameters extends StorageDomainParametersBase {
     private static final long serialVersionUID = 1051216804598069936L;
-    private ArrayList<String> privateLunIds;
+    private Set<String> privateLunIds;
 
-    public ArrayList<String> getLunIds() {
-        return privateLunIds == null ? new ArrayList<String>() : privateLunIds;
+    public Set<String> getLunIds() {
+        return privateLunIds == null ? new HashSet<>() : privateLunIds;
     }
 
-    public void setLunIds(ArrayList<String> value) {
+    public void setLunIds(Set<String> value) {
         privateLunIds = value;
     }
 
@@ -37,12 +39,12 @@ public class ExtendSANStorageDomainParameters extends StorageDomainParametersBas
         this.force = force;
     }
 
-    public ExtendSANStorageDomainParameters(Guid storageDomainId, ArrayList<String> lunIds) {
+    public ExtendSANStorageDomainParameters(Guid storageDomainId, Set<String> lunIds) {
         super(storageDomainId);
         setLunIds(lunIds);
     }
 
-    public ExtendSANStorageDomainParameters(Guid storageDomainId, ArrayList<String> lunIds, boolean force) {
+    public ExtendSANStorageDomainParameters(Guid storageDomainId, Set<String> lunIds, boolean force) {
         this(storageDomainId, lunIds);
         setForce(force);
     }

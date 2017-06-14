@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -723,7 +724,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             onSaveSanStorage();
             return;
         }
-        List<String> unkownStatusLuns = new ArrayList<>();
+        Set<String> unkownStatusLuns = new HashSet<>();
         for (LunModel lunModel : sanStorageModelBase.getAddedLuns()) {
             unkownStatusLuns.add(lunModel.getLunId());
         }
@@ -1332,7 +1333,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         AddSANStorageDomainParameters params = new AddSANStorageDomainParameters(storageDomain);
         params.setVdsId(host.getId());
-        params.setLunIds(new ArrayList<>(lunIds));
+        params.setLunIds(lunIds);
         params.setForce(force);
         Frontend.getInstance().runAction(ActionType.AddSANStorageDomain, params,
                 result -> {
@@ -1516,11 +1517,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
                     if (lunIds.size() > 0) {
                         Frontend.getInstance().runAction(ActionType.ExtendSANStorageDomain,
-                            new ExtendSANStorageDomainParameters(storageDomain1.getId(), new ArrayList<>(lunIds), force),
+                            new ExtendSANStorageDomainParameters(storageDomain1.getId(), new HashSet<>(lunIds), force),
                             null, this);
                     }
 
-                    ArrayList<String> lunToRefreshIds = new ArrayList<>();
+                    Set<String> lunToRefreshIds = new HashSet<>();
                     for (LunModel lun : sanStorageModelBase.getLunsToRefresh()) {
                         lunToRefreshIds.add(lun.getLunId());
                     }

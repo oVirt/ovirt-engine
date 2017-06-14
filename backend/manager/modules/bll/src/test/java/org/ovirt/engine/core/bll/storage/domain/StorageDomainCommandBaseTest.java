@@ -14,6 +14,7 @@ import static org.mockito.Mockito.withSettings;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.mockito.Answers;
@@ -145,7 +146,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         lun2.setStorageDomainId(Guid.newGuid());
 
         when(lunDao.getAll()).thenReturn(Arrays.asList(lun1, lun2));
-        List<String> specifiedLunIds = Collections.singletonList(GUIDS[0].toString());
+        Set<String> specifiedLunIds = Collections.singleton(GUIDS[0].toString());
 
         assertTrue(cmd.isLunsAlreadyInUse(specifiedLunIds));
         List<String> messages = cmd.getReturnValue().getValidationMessages();

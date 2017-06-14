@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public class RefreshLunsSizeCommandTest extends BaseCommandTest {
     @InjectMocks
     private RefreshLunsSizeCommand<ExtendSANStorageDomainParameters> cmd =
             new RefreshLunsSizeCommand<>(
-                    new ExtendSANStorageDomainParameters(sdId, new ArrayList<>(Arrays.asList("1", "2"))), null);
+                    new ExtendSANStorageDomainParameters(sdId, new HashSet<>(Arrays.asList("1", "2"))), null);
 
     @Mock
     private StorageDomainStaticDao sdsDao;

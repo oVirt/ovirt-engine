@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -101,7 +102,7 @@ public class AbstractSyncLunsCommandTest {
         lun2.setId("lun2");
 
         parameters.setDeviceList(Arrays.asList(lun1, lun2));
-        List<String> lunsIds = Collections.singletonList("lun2");
+        Set<String> lunsIds = Collections.singleton("lun2");
 
         assertEquals(command.getDeviceList(lunsIds), Collections.singletonList(lun2));
     }
