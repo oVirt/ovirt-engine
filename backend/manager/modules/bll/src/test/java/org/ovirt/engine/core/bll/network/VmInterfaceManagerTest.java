@@ -5,19 +5,18 @@ import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.transaction.TransactionManager;
 
@@ -34,9 +33,7 @@ import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
@@ -47,7 +44,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 @RunWith(MockitoJUnitRunner.class)
 public class VmInterfaceManagerTest {
 
-    private static final int OS_ID = 0;
     private static final String VM_NAME = "vm name";
 
     @Rule
@@ -73,9 +69,6 @@ public class VmInterfaceManagerTest {
 
     private VmInterfaceManager vmInterfaceManager;
 
-    @Mock
-    private Version version;
-
     @Before
     @SuppressWarnings("unchecked")
     public void setupMocks() {
@@ -90,27 +83,25 @@ public class VmInterfaceManagerTest {
 
     @Test
     public void add() {
-        runAddAndVerify(createNewInterface(), OS_ID, true);
+        runAddAndVerify(createNewInterface(), true);
     }
 
     @Test
     public void addWithExistingMacAddressSucceed() {
-        runAddAndVerify(createNewInterface(), OS_ID, false);
+        runAddAndVerify(createNewInterface(), false);
     }
 
-    protected void runAddAndVerify(VmNic iface,
-            int osId,
-            boolean reassignMac) {
-
-        OsRepository osRepository = mock(OsRepository.class);
-        when(vmInterfaceManager.getOsRepository()).thenReturn(osRepository);
-        when(osRepository.hasNicHotplugSupport(anyInt(), any())).thenReturn(true);
-
-        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reassignMac, osId, version);
+    protected void runAddAndVerify(VmNic iface, boolean reassignMac) {
         if (!reassignMac) {
-            verify(macPool).forceAddMac(iface.getMacAddress());
-        } else {
+            //we need to mock successful addition of MAC to pool, otherwise error is thrown
+            when(macPool.addMac(eq(iface.getMacAddress()))).thenReturn(true);
+        }
+
+        vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), reassignMac);
+        if (reassignMac) {
             verify(macPool).allocateNewMac();
+        } else {
+            verify(macPool).addMac(iface.getMacAddress());
         }
 
         verify(vmNicDao).save(iface);
@@ -123,11 +114,14 @@ public class VmInterfaceManagerTest {
 
         when(vmNicDao.getAllForVm(any())).thenReturn(interfaces);
 
-        vmInterfaceManager.removeAll(Guid.newGuid());
+        vmInterfaceManager.removeAllAndReleaseMacAddresses(Guid.newGuid());
 
         for (VmNic iface : interfaces) {
-            verifyRemoveAllDelegatedCorrectly(iface);
+            verify(vmNicDao).remove(iface.getId());
+            verify(vmNetworkStatisticsDao).remove(iface.getId());
         }
+
+        verify(macPool).freeMacs(interfaces.stream().map(VmNic::getMacAddress).collect(Collectors.toList()));
     }
 
     @Test
@@ -157,18 +151,6 @@ public class VmInterfaceManagerTest {
                 hasEntry("ifacename", iface.getName())));
         assertEquals(auditLogableCaptor.getValue().getVmId(), iface.getVmId());
         return capturedCustomValues;
-    }
-
-    /**
-     * Verify that {@link VmInterfaceManager#removeAll} delegated correctly to {@link MacPool} & Daos.
-     *
-     * @param iface
-     *            The interface to check for.
-     */
-    protected void verifyRemoveAllDelegatedCorrectly(VmNic iface) {
-        verify(macPool, times(1)).freeMac(iface.getMacAddress());
-        verify(vmNicDao).remove(iface.getId());
-        verify(vmNetworkStatisticsDao).remove(iface.getId());
     }
 
     /**

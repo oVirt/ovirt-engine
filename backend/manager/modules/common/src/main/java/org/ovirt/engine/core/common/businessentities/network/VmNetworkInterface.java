@@ -112,6 +112,7 @@ public class VmNetworkInterface extends VmNic {
     public String toString() {
         return ToStringBuilder.forInstance(this)
                 .append("id", getId())
+                .append("name", getName())
                 .append("networkName", getNetworkName())
                 .append("vnicProfileName", getVnicProfileName())
                 .append("vnicProfileId", getVnicProfileId())

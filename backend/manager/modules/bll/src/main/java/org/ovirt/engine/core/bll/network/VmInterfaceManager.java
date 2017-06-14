@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transaction;
 
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
@@ -63,26 +63,22 @@ public class VmInterfaceManager {
      *            Used to snapshot the saved entities.
      * @param reassignMac Used to denote if we want to assign a new MAC address from the {@link MacPool} to the NIC. If
      *            this value is <code>false</code>, then <code>iface.getMacAddress</code> will be added to MAC pool.
-     * @param clusterCompatibilityVersion
-     *            the compatibility version of the cluster
      */
-    public void add(final VmNic iface,
-            CompensationContext compensationContext,
-            boolean reassignMac,
-            int osId,
-            Version clusterCompatibilityVersion) {
+    public void add(final VmNic iface, CompensationContext compensationContext, boolean reassignMac) {
+        registerIfaceInMacPool(iface, reassignMac);
+        persistIface(iface, compensationContext);
+    }
 
+    private void registerIfaceInMacPool(VmNic iface, boolean reassignMac) {
         if (reassignMac) {
             iface.setMacAddress(macPool.allocateNewMac());
-        } else {
-            if (getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
-                macPool.forceAddMac(iface.getMacAddress());
-            } else if (!macPool.addMac(iface.getMacAddress())) {
-                auditLogMacInUse(iface);
-                throw new EngineException(EngineError.MAC_ADDRESS_IS_IN_USE);
-            }
+        } else if (!macPool.addMac(iface.getMacAddress())) {
+            auditLogMacInUse(iface);
+            throw new EngineException(EngineError.MAC_ADDRESS_IS_IN_USE);
         }
+    }
 
+    public void persistIface(VmNic iface, CompensationContext compensationContext) {
         getVmNicDao().save(iface);
         getVmNetworkStatisticsDao().save(iface.getStatistics());
         compensationContext.snapshotNewEntity(iface);
@@ -122,20 +118,33 @@ public class VmInterfaceManager {
      * @param vmId
      *            The ID of the VM to remove from.
      */
-    public void removeAll(Guid vmId) {
-        List<VmNic> interfaces = getVmNicDao().getAllForVm(vmId);
-        if (interfaces != null) {
-            removeFromExternalNetworks(interfaces);
+    public void removeAllAndReleaseMacAddresses(Guid vmId) {
+        removeAllAndReleaseMacAddresses(getVmNicDao().getAllForVm(vmId));
+    }
 
-            for (VmNic iface : interfaces) {
-                macPool.freeMac(iface.getMacAddress());
-                getVmNicDao().remove(iface.getId());
-                getVmNetworkStatisticsDao().remove(iface.getId());
-            }
+    public void removeAllAndReleaseMacAddresses(List<? extends VmNic> interfaces) {
+        removeAll(interfaces);
+        getMacPool().freeMacs(interfaces.stream().map(VmNic::getMacAddress).collect(Collectors.toList()));
+    }
+
+    public void removeAll(List<? extends VmNic> interfaces) {
+        if (interfaces == null) {
+            return;
+        }
+
+        removeFromExternalNetworks(interfaces);
+
+        for (VmNic iface : interfaces) {
+            getVmNicDao().remove(iface.getId());
+            getVmNetworkStatisticsDao().remove(iface.getId());
         }
     }
 
-    protected void removeFromExternalNetworks(List<VmNic> interfaces) {
+    public MacPool getMacPool() {
+        return macPool;
+    }
+
+    protected void removeFromExternalNetworks(List<? extends VmNic> interfaces) {
         Transaction transaction = TransactionSupport.suspend();
         for (VmNic iface : interfaces) {
             getExternalNetworkManagerFactory().create(iface).deallocateIfExternal();

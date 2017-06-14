@@ -1,11 +1,17 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
+import org.ovirt.engine.core.bll.snapshots.CountMacUsageDifference;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -36,6 +42,8 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
     private VmDynamicDao vmDynamicDao;
     @Inject
     private ExternalNetworkManagerFactory externalNetworkManagerFactory;
+    @Inject
+    private SnapshotsManager snapshotsManager;
 
     private String interfaceName = "";
 
@@ -62,9 +70,6 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
             }
 
             externalNetworkManagerFactory.create(iface).deallocateIfExternal();
-
-            // return mac to pool
-            getMacPool().freeMac(iface.getMacAddress());
         }
 
         // remove from db
@@ -73,9 +78,44 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
             vmNicDao.remove(getParameters().getInterfaceId());
             vmNetworkStatisticsDao.remove(getParameters().getInterfaceId());
             vmDeviceDao.remove(new VmDeviceId(getParameters().getInterfaceId(), getParameters().getVmId()));
+
+            // return mac to pool
+            if (iface != null) {
+
+                String macOfNicBeingRemoved = iface.getMacAddress();
+                if (macCanBeReleased(macOfNicBeingRemoved)) {
+                    getMacPool().freeMac(macOfNicBeingRemoved);
+                }
+            }
+
             setSucceeded(true);
             return null;
         });
+    }
+
+    private Stream<String> macsWhichShouldExistAfterCommandIsFinished(String macOfNicBeingRemoved) {
+        List<String> currentMacs =
+                getVm().getInterfaces().stream().map(VmNic::getMacAddress).collect(Collectors.toList());
+
+        //we cannot use filter here, because there can be duplicate mac addresses.
+        currentMacs.remove(macOfNicBeingRemoved);
+
+        return currentMacs.stream();
+    }
+
+    private boolean macCanBeReleased(String macOfNicBeingRemoved) {
+        boolean isRunningStatelessVm = getVm().isStateless() && getVm().isRunning();
+
+        if (!isRunningStatelessVm) {
+            return true;
+        }
+
+        CountMacUsageDifference countMacUsageDifference = new CountMacUsageDifference(snapshotsManager.macsInStatelessSnapshot(getVmId()),
+                macsWhichShouldExistAfterCommandIsFinished(macOfNicBeingRemoved));
+
+        //please navigate to UpdateVmInterfaceCommand for explanation of usageDifference.
+        boolean canReleaseMac = !(countMacUsageDifference.usageDifference(macOfNicBeingRemoved) < 0);
+        return canReleaseMac;
     }
 
     @Override

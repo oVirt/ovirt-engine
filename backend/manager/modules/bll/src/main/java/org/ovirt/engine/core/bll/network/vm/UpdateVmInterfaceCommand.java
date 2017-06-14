@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.vm;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -13,6 +15,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManagerFactory;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.snapshots.CountMacUsageDifference;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -72,6 +76,12 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     @Inject
     private NetworkHelper networkHelper;
 
+    @Inject
+    private SnapshotsManager snapshotsManager;
+
+    private CountMacUsageDifference countMacUsageDifference;
+    private List<VmNic> vmInterfaces;
+
     public UpdateVmInterfaceCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmId(parameters.getVmId());
@@ -116,9 +126,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 }
             }
 
-            if (macShouldBeChanged) {
-                macAddedToPool = addMacToPool(getMacAddress());
-            }
+            macAddedToPool = allocateMacFromRequest();
 
             if (mustChangeAddress(oldIface.getType(), getInterface().getType())) {
                 vmDeviceDao.clearDeviceAddress(getInterface().getId());
@@ -139,13 +147,48 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             succeeded = updateHost();
         } finally {
             setSucceeded(succeeded);
-            MacPool macPool = getMacPool();
-            if (macAddedToPool) {
-                if (succeeded) {
-                    macPool.freeMac(oldIface.getMacAddress());
-                } else {
-                    macPool.freeMac(getMacAddress());
-                }
+            macPoolCleanupAfterExecution(macAddedToPool);
+        }
+    }
+
+    boolean allocateMacFromRequest() {
+        return macShouldBeChanged && macShouldBeAddedIntoPool() && addMacToPool(getMacAddress());
+    }
+
+    private boolean macShouldBeAddedIntoPool() {
+        return countMacUsageDifference.usageDifference(getMacAddress()) > 0;
+    }
+
+    void macPoolCleanupAfterExecution(boolean macAddedToPool) {
+        MacPool macPool = getMacPool();
+        if (getSucceeded()) {    // command succeeded, actions are not going to be reverted.
+
+            String macToRelease = oldIface.getMacAddress();
+            boolean isRunningStatelessVm = getVm().isStateless() && getVm().isRunning();
+
+            /*
+             * This can be really confusing, so to explain:
+             *
+             * if not running as stateless, you can release mac you have in hand for release.
+             *
+             * If running stateless you can release mac, if usageDifference is 0. That means, that you have MAC to be
+             * released, which is not used after operations in this command, and it is not used in original snapshot.
+             * No one is using it, so it's possible to release it. If difference is negative, it means, that MAC is used
+             * less in state after this command is done, but it's still used in original snapshot, so we have to keep it
+             * reserved. If difference is positive, it means, that MAC is used less than before this command
+             * (because we are trying to release this mac), but it is still used more than in original snapshot,
+             * therefore we can safely release it.
+             */
+            boolean canReleaseOriginalMac = !(isRunningStatelessVm && countMacUsageDifference.usageDifference(macToRelease) < 0);
+
+            if (canReleaseOriginalMac) {
+                macPool.freeMac(macToRelease);
+            }
+        } else {
+            // command did not succeed, newly acquired MAC has to be released again,
+            // since this command ins't transactive
+            if (macAddedToPool) {   // new mac was added to MAC pool.
+                macPool.freeMac(getMacAddress());
             }
         }
     }
@@ -206,9 +249,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        oldVmDevice = vmDeviceDao.get(new VmDeviceId(getInterface().getId(), getVmId()));
-        List<VmNic> interfaces = vmNicDao.getAllForVm(getVmId());
-        oldIface = interfaces.stream().filter(i -> i.getId().equals(getInterface().getId())).findFirst().orElse(null);
+        initVmData();
 
         if (oldIface == null || oldVmDevice == null) {
             addValidationMessage(EngineMessage.VM_INTERFACE_NOT_EXIST);
@@ -219,12 +260,12 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !uniqueInterfaceName(interfaces)) {
+        if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !uniqueInterfaceName(vmInterfaces)) {
             return false;
         }
 
         // check that not exceeded PCI and IDE limit
-        List<VmNic> allInterfaces = new ArrayList<>(interfaces);
+        List<VmNic> allInterfaces = new ArrayList<>(vmInterfaces);
         allInterfaces.remove(oldIface);
         allInterfaces.add(getInterface());
 
@@ -258,12 +299,37 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             }
         }
 
-        macShouldBeChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
-        if (macShouldBeChanged && !validate(macAvailable())) {
+        initMacPoolData();
+
+        if (macShouldBeChanged && macShouldBeAddedIntoPool() && !validate(macAvailable())) {
             return false;
         }
 
         return true;
+    }
+
+    void initMacPoolData() {
+        macShouldBeChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
+
+        countMacUsageDifference = new CountMacUsageDifference(snapshotsManager.macsInStatelessSnapshot(getVmId()),
+                macsWhichShouldExistAfterCommandIsFinished());
+    }
+
+    private Stream<String> macsWhichShouldExistAfterCommandIsFinished() {
+        List<String> currentMacs =
+                getVm().getInterfaces().stream().map(VmNic::getMacAddress).collect(Collectors.toList());
+
+        //we cannot use filter here, because there can be duplicate mac addresses.
+        currentMacs.remove(oldIface.getMacAddress());
+        currentMacs.add(getMacAddress());
+
+        return currentMacs.stream();
+    }
+
+    void initVmData() {
+        oldVmDevice = vmDeviceDao.get(new VmDeviceId(getInterface().getId(), getVmId()));
+        vmInterfaces = vmNicDao.getAllForVm(getVmId());
+        oldIface = vmInterfaces.stream().filter(i -> i.getId().equals(getInterface().getId())).findFirst().orElse(null);
     }
 
     @Override

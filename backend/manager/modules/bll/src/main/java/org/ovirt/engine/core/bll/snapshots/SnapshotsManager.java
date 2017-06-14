@@ -9,7 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,9 +21,11 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.macpool.MacPool;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -39,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -46,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -58,6 +64,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
@@ -121,6 +128,15 @@ public class SnapshotsManager {
 
     @Inject
     private ClusterUtils clusterUtils;
+
+    @Inject
+    private VmNicDao vmNicDao;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
+    @Inject
+    private OvfHelper ovfHelper;
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
@@ -514,7 +530,12 @@ public class SnapshotsManager {
 
         if (vmUpdatedFromConfiguration) {
             vmStaticDao.update(vm.getStaticData());
-            synchronizeNics(vm, compensationContext, user, vmInterfaceManager);
+            boolean macsInSnapshotAreExpectedToBeAlreadyAllocated = SnapshotType.STATELESS.equals(snapshot.getType());
+            synchronizeNics(vm,
+                    compensationContext,
+                    user,
+                    vmInterfaceManager,
+                    macsInSnapshotAreExpectedToBeAlreadyAllocated);
 
             for (VmDevice vmDevice : vmDeviceDao.getVmDeviceByVmId(vm.getId())) {
                 if (deviceCanBeRemoved(vmDevice)) {
@@ -635,6 +656,20 @@ public class SnapshotsManager {
         }
     }
 
+    public Optional<VM> getVmConfigurationInStatelessSnapshotOfVm(Guid vmId) {
+        Snapshot snapshot = snapshotDao.get(vmId, SnapshotType.STATELESS);
+
+        if (snapshot == null) {
+            return Optional.empty();
+        }
+
+        try {
+            return Optional.of(ovfHelper.readVmFromOvf(snapshot.getVmConfiguration()));
+        } catch (OvfReaderException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Validate whether the quota supplied in snapshot configuration exists in<br>
      * current setup, if not reset to null.<br>
@@ -660,32 +695,45 @@ public class SnapshotsManager {
      *            The user that performs the action
      * @param vmInterfaceManager vmInterfaceManager instance
      */
-    private void synchronizeNics(VM vm,
+    private void synchronizeNics(VM snapshotedVm,
             CompensationContext compensationContext,
             DbUser user,
-            VmInterfaceManager vmInterfaceManager) {
+            VmInterfaceManager vmInterfaceManager,
+            boolean macsInSnapshotAreExpectedToBeAlreadyAllocated) {
         VnicProfileHelper vnicProfileHelper =
-                new VnicProfileHelper(vm.getClusterId(),
-                        vm.getStoragePoolId(),
+                new VnicProfileHelper(snapshotedVm.getClusterId(),
+                        snapshotedVm.getStoragePoolId(),
                         AuditLogType.IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES);
 
-        vmInterfaceManager.removeAll(vm.getId());
-        for (VmNetworkInterface vmInterface : vm.getInterfaces()) {
-            vmInterface.setVmId(vm.getId());
+        MacPool macPool = vmInterfaceManager.getMacPool();
+
+        /*what is at moment of calling this in DB are data related to (stateless) VM being updated/overwritten by
+         * snapshot data.
+         */
+        List<VmNic> dbNics = vmNicDao.getAllForVm(snapshotedVm.getId());
+
+        /*
+         * while snapshotedVm.getInterfaces() are interfaces taken from VM passed into here via parameter. This instance originates from same DB
+         * record, but it was updated with ovf snapshot, so at the moment of calling this, VM is filled with data to
+         * which we need to revert for example stateless VM being stopped.
+         */
+        new SyncMacsOfDbNicsWithSnapshot(macPool, auditLogDirector, macsInSnapshotAreExpectedToBeAlreadyAllocated)
+                .sync(dbNics, snapshotedVm.getInterfaces());
+
+        vmInterfaceManager.removeAll(dbNics);
+        for (VmNetworkInterface vmInterface : snapshotedVm.getInterfaces()) {
+            vmInterface.setVmId(snapshotedVm.getId());
             // These fields might not be saved in the OVF, so fill them with reasonable values.
             if (vmInterface.getId() == null) {
                 vmInterface.setId(Guid.newGuid());
             }
 
             vnicProfileHelper.updateNicWithVnicProfileForUser(vmInterface, user);
-            vmInterfaceManager.add(vmInterface,
-                    compensationContext,
-                    false,
-                    vm.getOs(),
-                    vm.getCompatibilityVersion());
+
+            vmInterfaceManager.persistIface(vmInterface, compensationContext);
         }
 
-        vnicProfileHelper.auditInvalidInterfaces(vm.getName());
+        vnicProfileHelper.auditInvalidInterfaces(snapshotedVm.getName());
     }
 
     /**
@@ -760,5 +808,16 @@ public class SnapshotsManager {
                 }
             }
         }
+    }
+
+    /**
+     *
+     * @param vmId id of VM
+     * @return Stream of MACs used in template if such template exist, otherwise empty stream.
+     */
+    public Stream<String> macsInStatelessSnapshot(Guid vmId) {
+        Optional<VM> originalSnapshot = getVmConfigurationInStatelessSnapshotOfVm(vmId);
+        Optional<List<VmNetworkInterface>> originalSnapshotNetworkInterfaces = originalSnapshot.map(VM::getInterfaces);
+        return originalSnapshotNetworkInterfaces.orElse(Collections.emptyList()).stream().map(VmNic::getMacAddress);
     }
 }

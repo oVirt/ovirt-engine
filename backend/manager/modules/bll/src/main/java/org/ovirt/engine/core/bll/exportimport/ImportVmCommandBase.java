@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -20,12 +21,14 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.UniquePermissionsSet;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPool;
+import org.ovirt.engine.core.bll.network.predicate.VnicWithBadMacPredicate;
 import org.ovirt.engine.core.bll.network.vm.ExternalVmMacsFinder;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
@@ -71,6 +74,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -133,7 +137,28 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
+        List<VmNetworkInterface> nicsUnableToBeImported = getVm().getInterfaces()
+                .stream()
+                .filter(this::ifaceMacCannotBeAddedToMacPool)
+                .collect(Collectors.toList());
+
+        if (!nicsUnableToBeImported.isEmpty()) {
+            EngineMessage engineMessage = EngineMessage.ACTION_TYPE_FAILED_CANNOT_ADD_IFACE_DUE_TO_MAC_DUPLICATES;
+            Collection<String> replacements =
+                    ReplacementUtils.getListVariableAssignmentString(engineMessage, nicsUnableToBeImported);
+
+            return validate(new ValidationResult(engineMessage, replacements));
+        }
+
+
         return true;
+    }
+
+    private boolean ifaceMacCannotBeAddedToMacPool(VmNetworkInterface iface) {
+        return iface.getMacAddress() != null
+                && !macPool.isDuplicateMacAddressesAllowed()
+                && !shouldReassignMac(iface)
+                && macPool.isMacInUse(iface.getMacAddress());
     }
 
     @Override
@@ -578,24 +603,21 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             initInterface(iface);
             vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
 
-            final boolean reassignMac = shouldMacBeReassigned(iface) || getParameters().isImportAsNewEntity();
-            vmInterfaceManager.add(iface,
-                                   getCompensationContext(),
-                                   reassignMac,
-                                   getVm().getOs(),
-                                   getEffectiveCompatibilityVersion());
+            vmInterfaceManager.add(iface, getCompensationContext(), shouldReassignMac(iface));
             macsAdded.add(iface.getMacAddress());
         }
 
         vnicProfileHelper.auditInvalidInterfaces(getVmName());
     }
 
-    protected boolean shouldMacBeReassigned(VmNetworkInterface iface) {
-        return getParameters().isReassignBadMacs() && vnicHasBadMac(iface);
+    private boolean shouldReassignMac(VmNetworkInterface iface) {
+        return (getParameters().isReassignBadMacs() && vNicHasBadMac(iface)) || getParameters().isImportAsNewEntity();
     }
 
-    protected boolean vnicHasBadMac(VmNetworkInterface vnic) {
-        return false;
+    protected boolean vNicHasBadMac(VmNetworkInterface vnic) {
+        MacPool macPool = getMacPool();
+        Predicate<VmNetworkInterface> vnicWithBadMacPredicate = new VnicWithBadMacPredicate(macPool);
+        return vnicWithBadMacPredicate.test(vnic);
     }
 
     protected boolean isExternalMacsToBeReported() {

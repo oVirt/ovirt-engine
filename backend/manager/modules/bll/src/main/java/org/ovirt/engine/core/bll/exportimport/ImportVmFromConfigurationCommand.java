@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -16,8 +14,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.macpool.MacPool;
-import org.ovirt.engine.core.bll.network.predicate.VnicWithBadMacPredicate;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -33,12 +29,10 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
-import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,9 +81,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData))) {
                 return false;
             }
-            if (!validateMacs(vmFromConfiguration)) {
-                return false;
-            }
             if (!validate(importValidator.validateStorageExistForUnregisteredEntity(getImages(),
                     getParameters().isAllowPartialImport(),
                     imageToDestinationDomainMap,
@@ -114,45 +105,9 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         return validate(validationResult);
     }
 
-    private boolean validateMacs(VM vm) {
-        if (getParameters().isReassignBadMacs()) {
-            return true;
-        }
-        final List<VmNetworkInterface> vnics = vm.getInterfaces();
-        return reportDuplicateMacs(vnics);
-    }
-
-    private boolean reportDuplicateMacs(List<VmNetworkInterface> vnics) {
-        final MacPool macPool = getMacPool();
-        return macPool.isDuplicateMacAddressesAllowed() || validate(validateForMacsInUse(vnics, macPool));
-    }
-
-    private ValidationResult validateForMacsInUse(List<VmNetworkInterface> vnics, MacPool macPool) {
-        if (macPool.isDuplicateMacAddressesAllowed()) {
-            return ValidationResult.VALID;
-        }
-        final List<String> macsInUse = vnics
-                .stream()
-                .map(VmNetworkInterface::getMacAddress)
-                .filter(Objects::nonNull)
-                .filter(macPool::isMacInUse)
-                .collect(Collectors.toList());
-        final EngineMessage msg = EngineMessage.NETWORK_MAC_ADDRESS_IN_USE_DETAILED;
-        return ValidationResult
-                .failWith(msg, ReplacementUtils.getListVariableAssignmentString(msg, macsInUse))
-                .unless(macsInUse.isEmpty());
-    }
-
     @Override
     protected boolean isExternalMacsToBeReported() {
         return !getParameters().isReassignBadMacs();
-    }
-
-    @Override
-    protected boolean vnicHasBadMac(VmNetworkInterface vnic) {
-        final MacPool macPool = getMacPool();
-        final Predicate<VmNetworkInterface> vnicWithBadMacPredicate = new VnicWithBadMacPredicate(macPool);
-        return vnicWithBadMacPredicate.test(vnic);
     }
 
     @Override
