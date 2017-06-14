@@ -31,6 +31,7 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -88,6 +89,7 @@ import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -1273,5 +1275,18 @@ public class VmHandler implements BackendService {
                         objectWithEditableDeviceFields,
                         existingVm.getDefaultDisplayType()),
                 compensationContext);
+    }
+
+    /**
+     * Marks given VM to be in case of guest-initiated reboot destroyed (instead of normally rebooting), thus triggering
+     * the engine-driven Cold Reboot logic used for engine-initiated VM reboots (in case of RunOnce or configuration change.)
+     *
+     * @see ColdRebootAutoStartVmsRunner
+     */
+    public void setVmDestroyOnReboot(VM vm) {
+        if (FeatureSupported.isDestroyOnRebootSupported(vm.getCompatibilityVersion())) {
+            vdsBrokerFrontend.runVdsCommand(VDSCommandType.SetDestroyOnReboot,
+                    new VdsAndVmIDVDSParametersBase(vm.getRunOnVds(), vm.getId()));
+        }
     }
 }

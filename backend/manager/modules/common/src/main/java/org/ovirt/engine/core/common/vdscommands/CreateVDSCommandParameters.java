@@ -18,6 +18,7 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private VmPayload vmPayload;
     private String hibernationVolHandle;
     private Map<Guid, String> passthroughVnicToVfMap;
+    private boolean volatileRun;
 
     public CreateVDSCommandParameters() {
     }
@@ -80,10 +81,17 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
     }
 
+    public boolean isVolatileRun() {
+        return volatileRun;
+    }
+
+    public void setVolatileRun(boolean volatileRun) {
+        this.volatileRun = volatileRun;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("vm", getVm());
     }
-
 }

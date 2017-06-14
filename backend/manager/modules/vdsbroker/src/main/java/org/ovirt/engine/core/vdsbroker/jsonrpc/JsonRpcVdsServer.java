@@ -254,6 +254,13 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturn setDestroyOnReboot(String vmId) {
+        JsonRpcRequest request = new RequestBuilder("VM.setDestroyOnReboot").withParameter("vmID", vmId).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
+    @Override
     public OneVmReturn pause(String vmId) {
         JsonRpcRequest request = new RequestBuilder("VM.pause").withParameter("vmID", vmId).build();
         Map<String, Object> response =

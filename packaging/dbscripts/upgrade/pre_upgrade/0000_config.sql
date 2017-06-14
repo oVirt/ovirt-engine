@@ -632,6 +632,8 @@ select fn_db_add_config_value('SriovHotPlugSupported','false','3.6');
 
 select fn_db_add_config_value('LegacyGraphicsDisplay','true','3.6');
 
+select fn_db_add_config_value_for_versions_up_to('DestroyOnRebootSupported','false','4.1');
+
 -- Hosted Engine
 select fn_db_add_config_value('HostedEngineVmName','HostedEngine','general');
 select fn_db_add_config_value('AutoImportHostedEngine','true','general');

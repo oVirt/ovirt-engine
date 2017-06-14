@@ -51,7 +51,8 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
             LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
                     createInfo,
                     vm,
-                    getRunOncePayload()));
+                    getRunOncePayload(),
+                    getParameters().isVolatileRun()));
             String libvirtXml = builder.build();
             String prettyLibvirtXml = prettify(libvirtXml);
             if (prettyLibvirtXml != null) {

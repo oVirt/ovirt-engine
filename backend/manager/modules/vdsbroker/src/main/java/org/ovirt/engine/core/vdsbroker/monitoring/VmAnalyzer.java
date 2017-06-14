@@ -324,7 +324,7 @@ public class VmAnalyzer {
                         vdsmVm.getVmDynamic().getExitReason());
                 resourceManager.removeAsyncRunningVm(vdsmVm.getVmDynamic().getId());
 
-                if (getVmManager().isColdReboot()) {
+                if (getVmManager().isColdReboot() || vdsmVm.getVmDynamic().getExitReason() == VmExitReason.DestroyedOnReboot) {
                     setColdRebootFlag();
                 }
             }

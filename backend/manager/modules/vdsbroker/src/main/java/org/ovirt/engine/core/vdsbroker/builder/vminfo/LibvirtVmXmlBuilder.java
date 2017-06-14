@@ -77,8 +77,10 @@ public class LibvirtVmXmlBuilder {
     private static final Logger log = LoggerFactory.getLogger(LibvirtVmXmlBuilder.class);
     // Namespace URIs:
     public static final String OVIRT_URI = "http://ovirt.org/vm/tune/1.0";
+    public static final String OVIRT_VM_URI = "http://ovirt.org/vm/1.0";
     // Namespace prefixes:
     public static final String OVIRT_PREFIX = "ovirt";
+    public static final String OVIRT_VM_PREFIX = "ovirt-vm";
 
     /** Timeout for the boot menu, in milliseconds */
     public static final int BOOT_MENU_TIMEOUT = 10000;
@@ -102,14 +104,16 @@ public class LibvirtVmXmlBuilder {
     private int payloadIndex;
     private int cdRomIndex;
     private VmDevice runOncePayload;
+    private boolean volatileRun;
 
     private Map<String, Object> createInfo;
     private VM vm;
 
-    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, VmDevice runOncePayload) {
+    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, VmDevice runOncePayload, boolean volatileRun) {
         this.createInfo = createInfo;
         this.vm = vm;
         this.runOncePayload = runOncePayload;
+        this.volatileRun = volatileRun;
         payloadIndex = -1;
         cdRomIndex = -1;
     }
@@ -137,6 +141,7 @@ public class LibvirtVmXmlBuilder {
         writeMetadata();
         writeSystemInfo();
         writeClock();
+        writePowerEvents();
         writeFeatures();
         writeCpu();
         writeNumaTune();
@@ -506,7 +511,21 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("metadata");
         writer.writeStartElement(OVIRT_URI, "qos");
         writer.writeEndElement();
+        writeVmMetadata();
         writer.writeEndElement();
+    }
+
+    private void writeVmMetadata() {
+        writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        writer.writeStartElement(OVIRT_VM_URI, "vm");
+        writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        writer.writeEndElement();
+    }
+
+    private void writePowerEvents() {
+        if (volatileRun) {
+            writer.writeElement("on_reboot", "destroy");
+        }
     }
 
     private void writeDevices() {

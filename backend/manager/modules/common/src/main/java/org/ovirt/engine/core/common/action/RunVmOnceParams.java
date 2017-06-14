@@ -40,6 +40,8 @@ public class RunVmOnceParams extends RunVmParams {
             groups = { StartEntity.class }, message = "VALIDATION_VM_INVALID_KEYBOARD_LAYOUT")
     private String vncKeyboardLayout;
 
+    private boolean volatileRun;
+
     public RunVmOnceParams() {
         initRunOnceGraphics();
     }
@@ -249,4 +251,11 @@ public class RunVmOnceParams extends RunVmParams {
         this.customProperties = customProperties;
     }
 
+    public boolean isVolatileRun() {
+        return volatileRun;
+    }
+
+    public void setVolatileRun(boolean volatileRun) {
+        this.volatileRun = volatileRun;
+    }
 }

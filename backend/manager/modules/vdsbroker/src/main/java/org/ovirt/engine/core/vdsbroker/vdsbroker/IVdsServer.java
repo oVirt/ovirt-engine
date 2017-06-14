@@ -64,6 +64,8 @@ public interface IVdsServer {
 
     StatusOnlyReturn shutdown(String vmId, String timeout, String message, boolean reboot);
 
+    StatusOnlyReturn setDestroyOnReboot(String vmId);
+
     OneVmReturn pause(String vmId);
 
     StatusOnlyReturn hibernate(String vmId, String hiberVolHandle);

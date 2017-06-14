@@ -185,4 +185,12 @@ public class FeatureSupported {
     public static boolean isLegacyDisplaySupported(Version version) {
         return supportedInConfig(ConfigValues.LegacyGraphicsDisplay, version);
     }
+
+    /**
+     * @param version Compatibility version to check for.
+     * @return {@code true} if VDSM trapping of guest reboot is supported.
+     */
+    public static boolean isDestroyOnRebootSupported(Version version) {
+        return supportedInConfig(ConfigValues.DestroyOnRebootSupported, version);
+    }
 }

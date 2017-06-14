@@ -2033,5 +2033,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     LegacyGraphicsDisplay,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    DestroyOnRebootSupported,
+
     Invalid
 }

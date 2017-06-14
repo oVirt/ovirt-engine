@@ -224,6 +224,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (isRunningConfigurationNeeded()) {
             vmHandler.createNextRunSnapshot(
                     getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
+            vmHandler.setVmDestroyOnReboot(getVm());
         } else if (!updateVmLease()) {
             return;
         }
