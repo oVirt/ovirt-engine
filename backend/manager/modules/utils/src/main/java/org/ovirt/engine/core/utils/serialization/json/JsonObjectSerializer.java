@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.lang.SerializationException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -22,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.SerializationExeption;
+import org.ovirt.engine.core.utils.SerializationException;
 import org.ovirt.engine.core.utils.Serializer;
 
 /**
@@ -56,7 +55,7 @@ public class JsonObjectSerializer implements Serializer {
     }
 
     @Override
-    public String serialize(Object payload) throws SerializationExeption {
+    public String serialize(Object payload) throws SerializationException {
         if (payload == null) {
             return null;
         } else {
@@ -77,7 +76,7 @@ public class JsonObjectSerializer implements Serializer {
         try {
             return mapper.writeValueAsString(payload);
         } catch (IOException e) {
-            throw new SerializationException(e);
+            throw new org.apache.commons.lang.SerializationException(e);
         }
     }
 
@@ -88,7 +87,7 @@ public class JsonObjectSerializer implements Serializer {
      *            - The serialized Object.
      * @return The string value of the serialized object.
      */
-    public String serializeUnformattedJson(Serializable payload) throws SerializationExeption {
+    public String serializeUnformattedJson(Serializable payload) throws SerializationException {
         return writeJsonAsString(payload, unformattedMapper);
     }
 }

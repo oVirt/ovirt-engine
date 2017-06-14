@@ -3,7 +3,6 @@ package org.ovirt.engine.core.utils.serialization.json;
 import java.io.IOException;
 import java.io.Serializable;
 
-import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -18,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.Deserializer;
-import org.ovirt.engine.core.utils.SerializationExeption;
+import org.ovirt.engine.core.utils.SerializationException;
 import org.ovirt.engine.core.utils.SerializationFactory;
 
 /**
@@ -51,7 +50,7 @@ public class JsonObjectDeserializer implements Deserializer {
     }
 
     @Override
-    public <T extends Serializable> T deserialize(Object source, Class<T> type) throws SerializationExeption {
+    public <T extends Serializable> T deserialize(Object source, Class<T> type) throws SerializationException {
         if (source == null) {
             return null;
         }
@@ -89,7 +88,7 @@ public class JsonObjectDeserializer implements Deserializer {
      * @param source - The object which supposed to be deserialize.
      * @return The serialized object.
      */
-    public <T extends Serializable> T deserializeUnformattedJson(Object source, Class<T> type) throws SerializationExeption {
+    public <T extends Serializable> T deserializeUnformattedJson(Object source, Class<T> type) throws SerializationException {
         return readJsonString(source, type, unformattedMapper);
     }
 
@@ -98,7 +97,7 @@ public class JsonObjectDeserializer implements Deserializer {
         try {
             return mapper.readValue(source.toString(), type);
         } catch (IOException e) {
-            throw new SerializationException(e);
+            throw new org.apache.commons.lang.SerializationException(e);
         }
     }
 }

@@ -13,6 +13,6 @@ public interface Deserializer {
      * @param type The type or the return value which is expected.
      * @return The deserialized payload
      */
-    public <T extends Serializable> T deserialize(Object source, Class<T> type) throws SerializationExeption;
+    public <T extends Serializable> T deserialize(Object source, Class<T> type) throws SerializationException;
 
 }
