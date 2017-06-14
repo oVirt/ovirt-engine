@@ -537,27 +537,17 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
         vmInterfaceManager.sortVmNics(nics, getVm().getStaticData().getManagedDeviceMap());
 
-        // If we import it as a new entity, then we allocate all MAC addresses in advance
-        if (getParameters().isImportAsNewEntity()) {
-            List<String> macAddresses = macPool.allocateMacAddresses(nics.size());
-            for (int i = 0; i < nics.size(); ++i) {
-                nics.get(i).setMacAddress(macAddresses.get(i));
-            }
-        } else {
-            if (isExternalMacsToBeReported()) {
-                reportExternalMacs();
-            }
+        if (!getParameters().isImportAsNewEntity() && isExternalMacsToBeReported()) {
+            reportExternalMacs();
         }
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
             vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
 
-            final boolean reassignMac = shouldMacBeReassigned(iface);
-            final boolean reserveExistingMac = !(reassignMac || getParameters().isImportAsNewEntity());
+            final boolean reassignMac = shouldMacBeReassigned(iface) || getParameters().isImportAsNewEntity();
             vmInterfaceManager.add(iface,
                                    getCompensationContext(),
-                                   reserveExistingMac,
                                    reassignMac,
                                    getVm().getOs(),
                                    getEffectiveCompatibilityVersion());

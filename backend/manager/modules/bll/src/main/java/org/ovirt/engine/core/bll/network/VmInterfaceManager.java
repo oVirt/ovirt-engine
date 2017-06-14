@@ -61,32 +61,26 @@ public class VmInterfaceManager {
      *            The interface to save.
      * @param compensationContext
      *            Used to snapshot the saved entities.
-     * @param reserveExistingMac
-     *            Used to denote if we want to reserve the NIC's MAC address in the {@link MacPool}
-     * @param assignNewMac
-     *            Used to denote if we want to assign a new MAC address from the {@link MacPool} to the NIC. Note that
-     *            <code>true</code> value in reserveExistingMac takes precedence over this one.
+     * @param reassignMac Used to denote if we want to assign a new MAC address from the {@link MacPool} to the NIC. If
+     *            this value is <code>false</code>, then <code>iface.getMacAddress</code> will be added to MAC pool.
      * @param clusterCompatibilityVersion
      *            the compatibility version of the cluster
      */
     public void add(final VmNic iface,
             CompensationContext compensationContext,
-            boolean reserveExistingMac,
-            boolean assignNewMac,
+            boolean reassignMac,
             int osId,
             Version clusterCompatibilityVersion) {
 
-        if (reserveExistingMac) {
-
+        if (reassignMac) {
+            iface.setMacAddress(macPool.allocateNewMac());
+        } else {
             if (getOsRepository().hasNicHotplugSupport(osId, clusterCompatibilityVersion)) {
                 macPool.forceAddMac(iface.getMacAddress());
             } else if (!macPool.addMac(iface.getMacAddress())) {
                 auditLogMacInUse(iface);
                 throw new EngineException(EngineError.MAC_ADDRESS_IS_IN_USE);
             }
-        } else if (assignNewMac) {
-            final String macAddress = macPool.allocateNewMac();
-            iface.setMacAddress(macAddress);
         }
 
         getVmNicDao().save(iface);
