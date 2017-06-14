@@ -495,7 +495,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private Predicate<VmNetworkInterface> getVnicRequiresNewMacPredicate() {
-        return ((Predicate<VmNetworkInterface>) this::nicWithoutMacAddress).or(this::shouldMacBeReassigned);
+        return ((Predicate<VmNetworkInterface>) this::nicWithoutMacAddress)
+                .or(iface -> getParameters().isReassignBadMacs() && vNicHasBadMac(iface));
     }
 
     private boolean nicWithoutMacAddress(VmNic vmNic) {
@@ -1172,7 +1173,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     protected void removeVmNetworkInterfaces() {
-        new VmInterfaceManager(getMacPool()).removeAll(getVmId());
+        new VmInterfaceManager(getMacPool()).removeAllAndReleaseMacAddresses(getVmId());
     }
 
     @Override
