@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
+import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -215,6 +216,13 @@ public class BackendDiskResource
         Guid imageId = getDiskImageId(disk.getImageId());
         StorageJobCommandParameters params = new StorageJobCommandParameters(imageId);
         return doAction(ActionType.SparsifyImage, params, action);
+    }
+
+    @Override
+    public Response refreshLun(Action action) {
+        validateParameters(action, "host.id|name");
+        return doAction(ActionType.SyncDirectLuns,
+                new SyncDirectLunsParameters(getHostId(action), guid), action);
     }
 
     protected Disk addLinks(Disk model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {

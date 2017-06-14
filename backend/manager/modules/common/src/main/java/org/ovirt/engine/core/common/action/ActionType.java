@@ -347,7 +347,7 @@ public enum ActionType {
 
     // Sync luns
     SyncStorageDomainsLuns(1042, QuotaDependency.NONE),
-    SyncDirectLuns(1043, QuotaDependency.NONE),
+    SyncDirectLuns(1043, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     SyncAllUsedLuns(1044, QuotaDependency.NONE),
 
     // Event Notification

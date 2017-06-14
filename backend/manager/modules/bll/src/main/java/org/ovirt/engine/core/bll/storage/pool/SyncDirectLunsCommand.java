@@ -2,22 +2,20 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
@@ -36,7 +34,6 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
  * When given a direct lun ID from {@link SyncDirectLunsParameters#getDirectLunId},
  * the command synchronizes only that direct lun.
  */
-@InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends AbstractSyncLunsCommand<T> {
 
@@ -102,10 +99,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Set<Guid> directLunsToLock = Optional.ofNullable(getParameters().getDirectLunId())
-                .map(Collections::singleton)
-                .orElse(new HashSet<>(getLunToDiskIdsOfDirectLunsAttachedToVmsInPool().values()));
-        return directLunsToLock.stream()
+        return getIdsOfDirectLunsToSync()
                 .collect(Collectors.toMap(Guid::toString, diskId -> LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.DISK, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED)));
     }
@@ -115,6 +109,19 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         super.setActionMessageParameters();
         addValidationMessage(EngineMessage.VAR__ACTION__SYNC);
         addValidationMessage(EngineMessage.VAR__TYPE__DISK);
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        return getIdsOfDirectLunsToSync()
+                .map(id -> new PermissionSubject(id, VdcObjectType.Disk, getActionType().getActionGroup()))
+                .collect(Collectors.toList());
+    }
+
+    private Stream<Guid> getIdsOfDirectLunsToSync() {
+        return Optional.ofNullable(getParameters().getDirectLunId())
+                .map(Stream::of)
+                .orElse(getLunToDiskIdsOfDirectLunsAttachedToVmsInPool().values().stream());
     }
 
     protected Collection<LUNs> getLunsToUpdateInDb() {
