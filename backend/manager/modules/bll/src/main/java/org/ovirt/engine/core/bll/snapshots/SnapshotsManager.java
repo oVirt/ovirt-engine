@@ -684,7 +684,6 @@ public class SnapshotsManager {
             vnicProfileHelper.updateNicWithVnicProfileForUser(vmInterface, user);
             vmInterfaceManager.add(vmInterface,
                     compensationContext,
-                    true,
                     false,
                     vm.getOs(),
                     vm.getCompatibilityVersion());
