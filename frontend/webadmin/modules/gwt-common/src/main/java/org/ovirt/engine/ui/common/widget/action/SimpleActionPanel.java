@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.action;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -35,11 +34,7 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
 
     @Override
     public List<T> getSelectedItems() {
-        if (getDataProvider().getModel().isSingleSelectionOnly()) {
-            return (List<T>) Collections.singletonList(getDataProvider().getModel().getSingleSelectionModel().getSelectedObject());
-        } else {
-            return getDataProvider().getModel().getOrderedMultiSelectionModel().getSelectedList();
-        }
+        return getDataProvider().getModel().getSelectedObjects();
     }
 
     @Override
