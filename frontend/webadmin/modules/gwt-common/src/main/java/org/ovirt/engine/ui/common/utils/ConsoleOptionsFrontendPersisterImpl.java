@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
+
 import com.google.inject.Inject;
 
 public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFrontendPersister {

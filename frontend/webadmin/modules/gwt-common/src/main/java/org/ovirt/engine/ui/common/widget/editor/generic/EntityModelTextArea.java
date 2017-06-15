@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.text.shared.Parser;

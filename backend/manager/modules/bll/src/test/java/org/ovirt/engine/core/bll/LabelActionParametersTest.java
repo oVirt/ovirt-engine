@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Label;

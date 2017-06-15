@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;

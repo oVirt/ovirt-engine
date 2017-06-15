@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
+
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 

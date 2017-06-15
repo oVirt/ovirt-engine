@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.TemplateMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;

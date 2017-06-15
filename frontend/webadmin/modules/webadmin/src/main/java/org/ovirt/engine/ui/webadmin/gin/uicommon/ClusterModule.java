@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProf
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterMainTabSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;

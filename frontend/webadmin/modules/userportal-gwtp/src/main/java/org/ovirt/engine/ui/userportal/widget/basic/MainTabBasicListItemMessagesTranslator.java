@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
+
 import com.google.inject.Inject;
 
 public class MainTabBasicListItemMessagesTranslator {

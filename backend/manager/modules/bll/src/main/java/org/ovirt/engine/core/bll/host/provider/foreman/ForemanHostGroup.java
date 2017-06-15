@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
+
 import java.io.Serializable;
 import java.util.Map;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class ForemanHostGroup implements Serializable {

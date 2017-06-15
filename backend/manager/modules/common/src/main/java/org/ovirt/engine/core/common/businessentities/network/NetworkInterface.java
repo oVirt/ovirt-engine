@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.util.Objects;
+
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;

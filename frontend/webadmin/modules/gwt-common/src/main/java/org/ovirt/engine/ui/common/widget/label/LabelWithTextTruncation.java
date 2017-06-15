@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.label;
 
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
+
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextOverflow;
 import com.google.gwt.dom.client.Style.WhiteSpace;

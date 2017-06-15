@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterHookSyncStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabClusterGlusterHookView

@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemActionBut
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
 import org.ovirt.engine.ui.userportal.widget.basic.VmPausedImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmUpMaskImage;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

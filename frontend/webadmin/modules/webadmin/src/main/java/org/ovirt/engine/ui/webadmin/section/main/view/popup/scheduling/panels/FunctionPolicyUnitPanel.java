@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView.WidgetStyle;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;

@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImageLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImagesModel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

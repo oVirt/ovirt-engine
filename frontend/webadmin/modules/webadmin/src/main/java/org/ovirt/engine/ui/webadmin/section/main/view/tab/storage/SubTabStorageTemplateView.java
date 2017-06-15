@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.storage.TemplatesTree;
+
 import com.google.inject.Inject;
 
 public class SubTabStorageTemplateView extends AbstractSubTabTreeView<TemplatesTree<StorageTemplateListModel>, StorageDomain, VmTemplate, StorageListModel, StorageTemplateListModel>

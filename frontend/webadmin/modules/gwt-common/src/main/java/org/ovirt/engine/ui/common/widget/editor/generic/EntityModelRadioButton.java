@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 import org.ovirt.engine.ui.common.widget.editor.TakesValueWithChangeHandlersEditor;
+
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+
 import com.google.gwt.editor.client.IsEditor;
 
 /**

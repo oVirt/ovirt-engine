@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 /**

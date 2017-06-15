@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.renderer;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
+
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class HostVLanNameRenderer extends AbstractRenderer<HostVLan> {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface ApplicationTemplates extends CommonApplicationTemplates {

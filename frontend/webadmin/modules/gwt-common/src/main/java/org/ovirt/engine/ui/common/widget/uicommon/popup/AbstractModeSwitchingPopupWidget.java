@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+
 import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractModeSwitchingPopupWidget<T extends Model> extends AbstractModelBoundPopupWidget<T> {

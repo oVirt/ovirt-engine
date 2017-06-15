@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
+
 import com.google.inject.Inject;
 
 public class ConsoleUtilsImpl implements ConsoleUtils {

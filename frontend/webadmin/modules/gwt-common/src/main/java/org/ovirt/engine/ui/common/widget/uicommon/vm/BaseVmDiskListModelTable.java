@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;

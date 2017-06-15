@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.DragLeaveEvent;
 import com.google.gwt.event.dom.client.DragOverEvent;

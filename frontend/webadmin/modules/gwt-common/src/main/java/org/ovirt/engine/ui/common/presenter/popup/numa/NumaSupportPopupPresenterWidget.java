@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.CollapsiblePanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.client.ui.IsWidget;

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.uicommonweb.ViewFilter;
+
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;

@@ -4,6 +4,7 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 

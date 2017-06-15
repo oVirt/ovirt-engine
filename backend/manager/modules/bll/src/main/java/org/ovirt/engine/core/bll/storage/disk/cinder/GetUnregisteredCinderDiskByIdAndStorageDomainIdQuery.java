@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
+
 import com.woorea.openstack.cinder.model.Volume;
 
 public class GetUnregisteredCinderDiskByIdAndStorageDomainIdQuery<P extends GetCinderEntityByStorageDomainIdParameters>

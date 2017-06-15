@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+
 import com.google.gwt.event.shared.EventBus;
 
 @RunWith(MockitoJUnitRunner.class)

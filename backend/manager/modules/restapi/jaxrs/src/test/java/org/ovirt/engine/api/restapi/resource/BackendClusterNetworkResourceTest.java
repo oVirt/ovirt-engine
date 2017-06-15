@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.api.restapi.resource.BackendClusterNetworksResourceTest.CLUSTER_ID;
 
 import java.util.ArrayList;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;

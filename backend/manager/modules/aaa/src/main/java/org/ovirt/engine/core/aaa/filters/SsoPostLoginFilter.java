@@ -3,8 +3,8 @@ package org.ovirt.engine.core.aaa.filters;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.naming.InitialContext;
 
+import javax.naming.InitialContext;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -14,13 +14,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

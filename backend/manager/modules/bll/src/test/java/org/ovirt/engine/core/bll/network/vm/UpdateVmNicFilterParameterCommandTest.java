@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.network.vm;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
 import org.mockito.InjectMocks;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.common.AuditLogType;

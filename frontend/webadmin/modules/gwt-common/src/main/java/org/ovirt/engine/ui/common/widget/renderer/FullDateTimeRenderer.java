@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.text.shared.AbstractRenderer;
 

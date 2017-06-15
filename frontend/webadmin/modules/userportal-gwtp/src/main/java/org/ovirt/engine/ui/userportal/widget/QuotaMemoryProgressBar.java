@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class QuotaMemoryProgressBar extends QuotaProgressBar {

@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
+
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;

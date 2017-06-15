@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.basic.DisksImageWidget;
 import org.ovirt.engine.ui.userportal.widget.basic.IconImage;
 import org.ovirt.engine.ui.userportal.widget.basic.VmTypeImage;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;

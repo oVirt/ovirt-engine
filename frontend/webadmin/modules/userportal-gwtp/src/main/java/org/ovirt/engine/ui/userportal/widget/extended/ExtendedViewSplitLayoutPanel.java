@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.widget.extended;
 
 import org.ovirt.engine.ui.userportal.widget.UserPortalSplitLayoutPanel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;

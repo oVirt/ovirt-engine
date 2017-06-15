@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 import java.util.Collection;
 
 import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
+
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;

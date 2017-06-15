@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabDataCenterStorageView extends AbstractSubTabTableView<StoragePool, StorageDomain, DataCenterListModel, DataCenterStorageListModel>

@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.action.UiMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+
 import com.google.gwt.event.shared.EventBus;
 
 public class WebAdminMenuBarButtonDefinition<T> extends UiMenuBarButtonDefinition<T> {

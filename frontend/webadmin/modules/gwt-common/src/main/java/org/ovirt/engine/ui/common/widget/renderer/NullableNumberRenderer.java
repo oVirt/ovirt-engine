@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.text.client.NumberFormatRenderer;
 

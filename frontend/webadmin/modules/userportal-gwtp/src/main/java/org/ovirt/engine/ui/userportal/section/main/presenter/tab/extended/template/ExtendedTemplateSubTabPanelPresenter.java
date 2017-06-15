@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templ
 
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSubTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;

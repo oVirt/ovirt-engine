@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;

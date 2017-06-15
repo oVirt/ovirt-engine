@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel.AdSearchType;
+
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.HasBlurHandlers;
 import com.google.gwt.event.dom.client.HasClickHandlers;

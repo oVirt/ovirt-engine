@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;

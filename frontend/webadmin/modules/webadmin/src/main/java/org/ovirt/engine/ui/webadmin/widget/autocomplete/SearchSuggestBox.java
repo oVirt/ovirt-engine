@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.autocomplete;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SuggestItemPartModel;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;

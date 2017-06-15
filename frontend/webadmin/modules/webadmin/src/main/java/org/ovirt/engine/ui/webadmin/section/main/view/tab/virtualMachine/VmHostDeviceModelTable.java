@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostDeviceModelBaseTable;
+
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.shared.EventBus;
 

@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmInterfaceListModelProv
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmPermissionListModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSnapshotListModelProvider;
+
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 

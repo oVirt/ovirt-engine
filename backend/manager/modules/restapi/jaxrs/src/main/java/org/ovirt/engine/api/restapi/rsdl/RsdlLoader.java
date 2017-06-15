@@ -18,6 +18,7 @@ package org.ovirt.engine.api.restapi.rsdl;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.xml.bind.JAXB;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.dom.DOMSource;

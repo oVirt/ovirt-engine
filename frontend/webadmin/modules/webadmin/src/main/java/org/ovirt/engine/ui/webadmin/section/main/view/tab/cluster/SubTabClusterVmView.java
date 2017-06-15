@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabClusterVmView extends AbstractSubTabTableView<Cluster, VM, ClusterListModel<Void>, ClusterVmListModel>

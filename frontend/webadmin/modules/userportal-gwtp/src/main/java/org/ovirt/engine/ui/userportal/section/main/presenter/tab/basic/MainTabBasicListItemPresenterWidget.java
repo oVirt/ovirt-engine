@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;

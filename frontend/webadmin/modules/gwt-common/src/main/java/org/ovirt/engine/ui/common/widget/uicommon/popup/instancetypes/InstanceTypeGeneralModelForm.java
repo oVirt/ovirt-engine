@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeGeneralModel;
+
 import com.google.gwt.core.client.GWT;
 
 public class InstanceTypeGeneralModelForm extends AbstractModelBoundFormWidget<InstanceTypeGeneralModel> {

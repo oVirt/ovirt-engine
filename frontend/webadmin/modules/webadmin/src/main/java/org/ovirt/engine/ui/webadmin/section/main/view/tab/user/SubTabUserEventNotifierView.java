@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserEventNotifierPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser, EventSubscriber, UserListModel, UserEventNotifierListModel>

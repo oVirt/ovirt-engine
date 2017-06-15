@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 import java.util.Arrays;
 
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.qos;
 
 import java.util.Objects;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 

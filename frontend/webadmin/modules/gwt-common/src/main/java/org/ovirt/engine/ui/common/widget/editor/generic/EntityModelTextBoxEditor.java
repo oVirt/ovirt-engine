@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.editor.AbstractValueBoxWithLabelEditor;
+
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 

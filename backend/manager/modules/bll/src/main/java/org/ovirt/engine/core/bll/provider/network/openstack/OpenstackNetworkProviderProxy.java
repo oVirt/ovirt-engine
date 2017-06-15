@@ -6,6 +6,7 @@ import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+
 import com.woorea.openstack.quantum.model.Port;
 
 public class OpenstackNetworkProviderProxy extends BaseNetworkProviderProxy<OpenstackNetworkProviderProperties> {

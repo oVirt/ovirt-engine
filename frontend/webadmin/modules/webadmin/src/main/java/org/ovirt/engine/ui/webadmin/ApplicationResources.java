@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+
 import com.google.gwt.resources.client.ImageResource;
 
 public interface ApplicationResources extends CommonApplicationResources {

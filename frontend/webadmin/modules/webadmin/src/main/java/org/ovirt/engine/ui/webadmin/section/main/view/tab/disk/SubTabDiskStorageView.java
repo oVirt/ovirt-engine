@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskSt
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, StorageDomain, DiskListModel, DiskStorageListModel>

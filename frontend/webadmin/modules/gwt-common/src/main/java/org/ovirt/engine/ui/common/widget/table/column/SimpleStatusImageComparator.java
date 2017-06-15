@@ -4,6 +4,7 @@ import java.util.Comparator;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+
 import com.google.gwt.resources.client.ImageResource;
 
 /**

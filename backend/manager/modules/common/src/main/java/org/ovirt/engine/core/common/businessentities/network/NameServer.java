@@ -6,7 +6,6 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
-
 import org.ovirt.engine.core.common.validation.annotation.Ipv4OrIpv6;
 
 public class NameServer implements Serializable {

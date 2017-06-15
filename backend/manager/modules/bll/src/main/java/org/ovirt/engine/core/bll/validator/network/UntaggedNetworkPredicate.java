@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator.network;
 
 import java.util.function.Predicate;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
+
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;

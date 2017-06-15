@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+
 import com.google.inject.Inject;
 
 /**

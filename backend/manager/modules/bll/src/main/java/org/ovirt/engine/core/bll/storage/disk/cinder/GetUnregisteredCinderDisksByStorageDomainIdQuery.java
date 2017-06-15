@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
+
 import com.woorea.openstack.cinder.model.Volume;
 
 public class GetUnregisteredCinderDisksByStorageDomainIdQuery<P extends IdQueryParameters> extends CinderQueryBase<P> {

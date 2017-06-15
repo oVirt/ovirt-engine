@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;

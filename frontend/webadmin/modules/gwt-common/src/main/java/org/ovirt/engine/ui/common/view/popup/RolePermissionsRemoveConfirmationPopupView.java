@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 

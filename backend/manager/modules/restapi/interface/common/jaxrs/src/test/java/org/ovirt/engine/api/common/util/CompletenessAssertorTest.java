@@ -17,6 +17,7 @@
 package org.ovirt.engine.api.common.util;
 
 import java.util.Arrays;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Assert;

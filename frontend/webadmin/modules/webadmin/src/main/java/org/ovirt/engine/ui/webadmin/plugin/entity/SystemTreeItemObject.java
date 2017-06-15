@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.plugin.entity;
 
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsMutableObjectWithProperties;
+
 import com.google.gwt.core.client.JavaScriptObject;
 
 /**

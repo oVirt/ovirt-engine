@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.compat.Guid;
 

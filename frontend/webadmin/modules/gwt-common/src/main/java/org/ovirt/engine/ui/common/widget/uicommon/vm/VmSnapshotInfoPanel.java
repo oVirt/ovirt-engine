@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
+
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.view.client.NoSelectionModel;

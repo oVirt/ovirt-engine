@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.widget.basic;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.user.client.TakesValue;

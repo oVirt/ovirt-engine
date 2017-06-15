@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.plugin.jsni;
 
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunction.ErrorHandler;
+
 import com.google.gwt.core.client.JsArray;
 
 /**

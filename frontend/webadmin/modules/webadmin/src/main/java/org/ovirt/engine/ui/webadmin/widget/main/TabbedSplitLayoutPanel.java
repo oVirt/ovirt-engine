@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.main;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;

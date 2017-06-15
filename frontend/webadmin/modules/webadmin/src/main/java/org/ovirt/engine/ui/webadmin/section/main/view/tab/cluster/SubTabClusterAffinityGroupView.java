@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinityGroupsView;
+
 import com.google.gwt.core.client.GWT;
 
 public class SubTabClusterAffinityGroupView extends AbstractSubTabAffinityGroupsView<Cluster, ClusterListModel<Void>, ClusterAffinityGroupListModel>

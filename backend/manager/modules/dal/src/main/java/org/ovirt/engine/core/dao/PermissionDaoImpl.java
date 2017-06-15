@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.Collection;
 import java.util.List;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 

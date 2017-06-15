@@ -22,6 +22,7 @@ import static org.ovirt.engine.api.v3.adapters.V3OutAdapters.adaptOut;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;

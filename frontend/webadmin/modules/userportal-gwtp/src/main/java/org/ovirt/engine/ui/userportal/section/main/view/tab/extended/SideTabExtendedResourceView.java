@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.userportal.widget.QuotaProgressBar;
 import org.ovirt.engine.ui.userportal.widget.QuotaStorageProgressBar;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.resources.VmTable;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;

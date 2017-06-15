@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;

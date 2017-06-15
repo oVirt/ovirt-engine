@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.host.provider.foreman;
+
 import java.io.Serializable;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 
 public class ForemanDiscoveredHost implements Serializable {

@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;

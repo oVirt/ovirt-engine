@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+
 import com.google.gwt.text.shared.AbstractRenderer;
 
 /**
