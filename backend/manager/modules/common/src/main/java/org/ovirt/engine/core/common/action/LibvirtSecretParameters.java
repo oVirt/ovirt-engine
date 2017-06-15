@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 
-public class LibvirtSecretParameters extends VdcActionParametersBase {
+public class LibvirtSecretParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -5231418068819634608L;
 

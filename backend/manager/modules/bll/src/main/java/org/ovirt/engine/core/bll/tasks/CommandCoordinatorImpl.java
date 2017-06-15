@@ -16,8 +16,8 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -54,7 +54,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
         cmdExecutor = Injector.get(CommandExecutor.class);
     }
 
-    public <P extends VdcActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
+    public <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
     }
 
@@ -89,7 +89,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
      */
     @Override
     public Future<VdcReturnValueBase> executeAsyncCommand(ActionType actionType,
-                                                          VdcActionParametersBase parameters,
+                                                          ActionParametersBase parameters,
                                                           CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
         CommandCallback callBack = command.getCallback();
@@ -109,7 +109,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     }
 
     @Override
-    public CommandEntity createCommandEntity(Guid cmdId, ActionType actionType, VdcActionParametersBase params) {
+    public CommandEntity createCommandEntity(Guid cmdId, ActionType actionType, ActionParametersBase params) {
         CommandEntity cmdEntity = new CommandEntity();
         cmdEntity.setId(cmdId);
         cmdEntity.setCommandType(actionType);

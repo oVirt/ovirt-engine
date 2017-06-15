@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class ForceSelectSPMParameters extends VdcActionParametersBase {
+public class ForceSelectSPMParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -755083459086386402L;
 

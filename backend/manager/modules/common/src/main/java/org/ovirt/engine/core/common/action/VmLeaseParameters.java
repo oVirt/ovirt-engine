@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmLeaseParameters  extends VdcActionParametersBase implements Serializable {
+public class VmLeaseParameters  extends ActionParametersBase implements Serializable {
 
     private Guid storagePoolId;
     private Guid storageDomainId;

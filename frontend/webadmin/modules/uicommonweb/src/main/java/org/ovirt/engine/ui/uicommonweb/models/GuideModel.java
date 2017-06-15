@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -96,10 +96,10 @@ public class GuideModel<T> extends EntityModel<T> {
     }
 
     protected void checkVdsClusterChangeSucceeded(final String searchStr,
-                                                  final List<VdcActionParametersBase> changeVdsParameterList,
-                                                  final List<VdcActionParametersBase> activateVdsParameterList) {
+                                                  final List<ActionParametersBase> changeVdsParameterList,
+                                                  final List<ActionParametersBase> activateVdsParameterList) {
         final Map<Guid, Guid> hostClusterIdMap = new HashMap<>();
-        for (VdcActionParametersBase param : changeVdsParameterList) {
+        for (ActionParametersBase param : changeVdsParameterList) {
             hostClusterIdMap.put(((ChangeVDSClusterParameters) param).getVdsId(),
                     ((ChangeVDSClusterParameters) param).getClusterId());
         }
@@ -125,7 +125,7 @@ public class GuideModel<T> extends EntityModel<T> {
 
     protected void activateHostsAfterClusterChange(
             final String searchStr,
-            final List<VdcActionParametersBase> activateVdsParameterList) {
+            final List<ActionParametersBase> activateVdsParameterList) {
         Frontend.getInstance().runMultipleAction(ActionType.ActivateVds, activateVdsParameterList,
                 result -> {
                     Timer timer = new Timer() {

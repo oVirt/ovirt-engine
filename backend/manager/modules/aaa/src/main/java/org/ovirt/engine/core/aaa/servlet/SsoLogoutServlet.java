@@ -13,8 +13,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -50,7 +50,7 @@ public class SsoLogoutServlet extends HttpServlet {
                     token = retValue.getReturnValue();
                     FiltersHelper.getBackend(ctx).runAction(
                             ActionType.LogoutSession,
-                            new VdcActionParametersBase(engineSessionId)
+                            new ActionParametersBase(engineSessionId)
                     );
                 } finally {
                     ctx.close();

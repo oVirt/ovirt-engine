@@ -25,9 +25,9 @@ import org.ovirt.engine.api.resource.openstack.OpenstackNetworksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderCertificatesResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -74,7 +74,7 @@ public class BackendOpenStackNetworkProviderResource
 
     private class UpdateParametersProvider implements ParametersProvider<OpenStackNetworkProvider, Provider> {
         @Override
-        public VdcActionParametersBase getParameters(OpenStackNetworkProvider incoming, Provider entity) {
+        public ActionParametersBase getParameters(OpenStackNetworkProvider incoming, Provider entity) {
             return new ProviderParameters(map(incoming, entity));
         }
     }

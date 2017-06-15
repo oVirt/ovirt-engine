@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -146,7 +146,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
     }
 
     public void onRemove() {
-        ArrayList<VdcActionParametersBase> pb = new ArrayList<>();
+        ArrayList<ActionParametersBase> pb = new ArrayList<>();
 
         for (Object a : sourceListModel.getSelectedItems()) {
             Network network = (Network) a;

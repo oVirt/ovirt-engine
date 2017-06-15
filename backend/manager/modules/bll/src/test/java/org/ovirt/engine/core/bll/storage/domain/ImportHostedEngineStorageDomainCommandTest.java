@@ -31,9 +31,9 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -185,7 +185,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
             .save(sd.getStorageStaticData().getConnection());
         verify(backend, times(1)).runInternalAction(
                 eq(ActionType.AddExistingFileStorageDomain),
-                any(VdcActionParametersBase.class),
+                any(ActionParametersBase.class),
                 any(CommandContext.class));
     }
 
@@ -207,10 +207,10 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
 
         verify(backend, times(1)).runInternalAction(
                 eq(ActionType.RemoveDisk),
-                any(VdcActionParametersBase.class));
+                any(ActionParametersBase.class));
         verify(backend, times(1)).runInternalAction(
                 eq(ActionType.AddExistingBlockStorageDomain),
-                any(VdcActionParametersBase.class),
+                any(ActionParametersBase.class),
                 any(CommandContext.class));
 
         assertTrue(cmd.getReturnValue().getSucceeded());
@@ -282,12 +282,12 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         if (withContext) {
             doReturn(successfulReturnValue())
                     .when(backend).runInternalAction(eq(actionType),
-                    any(VdcActionParametersBase.class),
+                    any(ActionParametersBase.class),
                     any(CommandContext.class));
         } else {
             doReturn(successfulReturnValue())
                     .when(backend).runInternalAction(eq(actionType),
-                    any(VdcActionParametersBase.class));
+                    any(ActionParametersBase.class));
         }
 
     }

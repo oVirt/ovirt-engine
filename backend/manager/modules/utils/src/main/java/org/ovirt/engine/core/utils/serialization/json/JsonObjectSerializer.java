@@ -11,9 +11,9 @@ import java.util.Map;
 import org.apache.commons.lang.SerializationException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -35,8 +35,8 @@ public class JsonObjectSerializer implements Serializer {
     static {
         formattedMapper = new ObjectMapper();
         formattedMapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonGuidMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(VdcActionParametersBase.class,
-                JsonVdcActionParametersBaseMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(ActionParametersBase.class,
+                JsonActionParametersBaseMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(IVdcQueryable.class, JsonIVdcQueryableMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(AddVmTemplateParameters.class,

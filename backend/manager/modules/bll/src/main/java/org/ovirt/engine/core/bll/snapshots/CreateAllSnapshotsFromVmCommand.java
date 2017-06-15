@@ -50,6 +50,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
@@ -57,7 +58,6 @@ import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -476,11 +476,11 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected List<VdcActionParametersBase> getParametersForChildCommand() {
-        List<VdcActionParametersBase> sortedList = getParameters().getImagesParameters();
-        Collections.sort(sortedList, new Comparator<VdcActionParametersBase>() {
+    protected List<ActionParametersBase> getParametersForChildCommand() {
+        List<ActionParametersBase> sortedList = getParameters().getImagesParameters();
+        Collections.sort(sortedList, new Comparator<ActionParametersBase>() {
             @Override
-            public int compare(VdcActionParametersBase o1, VdcActionParametersBase o2) {
+            public int compare(ActionParametersBase o1, ActionParametersBase o2) {
                 if (o1 instanceof ImagesActionsParametersBase && o2 instanceof ImagesActionsParametersBase) {
                     return ((ImagesActionsParametersBase) o1).getDestinationImageId()
                             .compareTo(((ImagesActionsParametersBase) o2).getDestinationImageId());

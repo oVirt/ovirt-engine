@@ -61,6 +61,7 @@ import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
@@ -77,7 +78,6 @@ import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -561,7 +561,7 @@ public class BackendVmResource
     protected class UpdateParametersProvider implements
             ParametersProvider<Vm, org.ovirt.engine.core.common.businessentities.VM> {
         @Override
-        public VdcActionParametersBase getParameters(Vm incoming,
+        public ActionParametersBase getParameters(Vm incoming,
                 org.ovirt.engine.core.common.businessentities.VM entity) {
             VmStatic updated = getMapper(modelType, VmStatic.class).map(incoming,
                     entity.getStaticData());

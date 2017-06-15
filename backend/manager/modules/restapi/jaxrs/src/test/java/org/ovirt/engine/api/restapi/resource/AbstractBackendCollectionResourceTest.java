@@ -22,8 +22,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Link;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -202,7 +202,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     }
 
     protected void setUpCreationExpectations(ActionType task,
-                                             Class<? extends VdcActionParametersBase> taskClass,
+                                             Class<? extends ActionParametersBase> taskClass,
                                              String[] taskNames,
                                              Object[] taskValues,
                                              boolean valid,
@@ -230,7 +230,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     }
 
     protected void setUpCreationExpectations(ActionType task,
-                                             Class<? extends VdcActionParametersBase> taskClass,
+                                             Class<? extends ActionParametersBase> taskClass,
                                              String[] taskNames,
                                              Object[] taskValues,
                                              boolean valid,

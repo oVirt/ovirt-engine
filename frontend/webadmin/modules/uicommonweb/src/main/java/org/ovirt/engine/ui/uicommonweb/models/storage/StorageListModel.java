@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -639,7 +639,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.ForceRemoveStorageDomain,
-                new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
+                new ArrayList<>(Arrays.asList(new ActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -1100,7 +1100,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         this.connection = connection;
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(posixModel.getAddStorageDomainVdcAction());
@@ -1262,7 +1262,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         connection = storageConnection;
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(ActionType.AddNFSStorageDomain);
@@ -1414,7 +1414,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         connection = tempVar;
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(ActionType.AddLocalStorageDomain);
@@ -1575,7 +1575,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         ImportSanStorageModel importSanStorageModel = (ImportSanStorageModel) storageModel;
         final List<StorageDomain> storageDomains = importSanStorageModel.getStorageDomains().getSelectedItems();
 
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>(items.size());
+        ArrayList<ActionParametersBase> parametersList = new ArrayList<>(items.size());
         List<IFrontendActionAsyncCallback> callbacks = new LinkedList<>();
 
         for (final StorageDomain storageDomain : storageDomains) {

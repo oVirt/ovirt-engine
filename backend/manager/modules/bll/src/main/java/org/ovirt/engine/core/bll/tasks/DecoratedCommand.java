@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
-public class DecoratedCommand<T extends VdcActionParametersBase> implements Command<T> {
+public class DecoratedCommand<T extends ActionParametersBase> implements Command<T> {
 
     private Command<T> innerCommand;
 

@@ -20,9 +20,9 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -97,7 +97,7 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
         vdcReturnValue.setSucceeded(true);
         when(backendInternal.runInternalAction(any(ActionType.class),
-                any(VdcActionParametersBase.class),
+                any(ActionParametersBase.class),
                 any(CommandContext.class))).thenReturn(vdcReturnValue);
         StorageDomainStatic storageDomain = new StorageDomainStatic();
         storageDomain.setId(Guid.newGuid());

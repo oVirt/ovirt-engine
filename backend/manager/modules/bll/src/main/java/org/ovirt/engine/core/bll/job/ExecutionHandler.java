@@ -19,8 +19,8 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.HasCorrelationId;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Job;
@@ -237,7 +237,7 @@ public class ExecutionHandler {
     }
 
     private Job getJob(CommandBase<?> command, ActionType actionType) {
-        VdcActionParametersBase params = command.getParameters();
+        ActionParametersBase params = command.getParameters();
         Job job;
         // if Job is external, we had already created the Job by AddExternalJobCommand, so just get it from DB
         if (params.getJobId() != null) {

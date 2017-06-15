@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 
-public class GraphicsParameters extends VdcActionParametersBase {
+public class GraphicsParameters extends ActionParametersBase {
 
     private boolean vm = true;
     private GraphicsDevice dev;

@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -180,7 +180,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runAction((ActionType) operation.getOperation(),
-                        (VdcActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
+                        (ActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         //Clear out the token, and let the retry mechanism try again.
@@ -326,13 +326,13 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     private void transmitMultipleActions(final Map<ActionType, List<VdcOperation<?, ?>>> actions) {
         for (final Map.Entry<ActionType, List<VdcOperation<?, ?>>> actionEntry: actions.entrySet()) {
-            List<VdcActionParametersBase> parameters = new ArrayList<>();
+            List<ActionParametersBase> parameters = new ArrayList<>();
             final List<VdcOperation<?, ?>> allActionOperations = actionEntry.getValue();
 
             boolean runOnlyIfAllValidationPass = false;
             for (VdcOperation<?, ?> operation: allActionOperations) {
                 runOnlyIfAllValidationPass = operation.isRunOnlyIfAllValidationPass();
-                parameters.add((VdcActionParametersBase) operation.getParameter());
+                parameters.add((ActionParametersBase) operation.getParameter());
             }
 
             if (parameters.size() > 1 || (allActionOperations.size() == 1
@@ -365,12 +365,12 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     }
 
     private void runMultipleActions(final ActionType actionType, final List<VdcOperation<?, ?>> operations,
-            final List<VdcActionParametersBase> parameters, final List<VdcOperation<?, ?>> allActionOperations,
+            final List<ActionParametersBase> parameters, final List<VdcOperation<?, ?>> allActionOperations,
             final boolean waitForResults, final boolean runOnlyIfAllValidationPass) {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.runMultipleActions(actionType, (ArrayList<VdcActionParametersBase>) parameters,
+                service.runMultipleActions(actionType, (ArrayList<ActionParametersBase>) parameters,
                         runOnlyIfAllValidationPass, waitForResults, new AsyncCallback<List<VdcReturnValueBase>>() {
 
                     @Override

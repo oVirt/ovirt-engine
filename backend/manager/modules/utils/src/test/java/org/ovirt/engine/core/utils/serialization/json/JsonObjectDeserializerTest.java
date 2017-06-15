@@ -11,9 +11,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
 import org.junit.Test;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 /**
  * Tests for {@link JsonObjectDeserializer}.
@@ -69,7 +69,8 @@ public class JsonObjectDeserializerTest {
 
     @Test(expected = SerializationException.class)
     public void testDeserializeVdcActionParameters() {
-        VdcActionParametersBase params = new JsonObjectDeserializer().deserialize(getVdcActionParamsJson(), VdcActionParametersBase.class);
+        ActionParametersBase
+                params = new JsonObjectDeserializer().deserialize(getVdcActionParamsJson(), ActionParametersBase.class);
         assertNotNull(params.getLockProperties());
         assertTrue(params.getLockProperties().isWait());
         assertEquals(Scope.None, params.getLockProperties().getScope());
@@ -77,7 +78,7 @@ public class JsonObjectDeserializerTest {
 
     private String getVdcActionParamsJson() {
         StringBuilder buf = new StringBuilder("");
-        buf.append("\"@class\" : \"org.ovirt.engine.core.common.action.VdcActionParametersBase\",");
+        buf.append("\"@class\" : \"org.ovirt.engine.core.common.action.ActionParametersBase\",");
         buf.append("\"commandId\" : null,");
         buf.append("\"parametersCurrentUser\" : null,");
         buf.append("\"compensationEnabled\" : false,");

@@ -2,11 +2,11 @@ package org.ovirt.engine.core.common.action.gluster;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UpdateGlusterVolumeSnapshotConfigParameters extends VdcActionParametersBase {
+public class UpdateGlusterVolumeSnapshotConfigParameters extends ActionParametersBase {
     private static final long serialVersionUID = 2015321730118872977L;
 
     private Guid clusterId;

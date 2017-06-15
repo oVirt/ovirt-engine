@@ -9,8 +9,8 @@ import org.ovirt.engine.core.bll.CommandMultiAsyncTasks;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
@@ -132,9 +132,9 @@ public class CommandAsyncTask extends SPMAsyncTask {
         boolean endActionRuntimeException = false;
 
         AsyncTask dbAsyncTask = getParameters().getDbAsyncTask();
-        ArrayList<VdcActionParametersBase> imagesParameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> imagesParameters = new ArrayList<>();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
-            VdcActionParametersBase childTaskParameters =
+            ActionParametersBase childTaskParameters =
                     taskInfo.getTaskParameters().getDbAsyncTask().getTaskParameters();
             boolean childTaskGroupSuccess =
                     childTaskParameters.getTaskGroupSuccess() && taskInfo.getTaskStatus().getTaskEndedSuccessfully();

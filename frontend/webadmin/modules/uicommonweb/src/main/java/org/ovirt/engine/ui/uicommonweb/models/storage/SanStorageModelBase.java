@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -308,7 +308,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
         final SanStorageModelBase sanStorageModel = this;

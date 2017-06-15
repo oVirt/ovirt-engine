@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -87,11 +87,11 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
     }
 
     public void clearAllAlerts() {
-        Frontend.getInstance().runAction(ActionType.ClearAllAuditLogAlerts, new VdcActionParametersBase());
+        Frontend.getInstance().runAction(ActionType.ClearAllAuditLogAlerts, new ActionParametersBase());
     }
 
     public void displayAllAlerts() {
-        Frontend.getInstance().runAction(ActionType.DisplayAllAuditLogAlerts, new VdcActionParametersBase());
+        Frontend.getInstance().runAction(ActionType.DisplayAllAuditLogAlerts, new ActionParametersBase());
     }
 
     @Override

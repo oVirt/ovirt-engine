@@ -19,7 +19,7 @@ import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -37,11 +37,11 @@ public class CommandBaseTest extends BaseCommandTest {
     private AuditLogDirector director;
 
     @InjectMocks
-    private CommandBase<VdcActionParametersBase> command = mock(
+    private CommandBase<ActionParametersBase> command = mock(
             CommandBase.class,
             withSettings().defaultAnswer(Answers.CALLS_REAL_METHODS)
                     .extraInterfaces(RenamedEntityInfoProvider.class)
-                    .useConstructor(new VdcActionParametersBase(), CommandContext.createContext(session)));
+                    .useConstructor(new ActionParametersBase(), CommandContext.createContext(session)));
 
     @Before
     public void setupEnvironment() {

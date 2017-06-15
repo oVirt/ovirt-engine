@@ -11,9 +11,9 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.EventResource;
 import org.ovirt.engine.api.resource.EventsResource;
 import org.ovirt.engine.api.restapi.types.ExternalStatusMapper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
@@ -43,7 +43,7 @@ public class BackendEventsResource
 
     @Override
     public Response undelete(Action action) {
-        return performAction(ActionType.DisplayAllAuditLogAlerts, new VdcActionParametersBase(), action, false);
+        return performAction(ActionType.DisplayAllAuditLogAlerts, new ActionParametersBase(), action, false);
     }
 
     @Override

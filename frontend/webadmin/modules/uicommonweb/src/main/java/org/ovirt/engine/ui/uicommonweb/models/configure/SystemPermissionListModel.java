@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.configure;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
@@ -122,7 +122,7 @@ public class SystemPermissionListModel extends SearchableListModel {
 
         Role role = model.getRole().getSelectedItem();
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (DbUser user : items) {
             Permission perm = new Permission(user.getId(), role.getId(), null, null);
 
@@ -191,7 +191,7 @@ public class SystemPermissionListModel extends SearchableListModel {
                 return;
             }
 
-            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+            ArrayList<ActionParametersBase> list = new ArrayList<>();
             for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImportVmFromExternalUrlParameters extends VdcActionParametersBase {
+public class ImportVmFromExternalUrlParameters extends ActionParametersBase {
 
     @NotEmpty
     private String url;

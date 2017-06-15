@@ -22,9 +22,9 @@ import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeyResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -55,7 +55,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResource
 
     private class UpdateParametersProvider implements ParametersProvider<OpenstackVolumeAuthenticationKey, org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret> {
         @Override
-        public VdcActionParametersBase getParameters(OpenstackVolumeAuthenticationKey model,
+        public ActionParametersBase getParameters(OpenstackVolumeAuthenticationKey model,
                 org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret entity) {
             final org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret libvirtSecret =
                     map(model, entity);

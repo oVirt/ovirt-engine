@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 
-public class RngDeviceParameters extends VdcActionParametersBase {
+public class RngDeviceParameters extends ActionParametersBase {
 
     private boolean isVm;
 

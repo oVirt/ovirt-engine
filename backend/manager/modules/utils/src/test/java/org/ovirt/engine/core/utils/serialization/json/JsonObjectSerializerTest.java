@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -45,7 +45,7 @@ public class JsonObjectSerializerTest {
 
     @Test
     public void serializeVdsActionParameters() {
-        VdcActionParametersBase params = new VdcActionParametersBase();
+        ActionParametersBase params = new ActionParametersBase();
         params.setLockProperties(LockProperties.create(Scope.None).withWait(true));
         JsonObjectSerializer serializer = new JsonObjectSerializer();
         assertTrue(serializer.serialize(params).length() > 0);

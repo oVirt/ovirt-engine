@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.action;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -34,7 +34,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class UiVdcMultipleAction extends UiAction {
 
     private ActionType actionType;
-    private Collection<? extends VdcActionParametersBase> parameterCollection;
+    private Collection<? extends ActionParametersBase> parameterCollection;
     boolean waitForResult;
     boolean runNextInCaseOfError;
 
@@ -51,7 +51,7 @@ public class UiVdcMultipleAction extends UiAction {
      *            whether the next action should be executed in case the current action has an error.
      */
     public UiVdcMultipleAction(ActionType actionType,
-            Collection<? extends VdcActionParametersBase> parameterCollection,
+            Collection<? extends ActionParametersBase> parameterCollection,
             Model model,
             boolean waitForResult,
             boolean runNextInCaseOfError) {
@@ -63,7 +63,7 @@ public class UiVdcMultipleAction extends UiAction {
     }
 
     public UiVdcMultipleAction(ActionType actionType,
-            Collection<? extends VdcActionParametersBase> parametersList,
+            Collection<? extends ActionParametersBase> parametersList,
             Model model) {
         this(actionType, parametersList, model, false, true);
     }

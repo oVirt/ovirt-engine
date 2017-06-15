@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterStorageSyncCommandParameters extends VdcActionParametersBase {
+public class GlusterStorageSyncCommandParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 223157376819659037L;
     private Guid storageDomainId;

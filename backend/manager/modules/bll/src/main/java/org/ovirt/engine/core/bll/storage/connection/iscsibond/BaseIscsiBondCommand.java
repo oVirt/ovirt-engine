@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.ISCSIStorageHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -30,7 +30,7 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
-public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
+public abstract class BaseIscsiBondCommand<T extends ActionParametersBase> extends CommandBase<T> {
 
     @Inject
     protected IscsiBondDao iscsiBondDao;

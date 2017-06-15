@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-public class SetSesssionSoftLimitCommandParameters extends VdcActionParametersBase {
+public class SetSesssionSoftLimitCommandParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 6853776483034717926L;
 

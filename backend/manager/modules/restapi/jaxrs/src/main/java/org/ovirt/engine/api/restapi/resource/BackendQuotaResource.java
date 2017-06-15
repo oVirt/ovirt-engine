@@ -8,10 +8,10 @@ import org.ovirt.engine.api.resource.QuotaClusterLimitsResource;
 import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -38,7 +38,7 @@ public class BackendQuotaResource extends AbstractBackendSubResource<Quota, org.
 
     protected class UpdateParametersProvider implements ParametersProvider<Quota, org.ovirt.engine.core.common.businessentities.Quota> {
         @Override
-        public VdcActionParametersBase getParameters(Quota incoming,
+        public ActionParametersBase getParameters(Quota incoming,
                 org.ovirt.engine.core.common.businessentities.Quota entity) {
             return new QuotaCRUDParameters(map(incoming, entity));
         }

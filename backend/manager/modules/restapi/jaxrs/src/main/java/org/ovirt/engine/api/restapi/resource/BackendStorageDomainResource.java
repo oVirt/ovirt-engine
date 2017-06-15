@@ -34,13 +34,13 @@ import org.ovirt.engine.api.resource.StorageDomainVmsResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -352,7 +352,7 @@ public class BackendStorageDomainResource
     protected class UpdateParametersProvider implements
             ParametersProvider<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> {
         @Override
-        public VdcActionParametersBase getParameters(StorageDomain incoming,
+        public ActionParametersBase getParameters(StorageDomain incoming,
                 org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
             // save SD type before mapping
             org.ovirt.engine.core.common.businessentities.StorageDomainType currentType =

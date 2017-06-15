@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveNetworkParameters extends VdcActionParametersBase {
+public class RemoveNetworkParameters extends ActionParametersBase {
     private static final long serialVersionUID = -7392121807419409051L;
 
     @NotNull

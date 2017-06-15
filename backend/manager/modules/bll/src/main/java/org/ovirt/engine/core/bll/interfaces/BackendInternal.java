@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.DateTime;
 
 public interface BackendInternal extends BackendLocal {
 
-    VdcReturnValueBase runInternalAction(ActionType actionType, VdcActionParametersBase parameters);
+    VdcReturnValueBase runInternalAction(ActionType actionType, ActionParametersBase parameters);
 
     /**
      * Executes an action internally.
@@ -29,7 +29,7 @@ public interface BackendInternal extends BackendLocal {
      * @return The result of executing the action
      */
     VdcReturnValueBase runInternalAction(ActionType actionType,
-            VdcActionParametersBase parameters,
+            ActionParametersBase parameters,
             CommandContext context);
 
     /**
@@ -45,7 +45,7 @@ public interface BackendInternal extends BackendLocal {
      * @return The result of the command ending.
      */
     VdcReturnValueBase endAction(ActionType actionType,
-            VdcActionParametersBase parameters,
+            ActionParametersBase parameters,
             CommandContext context);
 
     VdcQueryReturnValue runInternalQuery(VdcQueryType actionType,
@@ -53,7 +53,7 @@ public interface BackendInternal extends BackendLocal {
             EngineContext context);
 
     List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
-            List<VdcActionParametersBase> parameters);
+            List<ActionParametersBase> parameters);
 
     /**
      * Invokes multiple actions of the same action type with different parameters under a given command context which if
@@ -76,7 +76,7 @@ public interface BackendInternal extends BackendLocal {
      * @return A collection of the results of each action validation.
      */
     List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
-            List<VdcActionParametersBase> parameters, CommandContext commandContext);
+            List<ActionParametersBase> parameters, CommandContext commandContext);
 
     DateTime getStartedAt();
 

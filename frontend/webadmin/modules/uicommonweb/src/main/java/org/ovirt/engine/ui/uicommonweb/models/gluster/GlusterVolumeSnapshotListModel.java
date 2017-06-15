@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.TimeZoneType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -290,7 +290,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         final ConfirmationModel model = (ConfirmationModel) getConfirmWindow();
 
-        List<VdcActionParametersBase> paramsList = new ArrayList<>();
+        List<ActionParametersBase> paramsList = new ArrayList<>();
         for (GlusterVolumeSnapshotEntity snapshot : getSelectedItems()) {
             GlusterVolumeSnapshotActionParameters param =
                     new GlusterVolumeSnapshotActionParameters(getEntity().getId(), snapshot.getSnapshotName(), true);
@@ -375,7 +375,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                         true));
     }
 
-    private void runAction(ActionType action, VdcActionParametersBase param) {
+    private void runAction(ActionType action, ActionParametersBase param) {
         if (getConfirmWindow() == null) {
             return;
         }

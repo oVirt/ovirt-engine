@@ -5,12 +5,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -113,24 +113,24 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     // A list of 'detach' action parameters
-    private ArrayList<VdcActionParametersBase> privatepb_detach;
+    private ArrayList<ActionParametersBase> privatepb_detach;
 
-    private ArrayList<VdcActionParametersBase> getpb_detach() {
+    private ArrayList<ActionParametersBase> getpb_detach() {
         return privatepb_detach;
     }
 
-    private void setpb_detach(ArrayList<VdcActionParametersBase> value) {
+    private void setpb_detach(ArrayList<ActionParametersBase> value) {
         privatepb_detach = value;
     }
 
     // A list of 'remove' action parameters
-    private ArrayList<VdcActionParametersBase> privatepb_remove;
+    private ArrayList<ActionParametersBase> privatepb_remove;
 
-    private ArrayList<VdcActionParametersBase> getpb_remove() {
+    private ArrayList<ActionParametersBase> getpb_remove() {
         return privatepb_remove;
     }
 
-    private void setpb_remove(ArrayList<VdcActionParametersBase> value) {
+    private void setpb_remove(ArrayList<ActionParametersBase> value) {
         privatepb_remove = value;
     }
 
@@ -174,7 +174,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void onMaintenance() {
-        ArrayList<VdcActionParametersBase> pb = new ArrayList<>();
+        ArrayList<ActionParametersBase> pb = new ArrayList<>();
         for (StorageDomain a : getSelectedItems()) {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -209,7 +209,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void activate() {
-        ArrayList<VdcActionParametersBase> pb = new ArrayList<>();
+        ArrayList<ActionParametersBase> pb = new ArrayList<>();
         for (StorageDomain a : getSelectedItems()) {
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
@@ -412,7 +412,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void executeAttachStorageDomains() {
-        ArrayList<VdcActionParametersBase> pb = new ArrayList<>();
+        ArrayList<ActionParametersBase> pb = new ArrayList<>();
         for (StorageDomain storageDomain : selectedStorageDomains) {
             pb.add(new AttachStorageDomainToPoolParameters(storageDomain.getId(), getEntity().getId()));
         }
@@ -492,9 +492,9 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         }
 
         // A list of 'detach' action parameters
-        setpb_detach(new ArrayList<VdcActionParametersBase>());
+        setpb_detach(new ArrayList<ActionParametersBase>());
         // A list of 'remove' action parameters
-        setpb_remove(new ArrayList<VdcActionParametersBase>());
+        setpb_remove(new ArrayList<ActionParametersBase>());
         String localStorgaeDC = null;
         for (StorageDomain a : getSelectedItems()) {
             // For local storage - remove; otherwise - detach
@@ -511,7 +511,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
         if (getpb_remove().size() > 0) {
             AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery<>(locaVds -> {
-                for (VdcActionParametersBase item : getpb_remove()) {
+                for (ActionParametersBase item : getpb_remove()) {
                     ((RemoveStorageDomainParameters) item).setVdsId(locaVds != null ? locaVds.getId() : null);
                     ((RemoveStorageDomainParameters) item).setDoFormat(confirmModel.getForce().getEntity());
                 }
@@ -530,8 +530,8 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
 
                     Object[] array = (Object[]) outerResult.getState();
                     ConfirmationModel localModel1 = (ConfirmationModel) array[0];
-                    ArrayList<VdcActionParametersBase> parameters =
-                            (ArrayList<VdcActionParametersBase>) array[1];
+                    ArrayList<ActionParametersBase> parameters =
+                            (ArrayList<ActionParametersBase>) array[1];
                     Frontend.getInstance().runMultipleAction(ActionType.DetachStorageDomainFromPool, parameters,
                             innerResult -> {
                                 ConfirmationModel localModel2 = (ConfirmationModel) innerResult.getState();

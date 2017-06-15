@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddStepParameters extends VdcActionParametersBase {
+public class AddStepParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 2098671430609247442L;
 

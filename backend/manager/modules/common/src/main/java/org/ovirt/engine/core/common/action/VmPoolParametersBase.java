@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmPoolParametersBase extends VdcActionParametersBase implements Serializable {
+public class VmPoolParametersBase extends ActionParametersBase implements Serializable {
     private static final long serialVersionUID = -4244908570752388901L;
     private Guid vmPoolId;
     private String vmPoolName;

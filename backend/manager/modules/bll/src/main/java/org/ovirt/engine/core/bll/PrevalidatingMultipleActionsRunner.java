@@ -11,8 +11,8 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -25,7 +25,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
     private static final int CONCURRENT_ACTIONS = 10;
 
     private ActionType actionType = ActionType.Unknown;
-    private final Set<VdcActionParametersBase> parameters;
+    private final Set<ActionParametersBase> parameters;
     private final List<CommandBase<?>> commands = new ArrayList<>();
     protected boolean isInternal;
     private boolean isWaitForResult = false;
@@ -44,7 +44,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
     protected CommandContext commandContext;
 
     public PrevalidatingMultipleActionsRunner(ActionType actionType,
-            List<VdcActionParametersBase> parameters,
+            List<ActionParametersBase> parameters,
             CommandContext commandContext,
             boolean isInternal) {
         this.actionType = actionType;
@@ -53,7 +53,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         this.parameters = new LinkedHashSet<>(parameters);
     }
 
-    protected Set<VdcActionParametersBase> getParameters() {
+    protected Set<ActionParametersBase> getParameters() {
         return parameters;
     }
 
@@ -83,7 +83,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
 
     private void initCommandsAndReturnValues(List<VdcReturnValueBase> returnValues) {
         VdcReturnValueBase returnValue;
-        for (VdcActionParametersBase parameter : getParameters()) {
+        for (ActionParametersBase parameter : getParameters()) {
             parameter.setMultipleAction(true);
             returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
             if (returnValue == null) {

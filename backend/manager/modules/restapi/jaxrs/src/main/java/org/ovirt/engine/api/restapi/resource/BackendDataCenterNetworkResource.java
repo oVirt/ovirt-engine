@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.DataCenterNetworkResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 public class BackendDataCenterNetworkResource
     extends AbstractBackendNetworkResource
@@ -58,7 +58,7 @@ public class BackendDataCenterNetworkResource
         implements ParametersProvider<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
 
         @Override
-        public VdcActionParametersBase getParameters(
+        public ActionParametersBase getParameters(
                 Network incoming,
                 org.ovirt.engine.core.common.businessentities.network.Network entity) {
             org.ovirt.engine.core.common.businessentities.network.Network updated = getMapper(
@@ -70,7 +70,7 @@ public class BackendDataCenterNetworkResource
     }
 
     @Override
-    protected VdcActionParametersBase getRemoveParameters(
+    protected ActionParametersBase getRemoveParameters(
             org.ovirt.engine.core.common.businessentities.network.Network entity) {
         return new RemoveNetworkParameters(entity.getId());
     }

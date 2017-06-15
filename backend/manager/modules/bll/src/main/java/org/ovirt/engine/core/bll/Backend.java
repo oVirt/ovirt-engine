@@ -43,8 +43,8 @@ import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.EngineWorkingMode;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -417,12 +417,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public VdcReturnValueBase runInternalAction(ActionType actionType, VdcActionParametersBase parameters) {
+    public VdcReturnValueBase runInternalAction(ActionType actionType, ActionParametersBase parameters) {
         return runActionImpl(actionType, parameters, true, null);
     }
 
     @Override
-    public VdcReturnValueBase runAction(ActionType actionType, VdcActionParametersBase parameters) {
+    public VdcReturnValueBase runAction(ActionType actionType, ActionParametersBase parameters) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
             return returnValue;
@@ -458,7 +458,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
      * @return The result of executing the action
      */
     private VdcReturnValueBase runActionImpl(ActionType actionType,
-            VdcActionParametersBase parameters,
+            ActionParametersBase parameters,
             boolean runAsInternal,
             CommandContext context) {
         VdcReturnValueBase result;
@@ -499,7 +499,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     protected VdcReturnValueBase evaluateCorrelationId(CommandBase<?> commandBase) {
-        VdcActionParametersBase cmdParams = commandBase.getParameters();
+        ActionParametersBase cmdParams = commandBase.getParameters();
         if (cmdParams.getCorrelationId() == null && cmdParams.getParentParameters() != null) {
             cmdParams.setCorrelationId(cmdParams.getParentParameters().getCorrelationId());
         }
@@ -517,7 +517,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public VdcReturnValueBase endAction(ActionType actionType,
-            VdcActionParametersBase parameters,
+            ActionParametersBase parameters,
             CommandContext context) {
         return CommandsFactory.createCommand(actionType, parameters, context).endAction();
     }
@@ -576,13 +576,13 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
-            List<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass) {
+            List<ActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass) {
         return runMultipleActions(actionType, parameters, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
     public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
-            List<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass, boolean waitForResult) {
+            List<ActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass, boolean waitForResult) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
             List<VdcReturnValueBase> list = new ArrayList<>();
@@ -596,7 +596,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     @ExcludeClassInterceptors
     public List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
-            List<VdcActionParametersBase> parameters) {
+            List<ActionParametersBase> parameters) {
         return runMultipleActionsImpl(actionType, parameters, true, false, false, null);
     }
 
@@ -604,13 +604,13 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     @ExcludeClassInterceptors
     public List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
-            List<VdcActionParametersBase> parameters, CommandContext commandContext) {
+            List<ActionParametersBase> parameters, CommandContext commandContext) {
         return runMultipleActionsImpl(actionType, parameters, true, false, false, commandContext);
 
     }
 
     private List<VdcReturnValueBase> runMultipleActionsImpl(ActionType actionType,
-            List<VdcActionParametersBase> parameters,
+            List<ActionParametersBase> parameters,
             boolean isInternal,
             boolean isRunOnlyIfAllValidationPass,
             boolean isWaitForResult,
@@ -635,7 +635,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcReturnValueBase logoff(VdcActionParametersBase parameters) {
+    public VdcReturnValueBase logoff(ActionParametersBase parameters) {
         return runAction(ActionType.LogoutSession, parameters);
     }
 
@@ -677,7 +677,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Override
     @ExcludeClassInterceptors
     public VdcReturnValueBase runInternalAction(ActionType actionType,
-            VdcActionParametersBase parameters,
+            ActionParametersBase parameters,
             CommandContext context) {
         return runActionImpl(actionType, parameters, true, context);
     }
@@ -729,7 +729,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
    @Override
-    public CommandBase<?> createAction(ActionType actionType, VdcActionParametersBase parameters, CommandContext context) {
+    public CommandBase<?> createAction(ActionType actionType, ActionParametersBase parameters, CommandContext context) {
         return CommandsFactory.createCommand(actionType, parameters, context);
     }
 

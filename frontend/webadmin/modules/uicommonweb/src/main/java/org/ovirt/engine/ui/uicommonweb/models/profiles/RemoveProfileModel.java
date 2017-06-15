@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -32,23 +32,23 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
 
     protected abstract ActionType getRemoveActionType();
 
-    protected abstract VdcActionParametersBase getRemoveProfileParams(P profile);
+    protected abstract ActionParametersBase getRemoveProfileParams(P profile);
 
     private void onRemove() {
         if (getProgress() != null) {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> vdcActionParametersBaseList = new ArrayList<>();
+        ArrayList<ActionParametersBase> actionParametersBaseList = new ArrayList<>();
         for (P profile : getProfiles()) {
-            VdcActionParametersBase parameters = getRemoveProfileParams(profile);
-            vdcActionParametersBaseList.add(parameters);
+            ActionParametersBase parameters = getRemoveProfileParams(profile);
+            actionParametersBaseList.add(parameters);
 
         }
 
         startProgress();
 
-        Frontend.getInstance().runMultipleAction(getRemoveActionType(), vdcActionParametersBaseList,
+        Frontend.getInstance().runMultipleAction(getRemoveActionType(), actionParametersBaseList,
                 result -> {
                     stopProgress();
                     cancel();

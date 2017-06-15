@@ -17,12 +17,12 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -250,7 +250,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
 
     @Override
     protected void endActionOnAllImageGroups() {
-        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+        for (ActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             getBackend().endAction(ActionType.CopyImageGroup,
                     p,

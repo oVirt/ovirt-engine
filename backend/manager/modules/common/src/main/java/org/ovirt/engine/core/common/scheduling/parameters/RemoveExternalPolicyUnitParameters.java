@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.scheduling.parameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveExternalPolicyUnitParameters extends VdcActionParametersBase {
+public class RemoveExternalPolicyUnitParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -2354147436466353253L;
 

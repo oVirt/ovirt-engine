@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.utils.PersistedCommandContext;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -23,7 +23,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private Guid rootCommandId;
     private PersistedCommandContext commandContext;
     private ActionType commandType;
-    private VdcActionParametersBase commandParameters;
+    private ActionParametersBase commandParameters;
     private VdcReturnValueBase returnValue;
     private Date createdAt;
     private CommandStatus commandStatus;
@@ -79,11 +79,11 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.createdAt = createdAt;
     }
 
-    public VdcActionParametersBase getCommandParameters() {
+    public ActionParametersBase getCommandParameters() {
         return this.commandParameters;
     }
 
-    public void setCommandParameters(VdcActionParametersBase value) {
+    public void setCommandParameters(ActionParametersBase value) {
         this.commandParameters = value;
     }
 
@@ -158,7 +158,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    Guid rootCommandId,
                                                    PersistedCommandContext commandContext,
                                                    ActionType actionType,
-                                                   VdcActionParametersBase params,
+                                                   ActionParametersBase params,
                                                    CommandStatus status,
                                                    boolean callbackEnabled,
                                                    VdcReturnValueBase returnValue,

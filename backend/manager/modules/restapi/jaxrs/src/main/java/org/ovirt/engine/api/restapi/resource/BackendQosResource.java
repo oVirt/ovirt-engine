@@ -5,9 +5,9 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -68,7 +68,7 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
 
     protected class UpdateParametersProvider implements ParametersProvider<Qos, QosBase> {
         @Override
-        public VdcActionParametersBase getParameters(Qos incoming,
+        public ActionParametersBase getParameters(Qos incoming,
                 QosBase entity) {
             QosParametersBase<QosBase> parameters = new QosParametersBase<>();
             parameters.setQosId(guid);

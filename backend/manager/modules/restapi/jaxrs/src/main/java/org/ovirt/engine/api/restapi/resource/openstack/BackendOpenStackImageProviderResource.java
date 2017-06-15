@@ -23,9 +23,9 @@ import org.ovirt.engine.api.resource.openstack.OpenstackImageProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackImagesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -67,7 +67,7 @@ public class BackendOpenStackImageProviderResource
 
     private class UpdateParametersProvider implements ParametersProvider<OpenStackImageProvider, Provider> {
         @Override
-        public VdcActionParametersBase getParameters(OpenStackImageProvider incoming, Provider entity) {
+        public ActionParametersBase getParameters(OpenStackImageProvider incoming, Provider entity) {
             return new ProviderParameters(map(incoming, entity));
         }
     }

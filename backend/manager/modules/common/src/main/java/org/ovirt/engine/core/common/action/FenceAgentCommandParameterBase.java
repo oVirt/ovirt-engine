@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
-public class FenceAgentCommandParameterBase extends VdcActionParametersBase implements Serializable {
+public class FenceAgentCommandParameterBase extends ActionParametersBase implements Serializable {
 
     private static final long serialVersionUID = -8383185727830349139L;
 

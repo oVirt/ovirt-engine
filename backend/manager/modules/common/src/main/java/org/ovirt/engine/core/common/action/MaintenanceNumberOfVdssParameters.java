@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
+public class MaintenanceNumberOfVdssParameters extends ActionParametersBase {
     private static final long serialVersionUID = 8806810521151850069L;
 
     private List<Guid> _vdsIdList;

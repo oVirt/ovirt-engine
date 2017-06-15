@@ -20,9 +20,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.type.TypeFactory;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LoginOnBehalfParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
@@ -127,7 +127,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
                     }
                 }
             } finally {
-                backend.runInternalAction(ActionType.LogoutSession, new VdcActionParametersBase(engineSessionId));
+                backend.runInternalAction(ActionType.LogoutSession, new ActionParametersBase(engineSessionId));
             }
         }
 

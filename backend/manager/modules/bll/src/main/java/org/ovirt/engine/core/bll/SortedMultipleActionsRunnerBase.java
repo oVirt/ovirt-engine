@@ -3,12 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 public abstract class SortedMultipleActionsRunnerBase extends PrevalidatingMultipleActionsRunner {
     public SortedMultipleActionsRunnerBase(ActionType actionType,
-            List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
+            List<ActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }
 

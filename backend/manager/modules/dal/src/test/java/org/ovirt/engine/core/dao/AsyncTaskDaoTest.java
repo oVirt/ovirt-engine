@@ -13,8 +13,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
@@ -38,11 +38,11 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getAsyncTaskDao();
-        VdcActionParametersBase params = new VdcActionParametersBase();
+        ActionParametersBase params = new ActionParametersBase();
         params.setSessionId("ASESSIONID");
         params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
 
-        VdcActionParametersBase taskParams = new VdcActionParametersBase();
+        ActionParametersBase taskParams = new ActionParametersBase();
         taskParams.setSessionId("ASESSIONID");
         taskParams.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         taskParams.setParentParameters(params);

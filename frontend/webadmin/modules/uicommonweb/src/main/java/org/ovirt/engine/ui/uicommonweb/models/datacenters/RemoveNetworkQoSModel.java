@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -72,7 +72,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
     }
 
     public void onRemove() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         for (Object networkQoS : sourceListModel.getSelectedItems()) {
             QosParametersBase<NetworkQoS> parameter = new QosParametersBase<>();

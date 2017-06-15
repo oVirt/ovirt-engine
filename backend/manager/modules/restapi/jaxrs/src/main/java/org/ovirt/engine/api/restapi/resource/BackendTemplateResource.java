@@ -26,10 +26,10 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -143,7 +143,7 @@ public class BackendTemplateResource
 
     protected class UpdateParametersProvider implements ParametersProvider<Template, VmTemplate> {
         @Override
-        public VdcActionParametersBase getParameters(Template incoming, VmTemplate entity) {
+        public ActionParametersBase getParameters(Template incoming, VmTemplate entity) {
             VmTemplate updated = getMapper(modelType, VmTemplate.class).map(incoming, entity);
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy()));
             UpdateVmTemplateParameters params = new UpdateVmTemplateParameters(updated);

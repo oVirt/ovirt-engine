@@ -9,14 +9,14 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
-public abstract class NetworkCommon<T extends VdcActionParametersBase> extends CommandBase<T> {
+public abstract class NetworkCommon<T extends ActionParametersBase> extends CommandBase<T> {
 
     @Inject
     private VnicProfileDao vnicProfileDao;

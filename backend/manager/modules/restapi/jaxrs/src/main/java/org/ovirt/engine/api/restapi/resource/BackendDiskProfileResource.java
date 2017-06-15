@@ -4,9 +4,9 @@ import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DiskProfileResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -42,7 +42,7 @@ public class BackendDiskProfileResource extends AbstractBackendDiskProfileResour
     protected class UpdateParametersProvider
             implements ParametersProvider<DiskProfile, org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> {
         @Override
-        public VdcActionParametersBase getParameters(DiskProfile incoming,
+        public ActionParametersBase getParameters(DiskProfile incoming,
                 org.ovirt.engine.core.common.businessentities.profiles.DiskProfile entity) {
             org.ovirt.engine.core.common.businessentities.profiles.DiskProfile map = map(incoming, entity);
             return new DiskProfileParameters(map);

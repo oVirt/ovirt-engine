@@ -15,9 +15,9 @@ import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.LogSeverity;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalEventParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
@@ -102,7 +102,7 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
     public void testUndelete() throws Exception {
 
         setUriInfo(setUpActionExpectations(ActionType.DisplayAllAuditLogAlerts,
-                VdcActionParametersBase.class,
+                ActionParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 true,

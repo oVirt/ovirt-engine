@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
@@ -586,13 +586,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        ArrayList<VdcActionParametersBase> prmsToAttach = new ArrayList<>();
+        ArrayList<ActionParametersBase> prmsToAttach = new ArrayList<>();
         for (Guid tag_id : tagsToAttach) {
             prmsToAttach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
         Frontend.getInstance().runMultipleAction(ActionType.AttachVdsToTag, prmsToAttach);
 
-        ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<>();
+        ArrayList<ActionParametersBase> prmsToDetach = new ArrayList<>();
         for (Guid tag_id : tagsToDetach) {
             prmsToDetach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
@@ -631,7 +631,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             FenceVdsManualyParameters parameters = new FenceVdsManualyParameters(true);
@@ -1027,7 +1027,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         params.setAuthMethod(model.getAuthenticationMethod());
 
         Frontend.getInstance().runMultipleAction(ActionType.ApproveVds,
-                new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{params})),
+                new ArrayList<>(Arrays.asList(new ActionParametersBase[]{params})),
                 result -> {
 
                 },
@@ -1090,7 +1090,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         boolean force = model.getForce().getEntity();
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new RemoveVdsParameters(vds.getId(), force));
@@ -1126,7 +1126,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     public void activate() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
 
         Collections.sort(getSelectedItems(), new HostSpmPriorityComparator());
 
@@ -1409,7 +1409,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         if (model.getProgress() != null) {
             return;
         }
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             VdsPowerDownParameters param = new VdsPowerDownParameters(vds.getId());
@@ -1436,7 +1436,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         if (model.getProgress() != null) {
             return;
         }
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             VdsActionParameters params = new VdsActionParameters(vds.getId());
@@ -1464,7 +1464,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
@@ -1483,7 +1483,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     public void start() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
@@ -1523,7 +1523,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new FenceVdsActionParameters(vds.getId()));
@@ -1619,7 +1619,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private void refreshCapabilities() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VDS vds = (VDS) item;
             list.add(new VdsActionParameters(vds.getId()));
@@ -2078,7 +2078,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
         NumaSupportModel model = (NumaSupportModel) getWindow();
-        ArrayList<VdcActionParametersBase> updateParamsList = model.getUpdateParameters();
+        ArrayList<ActionParametersBase> updateParamsList = model.getUpdateParameters();
         if (!updateParamsList.isEmpty()) {
             Frontend.getInstance().runMultipleAction(ActionType.UpdateVmNumaNodes, updateParamsList);
         }

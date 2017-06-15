@@ -16,12 +16,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -223,7 +223,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         return liveMigrateDisksParameters;
     }
 
-    private List<VdcActionParametersBase> getParametersList(List<? extends VdcActionParametersBase> parametersList) {
+    private List<ActionParametersBase> getParametersList(List<? extends ActionParametersBase> parametersList) {
         parametersList.stream().forEach(p -> p.setSessionId(getParameters().getSessionId()));
         return new ArrayList<>(parametersList);
     }

@@ -26,8 +26,8 @@ import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.TemplateWatchdogResource;
 import org.ovirt.engine.api.restapi.types.WatchdogMapper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -98,7 +98,7 @@ public class BackendTemplateWatchdogResource
 
     private class UpdateParametersProvider implements ParametersProvider<Watchdog, VmWatchdog> {
         @Override
-        public VdcActionParametersBase getParameters(Watchdog model, VmWatchdog entity) {
+        public ActionParametersBase getParameters(Watchdog model, VmWatchdog entity) {
             WatchdogParameters parameters = new WatchdogParameters();
             if (model.isSetAction()) {
                 parameters.setAction(WatchdogMapper.map(model.getAction()));

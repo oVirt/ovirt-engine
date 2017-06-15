@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -325,7 +325,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     private void doExport() {
         ExportVmModel model = (ExportVmModel) getWindow();
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VmTemplate a = (VmTemplate) item;
             if (a.getId().equals(Guid.Empty)) {
@@ -507,7 +507,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VmTemplate a = (VmTemplate) item;
             list.add(new VmTemplateManagementParameters(a.getId()));

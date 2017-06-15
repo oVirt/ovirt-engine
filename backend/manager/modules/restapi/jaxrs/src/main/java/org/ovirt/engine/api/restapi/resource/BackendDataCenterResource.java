@@ -16,10 +16,10 @@ import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -103,7 +103,7 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     protected class UpdateParametersProvider implements
             ParametersProvider<DataCenter, StoragePool> {
         @Override
-        public VdcActionParametersBase getParameters(DataCenter incoming, StoragePool entity) {
+        public ActionParametersBase getParameters(DataCenter incoming, StoragePool entity) {
             return new StoragePoolManagementParameter(map(incoming, entity));
         }
     }

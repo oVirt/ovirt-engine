@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -307,8 +307,8 @@ public class NumaSupportModel extends Model {
      * Used when accessing the numa support screen from the host list panel.
      * @return List of updated numa configurations
      */
-    public ArrayList<VdcActionParametersBase> getUpdateParameters() {
-        final ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+    public ArrayList<ActionParametersBase> getUpdateParameters() {
+        final ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (Guid vmId : vmsToUpdate) {
             final List<VmNumaNode> numaNodes = new ArrayList<>();
             for (final VNodeModel model : numaModelsPerVm.get(vmId).values()) {

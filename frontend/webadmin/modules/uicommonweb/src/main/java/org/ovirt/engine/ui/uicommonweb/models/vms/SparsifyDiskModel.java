@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -53,10 +53,10 @@ public class SparsifyDiskModel extends ConfirmationModel {
     }
 
     public void onSparsify(final ICommandTarget target) {
-        List<VdcActionParametersBase> parameterList = new ArrayList<>();
+        List<ActionParametersBase> parameterList = new ArrayList<>();
 
         for (Disk disk : disksToSparsify) {
-            VdcActionParametersBase parameters = new StorageJobCommandParameters(((DiskImage) disk).getImageId());
+            ActionParametersBase parameters = new StorageJobCommandParameters(((DiskImage) disk).getImageId());
             parameterList.add(parameters);
         }
 

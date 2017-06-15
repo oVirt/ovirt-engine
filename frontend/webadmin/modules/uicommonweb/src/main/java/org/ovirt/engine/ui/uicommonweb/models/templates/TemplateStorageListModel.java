@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
@@ -148,7 +148,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
 
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        List<VdcActionParametersBase> parameters = new ArrayList<>();
+        List<ActionParametersBase> parameters = new ArrayList<>();
         List<? extends Object> disks = getSelectedItems() != null ? getSelectedItems() : new ArrayList<DiskModel>();
 
         for (Object o: disks) {

@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate, ImportTemplateData> {
 
     protected void onSave() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (ImportTemplateData entityData : getEntities().getItems()) {
             VmTemplate vmTemplate = entityData.getEntity();
             Cluster cluster = entityData.getCluster().getSelectedItem();

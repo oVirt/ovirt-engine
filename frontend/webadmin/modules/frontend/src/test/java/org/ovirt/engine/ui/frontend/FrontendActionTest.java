@@ -27,8 +27,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.compat.Guid;
@@ -163,8 +163,8 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunMultipleActions_ignored_failure_multiple() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        parameters.add(new VdcActionParametersBase());
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+        parameters.add(new ActionParametersBase());
         testState = null;
         frontend.runMultipleAction(ActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
@@ -188,8 +188,8 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunMultipleActions_404_failure_multiple() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        parameters.add(new VdcActionParametersBase());
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+        parameters.add(new ActionParametersBase());
         frontend.runMultipleAction(ActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).runMultipleActions(eq(ActionType.AddLocalStorageDomain), eq(parameters), eq(false),
@@ -220,10 +220,10 @@ public class FrontendActionTest {
     public void testrunMultipleActionsMultipleSuccess() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        parameters.add(new VdcActionParametersBase());
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+        parameters.add(new ActionParametersBase());
         parameters.get(0).setCommandId(Guid.Empty);
-        parameters.add(new VdcActionParametersBase());
+        parameters.add(new ActionParametersBase());
         frontend.runMultipleAction(ActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).runMultipleActions(eq(ActionType.AddLocalStorageDomain), eq(parameters), eq(false),
@@ -257,9 +257,9 @@ public class FrontendActionTest {
     public void testrunMultipleActionsMultipleSuccess_oneFailure() {
         // Don't immediately call process until both queries are in the queue.
         fakeScheduler.setThreshold(2);
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        parameters.add(new VdcActionParametersBase());
-        parameters.add(new VdcActionParametersBase());
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+        parameters.add(new ActionParametersBase());
+        parameters.add(new ActionParametersBase());
         parameters.get(0).setCommandId(Guid.Empty);
         frontend.runMultipleAction(ActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
@@ -300,11 +300,11 @@ public class FrontendActionTest {
     public void testrunMultipleActionsMultipleSuccess_multipleFailure() {
         // Don't immediately call process until all queries are in the queue.
         fakeScheduler.setThreshold(4);
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
-        parameters.add(new VdcActionParametersBase());
-        parameters.add(new VdcActionParametersBase());
-        parameters.add(new VdcActionParametersBase());
-        parameters.add(new VdcActionParametersBase());
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
+        parameters.add(new ActionParametersBase());
+        parameters.add(new ActionParametersBase());
+        parameters.add(new ActionParametersBase());
+        parameters.add(new ActionParametersBase());
         parameters.get(0).setCommandId(Guid.Empty);
         parameters.get(1).setCommandId(Guid.EVERYONE);
         parameters.get(2).setCommandId(Guid.SYSTEM);
@@ -350,7 +350,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunActionImpl_ignored_failure() {
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         frontend.runAction(ActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).runAction(eq(ActionType.AddDisk), eq(testParameters), callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
@@ -371,7 +371,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunActionImpl_404_failure() {
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         frontend.runAction(ActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).runAction(eq(ActionType.AddDisk), eq(testParameters), callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
@@ -397,7 +397,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunActionImpl_success() {
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         frontend.runAction(ActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).runAction(eq(ActionType.AddDisk), eq(testParameters), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -423,7 +423,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult() {
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setValid(false); // Yes this is the default, but to make sure.
         frontend.handleActionResult(ActionType.AddDisk, testParameters, returnValue, mockActionCallback,
@@ -451,7 +451,7 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult_SucceededFalse() {
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setValid(true);
         returnValue.setIsSyncronious(true);
@@ -484,7 +484,7 @@ public class FrontendActionTest {
     public void testHandleActionResult_isRaiseErrorModalPanel_actionMessageSize_1_or_less() {
         EngineFault testFault = new EngineFault();
         when(mockEventsHandler.isRaiseErrorModalPanel(ActionType.AddDisk, testFault)).thenReturn(true);
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
@@ -523,7 +523,7 @@ public class FrontendActionTest {
         ArrayList<String> translatedErrors = new ArrayList<>(Collections.singletonList("Translated Message 1")); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(ActionType.AddDisk, testFault)).thenReturn(true);
         when(mockValidateErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
@@ -564,7 +564,7 @@ public class FrontendActionTest {
                 "Translated Message 1", "Translated Message 2")); //$NON-NLS-1$ //$NON-NLS-2$
         when(mockEventsHandler.isRaiseErrorModalPanel(ActionType.AddDisk, testFault)).thenReturn(true);
         when(mockValidateErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
-        VdcActionParametersBase testParameters = new VdcActionParametersBase();
+        ActionParametersBase testParameters = new ActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
@@ -599,8 +599,8 @@ public class FrontendActionTest {
     public void testrunMultipleActions_1action() {
         List<ActionType> actionTypes = new ArrayList<>();
         actionTypes.add(ActionType.AddDisk);
-        List<VdcActionParametersBase> testParameters = new ArrayList<>();
-        testParameters.add(new VdcActionParametersBase());
+        List<ActionParametersBase> testParameters = new ArrayList<>();
+        testParameters.add(new ActionParametersBase());
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
         callbacks.add(mockActionCallback);
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
@@ -629,9 +629,9 @@ public class FrontendActionTest {
         List<ActionType> actionTypes = new ArrayList<>();
         actionTypes.add(ActionType.AddDisk);
         actionTypes.add(ActionType.AddBricksToGlusterVolume);
-        List<VdcActionParametersBase> testParameters = new ArrayList<>();
-        testParameters.add(new VdcActionParametersBase());
-        testParameters.add(new VdcActionParametersBase());
+        List<ActionParametersBase> testParameters = new ArrayList<>();
+        testParameters.add(new ActionParametersBase());
+        testParameters.add(new ActionParametersBase());
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
@@ -668,9 +668,9 @@ public class FrontendActionTest {
         List<ActionType> actionTypes = new ArrayList<>();
         actionTypes.add(ActionType.AddDisk);
         actionTypes.add(ActionType.AddBricksToGlusterVolume);
-        List<VdcActionParametersBase> testParameters = new ArrayList<>();
-        testParameters.add(new VdcActionParametersBase());
-        testParameters.add(new VdcActionParametersBase());
+        List<ActionParametersBase> testParameters = new ArrayList<>();
+        testParameters.add(new ActionParametersBase());
+        testParameters.add(new ActionParametersBase());
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
@@ -707,9 +707,9 @@ public class FrontendActionTest {
         List<ActionType> actionTypes = new ArrayList<>();
         actionTypes.add(ActionType.AddDisk);
         actionTypes.add(ActionType.AddBricksToGlusterVolume);
-        List<VdcActionParametersBase> testParameters = new ArrayList<>();
-        testParameters.add(new VdcActionParametersBase());
-        testParameters.add(new VdcActionParametersBase());
+        List<ActionParametersBase> testParameters = new ArrayList<>();
+        testParameters.add(new ActionParametersBase());
+        testParameters.add(new ActionParametersBase());
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);

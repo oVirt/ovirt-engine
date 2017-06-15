@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveDiskParameters extends VdcActionParametersBase {
+public class RemoveDiskParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -3691440035048144457L;
     private Guid diskId;

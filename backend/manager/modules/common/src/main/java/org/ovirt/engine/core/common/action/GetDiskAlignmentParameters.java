@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetDiskAlignmentParameters extends VdcActionParametersBase {
+public class GetDiskAlignmentParameters extends ActionParametersBase {
     private static final long serialVersionUID = -6587274019503875891L;
 
     private Guid diskId;

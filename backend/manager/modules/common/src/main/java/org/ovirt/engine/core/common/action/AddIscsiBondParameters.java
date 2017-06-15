@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 
-public class AddIscsiBondParameters extends VdcActionParametersBase {
+public class AddIscsiBondParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 8709128730744559712L;
 

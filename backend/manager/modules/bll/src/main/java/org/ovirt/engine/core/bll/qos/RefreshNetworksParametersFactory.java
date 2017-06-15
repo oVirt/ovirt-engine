@@ -7,9 +7,9 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,7 +46,7 @@ public class RefreshNetworksParametersFactory {
      * @return list of PersistentHostSetupNetworksParameters instances, to update all networks having given qosId,
      * on every host where they are used.
      */
-    public ArrayList<VdcActionParametersBase> create(Guid qosId) {
+    public ArrayList<ActionParametersBase> create(Guid qosId) {
         List<Network> networksHavingAlteredQos = networkDao.getAllForQos(qosId);
         return create(networksHavingAlteredQos);
     }
@@ -56,10 +56,10 @@ public class RefreshNetworksParametersFactory {
      * @return list of PersistentHostSetupNetworksParameters instances to update all given networks on all hosts where
      * they are used.
      */
-    public ArrayList<VdcActionParametersBase> create(List<Network> networks) {
+    public ArrayList<ActionParametersBase> create(List<Network> networks) {
         Map<Guid, List<Network>> vdsIdToNetworksOfAlteredQos = mapNetworksByAttachedHosts(networks);
 
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (Map.Entry<Guid, List<Network>> entry : vdsIdToNetworksOfAlteredQos.entrySet()) {
             Guid hostId = entry.getKey();
             List<Network> networksOfAlteredQos = entry.getValue();

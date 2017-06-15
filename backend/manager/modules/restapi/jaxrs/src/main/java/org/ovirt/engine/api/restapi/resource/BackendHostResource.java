@@ -38,6 +38,7 @@ import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKa
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
@@ -48,7 +49,6 @@ import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
@@ -676,7 +676,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     protected class UpdateParametersProvider implements ParametersProvider<Host, VDS> {
         @Override
-        public VdcActionParametersBase getParameters(Host incoming, VDS entity) {
+        public ActionParametersBase getParameters(Host incoming, VDS entity) {
             VdsStatic updated = getMapper(modelType, VdsStatic.class).map(incoming,
                     entity.getStaticData());
             UpdateVdsActionParameters updateParams = new UpdateVdsActionParameters(updated, incoming.getRootPassword(), false);

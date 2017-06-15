@@ -9,9 +9,9 @@ import java.util.MissingResourceException;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.EventNotificationMethod;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -154,8 +154,8 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
             return;
         }
 
-        ArrayList<VdcActionParametersBase> toAddList = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> toRemoveList = new ArrayList<>();
+        ArrayList<ActionParametersBase> toAddList = new ArrayList<>();
+        ArrayList<ActionParametersBase> toRemoveList = new ArrayList<>();
 
         // var selected = model.EventGroupModels.SelectMany(a => a.Children).Where(a => a.IsSelected == true);
         ArrayList<SelectionTreeNodeModel> selected = new ArrayList<>();
@@ -233,7 +233,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
 
         if (toRemoveList.size() > 0) {
             EventSubscriptionFrontendActionAsyncCallback callback = new EventSubscriptionFrontendActionAsyncCallback(toAddList, toRemoveList);
-            for (VdcActionParametersBase param : toRemoveList) {
+            for (ActionParametersBase param : toRemoveList) {
                 Frontend.getInstance().runAction(ActionType.RemoveEventSubscription, param, callback);
             }
         } else if (toAddList.size() > 0) {
@@ -243,11 +243,11 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
     }
 
     private static final class EventSubscriptionFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
-        private ArrayList<VdcActionParametersBase> toAddList;
-        ArrayList<VdcActionParametersBase> toRemoveList;
+        private ArrayList<ActionParametersBase> toAddList;
+        ArrayList<ActionParametersBase> toRemoveList;
         private int sucessCount = 0;
 
-        EventSubscriptionFrontendActionAsyncCallback(ArrayList<VdcActionParametersBase> toAddList, ArrayList<VdcActionParametersBase> toRemoveList) {
+        EventSubscriptionFrontendActionAsyncCallback(ArrayList<ActionParametersBase> toAddList, ArrayList<ActionParametersBase> toRemoveList) {
             this.toAddList = toAddList;
             this.toRemoveList = toRemoveList;
         }

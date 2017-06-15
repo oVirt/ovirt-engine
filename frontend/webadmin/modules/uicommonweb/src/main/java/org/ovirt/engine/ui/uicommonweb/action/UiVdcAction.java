@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.action;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -37,7 +37,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class UiVdcAction extends UiAction {
 
     private ActionType actionType;
-    private VdcActionParametersBase parameters;
+    private ActionParametersBase parameters;
     private boolean showErrorDialogOnFirstFailure;
 
     /**
@@ -52,7 +52,7 @@ public class UiVdcAction extends UiAction {
      *            be collected and displayed with all the other errors at the end of the flow.
      */
     public UiVdcAction(ActionType actionType,
-            VdcActionParametersBase parameters,
+            ActionParametersBase parameters,
             Model model,
             boolean showErrorDialogOnFirstFailure) {
         super(model);
@@ -61,7 +61,7 @@ public class UiVdcAction extends UiAction {
         this.showErrorDialogOnFirstFailure = showErrorDialogOnFirstFailure;
     }
 
-    public UiVdcAction(ActionType actionType, VdcActionParametersBase parameters, Model model) {
+    public UiVdcAction(ActionType actionType, ActionParametersBase parameters, Model model) {
         this(actionType, parameters, model, false);
     }
 

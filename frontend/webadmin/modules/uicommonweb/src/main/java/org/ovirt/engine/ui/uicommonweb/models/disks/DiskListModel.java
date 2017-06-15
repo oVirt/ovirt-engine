@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -339,7 +339,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     private void scanAlignment() {
-        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameterList = new ArrayList<>();
 
         for (Disk disk : getSelectedItems()) {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
@@ -396,12 +396,12 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
     private void onChangeQuota() {
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
         for (ChangeQuotaItemModel item : model.getItems()) {
             ChangeQuotaItemModel itemModel = item;
             DiskImage disk = itemModel.getEntity();
-            VdcActionParametersBase parameters =
+            ActionParametersBase parameters =
                     new ChangeQuotaParameters(itemModel.getQuota().getSelectedItem().getId(),
                             disk.getId(),
                             itemModel.getStorageDomainId(),
@@ -450,11 +450,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
     private void onRemove() {
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             Disk disk = (Disk) item;
-            VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getId());
+            ActionParametersBase parameters = new RemoveDiskParameters(disk.getId());
             paramerterList.add(parameters);
         }
 

@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -129,7 +129,7 @@ public class NetworkHelper {
 
     private static void removeNetworkFromHosts(Network network, CommandContext context, List<VdsNetworkInterface> nics) {
         RemoveNetworkParametersBuilder builder = Injector.get(RemoveNetworkParametersBuilder.class);
-        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(network, nics);
+        ArrayList<ActionParametersBase> parameters = builder.buildParameters(network, nics);
 
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);

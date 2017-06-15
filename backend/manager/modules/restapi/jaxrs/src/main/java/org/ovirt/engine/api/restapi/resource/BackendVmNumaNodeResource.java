@@ -4,8 +4,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.compat.Guid;
@@ -66,7 +66,7 @@ public class BackendVmNumaNodeResource
         return performAction(removeAction, getRemoveParameters());
     }
 
-    private VdcActionParametersBase getRemoveParameters() {
+    private ActionParametersBase getRemoveParameters() {
         VmNumaNode entity = new VmNumaNode();
         entity.setId(guid);
         VmNumaNodeOperationParameters parameters = new VmNumaNodeOperationParameters(collection.parentId, entity);

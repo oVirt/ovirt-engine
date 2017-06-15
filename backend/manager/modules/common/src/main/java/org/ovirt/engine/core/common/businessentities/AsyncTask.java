@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -109,19 +109,19 @@ public class AsyncTask implements Serializable {
         this.taskId = value;
     }
 
-    public VdcActionParametersBase getActionParameters() {
+    public ActionParametersBase getActionParameters() {
         return rootCmdEntity.getCommandParameters();
     }
 
-    public void setActionParameters(VdcActionParametersBase value) {
+    public void setActionParameters(ActionParametersBase value) {
         this.rootCmdEntity.setCommandParameters(value);
     }
 
-    public VdcActionParametersBase getTaskParameters() {
+    public ActionParametersBase getTaskParameters() {
         return childCmdEntity.getCommandParameters();
     }
 
-    public void setTaskParameters(VdcActionParametersBase value) {
+    public void setTaskParameters(ActionParametersBase value) {
         childCmdEntity.setCommandParameters(value);
     }
 

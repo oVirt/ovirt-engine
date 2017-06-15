@@ -22,11 +22,11 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
@@ -121,8 +121,8 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     private boolean runNetworkClusterCommands(
             Collection<NetworkCluster> networkClusters,
             ActionType actionType,
-            Function<NetworkCluster, ? extends VdcActionParametersBase> networkClusterToParameterTransformer) {
-        final List<? extends VdcActionParametersBase> parameters =
+            Function<NetworkCluster, ? extends ActionParametersBase> networkClusterToParameterTransformer) {
+        final List<? extends ActionParametersBase> parameters =
                 networkClusters.stream().map(networkClusterToParameterTransformer).collect(Collectors.toList());
         return runMultipleInternalCommandsSynchronously(actionType, parameters);
     }
@@ -136,9 +136,9 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
      */
     private boolean runMultipleInternalCommandsSynchronously(
             ActionType actionType,
-            List<? extends VdcActionParametersBase> parameters) {
+            List<? extends ActionParametersBase> parameters) {
 
-        for (VdcActionParametersBase param : parameters) {
+        for (ActionParametersBase param : parameters) {
             final VdcReturnValueBase executionResult = runInternalAction(actionType, param);
             if (!executionResult.getSucceeded()) {
                 TransactionSupport.setRollbackOnly();

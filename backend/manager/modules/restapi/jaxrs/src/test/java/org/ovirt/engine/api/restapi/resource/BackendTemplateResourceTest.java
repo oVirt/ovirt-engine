@@ -19,10 +19,10 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -446,14 +446,14 @@ public class BackendTemplateResourceTest
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
+                                              Class<? extends ActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
+                                              Class<? extends ActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,
                                               ArrayList<Guid> asyncTasks,

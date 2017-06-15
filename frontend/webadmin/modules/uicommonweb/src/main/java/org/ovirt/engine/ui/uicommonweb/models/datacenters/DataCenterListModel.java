@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -439,7 +439,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 if (windowModel.getProgress() != null) {
                     return;
                 }
-                ArrayList<VdcActionParametersBase> parameters =
+                ArrayList<ActionParametersBase> parameters =
                         new ArrayList<>();
                 for (StorageDomain a : items) {
                     parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(),
@@ -469,7 +469,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             return;
         }
 
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (StoragePool a : getSelectedItems()) {
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
@@ -493,7 +493,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         }
         StoragePoolParametersBase tempVar = new StoragePoolParametersBase(getSelectedItem().getId());
         tempVar.setForceDelete(true);
-        VdcActionParametersBase parametersBase = tempVar;
+        ActionParametersBase parametersBase = tempVar;
         Frontend.getInstance().runAction(ActionType.RemoveStoragePool, parametersBase);
         cancel();
     }
@@ -672,7 +672,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         } else {
             // Use async action in order to close dialog immediately.
             Frontend.getInstance().runMultipleAction(ActionType.UpdateStoragePool,
-                new ArrayList<VdcActionParametersBase>(Arrays.asList(
+                new ArrayList<ActionParametersBase>(Arrays.asList(
                     new StoragePoolManagementParameter(dataCenter))
                 ),
                     result -> {

@@ -26,9 +26,9 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.NicNetworkFilterParameterResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmNicFilterParameterParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -115,7 +115,7 @@ public class BackendVmNicFilterParameterResource
     private class UpdateParametersProvider
             implements ParametersProvider<NetworkFilterParameter, VmNicFilterParameter> {
         @Override
-        public VdcActionParametersBase getParameters(NetworkFilterParameter incoming, VmNicFilterParameter entity) {
+        public ActionParametersBase getParameters(NetworkFilterParameter incoming, VmNicFilterParameter entity) {
             VmNicFilterParameter parameter = map(incoming, entity);
             parameter.setVmInterfaceId(nicId);
             return new VmNicFilterParameterParameters(vmId, parameter);

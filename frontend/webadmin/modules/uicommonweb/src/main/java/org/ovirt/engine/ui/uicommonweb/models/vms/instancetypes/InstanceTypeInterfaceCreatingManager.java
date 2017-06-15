@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -24,12 +24,12 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
     }
 
     @Override
-    protected VdcActionParametersBase createAddInterfaceParameter(Guid id, VmNetworkInterface editedVnic) {
+    protected ActionParametersBase createAddInterfaceParameter(Guid id, VmNetworkInterface editedVnic) {
         return new AddVmTemplateInterfaceParameters(id, editedVnic);
     }
 
     @Override
-    protected VdcActionParametersBase createRemoveInterfaceParameter(Guid id, Guid nicId) {
+    protected ActionParametersBase createRemoveInterfaceParameter(Guid id, Guid nicId) {
         return new RemoveVmTemplateInterfaceParameters(id, nicId);
     }
 
@@ -40,9 +40,9 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
 
     @Override
     protected void doNicManipulation(
-            final ArrayList<VdcActionParametersBase> createVnicParameters,
-            final ArrayList<VdcActionParametersBase> updateVnicParameters,
-            final ArrayList<VdcActionParametersBase> removeVnicParameters,
+            final ArrayList<ActionParametersBase> createVnicParameters,
+            final ArrayList<ActionParametersBase> updateVnicParameters,
+            final ArrayList<ActionParametersBase> removeVnicParameters,
             final boolean isAddingNewVm,
             final Guid id,
             final UnitVmModel unitVmModel) {

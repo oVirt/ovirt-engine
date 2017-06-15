@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
@@ -210,7 +210,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
         model.startProgress();
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         PermissionsOperationsParameters permissionParams;
         for (DbUser user : items) {
             Permission perm = new Permission(
@@ -254,7 +254,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
                 return;
             }
 
-            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+            ArrayList<ActionParametersBase> list = new ArrayList<>();
             for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);

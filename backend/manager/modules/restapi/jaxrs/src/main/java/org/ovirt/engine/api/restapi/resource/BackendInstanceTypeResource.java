@@ -32,9 +32,9 @@ import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -138,7 +138,7 @@ public class BackendInstanceTypeResource
 
     protected class UpdateParametersProvider implements ParametersProvider<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType> {
         @Override
-        public VdcActionParametersBase getParameters(InstanceType incoming, org.ovirt.engine.core.common.businessentities.InstanceType entity) {
+        public ActionParametersBase getParameters(InstanceType incoming, org.ovirt.engine.core.common.businessentities.InstanceType entity) {
             org.ovirt.engine.core.common.businessentities.InstanceType updated = getMapper(modelType, org.ovirt.engine.core.common.businessentities.InstanceType.class).map(incoming, entity);
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy()));
 

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -448,7 +448,7 @@ public abstract class VmInterfaceModel extends Model {
                 : getMAC().getEntity().toLowerCase() : getDefaultMacAddress());
     }
 
-    protected abstract VdcActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave);
+    protected abstract ActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave);
 
     protected void updateLinkChangability() {
         boolean isNullProfileSelected = getProfile().getSelectedItem() == null;

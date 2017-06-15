@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class WatchdogParameters extends VdcActionParametersBase {
+public class WatchdogParameters extends ActionParametersBase {
     private static final long serialVersionUID = 8564973734004518462L;
     /**
      * true if the watchog must be set in the VM, false if it must be set in a template

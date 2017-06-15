@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -121,7 +121,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);

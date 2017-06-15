@@ -6,10 +6,10 @@ import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.resource.AffinityLabelHostsResource;
 import org.ovirt.engine.api.resource.AffinityLabelResource;
 import org.ovirt.engine.api.resource.AffinityLabelVmsResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.action.LabelActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -49,7 +49,7 @@ public class BackendAffinityLabelResource extends AbstractBackendActionableResou
 
     protected static class UpdateParametersProvider implements ParametersProvider<AffinityLabel, Label> {
         @Override
-        public VdcActionParametersBase getParameters(AffinityLabel model,
+        public ActionParametersBase getParameters(AffinityLabel model,
                 Label entity) {
             LabelBuilder newEntity = new LabelBuilder(entity);
 

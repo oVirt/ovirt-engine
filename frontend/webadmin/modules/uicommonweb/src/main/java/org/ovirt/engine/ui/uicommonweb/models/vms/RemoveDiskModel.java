@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -70,10 +70,10 @@ public class RemoveDiskModel extends ConfirmationModel {
     public void onRemove(final ICommandTarget target) {
         boolean removeDisk = getLatch().getEntity();
         ActionType actionType = removeDisk ? ActionType.RemoveDisk : ActionType.DetachDiskFromVm;
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Disk disk : disksToRemove) {
-            VdcActionParametersBase parameters = removeDisk ?
+            ActionParametersBase parameters = removeDisk ?
                     new RemoveDiskParameters(disk.getId()) :
                     new AttachDetachVmDiskParameters(new DiskVmElement(disk.getId(), vm.getId()));
             paramerterList.add(parameters);

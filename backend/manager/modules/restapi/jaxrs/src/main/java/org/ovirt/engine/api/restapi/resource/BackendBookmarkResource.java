@@ -4,10 +4,10 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.resource.BookmarkResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -33,7 +33,7 @@ public class BackendBookmarkResource extends AbstractBackendSubResource<Bookmark
         org.ovirt.engine.core.common.businessentities.Bookmark> {
 
         @Override
-        public VdcActionParametersBase getParameters(Bookmark incoming,
+        public ActionParametersBase getParameters(Bookmark incoming,
                 org.ovirt.engine.core.common.businessentities.Bookmark entity) {
             return new BookmarksOperationParameters(map(incoming, entity));
         }

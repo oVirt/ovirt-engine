@@ -7,9 +7,9 @@ import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,8 +31,8 @@ public class JsonObjectDeserializer implements Deserializer {
     static {
         formattedMapper = new ObjectMapper();
         formattedMapper.getDeserializationConfig().addMixInAnnotations(Guid.class, JsonGuidMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(VdcActionParametersBase.class,
-                JsonVdcActionParametersBaseMixIn.class);
+        formattedMapper.getDeserializationConfig().addMixInAnnotations(ActionParametersBase.class,
+                JsonActionParametersBaseMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(IVdcQueryable.class,
                 JsonIVdcQueryableMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);

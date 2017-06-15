@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageServerConnectionParametersBase extends VdcActionParametersBase {
+public class StorageServerConnectionParametersBase extends ActionParametersBase {
     private static final long serialVersionUID = 6389650711081394484L;
 
     @Valid

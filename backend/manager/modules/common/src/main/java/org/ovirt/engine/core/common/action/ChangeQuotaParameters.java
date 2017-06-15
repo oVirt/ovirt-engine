@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class ChangeQuotaParameters extends VdcActionParametersBase {
+public class ChangeQuotaParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -6136710318980549386L;
 

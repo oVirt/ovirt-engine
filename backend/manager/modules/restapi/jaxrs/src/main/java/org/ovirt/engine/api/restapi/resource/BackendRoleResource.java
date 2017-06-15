@@ -6,10 +6,10 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.PermitsResource;
 import org.ovirt.engine.api.resource.RoleResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,7 +59,7 @@ public class BackendRoleResource
 
     public class UpdateParametersProvider implements ParametersProvider<Role, org.ovirt.engine.core.common.businessentities.Role> {
         @Override
-        public VdcActionParametersBase getParameters(Role model, org.ovirt.engine.core.common.businessentities.Role entity) {
+        public ActionParametersBase getParameters(Role model, org.ovirt.engine.core.common.businessentities.Role entity) {
             RolesOperationsParameters params = new RolesOperationsParameters();
             params.setRoleId(guid);
             params.setRole(map(model, entity));

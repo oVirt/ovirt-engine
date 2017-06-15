@@ -14,8 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -38,8 +38,8 @@ public class VdcOperationManagerTest {
 
     @Test
     public void testAddOperationAction() {
-        VdcOperation<ActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<>(ActionType.AddNetworkOnProvider, new VdcActionParametersBase(), null);
+        VdcOperation<ActionType, ActionParametersBase> testOperation =
+                new VdcOperation<>(ActionType.AddNetworkOnProvider, new ActionParametersBase(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
         verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
@@ -61,8 +61,8 @@ public class VdcOperationManagerTest {
 
     @Test
     public void testAddOperationList() {
-        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(ActionType.AddNetworkOnProvider, new VdcActionParametersBase(), null);
+        VdcOperation<ActionType, ActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.AddNetworkOnProvider, new ActionParametersBase(), null);
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase().withRefresh();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation3 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);

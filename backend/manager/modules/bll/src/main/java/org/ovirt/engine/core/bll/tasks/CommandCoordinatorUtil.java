@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
@@ -399,7 +399,7 @@ public class CommandCoordinatorUtil {
      * @return The future object for the command submitted to the thread pool
      */
     public static Future<VdcReturnValueBase> executeAsyncCommand(ActionType actionType,
-                                                                 VdcActionParametersBase parameters,
+                                                                 ActionParametersBase parameters,
                                                                  CommandContext cmdContext) {
         return coco.executeAsyncCommand(actionType, parameters, cmdContext);
     }

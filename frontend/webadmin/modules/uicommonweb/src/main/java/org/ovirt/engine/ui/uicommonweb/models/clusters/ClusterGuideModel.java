@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -336,7 +336,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
 
         Cluster cluster = model.getCluster().getSelectedItem();
 
-        final List<VdcActionParametersBase> parameterList = new ArrayList<>();
+        final List<ActionParametersBase> parameterList = new ArrayList<>();
         for (MoveHostData hostData : model.getSelectedHosts()) {
             VDS host = hostData.getEntity();
             // Try to change host's cluster as neccessary.
@@ -350,7 +350,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
 
                     List<MoveHostData> hosts = ((MoveHost) getWindow()).getSelectedHosts();
                     List<VdcReturnValueBase> retVals = result.getReturnValue();
-                    final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
+                    final List<ActionParametersBase> activateVdsParameterList = new ArrayList<>();
                     if (retVals != null && hosts.size() == retVals.size()) {
                         int i = 0;
 

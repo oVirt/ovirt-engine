@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 
-public class EventSubscriptionParametesBase extends VdcActionParametersBase {
+public class EventSubscriptionParametesBase extends ActionParametersBase {
     private static final long serialVersionUID = -6988075041053848616L;
 
     public EventSubscriptionParametesBase(EventSubscriber eventSubscriber, String domain) {

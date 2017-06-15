@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -28,8 +28,8 @@ public class AddNetworkParametersBuilder extends HostSetupNetworksParametersBuil
         super(interfaceDao, vdsStaticDao, networkClusterDao, networkAttachmentDao);
     }
 
-    public ArrayList<VdcActionParametersBase> buildParameters(Network network, List<VdsNetworkInterface> nics) {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+    public ArrayList<ActionParametersBase> buildParameters(Network network, List<VdsNetworkInterface> nics) {
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         for (VdsNetworkInterface nic : nics) {
             PersistentHostSetupNetworksParameters setupNetworkParams =

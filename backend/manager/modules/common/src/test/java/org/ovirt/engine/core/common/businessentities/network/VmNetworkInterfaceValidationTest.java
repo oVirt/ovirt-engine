@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import javax.validation.groups.Default;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -209,7 +209,7 @@ public class VmNetworkInterfaceValidationTest {
         return VALID_MAC_ADDRESS.substring(random.nextInt(VALID_MAC_ADDRESS.length() - 2) + 1);
     }
 
-    private static class TestParams extends VdcActionParametersBase {
+    private static class TestParams extends ActionParametersBase {
 
         @Valid
         private NetworkInterface<?> nic;

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class LiveMigrateVmDisksParameters extends VdcActionParametersBase {
+public class LiveMigrateVmDisksParameters extends ActionParametersBase {
     private static final long serialVersionUID = -4601615377848349051L;
 
     private List<LiveMigrateDiskParameters> parametersList;

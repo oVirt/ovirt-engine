@@ -20,8 +20,8 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.BackendActionResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -133,7 +133,7 @@ public class BackendGlusterBricksResource
     }
 
     protected Response performCreationMultiple(ActionType task,
-            VdcActionParametersBase taskParams,
+            ActionParametersBase taskParams,
             EntityIdResolver<Guid> entityResolver) {
         VdcReturnValueBase createResult;
         try {

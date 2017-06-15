@@ -35,11 +35,11 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -530,7 +530,7 @@ public class BackendVmDiskResourceTest
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);

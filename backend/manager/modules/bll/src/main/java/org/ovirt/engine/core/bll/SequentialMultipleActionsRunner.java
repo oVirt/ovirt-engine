@@ -9,8 +9,8 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class SequentialMultipleActionsRunner implements MultipleActionsRunner {
     private static final Logger log = LoggerFactory.getLogger(SequentialMultipleActionsRunner.class);
 
     private final ActionType actionType;
-    private final List<VdcActionParametersBase> parameters;
+    private final List<ActionParametersBase> parameters;
     private final CommandContext commandContext;
     private final boolean isInternal;
     private final ArrayList<VdcReturnValueBase> returnValues = new ArrayList<>();
@@ -37,7 +37,7 @@ public class SequentialMultipleActionsRunner implements MultipleActionsRunner {
     NestedCommandFactory commandFactory;
 
     public SequentialMultipleActionsRunner(ActionType actionType,
-            List<VdcActionParametersBase> parameters,
+            List<ActionParametersBase> parameters,
             CommandContext commandContext, boolean isInternal) {
         this.actionType = requireNonNull(actionType);
         this.parameters = requireNonNull(parameters);
@@ -50,7 +50,7 @@ public class SequentialMultipleActionsRunner implements MultipleActionsRunner {
 
     @Override
     public ArrayList<VdcReturnValueBase> execute() {
-        for (VdcActionParametersBase parameter : parameters) {
+        for (ActionParametersBase parameter : parameters) {
             if(!isInternal) {
                 logExecution(log, sessionDataContainer, parameter.getSessionId(), String.format("command %s", actionType));
             }

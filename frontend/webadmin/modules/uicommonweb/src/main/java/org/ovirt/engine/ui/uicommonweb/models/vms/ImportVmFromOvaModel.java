@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -57,7 +57,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
                 null);
     }
 
-    private List<VdcActionParametersBase> buildImportVmFromOvaParameters() {
+    private List<ActionParametersBase> buildImportVmFromOvaParameters() {
         ImportVmData importVmData = (ImportVmData) getItems().iterator().next();
         VM vm = importVmData.getVm();
 
@@ -105,7 +105,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
             prm.setCopyCollapse(true);
         }
 
-        return java.util.Collections.<VdcActionParametersBase>singletonList(prm);
+        return java.util.Collections.<ActionParametersBase>singletonList(prm);
     }
 
 }

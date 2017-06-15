@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class StoragePoolParametersBase extends VdcActionParametersBase {
+public class StoragePoolParametersBase extends ActionParametersBase {
     private static final long serialVersionUID = 8118928386101354539L;
 
     private Guid vdsId;

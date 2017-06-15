@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
-public class TerminateSessionParameters extends VdcActionParametersBase implements Serializable {
+public class TerminateSessionParameters extends ActionParametersBase implements Serializable {
     private static final long serialVersionUID = -8545136602971701926L;
 
     /**

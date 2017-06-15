@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -295,8 +295,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         startProgress();
     }
 
-    protected ArrayList<VdcActionParametersBase> getParameters() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+    protected ArrayList<ActionParametersBase> getParameters() {
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (DiskModel diskModel : getDisks()) {
             StorageDomain destStorageDomain = diskModel.getStorageDomain().getSelectedItem();
             StorageDomain sourceStorageDomain =
@@ -325,7 +325,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return parameters;
     }
 
-    protected void addMoveOrCopyParameters(ArrayList<VdcActionParametersBase> parameters,
+    protected void addMoveOrCopyParameters(ArrayList<ActionParametersBase> parameters,
             Guid sourceStorageDomainGuid,
             Guid destStorageDomainGuid,
             DiskImage disk) {

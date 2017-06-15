@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -637,7 +637,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         connection = tempVar;
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(ActionType.AddLocalStorageDomain);
@@ -755,7 +755,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         connection = tempVar;
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(ActionType.AddNFSStorageDomain);
@@ -1185,7 +1185,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         }
 
         Cluster cluster = model.getCluster().getSelectedItem();
-        final List<VdcActionParametersBase> parameterList = new ArrayList<>();
+        final List<ActionParametersBase> parameterList = new ArrayList<>();
         for (MoveHostData hostData : model.getSelectedHosts()) {
             VDS host = hostData.getEntity();
             // Try to change host's cluster as neccessary.
@@ -1206,7 +1206,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                         List<MoveHostData> hosts =
                                 ((MoveHost) dataCenterGuideModel.getWindow()).getSelectedHosts();
                         List<VdcReturnValueBase> retVals = result.getReturnValue();
-                        final List<VdcActionParametersBase> activateVdsParameterList = new ArrayList<>();
+                        final List<ActionParametersBase> activateVdsParameterList = new ArrayList<>();
                         if (retVals != null && hosts.size() == retVals.size()) {
                             int i = 0;
                             for (MoveHostData selectedHostData : hosts) {
@@ -1393,7 +1393,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         this.connection = connection;
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(posixModel.getAddStorageDomainVdcAction());

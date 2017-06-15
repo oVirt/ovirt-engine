@@ -43,6 +43,7 @@ import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
@@ -60,7 +61,6 @@ import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -1234,14 +1234,14 @@ public class BackendVmResourceTest
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
+                                              Class<? extends ActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
+                                              Class<? extends ActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,
                                               ArrayList<Guid> asyncTasks,

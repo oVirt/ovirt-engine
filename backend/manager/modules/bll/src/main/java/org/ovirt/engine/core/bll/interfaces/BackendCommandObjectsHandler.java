@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.interfaces;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 /**
@@ -23,7 +23,7 @@ public interface BackendCommandObjectsHandler {
      *            parameters of the command
      * @return object of the created command
      */
-    CommandBase<?> createAction(ActionType actionType, VdcActionParametersBase parameters, CommandContext context);
+    CommandBase<?> createAction(ActionType actionType, ActionParametersBase parameters, CommandContext context);
 
     /**
      * Executes the instance of the action. This should be used by parent/root commands in order to execute child

@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -104,7 +104,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(pools -> {
             if (pools != null && pools.size() > 0) {
                 StoragePool pool = pools.get(0);
-                ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+                ArrayList<ActionParametersBase> list = new ArrayList<>();
                 for (VM vm : getSelectedItems()) {
                     list.add(new RemoveVmFromImportExportParameters(vm.getId(),
                             getEntity().getId(), pool.getId()));

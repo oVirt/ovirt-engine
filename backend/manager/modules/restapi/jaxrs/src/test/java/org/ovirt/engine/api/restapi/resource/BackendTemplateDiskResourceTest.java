@@ -16,11 +16,11 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -330,7 +330,7 @@ public class BackendTemplateDiskResourceTest
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);

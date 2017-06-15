@@ -5,10 +5,10 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
 import org.ovirt.engine.api.resource.StorageServerConnectionExtensionResource;
 import org.ovirt.engine.api.restapi.types.StorageServerConnectionExtensionMapper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -47,7 +47,7 @@ public class BackendStorageServerConnectionExtensionResource
 
     protected static class UpdateParametersProvider implements ParametersProvider<StorageConnectionExtension, StorageServerConnectionExtension> {
         @Override
-        public VdcActionParametersBase getParameters(StorageConnectionExtension model, StorageServerConnectionExtension entity) {
+        public ActionParametersBase getParameters(StorageConnectionExtension model, StorageServerConnectionExtension entity) {
             StorageServerConnectionExtension connExt = StorageServerConnectionExtensionMapper.map(model, entity);
             return new StorageServerConnectionExtensionParameters(connExt);
         }

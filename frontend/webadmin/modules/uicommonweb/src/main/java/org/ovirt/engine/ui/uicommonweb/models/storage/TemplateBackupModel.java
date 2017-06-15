@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -178,7 +178,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void removeTemplateBackup() {
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
+        ArrayList<ActionParametersBase> prms = new ArrayList<>();
         for (VmTemplate template : getSelectedItems()) {
             prms.add(new VmTemplateImportExportParameters(template.getId(),
                     getEntity().getId(),
@@ -246,7 +246,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         if (!model.validate()) {
             return;
         }
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
+        ArrayList<ActionParametersBase> prms = new ArrayList<>();
         for (Object object : importModel.getItems()) {
             ImportTemplateData importData = (ImportTemplateData) object;
             VmTemplate template = importData.getTemplate();

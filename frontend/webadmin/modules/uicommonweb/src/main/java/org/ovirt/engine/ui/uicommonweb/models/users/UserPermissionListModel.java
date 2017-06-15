@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -104,7 +104,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
                 return;
             }
 
-            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+            ArrayList<ActionParametersBase> list = new ArrayList<>();
             for (Object perm : getSelectedItems()) {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
                 tempVar.setPermission((Permission) perm);

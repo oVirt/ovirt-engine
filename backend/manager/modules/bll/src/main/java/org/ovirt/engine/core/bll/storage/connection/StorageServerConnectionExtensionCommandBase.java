@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageServerConnectionExtensionValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionExtensionDao;
 
-public abstract class StorageServerConnectionExtensionCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
+public abstract class StorageServerConnectionExtensionCommandBase<T extends ActionParametersBase> extends CommandBase<T> {
 
     @Inject
     private StorageServerConnectionExtensionDao storageServerConnectionExtensionDao;

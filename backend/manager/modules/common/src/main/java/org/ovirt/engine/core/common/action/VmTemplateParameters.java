@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmTemplateParameters extends VdcActionParametersBase implements Serializable {
+public class VmTemplateParameters extends ActionParametersBase implements Serializable {
 
     private static final long serialVersionUID = -8930994274659598061L;
 

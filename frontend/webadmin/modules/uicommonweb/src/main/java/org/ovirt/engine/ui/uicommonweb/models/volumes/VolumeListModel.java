@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
@@ -431,7 +431,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
@@ -728,7 +728,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
         List<GlusterVolumeEntity> selectedVolumesList = getSelectedItems();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
             parameters.add(parameter);
@@ -741,7 +741,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
         List<GlusterVolumeEntity> selectedVolumesList = getSelectedItems();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (GlusterVolumeEntity currentSelectedVolume : selectedVolumesList) {
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
             parameters.add(parameter);
@@ -762,7 +762,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
@@ -956,7 +956,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                                 new AsyncQuery<String>(optionOwnerGroupVirt -> {
 
-                                    ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+                                    ArrayList<ActionParametersBase> list = new ArrayList<>();
                                     for (GlusterVolumeEntity volume : volumeList) {
                                         Guid volumeId = volume.getId();
 
@@ -1028,7 +1028,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
@@ -1086,7 +1086,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }
     }
 
-    private void onStartVolume(ArrayList<VdcActionParametersBase> parameters) {
+    private void onStartVolume(ArrayList<ActionParametersBase> parameters) {
         Frontend.getInstance().runMultipleAction(ActionType.StartGlusterVolume, parameters, null, true, true);
     }
 
@@ -1098,7 +1098,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             closeConfirmationWindow();
             force = cModel.getForce().getEntity();
         }
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);

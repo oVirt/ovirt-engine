@@ -13,10 +13,10 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -92,7 +92,7 @@ public class BackendVmPoolResource
 
     protected class UpdateParametersProvider implements ParametersProvider<VmPool, org.ovirt.engine.core.common.businessentities.VmPool> {
         @Override
-        public VdcActionParametersBase getParameters(VmPool incoming,
+        public ActionParametersBase getParameters(VmPool incoming,
                 org.ovirt.engine.core.common.businessentities.VmPool current) {
             final int currentVmCount = current.getAssignedVmsCount();
 

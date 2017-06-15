@@ -25,7 +25,7 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -99,7 +99,7 @@ public class BaseBackendResource {
         return parameters;
     }
 
-    protected <P extends VdcActionParametersBase> P sessionize(P parameters) {
+    protected <P extends ActionParametersBase> P sessionize(P parameters) {
         String sessionId = getCurrent().getSessionId();
         parameters.setSessionId(sessionId);
         return parameters;

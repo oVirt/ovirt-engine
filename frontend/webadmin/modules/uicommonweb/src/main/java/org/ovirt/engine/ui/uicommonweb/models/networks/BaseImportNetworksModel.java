@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -226,7 +226,7 @@ public class BaseImportNetworksModel extends Model {
             return;
         }
 
-        List<VdcActionParametersBase> multipleActionParameters = new LinkedList<>();
+        List<ActionParametersBase> multipleActionParameters = new LinkedList<>();
         List<IFrontendActionAsyncCallback> callbacks = new LinkedList<>();
         dcClusters = new HashMap<>();
 

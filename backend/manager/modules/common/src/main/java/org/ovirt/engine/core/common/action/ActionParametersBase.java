@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
-public class VdcActionParametersBase implements Serializable, HasCorrelationId {
+public class ActionParametersBase implements Serializable, HasCorrelationId {
     private static final long serialVersionUID = 4872560145516614773L;
 
     private Guid commandId;
@@ -43,13 +43,13 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
      */
     private ActionType commandType;
 
-    private transient VdcActionParametersBase parentParameters;
+    private transient ActionParametersBase parentParameters;
     // this flag marks if the command ran with MultipleAction for ProcessExceptionToClient
     private boolean multipleAction;
 
     private EntityInfo entityInfo;
 
-    private List<VdcActionParametersBase> imagesParameters;
+    private List<ActionParametersBase> imagesParameters;
 
     private boolean taskGroupSuccess;
 
@@ -87,7 +87,7 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
     private Integer lifeInMinutes;
     private VDSStatus prevVdsStatus;
 
-    public VdcActionParametersBase() {
+    public ActionParametersBase() {
         shouldbelogged = true;
         transctionOption = TransactionScopeOption.Required;
         setTaskGroupSuccess(true);
@@ -100,7 +100,7 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
         prevVdsStatus = VDSStatus.Unassigned;
     }
 
-    public VdcActionParametersBase(String engineSessionId) {
+    public ActionParametersBase(String engineSessionId) {
         this();
         sessionid = engineSessionId;
     }
@@ -188,11 +188,11 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
         this.commandType = commandType;
     }
 
-    public VdcActionParametersBase getParentParameters() {
+    public ActionParametersBase getParentParameters() {
         return parentParameters;
     }
 
-    public void setParentParameters(VdcActionParametersBase parameters) {
+    public void setParentParameters(ActionParametersBase parameters) {
         parentParameters = parameters;
     }
 
@@ -204,18 +204,18 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
         multipleAction = value;
     }
 
-    public List<VdcActionParametersBase> getImagesParameters() {
+    public List<ActionParametersBase> getImagesParameters() {
         return imagesParameters;
     }
 
-    public void setImagesParameters(List<VdcActionParametersBase> value) {
+    public void setImagesParameters(List<ActionParametersBase> value) {
         imagesParameters = value;
     }
 
     public boolean getTaskGroupSuccess() {
         boolean childrenTasksSuccess = taskGroupSuccess;
         if (imagesParameters != null) {
-            for (VdcActionParametersBase childParameters : imagesParameters) {
+            for (ActionParametersBase childParameters : imagesParameters) {
                 childrenTasksSuccess &= childParameters.getTaskGroupSuccess();
 
                 if (!childrenTasksSuccess) {

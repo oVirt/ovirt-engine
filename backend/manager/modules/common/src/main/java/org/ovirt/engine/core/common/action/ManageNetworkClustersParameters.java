@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 
-public class ManageNetworkClustersParameters extends VdcActionParametersBase {
+public class ManageNetworkClustersParameters extends ActionParametersBase {
 
     private Collection<NetworkCluster> attachments;
     private Collection<NetworkCluster> detachments;

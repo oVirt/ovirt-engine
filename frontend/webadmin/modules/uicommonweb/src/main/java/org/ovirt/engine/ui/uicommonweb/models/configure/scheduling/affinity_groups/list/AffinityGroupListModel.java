@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_gro
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -152,7 +152,7 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
             return;
         }
 
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (AffinityGroup affinityGroup : getSelectedItems()) {
             parameters.add(new AffinityGroupCRUDParameters(affinityGroup.getId(), affinityGroup));
         }

@@ -22,13 +22,13 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.BlockStorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveDeviceFromSANStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -281,7 +281,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
     }
 
     protected void endActionOnDevices() {
-        for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+        for (ActionParametersBase p : getParameters().getImagesParameters()) {
             getBackend().endAction(p.getCommandType(),
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());

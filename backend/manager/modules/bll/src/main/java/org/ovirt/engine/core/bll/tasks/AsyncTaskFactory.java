@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -46,7 +46,7 @@ public final class AsyncTaskFactory {
     private static CommandEntity getCommandEntity(CommandCoordinator coco, Guid cmdId) {
         CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
         if (cmdEntity == null) {
-            cmdEntity = coco.createCommandEntity(cmdId, ActionType.Unknown, new VdcActionParametersBase());
+            cmdEntity = coco.createCommandEntity(cmdId, ActionType.Unknown, new ActionParametersBase());
         }
         return cmdEntity;
     }

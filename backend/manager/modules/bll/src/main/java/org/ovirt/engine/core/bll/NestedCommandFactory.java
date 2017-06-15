@@ -5,8 +5,8 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
 @Singleton
@@ -16,7 +16,7 @@ public class NestedCommandFactory {
     private ExecutionHandler executionHandler;
 
     public CommandBase<?> createWrappedCommand(CommandContext commandContext, ActionType actionType,
-            VdcActionParametersBase parameter, boolean isInternal) {
+            ActionParametersBase parameter, boolean isInternal) {
         CommandBase<?> command = isInternal ?
                 CommandsFactory.createCommand(actionType, parameter,
                         commandContext != null ? commandContext.clone().withoutCompensationContext() : null) :

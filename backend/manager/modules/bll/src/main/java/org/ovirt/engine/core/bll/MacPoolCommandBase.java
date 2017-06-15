@@ -4,11 +4,11 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.MacPoolDao;
 
-public abstract class MacPoolCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
+public abstract class MacPoolCommandBase<T extends ActionParametersBase> extends CommandBase<T> {
     @Inject
     protected MacPoolPerCluster macPoolPerCluster;
 

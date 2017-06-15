@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.common.action.gluster;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Parameter class with hostnameOrIp and forceAction as parameters. <br>
  * This will be used by remove gluster server command. <br>
  */
-public class RemoveGlusterServerParameters extends VdcActionParametersBase {
+public class RemoveGlusterServerParameters extends ActionParametersBase {
     private static final long serialVersionUID = -1224829720081853632L;
 
     private Guid clusterId;

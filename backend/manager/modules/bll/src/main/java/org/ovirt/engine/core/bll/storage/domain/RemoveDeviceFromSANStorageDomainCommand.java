@@ -16,12 +16,12 @@ import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveStorageDomainDeviceCommandParameters;
 import org.ovirt.engine.core.common.action.ReduceStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveDeviceFromSANStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveDeviceFromSANStorageDomainCommandParameters.OperationStage;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.job.StepEnum;
 
 @NonTransactiveCommandAttribute

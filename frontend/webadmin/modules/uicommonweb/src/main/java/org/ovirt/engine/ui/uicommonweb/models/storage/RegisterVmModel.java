@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -241,7 +241,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
     }
 
     protected void onSave() {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (RegisterVmData registerVmData : getEntities().getItems()) {
             VM vm = registerVmData.getEntity();
             Cluster cluster = registerVmData.getCluster().getSelectedItem();

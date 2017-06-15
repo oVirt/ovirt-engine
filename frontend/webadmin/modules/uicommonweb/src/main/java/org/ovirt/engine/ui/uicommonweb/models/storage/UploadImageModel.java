@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -1116,7 +1116,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
 
         model.startProgress(null);
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Disk disk : disks) {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.CANCELLED);
@@ -1135,7 +1135,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
     }
 
     public static void pauseUploads(List<? extends Disk> disks) {
-                ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+                ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Disk disk : disks) {
             ImageTransfer updates = new ImageTransfer();
             updates.setPhase(ImageTransferPhase.PAUSED_USER);

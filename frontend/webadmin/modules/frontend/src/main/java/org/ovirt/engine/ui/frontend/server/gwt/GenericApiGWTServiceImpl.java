@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -140,17 +140,17 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
 
     @Override
     public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
-            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass) {
+            ArrayList<ActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass) {
         return runMultipleActions(actionType, multipleParams, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
     public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
-            ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult) {
+            ArrayList<ActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: {}]", multipleParams.size()); //$NON-NLS-1$
 
         String correlationId = CorrelationIdTracker.getCorrelationId();
-        for (VdcActionParametersBase params : multipleParams) {
+        for (ActionParametersBase params : multipleParams) {
             params.setSessionId(getEngineSessionId());
             if (params.getCorrelationId() == null) {
                 params.setCorrelationId(correlationId);
@@ -165,7 +165,7 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
 
     @Override
     public VdcReturnValueBase runAction(ActionType actionType,
-            VdcActionParametersBase params) {
+            ActionParametersBase params) {
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);
         params.setSessionId(getEngineSessionId());
@@ -237,7 +237,7 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
         log.debug("Query type '{}', Parameters '{}'", queryType, parameters); //$NON-NLS-1$
     }
 
-    private void debugAction(ActionType actionType, VdcActionParametersBase params) {
+    private void debugAction(ActionType actionType, ActionParametersBase params) {
         log.debug("Action type '{}', Parameters '{}'", actionType, params); //$NON-NLS-1$
     }
 

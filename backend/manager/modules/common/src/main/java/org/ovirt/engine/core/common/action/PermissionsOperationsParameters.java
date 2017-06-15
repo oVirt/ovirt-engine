@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
-public class PermissionsOperationsParameters extends VdcActionParametersBase {
+public class PermissionsOperationsParameters extends ActionParametersBase {
     private static final long serialVersionUID = 8854712438369127152L;
 
     private DbUser user;

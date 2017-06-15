@@ -9,8 +9,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparer;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,7 +22,7 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
     private VmDao vmDao;
 
     public MigrateVMActionRunner(ActionType actionType,
-            List<VdcActionParametersBase> parameters,
+            List<ActionParametersBase> parameters,
             CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }

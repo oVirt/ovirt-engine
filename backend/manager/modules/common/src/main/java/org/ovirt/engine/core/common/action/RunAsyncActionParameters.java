@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.common.action;
 
-public class RunAsyncActionParameters extends VdcActionParametersBase {
+public class RunAsyncActionParameters extends ActionParametersBase {
     private static final long serialVersionUID = -8078914032408357639L;
 
     private ActionType action;
-    private VdcActionParametersBase actionParameters;
+    private ActionParametersBase actionParameters;
 
     public RunAsyncActionParameters() {
     }
 
-    public RunAsyncActionParameters(ActionType action, VdcActionParametersBase actionParams) {
+    public RunAsyncActionParameters(ActionType action, ActionParametersBase actionParams) {
         this.action = action;
         this.actionParameters = actionParams;
     }
@@ -22,11 +22,11 @@ public class RunAsyncActionParameters extends VdcActionParametersBase {
         this.action = action;
     }
 
-    public VdcActionParametersBase getActionParameters() {
+    public ActionParametersBase getActionParameters() {
         return actionParameters;
     }
 
-    public void setActionParameters(VdcActionParametersBase actionParams) {
+    public void setActionParameters(ActionParametersBase actionParams) {
         this.actionParameters = actionParams;
     }
 }

@@ -33,6 +33,8 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -40,8 +42,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -296,7 +296,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             List<String> failedToRemoveDisks = new ArrayList<>();
             Snapshot snapshot = snapshotDao.get(getParameters().getSnapshotId());
 
-            for (VdcActionParametersBase parameters : getParameters().getImagesParameters()) {
+            for (ActionParametersBase parameters : getParameters().getImagesParameters()) {
                 ImagesContainterParametersBase imagesParams = parameters instanceof ImagesContainterParametersBase ?
                         (ImagesContainterParametersBase) parameters : null;
 

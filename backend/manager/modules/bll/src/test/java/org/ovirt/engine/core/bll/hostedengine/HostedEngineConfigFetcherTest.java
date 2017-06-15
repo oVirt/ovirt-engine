@@ -36,8 +36,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -239,7 +239,7 @@ public class HostedEngineConfigFetcherTest {
 
     private void mockVdcCommand(ActionType actionType, VdcReturnValueBase returnValue) {
         doReturn(returnValue)
-                .when(backend).runInternalAction(eq(actionType), any(VdcActionParametersBase.class));
+                .when(backend).runInternalAction(eq(actionType), any(ActionParametersBase.class));
     }
 
     private VDSReturnValue verifyCalled(VDSCommandType vdsmCmd, VerificationMode times) {
@@ -247,7 +247,7 @@ public class HostedEngineConfigFetcherTest {
     }
 
     private VdcReturnValueBase verifyCalled(ActionType actionType, VerificationMode times) {
-        return verify(backend, times).runInternalAction(eq(actionType), any(VdcActionParametersBase.class));
+        return verify(backend, times).runInternalAction(eq(actionType), any(ActionParametersBase.class));
     }
 
     private VDSReturnValue successfulReturnValue(Object value) {

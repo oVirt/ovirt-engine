@@ -24,7 +24,7 @@
 		<include name="compat/DayOfWeek.java" />
 		<include name="compat/RegEx.java" />
 
-		<!-- Required by common->action->VdcActionParametersBase.java -->
+		<!-- Required by common->action->ActionParametersBase.java -->
 		<include name="compat/TransactionScopeOption.java" />
 		<include name="compat/EnumCompat.java" />
 	</source>

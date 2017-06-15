@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveMacPoolByIdParameters extends VdcActionParametersBase {
+public class RemoveMacPoolByIdParameters extends ActionParametersBase {
 
     @NotNull
     private Guid macPoolId;

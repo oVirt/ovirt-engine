@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -144,7 +144,7 @@ public class HostUpgradeCallback implements CommandCallback {
                 command.cloneContextAndDetachFromParent());
     }
 
-    private VdcActionParametersBase createUpgradeParameters(UpgradeHostParameters parameters) {
+    private ActionParametersBase createUpgradeParameters(UpgradeHostParameters parameters) {
         UpgradeHostParameters upgradeParams = new UpgradeHostParameters(parameters.getVdsId());
         upgradeParams.setSessionId(parameters.getSessionId());
         upgradeParams.setCorrelationId(parameters.getCorrelationId());

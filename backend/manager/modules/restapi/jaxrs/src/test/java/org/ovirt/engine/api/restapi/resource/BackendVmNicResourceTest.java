@@ -35,10 +35,10 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -366,7 +366,7 @@ public class BackendVmNicResourceTest
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);

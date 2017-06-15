@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveMemoryVolumesParameters extends VdcActionParametersBase {
+public class RemoveMemoryVolumesParameters extends ActionParametersBase {
     /** comma-separated string of UUIDs representing the memory volumes */
     private String memoryVolumes;
     private Guid vmId;

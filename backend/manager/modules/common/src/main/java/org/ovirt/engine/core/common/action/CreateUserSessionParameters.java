@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.util.Collection;
 import java.util.Map;
 
-public class CreateUserSessionParameters extends VdcActionParametersBase {
+public class CreateUserSessionParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 5238452182295928273L;
     private String ssoToken;

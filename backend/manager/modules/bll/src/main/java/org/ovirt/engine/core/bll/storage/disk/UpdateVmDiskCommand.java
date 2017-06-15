@@ -36,13 +36,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -639,7 +639,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         }
     }
 
-    private VdcActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
+    private ActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
         VmDiskOperationParameterBase parameters = new VmDiskOperationParameterBase(
                 DiskVmElement.copyOf(getOldDiskVmElement()), newCinderDisk);
         parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());

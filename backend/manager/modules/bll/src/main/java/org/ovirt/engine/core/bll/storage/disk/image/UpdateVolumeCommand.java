@@ -8,10 +8,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVolumeJobCommandParameters;
 import org.ovirt.engine.core.common.action.UpdateVolumeCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -81,7 +81,7 @@ public class UpdateVolumeCommand<T extends UpdateVolumeCommandParameters> extend
         p.setParentCommand(getActionType());
         p.setParentParameters(getParameters());
         p.setStoragePoolId(getParameters().getStoragePoolId());
-        p.setEndProcedure(VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        p.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         runInternalActionWithTasksContext(ActionType.FenceVolumeJob, p);
     }
 

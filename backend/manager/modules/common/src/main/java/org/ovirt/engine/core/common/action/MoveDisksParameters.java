@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.List;
 
-public class MoveDisksParameters extends VdcActionParametersBase {
+public class MoveDisksParameters extends ActionParametersBase {
     private static final long serialVersionUID = 2988540138349612909L;
 
     private List<MoveDiskParameters> parametersList;

@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -416,8 +416,8 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     }
 
 
-    private List<VdcActionParametersBase> buildImportVmParameters() {
-        List<VdcActionParametersBase> prms = new ArrayList<>();
+    private List<ActionParametersBase> buildImportVmParameters() {
+        List<ActionParametersBase> prms = new ArrayList<>();
 
         for (Object item : getItems()) {
             VM vm = ((ImportVmData) item).getVm();

@@ -8,9 +8,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterNetworkResource;
 import org.ovirt.engine.api.resource.ClusterNetworksResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -94,7 +94,7 @@ public class BackendClusterNetworksResource
     }
 
     @Override
-    protected VdcActionParametersBase getAddParameters(Network network,
+    protected ActionParametersBase getAddParameters(Network network,
             org.ovirt.engine.core.common.businessentities.network.Network entity) {
         return new AttachNetworkToClusterParameter(getCluster(), entity);
     }

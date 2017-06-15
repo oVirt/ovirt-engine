@@ -14,9 +14,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetSesssionSoftLimitCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public class RestApiSessionMgmtFilter implements Filter {
                     try {
                         FiltersHelper.getBackend(ctx).runAction(
                                 ActionType.LogoutSession,
-                                new VdcActionParametersBase(engineSessionId)
+                                new ActionParametersBase(engineSessionId)
                                 );
                         HttpSession session = req.getSession(false);
                         if (session != null) {

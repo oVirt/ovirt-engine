@@ -7,8 +7,8 @@ import org.ovirt.engine.api.resource.BalancesResource;
 import org.ovirt.engine.api.resource.FiltersResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyResource;
 import org.ovirt.engine.api.resource.WeightsResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -45,7 +45,7 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
 
     protected class UpdateParametersProvider implements ParametersProvider<SchedulingPolicy, ClusterPolicy> {
         @Override
-        public VdcActionParametersBase getParameters(SchedulingPolicy incoming, ClusterPolicy entity) {
+        public ActionParametersBase getParameters(SchedulingPolicy incoming, ClusterPolicy entity) {
             return new ClusterPolicyCRUDParameters(guid, map(incoming, entity));
         }
     }

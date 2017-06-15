@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -52,7 +52,7 @@ public class BackendVmNumaNodesResource
         return new String[0];
     }
 
-    private VdcActionParametersBase getAddParameters(VmNumaNode entity, VirtualNumaNode device) {
+    private ActionParametersBase getAddParameters(VmNumaNode entity, VirtualNumaNode device) {
         VmNumaNodeOperationParameters parameters = new VmNumaNodeOperationParameters(parentId, map(device, entity));
         return parameters;
     }
@@ -63,7 +63,7 @@ public class BackendVmNumaNodesResource
 
     private class UpdateParametersProvider implements ParametersProvider<VirtualNumaNode, VmNumaNode> {
         @Override
-        public VdcActionParametersBase getParameters(VirtualNumaNode incoming, VmNumaNode entity) {
+        public ActionParametersBase getParameters(VirtualNumaNode incoming, VmNumaNode entity) {
             return new VmNumaNodeOperationParameters(parentId, map(incoming, entity));
         }
     }

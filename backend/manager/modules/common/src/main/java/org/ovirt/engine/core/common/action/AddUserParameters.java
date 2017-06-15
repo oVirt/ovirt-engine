@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
-public class AddUserParameters extends VdcActionParametersBase {
+public class AddUserParameters extends ActionParametersBase {
 
     /**
      *

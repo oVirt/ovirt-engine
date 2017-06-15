@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -366,7 +366,7 @@ public class SnapshotModel extends EntityModel<Snapshot> {
         startProgress();
 
         VM vm = getVm();
-        ArrayList<VdcActionParametersBase> params = new ArrayList<>();
+        ArrayList<ActionParametersBase> params = new ArrayList<>();
         Set<Guid> snapshotDisksIds = null;
         if (getSnapshotDisks().getSelectedItems() != null) {
                 snapshotDisksIds =  getSnapshotDisks()

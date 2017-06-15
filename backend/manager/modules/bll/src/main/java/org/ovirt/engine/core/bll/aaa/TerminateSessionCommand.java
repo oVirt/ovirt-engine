@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.TerminateSessionParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,7 +55,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
         setReturnValue(
                 getBackend().logoff(
-                        new VdcActionParametersBase(terminatedSessionId)));
+                        new ActionParametersBase(terminatedSessionId)));
     }
 
     @Override

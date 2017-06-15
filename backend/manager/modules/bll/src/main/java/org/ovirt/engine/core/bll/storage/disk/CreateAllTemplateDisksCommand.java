@@ -22,11 +22,11 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -164,7 +164,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
 
     @Override
     protected void endSuccessfully() {
-        for (VdcActionParametersBase params : getParameters().getImagesParameters()) {
+        for (ActionParametersBase params : getParameters().getImagesParameters()) {
             Backend.getInstance().endAction(params.getCommandType(),
                     params,
                     cloneContextAndDetachFromParent());
@@ -174,7 +174,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
 
     @Override
     protected void endWithFailure() {
-        for (VdcActionParametersBase params : getParameters().getImagesParameters()) {
+        for (ActionParametersBase params : getParameters().getImagesParameters()) {
             params.setTaskGroupSuccess(false);
             Backend.getInstance().endAction(params.getCommandType(),
                     params,

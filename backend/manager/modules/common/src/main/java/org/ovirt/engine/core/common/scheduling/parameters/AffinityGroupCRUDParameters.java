@@ -2,11 +2,11 @@ package org.ovirt.engine.core.common.scheduling.parameters;
 
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AffinityGroupCRUDParameters extends VdcActionParametersBase {
+public class AffinityGroupCRUDParameters extends ActionParametersBase {
     private static final long serialVersionUID = 8148828386101354522L;
 
     private Guid affinityGroupId;

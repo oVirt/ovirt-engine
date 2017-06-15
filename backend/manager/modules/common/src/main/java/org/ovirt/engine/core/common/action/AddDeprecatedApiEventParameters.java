@@ -16,7 +16,7 @@ limitations under the License.
 
 package org.ovirt.engine.core.common.action;
 
-public class AddDeprecatedApiEventParameters extends VdcActionParametersBase {
+public class AddDeprecatedApiEventParameters extends ActionParametersBase {
     private static final long serialVersionUID = 7023971593753015625L;
 
     private String apiVersion;

@@ -15,10 +15,10 @@ import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -67,7 +67,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     private class UpdateParametersProvider implements ParametersProvider<org.ovirt.engine.api.model.Cluster, Cluster> {
         @Override
-        public VdcActionParametersBase getParameters(org.ovirt.engine.api.model.Cluster incoming, Cluster entity) {
+        public ActionParametersBase getParameters(org.ovirt.engine.api.model.Cluster incoming, Cluster entity) {
             final Cluster cluster = map(incoming, entity);
             final ManagementNetworkOnClusterOperationParameters managementNetworkOnClusterOperationParameters;
             final Guid dcId = getDataCenterId(cluster);

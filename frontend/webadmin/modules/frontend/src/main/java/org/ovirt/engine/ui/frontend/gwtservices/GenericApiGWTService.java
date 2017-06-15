@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.frontend.gwtservices;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -21,7 +21,7 @@ public interface GenericApiGWTService extends XsrfProtectedService {
             VdcQueryParametersBase searchParameters);
 
     VdcReturnValueBase runAction(ActionType actionType,
-            VdcActionParametersBase params);
+            ActionParametersBase params);
 
     @NoXsrfProtect
     VdcQueryReturnValue runPublicQuery(VdcQueryType queryType,
@@ -33,12 +33,12 @@ public interface GenericApiGWTService extends XsrfProtectedService {
 
     List<VdcReturnValueBase> runMultipleActions(
             ActionType actionType,
-            ArrayList<VdcActionParametersBase> multipleParams,
+            ArrayList<ActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllValidationPass);
 
     List<VdcReturnValueBase> runMultipleActions(
             ActionType actionType,
-            ArrayList<VdcActionParametersBase> multipleParams,
+            ArrayList<ActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult);
 
     void storeInHttpSession(String key, String value);

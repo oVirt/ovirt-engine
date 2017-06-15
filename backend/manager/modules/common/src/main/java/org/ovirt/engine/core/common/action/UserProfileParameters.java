@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class UserProfileParameters extends VdcActionParametersBase {
+public class UserProfileParameters extends ActionParametersBase {
     private static final long serialVersionUID = -4168302609852555079L;
 
     @Valid

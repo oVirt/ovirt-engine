@@ -39,7 +39,7 @@
       Se: Transient field that isn't set by deserialization.  (SE_TRANSIENT_FIELD_NOT_RESTORED)
      -->
      <Match>
-       <Class name="org.ovirt.engine.core.common.action.VdcActionParametersBase" />
+       <Class name="org.ovirt.engine.core.common.action.ActionParametersBase" />
        <Field name="executionReason"/>
        <Bug code="Se"/>
      </Match>

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -48,9 +48,9 @@ public abstract class BaseInterfaceCreatingManager {
                 existingVnicForName.put(vnic.getName(), vnic);
             }
 
-            final ArrayList<VdcActionParametersBase> createVnicParameters = new ArrayList<>();
-            final ArrayList<VdcActionParametersBase> updateVnicParameters = new ArrayList<>();
-            final ArrayList<VdcActionParametersBase> removeVnicParameters = new ArrayList<>();
+            final ArrayList<ActionParametersBase> createVnicParameters = new ArrayList<>();
+            final ArrayList<ActionParametersBase> updateVnicParameters = new ArrayList<>();
+            final ArrayList<ActionParametersBase> removeVnicParameters = new ArrayList<>();
             final Set<String> vnicsEncountered = new HashSet<>();
 
             // iterate over edited VNICs, see if any need to be added or have been assigned a different profile
@@ -115,16 +115,16 @@ public abstract class BaseInterfaceCreatingManager {
         }
     }
 
-    protected abstract VdcActionParametersBase createAddInterfaceParameter(Guid id, VmNetworkInterface editedVnic);
+    protected abstract ActionParametersBase createAddInterfaceParameter(Guid id, VmNetworkInterface editedVnic);
 
-    protected abstract VdcActionParametersBase createRemoveInterfaceParameter(Guid id, Guid nicId);
+    protected abstract ActionParametersBase createRemoveInterfaceParameter(Guid id, Guid nicId);
 
     protected abstract void getNics(AsyncQuery<List<VmNetworkInterface>> getNicsQuery, Guid id, UnitVmModel unitVmModel);
 
     protected abstract void doNicManipulation(
-            ArrayList<VdcActionParametersBase> createVnicParameters,
-            final ArrayList<VdcActionParametersBase> updateVnicParameters,
-            final ArrayList<VdcActionParametersBase> removeVnicParameters,
+            ArrayList<ActionParametersBase> createVnicParameters,
+            final ArrayList<ActionParametersBase> updateVnicParameters,
+            final ArrayList<ActionParametersBase> removeVnicParameters,
             final boolean isAddingNewVm,
             final Guid id,
             final UnitVmModel unitVmModel);

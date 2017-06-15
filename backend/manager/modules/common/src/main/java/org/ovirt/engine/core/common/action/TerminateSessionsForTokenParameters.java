@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-public class TerminateSessionsForTokenParameters extends VdcActionParametersBase {
+public class TerminateSessionsForTokenParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -5485237639188940638L;
     /**

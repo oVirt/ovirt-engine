@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -789,7 +789,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
 
     public void saveNICsConfig() {
         Frontend.getInstance().runMultipleAction(ActionType.CommitNetworkChanges,
-                new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new VdsActionParameters(getEntity().getId())})),
+                new ArrayList<>(Arrays.asList(new ActionParametersBase[]{new VdsActionParameters(getEntity().getId())})),
                 result -> {
 
                 },

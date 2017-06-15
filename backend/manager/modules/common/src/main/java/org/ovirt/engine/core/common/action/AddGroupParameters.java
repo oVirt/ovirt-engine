@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 
-public class AddGroupParameters extends VdcActionParametersBase {
+public class AddGroupParameters extends ActionParametersBase {
 
     /**
      *

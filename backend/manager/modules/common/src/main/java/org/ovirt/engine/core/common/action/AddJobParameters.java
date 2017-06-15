@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-public class AddJobParameters extends VdcActionParametersBase {
+public class AddJobParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -7319747815339126821L;
     protected String description;

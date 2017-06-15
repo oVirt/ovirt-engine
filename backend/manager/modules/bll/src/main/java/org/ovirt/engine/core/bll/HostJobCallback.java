@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.HostJobCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
@@ -39,7 +39,7 @@ public abstract class HostJobCallback extends ChildCommandsCallbackBase {
                                                int completedChildren) {
         Guid cmdId = command.getCommandId();
         CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(cmdId);
-        VdcActionParametersBase cmdParams = commandEntity.getCommandParameters();
+        ActionParametersBase cmdParams = commandEntity.getCommandParameters();
         Guid job = ((HostJobCommandParameters) cmdParams).getHostJobId();
         HostJobStatus jobStatus = null;
         Guid vdsId = cmdParams.getVdsRunningOn();

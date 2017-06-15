@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.compat.Guid;
 
-public class TransferImageStatusParameters extends VdcActionParametersBase {
+public class TransferImageStatusParameters extends ActionParametersBase {
     private static final long serialVersionUID = 8404863745376386682L;
     private Guid transferImageCommandId;
     private Guid diskId;

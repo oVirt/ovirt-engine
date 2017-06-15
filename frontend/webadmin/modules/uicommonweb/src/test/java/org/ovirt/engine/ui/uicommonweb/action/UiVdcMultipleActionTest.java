@@ -13,7 +13,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction.ActionFlowState;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -97,13 +97,13 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
     }
 
     private UiVdcMultipleAction createAction(boolean emptyParams) {
-        return new UiVdcMultipleAction(ACTION_TYPE, emptyParams ? new ArrayList<VdcActionParametersBase>()
-                : Collections.singletonList(new VdcActionParametersBase()), model);
+        return new UiVdcMultipleAction(ACTION_TYPE, emptyParams ? new ArrayList<ActionParametersBase>()
+                : Collections.singletonList(new ActionParametersBase()), model);
     }
 
     private UiVdcMultipleAction createAction(boolean waitForResult, boolean runNextInCaseOfError) {
         return new UiVdcMultipleAction(ACTION_TYPE,
-                Collections.singletonList(new VdcActionParametersBase()),
+                Collections.singletonList(new ActionParametersBase()),
                 model,
                 waitForResult,
                 runNextInCaseOfError);
@@ -161,7 +161,7 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
     private List<IFrontendMultipleActionAsyncCallback> verifyRunAction(int exepectedNumOfRunActionExecutions,
             boolean waitForResult) {
         verify(frontend, times(exepectedNumOfRunActionExecutions)).runMultipleAction(eq(ACTION_TYPE),
-                anyListOf(VdcActionParametersBase.class),
+                anyListOf(ActionParametersBase.class),
                 callbackCaptor.capture(),
                 eq(false),
                 eq(waitForResult));

@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class QosParametersBase<T extends QosBase> extends VdcActionParametersBase {
+public class QosParametersBase<T extends QosBase> extends ActionParametersBase {
 
     private static final long serialVersionUID = 1304387921254822524L;
 

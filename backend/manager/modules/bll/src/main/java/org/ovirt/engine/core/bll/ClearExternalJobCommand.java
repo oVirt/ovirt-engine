@@ -8,13 +8,13 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.dao.JobDao;
 
-public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends CommandBase<T>{
+public class ClearExternalJobCommand <T extends ActionParametersBase> extends CommandBase<T>{
 
     @Inject
     private JobDao jobDao;

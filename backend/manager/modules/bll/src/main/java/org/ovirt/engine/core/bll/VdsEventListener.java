@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -236,7 +236,7 @@ public class VdsEventListener implements IVdsEventListener {
             Guid storagePoolId,
             boolean isReconstructToInactiveDomains,
             boolean canReconstructToCurrentMaster) {
-        VdcActionParametersBase parameters =
+        ActionParametersBase parameters =
                 new ReconstructMasterParameters(storagePoolId,
                         storageDomainId,
                         true,
@@ -372,7 +372,7 @@ public class VdsEventListener implements IVdsEventListener {
                 .getSucceeded();
     }
 
-    private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate,
+    private List<ActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate,
             final VDS vds,
             String reason) {
         return vmsToMigrate.stream().map(

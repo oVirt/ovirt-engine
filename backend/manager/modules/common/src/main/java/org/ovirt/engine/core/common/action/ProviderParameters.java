@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 
-public class ProviderParameters extends VdcActionParametersBase {
+public class ProviderParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 308877238353433739L;
 

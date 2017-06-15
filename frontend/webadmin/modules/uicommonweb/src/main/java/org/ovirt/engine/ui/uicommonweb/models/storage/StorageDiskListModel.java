@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -191,11 +191,11 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
 
     private void onRemove() {
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             DiskImage disk = (DiskImage) item;
-            VdcActionParametersBase parameters = new RemoveDiskParameters(disk.getId(), getEntity().getId());
+            ActionParametersBase parameters = new RemoveDiskParameters(disk.getId(), getEntity().getId());
             paramerterList.add(parameters);
         }
 

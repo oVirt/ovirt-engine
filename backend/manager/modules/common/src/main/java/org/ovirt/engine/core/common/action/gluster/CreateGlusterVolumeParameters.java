@@ -3,13 +3,13 @@ package org.ovirt.engine.core.common.action.gluster;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 
 /**
  * Command parameters for the "Create Volume" action
  */
-public class CreateGlusterVolumeParameters extends VdcActionParametersBase {
+public class CreateGlusterVolumeParameters extends ActionParametersBase {
     private static final long serialVersionUID = 2015321730118872954L;
 
     @NotNull(message = "VALIDATION_GLUSTER_VOLUME_NOT_NULL")

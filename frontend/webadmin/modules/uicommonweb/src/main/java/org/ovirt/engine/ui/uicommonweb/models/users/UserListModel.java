@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
@@ -241,8 +241,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        ArrayList<VdcActionParametersBase> usersToAttach = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> grpsToAttach = new ArrayList<>();
+        ArrayList<ActionParametersBase> usersToAttach = new ArrayList<>();
+        ArrayList<ActionParametersBase> grpsToAttach = new ArrayList<>();
         for (Guid tag_id : tagsToAttach) {
             if (userIds.size() > 0) {
                 usersToAttach.add(new AttachEntityToTagParameters(tag_id, userIds));
@@ -258,8 +258,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             Frontend.getInstance().runMultipleAction(ActionType.AttachUserGroupToTag, grpsToAttach);
         }
 
-        ArrayList<VdcActionParametersBase> usersToDetach = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> grpsToDetach = new ArrayList<>();
+        ArrayList<ActionParametersBase> usersToDetach = new ArrayList<>();
+        ArrayList<ActionParametersBase> grpsToDetach = new ArrayList<>();
         for (Guid tag_id : tagsToDetach) {
             if (userIds.size() > 0) {
                 usersToDetach.add(new AttachEntityToTagParameters(tag_id, userIds));
@@ -400,8 +400,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         }
 
         List<ActionType> actionsList = new ArrayList<>(selectedItems.size());
-        List<VdcActionParametersBase> parametersList = new ArrayList<>(selectedItems.size());
-        VdcActionParametersBase parameters = null;
+        List<ActionParametersBase> parametersList = new ArrayList<>(selectedItems.size());
+        ActionParametersBase parameters = null;
         for (EntityModel<DbUser> item : selectedItems) {
             if (item.getEntity().isGroup()) {
                 actionsList.add(ActionType.AddGroup);
@@ -450,8 +450,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
     public void onRemove() {
         List<DbUser> selectedItems = getSelectedItems();
 
-        ArrayList<VdcActionParametersBase> userPrms = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<>();
+        ArrayList<ActionParametersBase> userPrms = new ArrayList<>();
+        ArrayList<ActionParametersBase> groupPrms = new ArrayList<>();
         for (DbUser item : selectedItems) {
             if (!item.isGroup()) {
                 userPrms.add(new IdParameters(item.getId()));

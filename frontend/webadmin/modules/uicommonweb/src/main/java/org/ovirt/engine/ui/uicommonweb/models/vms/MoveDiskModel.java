@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -177,7 +177,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     protected void doExecute() {
         super.doExecute();
 
-        ArrayList<VdcActionParametersBase> parameters = getParameters();
+        ArrayList<ActionParametersBase> parameters = getParameters();
         if (parameters.isEmpty()) {
             cancel();
             return;

@@ -2,10 +2,10 @@ package org.ovirt.engine.core.common.action.gluster;
 
 import javax.validation.constraints.NotNull;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterHookParameters extends VdcActionParametersBase {
+public class GlusterHookParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -8236696198344082891L;
 

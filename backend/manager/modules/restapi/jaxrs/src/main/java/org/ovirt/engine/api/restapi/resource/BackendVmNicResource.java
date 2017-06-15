@@ -32,10 +32,10 @@ import org.ovirt.engine.api.resource.NicNetworkFilterParametersResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -165,7 +165,7 @@ public class BackendVmNicResource
 
     private class UpdateParametersProvider implements ParametersProvider<Nic, VmNetworkInterface> {
         @Override
-        public VdcActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
+        public ActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
             VmNetworkInterface nic = map(incoming, entity);
             return new AddVmInterfaceParameters(vmId, nic);
         }

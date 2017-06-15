@@ -2,10 +2,10 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterNetworkResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 public class BackendClusterNetworkResource
     extends AbstractBackendNetworkResource
@@ -29,7 +29,7 @@ public class BackendClusterNetworkResource
     }
 
     @Override
-    protected VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity) {
+    protected ActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity) {
         return new AttachNetworkToClusterParameter(cluster.getCluster(), entity);
     }
 }

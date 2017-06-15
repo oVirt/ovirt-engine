@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 
-public class ExternalSubnetParameters extends VdcActionParametersBase {
+public class ExternalSubnetParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 308877238353433739L;
 

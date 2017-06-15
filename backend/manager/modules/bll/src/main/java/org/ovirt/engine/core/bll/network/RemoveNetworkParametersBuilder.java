@@ -8,8 +8,8 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -37,8 +37,8 @@ public class RemoveNetworkParametersBuilder extends HostSetupNetworksParametersB
         this.managementNetworkUtil = managementNetworkUtil;
     }
 
-    public ArrayList<VdcActionParametersBase> buildParameters(Network network, List<VdsNetworkInterface> labeledNics) {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+    public ArrayList<ActionParametersBase> buildParameters(Network network, List<VdsNetworkInterface> labeledNics) {
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         if (managementNetworkUtil.isManagementNetwork(network.getId())) {
             return parameters;

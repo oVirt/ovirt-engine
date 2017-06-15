@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
@@ -299,7 +299,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         ManageGlusterSwiftModel glusterSwiftModel = (ManageGlusterSwiftModel) getWindow();
         glusterSwiftModel.startProgress();
         if (glusterSwiftModel.getIsManageServerLevel().getEntity()) {
-            ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
+            ArrayList<ActionParametersBase> parametersList = new ArrayList<>();
             for (Object model : glusterSwiftModel.getHostServicesList().getItems()) {
                 GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) model;
                 GlusterSwiftAction action =
@@ -430,7 +430,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         }
 
         hostsModel.startProgress();
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
+        ArrayList<ActionParametersBase> parametersList = new ArrayList<>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
 
@@ -519,7 +519,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
             return;
         }
         boolean force = hostsModel.getForce().getEntity();
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
+        ArrayList<ActionParametersBase> parametersList = new ArrayList<>();
         for (Object model : hostsModel.getHosts().getSelectedItems()) {
             String host = (String) ((EntityModel) model).getEntity();
             parametersList.add(new RemoveGlusterServerParameters(getEntity().getId(), host, force));

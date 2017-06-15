@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -767,7 +767,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
     private void onRemove() {
         getConfirmWindow().startProgress();
 
-        List<VdcActionParametersBase> paramsList = new ArrayList<>();
+        List<ActionParametersBase> paramsList = new ArrayList<>();
         for (VM vm : getSelectedVms()) {
             paramsList.add(new RemoveVmParameters(vm.getId(), false));
         }

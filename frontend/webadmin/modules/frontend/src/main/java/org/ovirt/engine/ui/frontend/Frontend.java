@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineFault;
@@ -366,7 +366,7 @@ public class Frontend implements HasHandlers {
      * @param callback The callback to call when the action is completed.
      */
     public void runAction(final ActionType actionType,
-            final VdcActionParametersBase parameters,
+            final ActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback) {
         runAction(actionType, parameters, callback, null);
     }
@@ -379,7 +379,7 @@ public class Frontend implements HasHandlers {
      * @param state The state object.
      */
     public void runAction(final ActionType actionType,
-            final VdcActionParametersBase parameters,
+            final ActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
             final Object state) {
         runAction(actionType, parameters, callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, true);
@@ -391,7 +391,7 @@ public class Frontend implements HasHandlers {
      * @param parameters The parameters to the action.
      * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
      */
-    public void runAction(final ActionType actionType, final VdcActionParametersBase parameters,
+    public void runAction(final ActionType actionType, final ActionParametersBase parameters,
             final boolean showErrorDialog) {
         runAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK, null, showErrorDialog);
     }
@@ -401,7 +401,7 @@ public class Frontend implements HasHandlers {
      * @param actionType The action type of the action to run.
      * @param parameters The parameters to the action.
      */
-    public void runAction(final ActionType actionType, final VdcActionParametersBase parameters) {
+    public void runAction(final ActionType actionType, final ActionParametersBase parameters) {
         runAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK);
      }
 
@@ -413,7 +413,7 @@ public class Frontend implements HasHandlers {
      * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
      */
     public void runAction(final ActionType actionType,
-            final VdcActionParametersBase parameters,
+            final ActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
             final boolean showErrorDialog) {
         runAction(actionType, parameters, callback, null, showErrorDialog);
@@ -428,15 +428,15 @@ public class Frontend implements HasHandlers {
      * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
      */
     public void runAction(final ActionType actionType,
-            final VdcActionParametersBase parameters,
+            final ActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
             final Object state,
             final boolean showErrorDialog) {
-        VdcOperation<ActionType, VdcActionParametersBase> operation = new VdcOperation<>(
+        VdcOperation<ActionType, ActionParametersBase> operation = new VdcOperation<>(
                 actionType, parameters, new VdcOperationCallback<VdcOperation<ActionType,
-                VdcActionParametersBase>, VdcReturnValueBase>() {
+                ActionParametersBase>, VdcReturnValueBase>() {
             @Override
-            public void onSuccess(final VdcOperation<ActionType, VdcActionParametersBase> operation,
+            public void onSuccess(final VdcOperation<ActionType, ActionParametersBase> operation,
                     final VdcReturnValueBase result) {
                 logger.finer("Frontend: sucessfully executed runAction, determining result!"); //$NON-NLS-1$
                 handleActionResult(actionType, parameters, result,
@@ -445,7 +445,7 @@ public class Frontend implements HasHandlers {
             }
 
             @Override
-            public void onFailure(final VdcOperation<ActionType, VdcActionParametersBase> operation,
+            public void onFailure(final VdcOperation<ActionType, ActionParametersBase> operation,
                     final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
@@ -472,7 +472,7 @@ public class Frontend implements HasHandlers {
      * @param state A state object.
      */
     public void runMultipleAction(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
         runMultipleAction(actionType, parameters, false, callback, state);
@@ -484,7 +484,7 @@ public class Frontend implements HasHandlers {
      * @param parameters The parameters of the action.
      */
     public void runMultipleAction(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback) {
         runMultipleAction(actionType, parameters, callback, null);
     }
@@ -495,7 +495,7 @@ public class Frontend implements HasHandlers {
      * @param parameters The parameters of the action.
      */
     public void runMultipleAction(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters) {
+            final List<ActionParametersBase> parameters) {
         runMultipleAction(actionType, parameters, null, null);
     }
 
@@ -508,7 +508,7 @@ public class Frontend implements HasHandlers {
      * @param waitForResult a flag to return the result after running the whole action and not just the can do actions.
      */
     public void runMultipleAction(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final boolean showErrorDialog,
             final boolean waitForResult) {
@@ -524,7 +524,7 @@ public class Frontend implements HasHandlers {
      * @param state The state.
      */
     public void runMultipleAction(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final boolean isRunOnlyIfAllValidationPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
@@ -542,17 +542,17 @@ public class Frontend implements HasHandlers {
      * @param waitForResult a flag to return the result after running the whole action and not just the can do actions.
      */
     public void runMultipleAction(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final boolean isRunOnlyIfAllValidationPass,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state,
             final boolean showErrorDialog,
             final boolean waitForResult) {
-        VdcOperationCallbackList<VdcOperation<ActionType, VdcActionParametersBase>, List<VdcReturnValueBase>>
-        multiCallback = new VdcOperationCallbackList<VdcOperation<ActionType, VdcActionParametersBase>,
+        VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>, List<VdcReturnValueBase>>
+        multiCallback = new VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>,
         List<VdcReturnValueBase>>() {
             @Override
-            public void onSuccess(final List<VdcOperation<ActionType, VdcActionParametersBase>> operationList,
+            public void onSuccess(final List<VdcOperation<ActionType, ActionParametersBase>> operationList,
                     final List<VdcReturnValueBase> resultObject) {
                 logger.finer("Frontend: successfully executed runMultipleAction, determining result!"); //$NON-NLS-1$
 
@@ -577,7 +577,7 @@ public class Frontend implements HasHandlers {
             }
 
             @Override
-            public void onFailure(final List<VdcOperation<ActionType, VdcActionParametersBase>> operation,
+            public void onFailure(final List<VdcOperation<ActionType, ActionParametersBase>> operation,
                     final Throwable caught) {
                 if (ignoreFailure(caught)) {
                     return;
@@ -594,8 +594,8 @@ public class Frontend implements HasHandlers {
         };
 
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
-        for (VdcActionParametersBase parameter: parameters) {
-            VdcOperation<ActionType, VdcActionParametersBase> operation = new VdcOperation<>(
+        for (ActionParametersBase parameter: parameters) {
+            VdcOperation<ActionType, ActionParametersBase> operation = new VdcOperation<>(
                 actionType, parameter, !waitForResult, multiCallback, isRunOnlyIfAllValidationPass);
                 operationList.add(operation);
         }
@@ -630,7 +630,7 @@ public class Frontend implements HasHandlers {
      * @param runCallbacksOnEmptyRun Whether to run the callback or not even if no commands were run
      */
     public void runMultipleActions(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final IFrontendActionAsyncCallback successCallback,
             final Object state,
             final boolean runCallbacksOnEmptyRun) {
@@ -660,7 +660,7 @@ public class Frontend implements HasHandlers {
      * @param state State object
      */
     public void runMultipleActions(final ActionType actionType,
-                                   final List<VdcActionParametersBase> parameters,
+                                   final List<ActionParametersBase> parameters,
                                    final IFrontendActionAsyncCallback successCallback,
                                    final Object state) {
         runMultipleActions(actionType, parameters, successCallback, state, true);
@@ -674,7 +674,7 @@ public class Frontend implements HasHandlers {
      * @param successCallback The callback to call on success.
      */
     public void runMultipleActions(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final IFrontendActionAsyncCallback successCallback) {
         runMultipleActions(actionType, parameters, successCallback, null, true);
     }
@@ -691,7 +691,7 @@ public class Frontend implements HasHandlers {
      * @param aggregateErrors Whether error messages should be aggregated.
      */
     public void runMultipleActions(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final List<IFrontendActionAsyncCallback> callbacks,
             final Object state,
             boolean aggregateErrors) {
@@ -718,7 +718,7 @@ public class Frontend implements HasHandlers {
      * @param callbacks A list of callbacks.
      */
     public void runMultipleActions(final ActionType actionType,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final List<IFrontendActionAsyncCallback> callbacks) {
         runMultipleActions(actionType, parameters, callbacks, null, true);
     }
@@ -729,7 +729,7 @@ public class Frontend implements HasHandlers {
      * message aggregation.
      */
     public void runMultipleActions(final List<ActionType> actionTypes,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final List<IFrontendActionAsyncCallback> callbacks,
             final IFrontendActionAsyncCallback failureCallback,
             final Object state) {
@@ -747,7 +747,7 @@ public class Frontend implements HasHandlers {
      * @param aggregateErrors Whether error messages should be aggregated.
      */
     public void runMultipleActions(final List<ActionType> actionTypes,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final List<IFrontendActionAsyncCallback> callbacks,
             final IFrontendActionAsyncCallback failureCallback,
             final Object state,
@@ -763,7 +763,7 @@ public class Frontend implements HasHandlers {
     }
 
     private void runMultipleActions(final List<ActionType> actionTypes,
-            final List<VdcActionParametersBase> parameters,
+            final List<ActionParametersBase> parameters,
             final List<IFrontendActionAsyncCallback> callbacks,
             final IFrontendActionAsyncCallback failureCallback,
             final Object state,
@@ -884,7 +884,7 @@ public class Frontend implements HasHandlers {
      * @param state The state before the action happened.
      * @param showErrorDialog Should we show an error dialog?
      */
-    void handleActionResult(final ActionType actionType, final VdcActionParametersBase parameters,
+    void handleActionResult(final ActionType actionType, final ActionParametersBase parameters,
             final VdcReturnValueBase result, final IFrontendActionAsyncCallback callback,
             final Object state, final boolean showErrorDialog) {
         logger.log(Level.FINER, "Retrieved action result from RunAction."); //$NON-NLS-1$

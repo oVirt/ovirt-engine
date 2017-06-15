@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 
 import org.junit.BeforeClass;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CommandCtorsTest extends CtorsTestBase {
@@ -25,7 +25,7 @@ public class CommandCtorsTest extends CtorsTestBase {
 
     @Override
     protected Stream<MandatoryCtorPredicate> getMandatoryCtorPredicates() {
-        return Stream.of(new MandatoryCtorPredicate(VdcActionParametersBase.class, CommandContext.class),
+        return Stream.of(new MandatoryCtorPredicate(ActionParametersBase.class, CommandContext.class),
                 new MandatoryCtorPredicate(Guid.class) {
                     @Override
                     public boolean test(Class<?> commandClass) {

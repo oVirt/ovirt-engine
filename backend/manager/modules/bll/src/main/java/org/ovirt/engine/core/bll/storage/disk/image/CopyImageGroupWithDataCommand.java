@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureCommandParameters;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.action.CopyImageGroupVolumesDataCommandParam
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters.CopyStage;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;

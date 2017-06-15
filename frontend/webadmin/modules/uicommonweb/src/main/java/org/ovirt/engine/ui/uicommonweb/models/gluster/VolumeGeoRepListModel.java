@@ -7,8 +7,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -353,7 +353,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
     private void updateConfig() {
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         List<IFrontendActionAsyncCallback> callbacks;
 
         final GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =

@@ -9,8 +9,8 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -76,11 +76,11 @@ public final class CommandsFactory {
 
     private static ConcurrentMap<String, Class<?>> commandsCache = new ConcurrentHashMap<>();
 
-    public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
+    public static <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return createCommand(action, parameters, null);
     }
 
-    public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters,
+    public static <P extends ActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters,
             CommandContext commandContext) {
         try {
             Constructor<?> commandConstructor =

@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.macpool;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -135,7 +135,7 @@ public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, Mac
 
     private void onRemove() {
         cancel();
-        ArrayList<VdcActionParametersBase> params = new ArrayList<>();
+        ArrayList<ActionParametersBase> params = new ArrayList<>();
         for (MacPool macPool : getSelectedItems()) {
             params.add(new RemoveMacPoolByIdParameters(macPool.getId()));
         }

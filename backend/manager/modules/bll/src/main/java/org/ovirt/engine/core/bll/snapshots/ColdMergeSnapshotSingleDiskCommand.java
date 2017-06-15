@@ -14,11 +14,11 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ColdMergeCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
@@ -73,7 +73,7 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         log.info("Command '{}' id '{}' executing step '{}'", getActionType(), getCommandId(),
                 getParameters().getCommandStep());
 
-        Pair<ActionType, ? extends VdcActionParametersBase> nextCommand = null;
+        Pair<ActionType, ? extends ActionParametersBase> nextCommand = null;
         switch (getParameters().getCommandStep()) {
             case PREPARE_MERGE:
                 nextCommand = new Pair<>(ActionType.PrepareMerge,
@@ -162,7 +162,7 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         SubchainInfo subchainInfo = new SubchainInfo(getDiskImage().getStorageIds().get(0), baseVolume, topVolume);
         ColdMergeCommandParameters parameters = new ColdMergeCommandParameters(
                 getDiskImage().getStoragePoolId(), subchainInfo);
-        parameters.setEndProcedure(VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
+        parameters.setEndProcedure(ActionParametersBase.EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         return parameters;

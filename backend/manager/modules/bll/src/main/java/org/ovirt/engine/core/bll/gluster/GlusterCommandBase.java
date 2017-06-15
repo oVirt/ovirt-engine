@@ -19,7 +19,7 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -43,7 +43,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 /**
  * Base class for all Gluster commands
  */
-public abstract class GlusterCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
+public abstract class GlusterCommandBase<T extends ActionParametersBase> extends CommandBase<T> {
     protected AuditLogType errorType;
     protected VDS upServer;
     private Network glusterNetwork;

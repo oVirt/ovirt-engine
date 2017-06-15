@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.compat.Guid;
 
-public class LabelNicParameters extends VdcActionParametersBase {
+public class LabelNicParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 657263466320044730L;
 

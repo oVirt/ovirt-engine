@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -548,7 +548,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             TagModel.recursiveEditAttachDetachLists(rootTag, attachedTags, tagsToAttach, tagsToDetach);
         }
 
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (Guid a : tagsToAttach) {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
@@ -934,7 +934,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     private void postExportGetMissingTemplates(ArrayList<String> missingTemplatesFromVms) {
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
 
         model.stopProgress();
 
@@ -991,7 +991,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 return;
             }
 
-            for (VdcActionParametersBase item : parameters) {
+            for (ActionParametersBase item : parameters) {
                 MoveOrCopyParameters parameter = (MoveOrCopyParameters) item;
                 parameter.setTemplateMustExists(false);
             }
@@ -1034,7 +1034,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             MoveOrCopyParameters parameters = new MoveOrCopyParameters(a.getId(), storageDomainId);
@@ -1212,7 +1212,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void cancelMigration() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             list.add(new VmOperationParameterBase(a.getId()));
@@ -1224,7 +1224,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void cancelConversion() {
-        List<VdcActionParametersBase> parameters = new ArrayList<>();
+        List<ActionParametersBase> parameters = new ArrayList<>();
         for (VM vm : getSelectedItems()) {
             parameters.add(new VmOperationParameterBase(vm.getId()));
         }
@@ -1242,7 +1242,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.startProgress();
 
         if (model.getIsAutoSelect()) {
-            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+            ArrayList<ActionParametersBase> list = new ArrayList<>();
             for (Object item : getSelectedItems()) {
                 VM vm = (VM) item;
                 list.add(new MigrateVmParameters(true, vm.getId(), vm.getClusterId()));
@@ -1258,7 +1258,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                     }, model);
         }
         else {
-            ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+            ArrayList<ActionParametersBase> list = new ArrayList<>();
             for (Object item : getSelectedItems()) {
                 VM vm = (VM) item;
 
@@ -1354,7 +1354,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.getCommands().add(tempVar2);
     }
 
-    private interface PowerActionParametersFactory<P extends VdcActionParametersBase> {
+    private interface PowerActionParametersFactory<P extends ActionParametersBase> {
         P createActionParameters(VM vm);
     }
 
@@ -1366,7 +1366,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
 
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM vm = (VM) item;
             list.add(parametersFactory.createActionParameters(vm));
@@ -1424,7 +1424,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void pause() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             list.add(new VmOperationParameterBase(a.getId()));
@@ -1434,7 +1434,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void run() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             VM a = (VM) item;
             list.add(new RunVmParams(a.getId()));
@@ -1450,7 +1450,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             return;
         }
 
-        final ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        final ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Entry<Guid, EntityModel> entry : vmsRemoveMap.entrySet()) {
             list.add(new RemoveVmParameters(entry.getKey(), false, (Boolean) entry.getValue().getEntity()));
         }
@@ -1792,7 +1792,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         }
 
         Frontend.getInstance().runMultipleAction(ActionType.ChangeDisk,
-                new ArrayList<>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
+                new ArrayList<>(Arrays.asList(new ActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
                         Objects.equals(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
                 result -> {
 

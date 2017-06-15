@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 public abstract class AbstractBackendNetworkResource
     extends AbstractBackendSubResource<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
@@ -33,7 +33,7 @@ public abstract class AbstractBackendNetworkResource
         return parent;
     }
 
-    protected abstract VdcActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity);
+    protected abstract ActionParametersBase getRemoveParameters(org.ovirt.engine.core.common.businessentities.network.Network entity);
 
     public Response remove() {
         get();

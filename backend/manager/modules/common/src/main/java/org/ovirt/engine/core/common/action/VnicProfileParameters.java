@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 
-public class VnicProfileParameters extends VdcActionParametersBase {
+public class VnicProfileParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 7238781812367042839L;
 

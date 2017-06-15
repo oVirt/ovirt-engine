@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -545,7 +545,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
             return;
         }
 
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
+        ArrayList<ActionParametersBase> prms = new ArrayList<>();
         for (Quota a : getSelectedItems()) {
             IdParameters idParameters = new IdParameters(a.getId());
             prms.add(idParameters);

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterClusterParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
@@ -103,7 +103,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (GlusterHookEntity hook : getSelectedItems()) {
             list.add(new GlusterHookParameters(hook.getId()));
         }
@@ -149,7 +149,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             GlusterHookEntity hook = (GlusterHookEntity) item;
@@ -303,7 +303,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
         GlusterHookEntity hookEntity = resolveConflictsModel.getGlusterHookEntity();
 
         ArrayList<ActionType> actionTypes = new ArrayList<>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
         if (resolveConflictsModel.getResolveContentConflict().getEntity()) {

@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -150,7 +150,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
 
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        ArrayList<VdcActionParametersBase> params = new ArrayList<>();
+        ArrayList<ActionParametersBase> params = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             params.add(new RemoveIscsiBondParameters(((IscsiBond) item).getId()));

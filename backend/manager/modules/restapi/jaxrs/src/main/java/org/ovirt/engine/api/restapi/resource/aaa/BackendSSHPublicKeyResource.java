@@ -5,9 +5,9 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.SshPublicKey;
 import org.ovirt.engine.api.resource.aaa.SshPublicKeyResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -47,7 +47,7 @@ public class BackendSSHPublicKeyResource
 
     public class UpdateParametersProvider implements ParametersProvider<SshPublicKey, UserProfile> {
         @Override
-        public VdcActionParametersBase getParameters(SshPublicKey model, UserProfile entity) {
+        public ActionParametersBase getParameters(SshPublicKey model, UserProfile entity) {
             UserProfileParameters params = new UserProfileParameters();
             UserProfile profile = map(model, entity);
 

@@ -17,7 +17,7 @@ public class CloneImageGroupVolumesStructureCommandParameters extends ImagesActi
                                                             Guid destDomain,
                                                             Guid srcImageGroupId,
                                                             ActionType parentType,
-                                                            VdcActionParametersBase parentParams) {
+                                                            ActionParametersBase parentParams) {
         this.destDomain = destDomain;
         this.srcDomain = srcDomain;
         setStoragePoolId(storagePoolId);

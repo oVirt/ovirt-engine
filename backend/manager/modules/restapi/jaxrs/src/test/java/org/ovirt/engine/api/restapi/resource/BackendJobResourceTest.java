@@ -8,9 +8,9 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Job;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -55,7 +55,7 @@ public class BackendJobResourceTest
     @Test
     public void testClear() throws Exception {
         setUriInfo(setUpActionExpectations(ActionType.ClearExternalJob,
-                VdcActionParametersBase.class,
+                ActionParametersBase.class,
               new String[] {"JobId"},
               new Object[] {GUIDS[0]}, true, true));
         Action action = new Action();

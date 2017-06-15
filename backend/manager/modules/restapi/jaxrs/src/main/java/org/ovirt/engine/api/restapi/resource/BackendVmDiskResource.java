@@ -38,12 +38,12 @@ import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -227,7 +227,7 @@ public class BackendVmDiskResource
 
     protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
         @Override
-        public VdcActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
+        public ActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
             DiskVmElement dveFromDb = runQuery(VdcQueryType.GetDiskVmElementById,
                     new VmDeviceIdQueryParameters(new VmDeviceId(entity.getId(), vmId))).getReturnValue();
 

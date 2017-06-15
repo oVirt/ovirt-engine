@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction.ActionFlowState;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -58,11 +58,11 @@ public class UiVdcActionTest extends AsyncUiActionTest<IFrontendActionAsyncCallb
 
     @Override
     protected UiVdcAction createAction() {
-        return new UiVdcAction(ACTION_TYPE, new VdcActionParametersBase(), model);
+        return new UiVdcAction(ACTION_TYPE, new ActionParametersBase(), model);
     }
 
     private UiVdcAction createAction(boolean showErrorDialog) {
-        return new UiVdcAction(ACTION_TYPE, new VdcActionParametersBase(), model, showErrorDialog);
+        return new UiVdcAction(ACTION_TYPE, new ActionParametersBase(), model, showErrorDialog);
     }
 
     private void verifyRunActionAndExecuteCallbacksRandomly(boolean success,
@@ -115,7 +115,7 @@ public class UiVdcActionTest extends AsyncUiActionTest<IFrontendActionAsyncCallb
     private List<IFrontendActionAsyncCallback> verfifyRunAction(int exepectedNumOfRunActionExecutions,
             boolean showErrorDialog) {
         verify(frontend, times(exepectedNumOfRunActionExecutions)).runAction(eq(ACTION_TYPE),
-                any(VdcActionParametersBase.class),
+                any(ActionParametersBase.class),
                 callbackCaptor.capture(),
                 eq(showErrorDialog));
         List<IFrontendActionAsyncCallback> callbacks = callbackCaptor.getAllValues();

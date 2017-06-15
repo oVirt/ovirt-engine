@@ -20,9 +20,9 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -215,7 +215,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected List<VdcReturnValueBase> endActionOnDisks() {
         List<VdcReturnValueBase> returnValues = new ArrayList<>();
-        for (VdcActionParametersBase p : getParametersForChildCommand()) {
+        for (ActionParametersBase p : getParametersForChildCommand()) {
             if (overrideChildCommandSuccess()) {
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
@@ -229,7 +229,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return returnValues;
     }
 
-    protected List<VdcActionParametersBase> getParametersForChildCommand() {
+    protected List<ActionParametersBase> getParametersForChildCommand() {
         return getParameters().getImagesParameters();
     }
 

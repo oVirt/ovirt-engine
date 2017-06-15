@@ -25,10 +25,10 @@ import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.InstanceTypeNicResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -109,7 +109,7 @@ public class BackendInstanceTypeNicResource
 
     private class UpdateParametersProvider implements ParametersProvider<Nic, VmNetworkInterface> {
         @Override
-        public VdcActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
+        public ActionParametersBase getParameters(Nic incoming, VmNetworkInterface entity) {
             VmNetworkInterface nic = map(incoming, entity);
             return new AddVmTemplateInterfaceParameters(instanceTypeId, nic);
         }

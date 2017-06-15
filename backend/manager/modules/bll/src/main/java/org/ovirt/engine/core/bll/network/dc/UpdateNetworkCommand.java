@@ -23,10 +23,10 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -95,7 +95,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private void applyNetworkChangesToHosts() {
-        List<VdcActionParametersBase> parameters = syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork());
+        List<ActionParametersBase> parameters = syncNetworkParametersBuilder.buildParameters(getNetwork(), getOldNetwork());
 
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
@@ -335,8 +335,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             super(interfaceDao, vdsStaticDao, networkClusterDao, networkAttachmentDao);
         }
 
-        private ArrayList<VdcActionParametersBase> buildParameters(Network network, Network oldNetwork) {
-            ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        private ArrayList<ActionParametersBase> buildParameters(Network network, Network oldNetwork) {
+            ArrayList<ActionParametersBase> parameters = new ArrayList<>();
             List<VdsNetworkInterface> nics =
                     interfaceDao.getVdsInterfacesByNetworkId(network.getId());
 
@@ -410,11 +410,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return parameters;
         }
 
-        private ArrayList<VdcActionParametersBase> createAddNetworkParameters(Network network, List<VdsNetworkInterface> nicsForAdd) {
+        private ArrayList<ActionParametersBase> createAddNetworkParameters(Network network, List<VdsNetworkInterface> nicsForAdd) {
             return addNetworkParametersBuilder.buildParameters(network, nicsForAdd);
         }
 
-        private ArrayList<VdcActionParametersBase> createRemoveNetworkParameters(Network oldNetwork, List<VdsNetworkInterface> nicsForRemove) {
+        private ArrayList<ActionParametersBase> createRemoveNetworkParameters(Network oldNetwork, List<VdsNetworkInterface> nicsForRemove) {
             return removeNetworkParametersBuilder.buildParameters(oldNetwork, nicsForRemove);
         }
 
@@ -436,7 +436,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             return labeledNics;
         }
 
-        private void createSyncNetworkParameters(Network network, ArrayList<VdcActionParametersBase> parameters,
+        private void createSyncNetworkParameters(Network network, ArrayList<ActionParametersBase> parameters,
                 Collection<VdsNetworkInterface> nics) {
 
             Set<Guid> hostIdsToSync = new HashSet<>();

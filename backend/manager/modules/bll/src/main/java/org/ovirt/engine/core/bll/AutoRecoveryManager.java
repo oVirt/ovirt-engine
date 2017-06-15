@@ -12,9 +12,9 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -127,7 +127,7 @@ public class AutoRecoveryManager implements BackendService {
      */
     <T extends BusinessEntity<Guid>> void check(final AutoRecoverDao<T> dao,
             final ActionType actionType,
-            final Function<T, VdcActionParametersBase> paramsCallback,
+            final Function<T, ActionParametersBase> paramsCallback,
             final Function<List<T>, List<T>> filter,
             final String logMsg) {
         if (!shouldPerformRecoveryOnType(logMsg)) {
@@ -140,7 +140,7 @@ public class AutoRecoveryManager implements BackendService {
             log.info("Autorecovering {} {}", fails.size(), logMsg);
             for (final T fail : fails) {
                 log.info("Autorecovering {} id: {} {}", logMsg, fail.getId(), getHostName(fail));
-                final VdcActionParametersBase actionParams = paramsCallback.apply(fail);
+                final ActionParametersBase actionParams = paramsCallback.apply(fail);
                 actionParams.setShouldBeLogged(true);
                 backend.runInternalAction(actionType, actionParams);
             }

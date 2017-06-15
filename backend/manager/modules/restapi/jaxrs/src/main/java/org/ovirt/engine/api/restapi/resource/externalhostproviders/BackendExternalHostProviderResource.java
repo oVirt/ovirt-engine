@@ -26,9 +26,9 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviderR
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -86,7 +86,7 @@ public class BackendExternalHostProviderResource
 
     private class UpdateParametersProvider implements ParametersProvider<ExternalHostProvider, Provider> {
         @Override
-        public VdcActionParametersBase getParameters(ExternalHostProvider incoming, Provider entity) {
+        public ActionParametersBase getParameters(ExternalHostProvider incoming, Provider entity) {
             return new ProviderParameters(map(incoming, entity));
         }
     }

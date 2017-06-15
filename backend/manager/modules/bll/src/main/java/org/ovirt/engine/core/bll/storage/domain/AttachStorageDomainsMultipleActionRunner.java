@@ -11,10 +11,10 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -24,7 +24,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
     public AttachStorageDomainsMultipleActionRunner(ActionType actionType,
-            List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
+            List<ActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }
 
@@ -44,10 +44,10 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
             StoragePool pool = storagePoolDao.get(storagePoolParameter.getStoragePoolId());
             if (pool.getStatus() == StoragePoolStatus.Uninitialized) {
                 List<Guid> storageDomainIds = new ArrayList<>();
-                for (VdcActionParametersBase param : getParameters()) {
+                for (ActionParametersBase param : getParameters()) {
                     storageDomainIds.add(((StorageDomainPoolParametersBase) param).getStorageDomainId());
                 }
-                List<VdcActionParametersBase> parameters = new ArrayList<>();
+                List<ActionParametersBase> parameters = new ArrayList<>();
                 parameters.add(new StoragePoolWithStoragesParameter(pool,
                         storageDomainIds,
                         storagePoolParameter.getSessionId()));

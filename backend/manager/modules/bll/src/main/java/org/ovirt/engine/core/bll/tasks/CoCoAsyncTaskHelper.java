@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -151,7 +151,7 @@ public class CoCoAsyncTaskHelper {
     private CommandEntity getCommandEntity(Guid cmdId) {
         CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
         if (cmdEntity == null) {
-            cmdEntity = coco.createCommandEntity(cmdId, ActionType.Unknown, new VdcActionParametersBase());
+            cmdEntity = coco.createCommandEntity(cmdId, ActionType.Unknown, new ActionParametersBase());
         }
         return cmdEntity;
     }
@@ -251,7 +251,7 @@ public class CoCoAsyncTaskHelper {
             asyncTask = getAsyncTaskFromDb(taskId);
         }
         if (asyncTask != null) {
-            VdcActionParametersBase parentParameters = command.getParentParameters() == null ?
+            ActionParametersBase parentParameters = command.getParentParameters() == null ?
                     command.getParentParameters(parentCommand) : command.getParentParameters();
             Guid parentCommandId =
                     parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
@@ -283,7 +283,7 @@ public class CoCoAsyncTaskHelper {
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             ActionType parentCommand) {
-        VdcActionParametersBase parentParameters = command.getParentParameters() == null ?
+        ActionParametersBase parentParameters = command.getParentParameters() == null ?
                 command.getParentParameters(parentCommand) : command.getParentParameters();
         Guid parentCommandId =
                 parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
@@ -315,7 +315,7 @@ public class CoCoAsyncTaskHelper {
 
     private CommandEntity getParentCommandEntity(Guid cmdId,
                                                  ActionType actionType,
-                                                 VdcActionParametersBase parameters) {
+                                                 ActionParametersBase parameters) {
         CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
         if (cmdEntity == null) {
             cmdEntity = coco.createCommandEntity(cmdId, actionType, parameters);
@@ -330,7 +330,7 @@ public class CoCoAsyncTaskHelper {
     public VdcReturnValueBase endAction(SPMTask task) {
         AsyncTask dbAsyncTask = task.getParameters().getDbAsyncTask();
         ActionType actionType = getEndActionType(dbAsyncTask);
-        VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
+        ActionParametersBase parameters = dbAsyncTask.getActionParameters();
         CommandBase<?> command = CommandHelper.buildCommand(actionType, parameters,
                 coco.retrieveCommandContext(dbAsyncTask.getRootCommandId()).getExecutionContext(),
                 coco.getCommandStatus(dbAsyncTask.getCommandId()));

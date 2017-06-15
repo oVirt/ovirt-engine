@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.MacPool;
 
-public class MacPoolParameters extends VdcActionParametersBase {
+public class MacPoolParameters extends ActionParametersBase {
 
     public MacPoolParameters() {
     }

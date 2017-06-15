@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -50,9 +50,9 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (VnicProfileView profile : getProfiles()) {
-            VdcActionParametersBase parameters = getRemoveVnicProfileParams(profile);
+            ActionParametersBase parameters = getRemoveVnicProfileParams(profile);
             list.add(parameters);
 
         }
@@ -74,7 +74,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
                 .vnicProfileFromNetwork(profile.getName(), profile.getNetworkName());
     }
 
-    protected VdcActionParametersBase getRemoveVnicProfileParams(VnicProfileView profile) {
+    protected ActionParametersBase getRemoveVnicProfileParams(VnicProfileView profile) {
         return new VnicProfileParameters(profile);
     }
 

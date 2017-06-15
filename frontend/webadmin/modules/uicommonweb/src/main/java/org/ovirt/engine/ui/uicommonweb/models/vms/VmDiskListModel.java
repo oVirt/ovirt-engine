@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -265,12 +265,12 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private void onChangeQuota() {
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
         for (Object item : model.getItems()) {
             ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
             DiskImage disk = itemModel.getEntity();
-            VdcActionParametersBase parameters =
+            ActionParametersBase parameters =
                     new ChangeQuotaParameters(itemModel.getQuota().getSelectedItem().getId(),
                             disk.getId(),
                             itemModel.getStorageDomainId(),
@@ -363,8 +363,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
                 this);
     }
 
-    private ArrayList<VdcActionParametersBase> createPlugOrUnplugParams(boolean plug) {
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
+    private ArrayList<ActionParametersBase> createPlugOrUnplugParams(boolean plug) {
+        ArrayList<ActionParametersBase> parametersList = new ArrayList<>();
         VM vm = getEntity();
 
         for (Object item : getSelectedItems()) {
@@ -421,7 +421,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private void scanAlignment() {
-        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameterList = new ArrayList<>();
 
         for (Disk disk : getSelectedItems()) {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));

@@ -31,10 +31,10 @@ import org.ovirt.engine.api.resource.DiskAttachmentsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -161,7 +161,7 @@ public class BackendDiskAttachmentsResource
         }
     }
 
-    private VdcActionParametersBase getAddParameters(DiskAttachment attachment, org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
+    private ActionParametersBase getAddParameters(DiskAttachment attachment, org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
         DiskVmElement dve = map(attachment);
         dve.getId().setVmId(vmId);
         AddDiskParameters parameters = new AddDiskParameters(dve, entity);

@@ -6,12 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -91,23 +91,23 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         attachMultiple = value;
     }
 
-    private ArrayList<VdcActionParametersBase> detachPrms;
+    private ArrayList<ActionParametersBase> detachPrms;
 
-    public ArrayList<VdcActionParametersBase> getdetachPrms() {
+    public ArrayList<ActionParametersBase> getdetachPrms() {
         return detachPrms;
     }
 
-    public void setdetachPrms(ArrayList<VdcActionParametersBase> value) {
+    public void setdetachPrms(ArrayList<ActionParametersBase> value) {
         detachPrms = value;
     }
 
-    private ArrayList<VdcActionParametersBase> removePrms;
+    private ArrayList<ActionParametersBase> removePrms;
 
-    public ArrayList<VdcActionParametersBase> getremovePrms() {
+    public ArrayList<ActionParametersBase> getremovePrms() {
         return removePrms;
     }
 
-    public void setremovePrms(ArrayList<VdcActionParametersBase> value) {
+    public void setremovePrms(ArrayList<ActionParametersBase> value) {
         removePrms = value;
     }
 
@@ -398,7 +398,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     public void executeAttachStorageDomains(Model model) {
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         for (StoragePool dataCenter : getSelectedDataCentersForAttach()) {
             parameters.add(new AttachStorageDomainToPoolParameters(getEntity().getId(), dataCenter.getId()));
         }
@@ -477,8 +477,8 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
             return;
         }
 
-        setdetachPrms(new ArrayList<VdcActionParametersBase>());
-        setremovePrms(new ArrayList<VdcActionParametersBase>());
+        setdetachPrms(new ArrayList<ActionParametersBase>());
+        setremovePrms(new ArrayList<ActionParametersBase>());
 
         for (Object item : getSelectedItems()) {
             StorageDomain storageDomain = (StorageDomain) item;
@@ -541,7 +541,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void onMaintenance() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (StorageDomain item : getSelectedItems()) {
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
@@ -563,7 +563,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     }
 
     private void activate() {
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (Object item : getSelectedItems()) {
             StorageDomain a = (StorageDomain) item;
 

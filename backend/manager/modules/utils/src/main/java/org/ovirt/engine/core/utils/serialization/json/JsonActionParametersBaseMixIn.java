@@ -7,22 +7,22 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
 @SuppressWarnings("serial")
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY)
-public abstract class JsonVdcActionParametersBaseMixIn extends VdcActionParametersBase {
+public abstract class JsonActionParametersBaseMixIn extends ActionParametersBase {
     /**
      * Ignore this method since Jackson will try to recursively dereference it and fail to serialize.
      */
     @JsonIgnore
     @Override
-    public abstract VdcActionParametersBase getParentParameters();
+    public abstract ActionParametersBase getParentParameters();
 
     @JsonIgnore
     @Override
-    public abstract ArrayList<VdcActionParametersBase> getImagesParameters();
+    public abstract ArrayList<ActionParametersBase> getImagesParameters();
 
     @JsonDeserialize (using=ActionTypeDeserializer.class)
     @Override

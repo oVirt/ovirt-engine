@@ -11,12 +11,12 @@ import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -358,7 +358,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     @Override
-    protected boolean canPerformRollbackUsingCommand(ActionType commandType, VdcActionParametersBase params) {
+    protected boolean canPerformRollbackUsingCommand(ActionType commandType, ActionParametersBase params) {
         return diskImageDao.get(getParameters().getDestinationImageId()) != null;
     }
 

@@ -30,6 +30,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -38,7 +39,6 @@ import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
@@ -693,14 +693,14 @@ public class BackendHostResourceTest
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
+                                              Class<? extends ActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-                                              Class<? extends VdcActionParametersBase> clz,
+                                              Class<? extends ActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,
                                               ArrayList<Guid> asyncTasks,

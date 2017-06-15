@@ -341,7 +341,7 @@
         <include name="common/businessentities/AsyncTaskStatusEnum.java" />
         <include name="common/businessentities/AsyncTaskResultEnum.java" />
 
-        <!-- Sadly because VdcQueryParametersBase / VdcActionParametersBase :/ -->
+        <!-- Sadly because VdcQueryParametersBase / ActionParametersBase :/ -->
         <include name="common/HasCorrelationId.java" />
         <include name="common/queries/*.java" />
         <include name="common/action/*.java" />
@@ -362,7 +362,7 @@
 
         <include name="common/vdscommands/VDSCommandType.java" />
 
-        <!--required by action/VdcActionParametersBase.java -->
+        <!--required by action/ActionParametersBase.java -->
         <include name="common/asynctasks/EntityInfo.java" />
         <include name="common/businessentities/RoleGroupMap.java" />
         <include name="common/businessentities/RoleGroupMapId.java" />

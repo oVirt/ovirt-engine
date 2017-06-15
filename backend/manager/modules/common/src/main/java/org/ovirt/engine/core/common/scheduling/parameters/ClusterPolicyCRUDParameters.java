@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.scheduling.parameters;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ClusterPolicyCRUDParameters extends VdcActionParametersBase {
+public class ClusterPolicyCRUDParameters extends ActionParametersBase {
     private static final long serialVersionUID = 8144928386101354544L;
     private Guid clusterPolicyId;
     private ClusterPolicy clusterPolicy;

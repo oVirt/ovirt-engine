@@ -24,10 +24,10 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -118,8 +118,8 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     private void removeVmImages() {
         // Remove vm images, in case they were not already removed by child commands
-        List<VdcActionParametersBase> imageParams = getParameters().getImagesParameters();
-        for (VdcActionParametersBase param : imageParams) {
+        List<ActionParametersBase> imageParams = getParameters().getImagesParameters();
+        for (ActionParametersBase param : imageParams) {
             DiskImage diskImage = getDiskImageToRemoveByParam((MoveOrCopyImageGroupParameters) param);
             if (diskImage != null) {
                 ImagesHandler.removeDiskImage(diskImage, getVmId());
@@ -232,7 +232,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
      * @param parameters
      *            parameters for copy
      */
-    protected VdcReturnValueBase executeChildCopyingCommand(VdcActionParametersBase parameters) {
+    protected VdcReturnValueBase executeChildCopyingCommand(ActionParametersBase parameters) {
         return runInternalActionWithTasksContext(getChildActionType(), parameters);
     }
 

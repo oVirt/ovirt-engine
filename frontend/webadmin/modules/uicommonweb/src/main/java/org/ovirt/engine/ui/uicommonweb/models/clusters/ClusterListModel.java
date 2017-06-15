@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
@@ -496,7 +496,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             return;
         }
 
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
+        ArrayList<ActionParametersBase> prms = new ArrayList<>();
         for (Cluster cluster : getSelectedItems()) {
             ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters(cluster);
             currentParam.setForceResetEmulatedMachine(true);
@@ -521,7 +521,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             return;
         }
 
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
+        ArrayList<ActionParametersBase> prms = new ArrayList<>();
         for (Object a : getSelectedItems()) {
             prms.add(new ClusterParametersBase(((Cluster) a).getId()));
         }
@@ -885,7 +885,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
     private void addHosts(final MultipleHostsModel hostsModel) {
         hostsModel.startProgress();
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
+        ArrayList<ActionParametersBase> parametersList = new ArrayList<>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
 

@@ -6,12 +6,12 @@ import java.util.List;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class ExternalEventCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
+public abstract class ExternalEventCommandBase<T extends ActionParametersBase> extends CommandBase<T> {
 
     public ExternalEventCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

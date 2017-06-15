@@ -4,9 +4,9 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.resource.FenceAgentResource;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -38,7 +38,7 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
 
     protected class UpdateParametersProvider implements ParametersProvider<Agent, FenceAgent> {
         @Override
-        public VdcActionParametersBase getParameters(Agent incoming, FenceAgent entity) {
+        public ActionParametersBase getParameters(Agent incoming, FenceAgent entity) {
             FenceAgentCommandParameterBase updateParams = new FenceAgentCommandParameterBase();
             FenceAgent agent = map(incoming, entity);
             updateParams.setAgent(agent);

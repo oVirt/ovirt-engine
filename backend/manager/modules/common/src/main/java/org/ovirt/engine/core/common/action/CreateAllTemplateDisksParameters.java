@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CreateAllTemplateDisksParameters extends VdcActionParametersBase {
+public class CreateAllTemplateDisksParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -8161353466219476690L;
 

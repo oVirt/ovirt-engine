@@ -45,8 +45,8 @@ import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -341,7 +341,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -350,7 +350,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -360,7 +360,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -370,7 +370,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -381,7 +381,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -402,7 +402,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -427,7 +427,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -453,7 +453,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,
@@ -483,7 +483,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values,
             boolean valid,

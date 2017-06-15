@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.action.gluster;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterServiceParameters extends VdcActionParametersBase {
+public class GlusterServiceParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = 8706812640906006229L;
 

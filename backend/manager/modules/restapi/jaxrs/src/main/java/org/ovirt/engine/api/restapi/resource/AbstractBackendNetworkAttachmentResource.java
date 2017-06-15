@@ -5,10 +5,10 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkAttachmentParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -53,7 +53,7 @@ public abstract class AbstractBackendNetworkAttachmentResource<T extends Abstrac
             implements ParametersProvider<NetworkAttachment, org.ovirt.engine.core.common.businessentities.network.NetworkAttachment> {
 
         @Override
-        public VdcActionParametersBase getParameters(NetworkAttachment incoming,
+        public ActionParametersBase getParameters(NetworkAttachment incoming,
                 org.ovirt.engine.core.common.businessentities.network.NetworkAttachment entity) {
             boolean overrideConfiguration = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, OVERRIDE_CONFIGURATION, true, false);
             org.ovirt.engine.core.common.businessentities.network.NetworkAttachment attachment = map(incoming, entity);

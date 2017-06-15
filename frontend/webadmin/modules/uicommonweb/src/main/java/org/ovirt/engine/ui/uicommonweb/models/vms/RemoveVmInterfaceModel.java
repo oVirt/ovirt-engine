@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -50,9 +50,9 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
             return;
         }
 
-        ArrayList<VdcActionParametersBase> list = new ArrayList<>();
+        ArrayList<ActionParametersBase> list = new ArrayList<>();
         for (VmNetworkInterface vnic : getVnics()) {
-            VdcActionParametersBase parameters = getRemoveVmInterfaceParams(vnic);
+            ActionParametersBase parameters = getRemoveVmInterfaceParams(vnic);
             list.add(parameters);
 
         }
@@ -72,7 +72,7 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
         return ConstantsManager.getInstance().getMessages().vnicFromVm(vnic.getName(), vnic.getVmName());
     }
 
-    protected VdcActionParametersBase getRemoveVmInterfaceParams(VmNetworkInterface vnic) {
+    protected ActionParametersBase getRemoveVmInterfaceParams(VmNetworkInterface vnic) {
         return new RemoveVmInterfaceParameters(vnic.getVmId(), vnic.getId());
     }
 

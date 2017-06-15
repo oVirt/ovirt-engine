@@ -6,8 +6,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.MutabilityAssertor;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -125,6 +125,6 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
     }
 
     protected interface ParametersProvider<R, Q> {
-        VdcActionParametersBase getParameters(R model, Q entity);
+        ActionParametersBase getParameters(R model, Q entity);
     }
 }

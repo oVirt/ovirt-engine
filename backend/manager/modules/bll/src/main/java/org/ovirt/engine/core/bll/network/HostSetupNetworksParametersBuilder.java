@@ -8,8 +8,8 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -113,7 +113,7 @@ public abstract class HostSetupNetworksParametersBuilder {
      * @param parameters
      *            A list of parameters to update.
      */
-    public static void updateParametersSequencing(List<VdcActionParametersBase> parameters) {
+    public static void updateParametersSequencing(List<ActionParametersBase> parameters) {
         for (int i = 0; i < parameters.size(); i++) {
             PersistentHostSetupNetworksParameters setupNetworkParameters =
                     (PersistentHostSetupNetworksParameters) parameters.get(i);

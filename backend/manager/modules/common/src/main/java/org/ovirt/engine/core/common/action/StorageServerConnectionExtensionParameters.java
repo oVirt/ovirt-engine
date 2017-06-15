@@ -4,7 +4,7 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 
-public class StorageServerConnectionExtensionParameters extends VdcActionParametersBase {
+public class StorageServerConnectionExtensionParameters extends ActionParametersBase {
 
     @Valid
     StorageServerConnectionExtension connExt;

@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -57,7 +57,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
 
         startProgress();
 
-        ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<>();
+        ArrayList<ActionParametersBase> actionParameters = new ArrayList<>();
 
         for (EntityModel entity : getEntities()) {
             actionParameters.add(new ExportRepoImageParameters(

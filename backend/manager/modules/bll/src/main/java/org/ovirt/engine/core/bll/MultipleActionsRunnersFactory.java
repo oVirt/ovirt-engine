@@ -10,9 +10,9 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.AttachStorageDomainsMultipleActionRunner;
 import org.ovirt.engine.core.bll.storage.domain.DeactivateStorageDomainsMultipleActionRunner;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,7 +30,7 @@ public class MultipleActionsRunnersFactory {
     private ClusterDao clusterDao;
 
     public MultipleActionsRunner createMultipleActionsRunner(ActionType actionType,
-                                                             List<VdcActionParametersBase> parameters,
+                                                             List<ActionParametersBase> parameters,
                                                              boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;
         switch (actionType) {
@@ -92,9 +92,9 @@ public class MultipleActionsRunnersFactory {
         return Injector.injectMembers(runner);
     }
 
-    private boolean containsGlusterServer(List<VdcActionParametersBase> parameters) {
+    private boolean containsGlusterServer(List<ActionParametersBase> parameters) {
         Set<Guid> processed = new HashSet<>();
-        for (VdcActionParametersBase param : parameters) {
+        for (ActionParametersBase param : parameters) {
             VDS vds = vdsDao.get(((RemoveVdsParameters) param).getVdsId());
             if (vds != null && !processed.contains(vds.getClusterId())) {
                 Cluster cluster = clusterDao.get(vds.getClusterId());

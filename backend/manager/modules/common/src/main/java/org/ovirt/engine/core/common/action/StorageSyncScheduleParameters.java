@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageSyncSchedule;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageSyncScheduleParameters extends VdcActionParametersBase{
+public class StorageSyncScheduleParameters extends ActionParametersBase {
 
     private static final long serialVersionUID = -1229678351308315047L;
 

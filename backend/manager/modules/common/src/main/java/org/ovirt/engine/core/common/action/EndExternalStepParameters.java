@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class EndExternalStepParameters extends VdcActionParametersBase {
+public class EndExternalStepParameters extends ActionParametersBase {
 
     /**
      *

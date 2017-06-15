@@ -17,8 +17,8 @@ import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -201,7 +201,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     protected UriInfo setUpActionExpectations(ActionType task,
-            Class<? extends VdcActionParametersBase> clz,
+            Class<? extends ActionParametersBase> clz,
             String[] names,
             Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);

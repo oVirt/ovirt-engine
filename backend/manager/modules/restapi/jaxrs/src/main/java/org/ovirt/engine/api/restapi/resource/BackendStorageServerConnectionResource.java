@@ -6,9 +6,9 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -83,7 +83,7 @@ public class BackendStorageServerConnectionResource extends
     protected class UpdateParametersProvider implements
             ParametersProvider<StorageConnection, StorageServerConnections> {
         @Override
-        public VdcActionParametersBase getParameters(StorageConnection incoming, StorageServerConnections entity) {
+        public ActionParametersBase getParameters(StorageConnection incoming, StorageServerConnections entity) {
             StorageServerConnections connection = map(incoming, entity);
             Guid hostId = Guid.Empty;
             if (incoming.getHost() != null) {

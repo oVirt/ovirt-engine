@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -140,7 +140,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
     private void onRemove() {
         ConfirmationModel model = (ConfirmationModel) getWindow();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
 
         Map<Guid, List<Guid>> diskImageIdsMap = groupImageIdsByDiskId(getSelectedItems());
         for (List<Guid> imageIds : diskImageIdsMap.values()) {
