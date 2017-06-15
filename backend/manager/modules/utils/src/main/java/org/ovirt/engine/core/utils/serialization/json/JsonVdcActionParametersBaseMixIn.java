@@ -24,11 +24,11 @@ public abstract class JsonVdcActionParametersBaseMixIn extends VdcActionParamete
     @Override
     public abstract ArrayList<VdcActionParametersBase> getImagesParameters();
 
-    @JsonDeserialize (using=VdcActionTypeDeserializer.class)
+    @JsonDeserialize (using=ActionTypeDeserializer.class)
     @Override
     public abstract void setParentCommand(ActionType value);
 
-    @JsonDeserialize (using=VdcActionTypeDeserializer.class)
+    @JsonDeserialize (using=ActionTypeDeserializer.class)
     @Override
     public abstract void setCommandType(ActionType commandType);
 }

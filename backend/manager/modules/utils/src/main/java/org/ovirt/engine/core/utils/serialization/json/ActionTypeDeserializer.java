@@ -8,7 +8,7 @@ import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.ovirt.engine.core.common.action.ActionType;
 
-public class VdcActionTypeDeserializer extends JsonDeserializer<ActionType> {
+public class ActionTypeDeserializer extends JsonDeserializer<ActionType> {
     private static HashMap<String, ActionType> mappings = new HashMap<>();
 
     static {
