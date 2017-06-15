@@ -1715,7 +1715,7 @@ public class IrsProxy {
                         domainIdTuple,
                         storageDomain.getStorageDomainType());
             }
-            result = new EventResult(true, EventType.VDSSTOARGEPROBLEMS);
+            result = new EventResult(true, EventType.VDSSTORAGEPROBLEMS);
         } else { // Because all the hosts in status UP
                  // reported on this domain as in problem
                  // we assume the problem is with the
