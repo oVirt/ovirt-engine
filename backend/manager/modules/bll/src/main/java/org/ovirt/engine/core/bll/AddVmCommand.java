@@ -80,6 +80,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
+import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -119,6 +120,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
+import org.ovirt.engine.core.dao.VmInitDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -188,6 +190,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private DiskProfileDao diskProfileDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmInitDao vmInitDao;
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);
@@ -1174,6 +1179,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     private void addVmInit() {
+        final VmInit vmInit = getParameters().getVmStaticData().getVmInit();
+        if (vmInit == null) {
+            return;
+        }
+        if (vmInit.isPasswordAlreadyStored()) {
+            final VmInit templateVmInit = vmInitDao.get(getVmTemplateId());
+            vmInit.setPasswordAlreadyStored(false);
+            vmInit.setRootPassword(templateVmInit.getRootPassword());
+        }
         vmHandler.addVmInitToDB(getParameters().getVmStaticData());
     }
 
