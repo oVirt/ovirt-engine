@@ -145,7 +145,7 @@ public class Frontend implements HasHandlers {
      * @param operationManager The {@code VdcOperationManger} to associate with this object.
      * @param applicationErrors The application error messages, we can use to translate application errors.
      * @param vdsmErrors The VDSM error messages, we can use to translate VDSM errors.
-     * @param gwtEventBut The GWT event bus.
+     * @param gwtEventBus The GWT event bus.
      */
     @Inject
     public Frontend(final VdcOperationManager operationManager, final AppErrors applicationErrors,
