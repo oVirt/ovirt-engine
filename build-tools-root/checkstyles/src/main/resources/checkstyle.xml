@@ -45,6 +45,7 @@
       <property name="caseSensitive" value="true"/>
       <property name="option" value="top"/>
       <property name="sortStaticImportsAlphabetically" value="true"/>
+      <property name="separated" value="true"/>
     </module>
     <module name="IllegalInstantiation"/>
     <module name="LeftCurly"/>
