@@ -4,8 +4,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractOverlayPresenter.ViewDef;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.OverlayPresenter.OverlayType;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 
 import com.google.inject.Inject;
