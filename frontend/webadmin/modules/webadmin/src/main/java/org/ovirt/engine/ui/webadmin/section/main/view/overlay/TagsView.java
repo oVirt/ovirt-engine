@@ -18,10 +18,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -101,48 +98,31 @@ public class TagsView extends AbstractView implements TagsPresenter.ViewDef {
 
     private Button createEditButton(final TagModel model) {
         Button result = new Button(constants.editTag());
-        result.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                tagModelProvider.getSelectionModel().setSelected(model, true);
+        result.addClickHandler(e -> {
+            tagModelProvider.getSelectionModel().setSelected(model, true);
+            Scheduler.get().scheduleDeferred(() -> {
                 tagModelProvider.getModel().executeCommand(tagModelProvider.getModel().getEditCommand());
-            }
-
+            });
         });
         return result;
     }
 
     private Button createRemoveButton(final TagModel model) {
         Button result = new Button(constants.removeTag());
-        result.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                tagModelProvider.getSelectionModel().setSelected(model, true);
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-
-                    @Override
-                    public void execute() {
-                        tagModelProvider.getModel().executeCommand(tagModelProvider.getModel().getRemoveCommand());
-                    }
-                });
-            }
-
+        result.addClickHandler(e -> {
+            tagModelProvider.getSelectionModel().setSelected(model, true);
+            Scheduler.get().scheduleDeferred(() -> {
+                tagModelProvider.getModel().executeCommand(tagModelProvider.getModel().getRemoveCommand());
+            });
         });
         return result;
     }
 
     private Button createAddButton(final TagModel model) {
         Button result = new Button(constants.newTag());
-        result.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                tagModelProvider.getSelectionModel().setSelected(model, true);
-                tagModelProvider.getModel().executeCommand(tagModelProvider.getModel().getNewCommand());
-            }
-
+        result.addClickHandler(e -> {
+            tagModelProvider.getSelectionModel().setSelected(model, true);
+            tagModelProvider.getModel().executeCommand(tagModelProvider.getModel().getNewCommand());
         });
         return result;
     }
