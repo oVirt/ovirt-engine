@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -121,6 +122,14 @@ public class GlusterStorageModel extends PosixStorageModel {
         super.prepareConnectionForEditing(connection);
         getLinkGlusterVolume().setEntity(connection.getGlusterVolumeId() != null);
     }
+
+    @Override
+    public void prepareForEdit(StorageDomain storage) {
+        super.prepareForEdit(storage);
+        boolean isEditable = isEditable(storage);
+        getLinkGlusterVolume().setIsChangeable(isEditable);
+    }
+
 
 
 }
