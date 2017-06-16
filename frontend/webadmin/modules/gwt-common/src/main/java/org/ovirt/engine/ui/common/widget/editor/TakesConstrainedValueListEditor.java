@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.user.client.TakesValue;
@@ -33,11 +34,7 @@ public class TakesConstrainedValueListEditor<T> extends TakesConstrainedValueEdi
     }
 
     private List<List<T>> createListOfLists(Collection<T> items) {
-        List<List<T>> acceptableItems = new ArrayList<>();
-        for (T item: items) {
-            acceptableItems.add(Arrays.asList(item));
-        }
-        return acceptableItems;
+        return items.stream().map(Arrays::asList).collect(Collectors.toList());
     }
 
     public void setListValue(List<T> value) {
