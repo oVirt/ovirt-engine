@@ -41,10 +41,11 @@ public class OAuthCallbackServlet extends HttpServlet {
         if (StringUtils.isEmpty((String) request.getSession(true).getAttribute(WelcomeUtils.TOKEN))) {
             request.getSession(true).setAttribute(WelcomeUtils.TOKEN, token);
         }
-        if (StringUtils.isNotEmpty(request.getParameter(WelcomeUtils.ERROR_CODE)) &&
-                !WelcomeUtils.ERR_OVIRT_CODE_NOT_AUTHENTICATED.equals(request.getParameter(WelcomeUtils.ERROR_CODE))) {
+        if (StringUtils.isNotEmpty(request.getParameter(WelcomeUtils.ERROR)) &&
+                !WelcomeUtils.ERR_OVIRT_CODE_NOT_AUTHENTICATED.equals(request.getParameter(WelcomeUtils.ERROR))) {
+            request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
+                    request.getParameter(WelcomeUtils.ERROR_DESCRIPTION));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, request.getParameter(WelcomeUtils.ERROR));
-            request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, request.getParameter(WelcomeUtils.ERROR_CODE));
         }
         log.debug("Redirecting to {}", engineUri);
         response.sendRedirect(engineUri);
@@ -54,9 +55,10 @@ public class OAuthCallbackServlet extends HttpServlet {
     private String getTokenForAuthCode(HttpServletRequest request, String authCode, String scope, String redirectUri) {
         String token  = null;
         Map<String, Object> tokenMap = SsoOAuthServiceUtils.getToken(WelcomeUtils.AUTHORIZATION_CODE, authCode, scope, redirectUri);
-        if (tokenMap.containsKey(WelcomeUtils.ERROR)) {
+        if (tokenMap.containsKey(WelcomeUtils.ERROR_DESCRIPTION)) {
+            request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
+                    tokenMap.get(WelcomeUtils.ERROR_DESCRIPTION));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, tokenMap.get(WelcomeUtils.ERROR));
-            request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, tokenMap.get(WelcomeUtils.ERROR_CODE));
         } else {
             token = (String) tokenMap.get(WelcomeUtils.JSON_ACCESS_TOKEN);
         }

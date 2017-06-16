@@ -602,8 +602,8 @@ public class SsoUtils {
         }
         log.debug("Exception", ex);
         Map<String, Object> errorData = new HashMap<>();
-        errorData.put(SsoConstants.ERROR_CODE, ex.getCode());
-        errorData.put(SsoConstants.ERROR, ex.getMessage());
+        errorData.put(SsoConstants.ERROR, ex.getCode());
+        errorData.put(SsoConstants.ERROR_DESCRIPTION, ex.getMessage());
         sendJsonData(response, errorData);
     }
 

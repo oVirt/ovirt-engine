@@ -33,7 +33,7 @@ public class OpenIdUserInfoServlet extends HttpServlet {
                 token = getTokenFromHeader(request);
             }
             if (token == null) {
-                throw new OAuthException(SsoConstants.ERROR_CODE,
+                throw new OAuthException(SsoConstants.ERROR,
                         SsoConstants.ERR_CODE_INVALID_REQUEST);
             }
             SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, token);

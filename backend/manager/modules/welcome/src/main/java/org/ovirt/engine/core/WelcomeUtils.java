@@ -42,8 +42,8 @@ public class WelcomeUtils {
     public static final String JSON_ACCESS_TOKEN = "access_token";
     public static final String JSON_USER_ID = "user_id";
 
-    public static final String ERROR_CODE = "error_code";
     public static final String ERROR = "error";
+    public static final String ERROR_DESCRIPTION = "error_description";
     public static final String ERR_CODE_INVALID_GRANT = "invalid_grant";
     public static final String ERR_OVIRT_CODE_NOT_AUTHENTICATED = "not_authenticated";
 

@@ -23,13 +23,13 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String errorDescription = null;
         String error = null;
-        String error_code = null;
         try {
             Map<String, Object> revokeResponse =  SsoOAuthServiceUtils.revoke(
                     (String) request.getSession(true).getAttribute(WelcomeUtils.TOKEN));
+            errorDescription = (String) revokeResponse.get(WelcomeUtils.ERROR_DESCRIPTION);
             error = (String) revokeResponse.get(WelcomeUtils.ERROR);
-            error_code = (String) revokeResponse.get(WelcomeUtils.ERROR_CODE);
             HttpSession session = request.getSession();
             if (session != null) {
                 session.invalidate();
@@ -38,7 +38,7 @@ public class LogoutServlet extends HttpServlet {
             log.error("Unable to logout user: {}", ex.getMessage());
         }
         response.sendRedirect(new URLBuilder(WelcomeUtils.getOauth2CallbackUrl(request))
-                .addParameter(WelcomeUtils.ERROR, StringUtils.defaultIfEmpty(error, ""))
-                .addParameter(WelcomeUtils.ERROR_CODE, StringUtils.defaultIfEmpty(error_code, "")).build());
+                .addParameter(WelcomeUtils.ERROR_DESCRIPTION, StringUtils.defaultIfEmpty(errorDescription, ""))
+                .addParameter(WelcomeUtils.ERROR, StringUtils.defaultIfEmpty(error, "")).build());
     }
 }

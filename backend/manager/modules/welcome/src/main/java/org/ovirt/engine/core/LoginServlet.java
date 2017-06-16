@@ -19,9 +19,10 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> deployedResponse = SsoOAuthServiceUtils.isSsoDeployed();
-        if (deployedResponse.containsKey(WelcomeUtils.ERROR)) {
+        if (deployedResponse.containsKey(WelcomeUtils.ERROR_DESCRIPTION)) {
+            request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
+                    deployedResponse.get(WelcomeUtils.ERROR_DESCRIPTION));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, deployedResponse.get(WelcomeUtils.ERROR));
-            request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, deployedResponse.get(WelcomeUtils.ERROR_CODE));
             response.sendRedirect(EngineLocalConfig.getInstance().getProperty(WelcomeUtils.ENGINE_URI));
         } else {
             response.sendRedirect(

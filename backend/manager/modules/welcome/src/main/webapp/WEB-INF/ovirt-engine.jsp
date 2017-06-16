@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="col-sm-12">
-                    <c:if test="${sessionScope.error != null && sessionScope.error != '' }">
+                    <c:if test="${sessionScope.error_description != null && sessionScope.error_description != '' }">
                         <div class="alert">
                             <span class="pficon-layered">
                                 <span class="pficon pficon-warning-triangle"></span>
@@ -56,8 +56,8 @@
                             </span>
                             ${sessionScope.error}
                         </div>
-                        <c:remove var="error_code" scope="session"/>
-                         <c:remove var="error" scope="session"/>
+                        <c:remove var="error" scope="session"/>
+                        <c:remove var="error_description" scope="session"/>
                     </c:if>
                 </div>
 

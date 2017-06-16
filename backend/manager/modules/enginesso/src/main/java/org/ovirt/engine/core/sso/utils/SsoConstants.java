@@ -89,8 +89,8 @@ public class SsoConstants {
     public static final String JSON_TOKEN_TYPE = "token_type";
     public static final String JSON_USER_ID = "user_id";
 
-    public static final String ERROR_CODE = "error_code";
     public static final String ERROR = "error";
+    public static final String ERROR_DESCRIPTION = "error_description";
     public static final String ERR_CODE_INVALID_GRANT = "invalid_grant";
     public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
     public static final String ERR_CODE_INVALID_REQUEST = "invalid_request";

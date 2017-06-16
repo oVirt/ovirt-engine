@@ -101,15 +101,16 @@ public class WelcomeServlet extends HttpServlet {
         String reauthenticate = (String) request.getSession(true).getAttribute(WelcomeUtils.REAUTHENTICATE);
         if (StringUtils.isEmpty(reauthenticate)) {
             Map<String, Object> deployedResponse = isSsoWebappDeployed();
-            if (deployedResponse.containsKey(WelcomeUtils.ERROR)) {
+            if (deployedResponse.containsKey(WelcomeUtils.ERROR_DESCRIPTION)) {
+                request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
+                        deployedResponse.get(WelcomeUtils.ERROR_DESCRIPTION));
                 request.getSession(true).setAttribute(WelcomeUtils.ERROR, deployedResponse.get(WelcomeUtils.ERROR));
-                request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, deployedResponse.get(WelcomeUtils.ERROR_CODE));
             }
         }
 
         String authCode = (String) request.getSession(true).getAttribute(WelcomeUtils.AUTH_CODE);
         String token = (String) request.getSession(true).getAttribute(WelcomeUtils.TOKEN);
-        String error = (String) request.getSession(true).getAttribute(WelcomeUtils.ERROR);
+        String errorDescription = (String) request.getSession(true).getAttribute(WelcomeUtils.ERROR_DESCRIPTION);
 
         if (StringUtils.isNotEmpty(token) && !isSessionValid(request, token)) {
             request.getSession(true).removeAttribute(WelcomeUtils.TOKEN);
@@ -117,11 +118,12 @@ public class WelcomeServlet extends HttpServlet {
             request.getSession(true).removeAttribute(WelcomeUtils.CAPABILITY_CREDENTIALS_CHANGE);
             token = "";
         }
-        if (authCode == null && StringUtils.isEmpty(error) && StringUtils.isEmpty(reauthenticate)) {
-            if (StringUtils.isNotEmpty(request.getParameter(WelcomeUtils.ERROR_CODE)) &&
-                    !WelcomeUtils.ERR_OVIRT_CODE_NOT_AUTHENTICATED.equals(request.getParameter(WelcomeUtils.ERROR_CODE))) {
+        if (authCode == null && StringUtils.isEmpty(errorDescription) && StringUtils.isEmpty(reauthenticate)) {
+            if (StringUtils.isNotEmpty(request.getParameter(WelcomeUtils.ERROR)) &&
+                    !WelcomeUtils.ERR_OVIRT_CODE_NOT_AUTHENTICATED.equals(request.getParameter(WelcomeUtils.ERROR))) {
+                request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
+                        request.getParameter(WelcomeUtils.ERROR_DESCRIPTION));
                 request.getSession(true).setAttribute(WelcomeUtils.ERROR, request.getParameter(WelcomeUtils.ERROR));
-                request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, request.getParameter(WelcomeUtils.ERROR_CODE));
             }
             String url = WelcomeUtils.getLoginUrl(engineUri, identityScope);
             log.debug("redirecting to {}", url);
@@ -179,9 +181,10 @@ public class WelcomeServlet extends HttpServlet {
 
     public String getCurrentSsoSessionUser(HttpServletRequest request, Map<String, Object> userInfoMap) {
         String username  = null;
-        if (userInfoMap.containsKey(WelcomeUtils.ERROR)) {
+        if (userInfoMap.containsKey(WelcomeUtils.ERROR_DESCRIPTION)) {
+            request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
+                    userInfoMap.get(WelcomeUtils.ERROR_DESCRIPTION));
             request.getSession(true).setAttribute(WelcomeUtils.ERROR, userInfoMap.get(WelcomeUtils.ERROR));
-            request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, userInfoMap.get(WelcomeUtils.ERROR_CODE));
         } else {
             username = (String) userInfoMap.get(WelcomeUtils.JSON_USER_ID);
             log.debug("Got current user {} for session", username);
@@ -190,7 +193,8 @@ public class WelcomeServlet extends HttpServlet {
     }
 
     public boolean getChangePasswordEnabled(Map<String, Object> userInfoMap) {
-        return (boolean) ((Map<String, Object>) userInfoMap.get("ovirt")).get(WelcomeUtils.CAPABILITY_CREDENTIALS_CHANGE);
+        return (boolean) ((Map<String, Object>) userInfoMap.get("ovirt"))
+                .get(WelcomeUtils.CAPABILITY_CREDENTIALS_CHANGE);
     }
 
     public Map<String, Object> isSsoWebappDeployed() {
@@ -201,12 +205,13 @@ public class WelcomeServlet extends HttpServlet {
         boolean isValid = false;
         if (StringUtils.isNotEmpty(token)) {
             Map<String, Object> response = SsoOAuthServiceUtils.getTokenInfo(token, "ovirt-ext=token-info:validate");
-            isValid = !response.containsKey(WelcomeUtils.ERROR);
-            if (response.containsKey(WelcomeUtils.ERROR) &&
-                    !WelcomeUtils.ERR_CODE_INVALID_GRANT.equals(response.get(WelcomeUtils.ERROR_CODE))) {
+            isValid = !response.containsKey(WelcomeUtils.ERROR_DESCRIPTION);
+            if (response.containsKey(WelcomeUtils.ERROR_DESCRIPTION) &&
+                    !WelcomeUtils.ERR_CODE_INVALID_GRANT.equals(response.get(WelcomeUtils.ERROR))) {
+                request.getSession(true).setAttribute(WelcomeUtils.ERROR_DESCRIPTION,
+                        response.get(WelcomeUtils.ERROR_DESCRIPTION));
                 request.getSession(true).setAttribute(WelcomeUtils.ERROR, response.get(WelcomeUtils.ERROR));
-                request.getSession(true).setAttribute(WelcomeUtils.ERROR_CODE, response.get(WelcomeUtils.ERROR_CODE));
-                log.error("Session not valid session id = " + token, response.get(WelcomeUtils.ERROR));
+                log.error("Session not valid session id = " + token, response.get(WelcomeUtils.ERROR_DESCRIPTION));
             }
         }
         return isValid;
