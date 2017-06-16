@@ -60,7 +60,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         payload.put("end_session_endpoint", String.format("%s/oauth/revoke", ssoUrl));
         payload.put("issuer", String.format("%s/openid", ssoUrl));
         payload.put("jwks_uri", String.format("%s/openid/jwks", ssoUrl));
-        payload.put("token_endpoint", String.format("%s/oauth/token", ssoUrl));
+        payload.put("token_endpoint", String.format("%s/openid/token", ssoUrl));
         payload.put("userinfo_endpoint", String.format("%s/openid/userinfo", ssoUrl));
         payload.putAll(staticConfig);
         return payload;

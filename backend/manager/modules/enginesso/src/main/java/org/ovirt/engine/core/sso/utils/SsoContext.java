@@ -186,6 +186,23 @@ public class SsoContext implements Serializable{
         return token;
     }
 
+    public String getTokenForOpenIdAuthCode(String authCode) {
+        String token = null;
+        for (Map.Entry<String, SsoSession> entry : ssoSessions.entrySet()) {
+            if (entry.getValue().getAuthorizationCode().equals(authCode)) {
+                if (entry.getValue().isTokenIssued()) {
+                    entry.getValue().setActive(false);
+                } else {
+                    token = entry.getKey();
+                    // the auth code should be used to obtain token only once
+                    entry.getValue().setTokenIssued(true);
+                }
+                break;
+            }
+        }
+        return token;
+    }
+
     public Map<String, SsoSession> getSsoSessions() {
         return ssoSessions;
     }

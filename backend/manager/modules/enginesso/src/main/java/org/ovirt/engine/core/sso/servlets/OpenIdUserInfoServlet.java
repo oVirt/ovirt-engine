@@ -37,6 +37,10 @@ public class OpenIdUserInfoServlet extends HttpServlet {
                         SsoConstants.ERR_CODE_INVALID_REQUEST);
             }
             SsoSession ssoSession = SsoUtils.getSsoSessionFromRequest(request, token);
+            if (!ssoSession.isActive()) {
+                throw new OAuthException(SsoConstants.ERR_CODE_INVALID_TOKEN,
+                        SsoConstants.ERR_SESSION_EXPIRED_MSG);
+            }
             SsoUtils.sendJsonData(response, buildResponse(request, ssoSession), "application/jwt");
         } catch(OAuthException ex) {
             SsoUtils.sendJsonDataWithMessage(response, ex);

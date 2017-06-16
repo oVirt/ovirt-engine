@@ -12,7 +12,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 
-public class SsoSession implements Serializable {
+public class SsoSession implements Serializable, Cloneable {
     private static final long serialVersionUID = 6904401523209679500L;
 
     public enum Status { unauthenticated, inprogress, authenticated}
@@ -49,6 +49,7 @@ public class SsoSession implements Serializable {
     private String openIdNonce;
     private String openIdPrompt;
     private Date authTime;
+    private boolean tokenIssued;
 
     public SsoSession() {
         this(null);
@@ -65,6 +66,14 @@ public class SsoSession implements Serializable {
 
     public void setAuthorizationCode(String authorizationCode) {
         this.authorizationCode = authorizationCode;
+    }
+
+    public boolean isTokenIssued() {
+        return this.tokenIssued;
+    }
+
+    public void setTokenIssued(boolean tokenIssued) {
+        this.tokenIssued = tokenIssued;
     }
 
     public long getTokenLastAccess() {
@@ -326,5 +335,14 @@ public class SsoSession implements Serializable {
         redirectUri = null;
         authStack = null;
         state = null;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        SsoSession ssoSession = (SsoSession) super.clone();
+        ssoSession.setAuthorizationCode(null);
+        ssoSession.setAccessToken(null);
+        ssoSession.setTokenIssued(false);
+        return ssoSession;
     }
 }

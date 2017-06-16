@@ -97,8 +97,9 @@ public class SsoUtils {
             if (StringUtils.isNotEmpty(state)) {
                 redirectUrl.addParameter("state", state);
             }
-            response.sendRedirect(redirectUrl.build());
-            log.debug("Redirecting back to module: {}", redirectUrl);
+            String url = redirectUrl.build();
+            response.sendRedirect(url);
+            log.debug("Redirecting back to module: {}", url);
         } catch (Exception ex) {
             log.error("Error redirecting back to module: {}", ex.getMessage());
             log.debug("Exception", ex);
@@ -549,8 +550,8 @@ public class SsoUtils {
                     }
                 }
                 if (!isValidUri) {
-                    throw new OAuthException(SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT,
-                            SsoConstants.ERR_CODE_UNAUTHORIZED_CLIENT_MSG);
+                    throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                            SsoConstants.ERR_REDIRECT_URI_NOTREG_MSG);
                 }
             }
         } catch (OAuthException ex) {
@@ -601,6 +602,7 @@ public class SsoUtils {
             log.error("OAuthException {}: {}", ex.getCode(), ex.getMessage());
         }
         log.debug("Exception", ex);
+        response.setStatus(HttpStatus.SC_BAD_REQUEST);
         Map<String, Object> errorData = new HashMap<>();
         errorData.put(SsoConstants.ERROR, ex.getCode());
         errorData.put(SsoConstants.ERROR_DESCRIPTION, ex.getMessage());

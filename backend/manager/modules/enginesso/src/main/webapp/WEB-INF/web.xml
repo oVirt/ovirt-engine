@@ -125,6 +125,16 @@
         <servlet-class>org.ovirt.engine.core.sso.servlets.OpenIdUserInfoServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>OpenIdTokenServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OpenIdTokenServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OpenIdTokenServlet</servlet-name>
+        <url-pattern>/openid/token</url-pattern>
+    </servlet-mapping>
+
     <servlet-mapping>
         <servlet-name>OpenIdUserInfoServlet</servlet-name>
         <url-pattern>/openid/userinfo</url-pattern>

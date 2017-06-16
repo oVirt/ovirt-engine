@@ -39,30 +39,28 @@ public class OAuthAuthorizeServlet extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            log.debug("Entered AuthorizeServlet QueryString: {}, Parameters : {}",
-                    request.getQueryString(),
-                    SsoUtils.getRequestParameters(request));
-            String responseType = SsoUtils.getRequestParameter(request, SsoConstants.JSON_RESPONSE_TYPE);
-
-            if (!responseType.equals("code")) {
-                throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
-                        String.format(
-                                ssoContext.getLocalizationUtils().localize(
-                                        SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
-                                        (Locale) request.getAttribute(SsoConstants.LOCALE)),
-                                responseType,
-                                SsoConstants.JSON_RESPONSE_TYPE));
-            }
-            login(request, response, buildSsoSession(request));
+            handleRequest(request, response);
         } catch (Exception ex) {
-            SsoSession ssoSession = SsoUtils.getSsoSession(request, true);
-            String scope = SsoUtils.getScopeRequestParameter(request, "");
-            if (ssoSession.isOpenIdScope() ||
-                    SsoUtils.scopeAsList(scope).contains(SsoConstants.OPENID_SCOPE)) {
-                ssoSession.setRedirectUri(request.getParameter(SsoConstants.HTTP_PARAM_REDIRECT_URI));
-            }
             SsoUtils.redirectToErrorPage(request, response, ex);
         }
+    }
+
+    protected void handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        log.debug("Entered AuthorizeServlet QueryString: {}, Parameters : {}",
+                request.getQueryString(),
+                SsoUtils.getRequestParameters(request));
+        String responseType = SsoUtils.getRequestParameter(request, SsoConstants.JSON_RESPONSE_TYPE);
+
+        if (!responseType.equals("code")) {
+            throw new OAuthException(SsoConstants.ERR_CODE_INVALID_REQUEST,
+                    String.format(
+                            ssoContext.getLocalizationUtils().localize(
+                                    SsoConstants.APP_ERROR_UNSUPPORTED_PARAMETER_IN_REQUEST,
+                                    (Locale) request.getAttribute(SsoConstants.LOCALE)),
+                            responseType,
+                            SsoConstants.JSON_RESPONSE_TYPE));
+        }
+        login(request, response, buildSsoSession(request));
     }
 
     protected SsoSession buildSsoSession(HttpServletRequest request)
@@ -102,7 +100,7 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         SsoUtils.validateClientRequest(request, clientId, null, scope, redirectUri);
     }
 
-    private void login(
+    protected void login(
             HttpServletRequest request,
             HttpServletResponse response,
             SsoSession ssoSession) throws Exception {

@@ -103,6 +103,7 @@ public class SsoConstants {
     public static final String ERR_CODE_SERVER_ERROR = "server_error";
     public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE_MSG = "The authorization grant type is not supported " +
             "by the authorization server.";
+    public static final String ERR_CODE_INVALID_CODE_MSG = "Code not valid";
     public static final String ERR_CODE_INVALID_REQUEST_MSG = "Missing parameter: '%s'";
     public static final String ERR_CODE_NOT_AUTHENTICATED_MSG = "The user is not authenticated.";
     public static final String ERR_CODE_UNAUTHORIZED_CLIENT_MSG = "The client is not authorized to request an " +
@@ -111,6 +112,8 @@ public class SsoConstants {
             "request.";
     public static final String ERR_CODE_INVALID_SCOPE_MSG = "The requested scope '%s' is invalid, unknown, " +
             "malformed, or exceeds the scope granted by the resource owner.";
+    public static final String ERR_REDIRECT_URI_NOTREG_MSG = "The redirection URI for client is not registered";
+    public static final String ERR_SESSION_EXPIRED_MSG = "Session expired";
 
     public static final String AVAILABLE_NAMESPACES_QUERY = "available-namespaces";
     public static final String DOMAIN_LIST_QUERY = "domain-list";
