@@ -134,7 +134,7 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
     }
 
     private void updateActionAvailability() {
-        List selectedItems = getSelectedItems();
+        List<T> selectedItems = getSelectedItems();
 
         getEditCommand().setIsExecutionAllowed(selectedItems != null && selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems != null && selectedItems.size() > 0);

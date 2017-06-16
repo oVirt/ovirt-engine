@@ -15,7 +15,7 @@ public class NewStorageQosModel extends QosModel<StorageQos, StorageQosParameter
     }
 
     @Override
-    protected ActionType getVdcAction() {
+    protected ActionType getAction() {
         return ActionType.AddStorageQos;
     }
 

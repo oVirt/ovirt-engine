@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -72,7 +74,10 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
     public T flush() {
         getQos().setName(getName().getEntity());
         getQos().setDescription(getDescription().getEntity());
-        getQos().setStoragePoolId(getDataCenters().getSelectedItem().getId());
+        List<StoragePool> selectedDataCenters = getDataCenters().getSelectedObjects();
+        if (!selectedDataCenters.isEmpty()) {
+            getQos().setStoragePoolId(selectedDataCenters.get(0).getId());
+        }
         getQosParametersModel().flush(getQos());
         return getQos();
     }
@@ -80,7 +85,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
     protected void executeSave() {
         final QosParametersBase<T> parameters = getParameters();
         parameters.setQos(getQos());
-        Frontend.getInstance().runAction(getVdcAction(), parameters, result -> {
+        Frontend.getInstance().runAction(getAction(), parameters, result -> {
             VdcReturnValueBase retVal = result.getReturnValue();
             boolean succeeded = false;
             if (retVal != null && retVal.getSucceeded()) {
@@ -91,7 +96,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
         });
     }
 
-    protected abstract ActionType getVdcAction();
+    protected abstract ActionType getAction();
 
     protected abstract QosParametersBase<T> getParameters();
 

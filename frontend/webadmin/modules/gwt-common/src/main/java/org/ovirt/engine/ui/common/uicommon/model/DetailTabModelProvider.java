@@ -34,6 +34,11 @@ public class DetailTabModelProvider<M extends ListWithDetailsModel, D extends En
     }
 
     @Override
+    public void activateDetailModel() {
+        getMainModel().addActiveDetailModel(getModel());
+    }
+
+    @Override
     public void onSubTabDeselected() {
         getMainModel().setActiveDetailModel(null);
     }

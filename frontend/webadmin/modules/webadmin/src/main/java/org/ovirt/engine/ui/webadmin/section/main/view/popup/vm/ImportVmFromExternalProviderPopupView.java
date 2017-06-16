@@ -447,6 +447,10 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
                     @Override
                     public void onSubTabDeselected() {
                     }
+
+                    @Override
+                    public void activateDetailModel() {
+                    }
                 };
         generalView = new ImportVmGeneralSubTabView(modelProvider);
         generalPanel.add(generalView);

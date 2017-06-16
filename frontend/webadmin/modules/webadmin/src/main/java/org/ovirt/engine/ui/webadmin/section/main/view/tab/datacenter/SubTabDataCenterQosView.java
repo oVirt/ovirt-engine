@@ -119,7 +119,7 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
             }
         };
         throughputColumn.makeSortable();
-        getTable().addColumn(throughputColumn, constants.storageQosThroughputTotal(), "105px"); //$NON-NLS-1$
+        getTable().addColumn(throughputColumn, constants.storageQosThroughputTotal(), "155px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageQos> readThroughputColumn = new AbstractTextColumn<StorageQos>() {
             @Override
@@ -129,7 +129,7 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
             }
         };
         readThroughputColumn.makeSortable();
-        getTable().addColumn(readThroughputColumn, constants.storageQosThroughputRead(), "105px"); //$NON-NLS-1$
+        getTable().addColumn(readThroughputColumn, constants.storageQosThroughputRead(), "155px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageQos> writeThroughputColumn = new AbstractTextColumn<StorageQos>() {
             @Override
@@ -139,7 +139,7 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
             }
         };
         writeThroughputColumn.makeSortable();
-        getTable().addColumn(writeThroughputColumn, constants.storageQosThroughputWrite(), "105px"); //$NON-NLS-1$
+        getTable().addColumn(writeThroughputColumn, constants.storageQosThroughputWrite(), "155px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageQos> iopsColumn = new AbstractTextColumn<StorageQos>() {
             @Override
@@ -199,9 +199,9 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
     @Override
     public void setMainTabSelectedItem(StoragePool selectedItem) {
         super.setMainTabSelectedItem(selectedItem);
-        getModelProvider().onSubTabSelected();
-        vmNetworkModelProvider.onSubTabSelected();
-        hostNetworkModelProvider.onSubTabSelected();
-        cpuModelProvider.onSubTabSelected();
+        cpuModelProvider.activateDetailModel();
+        vmNetworkModelProvider.activateDetailModel();
+        hostNetworkModelProvider.activateDetailModel();
+        getModelProvider().activateDetailModel();
     }
 }

@@ -47,4 +47,9 @@ public class UserPortalDetailModelProvider<M extends ListWithDetailsModel, D ext
     public void setParentModelProvider(Provider<M> parentModelProvider) {
         this.parentModelProvider = parentModelProvider;
     }
+
+    @Override
+    public void activateDetailModel() {
+        onSubTabSelected();
+    }
 }

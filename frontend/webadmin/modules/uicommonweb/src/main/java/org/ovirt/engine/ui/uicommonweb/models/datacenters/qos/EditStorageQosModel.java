@@ -15,7 +15,7 @@ public class EditStorageQosModel extends QosModel<StorageQos, StorageQosParamete
     }
 
     @Override
-    protected ActionType getVdcAction() {
+    protected ActionType getAction() {
         return ActionType.UpdateStorageQos;
     }
 

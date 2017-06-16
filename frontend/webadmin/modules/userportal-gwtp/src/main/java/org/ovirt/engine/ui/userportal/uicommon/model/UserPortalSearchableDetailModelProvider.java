@@ -52,4 +52,9 @@ public class UserPortalSearchableDetailModelProvider<T, M extends ListWithDetail
         this.parentModelProvider = parentModelProvider;
     }
 
+    @Override
+    public void activateDetailModel() {
+        getParentModel().addActiveDetailModel(getModel());
+    }
+
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -13,6 +14,9 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
  */
 public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<E, T> {
 
+    private static final String ACTIVE_DETAIL_MODELS = "ActiveDetailModels"; //$NON-NLS-1$
+    private static final String DETAIL_MODELS = "DetailModels"; // $NON-NLS-1$
+
     private List<HasEntity<D>> detailModels;
 
     public List<HasEntity<D>> getDetailModels() {
@@ -22,35 +26,49 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
     public void setDetailModels(List<HasEntity<D>> value) {
         if (detailModels != value) {
             detailModels = value;
-            onPropertyChanged(new PropertyChangedEventArgs("DetailModels")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(DETAIL_MODELS));
         }
     }
 
-    private HasEntity<D> activeDetailModel;
+    private List<HasEntity<D>> activeDetailModels = new ArrayList<>();
 
     public HasEntity<D> getActiveDetailModel() {
-        return activeDetailModel;
+        return activeDetailModels.isEmpty() ? null : activeDetailModels.get(0);
     }
 
     public void setActiveDetailModel(HasEntity<D> value) {
-        if (activeDetailModel != value) {
-            activeDetailModelChanging(value, getActiveDetailModel());
-            activeDetailModel = value;
+        if (!activeDetailModels.contains(value)) {
+            activeDetailModelChanging(value, true);
+            activeDetailModels.clear();
+            activeDetailModels.add(value);
             activeDetailModelChanged();
-            onPropertyChanged(new PropertyChangedEventArgs("ActiveDetailModel")); //$NON-NLS-1$
+            onPropertyChanged(new PropertyChangedEventArgs(ACTIVE_DETAIL_MODELS));
+        }
+    }
+
+    public void addActiveDetailModel(HasEntity<D> value) {
+        if (!activeDetailModels.contains(value)) {
+            activeDetailModelChanging(value, false);
+            activeDetailModels.add(value);
+            activeDetailModelChanged();
+            onPropertyChanged(new PropertyChangedEventArgs(ACTIVE_DETAIL_MODELS));
         }
     }
 
     protected void updateDetailsAvailability() {
     }
 
-    private void activeDetailModelChanging(HasEntity<D> newValue, HasEntity<D> oldValue) {
-        // Make sure we had set an entity property of details model.
-        if (oldValue != null) {
-            oldValue.setEntity(null);
+    private void activeDetailModelChanging(HasEntity<D> newValue, boolean stopRefresh) {
+        if (stopRefresh) {
+            for (HasEntity<D> oldValue : activeDetailModels) {
+                // Make sure we had set an entity property of details model.
+                if (oldValue != null) {
+                    oldValue.setEntity(null);
 
-            if (oldValue instanceof SearchableListModel) {
-                ((SearchableListModel) oldValue).stopRefresh();
+                    if (oldValue instanceof SearchableListModel) {
+                        ((SearchableListModel) oldValue).stopRefresh();
+                    }
+                }
             }
         }
 
@@ -71,7 +89,6 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
             if (getDetailModels() != null) {
                 if ((getActiveDetailModel() != null && !getActiveDetailModel().getIsAvailable())
                         || getActiveDetailModel() == null) {
-                    // ActiveDetailModel = DetailModels.FirstOrDefault(AvailabilityDecorator.GetIsAvailable);
                     HasEntity<D> model = null;
                     for (HasEntity<D> item : getDetailModels()) {
                         if (item.getIsAvailable()) {
@@ -82,11 +99,6 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
                     setActiveDetailModel(model);
                 }
             }
-
-            // if (DetailModels != null && ActiveDetailModel == null)
-            // {
-            // ActiveDetailModel = DetailModels.FirstOrDefault();
-            // }
         }
         else {
             // If selected item become null, make sure we stop all activity on an active detail model.

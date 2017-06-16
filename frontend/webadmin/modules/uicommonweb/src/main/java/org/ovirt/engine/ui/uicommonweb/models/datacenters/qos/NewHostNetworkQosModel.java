@@ -15,7 +15,7 @@ public class NewHostNetworkQosModel extends QosModel<HostNetworkQos, HostNetwork
     }
 
     @Override
-    protected ActionType getVdcAction() {
+    protected ActionType getAction() {
         return ActionType.AddHostNetworkQos;
     }
 

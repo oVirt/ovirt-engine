@@ -15,7 +15,7 @@ public class EditCpuQosModel extends QosModel<CpuQos, CpuQosParametersModel> {
     }
 
     @Override
-    protected ActionType getVdcAction() {
+    protected ActionType getAction() {
         return ActionType.UpdateCpuQos;
     }
 

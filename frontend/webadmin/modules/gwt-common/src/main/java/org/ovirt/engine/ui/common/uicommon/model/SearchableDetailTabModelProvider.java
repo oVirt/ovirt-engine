@@ -42,6 +42,10 @@ public class SearchableDetailTabModelProvider<T, M extends ListWithDetailsModel,
         getMainModel().setActiveDetailModel(null);
     }
 
+    public void activateDetailModel() {
+        getMainModel().addActiveDetailModel(getModel());
+    }
+
     @Inject
     public void setMainModelProvider(Provider<M> mainModelProvider) {
         this.mainModelProvider = mainModelProvider;

@@ -345,7 +345,8 @@ public class ListModel<T> extends Model {
     private final OrderedMultiSelectionModel<T> multiSelectionModel;
 
     public boolean isSingleSelectionOnly() {
-        return false;
+        // Most standard list models will have a single selection.
+        return true;
     }
 
     public SelectionModel<T> getSelectionModel() {
@@ -358,7 +359,12 @@ public class ListModel<T> extends Model {
 
     public List<T> getSelectedObjects() {
         if (isSingleSelectionOnly()) {
-            return Collections.singletonList(singleSelectionModel.getSelectedObject());
+            T selectedItem = singleSelectionModel.getSelectedObject();
+            if (selectedItem == null) {
+                return Collections.EMPTY_LIST;
+            } else {
+                return Collections.singletonList(selectedItem);
+            }
         } else {
             return multiSelectionModel.getSelectedList();
         }

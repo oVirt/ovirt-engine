@@ -66,6 +66,10 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplat
                 @Override
                 public void onSubTabDeselected() {
                 }
+
+                @Override
+                public void activateDetailModel() {
+                }
             };
         generalView = new ImportTemplateGeneralSubTabView(modelProvider);
     }

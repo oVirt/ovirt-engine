@@ -25,4 +25,9 @@ public interface DetailModelProvider<M extends ListWithDetailsModel, D extends H
      */
     void onSubTabDeselected();
 
+    /**
+     * Activate the detail model provided by this model provider. This is useful for views that are bound to multiple
+     * detail models.
+     */
+    void activateDetailModel();
 }

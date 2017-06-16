@@ -76,6 +76,10 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM, RegisterVmD
                 @Override
                 public void onSubTabDeselected() {
                 }
+
+                @Override
+                public void activateDetailModel() {
+                }
             };
         generalView = new ImportVmGeneralSubTabView(modelProvider);
     }

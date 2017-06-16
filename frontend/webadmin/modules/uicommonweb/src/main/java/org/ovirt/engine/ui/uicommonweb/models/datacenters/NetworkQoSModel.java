@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -73,7 +75,10 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
     public NetworkQoS flush() {
         super.flush();
         networkQoS.setName(getName().getEntity());
-        networkQoS.setStoragePoolId(getDataCenters().getSelectedItem().getId());
+        List<StoragePool> selectedDataCenters = getDataCenters().getSelectedObjects();
+        if (!selectedDataCenters.isEmpty()) {
+            networkQoS.setStoragePoolId(selectedDataCenters.get(0).getId());
+        }
         return networkQoS;
     }
 

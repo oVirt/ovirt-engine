@@ -150,6 +150,10 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
                     @Override
                     public void onSubTabDeselected() {
                     }
+
+                    @Override
+                    public void activateDetailModel() {
+                    }
                 };
         generalView = new ImportTemplateGeneralSubTabView(modelProvider);
         generalPanel.add(generalView);

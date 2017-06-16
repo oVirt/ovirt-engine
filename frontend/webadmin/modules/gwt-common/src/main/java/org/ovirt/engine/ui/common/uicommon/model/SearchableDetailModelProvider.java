@@ -13,5 +13,4 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
  * @param <D> Detail model type (extends SearchableListModel).
  */
 public interface SearchableDetailModelProvider<T, M extends ListWithDetailsModel, D extends SearchableListModel> extends DetailModelProvider<M, D>, SearchableTableModelProvider<T, D> {
-
 }

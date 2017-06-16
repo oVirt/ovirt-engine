@@ -122,5 +122,4 @@ public class VmNetworkQosListModelTable extends AbstractModelBoundTableWidget<Ne
             }
         }));
     }
-
 }
