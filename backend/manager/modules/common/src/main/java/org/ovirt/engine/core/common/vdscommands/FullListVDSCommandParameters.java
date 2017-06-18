@@ -10,9 +10,9 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class FullListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
 
-    private List<String> vmIds;
+    private List<Guid> vmIds;
 
-    public FullListVDSCommandParameters(Guid vdsId, List<String> vmIds) {
+    public FullListVDSCommandParameters(Guid vdsId, List<Guid> vmIds) {
         super(vdsId);
         this.vmIds = vmIds;
     }
@@ -20,7 +20,7 @@ public class FullListVDSCommandParameters extends VdsIdVDSCommandParametersBase 
     public FullListVDSCommandParameters() {
     }
 
-    public List<String> getVmIds() {
+    public List<Guid> getVmIds() {
         return vmIds;
     }
 

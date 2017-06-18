@@ -452,9 +452,7 @@ public class VmDevicesMonitoring {
 
         VDSReturnValue vdsReturnValue = runVdsCommand(
                 VDSCommandType.FullList,
-                new FullListVDSCommandParameters(
-                        vdsId,
-                        vmIds.stream().map(Guid::toString).collect(Collectors.toList())));
+                new FullListVDSCommandParameters(vdsId, vmIds));
 
         return vdsReturnValue.getSucceeded() ?
             (Map<String, Object>[]) vdsReturnValue.getReturnValue()

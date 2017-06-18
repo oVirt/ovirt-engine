@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -163,11 +162,10 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
      */
     @SuppressWarnings("unchecked")
     protected Map<String, Object>[] getVmsInfo() {
-        List<String> vmsToUpdate = getParameters().getVmIds().stream().map(Guid::toString).collect(Collectors.toList());
         Map<String, Object>[] result = new Map[0];
         VDSReturnValue vdsReturnValue = runVdsCommand(
                 VDSCommandType.FullList,
-                new FullListVDSCommandParameters(getVdsId(), vmsToUpdate));
+                new FullListVDSCommandParameters(getVdsId(), getParameters().getVmIds()));
         if (vdsReturnValue.getSucceeded()) {
             result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
         }

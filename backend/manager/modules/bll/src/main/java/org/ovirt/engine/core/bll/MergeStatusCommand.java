@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -111,11 +110,11 @@ public class MergeStatusCommand<T extends MergeParameters>
     }
 
     private Set<Guid> getVolumeChain() {
-        List<String> vmIds = new ArrayList<>();
-        vmIds.add(getParameters().getVmId().toString());
         Map[] vms = (Map[]) runVdsCommand(
                 VDSCommandType.FullList,
-                new FullListVDSCommandParameters(getParameters().getVdsId(), vmIds))
+                new FullListVDSCommandParameters(
+                        getParameters().getVdsId(),
+                        Collections.singletonList(getParameters().getVmId())))
                 .getReturnValue();
 
         if (vms == null || vms.length == 0) {
