@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -312,8 +313,8 @@ public class VmDevicesMonitoring {
                 new DevicesStatus(pair.getSecond(), fetchTime)));
     }
 
-    ResourceManager getResourceManager() {
-        return resourceManager;
+    <P extends VDSParametersBase> VDSReturnValue runVdsCommand(VDSCommandType commandType, P parameters) {
+        return resourceManager.runVdsCommand(commandType, parameters);
     }
 
     VmDeviceDao getVmDeviceDao() {
@@ -444,22 +445,20 @@ public class VmDevicesMonitoring {
         removeLock(vmId);
     }
 
-    private Map<String, Object>[] getVmInfo(Guid vdsId, List<Guid> vms) {
-        if (vdsId == null || vms.isEmpty()) {
+    private Map<String, Object>[] getVmInfo(Guid vdsId, List<Guid> vmIds) {
+        if (vdsId == null || vmIds.isEmpty()) {
             return null;
         }
 
-        Map<String, Object>[] result = new Map[0];
+        VDSReturnValue vdsReturnValue = runVdsCommand(
+                VDSCommandType.FullList,
+                new FullListVDSCommandParameters(
+                        vdsId,
+                        vmIds.stream().map(Guid::toString).collect(Collectors.toList())));
 
-        List<String> vmIds = vms.stream().map(Guid::toString).collect(Collectors.toList());
-        VDSReturnValue vdsReturnValue =
-                getResourceManager().runVdsCommand(VDSCommandType.FullList,
-                        new FullListVDSCommandParameters(vdsId, vmIds));
-        if (vdsReturnValue.getSucceeded()) {
-            result = (Map<String, Object>[]) vdsReturnValue.getReturnValue();
-        }
-
-        return result;
+        return vdsReturnValue.getSucceeded() ?
+            (Map<String, Object>[]) vdsReturnValue.getReturnValue()
+            : new Map[0];
     }
 
     /**
