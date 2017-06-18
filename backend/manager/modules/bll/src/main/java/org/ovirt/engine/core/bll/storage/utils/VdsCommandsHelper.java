@@ -121,6 +121,10 @@ public class VdsCommandsHelper {
         }
     }
 
+    public static Guid getHostForExecution(Guid poolId) {
+        return getHostForExecution(poolId, Collections.emptyList());
+    }
+
     public static Guid getHostForExecution(Guid poolId, Collection<Guid> hostsToFilter) {
         List<Guid> hostsForExecution = getVdsDao()
                 .getAllForStoragePoolAndStatus(poolId, VDSStatus.Up).stream()
