@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
@@ -70,7 +72,12 @@ public class SyncStorageDomainsLunsCommand<T extends SyncLunsParameters> extends
     protected boolean runSyncLunsInfoForBlockStorageDomain(Guid storageDomainId,
             List<LUNs> storageDomainLuns) {
         return runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain,
-                new SyncLunsInfoForBlockStorageDomainParameters(storageDomainId, storageDomainLuns)).getSucceeded();
+                new SyncLunsInfoForBlockStorageDomainParameters(
+                        storageDomainId,
+                        VdsCommandsHelper.getHostForExecution(
+                                getParameters().getStoragePoolId(), Collections.emptyList()),
+                        storageDomainLuns))
+                .getSucceeded();
     }
 
     /**

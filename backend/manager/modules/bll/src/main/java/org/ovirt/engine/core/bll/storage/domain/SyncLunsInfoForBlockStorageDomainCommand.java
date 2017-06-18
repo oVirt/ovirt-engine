@@ -17,7 +17,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
-import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
@@ -57,6 +57,17 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
     }
 
     @Override
+    protected boolean validate() {
+        HostValidator hostValidator = getHostValidator();
+        return validate(hostValidator.hostExists()) &&
+                validate(hostValidator.isUp());
+    }
+
+    protected HostValidator getHostValidator() {
+        return HostValidator.createInstance(getVds());
+    }
+
+    @Override
     protected void executeCommand() {
         final List<LUNs> lunsFromVgInfo = getVgInfo();
         final List<LUNs> lunsFromDb = lunDao.getAllForVolumeGroup(getStorageDomain().getStorage());
@@ -84,10 +95,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
         }
         GetVGInfoVDSCommandParameters params = new GetVGInfoVDSCommandParameters(getParameters().getVdsId(),
                 getStorageDomain().getStorage());
-        if (getParameters().getVdsId() == null) {
-            return (List<LUNs>) VdsCommandsHelper.runVdsCommandWithoutFailover(
-                    VDSCommandType.GetVGInfo, params, getStoragePoolId(), null).getReturnValue();
-        }
         return (List<LUNs>) runVdsCommand(VDSCommandType.GetVGInfo, params).getReturnValue();
     }
 
@@ -118,16 +125,6 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
         // will change its metadata devices - therefore when syncing the luns info we refresh the metadata devices
         // information as well.
 
-        // Note: the refresh is currently performed only when the vds id is passed in the parameters as
-        // BlockStorageDomainHelper.fillMetadataDevicesInfo() doesn't support randomizing a host for the execution.
-        // Currently all the flows the needs that functionality do pass the vds id, while the command should obviously
-        // not be aware to the parameters passed by it's callers -  as this patch is intended to be backported
-        // to the 4.1 branch the change here is minimal - skips the execution if no vds id was passed. Once
-        // fillMetadataDevicesInfo() will support randomizing a host that may be changed.
-        if (Guid.isNullOrEmpty(getParameters().getVdsId())) {
-            log.info("vds id wasn't passed to the command, skipping metadata devices refresh");
-            return;
-        }
         String oldVgMetadataDevice = getStorageDomain().getVgMetadataDevice();
         String oldFirstMetadataDevice = getStorageDomain().getFirstMetadataDevice();
         blockStorageDomainHelper.fillMetadataDevicesInfo(getStorageDomain().getStorageStaticData(),
