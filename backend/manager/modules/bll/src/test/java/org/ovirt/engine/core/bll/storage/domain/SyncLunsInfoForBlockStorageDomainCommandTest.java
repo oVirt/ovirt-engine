@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll.storage.domain;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
+import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateSuccess;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,12 +16,16 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.domain.SyncLunsInfoForBlockStorageDomainCommand.LunHandler;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTest {
@@ -28,13 +36,39 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     @InjectMocks
     private SyncLunsInfoForBlockStorageDomainCommand<SyncLunsInfoForBlockStorageDomainParameters> command =
             new SyncLunsInfoForBlockStorageDomainCommand<>(parameters, null);
+
+    @Mock
+    private HostValidator hostValidator;
+
     private LUNs lunFromVg;
     private LUNs lunFromDb;
 
     @Before
     public void setUp() {
+        doReturn(hostValidator).when(command).getHostValidator();
         lunFromVg = new LUNs();
         lunFromDb = new LUNs();
+    }
+
+    @Test
+    public void validationSucceeds() {
+        when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
+        when(hostValidator.isUp()).thenReturn(ValidationResult.VALID);
+        runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void validateInvalidHost() {
+        when(hostValidator.hostExists()).thenReturn(new ValidationResult(EngineMessage.VDS_INVALID_SERVER_ID));
+        runAndAssertValidateFailure(command, EngineMessage.VDS_INVALID_SERVER_ID);
+    }
+
+    @Test
+    public void validateHostIsNotUp() {
+        when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
+        when(hostValidator.isUp())
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL));
+        runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
     }
 
     @Test
@@ -140,8 +174,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
 
     private SyncLunsInfoForBlockStorageDomainParameters createParameters() {
         SyncLunsInfoForBlockStorageDomainParameters params =
-                new SyncLunsInfoForBlockStorageDomainParameters(Guid.newGuid());
-        params.setVdsId(Guid.newGuid());
+                new SyncLunsInfoForBlockStorageDomainParameters(Guid.newGuid(), Guid.newGuid());
         return params;
     }
 

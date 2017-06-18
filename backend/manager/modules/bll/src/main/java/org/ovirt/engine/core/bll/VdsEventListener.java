@@ -275,8 +275,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void syncLunsInfoForBlockStorageDomain(final Guid storageDomainId, final Guid vdsId) {
         ThreadPoolUtil.execute(() -> {
             SyncLunsInfoForBlockStorageDomainParameters parameters = new SyncLunsInfoForBlockStorageDomainParameters(
-                    storageDomainId);
-            parameters.setVdsId(vdsId);
+                    storageDomainId, vdsId);
             backend.runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters);
         });
     }

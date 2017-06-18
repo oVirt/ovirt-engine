@@ -12,15 +12,16 @@ public class SyncLunsInfoForBlockStorageDomainParameters extends StorageDomainPa
     private List<LUNs> vgInfo;
 
     public SyncLunsInfoForBlockStorageDomainParameters() {
-        this(null);
+        this(null, null);
     }
 
-    public SyncLunsInfoForBlockStorageDomainParameters(Guid storageDomainId) {
-        this(storageDomainId, null);
+    public SyncLunsInfoForBlockStorageDomainParameters(Guid storageDomainId, Guid vdsId) {
+        this(storageDomainId, vdsId, null);
     }
 
-    public SyncLunsInfoForBlockStorageDomainParameters(Guid storageDomainId, List<LUNs> vgInfo) {
+    public SyncLunsInfoForBlockStorageDomainParameters(Guid storageDomainId, Guid vdsId, List<LUNs> vgInfo) {
         super(storageDomainId);
+        setVdsId(vdsId);
         this.vgInfo = vgInfo;
     }
 
