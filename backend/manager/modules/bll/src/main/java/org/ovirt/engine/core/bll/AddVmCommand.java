@@ -710,16 +710,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (shouldAddLease(getParameters().getVmStaticData())) {
-            if (!getParameters().getVmStaticData().isAutoStartup()) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED_WITH_HA_OFF);
-            }
-            if (!FeatureSupported.isVmLeasesSupported(getEffectiveCompatibilityVersion())) {
-                return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_LEASES_ARE_NOT_SUPPORTED);
-            }
-            if (!validateLeaseStorageDomain(getParameters().getVmStaticData().getLeaseStorageDomainId())) {
-                return false;
-            }
+        if (shouldAddLease(getParameters().getVmStaticData()) && !canAddLease()) {
+            return false;
         }
 
         return true;
