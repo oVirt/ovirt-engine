@@ -59,6 +59,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.migration.ConvergenceConfig;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
@@ -378,7 +379,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             MigrationPolicy clusterMigrationPolicy = convergenceConfigProvider.getMigrationPolicy(
                     getCluster().getMigrationPolicyId(), getCluster().getCompatibilityVersion());
             MigrationPolicy effectiveMigrationPolicy = findEffectiveConvergenceConfig(clusterMigrationPolicy);
-            convergenceSchedule = ConvergenceSchedule.from(effectiveMigrationPolicy.getConfig()).asMap();
+            ConvergenceConfig convergenceConfig = getVm().getStatus() == VMStatus.Paused
+                    ? filterOutPostcopy(effectiveMigrationPolicy.getConfig())
+                    : effectiveMigrationPolicy.getConfig();
+            convergenceSchedule = ConvergenceSchedule.from(convergenceConfig).asMap();
 
             maxBandwidth = getMaxBandwidth(clusterMigrationPolicy);
             if (!NoMigrationPolicy.ID.equals(effectiveMigrationPolicy.getId())) {
@@ -408,6 +412,24 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 enableGuestEvents,
                 maxIncomingMigrations,
                 maxOutgoingMigrations);
+    }
+
+    private ConvergenceConfig filterOutPostcopy(ConvergenceConfig config) {
+        ConvergenceConfig filteredConfig = new ConvergenceConfig();
+        filteredConfig.setInitialItems(config.getInitialItems());
+        if (config.getConvergenceItems() != null) {
+            filteredConfig.setConvergenceItems(config.getConvergenceItems()
+                    .stream()
+                    .filter(item -> !item.getConvergenceItem().getAction().equals("postcopy"))
+                    .collect(Collectors.toList()));
+        }
+        if (config.getLastItems() != null) {
+            filteredConfig.setLastItems(config.getLastItems()
+                    .stream()
+                    .filter(item -> !item.getAction().equals("postcopy"))
+                    .collect(Collectors.toList()));
+        }
+        return filteredConfig;
     }
 
     /**
