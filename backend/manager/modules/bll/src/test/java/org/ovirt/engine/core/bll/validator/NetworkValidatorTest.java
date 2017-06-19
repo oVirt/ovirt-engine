@@ -49,8 +49,6 @@ public class NetworkValidatorTest {
     private static final String OTHER_NETWORK_NAME = "myothernetwork";
     private static final Guid DEFAULT_GUID = Guid.newGuid();
     private static final Guid OTHER_GUID = Guid.newGuid();
-    private static final int DEFAULT_VLAN_ID = 0;
-    private static final int OTHER_VLAN_ID = 1;
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();
@@ -170,40 +168,12 @@ public class NetworkValidatorTest {
         networkPrefixValidTest(isValid(), DEFAULT_NETWORK_NAME);
     }
 
-    private void vlanIdAvailableTest(Matcher<ValidationResult> matcher, List<Network> networks) {
-        this.networks.addAll(networks);
-        when(network.getVlanId()).thenReturn(DEFAULT_VLAN_ID);
-        when(network.getId()).thenReturn(DEFAULT_GUID);
-
-        assertThat(validator.vlanIdNotUsed(), matcher);
-    }
 
     private static List<Network> getSingletonVlanNetworkList(int vlanId, Guid networkId) {
         Network network = new Network();
         network.setVlanId(vlanId);
         network.setId(networkId);
         return Collections.singletonList(network);
-    }
-
-    @Test
-    public void vlanIdNoNetworks() throws Exception {
-        vlanIdAvailableTest(isValid(), Collections.emptyList());
-    }
-
-    @Test
-    public void vlanIdAvailable() throws Exception {
-        vlanIdAvailableTest(isValid(), getSingletonVlanNetworkList(OTHER_VLAN_ID, OTHER_GUID));
-    }
-
-    @Test
-    public void vlanIdTakenByDifferentNetwork() throws Exception {
-        vlanIdAvailableTest(failsWith(EngineMessage.NETWORK_VLAN_IN_USE),
-                getSingletonVlanNetworkList(DEFAULT_VLAN_ID, OTHER_GUID));
-    }
-
-    @Test
-    public void vlanIdTakenBySameNetwork() throws Exception {
-        vlanIdAvailableTest(isValid(), getSingletonVlanNetworkList(DEFAULT_VLAN_ID, DEFAULT_GUID));
     }
 
     private void networkNameAvailableTest(Matcher<ValidationResult> matcher, List<Network> networks) {

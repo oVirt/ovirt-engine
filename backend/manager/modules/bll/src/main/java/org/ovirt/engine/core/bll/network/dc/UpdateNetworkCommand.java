@@ -117,7 +117,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorNew.stpForVmNetworkOnly())
                 && validate(validatorNew.mtuValid())
                 && validate(validatorNew.networkPrefixValid())
-                && validate(validatorNew.vlanIdNotUsed())
                 && validate(validatorNew.qosExistsInDc())
                 && validate(validatorOld.networkIsSet(getNetwork().getId()))
                 && validate(validatorOld.notChangingDataCenterId(getNetwork().getDataCenterId()))
