@@ -375,7 +375,7 @@
         <include name="common/mode/ApplicationMode.java" />
         <include name="common/interfaces/ITagsHandler.java" />
         <!-- UiCommon -->
-        <include name="common/VdcActionUtils.java" />
+        <include name="common/ActionUtils.java" />
 
         <!-- Backend Validation framework -->
         <include name="common/validation/annotation/HostnameOrIp.java" />
