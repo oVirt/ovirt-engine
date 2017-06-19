@@ -92,6 +92,7 @@ class Plugin(plugin.PluginBase):
         self.environment[oenginecons.EngineDBEnv.CONNECTION] = None
         self.environment[oenginecons.EngineDBEnv.STATEMENT] = None
         self.environment[oenginecons.EngineDBEnv.NEW_DATABASE] = True
+        self.environment[oenginecons.EngineDBEnv.NEED_DBMSUPGRADE] = False
         self.environment[oenginecons.EngineDBEnv.JUST_RESTORED] = False
 
     @plugin.event(
@@ -134,6 +135,11 @@ class Plugin(plugin.PluginBase):
                 self.environment[
                     oenginecons.EngineDBEnv.NEW_DATABASE
                 ] = dbovirtutils.isNewDatabase()
+
+                self.environment[
+                    oenginecons.EngineDBEnv.NEED_DBMSUPGRADE
+                ] = dbovirtutils.checkDBMSUpgrade()
+
             except RuntimeError as e:
                 self.logger.debug(
                     'Existing credential use failed',
@@ -179,6 +185,14 @@ class Plugin(plugin.PluginBase):
                     self.logger.info(_(
                         'The engine DB has been restored from a backup'
                     ))
+            if self.environment[
+                oenginecons.EngineDBEnv.NEED_DBMSUPGRADE
+            ]:
+                self.logger.error(
+                    'The DBMS instance used for the engine '
+                    'DB has to be upgraded'
+                )
+                # TODO: handle the upgrade
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

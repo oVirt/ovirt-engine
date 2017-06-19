@@ -11,11 +11,11 @@ MYTEMP="$(mktemp -d)"
 
 generatePgPass() {
     local password="$(echo "${ENGINE_DB_PASSWORD}" | sed -e 's/\\/\\\\/g' -e 's/:/\\:/g')"
-	export PGPASSFILE="${MYTEMP}/.pgpass"
-	touch "${PGPASSFILE}" || die "Can't create ${PGPASSFILE}"
-	chmod 0600 "${PGPASSFILE}" || die "Can't chmod ${PGPASSFILE}"
+	export MYPGPASS="${MYTEMP}/.pgpass"
+	touch "${MYPGPASS}" || die "Can't create ${MYPGPASS}"
+	chmod 0600 "${MYPGPASS}" || die "Can't chmod ${MYPGPASS}"
 
-	cat > "${PGPASSFILE}" << __EOF__
+	cat > "${MYPGPASS}" << __EOF__
 ${ENGINE_DB_HOST}:${ENGINE_DB_PORT}:${ENGINE_DB_DATABASE}:${ENGINE_DB_USER}:${password}
 __EOF__
 }

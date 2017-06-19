@@ -210,6 +210,7 @@ class DBEnvKeysConst(object):
     CONNECTION = 'connection'
     PGPASSFILE = 'pgpassfile'
     NEW_DATABASE = 'newDatabase'
+    NEED_DBMSUPGRADE = 'needDBMSUpgrade'
     DUMPER = 'dumper'
     FILTER = 'filter'
     RESTORE_JOBS = 'restoreJobs'
@@ -226,6 +227,7 @@ class DBEnvKeysConst(object):
         CONNECTION,
         PGPASSFILE,
         NEW_DATABASE,
+        NEED_DBMSUPGRADE,
         DUMPER,
         FILTER,
         RESTORE_JOBS,

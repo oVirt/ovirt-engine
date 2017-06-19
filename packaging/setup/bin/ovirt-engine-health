@@ -102,4 +102,4 @@ if ! python -c 'import psycopg2' > /dev/null 2>&1; then
 	exit 1
 fi
 
-exec "${otopidir}/otopi" "${baseenv} ${environment} ${otopienv}"
+otopi_scl_exec

@@ -18,6 +18,7 @@
 
 import atexit
 import datetime
+import distutils.version
 import gettext
 import os
 import re
@@ -405,6 +406,79 @@ class OvirtUtils(base.Base):
             transaction=False,
         )
         return ret[0]['count'] == 0
+
+    def checkServerVersion(
+        self,
+        host=None,
+        port=None,
+        secured=None,
+        user=None,
+        password=None,
+        database=None,
+    ):
+        statement = Statement(
+            environment=self.environment,
+            dbenvkeys=self._dbenvkeys,
+        )
+        ret = statement.execute(
+            statement="SHOW server_version",
+            args=dict(),
+            host=host,
+            port=port,
+            secured=secured,
+            user=user,
+            password=password,
+            database=database,
+            ownConnection=True,
+            transaction=False,
+        )
+        server_v = ret[0]['server_version']
+        self.logger.debug(
+            "PostgreSQL server version: {v}".format(
+                v=server_v,
+            )
+        )
+        return server_v
+
+    def checkClientVersion(self):
+        rc, stdout, stderr = self._plugin.execute(
+            (
+                self.command.get('psql'),
+                '--version',
+            ),
+            raiseOnError=True,
+        )
+        client_v = stdout[0].split()[-1]
+        self.logger.debug(
+            "PostgreSQL client version: {v}".format(
+                v=client_v,
+            )
+        )
+        return client_v
+
+    def checkDBMSUpgrade(
+        self,
+        host=None,
+        port=None,
+        secured=None,
+        user=None,
+        password=None,
+        database=None,
+    ):
+        server_v = distutils.version.LooseVersion(
+            self.checkServerVersion(
+                host,
+                port,
+                secured,
+                user,
+                password,
+                database,
+            )
+        ).version[:2]
+        client_v = distutils.version.LooseVersion(
+            self.checkClientVersion()
+        ).version[:2]
+        return server_v < client_v
 
     def createLanguage(self, language):
         statement = Statement(
@@ -926,6 +1000,7 @@ class OvirtUtils(base.Base):
                 ],
                 'ok': self._lower_equal,
                 'check_on_use': True,
+                'skip_on_dbmsupgrade': True,
                 'needed_on_create': False,
                 'error_msg': _(
                     "Postgresql client version is '{expected}', whereas "
@@ -953,6 +1028,11 @@ class OvirtUtils(base.Base):
         for item in [
             i for i in self._pg_conf_info() if i['check_on_use']
         ]:
+            if (
+                self._environment[self._dbenvkeys[DEK.NEED_DBMSUPGRADE]] and
+                item.get('skip_on_dbmsupgrade', False)
+            ):
+                continue
             key = item['key']
             expected = item['expected']
             # When using 'show some_setting', the returned value is prettified
@@ -1209,6 +1289,13 @@ class OvirtUtils(base.Base):
             ] = self.isNewDatabase()
         except:
             self.logger.debug('database connection failed', exc_info=True)
+
+        try:
+            self.environment[
+                self._dbenvkeys[DEK.NEED_DBMSUPGRADE]
+            ] = self.checkDBMSUpgrade()
+        except:
+            self.logger.debug('database version check failed', exc_info=True)
 
         if not _ind_env(self, DEK.NEW_DATABASE):
                 invalid_config_items = self.validateDbConf(name, dbenv)

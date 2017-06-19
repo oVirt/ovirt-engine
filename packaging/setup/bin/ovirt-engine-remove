@@ -70,4 +70,4 @@ while [ -n "$1" ]; do
 	esac
 done
 
-exec "${otopidir}/otopi" "${baseenv} ${environment} ${otopienv}"
+otopi_scl_exec

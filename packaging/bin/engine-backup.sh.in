@@ -1930,6 +1930,11 @@ TEMP_FOLDER="$(mktemp -d -t engine-backup.XXXXXXXXXX)" || logdie "Can't create t
 
 log "Start of engine-backup mode ${MODE} scope ${SCOPE} file ${FILE}"
 
+if ! [ -z "$sclenv" ]; then
+	log "Setting scl env for ${sclenv}"
+	. scl_source enable ${sclenv}
+fi
+
 generatePgPass
 do${MODE}
 output "Done."

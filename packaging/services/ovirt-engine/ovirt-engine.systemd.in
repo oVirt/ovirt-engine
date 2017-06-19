@@ -1,6 +1,6 @@
 [Unit]
 Description=oVirt Engine
-After=network.target postgresql.service
+After=network.target @POSTGRESQL_SYSTEMD_SERVICE@
 
 [Service]
 Type=notify

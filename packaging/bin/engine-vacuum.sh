@@ -43,7 +43,7 @@ done
 # setups with 'trust' may have empty passwords
 [[ -n $ENGINE_DB_PASSWORD ]] && generatePgPass
 
-vacuumdb \
+PGPASSFILE="${MYPGPASS}" vacuumdb \
 ${ANALYZE+-z} \
 ${ANALYZE_ONLY+-Z} \
 ${FULL+-f} \

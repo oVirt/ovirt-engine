@@ -428,6 +428,7 @@ class Const(object):
             DEK.CONNECTION: EngineDBEnv.CONNECTION,
             DEK.PGPASSFILE: EngineDBEnv.PGPASS_FILE,
             DEK.NEW_DATABASE: EngineDBEnv.NEW_DATABASE,
+            DEK.NEED_DBMSUPGRADE: EngineDBEnv.NEED_DBMSUPGRADE,
             DEK.DUMPER: EngineDBEnv.DUMPER,
             DEK.FILTER: EngineDBEnv.FILTER,
             DEK.RESTORE_JOBS: EngineDBEnv.RESTORE_JOBS,
@@ -517,6 +518,7 @@ class EngineDBEnv(object):
     STATEMENT = 'OVESETUP_DB/statement'
     PGPASS_FILE = 'OVESETUP_DB/pgPassFile'
     NEW_DATABASE = 'OVESETUP_DB/newDatabase'
+    NEED_DBMSUPGRADE = 'OVESETUP_DB/needDBMSUpgrade'
     JUST_RESTORED = 'OVESETUP_DB/justRestored'
 
     @osetupattrs(

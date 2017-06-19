@@ -62,6 +62,13 @@
 %global ovirt_provides_jboss 1
 %global jboss ovirt-engine-wildfly
 %global ovirt_wildfly_overlay 1
+%if 0%{?fedora}
+%global ovirt_rh_postgresql95 0
+%global postgresql_systemd_service postgresql.service
+%else
+%global ovirt_rh_postgresql95 1
+%global postgresql_systemd_service rh-postgresql95-postgresql.service
+%endif
 %global require_jboss 1
 
 %global ovirt_product_name oVirt Engine
@@ -169,6 +176,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_STATE_DIR=%{engine_state} \\\
 	PKG_USER=%{engine_user} \\\
 	PKG_GROUP=%{engine_group} \\\
+	POSTGRESQL_SYSTEMD_SERVICE=%{postgresql_systemd_service} \\\
 	WILDFLY_OVERLAY_MODULES=%{wildfly_overlay_modules} \\\
 	%{?EXTRA_BUILD_FLAGS:EXTRA_BUILD_FLAGS="%{EXTRA_BUILD_FLAGS}"}
 
@@ -232,7 +240,6 @@ Requires:	java-openjdk-headless >= 1:1.8.0
 Requires:	jpackage-utils
 Requires:	objectweb-asm
 Requires:	ovirt-iso-uploader >= 4.1.0
-Requires:	postgresql-server >= 9.2.15
 Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	xmlrpc-client
@@ -261,6 +268,12 @@ Requires:	postgresql-jdbc >= 9.2.1002
 Conflicts:	postgresql-jdbc >= 9.3
 
 Requires:	yum-plugin-versionlock
+%endif
+
+%if %{ovirt_rh_postgresql95}
+Requires:	rh-postgresql95-postgresql-server
+%else
+Requires:	postgresql-server >= 9.5
 %endif
 
 Requires:	openstack-java-cinder-client >= %{openstack_java_version}
@@ -526,7 +539,11 @@ Requires:	tar
 Requires:	bzip2
 Requires:	xz
 Requires:	otopi >= 1.7.1
-Requires:	postgresql >= 9.2.15
+%if %{ovirt_rh_postgresql95}
+Requires:	rh-postgresql95-postgresql
+%else
+Requires:	postgresql >= 9.5
+%endif
 
 %description tools-backup
 %{ovirt_product_name_short} Tools (engine-backup)
@@ -824,6 +841,29 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" <
 OVESETUP_APACHE/configureRootRedirectionDefault=bool:True
 __EOF__
 
+%if %{ovirt_rh_postgresql95}
+install -d "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.env.d"
+cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.env.d/10-setup-scl-postgres-95.env" << __EOF__
+RHPOSTGRESQL95BASE="/opt/rh/rh-postgresql95/root"
+RHPOSTGRESQL95DATA="/var/opt/rh/rh-postgresql95/lib/pgsql/data"
+if [ -e \${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup ]
+then
+  export sclenv="rh-postgresql95"
+  export POSTGRESQLENV="COMMAND/pg_dump=str:\${RHPOSTGRESQL95BASE}/usr/bin/pg_dump \
+         COMMAND/psql=str:\${RHPOSTGRESQL95BASE}/usr/bin/psql \
+         COMMAND/pg_restore=str:\${RHPOSTGRESQL95BASE}/usr/bin/pg_restore \
+         COMMAND/postgresql-setup=str:\${RHPOSTGRESQL95BASE}/usr/bin/postgresql-setup \
+         OVESETUP_PROVISIONING/postgresService=str:rh-postgresql95-postgresql \
+         OVESETUP_PROVISIONING/postgresConf=str:\${RHPOSTGRESQL95DATA}/postgresql.conf \
+         OVESETUP_PROVISIONING/postgresPgHba=str:\${RHPOSTGRESQL95DATA}/pg_hba.conf \
+         OVESETUP_PROVISIONING/postgresPgVersion=str:\${RHPOSTGRESQL95DATA}/PG_VERSION"
+fi
+__EOF__
+cat > "%{buildroot}%{engine_etc}/engine.conf.d/10-scl-postgres-95.conf" << __EOF__
+sclenv="rh-postgresql95"
+__EOF__
+%endif
+
 %if %{ovirt_provides_jboss}
 %if %{ovirt_wildfly_overlay}
 OVIRT_JBOSS_PACKAGES=ovirt-engine-wildfly,ovirt-engine-wildfly-overlay
@@ -1025,6 +1065,11 @@ fi
 
 %if %{ovirt_provides_jboss}
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-jboss.conf
+%endif
+
+%if %{ovirt_rh_postgresql95}
+%config %{_sysconfdir}/ovirt-engine-setup.env.d/10-setup-scl-postgres-95.env
+%config %{engine_etc}/engine.conf.d/10-scl-postgres-95.conf
 %endif
 
 %if %{ovirt_wildfly_overlay}
