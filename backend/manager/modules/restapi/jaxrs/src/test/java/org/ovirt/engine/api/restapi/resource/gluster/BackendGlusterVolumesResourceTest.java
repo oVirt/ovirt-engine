@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.api.restapi.resource.BackendResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -195,7 +195,7 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
     }
 
     private void setUpVolumeCreationExpectations(boolean force) {
-        setUpCreationExpectations(VdcActionType.CreateGlusterVolume,
+        setUpCreationExpectations(ActionType.CreateGlusterVolume,
                                   CreateGlusterVolumeParameters.class,
                 new String[] { "Volume.Name", "Volume.VolumeType", "Force" },
                 new Object[] { "testVol1", GlusterVolumeType.DISTRIBUTE, force },

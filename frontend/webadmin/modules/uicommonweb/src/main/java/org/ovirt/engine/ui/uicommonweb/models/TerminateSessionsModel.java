@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TerminateSessionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -66,7 +66,7 @@ public class TerminateSessionsModel extends ConfirmationModel {
         }
 
         Frontend.getInstance()
-                .runMultipleActions(VdcActionType.TerminateSession, parameterList,
+                .runMultipleActions(ActionType.TerminateSession, parameterList,
                         result -> sourceListModel.getSearchCommand().execute());
         cancel();
     }

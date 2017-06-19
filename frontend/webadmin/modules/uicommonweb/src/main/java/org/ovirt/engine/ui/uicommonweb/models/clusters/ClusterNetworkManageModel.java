@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -198,7 +198,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
 
         if (needsAnyChange) {
             Frontend.getInstance()
-                    .runAction(VdcActionType.ManageNetworkClusters,
+                    .runAction(ActionType.ManageNetworkClusters,
                             new ManageNetworkClustersParameters(toAttach, toDetach, toUpdate),
                             result -> {
                                 needsAnyChange = false;

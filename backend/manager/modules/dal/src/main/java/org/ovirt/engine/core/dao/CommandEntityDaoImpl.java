@@ -11,8 +11,8 @@ import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
@@ -49,7 +49,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
         result.setCommandContext(SerializationFactory.getDeserializer().deserialize(
                 resultSet.getString("command_context"), PersistedCommandContext.class));
         result.setCreatedAt(DbFacadeUtils.fromDate(resultSet.getTimestamp("created_at")));
-        result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
+        result.setCommandType(ActionType.forValue(resultSet.getInt("command_type")));
         result.setParentCommandId(Guid.createGuidFromString(resultSet.getString("parent_command_id")));
         result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
         result.setCommandParameters(deserializeParameters(resultSet.getString("command_parameters"), resultSet.getString("command_params_class")));

@@ -11,8 +11,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.NetworkLabel;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -65,7 +65,7 @@ public class BackendHostNicLabelResourceTest
         setUpEntityQueryExpectations(getEntityList());
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UnlabelNic,
+                ActionType.UnlabelNic,
                 LabelNicParameters.class,
                 new String[] { "NicId", "Label" },
                 new Object[] { NIC_ID, LABELS[0] },
@@ -104,7 +104,7 @@ public class BackendHostNicLabelResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UnlabelNic,
+                ActionType.UnlabelNic,
                 LabelNicParameters.class,
                 new String[] { "NicId", "Label" },
                 new Object[] { NIC_ID, LABELS[0] },

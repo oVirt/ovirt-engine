@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -514,8 +514,8 @@ public class NewClusterPolicyModel extends Model {
         policy.setFunctions(pairs);
         policy.setBalance(getLoadBalanceList().getSelectedItem().getId());
         policy.setParameterMap(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
-        Frontend.getInstance().runAction(commandType == CommandType.Edit ? VdcActionType.EditClusterPolicy
-                : VdcActionType.AddClusterPolicy,
+        Frontend.getInstance().runAction(commandType == CommandType.Edit ? ActionType.EditClusterPolicy
+                : ActionType.AddClusterPolicy,
                 new ClusterPolicyCRUDParameters(policy.getId(), policy), result -> {
                     NewClusterPolicyModel.this.stopProgress();
                     if (result.getReturnValue().getSucceeded()) {

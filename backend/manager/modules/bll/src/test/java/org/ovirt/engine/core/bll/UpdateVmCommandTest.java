@@ -35,7 +35,7 @@ import org.ovirt.engine.core.bll.numa.vm.NumaValidator;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -140,7 +140,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         vmStatic.setMaxMemorySizeMb(MAX_MEMORY_SIZE);
 
         VmManagementParametersBase params = new VmManagementParametersBase();
-        params.setCommandType(VdcActionType.UpdateVm);
+        params.setCommandType(ActionType.UpdateVm);
         params.setVmStaticData(vmStatic);
 
         return params;
@@ -186,7 +186,7 @@ public class UpdateVmCommandTest extends BaseCommandTest {
 
         doReturn(group).when(command).getCluster();
         doReturn(vm).when(command).getVm();
-        doReturn(VdcActionType.UpdateVm).when(command).getActionType();
+        doReturn(ActionType.UpdateVm).when(command).getActionType();
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
         doReturn(true).when(command).isBalloonEnabled();
         doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());

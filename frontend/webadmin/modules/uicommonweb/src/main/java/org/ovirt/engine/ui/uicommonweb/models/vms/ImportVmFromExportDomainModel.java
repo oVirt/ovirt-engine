@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -409,7 +409,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     public void importVms(IFrontendMultipleActionAsyncCallback callback) {
         startProgress();
         Frontend.getInstance().runMultipleAction(
-                VdcActionType.ImportVm,
+                ActionType.ImportVm,
                 buildImportVmParameters(),
                 callback,
                 this);

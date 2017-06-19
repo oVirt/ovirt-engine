@@ -20,8 +20,8 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.BackendActionResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -101,7 +101,7 @@ public class BackendGlusterBricksResource
         int replicaCount = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, REPLICA_COUNT, 0, 0);
         int stripeCount = ParametersHelper.getIntegerParameter(httpHeaders, uriInfo, STRIPE_COUNT, 0, 0);
 
-        return performCreationMultiple(VdcActionType.AddBricksToGlusterVolume,
+        return performCreationMultiple(ActionType.AddBricksToGlusterVolume,
                 new GlusterVolumeBricksActionParameters(asGuid(getVolumeId()),
                         brickEntities,
                         replicaCount,
@@ -132,7 +132,7 @@ public class BackendGlusterBricksResource
         }
     }
 
-    protected Response performCreationMultiple(VdcActionType task,
+    protected Response performCreationMultiple(ActionType task,
             VdcActionParametersBase taskParams,
             EntityIdResolver<Guid> entityResolver) {
         VdcReturnValueBase createResult;
@@ -174,9 +174,9 @@ public class BackendGlusterBricksResource
                         "");
         if (volume.getAsyncTask() != null && volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
                 && volume.getAsyncTask().getStatus() == JobExecutionStatus.FINISHED) {
-            return performAction(VdcActionType.CommitRemoveGlusterVolumeBricks, params);
+            return performAction(ActionType.CommitRemoveGlusterVolumeBricks, params);
         } else {
-            return performAction(VdcActionType.GlusterVolumeRemoveBricks, params);
+            return performAction(ActionType.GlusterVolumeRemoveBricks, params);
         }
     }
 
@@ -244,7 +244,7 @@ public class BackendGlusterBricksResource
         }
         params.setVolumeId(asGuid(getVolumeId()));
         params.setBricks(entityBricks);
-        params.setCommandType(VdcActionType.StartRemoveGlusterVolumeBricks);
+        params.setCommandType(ActionType.StartRemoveGlusterVolumeBricks);
 
         return params;
     }
@@ -267,7 +267,7 @@ public class BackendGlusterBricksResource
         validateParameters(action, "bricks");
         validateBrickNames(action);
         GlusterVolumeRemoveBricksParameters params = toParameters(action.getBricks());
-        return performAction(VdcActionType.StartRemoveGlusterVolumeBricks, params, action, false);
+        return performAction(ActionType.StartRemoveGlusterVolumeBricks, params, action, false);
     }
 
     @Override
@@ -275,7 +275,7 @@ public class BackendGlusterBricksResource
         validateParameters(action, "bricks");
         validateBrickNames(action);
         GlusterVolumeRemoveBricksParameters params = toParameters(action.getBricks());
-        return performAction(VdcActionType.StopRemoveGlusterVolumeBricks, params, action, false);
+        return performAction(ActionType.StopRemoveGlusterVolumeBricks, params, action, false);
     }
 
     @Override

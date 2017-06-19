@@ -12,9 +12,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -61,10 +61,10 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
     protected void addPermissions() {
         PermissionsOperationsParameters permissionsOperationsParameters = createPermissionParameters(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                                                                                                      PredefinedRoles.CPU_PROFILE_OPERATOR.getId());
-        getBackend().runAction(VdcActionType.AddPermission, permissionsOperationsParameters);
+        getBackend().runAction(ActionType.AddPermission, permissionsOperationsParameters);
 
         permissionsOperationsParameters = createPermissionParameters(getUserId(), PredefinedRoles.CPU_PROFILE_CREATOR.getId());
-        getBackend().runAction(VdcActionType.AddPermission, permissionsOperationsParameters);
+        getBackend().runAction(ActionType.AddPermission, permissionsOperationsParameters);
 
     }
 

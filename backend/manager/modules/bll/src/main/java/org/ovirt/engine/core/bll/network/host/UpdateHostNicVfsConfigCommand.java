@@ -7,8 +7,8 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.errors.EngineError;
@@ -88,7 +88,7 @@ public class UpdateHostNicVfsConfigCommand extends VfsConfigCommandBase<UpdateHo
 
     private boolean refreshHost() {
             VdsActionParameters vdsActionParams = new VdsActionParameters(getVdsId());
-            return runInternalAction(VdcActionType.RefreshHost, vdsActionParams).getSucceeded();
+            return runInternalAction(ActionType.RefreshHost, vdsActionParams).getSucceeded();
     }
 
     @Override

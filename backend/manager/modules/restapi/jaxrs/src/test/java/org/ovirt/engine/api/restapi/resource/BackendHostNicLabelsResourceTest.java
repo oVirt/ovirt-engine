@@ -12,8 +12,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.NetworkLabel;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +32,7 @@ public class BackendHostNicLabelsResourceTest
     @Test
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.LabelNic,
+        setUpCreationExpectations(ActionType.LabelNic,
                 LabelNicParameters.class,
                 new String[] { "NicId", "Label" },
                 new Object[] { nicId, LABELS[0] },
@@ -61,7 +61,7 @@ public class BackendHostNicLabelsResourceTest
     }
 
     private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.LabelNic,
+        setUriInfo(setUpActionExpectations(ActionType.LabelNic,
                 LabelNicParameters.class,
                 new String[] { "NicId", "Label" },
                 new Object[] { nicId, LABELS[0] },

@@ -7,8 +7,8 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -55,7 +55,7 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
         }
 
         VdcReturnValueBase returnValue =
-                runInternalAction(VdcActionType.HostSetupNetworks, getParameters(), cloneContextAndDetachFromParent());
+                runInternalAction(ActionType.HostSetupNetworks, getParameters(), cloneContextAndDetachFromParent());
 
         if (returnValue.getSucceeded()) {
             boolean changesDetected = checkForChanges();
@@ -63,7 +63,7 @@ public class PersistentHostSetupNetworksCommand<T extends PersistentHostSetupNet
                 VdsActionParameters parameters = new VdsActionParameters(getParameters().getVdsId());
                 parameters.setShouldBeLogged(false);
                 parameters.setCorrelationId(getCorrelationId());
-                returnValue = runInternalAction(VdcActionType.CommitNetworkChanges,
+                returnValue = runInternalAction(ActionType.CommitNetworkChanges,
                         parameters, cloneContextAndDetachFromParent());
             }
         }

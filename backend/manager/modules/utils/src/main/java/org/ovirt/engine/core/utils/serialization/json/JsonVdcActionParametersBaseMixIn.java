@@ -7,8 +7,8 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 @SuppressWarnings("serial")
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY)
@@ -26,9 +26,9 @@ public abstract class JsonVdcActionParametersBaseMixIn extends VdcActionParamete
 
     @JsonDeserialize (using=VdcActionTypeDeserializer.class)
     @Override
-    public abstract void setParentCommand(VdcActionType value);
+    public abstract void setParentCommand(ActionType value);
 
     @JsonDeserialize (using=VdcActionTypeDeserializer.class)
     @Override
-    public abstract void setCommandType(VdcActionType commandType);
+    public abstract void setCommandType(ActionType commandType);
 }

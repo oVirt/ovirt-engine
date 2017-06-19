@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationPa
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -636,11 +636,11 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         tempVar.setStorageType(localModel.getType());
         connection = tempVar;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
-        actionTypes.add(VdcActionType.AddStorageServerConnection);
-        actionTypes.add(VdcActionType.AddLocalStorageDomain);
+        actionTypes.add(ActionType.AddStorageServerConnection);
+        actionTypes.add(ActionType.AddLocalStorageDomain);
 
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
@@ -684,7 +684,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     }
 
     private void cleanConnection(StorageServerConnections connection, Guid hostId) {
-        Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
+        Frontend.getInstance().runAction(ActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(connection, hostId, false),
                 null,
                 this);
@@ -754,12 +754,12 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         tempVar.setStorageType(nfsModel.getType());
         connection = tempVar;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
-        actionTypes.add(VdcActionType.AddStorageServerConnection);
-        actionTypes.add(VdcActionType.AddNFSStorageDomain);
-        actionTypes.add(VdcActionType.DisconnectStorageServerConnection);
+        actionTypes.add(ActionType.AddStorageServerConnection);
+        actionTypes.add(ActionType.AddNFSStorageDomain);
+        actionTypes.add(ActionType.DisconnectStorageServerConnection);
 
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
@@ -913,7 +913,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         params.setVdsId(host.getId());
         params.setLunIds(new ArrayList<>(lunIds));
         params.setForce(force);
-        Frontend.getInstance().runAction(VdcActionType.AddSANStorageDomain, params,
+        Frontend.getInstance().runAction(ActionType.AddSANStorageDomain, params,
                 result -> {
 
                     DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
@@ -973,7 +973,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     }
 
     private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId) {
-        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, new AttachStorageDomainToPoolParameters(storageId,
+        Frontend.getInstance().runAction(ActionType.AttachStorageDomainToPool, new AttachStorageDomainToPoolParameters(storageId,
                 dataCenterId),
                 null,
                 this);
@@ -1117,7 +1117,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.AddCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
+        Frontend.getInstance().runAction(ActionType.AddCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
                 result -> {
 
                     DataCenterGuideModel localModel = (DataCenterGuideModel) result.getState();
@@ -1197,7 +1197,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, parameterList,
+        Frontend.getInstance().runMultipleAction(ActionType.ChangeVDSCluster, parameterList,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -1213,7 +1213,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                 VDS selectedHost = selectedHostData.getEntity();
                                 if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                         && retVals.get(i).getSucceeded()) {
-                                    Frontend.getInstance().runAction(VdcActionType.ApproveVds,
+                                    Frontend.getInstance().runAction(ActionType.ApproveVds,
 
                                             new ApproveVdsParameters(selectedHost.getId()),
                                             null,
@@ -1325,7 +1325,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         addVdsParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.AddVds, addVdsParams,
+        Frontend.getInstance().runAction(ActionType.AddVds, addVdsParams,
                 result -> {
 
                     DataCenterGuideModel localModel = (DataCenterGuideModel) result.getState();
@@ -1392,10 +1392,10 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         connection.setMountOptions(posixModel.getMountOptions().getEntity());
         this.connection = connection;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
-        actionTypes.add(VdcActionType.AddStorageServerConnection);
+        actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(posixModel.getAddStorageDomainVdcAction());
 
         parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId(), false));

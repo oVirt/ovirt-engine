@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -198,7 +198,7 @@ public abstract class UiAction {
     protected static class ActionFlowState {
         private int branchCounter;
         private SimpleAction finalAction;
-        Map<VdcActionType, List<VdcReturnValueBase>> failedActionsMap = new HashMap<>();
+        Map<ActionType, List<VdcReturnValueBase>> failedActionsMap = new HashMap<>();
         private boolean startedProgress;
 
         public ActionFlowState(int value, SimpleAction finalAction) {
@@ -229,7 +229,7 @@ public abstract class UiAction {
             return finalAction;
         }
 
-        protected void addFailure(VdcActionType actionType, VdcReturnValueBase result) {
+        protected void addFailure(ActionType actionType, VdcReturnValueBase result) {
             List<VdcReturnValueBase> actionTypeResults = failedActionsMap.get(actionType);
             if (actionTypeResults == null) {
                 actionTypeResults = new LinkedList<>();
@@ -239,7 +239,7 @@ public abstract class UiAction {
             actionTypeResults.add(result);
         }
 
-        protected Map<VdcActionType, List<VdcReturnValueBase>> getFailedActionsMap() {
+        protected Map<ActionType, List<VdcReturnValueBase>> getFailedActionsMap() {
             return failedActionsMap;
         }
 

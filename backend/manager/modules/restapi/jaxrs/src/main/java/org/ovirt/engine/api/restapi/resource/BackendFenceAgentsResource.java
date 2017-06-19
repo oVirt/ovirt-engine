@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.FenceAgentResource;
 import org.ovirt.engine.api.resource.FenceAgentsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -35,7 +35,7 @@ public class BackendFenceAgentsResource
     @Override
     public Response add(Agent agent) {
         validateParameters(agent, "address", "order", "type", "username", "password");
-        return performCreate(VdcActionType.AddFenceAgent,
+        return performCreate(ActionType.AddFenceAgent,
                 getAddParameters(agent),
                 new QueryIdResolver<Guid>(VdcQueryType.GetFenceAgentById, IdQueryParameters.class));
     }

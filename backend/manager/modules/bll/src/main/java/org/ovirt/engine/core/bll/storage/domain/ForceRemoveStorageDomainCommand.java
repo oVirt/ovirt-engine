@@ -9,11 +9,11 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -51,7 +51,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                     ReconstructMasterParameters tempVar = new ReconstructMasterParameters(getStoragePool().getId(),
                             getStorageDomain().getId(), false);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-                    runInternalAction(VdcActionType.ReconstructMasterDomain, tempVar);
+                    runInternalAction(ActionType.ReconstructMasterDomain, tempVar);
                 }
                 // try to force detach first
                 DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(

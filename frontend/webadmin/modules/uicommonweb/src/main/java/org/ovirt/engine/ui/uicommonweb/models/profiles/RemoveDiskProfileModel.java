@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -20,8 +20,8 @@ public class RemoveDiskProfileModel extends RemoveProfileModel<DiskProfile> {
     }
 
     @Override
-    protected VdcActionType getRemoveActionType() {
-        return VdcActionType.RemoveDiskProfile;
+    protected ActionType getRemoveActionType() {
+        return ActionType.RemoveDiskProfile;
     }
 
     @Override

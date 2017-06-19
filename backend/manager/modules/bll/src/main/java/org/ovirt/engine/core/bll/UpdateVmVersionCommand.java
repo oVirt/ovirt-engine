@@ -11,13 +11,13 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -141,7 +141,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             getParameters().setVmPoolId(getVm().getVmPoolId());
 
             VdcReturnValueBase result = runInternalActionWithTasksContext(
-                    VdcActionType.RemoveVmFromPool,
+                    ActionType.RemoveVmFromPool,
                     buildRemoveVmFromPoolParameters(),
                     getLock());
             if (!result.getSucceeded()) {
@@ -154,7 +154,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         }
 
         VdcReturnValueBase result = runInternalActionWithTasksContext(
-                VdcActionType.RemoveVm,
+                ActionType.RemoveVm,
                 buildRemoveVmParameters(),
                 getLock());
 
@@ -199,7 +199,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
 
     private void addUpdatedVm() {
-        runInternalAction(VdcActionType.AddVm,
+        runInternalAction(ActionType.AddVm,
                 buildAddVmParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
     }

@@ -12,8 +12,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageConnection;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -39,7 +39,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     @Test
     public void testAttachSuccess() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpActionExpectations(VdcActionType.AttachStorageConnectionToStorageDomain,
+        setUpActionExpectations(ActionType.AttachStorageConnectionToStorageDomain,
                 AttachDetachStorageConnectionParameters.class,
                 new String[] { },
                 new Object[] { },
@@ -54,7 +54,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     @Test
     public void testAttachFailure() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpActionExpectations(VdcActionType.AttachStorageConnectionToStorageDomain,
+        setUpActionExpectations(ActionType.AttachStorageConnectionToStorageDomain,
                 AttachDetachStorageConnectionParameters.class,
                 new String[] { },
                 new Object[] { },

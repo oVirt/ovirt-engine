@@ -4,8 +4,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.resource.EventResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -30,6 +30,6 @@ public class BackendEventResource extends AbstractBackendActionableResource<Even
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveAuditLogById, new RemoveAuditLogByIdParameters(asLong(id)));
+        return performAction(ActionType.RemoveAuditLogById, new RemoveAuditLogByIdParameters(asLong(id)));
     }
 }

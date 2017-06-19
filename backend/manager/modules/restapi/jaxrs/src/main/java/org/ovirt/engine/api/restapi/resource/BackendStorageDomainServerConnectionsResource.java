@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -54,7 +54,7 @@ public class BackendStorageDomainServerConnectionsResource
     public Response add(StorageConnection storageConnection) {
         validateParameters(storageConnection, "id");
 
-        return performAction(VdcActionType.AttachStorageConnectionToStorageDomain,
+        return performAction(ActionType.AttachStorageConnectionToStorageDomain,
                 new AttachDetachStorageConnectionParameters(storageDomainId, storageConnection.getId()));
     }
 

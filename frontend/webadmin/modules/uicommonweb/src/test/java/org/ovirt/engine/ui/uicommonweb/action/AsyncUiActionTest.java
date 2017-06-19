@@ -12,7 +12,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction.ActionFlowState;
 import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
@@ -20,7 +19,8 @@ import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AsyncUiActionTest<C> extends UiActionBaseTest {
 
-    protected VdcActionType ACTION_TYPE = VdcActionType.Unknown;
+    protected org.ovirt.engine.core.common.action.ActionType
+            ACTION_TYPE = org.ovirt.engine.core.common.action.ActionType.Unknown;
 
     @Rule
     public UiCommonSetup setup = new UiCommonSetup();
@@ -72,7 +72,7 @@ public abstract class AsyncUiActionTest<C> extends UiActionBaseTest {
     }
 
     private List<UiAction> runParallelActionFlowCommon(boolean success) {
-        List<UiAction> actions = runActionFlow(ActionType.parallel);
+        List<UiAction> actions = runActionFlow(UiActionBaseTest.ActionType.parallel);
 
         verifyRunActionAndExecuteCallbacksRandomly(success, actions.get(0).getActionFlowState(), actions.size());
 
@@ -92,7 +92,7 @@ public abstract class AsyncUiActionTest<C> extends UiActionBaseTest {
     }
 
     private List<UiAction> runNextActionFlowCommon(boolean lastSuccess) {
-        List<UiAction> actions = runActionFlow(ActionType.next);
+        List<UiAction> actions = runActionFlow(UiActionBaseTest.ActionType.next);
         ActionFlowState flowState = actions.get(0).getActionFlowState();
 
         verifyRunActionAndExecuteCallbacksRandomly(true, flowState, 1);
@@ -104,7 +104,7 @@ public abstract class AsyncUiActionTest<C> extends UiActionBaseTest {
     @Test
     public void runMixedActionFlowAllSucceed() {
         // action1.and(action2).next(action3).and(action4)
-        List<UiAction> actions = runActionFlow(ActionType.parallel, ActionType.next, ActionType.parallel);
+        List<UiAction> actions = runActionFlow(UiActionBaseTest.ActionType.parallel, UiActionBaseTest.ActionType.next, UiActionBaseTest.ActionType.parallel);
         ActionFlowState flowState = actions.get(0).getActionFlowState();
 
         verifyRunActionAndExecuteCallbacksRandomly(true, flowState, 2);
@@ -118,7 +118,7 @@ public abstract class AsyncUiActionTest<C> extends UiActionBaseTest {
         // action1.and(action2).next(action3).and(action4)
         // action1 has an error- all the flow will be executed
 
-        List<UiAction> actions = runActionFlow(ActionType.parallel, ActionType.next, ActionType.parallel);
+        List<UiAction> actions = runActionFlow(UiActionBaseTest.ActionType.parallel, UiActionBaseTest.ActionType.next, UiActionBaseTest.ActionType.parallel);
         ActionFlowState flowState = actions.get(0).getActionFlowState();
 
         List<C> callbacks = verifyRunAction(2);

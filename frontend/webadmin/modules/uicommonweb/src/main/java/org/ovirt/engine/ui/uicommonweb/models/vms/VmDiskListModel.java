@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -155,7 +155,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
-                VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
+                VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, ActionType.ExtendImageSize) : false;
     }
 
     public VmDiskListModel() {
@@ -280,7 +280,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(ActionType.ChangeQuotaForDisk, paramerterList,
                 result -> cancel(),
                 this);
     }
@@ -345,7 +345,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private void plug() {
-        Frontend.getInstance().runMultipleAction(VdcActionType.HotPlugDiskToVm, createPlugOrUnplugParams(true),
+        Frontend.getInstance().runMultipleAction(ActionType.HotPlugDiskToVm, createPlugOrUnplugParams(true),
                 result -> {
                 },
                 this);
@@ -355,7 +355,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.HotUnPlugDiskFromVm, createPlugOrUnplugParams(false),
+        Frontend.getInstance().runMultipleAction(ActionType.HotUnPlugDiskFromVm, createPlugOrUnplugParams(false),
                 result -> {
                     model.stopProgress();
                     setWindow(null);
@@ -427,7 +427,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
+        Frontend.getInstance().runMultipleAction(ActionType.GetDiskAlignment, parameterList,
                 result -> {
                 },
                 this);

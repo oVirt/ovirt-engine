@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageSyncScheduleParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
@@ -188,7 +188,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
                 new StorageSyncScheduleParameters(syncSchedule, storageDomain.getId(), georepId);
 
         model.startProgress();
-        Frontend.getInstance().runAction(VdcActionType.ScheduleGlusterStorageSync,
+        Frontend.getInstance().runAction(ActionType.ScheduleGlusterStorageSync,
                 parameter,
                 result -> {
                     StorageDRListModel localModel =

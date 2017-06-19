@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
@@ -162,7 +162,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.SetGlusterVolumeOption,
+        Frontend.getInstance().runAction(ActionType.SetGlusterVolumeOption,
                 new GlusterVolumeOptionParameters(option),
                 result -> {
                     VolumeParameterListModel localModel = (VolumeParameterListModel) result.getState();
@@ -283,7 +283,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.ResetGlusterVolumeOptions,
+        Frontend.getInstance().runAction(ActionType.ResetGlusterVolumeOptions,
                 parameters,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -327,7 +327,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.ResetGlusterVolumeOptions,
+        Frontend.getInstance().runAction(ActionType.ResetGlusterVolumeOptions,
                 parameters,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();

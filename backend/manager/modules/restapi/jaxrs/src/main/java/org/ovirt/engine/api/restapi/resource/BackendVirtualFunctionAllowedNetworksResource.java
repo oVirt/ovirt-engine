@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworkResource;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworksResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.compat.Guid;
@@ -57,7 +57,7 @@ public class BackendVirtualFunctionAllowedNetworksResource
 
         final org.ovirt.engine.core.common.businessentities.network.Network network = findNetwork(networkModel);
 
-        return performAction(VdcActionType.AddVfsConfigNetwork, new VfsConfigNetworkParameters(nicId, network.getId()));
+        return performAction(ActionType.AddVfsConfigNetwork, new VfsConfigNetworkParameters(nicId, network.getId()));
     }
 
     @Override

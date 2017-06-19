@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -99,7 +99,7 @@ public class ImportVmFromExternalSourceModel extends ImportVmFromExternalProvide
     @Override
     public void importVms(IFrontendMultipleActionAsyncCallback callback) {
         Frontend.getInstance().runMultipleAction(
-                VdcActionType.ImportVmFromExternalProvider,
+                ActionType.ImportVmFromExternalProvider,
                 buildImportVmFromExternalProviderParameters(),
                 true,
                 callback,

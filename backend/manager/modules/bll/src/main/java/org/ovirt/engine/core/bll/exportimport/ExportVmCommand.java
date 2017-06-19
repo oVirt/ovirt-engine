@@ -35,11 +35,11 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -373,7 +373,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
             // copy the memory dump image
             VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                    VdcActionType.CopyImageGroup,
+                    ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerID, guids.get(0), guids.get(2), guids.get(3)));
             if (!vdcRetValue.getSucceeded()) {
@@ -383,7 +383,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
             // copy the memory configuration (of the VM) image
             vdcRetValue = runInternalActionWithTasksContext(
-                    VdcActionType.CopyImageGroup,
+                    ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
                             containerID, guids.get(0), guids.get(4), guids.get(5)));
             if (!vdcRetValue.getSucceeded()) {
@@ -437,7 +437,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
             VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                    VdcActionType.CopyImageGroup,
+                    ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(containerID, disk));
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");

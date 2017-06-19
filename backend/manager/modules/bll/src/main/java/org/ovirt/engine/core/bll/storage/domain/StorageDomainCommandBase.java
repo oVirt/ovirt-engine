@@ -27,9 +27,9 @@ import org.ovirt.engine.core.bll.storage.pool.RefreshStoragePoolAndDisconnectAsy
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -432,7 +432,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             final DiskProfile diskProfile =
                     diskProfileHelper.createDiskProfile(getStorageDomain().getId(), getStorageDomainName());
             DiskProfileParameters diskProfileParameters = new DiskProfileParameters(diskProfile, true);
-            runInternalActionWithTasksContext(VdcActionType.AddDiskProfile, diskProfileParameters);
+            runInternalActionWithTasksContext(ActionType.AddDiskProfile, diskProfileParameters);
             getCompensationContext().snapshotNewEntity(diskProfile);
             getCompensationContext().stateChanged();
             return null;

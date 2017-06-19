@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.DiskSnapshot;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -45,7 +45,7 @@ public class BackendStorageDomainDiskSnapshotResourceTest
         ArrayList<Guid> ids = new ArrayList<>();
         ids.add(GUIDS[1]);
         setUriInfo(setUpActionExpectations(
-                VdcActionType.RemoveDiskSnapshots,
+                ActionType.RemoveDiskSnapshots,
                 RemoveDiskSnapshotsParameters.class,
                 new String[] { "ImageIds" },
                 new Object[] { ids },

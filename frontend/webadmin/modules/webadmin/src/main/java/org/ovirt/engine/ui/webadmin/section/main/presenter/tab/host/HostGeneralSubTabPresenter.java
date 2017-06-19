@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 import java.util.Arrays;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -118,7 +118,7 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
 
         // Review the alerts and add those that are active:
         if (model.getHasUpgradeAlert()) {
-            if (VdcActionUtils.canExecute(Arrays.asList(model.getEntity()), VDS.class, VdcActionType.UpgradeHost)) {
+            if (VdcActionUtils.canExecute(Arrays.asList(model.getEntity()), VDS.class, ActionType.UpgradeHost)) {
                 addTextAndLinkAlert(view,
                         messages.hostInSupportedStatusHasUpgradeAlert(),
                         model.getUpgradeHostCommand(),

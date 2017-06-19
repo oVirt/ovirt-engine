@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -111,7 +111,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
                 }
 
                 Frontend.getInstance().runMultipleAction(
-                        VdcActionType.RemoveVmFromImportExport, list,
+                        ActionType.RemoveVmFromImportExport, list,
                         result -> {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();

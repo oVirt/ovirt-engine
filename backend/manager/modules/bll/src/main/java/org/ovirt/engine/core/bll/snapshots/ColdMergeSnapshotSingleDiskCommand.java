@@ -14,11 +14,11 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ColdMergeCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
@@ -73,30 +73,30 @@ public class ColdMergeSnapshotSingleDiskCommand<T extends RemoveSnapshotSingleDi
         log.info("Command '{}' id '{}' executing step '{}'", getActionType(), getCommandId(),
                 getParameters().getCommandStep());
 
-        Pair<VdcActionType, ? extends VdcActionParametersBase> nextCommand = null;
+        Pair<ActionType, ? extends VdcActionParametersBase> nextCommand = null;
         switch (getParameters().getCommandStep()) {
             case PREPARE_MERGE:
-                nextCommand = new Pair<>(VdcActionType.PrepareMerge,
+                nextCommand = new Pair<>(ActionType.PrepareMerge,
                         buildColdMergeParameters(getImage(), getDestinationDiskImage()));
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.MERGE);
                 break;
             case MERGE:
-                nextCommand = new Pair<>(VdcActionType.ColdMerge,
+                nextCommand = new Pair<>(ActionType.ColdMerge,
                         buildColdMergeParameters(getImage(), getDestinationDiskImage()));
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.FINALIZE_MERGE);
                 break;
             case FINALIZE_MERGE:
-                nextCommand = new Pair<>(VdcActionType.FinalizeMerge,
+                nextCommand = new Pair<>(ActionType.FinalizeMerge,
                         buildColdMergeParameters(getImage(), getDestinationDiskImage()));
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
                 break;
             case DESTROY_IMAGE:
-                nextCommand = buildDestroyCommand(VdcActionType.DestroyImage, getActionType(),
+                nextCommand = buildDestroyCommand(ActionType.DestroyImage, getActionType(),
                         Collections.singletonList(getDestinationImageId()));
                 getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE_CHECK);
                 break;
             case DESTROY_IMAGE_CHECK:
-                nextCommand = buildDestroyCommand(VdcActionType.DestroyImageCheck, getActionType(),
+                nextCommand = buildDestroyCommand(ActionType.DestroyImageCheck, getActionType(),
                         Collections.singletonList(getDestinationImageId()));
                 setCommandStatus(CommandStatus.SUCCEEDED);
                 break;

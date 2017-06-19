@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.StorageConnectionExtensions;
 import org.ovirt.engine.api.resource.StorageServerConnectionExtensionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionExtensionsResource;
 import org.ovirt.engine.api.restapi.types.StorageServerConnectionExtensionMapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -46,7 +46,7 @@ public class BackendStorageServerConnectionExtensionsResource
         StorageServerConnectionExtension connExt = StorageServerConnectionExtensionMapper.map(storageConnectionExtension, null);
         connExt.setHostId(hostId);
         StorageServerConnectionExtensionParameters params = new StorageServerConnectionExtensionParameters(connExt);
-        return performCreate(VdcActionType.AddStorageServerConnectionExtension, params,
+        return performCreate(ActionType.AddStorageServerConnectionExtension, params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetStorageServerConnectionExtensionById,
                         IdQueryParameters.class));
     }

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -72,7 +72,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
 
     @Override
     protected void onRunOnce() {
-        Frontend.getInstance().runAction(VdcActionType.RunVmOnce, createRunVmOnceParams(), null, this);
+        Frontend.getInstance().runAction(ActionType.RunVmOnce, createRunVmOnceParams(), null, this);
         commandTarget.executeCommand(runOnceCommand);
     }
 }

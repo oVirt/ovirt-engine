@@ -16,7 +16,7 @@ import org.ovirt.engine.api.restapi.resource.VolumeStatisticalQuery;
 import org.ovirt.engine.api.restapi.types.GlusterVolumeProfileInfoMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -63,13 +63,13 @@ public class BackendGlusterVolumeResource
 
     @Override
     public Response start(Action action) {
-        return doAction(VdcActionType.StartGlusterVolume, new GlusterVolumeActionParameters(guid,
+        return doAction(ActionType.StartGlusterVolume, new GlusterVolumeActionParameters(guid,
                 action.isSetForce() ? action.isForce() : false), action);
     }
 
     @Override
     public Response stop(Action action) {
-        return doAction(VdcActionType.StopGlusterVolume, new GlusterVolumeActionParameters(guid,
+        return doAction(ActionType.StopGlusterVolume, new GlusterVolumeActionParameters(guid,
                 action.isSetForce() ? action.isForce() : false), action);
     }
 
@@ -77,7 +77,7 @@ public class BackendGlusterVolumeResource
     public Response rebalance(Action action) {
         boolean fixLayoutOnly = action.isSetFixLayout() ? action.isFixLayout() : false;
         boolean force = action.isSetForce() ? action.isForce() : false;
-        return doAction(VdcActionType.StartRebalanceGlusterVolume,
+        return doAction(ActionType.StartRebalanceGlusterVolume,
                 new GlusterVolumeRebalanceParameters(guid,
                         fixLayoutOnly,
                         force), action);
@@ -85,7 +85,7 @@ public class BackendGlusterVolumeResource
 
     @Override
     public Response stopRebalance(Action action) {
-        return doAction(VdcActionType.StopRebalanceGlusterVolume,
+        return doAction(ActionType.StopRebalanceGlusterVolume,
                 new GlusterVolumeRebalanceParameters(guid), action);
     }
 
@@ -94,7 +94,7 @@ public class BackendGlusterVolumeResource
         Option option = action.getOption();
         validateParameters(option, "name", "value");
 
-        return doAction(VdcActionType.SetGlusterVolumeOption,
+        return doAction(ActionType.SetGlusterVolumeOption,
                 new GlusterVolumeOptionParameters(new GlusterVolumeOptionEntity(guid,
                         option.getName(),
                         option.getValue())),
@@ -114,7 +114,7 @@ public class BackendGlusterVolumeResource
     }
 
     private Response resetOption(Action action, String optionName, String optionValue, boolean force) {
-        return doAction(VdcActionType.ResetGlusterVolumeOptions,
+        return doAction(ActionType.ResetGlusterVolumeOptions,
                 new ResetGlusterVolumeOptionsParameters(guid,
                         new GlusterVolumeOptionEntity(guid, optionName, optionValue),
                         force), action);
@@ -122,13 +122,13 @@ public class BackendGlusterVolumeResource
 
     @Override
     public Response startProfile(Action action) {
-        return doAction(VdcActionType.StartGlusterVolumeProfile, new GlusterVolumeParameters(guid), action);
+        return doAction(ActionType.StartGlusterVolumeProfile, new GlusterVolumeParameters(guid), action);
     }
 
 
     @Override
     public Response stopProfile(Action action) {
-        return doAction(VdcActionType.StopGlusterVolumeProfile, new GlusterVolumeParameters(guid), action);
+        return doAction(ActionType.StopGlusterVolumeProfile, new GlusterVolumeParameters(guid), action);
     }
 
     @Override
@@ -184,6 +184,6 @@ public class BackendGlusterVolumeResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.DeleteGlusterVolume, new GlusterVolumeParameters(guid));
+        return performAction(ActionType.DeleteGlusterVolume, new GlusterVolumeParameters(guid));
     }
 }

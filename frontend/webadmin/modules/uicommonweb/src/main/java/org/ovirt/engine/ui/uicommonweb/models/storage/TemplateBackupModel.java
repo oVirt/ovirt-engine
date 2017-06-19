@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -184,7 +184,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                     getEntity().getId(),
                     pool.getId()));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveVmTemplateFromImportExport, prms);
         cancel();
     }
 
@@ -291,7 +291,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmTemplate, prms,
+        Frontend.getInstance().runMultipleAction(ActionType.ImportVmTemplate, prms,
                 result -> {
 
                     TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();

@@ -14,8 +14,8 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -75,7 +75,7 @@ public class RemoveDiskCommandTest extends BaseCommandTest {
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
 
         doReturn(disk).when(cmd).getDisk();
-        doReturn(VdcActionType.RemoveDisk).when(cmd).getActionType();
+        doReturn(ActionType.RemoveDisk).when(cmd).getActionType();
     }
 
     protected void setupDisk() {

@@ -16,10 +16,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.CommandsWeightsUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
 import org.ovirt.engine.core.common.action.CopyImageGroupVolumesDataCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -104,7 +104,7 @@ public class CopyImageGroupVolumesDataCommand<T extends CopyImageGroupVolumesDat
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(image.toString()));
-        runInternalActionWithTasksContext(VdcActionType.CopyData, parameters);
+        runInternalActionWithTasksContext(ActionType.CopyData, parameters);
     }
 
     @Override

@@ -25,9 +25,9 @@ import org.ovirt.engine.api.resource.openstack.OpenstackNetworksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderCertificatesResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -50,7 +50,7 @@ public class BackendOpenStackNetworkProviderResource
         return performUpdate(
             incoming,
             new QueryIdResolver<>(VdcQueryType.GetProviderById, IdQueryParameters.class),
-            VdcActionType.UpdateProvider,
+            ActionType.UpdateProvider,
             new UpdateParametersProvider()
         );
     }
@@ -69,7 +69,7 @@ public class BackendOpenStackNetworkProviderResource
     public Response remove() {
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
         ProviderParameters parameters = new ProviderParameters(provider);
-        return performAction(VdcActionType.RemoveProvider, parameters);
+        return performAction(ActionType.RemoveProvider, parameters);
     }
 
     private class UpdateParametersProvider implements ParametersProvider<OpenStackNetworkProvider, Provider> {

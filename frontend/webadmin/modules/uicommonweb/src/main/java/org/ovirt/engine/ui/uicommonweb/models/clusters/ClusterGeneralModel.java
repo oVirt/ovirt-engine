@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
@@ -320,7 +320,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
             // becuase this flag is now supported.
             // should check what is the required behaviour and return to true if required.
             if (!parametersList.isEmpty()) {
-                Frontend.getInstance().runMultipleAction(VdcActionType.ManageGlusterService,
+                Frontend.getInstance().runMultipleAction(ActionType.ManageGlusterService,
                         parametersList,
                         false,
                         result -> {
@@ -349,7 +349,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                                 null,
                                 ServiceType.GLUSTER_SWIFT,
                                 action.name().toLowerCase());
-                Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters, result -> {
+                Frontend.getInstance().runAction(ActionType.ManageGlusterService, parameters, result -> {
                     ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
                     innerGlusterSwiftModel.stopProgress();
                     if (result.getReturnValue().getSucceeded()) {
@@ -456,7 +456,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         // Todo: calling the runMultipleAction() with isRunOnlyIfAllValidationPass=false
         // becuase this flag is now supported.
         // should check what is the required behaviour and return to true if required.
-        Frontend.getInstance().runMultipleAction(VdcActionType.AddVds,
+        Frontend.getInstance().runMultipleAction(ActionType.AddVds,
                 parametersList,
                 false,
                 result -> {
@@ -524,7 +524,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
             String host = (String) ((EntityModel) model).getEntity();
             parametersList.add(new RemoveGlusterServerParameters(getEntity().getId(), host, force));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveGlusterServer, parametersList);
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveGlusterServer, parametersList);
         cancel();
     }
 

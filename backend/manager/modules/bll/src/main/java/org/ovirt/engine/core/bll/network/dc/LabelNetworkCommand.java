@@ -11,9 +11,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -44,7 +44,7 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
     @Override
     protected void executeCommand() {
         getNetwork().setLabel(getLabel());
-        VdcReturnValueBase result = runInternalAction(VdcActionType.UpdateNetwork,
+        VdcReturnValueBase result = runInternalAction(ActionType.UpdateNetwork,
                 new AddNetworkStoragePoolParameters(getNetwork().getDataCenterId(), getNetwork()));
 
         if (!result.getSucceeded()) {

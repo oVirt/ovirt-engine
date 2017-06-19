@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.Vms;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -48,7 +48,7 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
         AffinityGroup affinityGroup = getEntity();
 
         affinityGroup.getVmIds().add(asGuid(vm.getId()));
-        return performAction(VdcActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),
+        return performAction(ActionType.EditAffinityGroup, new AffinityGroupCRUDParameters(affinityGroup.getId(),
                 affinityGroup));
     }
 

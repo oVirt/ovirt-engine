@@ -21,11 +21,11 @@ import org.ovirt.engine.core.bll.network.predicate.VnicWithBadMacPredicate;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -258,7 +258,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             DiskVmElement dve = disk.getDiskVmElements().iterator().next();
             AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(
                     new DiskVmElement(disk.getId(), getVm().getId()), dve.isPlugged());
-            VdcReturnValueBase returnVal = runInternalAction(VdcActionType.AttachDiskToVm, params, cloneContextAndDetachFromParent());
+            VdcReturnValueBase returnVal = runInternalAction(ActionType.AttachDiskToVm, params, cloneContextAndDetachFromParent());
             if (!returnVal.getSucceeded()) {
                 failedDisks.add(disk.getDiskAlias());
             }

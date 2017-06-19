@@ -17,13 +17,13 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -191,7 +191,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         permParams.setShouldBeLogged(false);
         permParams.setParentCommand(getActionType());
         permParams.setParentParameters(getParameters());
-        return runInternalAction(VdcActionType.AddPermission,
+        return runInternalAction(ActionType.AddPermission,
                 permParams,
                 cloneContext().withoutExecutionContext().withoutLock());
     }
@@ -222,7 +222,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         runVmParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         runVmParams.setRunAsStateless(!getVmPool().isStateful());
         ExecutionContext runVmContext = createRunVmContext();
-        VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
+        VdcReturnValueBase vdcReturnValue = runInternalAction(ActionType.RunVm,
                 runVmParams,
                 cloneContext().withExecutionContext(runVmContext).withCompensationContext(null));
 

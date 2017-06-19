@@ -19,8 +19,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -125,11 +125,11 @@ public class ConfigureConsoleOptionsQueryTest extends
         VdcReturnValueBase result = new VdcReturnValueBase();
         result.setSucceeded(true);
         result.setActionReturnValue("nbusr123");
-        doReturn(result).when(backend).runAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
+        doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any(SetVmTicketParameters.class));
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
-        verify(backend, times(1)).runAction(eq(VdcActionType.SetVmTicket), any(SetVmTicketParameters.class));
+        verify(backend, times(1)).runAction(eq(ActionType.SetVmTicket), any(SetVmTicketParameters.class));
     }
 
     @Test

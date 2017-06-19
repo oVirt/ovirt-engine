@@ -21,8 +21,8 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -86,7 +86,7 @@ public class AttachDiskToVmCommandTest {
 
         doReturn(true).when(command).isDiskPassPciAndIdeLimit();
         doReturn(false).when(command).isOperationPerformedOnDiskSnapshot();
-        doReturn(VdcActionType.AttachDiskToVm).when(command).getActionType();
+        doReturn(ActionType.AttachDiskToVm).when(command).getActionType();
 
         mockStoragePoolIsoMap();
     }

@@ -16,8 +16,8 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateVersion;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -75,7 +75,7 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[] { "Name", "Description", "CopyVmPermissions" },
                 new Object[] { NAMES[0], DESCRIPTIONS[0], copy },
@@ -131,7 +131,7 @@ public class BackendTemplatesResourceTest
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
                                   new String[] { "Name", "Description" },
                                   new Object[] { NAMES[0], DESCRIPTIONS[0] },
@@ -227,7 +227,7 @@ public class BackendTemplatesResourceTest
                                        setUpVm(GUIDS[1]));
         setUpGetEntityExpectations(2);
 
-            setUpCreationExpectations(VdcActionType.AddVmTemplate,
+            setUpCreationExpectations(ActionType.AddVmTemplate,
                                       AddVmTemplateParameters.class,
                                       new String[] { "Name", "Description" },
                                       new Object[] { NAMES[2], DESCRIPTIONS[2] },
@@ -270,7 +270,7 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
                                   new String[] { "Name", "Description" },
                                   new Object[] { NAMES[0], DESCRIPTIONS[0] },
@@ -317,7 +317,7 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
                                   new String[] { "Name", "Description" },
                                   new Object[] { NAMES[0], DESCRIPTIONS[0] },
@@ -362,7 +362,7 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[]{"Name", "Description"},
                 new Object[]{NAMES[0], DESCRIPTIONS[0]},
@@ -418,7 +418,7 @@ public class BackendTemplatesResourceTest
                 new Object[] { NAMES[2] },
                 setUpCluster(GUIDS[2]));
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
                                   new String[] { "Name", "Description" },
                                   new Object[] { NAMES[0], DESCRIPTIONS[0] },
@@ -503,7 +503,7 @@ public class BackendTemplatesResourceTest
 
         setUpAddExpectations();
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[] { "Name", "Description", "VmLargeIcon"},
                 new Object[] { NAMES[0], DESCRIPTIONS[0],
@@ -542,7 +542,7 @@ public class BackendTemplatesResourceTest
 
         setUpAddExpectations();
 
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[] { "Name", "Description"},
                 new Object[] { NAMES[0], DESCRIPTIONS[0] },

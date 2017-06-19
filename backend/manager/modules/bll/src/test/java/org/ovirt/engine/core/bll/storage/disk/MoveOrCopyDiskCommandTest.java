@@ -21,8 +21,8 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -381,7 +381,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
-        doReturn(VdcActionType.MoveOrCopyDisk).when(command).getActionType();
+        doReturn(ActionType.MoveOrCopyDisk).when(command).getActionType();
     }
 
     private void initTemplateDiskImage() {

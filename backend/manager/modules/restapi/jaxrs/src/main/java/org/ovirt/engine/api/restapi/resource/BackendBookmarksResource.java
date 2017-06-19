@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.Bookmarks;
 import org.ovirt.engine.api.resource.BookmarkResource;
 import org.ovirt.engine.api.resource.BookmarksResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -32,7 +32,7 @@ public class BackendBookmarksResource extends
     public Response add(Bookmark bookmark) {
         validateParameters(bookmark, "name");
         validateParameters(bookmark, "value");
-        return performCreate(VdcActionType.AddBookmark, new BookmarksOperationParameters(map(bookmark)),
+        return performCreate(ActionType.AddBookmark, new BookmarksOperationParameters(map(bookmark)),
                 new BookmarkNameResolver(bookmark.getName()));
     }
 

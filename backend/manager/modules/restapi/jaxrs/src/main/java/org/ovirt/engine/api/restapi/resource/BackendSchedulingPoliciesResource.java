@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -36,7 +36,7 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     @Override
     public Response add(SchedulingPolicy schedulingPolicy) {
         validateParameters(schedulingPolicy, "name");
-        return performCreate(VdcActionType.AddClusterPolicy, new ClusterPolicyCRUDParameters(null,
+        return performCreate(ActionType.AddClusterPolicy, new ClusterPolicyCRUDParameters(null,
                 map(schedulingPolicy)), queryIdResolver);
     }
 

@@ -6,8 +6,8 @@ import org.ovirt.engine.api.model.QuotaStorageLimit;
 import org.ovirt.engine.api.model.QuotaStorageLimits;
 import org.ovirt.engine.api.resource.QuotaStorageLimitResource;
 import org.ovirt.engine.api.resource.QuotaStorageLimitsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -48,7 +48,7 @@ public class BackendQuotaStorageLimitsResource
     public Response add(QuotaStorageLimit incoming) {
         Quota entity = getQuota();
         QuotaCRUDParameters parameters = new QuotaCRUDParameters(map(incoming, entity));
-        performAction(VdcActionType.UpdateQuota, parameters);
+        performAction(ActionType.UpdateQuota, parameters);
         entity = getQuota();
         updateIncomingId(incoming, entity);
         QuotaStorageLimit model = map(entity, incoming);

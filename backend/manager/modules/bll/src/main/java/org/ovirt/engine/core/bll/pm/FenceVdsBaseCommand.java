@@ -13,8 +13,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -84,7 +84,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // Check Quiet time between PM operations, this is done only if command is not internal and parent
         // command is not <Restart>
         int secondsLeftToNextPmOp =
-                (isInternalExecution() || (getParameters().getParentCommand() == VdcActionType.RestartVds))
+                (isInternalExecution() || (getParameters().getParentCommand() == ActionType.RestartVds))
                         ?
                         0
                         :

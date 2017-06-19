@@ -27,9 +27,9 @@ import org.ovirt.engine.api.model.Certificates;
 import org.ovirt.engine.api.model.ExternalProvider;
 import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
 import org.ovirt.engine.api.resource.ExternalProviderResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 
 public abstract class AbstractBackendExternalProviderResource<R extends ExternalProvider>
@@ -43,7 +43,7 @@ public abstract class AbstractBackendExternalProviderResource<R extends External
     public Response testConnectivity(Action action) {
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
         ProviderParameters parameters = new ProviderParameters(provider);
-        return performAction(VdcActionType.TestProviderConnectivity, parameters);
+        return performAction(ActionType.TestProviderConnectivity, parameters);
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class AbstractBackendExternalProviderResource<R extends External
             }
         }
         return performAction(
-            VdcActionType.ImportProviderCertificate,
+            ActionType.ImportProviderCertificate,
             new ImportProviderCertificateParameters(provider, content)
         );
     }

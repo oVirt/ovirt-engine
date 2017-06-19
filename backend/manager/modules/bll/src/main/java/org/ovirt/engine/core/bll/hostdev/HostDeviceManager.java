@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -65,7 +65,7 @@ public class HostDeviceManager implements BackendService {
             parameters.add(new VdsActionParameters(hostId));
         }
 
-        backend.runInternalMultipleActions(VdcActionType.RefreshHostDevices, parameters);
+        backend.runInternalMultipleActions(ActionType.RefreshHostDevices, parameters);
         hostDeviceDao.cleanDownVms();
     }
 
@@ -142,13 +142,13 @@ public class HostDeviceManager implements BackendService {
     }
 
     /**
-     * Calls <code>VdcActionType.RefreshHost</code> on the specified host, in case any of the specified vms contain
+     * Calls <code>ActionType.RefreshHost</code> on the specified host, in case any of the specified vms contain
      * host devices (that were attached directly or via the SRIOV scheduling)
      */
     public void refreshHostIfAnyVmHasHostDevices(Collection<Guid> vmIds, Guid hostId) {
         for (Guid vmId : vmIds) {
             if (checkVmNeedsHostDevices(vmId)) {
-                backend.runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(hostId));
+                backend.runInternalAction(ActionType.RefreshHost, new VdsActionParameters(hostId));
                 return;
             }
         }

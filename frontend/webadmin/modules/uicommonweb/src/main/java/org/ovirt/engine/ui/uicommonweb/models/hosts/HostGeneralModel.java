@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -788,7 +788,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     public void saveNICsConfig() {
-        Frontend.getInstance().runMultipleAction(VdcActionType.CommitNetworkChanges,
+        Frontend.getInstance().runMultipleAction(ActionType.CommitNetworkChanges,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new VdsActionParameters(getEntity().getId())})),
                 result -> {
 
@@ -808,7 +808,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
                         getEntity().getId(),
                         ServiceType.GLUSTER,
                         "restart"); //$NON-NLS-1$
-        Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters);
+        Frontend.getInstance().runAction(ActionType.ManageGlusterService, parameters);
     }
 
     public void cancel() {
@@ -947,12 +947,12 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     private void updateActionAvailability() {
-        getEditHostCommand().setIsExecutionAllowed(canExecuteCommand(VdcActionType.UpdateVds));
+        getEditHostCommand().setIsExecutionAllowed(canExecuteCommand(ActionType.UpdateVds));
         getUpgradeHostCommand().setIsExecutionAllowed(getEntity().isUpdateAvailable()
-                && canExecuteCommand(VdcActionType.UpgradeHost));
+                && canExecuteCommand(ActionType.UpgradeHost));
     }
 
-    private boolean canExecuteCommand(VdcActionType actionType) {
+    private boolean canExecuteCommand(ActionType actionType) {
         return VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VDS[]{getEntity()})),
                 VDS.class,
                 actionType);

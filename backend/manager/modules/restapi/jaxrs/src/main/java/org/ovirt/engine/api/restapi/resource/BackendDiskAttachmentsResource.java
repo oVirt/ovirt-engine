@@ -31,10 +31,10 @@ import org.ovirt.engine.api.resource.DiskAttachmentsResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -74,7 +74,7 @@ public class BackendDiskAttachmentsResource
         Disk disk = attachment.getDisk();
         validateDiskForCreation(disk);
         updateStorageTypeForDisk(disk);
-        return resource.performCreate(VdcActionType.AddDisk,
+        return resource.performCreate(ActionType.AddDisk,
                 getAddParameters(attachment, DiskMapper.map(disk, null), disk), entityResolver);
     }
 
@@ -109,7 +109,7 @@ public class BackendDiskAttachmentsResource
             params.setSnapshotId(asGuid(disk.getSnapshot().getId()));
         }
 
-        return resource.performCreate(VdcActionType.AttachDiskToVm, params, entityResolver);
+        return resource.performCreate(ActionType.AttachDiskToVm, params, entityResolver);
     }
 
     private class AttachDiskResolver implements IResolver<VmDeviceId, DiskVmElement> {

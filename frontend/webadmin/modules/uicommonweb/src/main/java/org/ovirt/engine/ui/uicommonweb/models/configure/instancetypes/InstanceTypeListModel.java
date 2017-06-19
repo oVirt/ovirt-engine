@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -235,7 +235,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         getWindow().startProgress();
 
         Frontend.getInstance().runAction(
-                VdcActionType.AddVmTemplate,
+                ActionType.AddVmTemplate,
                 addInstanceTypeParameters,
                 new UnitVmModelNetworkAsyncCallback(model, addInstanceTypeNetworkManager),
                 this
@@ -271,7 +271,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         getWindow().startProgress();
 
         Frontend.getInstance().runAction(
-                VdcActionType.UpdateVmTemplate,
+                ActionType.UpdateVmTemplate,
                 updateInstanceTypeParameters,
                 new UnitVmModelNetworkAsyncCallback(model, addInstanceTypeNetworkManager, instanceType.getId()),
                 this
@@ -291,7 +291,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         Guid instanceTypeId = getSelectedItem().getId();
 
-        Frontend.getInstance().runAction(VdcActionType.RemoveVmTemplate,
+        Frontend.getInstance().runAction(ActionType.RemoveVmTemplate,
                 new VmTemplateManagementParameters(instanceTypeId),
                 result -> {
                     model.stopProgress();

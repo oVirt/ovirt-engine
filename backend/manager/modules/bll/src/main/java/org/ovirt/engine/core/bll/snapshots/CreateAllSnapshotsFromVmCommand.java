@@ -50,6 +50,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
@@ -57,7 +58,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -334,7 +334,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 params.setQuotaId(disk.getQuotaId());
 
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                        VdcActionType.CreateCinderSnapshot,
+                        ActionType.CreateCinderSnapshot,
                         params,
                         cloneContext().withoutCompensationContext().withoutLock());
                 try {
@@ -350,7 +350,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 continue;
             }
             VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.CreateSnapshot,
+                    ActionType.CreateSnapshot,
                     buildCreateSnapshotParameters(disk),
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
 
@@ -461,7 +461,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private void removeMemoryVolumesOfSnapshot(Snapshot snapshot) {
         VdcReturnValueBase retVal = runInternalAction(
-                VdcActionType.RemoveMemoryVolumes,
+                ActionType.RemoveMemoryVolumes,
                 new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {
@@ -471,7 +471,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     protected boolean isLiveSnapshotApplicable() {
-        return getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null
+        return getParameters().getParentCommand() != ActionType.RunVm && getVm() != null
                 && (getVm().isRunning() || getVm().getStatus() == VMStatus.Paused) && getVm().getRunOnVds() != null;
     }
 
@@ -742,7 +742,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     protected boolean validateVM(VmValidator vmValidator) {
         return validate(vmValidator.vmNotSavingRestoring()) &&
-                validate(vmValidator.validateVmStatusUsingMatrix(VdcActionType.CreateAllSnapshotsFromVm));
+                validate(vmValidator.validateVmStatusUsingMatrix(ActionType.CreateAllSnapshotsFromVm));
     }
 
     private boolean isSpecifiedDisksExist(Set<Guid> disks) {
@@ -766,8 +766,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.CreateSnapshot;
+    protected ActionType getChildActionType() {
+        return ActionType.CreateSnapshot;
     }
 
     @Override

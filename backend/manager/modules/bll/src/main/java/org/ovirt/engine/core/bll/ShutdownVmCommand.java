@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -76,7 +76,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
             stopVmParams.setStopReason(getParameters().getStopReason());
             // stopVmParams.ParametersCurrentUser = CurrentUser;
             stopVmParams.setSessionId(getParameters().getSessionId());
-            runInternalAction(VdcActionType.StopVm, stopVmParams);
+            runInternalAction(ActionType.StopVm, stopVmParams);
         }
 
         setSucceeded(true);

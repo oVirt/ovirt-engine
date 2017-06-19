@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -529,7 +529,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         // if create connection command was the one to fail and didn't create a connection
         // then the id of connection will be empty, and there's nothing to delete.
         if (connection.getId() != null && !connection.getId().equals("")) {  //$NON-NLS-1$
-            Frontend.getInstance().runAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId, false),
+            Frontend.getInstance().runAction(ActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId, false),
                 null, this);
         }
 
@@ -575,7 +575,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         StorageDomain storage = getSelectedItem();
         if (storage != null) {
             StorageDomainParametersBase params = new StorageDomainParametersBase(storage.getId());
-            Frontend.getInstance().runAction(VdcActionType.UpdateOvfStoreForStorageDomain, params, null, this);
+            Frontend.getInstance().runAction(ActionType.UpdateOvfStoreForStorageDomain, params, null, this);
         }
         cancel();
     }
@@ -595,7 +595,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             tempVar.setVdsId(host.getId());
             tempVar.setDoFormat(model.getFormat().getEntity());
 
-            Frontend.getInstance().runAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
+            Frontend.getInstance().runAction(ActionType.RemoveStorageDomain, tempVar, null, this);
         }
 
         cancel();
@@ -638,7 +638,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ForceRemoveStorageDomain,
+        Frontend.getInstance().runMultipleAction(ActionType.ForceRemoveStorageDomain,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{new StorageDomainParametersBase(storageDomain.getId())})),
                 result -> {
 
@@ -653,7 +653,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     private void scanDisks() {
         StorageDomain storageDomain = getSelectedItem();
         if (storageDomain != null) {
-            Frontend.getInstance().runAction(VdcActionType.ScanStorageForUnregisteredDisks,
+            Frontend.getInstance().runAction(ActionType.ScanStorageForUnregisteredDisks,
                     new StorageDomainParametersBase(storageDomain.getStoragePoolId(), storageDomain.getId()));
         }
     }
@@ -799,7 +799,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getWindow().stopProgress();
 
         if (fileConnection != null) {
-            Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
+            Frontend.getInstance().runAction(ActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                     result -> {
                         StorageListModel storageListModel = (StorageListModel) result.getState();
@@ -1068,7 +1068,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     private void updateStorageDomain() {
-        Frontend.getInstance().runAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain),
+        Frontend.getInstance().runAction(ActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain),
                 result -> {
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1099,10 +1099,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
         this.connection = connection;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
-        actionTypes.add(VdcActionType.AddStorageServerConnection);
+        actionTypes.add(ActionType.AddStorageServerConnection);
         actionTypes.add(posixModel.getAddStorageDomainVdcAction());
 
         parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId(), false));
@@ -1212,7 +1212,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         StorageServerConnectionParametersBase parameters =
                 new StorageServerConnectionParametersBase(connection, hostId, false);
-        Frontend.getInstance().runAction(VdcActionType.UpdateStorageServerConnection, parameters,
+        Frontend.getInstance().runAction(ActionType.UpdateStorageServerConnection, parameters,
                 result -> {
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1261,12 +1261,12 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         }
         connection = storageConnection;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
-        actionTypes.add(VdcActionType.AddStorageServerConnection);
-        actionTypes.add(VdcActionType.AddNFSStorageDomain);
-        actionTypes.add(VdcActionType.DisconnectStorageServerConnection);
+        actionTypes.add(ActionType.AddStorageServerConnection);
+        actionTypes.add(ActionType.AddNFSStorageDomain);
+        actionTypes.add(ActionType.DisconnectStorageServerConnection);
 
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
@@ -1334,7 +1334,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         params.setVdsId(host.getId());
         params.setLunIds(new ArrayList<>(lunIds));
         params.setForce(force);
-        Frontend.getInstance().runAction(VdcActionType.AddSANStorageDomain, params,
+        Frontend.getInstance().runAction(ActionType.AddSANStorageDomain, params,
                 result -> {
                         StorageListModel storageListModel = (StorageListModel) result.getState();
                         StorageModel storageModel = (StorageModel) storageListModel.getWindow();
@@ -1413,11 +1413,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         tempVar.setStorageType(localModel.getType());
         connection = tempVar;
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
-        actionTypes.add(VdcActionType.AddStorageServerConnection);
-        actionTypes.add(VdcActionType.AddLocalStorageDomain);
+        actionTypes.add(ActionType.AddStorageServerConnection);
+        actionTypes.add(ActionType.AddLocalStorageDomain);
 
         parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
         StorageDomainManagementParameter tempVar2 = new StorageDomainManagementParameter(storageDomain);
@@ -1499,7 +1499,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             saveNewSanStorage();
         }
         else {
-            Frontend.getInstance().runAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
+            Frontend.getInstance().runAction(ActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
 
@@ -1515,7 +1515,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     }
 
                     if (lunIds.size() > 0) {
-                        Frontend.getInstance().runAction(VdcActionType.ExtendSANStorageDomain,
+                        Frontend.getInstance().runAction(ActionType.ExtendSANStorageDomain,
                             new ExtendSANStorageDomainParameters(storageDomain1.getId(), new ArrayList<>(lunIds), force),
                             null, this);
                     }
@@ -1526,7 +1526,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     }
 
                     if (lunToRefreshIds.size() > 0) {
-                        Frontend.getInstance().runAction(VdcActionType.RefreshLunsSize,
+                        Frontend.getInstance().runAction(ActionType.RefreshLunsSize,
                                 new ExtendSANStorageDomainParameters(storageDomain1.getId(), lunToRefreshIds, false),
                                 null, this);
                     }
@@ -1542,7 +1542,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         if (activateDomain != null) {
             params.setActivate(activateDomain);
         }
-        Frontend.getInstance().runAction(VdcActionType.AttachStorageDomainToPool, params, null, this);
+        Frontend.getInstance().runAction(ActionType.AttachStorageDomainToPool, params, null, this);
     }
 
     private void importFileStorage(TaskContext context) {
@@ -1608,13 +1608,13 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             });
         }
 
-        Frontend.getInstance().runMultipleActions(VdcActionType.AddExistingBlockStorageDomain, parametersList, callbacks);
+        Frontend.getInstance().runMultipleActions(ActionType.AddExistingBlockStorageDomain, parametersList, callbacks);
     }
 
     public void importFileStorageInit() {
         if (fileConnection != null) {
             // Clean nfs connection
-            Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
+            Frontend.getInstance().runAction(ActionType.DisconnectStorageServerConnection,
                 new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                     result -> {
 
@@ -1675,7 +1675,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     public void importFileStorageConnect() {
-        Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId, false),
+        Frontend.getInstance().runAction(ActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                 result -> {
                     StorageListModel storageListModel = (StorageListModel) result.getState();
                     VdcReturnValueBase returnVal = result.getReturnValue();
@@ -1736,7 +1736,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
-        Frontend.getInstance().runAction(VdcActionType.AddExistingFileStorageDomain, params, result -> {
+        Frontend.getInstance().runAction(ActionType.AddExistingFileStorageDomain, params, result -> {
 
             Object[] array = (Object[]) result.getState();
             StorageListModel storageListModel = (StorageListModel) array[0];
@@ -1763,7 +1763,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     public void postImportFileStorage(TaskContext context, boolean isSucceeded, IStorageModel model, String message) {
-        Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
+        Frontend.getInstance().runAction(ActionType.DisconnectStorageServerConnection,
             new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                 result -> {
 

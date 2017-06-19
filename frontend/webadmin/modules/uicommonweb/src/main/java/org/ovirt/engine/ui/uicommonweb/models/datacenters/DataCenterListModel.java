@@ -5,11 +5,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -446,7 +446,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                             a.getId()));
                 }
                 windowModel.startProgress();
-                Frontend.getInstance().runMultipleAction(VdcActionType.RecoveryStoragePool, parameters,
+                Frontend.getInstance().runMultipleAction(ActionType.RecoveryStoragePool, parameters,
                         result -> {
 
                             ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -476,7 +476,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStoragePool, parameters,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveStoragePool, parameters,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -494,7 +494,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         StoragePoolParametersBase tempVar = new StoragePoolParametersBase(getSelectedItem().getId());
         tempVar.setForceDelete(true);
         VdcActionParametersBase parametersBase = tempVar;
-        Frontend.getInstance().runAction(VdcActionType.RemoveStoragePool, parametersBase);
+        Frontend.getInstance().runAction(ActionType.RemoveStoragePool, parametersBase);
         cancel();
     }
 
@@ -662,7 +662,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
 
         if (model.getIsNew()) {
             // When adding a data center use sync action to be able present a Guide Me dialog afterwards.
-            Frontend.getInstance().runAction(VdcActionType.AddEmptyStoragePool,
+            Frontend.getInstance().runAction(ActionType.AddEmptyStoragePool,
                 new StoragePoolManagementParameter(dataCenter),
                     result -> {
                         DataCenterListModel localModel = (DataCenterListModel) result.getState();
@@ -671,7 +671,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 this);
         } else {
             // Use async action in order to close dialog immediately.
-            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateStoragePool,
+            Frontend.getInstance().runMultipleAction(ActionType.UpdateStoragePool,
                 new ArrayList<VdcActionParametersBase>(Arrays.asList(
                     new StoragePoolManagementParameter(dataCenter))
                 ),

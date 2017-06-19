@@ -7,8 +7,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageConnection;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -53,7 +53,7 @@ public class BackendIscsiBondStorageConnectionsResourceTest
                 new Object[] { ISCSI_BOND_ID },
                 getIscsiBond());
 
-        setUpActionExpectations(VdcActionType.EditIscsiBond,
+        setUpActionExpectations(ActionType.EditIscsiBond,
                 EditIscsiBondParameters.class,
                 new String[] { "IscsiBond" },
                 new Object[] { getIscsiBondContainingStorageConnection() },

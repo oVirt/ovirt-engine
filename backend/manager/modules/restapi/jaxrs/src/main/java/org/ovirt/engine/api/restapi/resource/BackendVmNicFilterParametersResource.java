@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.NicNetworkFilterParameterResource;
 import org.ovirt.engine.api.resource.NicNetworkFilterParametersResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -49,7 +49,7 @@ public class BackendVmNicFilterParametersResource
         VmNicFilterParameter vmNicFilterParameter = map(parameter);
         vmNicFilterParameter.setVmInterfaceId(nicId);
         return performCreate(
-            VdcActionType.AddVmNicFilterParameter,
+            ActionType.AddVmNicFilterParameter,
             new VmNicFilterParameterParameters(vmId, vmNicFilterParameter),
             new NicNetworkFilterParameterResolver(parameter.getName())
         );

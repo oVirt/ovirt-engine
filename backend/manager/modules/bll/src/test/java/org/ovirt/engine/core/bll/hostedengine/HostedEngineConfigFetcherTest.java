@@ -36,8 +36,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -142,7 +142,7 @@ public class HostedEngineConfigFetcherTest {
         verifyCalled(VDSCommandType.GetImagesList, times(1));
         verifyCalled(VDSCommandType.GetVolumesList, times(1));
         verifyCalled(VDSCommandType.GetImageInfo, times(1));
-        verifyCalled(VdcActionType.RetrieveImageData, never());
+        verifyCalled(ActionType.RetrieveImageData, never());
         assertThat(config, is(Collections.emptyMap()));
     }
 
@@ -157,7 +157,7 @@ public class HostedEngineConfigFetcherTest {
         verifyCalled(VDSCommandType.GetImagesList, times(1));
         verifyCalled(VDSCommandType.GetVolumesList, times(1));
         verifyCalled(VDSCommandType.GetImageInfo, times(1));
-        verifyCalled(VdcActionType.RetrieveImageData, never());
+        verifyCalled(ActionType.RetrieveImageData, never());
         assertThat(config, is(Collections.emptyMap()));
     }
 
@@ -166,7 +166,7 @@ public class HostedEngineConfigFetcherTest {
         // given
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
-        mockVdcCommand(VdcActionType.RetrieveImageData,
+        mockVdcCommand(ActionType.RetrieveImageData,
                 successfulVdcReturnValue(null));
         // when
         Map<String, String> config = fetchConfig();
@@ -174,7 +174,7 @@ public class HostedEngineConfigFetcherTest {
         verifyCalled(VDSCommandType.GetImagesList, times(1));
         verifyCalled(VDSCommandType.GetVolumesList, times(1));
         verifyCalled(VDSCommandType.GetImageInfo, times(1));
-        verifyCalled(VdcActionType.RetrieveImageData, times(1));
+        verifyCalled(ActionType.RetrieveImageData, times(1));
         assertThat(config, is(Collections.emptyMap()));
 
     }
@@ -184,7 +184,7 @@ public class HostedEngineConfigFetcherTest {
         // given
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
-        mockVdcCommand(VdcActionType.RetrieveImageData,
+        mockVdcCommand(ActionType.RetrieveImageData,
                 successfulVdcReturnValue(new byte[10]));
         // when
         Map<String, String> config = fetchConfig();
@@ -197,12 +197,12 @@ public class HostedEngineConfigFetcherTest {
         // given
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
-        mockVdcCommand(VdcActionType.RetrieveImageData,
+        mockVdcCommand(ActionType.RetrieveImageData,
                 successfulVdcReturnValue(load("not-a-valid-hosted-engine-config-tar.tar")));
         // when
         Map<String, String> config = fetchConfig();
         // then
-        verifyCalled(VdcActionType.RetrieveImageData, times(1));
+        verifyCalled(ActionType.RetrieveImageData, times(1));
         assertThat(config, is(Collections.emptyMap()));
     }
 
@@ -211,12 +211,12 @@ public class HostedEngineConfigFetcherTest {
         // given
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
-        mockVdcCommand(VdcActionType.RetrieveImageData,
+        mockVdcCommand(ActionType.RetrieveImageData,
                 successfulVdcReturnValue(load("hosted-engine-config.tar")));
         // when
         Map<String, String> config = fetchConfig();
         // then
-        verifyCalled(VdcActionType.RetrieveImageData, times(1));
+        verifyCalled(ActionType.RetrieveImageData, times(1));
         assertThat(config, hasKey("sdUUID"));
         assertThat(config, hasKey("host_id"));
     }
@@ -237,17 +237,17 @@ public class HostedEngineConfigFetcherTest {
                 .when(resourceManager).runVdsCommand(eq(cmdType), any(VDSParametersBase.class));
     }
 
-    private void mockVdcCommand(VdcActionType vdcActionType, VdcReturnValueBase returnValue) {
+    private void mockVdcCommand(ActionType actionType, VdcReturnValueBase returnValue) {
         doReturn(returnValue)
-                .when(backend).runInternalAction(eq(vdcActionType), any(VdcActionParametersBase.class));
+                .when(backend).runInternalAction(eq(actionType), any(VdcActionParametersBase.class));
     }
 
     private VDSReturnValue verifyCalled(VDSCommandType vdsmCmd, VerificationMode times) {
         return verify(resourceManager, times).runVdsCommand(eq(vdsmCmd), any());
     }
 
-    private VdcReturnValueBase verifyCalled(VdcActionType vdcActionType, VerificationMode times) {
-        return verify(backend, times).runInternalAction(eq(vdcActionType), any(VdcActionParametersBase.class));
+    private VdcReturnValueBase verifyCalled(ActionType actionType, VerificationMode times) {
+        return verify(backend, times).runInternalAction(eq(actionType), any(VdcActionParametersBase.class));
     }
 
     private VDSReturnValue successfulReturnValue(Object value) {

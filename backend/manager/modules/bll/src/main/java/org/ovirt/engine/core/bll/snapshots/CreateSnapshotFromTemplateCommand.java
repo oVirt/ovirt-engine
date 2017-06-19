@@ -6,9 +6,9 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -100,7 +100,7 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
         removeImageParams.setShouldLockImage(false);
         removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getDestinationDiskImage().getId()));
         VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
-                VdcActionType.RemoveImage,
+                ActionType.RemoveImage,
                 removeImageParams);
         if (!returnValue.getSucceeded()) {
             addAuditLogOnRemoveFailure();

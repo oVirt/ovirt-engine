@@ -35,10 +35,10 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.restapi.util.RxTxCalculator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -132,7 +132,7 @@ public class BackendVmNicResourceTest
         setAllContentHeaderExpectation();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVmInterface,
+                ActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
                 new Object[] { VM_ID, NIC_ID },
@@ -164,7 +164,7 @@ public class BackendVmNicResourceTest
         setGetGuestAgentQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVmInterface,
+                ActionType.RemoveVmInterface,
                 RemoveVmInterfaceParameters.class,
                 new String[] { "VmId", "InterfaceId" },
                 new Object[] { VM_ID, NIC_ID },
@@ -191,7 +191,7 @@ public class BackendVmNicResourceTest
         setGetGuestAgentQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVmInterface,
+                ActionType.RemoveVmInterface,
                 RemoveVmInterfaceParameters.class,
                 new String[] { "VmId", "InterfaceId" },
                 new Object[] { VM_ID, NIC_ID },
@@ -328,7 +328,7 @@ public class BackendVmNicResourceTest
         setAllContentHeaderExpectation();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVmInterface,
+                ActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
                 new Object[] { VM_ID, NIC_ID }
@@ -351,7 +351,7 @@ public class BackendVmNicResourceTest
         setUpGetEntityExpectations(3);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVmInterface,
+                ActionType.UpdateVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId", "Interface.Id" },
                 new Object[] { VM_ID, NIC_ID }
@@ -365,7 +365,7 @@ public class BackendVmNicResourceTest
         verifyActionResponse(r, "vms/" + VM_ID + "/nics/" + NIC_ID, false);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values) {

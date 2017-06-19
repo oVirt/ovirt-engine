@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.AssignedTagResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendGroupTagsResource extends AbstractBackendAssignedTagsResource {
     public BackendGroupTagsResource(String parentId) {
-        super(Group.class, parentId, VdcActionType.AttachUserGroupToTag);
+        super(Group.class, parentId, ActionType.AttachUserGroupToTag);
     }
 
     public List<Tags> getCollection() {

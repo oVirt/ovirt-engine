@@ -12,9 +12,9 @@ import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -66,7 +66,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
         final VDS vds = getVds();
         try (EngineLock monitoringLock = acquireMonitorLock("Activate host")) {
-            executionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
+            executionHandler.updateSpecificActionJobCompleted(vds.getId(), ActionType.MaintenanceVds, false);
             setSucceeded(setVdsStatus(VDSStatus.Unassigned).getSucceeded());
 
             if (getSucceeded()) {

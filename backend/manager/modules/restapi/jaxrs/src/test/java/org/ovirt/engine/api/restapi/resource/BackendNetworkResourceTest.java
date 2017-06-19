@@ -8,9 +8,9 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -76,7 +76,7 @@ public class BackendNetworkResourceTest
     public void testUpdate() throws Exception {
         setUpEntityQueryExpectations(2);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetwork,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateNetwork,
                                            AddNetworkStoragePoolParameters.class,
                                            new String[] { "StoragePoolId" },
                                            new Object[] { GUIDS[1] },
@@ -99,7 +99,7 @@ public class BackendNetworkResourceTest
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetwork,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateNetwork,
                                            AddNetworkStoragePoolParameters.class,
                                            new String[] { "StoragePoolId" },
                                            new Object[] { GUIDS[1] },
@@ -152,7 +152,7 @@ public class BackendNetworkResourceTest
         setUpEntityQueryExpectations(2);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveNetwork,
+                ActionType.RemoveNetwork,
                 RemoveNetworkParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -197,7 +197,7 @@ public class BackendNetworkResourceTest
         setUpEntityQueryExpectations(2);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveNetwork,
+                ActionType.RemoveNetwork,
                 RemoveNetworkParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

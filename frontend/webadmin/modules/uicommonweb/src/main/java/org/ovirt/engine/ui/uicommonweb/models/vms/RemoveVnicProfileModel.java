@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -59,7 +59,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
         startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVnicProfile, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveVnicProfile, list,
                 result -> {
 
                     stopProgress();

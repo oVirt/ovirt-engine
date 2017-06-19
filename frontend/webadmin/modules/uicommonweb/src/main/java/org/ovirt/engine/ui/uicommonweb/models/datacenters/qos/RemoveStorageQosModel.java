@@ -4,7 +4,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -78,8 +78,8 @@ public class RemoveStorageQosModel extends RemoveQosModel<StorageQos> {
     }
 
     @Override
-    protected VdcActionType getRemoveActionType() {
-        return VdcActionType.RemoveStorageQos;
+    protected ActionType getRemoveActionType() {
+        return ActionType.RemoveStorageQos;
     }
 
 }

@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.uicompat;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 public final class FrontendActionAsyncResult {
-    private VdcActionType privateActionType;
-    public VdcActionType getActionType() {
+    private ActionType privateActionType;
+    public ActionType getActionType() {
         return privateActionType;
     }
-    private void setActionType(VdcActionType value) {
+    private void setActionType(ActionType value) {
         privateActionType = value;
     }
     private VdcActionParametersBase privateParameters;
@@ -34,13 +34,13 @@ public final class FrontendActionAsyncResult {
         state = value;
     }
 
-    public FrontendActionAsyncResult(VdcActionType actionType, VdcActionParametersBase parameters, VdcReturnValueBase returnValue) {
+    public FrontendActionAsyncResult(ActionType actionType, VdcActionParametersBase parameters, VdcReturnValueBase returnValue) {
         setActionType(actionType);
         setParameters(parameters);
         setReturnValue(returnValue);
     }
 
-    public FrontendActionAsyncResult(VdcActionType actionType, VdcActionParametersBase parameters, VdcReturnValueBase returnValue, Object state) {
+    public FrontendActionAsyncResult(ActionType actionType, VdcActionParametersBase parameters, VdcReturnValueBase returnValue, Object state) {
         setActionType(actionType);
         setParameters(parameters);
         setReturnValue(returnValue);

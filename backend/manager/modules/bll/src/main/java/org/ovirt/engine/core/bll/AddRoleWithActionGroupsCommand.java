@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -81,7 +81,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
         });
 
         VdcReturnValueBase attachAction = runInternalAction(
-                VdcActionType.AttachActionGroupsToRole,
+                ActionType.AttachActionGroupsToRole,
                 new ActionGroupsToRoleParameter(getRole().getId(), getParameters().getActionGroups()));
         if (!attachAction.isValid() || !attachAction.getSucceeded()) {
             List<String> failedMsgs = getReturnValue().getExecuteFailedMessages();

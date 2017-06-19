@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -141,7 +141,7 @@ public class HostGlusterSwiftListModel extends SearchableListModel<VDS, GlusterS
                         getEntity().getId(),
                         ServiceType.GLUSTER_SWIFT, action);
 
-        Frontend.getInstance().runAction(VdcActionType.ManageGlusterService, parameters);
+        Frontend.getInstance().runAction(ActionType.ManageGlusterService, parameters);
     }
 
     @Override

@@ -23,10 +23,10 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -99,7 +99,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
-            runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, parameters);
+            runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, parameters);
         }
     }
 

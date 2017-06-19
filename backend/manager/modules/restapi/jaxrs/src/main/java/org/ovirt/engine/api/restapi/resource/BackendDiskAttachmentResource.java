@@ -22,10 +22,10 @@ import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.resource.DiskAttachmentResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -59,10 +59,10 @@ public class BackendDiskAttachmentResource
     public Response remove() {
         boolean detachOnly = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, DETACH_ONLY, true, true);
         if (detachOnly) {
-            return performAction(VdcActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(new DiskVmElement(guid, vmId)));
+            return performAction(ActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(new DiskVmElement(guid, vmId)));
         }
         else {
-            return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
+            return performAction(ActionType.RemoveDisk, new RemoveDiskParameters(guid));
         }
     }
 
@@ -71,7 +71,7 @@ public class BackendDiskAttachmentResource
         if (attachment.isSetActive()) {
             DiskAttachment attachmentFromDb = get();
             if (!attachmentFromDb.isActive().equals(attachment.isActive())) {
-                VdcActionType actionType = attachment.isActive() ? VdcActionType.HotPlugDiskToVm : VdcActionType.HotUnPlugDiskFromVm;
+                ActionType actionType = attachment.isActive() ? ActionType.HotPlugDiskToVm : ActionType.HotUnPlugDiskFromVm;
                 VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(guid, vmId));
                 try {
                     doAction(actionType, params);
@@ -81,7 +81,7 @@ public class BackendDiskAttachmentResource
                 }
             }
         }
-        return performUpdate(attachment, new AddDiskResolver(), VdcActionType.UpdateVmDisk, new UpdateParametersProvider());
+        return performUpdate(attachment, new AddDiskResolver(), ActionType.UpdateVmDisk, new UpdateParametersProvider());
     }
 
     private class AddDiskResolver extends EntityIdResolver<Guid> {

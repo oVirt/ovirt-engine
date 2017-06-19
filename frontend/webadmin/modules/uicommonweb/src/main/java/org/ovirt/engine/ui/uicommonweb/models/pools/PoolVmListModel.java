@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -138,7 +138,7 @@ public class PoolVmListModel extends VmListModel<VmPool> {
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmFromPool, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveVmFromPool, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();

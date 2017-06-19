@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalUrlParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -51,7 +51,7 @@ public class BackendExternalVmImportsResourceTest extends AbstractBackendBaseTes
         VM externalVm = new VM();
         externalVm.setName(EXTERNAL_VM_NAME);
 
-        setUpActionExpectations(VdcActionType.ImportVmFromExternalUrl,
+        setUpActionExpectations(ActionType.ImportVmFromExternalUrl,
                 ImportVmFromExternalUrlParameters.class,
                 new String[] {
                     "OriginType",

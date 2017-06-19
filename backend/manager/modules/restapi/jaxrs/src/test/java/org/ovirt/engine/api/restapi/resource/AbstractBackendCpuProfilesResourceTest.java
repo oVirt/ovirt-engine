@@ -17,8 +17,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -44,7 +44,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     public void testAddCpuProfile() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpClusterQueryExpectations();
-        setUpCreationExpectations(VdcActionType.AddCpuProfile,
+        setUpCreationExpectations(ActionType.AddCpuProfile,
                 CpuProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -79,7 +79,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     }
 
     private void doTestBadAddCpuProfile(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddCpuProfile,
+        setUriInfo(setUpActionExpectations(ActionType.AddCpuProfile,
                 CpuProfileParameters.class,
                 new String[] {},
                 new Object[] {},

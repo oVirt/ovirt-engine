@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.HostDevice;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 
@@ -30,7 +30,7 @@ public class BackendVmHostDevicesResourceTest
         setUpGetVmHostDevicesExpectations();
 
         setUpActionExpectations(
-                VdcActionType.AddVmHostDevices,
+                ActionType.AddVmHostDevices,
                 VmHostDevicesParameters.class,
                 new String[] { "VmId", "DeviceNames" },
                 new Object[] { VM_ID, Collections.singletonList(DEVICE_NAME)},

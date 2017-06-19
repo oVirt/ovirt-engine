@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -37,7 +37,7 @@ public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate, Impor
         }
 
         startProgress();
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmTemplateFromConfiguration, parameters,
+        Frontend.getInstance().runMultipleAction(ActionType.ImportVmTemplateFromConfiguration, parameters,
                 result -> {
                     stopProgress();
                     cancel();

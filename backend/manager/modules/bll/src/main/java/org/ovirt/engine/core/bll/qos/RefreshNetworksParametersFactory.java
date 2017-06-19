@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -18,7 +19,7 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 /**
  * Factory creates parameters to be used to refresh out of sync networks using
- * {@link org.ovirt.engine.core.common.action.VdcActionType#PersistentHostSetupNetworks}.
+ * {@link ActionType#PersistentHostSetupNetworks}.
  *
  * In contrast of {@link PersistentHostSetupNetworksParametersFactory}, which is called by this factory, this factory
  * does not work with given host ID. Parameters are created for all identified networks on all found hosts.

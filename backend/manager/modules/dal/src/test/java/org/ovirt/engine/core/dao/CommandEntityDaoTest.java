@@ -18,8 +18,8 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -31,9 +31,9 @@ public class CommandEntityDaoTest extends BaseGenericDaoTestCase<Guid, CommandEn
     protected CommandEntity generateNewEntity() {
 
         Map<String, Serializable> data = new HashMap<>();
-        data.put("NEXT_COMMAND_TYPE", VdcActionType.DestroyImage);
+        data.put("NEXT_COMMAND_TYPE", ActionType.DestroyImage);
         CommandEntity commandEntity = new CommandEntity();
-        commandEntity.setCommandType(VdcActionType.AddCluster);
+        commandEntity.setCommandType(ActionType.AddCluster);
         commandEntity.setCreatedAt(new Date(System.currentTimeMillis()));
         commandEntity.setId(Guid.newGuid());
         commandEntity.setCommandStatus(CommandStatus.ACTIVE);

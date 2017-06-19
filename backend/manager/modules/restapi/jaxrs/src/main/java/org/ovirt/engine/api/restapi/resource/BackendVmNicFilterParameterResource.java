@@ -26,9 +26,9 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.NicNetworkFilterParameterResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -87,7 +87,7 @@ public class BackendVmNicFilterParameterResource
         return performUpdate(
                 parameter,
                 new FilterParameterResolver(),
-                VdcActionType.UpdateVmNicFilterParameter,
+                ActionType.UpdateVmNicFilterParameter,
                 new UpdateParametersProvider()
         );
     }
@@ -95,7 +95,7 @@ public class BackendVmNicFilterParameterResource
     @Override
     public Response remove() {
         return performAction(
-                VdcActionType.RemoveVmNicFilterParameter,
+                ActionType.RemoveVmNicFilterParameter,
                 new RemoveVmNicFilterParameterParameters(vmId, guid)
         );
     }

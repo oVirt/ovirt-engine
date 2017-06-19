@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.AffinityGroups;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
@@ -48,7 +48,7 @@ public class BackendAffinityGroupsResource
                         null);
         backendEntity.setClusterId(asGuid(clusterId));
 
-        return performCreate(VdcActionType.AddAffinityGroup,
+        return performCreate(ActionType.AddAffinityGroup,
                 new AffinityGroupCRUDParameters(null, backendEntity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetAffinityGroupById, IdQueryParameters.class),
                 true);

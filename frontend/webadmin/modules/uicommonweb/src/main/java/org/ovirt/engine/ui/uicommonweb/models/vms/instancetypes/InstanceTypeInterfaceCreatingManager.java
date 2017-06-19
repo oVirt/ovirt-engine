@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -46,19 +46,19 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
             final boolean isAddingNewVm,
             final Guid id,
             final UnitVmModel unitVmModel) {
-        Frontend.getInstance().runMultipleActions(VdcActionType.AddVmTemplateInterface,
+        Frontend.getInstance().runMultipleActions(ActionType.AddVmTemplateInterface,
                 createVnicParameters,
                 new IFrontendActionAsyncCallback() {
 
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
-                        Frontend.getInstance().runMultipleActions(VdcActionType.UpdateVmTemplateInterface,
+                        Frontend.getInstance().runMultipleActions(ActionType.UpdateVmTemplateInterface,
                                 updateVnicParameters,
                                 new IFrontendActionAsyncCallback() {
 
                                     @Override
                                     public void executed(FrontendActionAsyncResult result) {
-                                        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVmTemplateInterface,
+                                        Frontend.getInstance().runMultipleActions(ActionType.RemoveVmTemplateInterface,
                                                 removeVnicParameters,
                                                 r -> {
                                                     // no need to reorder - it will be done for the VMs when creating from instance type

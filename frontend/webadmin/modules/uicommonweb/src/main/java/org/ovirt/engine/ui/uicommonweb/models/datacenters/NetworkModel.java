@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -621,7 +621,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
                 paramlist.add(parameters);
             }
         }
-        Frontend.getInstance().runMultipleActions(VdcActionType.AddVnicProfile,
+        Frontend.getInstance().runMultipleActions(ActionType.AddVnicProfile,
                 paramlist,
                 (IFrontendActionAsyncCallback) null); // cast is required to avoid overload ambiguity
     }

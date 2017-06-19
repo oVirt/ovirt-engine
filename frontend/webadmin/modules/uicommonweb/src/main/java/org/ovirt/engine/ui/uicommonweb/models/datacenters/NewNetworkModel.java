@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -126,10 +126,10 @@ public class NewNetworkModel extends NetworkModel {
             providerNetwork.setProviderId(externalProvider.getId());
             getNetwork().setProvidedBy(providerNetwork);
 
-            Frontend.getInstance().runAction(VdcActionType.AddNetworkOnProvider,
+            Frontend.getInstance().runAction(ActionType.AddNetworkOnProvider,
                     parameters, addNetworkOnProviderCallback(), null);
         } else {
-            Frontend.getInstance().runAction(VdcActionType.AddNetwork,
+            Frontend.getInstance().runAction(ActionType.AddNetwork,
                     parameters, addNetworkCallback(), null);
         }
     }
@@ -175,7 +175,7 @@ public class NewNetworkModel extends NetworkModel {
             getSubnetModel().setExternalNetwork(providedBy);
             getSubnetModel().flush();
 
-            Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
+            Frontend.getInstance().runAction(ActionType.AddSubnetToProvider,
                     new AddExternalSubnetParameters(getSubnetModel().getSubnet(), providedBy.getProviderId(), providedBy.getExternalId()));
         }
     }
@@ -195,7 +195,7 @@ public class NewNetworkModel extends NetworkModel {
 
         if (!networkAttachments.isEmpty()) {
             Frontend.getInstance().runAction(
-                    VdcActionType.ManageNetworkClusters,
+                    ActionType.ManageNetworkClusters,
                     new ManageNetworkClustersParameters(networkAttachments));
         }
     }

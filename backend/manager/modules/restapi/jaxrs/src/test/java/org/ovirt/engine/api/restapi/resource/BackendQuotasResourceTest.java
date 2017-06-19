@@ -9,8 +9,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,7 +53,7 @@ public class BackendQuotasResourceTest
     @Test
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddQuota,
+        setUpCreationExpectations(ActionType.AddQuota,
                 QuotaCRUDParameters.class,
                 new String[] { "Quota.StoragePoolId", "Quota.ThresholdClusterPercentage",
                         "Quota.GraceClusterPercentage", "Quota.ThresholdStoragePercentage",

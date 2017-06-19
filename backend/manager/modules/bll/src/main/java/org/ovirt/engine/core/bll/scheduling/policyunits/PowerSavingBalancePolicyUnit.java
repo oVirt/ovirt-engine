@@ -15,9 +15,9 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingVM;
 import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -112,7 +112,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             Guid[] vdsList = new Guid[] {vds.getId()};
             MaintenanceNumberOfVdssParameters parameters =
                     new MaintenanceNumberOfVdssParameters(Arrays.asList(vdsList), true, true);
-            Backend.getInstance().runInternalAction(VdcActionType.MaintenanceNumberOfVdss,
+            Backend.getInstance().runInternalAction(ActionType.MaintenanceNumberOfVdss,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
         }
@@ -122,7 +122,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
             /* Maint -> Down */
             VdsPowerDownParameters parameters = new VdsPowerDownParameters(vds.getId());
             parameters.setKeepPolicyPMEnabled(true);
-            Backend.getInstance().runInternalAction(VdcActionType.VdsPowerDown,
+            Backend.getInstance().runInternalAction(ActionType.VdsPowerDown,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
         }
@@ -131,7 +131,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
 
             /* Maint -> Up */
             VdsActionParameters parameters = new VdsActionParameters(vds.getId());
-            Backend.getInstance().runInternalAction(VdcActionType.ActivateVds,
+            Backend.getInstance().runInternalAction(ActionType.ActivateVds,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
         }
@@ -140,7 +140,7 @@ public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUni
 
             /* Down -> Up */
             FenceVdsActionParameters parameters = new FenceVdsActionParameters(vds.getId());
-            Backend.getInstance().runInternalAction(VdcActionType.StartVds,
+            Backend.getInstance().runInternalAction(ActionType.StartVds,
                     parameters,
                     ExecutionHandler.createInternalJobContext());
         }

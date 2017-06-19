@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Filter;
 import org.ovirt.engine.api.resource.FilterResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -33,7 +33,7 @@ public class BackendFilterResource
     public Response remove() {
         ClusterPolicy entity = parent.getClusterPolicy();
         updateEntityForRemove(entity, guid);
-        return performAction(VdcActionType.EditClusterPolicy, new ClusterPolicyCRUDParameters(entity.getId(), entity));
+        return performAction(ActionType.EditClusterPolicy, new ClusterPolicyCRUDParameters(entity.getId(), entity));
     }
 
     private void updateEntityForRemove(ClusterPolicy entity, Guid id) {

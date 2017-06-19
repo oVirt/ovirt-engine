@@ -28,13 +28,13 @@ import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters.OvfUpdateStep;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -337,7 +337,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             uploadStreamParameters.setParentParameters(getParameters());
             uploadStreamParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             VdcReturnValueBase vdcReturnValueBase =
-                    runInternalActionWithTasksContext(VdcActionType.UploadStream, uploadStreamParameters);
+                    runInternalActionWithTasksContext(ActionType.UploadStream, uploadStreamParameters);
             if (vdcReturnValueBase.getSucceeded()) {
                 storageDomainOvfInfo.setStatus(StorageDomainOvfInfoStatus.UPDATED);
                 storageDomainOvfInfo.setStoredOvfIds(vmAndTemplatesIds);
@@ -362,7 +362,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     public void createOvfStoreDisks(int missingDiskCount) {
         for (int i = 0; i < missingDiskCount; i++) {
             CreateOvfVolumeForStorageDomainCommandParameters parameters = createCreateOvfVolumeForStorageDomainParams();
-            runInternalAction(VdcActionType.CreateOvfVolumeForStorageDomain, parameters, getContext().clone().withoutLock());
+            runInternalAction(ActionType.CreateOvfVolumeForStorageDomain, parameters, getContext().clone().withoutLock());
         }
     }
 

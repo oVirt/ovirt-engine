@@ -573,339 +573,339 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_STORAGE_DOMAIN_SYNC_STARTED();
 
-    String VdcActionType___ActivateVds();
+    String ActionType___ActivateVds();
 
-    String VdcActionType___RecoveryStoragePool();
+    String ActionType___RecoveryStoragePool();
 
-    String VdcActionType___UpdateVmInterface();
+    String ActionType___UpdateVmInterface();
 
-    String VdcActionType___MigrateVmToServer();
+    String ActionType___MigrateVmToServer();
 
-    String VdcActionType___UpdateDisplayToCluster();
+    String ActionType___UpdateDisplayToCluster();
 
-    String VdcActionType___ChangeDisk();
+    String ActionType___ChangeDisk();
 
-    String VdcActionType___MoveOrCopyDisk();
+    String ActionType___MoveOrCopyDisk();
 
-    String VdcActionType___LiveMigrateDisk();
+    String ActionType___LiveMigrateDisk();
 
-    String VdcActionType___MoveDisk();
+    String ActionType___MoveDisk();
 
-    String VdcActionType___ShutdownVm();
+    String ActionType___ShutdownVm();
 
-    String VdcActionType___ApproveVds();
+    String ActionType___ApproveVds();
 
-    String VdcActionType___AddBond();
+    String ActionType___AddBond();
 
-    String VdcActionType___AddNetwork();
+    String ActionType___AddNetwork();
 
-    String VdcActionType___AddPermission();
+    String ActionType___AddPermission();
 
-    String VdcActionType___RemoveRole();
+    String ActionType___RemoveRole();
 
-    String VdcActionType___AddRoleWithActions();
+    String ActionType___AddRoleWithActions();
 
-    String VdcActionType___AddVds();
+    String ActionType___AddVds();
 
-    String VdcActionType___AddCluster();
+    String ActionType___AddCluster();
 
-    String VdcActionType___AddVm();
+    String ActionType___AddVm();
 
-    String VdcActionType___AddVmFromScratch();
+    String ActionType___AddVmFromScratch();
 
-    String VdcActionType___AddVmInterface();
+    String ActionType___AddVmInterface();
 
-    String VdcActionType___AddVmPool();
+    String ActionType___AddVmPool();
 
-    String VdcActionType___AddVmTemplate();
+    String ActionType___AddVmTemplate();
 
-    String VdcActionType___AddVmTemplateInterface();
+    String ActionType___AddVmTemplateInterface();
 
-    String VdcActionType___AddVmToPool();
+    String ActionType___AddVmToPool();
 
-    String VdcActionType___AttachActionToRole();
+    String ActionType___AttachActionToRole();
 
-    String VdcActionType___AttachNetworkToCluster();
+    String ActionType___AttachNetworkToCluster();
 
-    String VdcActionType___AttachNetworkToVdsInterface();
+    String ActionType___AttachNetworkToVdsInterface();
 
-    String VdcActionType___AttachVmPoolToAdGroup();
+    String ActionType___AttachVmPoolToAdGroup();
 
-    String VdcActionType___AttachVmPoolToUser();
+    String ActionType___AttachVmPoolToUser();
 
-    String VdcActionType___AttachVmToAdGroup();
+    String ActionType___AttachVmToAdGroup();
 
-    String VdcActionType___AttachVmToUser();
+    String ActionType___AttachVmToUser();
 
-    String VdcActionType___CommitNetworkChanges();
+    String ActionType___CommitNetworkChanges();
 
-    String VdcActionType___SetupNetworks();
+    String ActionType___SetupNetworks();
 
-    String VdcActionType___CreateAllSnapshotsFromVm();
+    String ActionType___CreateAllSnapshotsFromVm();
 
-    String VdcActionType___DetachActionFromRole();
+    String ActionType___DetachActionFromRole();
 
-    String VdcActionType___DetachNetworkFromVdsInterface();
+    String ActionType___DetachNetworkFromVdsInterface();
 
-    String VdcActionType___DetachNetworkToCluster();
+    String ActionType___DetachNetworkToCluster();
 
-    String VdcActionType___DetachUserFromVmFromPool();
+    String ActionType___DetachUserFromVmFromPool();
 
-    String VdcActionType___DetachVmFromAdGroup();
+    String ActionType___DetachVmFromAdGroup();
 
-    String VdcActionType___DetachVmFromUser();
+    String ActionType___DetachVmFromUser();
 
-    String VdcActionType___DetachVmPoolFromAdGroup();
+    String ActionType___DetachVmPoolFromAdGroup();
 
-    String VdcActionType___DetachVmPoolFromUser();
+    String ActionType___DetachVmPoolFromUser();
 
-    String VdcActionType___HibernateVm();
+    String ActionType___HibernateVm();
 
-    String VdcActionType___ActivateDeactivateVmNic();
+    String ActionType___ActivateDeactivateVmNic();
 
-    String VdcActionType___LoginAdminUser();
+    String ActionType___LoginAdminUser();
 
-    String VdcActionType___MaintenanceNumberOfVdss();
+    String ActionType___MaintenanceNumberOfVdss();
 
-    String VdcActionType___MergeSnapshot();
+    String ActionType___MergeSnapshot();
 
-    String VdcActionType___MigrateVm();
+    String ActionType___MigrateVm();
 
-    String VdcActionType___PauseVm();
+    String ActionType___PauseVm();
 
-    String VdcActionType___RemoveAdGroup();
+    String ActionType___RemoveAdGroup();
 
-    String VdcActionType___RemoveUser();
+    String ActionType___RemoveUser();
 
-    String VdcActionType___RemoveBond();
+    String ActionType___RemoveBond();
 
-    String VdcActionType___RemoveNetwork();
+    String ActionType___RemoveNetwork();
 
-    String VdcActionType___RemovePermission();
+    String ActionType___RemovePermission();
 
-    String VdcActionType___RemoveVds();
+    String ActionType___RemoveVds();
 
-    String VdcActionType___RemoveCluster();
+    String ActionType___RemoveCluster();
 
-    String VdcActionType___RemoveVm();
+    String ActionType___RemoveVm();
 
-    String VdcActionType___RemoveVmFromPool();
+    String ActionType___RemoveVmFromPool();
 
-    String VdcActionType___RemoveVmInterface();
+    String ActionType___RemoveVmInterface();
 
-    String VdcActionType___RemoveVmPool();
+    String ActionType___RemoveVmPool();
 
-    String VdcActionType___RemoveVmTemplate();
+    String ActionType___RemoveVmTemplate();
 
-    String VdcActionType___RemoveVmTemplateInterface();
+    String ActionType___RemoveVmTemplateInterface();
 
-    String VdcActionType___RestartVds();
+    String ActionType___RestartVds();
 
-    String VdcActionType___RestoreAllSnapshots();
+    String ActionType___RestoreAllSnapshots();
 
-    String VdcActionType___RunVm();
+    String ActionType___RunVm();
 
-    String VdcActionType___StartVds();
+    String ActionType___StartVds();
 
-    String VdcActionType___StopVds();
+    String ActionType___StopVds();
 
-    String VdcActionType___RunVmOnce();
+    String ActionType___RunVmOnce();
 
-    String VdcActionType___RefreshHostCapabilities();
+    String ActionType___RefreshHostCapabilities();
 
-    String VdcActionType___StopVm();
+    String ActionType___StopVm();
 
-    String VdcActionType___TryBackToAllSnapshotsOfVm();
+    String ActionType___TryBackToAllSnapshotsOfVm();
 
-    String VdcActionType___UpdateNetworkToVdsInterface();
+    String ActionType___UpdateNetworkToVdsInterface();
 
-    String VdcActionType___UpdateNetwork();
+    String ActionType___UpdateNetwork();
 
-    String VdcActionType___UpdateRole();
+    String ActionType___UpdateRole();
 
-    String VdcActionType___UpdateVds();
+    String ActionType___UpdateVds();
 
-    String VdcActionType___UpdateCluster();
+    String ActionType___UpdateCluster();
 
-    String VdcActionType___UpdateVm();
+    String ActionType___UpdateVm();
 
-    String VdcActionType___UpdateVmConsoleData();
+    String ActionType___UpdateVmConsoleData();
 
-    String VdcActionType___UpdateVmPool();
+    String ActionType___UpdateVmPool();
 
-    String VdcActionType___UpdateVmTemplate();
+    String ActionType___UpdateVmTemplate();
 
-    String VdcActionType___UpdateVmTemplateInterface();
+    String ActionType___UpdateVmTemplateInterface();
 
-    String VdcActionType___AttachVmsToTag();
+    String ActionType___AttachVmsToTag();
 
-    String VdcActionType___DetachVmFromTag();
+    String ActionType___DetachVmFromTag();
 
-    String VdcActionType___AddDisk();
+    String ActionType___AddDisk();
 
-    String VdcActionType___RemoveDisk();
+    String ActionType___RemoveDisk();
 
-    String VdcActionType___UpdateVmDisk();
+    String ActionType___UpdateVmDisk();
 
-    String VdcActionType___AttachDiskToVm();
+    String ActionType___AttachDiskToVm();
 
-    String VdcActionType___DetachDiskFromVm();
+    String ActionType___DetachDiskFromVm();
 
-    String VdcActionType___AddVmAndAttachToUser();
+    String ActionType___AddVmAndAttachToUser();
 
-    String VdcActionType___AttachUserToVmFromPool();
+    String ActionType___AttachUserToVmFromPool();
 
-    String VdcActionType___AttachUserToVmFromPoolAndRun();
+    String ActionType___AttachUserToVmFromPoolAndRun();
 
-    String VdcActionType___AddStorageServerConnection();
+    String ActionType___AddStorageServerConnection();
 
-    String VdcActionType___ForceRemoveStorageDomain();
+    String ActionType___ForceRemoveStorageDomain();
 
-    String VdcActionType___ActivateStorageDomain();
+    String ActionType___ActivateStorageDomain();
 
-    String VdcActionType___FenceVdsManualy();
+    String ActionType___FenceVdsManualy();
 
-    String VdcActionType___AddEmptyStoragePool();
+    String ActionType___AddEmptyStoragePool();
 
-    String VdcActionType___AddNFSStorageDomain();
+    String ActionType___AddNFSStorageDomain();
 
-    String VdcActionType___AddSANStorageDomain();
+    String ActionType___AddSANStorageDomain();
 
-    String VdcActionType___AddLocalStorageDomain();
+    String ActionType___AddLocalStorageDomain();
 
-    String VdcActionType___AddStoragePoolWithStorages();
+    String ActionType___AddStoragePoolWithStorages();
 
-    String VdcActionType___AttachStorageDomainToPool();
+    String ActionType___AttachStorageDomainToPool();
 
-    String VdcActionType___DeactivateStorageDomain();
+    String ActionType___DeactivateStorageDomain();
 
-    String VdcActionType___DetachStorageDomainFromPool();
+    String ActionType___DetachStorageDomainFromPool();
 
-    String VdcActionType___ExtendSANStorageDomain();
+    String ActionType___ExtendSANStorageDomain();
 
-    String VdcActionType___RemoveStorageDomain();
+    String ActionType___RemoveStorageDomain();
 
-    String VdcActionType___RemoveStoragePool();
+    String ActionType___RemoveStoragePool();
 
-    String VdcActionType___UpdateStorageDomain();
+    String ActionType___UpdateStorageDomain();
 
-    String VdcActionType___UpdateStoragePool();
+    String ActionType___UpdateStoragePool();
 
-    String VdcActionType___UploadDiskImage();
+    String ActionType___UploadDiskImage();
 
-    String VdcActionType___UploadImageStatus();
+    String ActionType___UploadImageStatus();
 
-    String VdcActionType___ProcessOvfUpdateForStorageDomain();
+    String ActionType___ProcessOvfUpdateForStorageDomain();
 
-    String VdcActionType___AddEventSubscription();
+    String ActionType___AddEventSubscription();
 
-    String VdcActionType___RemoveEventSubscription();
+    String ActionType___RemoveEventSubscription();
 
-    String VdcActionType___ImportVm();
+    String ActionType___ImportVm();
 
-    String VdcActionType___ExportVm();
+    String ActionType___ExportVm();
 
-    String VdcActionType___RemoveVmFromImportExport();
+    String ActionType___RemoveVmFromImportExport();
 
-    String VdcActionType___ImportVmTemplate();
+    String ActionType___ImportVmTemplate();
 
-    String VdcActionType___ExportVmTemplate();
+    String ActionType___ExportVmTemplate();
 
-    String VdcActionType___RemoveVmTemplateFromImportExport();
+    String ActionType___RemoveVmTemplateFromImportExport();
 
-    String VdcActionType___AddQuota();
+    String ActionType___AddQuota();
 
-    String VdcActionType___UpdateQuota();
+    String ActionType___UpdateQuota();
 
-    String VdcActionType___RemoveQuota();
+    String ActionType___RemoveQuota();
 
-    String VdcActionType___CreateGlusterVolume();
+    String ActionType___CreateGlusterVolume();
 
-    String VdcActionType___SetGlusterVolumeOption();
+    String ActionType___SetGlusterVolumeOption();
 
-    String VdcActionType___StartGlusterVolume();
+    String ActionType___StartGlusterVolume();
 
-    String VdcActionType___StopGlusterVolume();
+    String ActionType___StopGlusterVolume();
 
-    String VdcActionType___ResetGlusterVolumeOptions();
+    String ActionType___ResetGlusterVolumeOptions();
 
-    String VdcActionType___DeleteGlusterVolume();
+    String ActionType___DeleteGlusterVolume();
 
-    String VdcActionType___GlusterVolumeRemoveBricks();
+    String ActionType___GlusterVolumeRemoveBricks();
 
-    String VdcActionType___AddBricksToGlusterVolume();
+    String ActionType___AddBricksToGlusterVolume();
 
-    String VdcActionType___StartRebalanceGlusterVolume();
+    String ActionType___StartRebalanceGlusterVolume();
 
-    String VdcActionType___CreateGlusterVolumeSnapshot();
+    String ActionType___CreateGlusterVolumeSnapshot();
 
-    String VdcActionType___ScheduleGlusterVolumeSnapshot();
+    String ActionType___ScheduleGlusterVolumeSnapshot();
 
-    String VdcActionType___RescheduleGlusterVolumeSnapshot();
+    String ActionType___RescheduleGlusterVolumeSnapshot();
 
-    String VdcActionType___ReplaceGlusterVolumeBrick();
+    String ActionType___ReplaceGlusterVolumeBrick();
 
-    String VdcActionType___GlusterHostAdd();
+    String ActionType___GlusterHostAdd();
 
-    String vdcActionType___StartGlusterVolumeProfile();
+    String ActionType___StartGlusterVolumeProfile();
 
-    String vdcActionType___StopGlusterVolumeProfile();
+    String ActionType___StopGlusterVolumeProfile();
 
-    String VdcActionType___EnableGlusterHook();
+    String ActionType___EnableGlusterHook();
 
-    String VdcActionType___DisableGlusterHook();
+    String ActionType___DisableGlusterHook();
 
-    String VdcActionType___UpdateGlusterHook();
+    String ActionType___UpdateGlusterHook();
 
-    String VdcActionType___AddGlusterHook();
+    String ActionType___AddGlusterHook();
 
-    String VdcActionType___RemoveGlusterHook();
+    String ActionType___RemoveGlusterHook();
 
-    String VdcActionType___RefreshGlusterHook();
+    String ActionType___RefreshGlusterHook();
 
-    String VdcActionType___ManageGlusterService();
+    String ActionType___ManageGlusterService();
 
-    String VdcActionType___RefreshGeoRepSessions();
+    String ActionType___RefreshGeoRepSessions();
 
-    String VdcActionType___CreateGlusterVolumeGeoRepSession();
+    String ActionType___CreateGlusterVolumeGeoRepSession();
 
-    String VdcActionType___StopGeoRepSession();
+    String ActionType___StopGeoRepSession();
 
-    String VdcActionType___DeleteGeoRepSession();
+    String ActionType___DeleteGeoRepSession();
 
-    String VdcActionType___StartGlusterVolumeGeoRep();
+    String ActionType___StartGlusterVolumeGeoRep();
 
-    String VdcActionType___PauseGlusterVolumeGeoRepSession();
+    String ActionType___PauseGlusterVolumeGeoRepSession();
 
-    String VdcActionType___ResumeGeoRepSession();
+    String ActionType___ResumeGeoRepSession();
 
-    String VdcActionType___UpdateGlusterVolumeSnapshotConfigCommand();
+    String ActionType___UpdateGlusterVolumeSnapshotConfigCommand();
 
-    String VdcActionType___ConnectStorageToVds();
+    String ActionType___ConnectStorageToVds();
 
-    String VdcActionType___AddVnicProfile();
+    String ActionType___AddVnicProfile();
 
-    String VdcActionType___UpdateProfile();
+    String ActionType___UpdateProfile();
 
-    String VdcActionType___RemoveVnicProfile();
+    String ActionType___RemoveVnicProfile();
 
-    String VdcActionType___AddSubnetToProvider();
+    String ActionType___AddSubnetToProvider();
 
-    String VdcActionType___RemoveSubnetFromProvider();
+    String ActionType___RemoveSubnetFromProvider();
 
-    String VdcActionType___DeleteGlusterVolumeSnapshot();
+    String ActionType___DeleteGlusterVolumeSnapshot();
 
-    String VdcActionType___DeleteAllGlusterVolumeSnapshots();
+    String ActionType___DeleteAllGlusterVolumeSnapshots();
 
-    String VdcActionType___ActivateGlusterVolumeSnapshot();
+    String ActionType___ActivateGlusterVolumeSnapshot();
 
-    String VdcActionType___DeactivateGlusterVolumeSnapshot();
+    String ActionType___DeactivateGlusterVolumeSnapshot();
 
-    String VdcActionType___RestoreGlusterVolumeSnapshot();
+    String ActionType___RestoreGlusterVolumeSnapshot();
 
-    String VdcActionType___SyncStorageDevices();
+    String ActionType___SyncStorageDevices();
 
-    String VdcActionType___CreateBrick();
+    String ActionType___CreateBrick();
 
     String VdcObjectType___AdElements();
 
@@ -955,9 +955,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcObjectType___DiskProfile();
 
-    String VdcActionType___AddLibvirtSecret();
+    String ActionType___AddLibvirtSecret();
 
-    String VdcActionType___UpdateLibvirtSecret();
+    String ActionType___UpdateLibvirtSecret();
 
     String VdsSelectionAlgorithm___None();
 

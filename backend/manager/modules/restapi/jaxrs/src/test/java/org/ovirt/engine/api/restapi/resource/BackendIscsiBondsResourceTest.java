@@ -7,8 +7,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.IscsiBond;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,7 +42,7 @@ public class BackendIscsiBondsResourceTest
     @Test
     public void testAddIscsiBond() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddIscsiBond,
+        setUpCreationExpectations(ActionType.AddIscsiBond,
                 AddIscsiBondParameters.class,
                 new String[] { "IscsiBond" },
                 new Object[] { getIscsiBond() },

@@ -5,9 +5,9 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -46,7 +46,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
                     Backend
                     .getInstance()
                     .runInternalAction(
-                            VdcActionType.AddStorageServerConnection,
+                            ActionType.AddStorageServerConnection,
                             new StorageServerConnectionParametersBase(getStorageDomain().getStorageStaticData()
                                     .getConnection(), getVds().getId(), false)).getActionReturnValue());
         }

@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -74,7 +74,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     public Response add(org.ovirt.engine.api.model.Cluster cluster) {
         validateParameters(cluster, getMandatoryParameters());
         StoragePool dataCenter = getDataCenter(cluster);
-        return performCreate(VdcActionType.AddCluster,
+        return performCreate(ActionType.AddCluster,
                 createAddCommandParams(cluster, dataCenter),
                 new QueryIdResolver<Guid>(VdcQueryType.GetClusterById, IdQueryParameters.class));
     }

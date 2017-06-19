@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,7 +32,7 @@ class AttachNetworkClusterPermissionsChecker {
     public boolean checkPermissions(
             CommandBase<?> command,
             NetworkCluster attachment,
-            VdcActionType actionType) {
+            ActionType actionType) {
         final List<PermissionSubject> permissionCheckSubjects = findPermissionCheckSubjects(attachment, actionType);
 
         return checkPermissions(command, permissionCheckSubjects);
@@ -40,7 +40,7 @@ class AttachNetworkClusterPermissionsChecker {
 
     public List<PermissionSubject> findPermissionCheckSubjects(
             NetworkCluster networkCluster,
-            VdcActionType actionType) {
+            ActionType actionType) {
 
         final List<PermissionSubject> permissions = new ArrayList<>();
 

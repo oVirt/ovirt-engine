@@ -11,9 +11,9 @@ import java.util.Map;
 
 import org.apache.commons.lang.SerializationException;
 import org.junit.Test;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 /**
  * Tests for {@link JsonObjectDeserializer}.
@@ -117,11 +117,11 @@ public class JsonObjectDeserializerTest {
     public void testParameterMapDeserialization() {
         StringBuilder buf = new StringBuilder("");
         buf.append("{");
-        buf.append("\"NEXT_COMMAND_TYPE\" : [ \"org.ovirt.engine.core.common.action.VdcActionType\", \"DestroyImage\" ]");
+        buf.append("\"NEXT_COMMAND_TYPE\" : [ \"org.ovirt.engine.core.common.action.ActionType\", \"DestroyImage\" ]");
         buf.append("}");
         Map<String, Serializable> data = new JsonObjectDeserializer().deserialize(buf.toString(), HashMap.class);
         assertNotNull(data);
-        assertEquals(VdcActionType.DestroyImage, data.get("NEXT_COMMAND_TYPE"));
+        assertEquals(ActionType.DestroyImage, data.get("NEXT_COMMAND_TYPE"));
     }
 
     @Test

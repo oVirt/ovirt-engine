@@ -8,8 +8,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -30,7 +30,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+        setUpActionExpectations(ActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
                 new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
@@ -58,7 +58,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
         setUriInfo(setUpBasicUriExpectations());
         setUpGetNetworksByDataCenterExpectations(1, null);
-        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+        setUpActionExpectations(ActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
                 new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
@@ -83,7 +83,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpEntityQueryExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpClusterExpectations(CLUSTER_ID);
-        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+        setUpActionExpectations(ActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
                 new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
@@ -100,7 +100,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         setUpEntityQueryExpectations(1, null);
         setUpGetNetworksByDataCenterExpectations(1, null);
         setUpClusterExpectations(CLUSTER_ID);
-        setUpActionExpectations(VdcActionType.AttachNetworkToCluster,
+        setUpActionExpectations(ActionType.AttachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
                 new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },

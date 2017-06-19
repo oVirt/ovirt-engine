@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.DataCenters;
 import org.ovirt.engine.api.model.Versions;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -47,7 +47,7 @@ public class BackendDataCentersResource extends
             validateParameters(dataCenter, "local");
         }
         StoragePool entity = map(dataCenter);
-        return performCreate(VdcActionType.AddEmptyStoragePool,
+        return performCreate(ActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),
                                new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, IdQueryParameters.class));
     }

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -166,10 +166,10 @@ public class StorageDomainValidator {
         });
     }
 
-    private double getTotalSizeForMerge(Collection<SubchainInfo> subchains, VdcActionType vdcActionType) {
+    private double getTotalSizeForMerge(Collection<SubchainInfo> subchains, ActionType actionType) {
         return subchains
                 .stream()
-                .mapToDouble(subchain -> getRequiredSizeForMerge(subchain, vdcActionType))
+                .mapToDouble(subchain -> getRequiredSizeForMerge(subchain, actionType))
                 .sum();
     }
 
@@ -199,7 +199,7 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
-    public ValidationResult hasSpaceForMerge(List<SubchainInfo> subchains, VdcActionType snapshotActionType) {
+    public ValidationResult hasSpaceForMerge(List<SubchainInfo> subchains, ActionType snapshotActionType) {
         if (storageDomain.getStorageType().isCinderDomain()) {
             return ValidationResult.VALID;
         }
@@ -310,14 +310,14 @@ public class StorageDomainValidator {
      * @param snapshotActionType - Type of the merge operation (cold/live)
      * @return required size for merge
      */
-    private double getRequiredSizeForMerge(SubchainInfo subchain, VdcActionType snapshotActionType) {
+    private double getRequiredSizeForMerge(SubchainInfo subchain, ActionType snapshotActionType) {
         DiskImage baseSnapshot = subchain.getBaseImage();
         DiskImage topSnapshot = subchain.getTopImage();
 
         // We are doing a pre-4.1 cold merge, using block-rebase
         // IMPORTANT: baseSnapshot and topSnapshot are swapped becuase
         // this is the old cold merge flow
-        if (snapshotActionType == VdcActionType.RemoveSnapshotSingleDisk) {
+        if (snapshotActionType == ActionType.RemoveSnapshotSingleDisk) {
             return Math.min(baseSnapshot.getActualSizeInBytes() + topSnapshot.getActualSizeInBytes(),
                     baseSnapshot.getSize()) * StorageConstants.QCOW_OVERHEAD_FACTOR;
         }

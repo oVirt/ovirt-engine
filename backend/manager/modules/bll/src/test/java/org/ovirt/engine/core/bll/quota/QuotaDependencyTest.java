@@ -11,20 +11,20 @@ import org.junit.runner.RunWith;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 
 @RunWith(Theories.class)
 public class QuotaDependencyTest {
 
     @DataPoints
-    public static VdcActionType[] data() {
-        return VdcActionType.values();
+    public static ActionType[] data() {
+        return ActionType.values();
     }
 
     @Theory
-    public void quotaDependencyTest(VdcActionType vdcActionType) {
-        if (vdcActionType.getQuotaDependency() != VdcActionType.QuotaDependency.NONE) {
-            Class commandClass = CommandsFactory.getCommandClass(vdcActionType.name());
+    public void quotaDependencyTest(ActionType actionType) {
+        if (actionType.getQuotaDependency() != ActionType.QuotaDependency.NONE) {
+            Class commandClass = CommandsFactory.getCommandClass(actionType.name());
 
             // if command is deprecated or internal - skip it
             if (commandClass.getAnnotation(Deprecated.class) != null
@@ -32,7 +32,7 @@ public class QuotaDependencyTest {
                 return;
             }
 
-            switch (vdcActionType.getQuotaDependency()) {
+            switch (actionType.getQuotaDependency()) {
             case CLUSTER:
                 assertCommandIsQuotaVdsDependent(commandClass);
                 break;

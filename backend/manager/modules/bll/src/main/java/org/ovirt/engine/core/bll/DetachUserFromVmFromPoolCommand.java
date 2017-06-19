@@ -4,8 +4,8 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -64,7 +64,7 @@ public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolP
             // setting RestoreStatelessVm to run in new transaction so it could rollback internally if needed,
             // but still not affect this command, in order to keep permissions changes even on restore failure
             restoreParams.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            runInternalAction(VdcActionType.RestoreStatelessVm, restoreParams,
+            runInternalAction(ActionType.RestoreStatelessVm, restoreParams,
                     getContext().withCompensationContext(null));
         }
     }

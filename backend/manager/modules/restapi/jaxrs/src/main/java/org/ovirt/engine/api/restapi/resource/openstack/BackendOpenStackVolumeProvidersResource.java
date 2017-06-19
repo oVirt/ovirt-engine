@@ -29,8 +29,8 @@ import org.ovirt.engine.api.resource.openstack.OpenstackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.types.DataCenterMapper;
 import org.ovirt.engine.api.restapi.util.QueryHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -97,7 +97,7 @@ public class BackendOpenStackVolumeProvidersResource
             provider.setDataCenter(DataCenterMapper.map(storagePool, null));
         }
         return performCreate(
-                VdcActionType.AddProvider,
+                ActionType.AddProvider,
                 new ProviderParameters(map(provider)),
                 new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class)
         );

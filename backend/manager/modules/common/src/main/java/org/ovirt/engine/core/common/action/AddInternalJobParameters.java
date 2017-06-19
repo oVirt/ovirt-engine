@@ -6,38 +6,38 @@ import org.ovirt.engine.core.compat.Guid;
 public class AddInternalJobParameters extends AddJobParameters {
 
     private static final long serialVersionUID = -7824725232199970355L;
-    private VdcActionType actionType;
+    private ActionType actionType;
     private VdcObjectType jobEntityType;
     private Guid jobEntityId;
 
     public AddInternalJobParameters() {
     }
 
-    public AddInternalJobParameters(VdcActionType actionType, boolean isAutoCleared) {
+    public AddInternalJobParameters(ActionType actionType, boolean isAutoCleared) {
         super();
         this.actionType = actionType;
         this.isAutoCleared = isAutoCleared;
     }
 
-    public AddInternalJobParameters(String description, VdcActionType actionType, boolean isAutoCleared) {
+    public AddInternalJobParameters(String description, ActionType actionType, boolean isAutoCleared) {
         super();
         this.description = description;
         this.actionType = actionType;
         this.isAutoCleared = isAutoCleared;
     }
 
-    public AddInternalJobParameters(String description, VdcActionType actionType, boolean isAutoCleared,
+    public AddInternalJobParameters(String description, ActionType actionType, boolean isAutoCleared,
                                     VdcObjectType jobEntityType, Guid jobEntityId) {
         this(description, actionType, isAutoCleared);
         this.jobEntityType = jobEntityType;
         this.jobEntityId = jobEntityId;
     }
 
-    public VdcActionType getActionType() {
+    public ActionType getActionType() {
         return actionType;
     }
 
-    public void setActionType(VdcActionType actionType) {
+    public void setActionType(ActionType actionType) {
         this.actionType = actionType;
     }
 

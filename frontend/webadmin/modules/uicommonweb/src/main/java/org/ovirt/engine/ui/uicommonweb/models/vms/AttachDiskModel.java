@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -204,7 +204,7 @@ public class AttachDiskModel extends NewDiskModel {
             return;
         }
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
@@ -235,7 +235,7 @@ public class AttachDiskModel extends NewDiskModel {
             dve.setReadOnly(disk.isReadOnly());
             AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(dve , activate);
 
-            actionTypes.add(VdcActionType.AttachDiskToVm);
+            actionTypes.add(ActionType.AttachDiskToVm);
             paramerterList.add(parameters);
             callbacks.add(i == disksToAttach.size() - 1 ? onFinishCallback : null);
         }

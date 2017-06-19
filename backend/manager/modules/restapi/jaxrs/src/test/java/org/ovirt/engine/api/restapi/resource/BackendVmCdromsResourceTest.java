@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.File;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -100,7 +100,7 @@ public class BackendVmCdromsResourceTest
             1
         );
         setUpCreationExpectations(
-            VdcActionType.UpdateVm,
+            ActionType.UpdateVm,
             VmManagementParametersBase.class,
             new String[] {},
             new Object[] {},
@@ -141,7 +141,7 @@ public class BackendVmCdromsResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVm,
+                ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},

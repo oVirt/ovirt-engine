@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -39,7 +39,7 @@ public class BackendPermitsResource
         validateParameters(permit, "name|id");
         ArrayList<ActionGroup> actionGroups = new ArrayList<>();
         addIfNotExists(actionGroups, map(permit));
-        return performCreate(VdcActionType.AttachActionGroupsToRole,
+        return performCreate(ActionType.AttachActionGroupsToRole,
                                new ActionGroupsToRoleParameter(roleId, actionGroups),
                                new PermitIdResolver(actionGroups.get(0)));
     }

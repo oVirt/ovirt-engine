@@ -4,8 +4,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.IscsiBond;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -21,7 +21,7 @@ public class BackendIscsiBondResourceTest
         setUpGetEntityExpectations(0, getEntity(0));
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveIscsiBond,
+                ActionType.RemoveIscsiBond,
                 RemoveIscsiBondParameters.class,
                 new String[] { "IscsiBondId" },
                 new Object[] { GUIDS[0] },

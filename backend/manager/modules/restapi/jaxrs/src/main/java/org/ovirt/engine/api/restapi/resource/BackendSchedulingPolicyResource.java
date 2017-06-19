@@ -7,8 +7,8 @@ import org.ovirt.engine.api.resource.BalancesResource;
 import org.ovirt.engine.api.resource.FiltersResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyResource;
 import org.ovirt.engine.api.resource.WeightsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
@@ -39,7 +39,7 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
     public SchedulingPolicy update(SchedulingPolicy incoming) {
         return performUpdate(incoming,
                 new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById, IdQueryParameters.class),
-                VdcActionType.EditClusterPolicy,
+                ActionType.EditClusterPolicy,
                 new UpdateParametersProvider());
     }
 
@@ -72,7 +72,7 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
         try {
 
             performAction =
-                    performAction(VdcActionType.RemoveClusterPolicy, new ClusterPolicyCRUDParameters(asGuid(id),
+                    performAction(ActionType.RemoveClusterPolicy, new ClusterPolicyCRUDParameters(asGuid(id),
                             new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById,
                                     IdQueryParameters.class).lookupEntity(asGuid(id))));
         } catch (BackendFailureException e) {

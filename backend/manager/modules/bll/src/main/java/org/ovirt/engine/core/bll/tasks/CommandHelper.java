@@ -5,20 +5,20 @@ import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 
 public class CommandHelper {
 
-    public static VdcReturnValueBase validate(VdcActionType actionType,
+    public static VdcReturnValueBase validate(ActionType actionType,
                                                  VdcActionParametersBase parameters,
                                                  CommandContext commandContext) {
         return CommandsFactory.createCommand(actionType, parameters, commandContext).validateOnly();
     }
 
-    public static CommandBase<?> buildCommand(VdcActionType actionType,
+    public static CommandBase<?> buildCommand(ActionType actionType,
                                               VdcActionParametersBase parameters,
                                               ExecutionContext executionContext,
                                               CommandStatus cmdStatus) {

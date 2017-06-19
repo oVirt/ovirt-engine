@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.storage.disk.image;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -22,7 +22,7 @@ public final class VdsmImagePoller {
     }
 
     protected HostJobStatus pollImage(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId, Guid imageId,
-                                      int executionGeneration, Guid cmdId, VdcActionType actionType) {
+                                      int executionGeneration, Guid cmdId, ActionType actionType) {
         Image imageInfo =
                 ((DiskImage) VdsCommandsHelper.runVdsCommandWithoutFailover(
                         VDSCommandType.GetVolumeInfo,

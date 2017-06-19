@@ -6,8 +6,8 @@ import java.util.List;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -118,7 +118,7 @@ public class RestartVdsVmsOperation {
                 );
             }
             Backend.getInstance().runInternalAction(
-                    VdcActionType.ProcessDownVm,
+                    ActionType.ProcessDownVm,
                     new ProcessDownVmParameters(vm.getId(), true),
                     ExecutionHandler.createDefaultContextForTasks(commandContext)
             );

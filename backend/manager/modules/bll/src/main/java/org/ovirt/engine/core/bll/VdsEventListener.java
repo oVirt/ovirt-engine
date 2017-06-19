@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -152,7 +152,7 @@ public class VdsEventListener implements IVdsEventListener {
         try {
             processStorageOnVdsInactive(vds);
         } finally {
-            executionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, true);
+            executionHandler.updateSpecificActionJobCompleted(vds.getId(), ActionType.MaintenanceVds, true);
         }
     }
 
@@ -179,7 +179,7 @@ public class VdsEventListener implements IVdsEventListener {
                                     vds.getStoragePoolId(), vds.getVdsSpmId()));
                     HostStoragePoolParametersBase params =
                             new HostStoragePoolParametersBase(storage_pool, vds);
-                    backend.runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
+                    backend.runInternalAction(ActionType.DisconnectHostFromStoragePoolServers, params);
                 }
             } finally {
                 lockManager.releaseLock(lock);
@@ -225,7 +225,7 @@ public class VdsEventListener implements IVdsEventListener {
                 new StorageDomainPoolParametersBase(storageDomainId, storagePoolId);
         parameters.setIsInternal(true);
         parameters.setInactive(true);
-        boolean isSucceeded = backend.runInternalAction(VdcActionType.DeactivateStorageDomain,
+        boolean isSucceeded = backend.runInternalAction(ActionType.DeactivateStorageDomain,
                 parameters,
                 ExecutionHandler.createInternalJobContext()).getSucceeded();
         return new EventResult(isSucceeded, EventType.DOMAINNOTOPERATIONAL);
@@ -242,7 +242,7 @@ public class VdsEventListener implements IVdsEventListener {
                         true,
                         isReconstructToInactiveDomains,
                         canReconstructToCurrentMaster);
-        boolean isSucceeded = backend.runInternalAction(VdcActionType.ReconstructMasterDomain,
+        boolean isSucceeded = backend.runInternalAction(ActionType.ReconstructMasterDomain,
                 parameters,
                 ExecutionHandler.createInternalJobContext()).getSucceeded();
         return new EventResult(isSucceeded, EventType.RECONSTRUCT);
@@ -260,7 +260,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     private void processOnVmStopInternal(final Collection<Guid> vmIds, final Guid hostId) {
         for (Guid vmId : vmIds) {
-            backend.runInternalAction(VdcActionType.ProcessDownVm,
+            backend.runInternalAction(ActionType.ProcessDownVm,
                     new ProcessDownVmParameters(vmId, true));
         }
 
@@ -277,7 +277,7 @@ public class VdsEventListener implements IVdsEventListener {
             SyncLunsInfoForBlockStorageDomainParameters parameters = new SyncLunsInfoForBlockStorageDomainParameters(
                     storageDomainId);
             parameters.setVdsId(vdsId);
-            backend.runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters);
+            backend.runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters);
         });
     }
 
@@ -294,26 +294,26 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, Guid domainId,
             Map<String, String> customLogValues) {
-        executionHandler.updateSpecificActionJobCompleted(vdsId, VdcActionType.MaintenanceVds, false);
+        executionHandler.updateSpecificActionJobCompleted(vdsId, ActionType.MaintenanceVds, false);
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(vdsId, reason, customLogValues);
         tempVar.setStorageDomainId(domainId);
         tempVar.setShouldBeLogged(logCommand);
-        backend.runInternalAction(VdcActionType.SetNonOperationalVds,
+        backend.runInternalAction(ActionType.SetNonOperationalVds,
                 tempVar,
                 ExecutionHandler.createInternalJobContext());
     }
 
     @Override
     public void vdsNotResponding(final VDS vds) {
-        executionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
+        executionHandler.updateSpecificActionJobCompleted(vds.getId(), ActionType.MaintenanceVds, false);
         ThreadPoolUtil.execute(() -> {
             log.info("ResourceManager::vdsNotResponding entered for Host '{}', '{}'",
                     vds.getId(),
                     vds.getHostName());
 
             FenceVdsActionParameters params = new FenceVdsActionParameters(vds.getId());
-            backend.runInternalAction(VdcActionType.VdsNotRespondingTreatment,
+            backend.runInternalAction(ActionType.VdsNotRespondingTreatment,
                     params,
                     ExecutionHandler.createInternalJobContext());
 
@@ -335,7 +335,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public boolean vdsUpEvent(final VDS vds) {
         HostStoragePoolParametersBase params = new HostStoragePoolParametersBase(vds);
-        boolean isSucceeded = backend.runInternalAction(VdcActionType.InitVdsOnUp, params).getSucceeded();
+        boolean isSucceeded = backend.runInternalAction(ActionType.InitVdsOnUp, params).getSucceeded();
         if (isSucceeded) {
             ThreadPoolUtil.execute(() -> {
                 try {
@@ -346,7 +346,7 @@ public class VdsEventListener implements IVdsEventListener {
                     if (!vmsToMigrate.isEmpty()) {
                         CommandContext ctx = new CommandContext(new EngineContext());
                         ctx.getExecutionContext().setMonitored(true);
-                        backend.runInternalMultipleActions(VdcActionType.MigrateVmToServer,
+                        backend.runInternalMultipleActions(ActionType.MigrateVmToServer,
                                 new ArrayList<>(createMigrateVmToServerParametersList(
                                         vmsToMigrate,
                                         vds,
@@ -368,7 +368,7 @@ public class VdsEventListener implements IVdsEventListener {
         ConnectHostToStoragePoolServersParameters params =
                 new ConnectHostToStoragePoolServersParameters(sp, vds, false);
         return backend
-                .runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params)
+                .runInternalAction(ActionType.ConnectHostToStoragePoolServers, params)
                 .getSucceeded();
     }
 
@@ -388,13 +388,13 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnCpuFlagsChange(Guid vdsId) {
-        backend.runInternalAction(VdcActionType.HandleVdsCpuFlagsOrClusterChanged,
+        backend.runInternalAction(ActionType.HandleVdsCpuFlagsOrClusterChanged,
                 new VdsActionParameters(vdsId));
     }
 
     @Override
     public void handleVdsVersion(Guid vdsId) {
-        backend.runInternalAction(VdcActionType.HandleVdsVersion, new VdsActionParameters(vdsId));
+        backend.runInternalAction(ActionType.HandleVdsVersion, new VdsActionParameters(vdsId));
     }
 
     @Override
@@ -426,7 +426,7 @@ public class VdsEventListener implements IVdsEventListener {
         if (transactionScopeOption != null) {
             tempVar.setTransactionScopeOption(transactionScopeOption);
         }
-        backend.runInternalAction(VdcActionType.SetStoragePoolStatus, tempVar);
+        backend.runInternalAction(ActionType.SetStoragePoolStatus, tempVar);
     }
 
     @Override
@@ -469,7 +469,7 @@ public class VdsEventListener implements IVdsEventListener {
     public void addUnmanagedVms(Guid hostId, List<Guid> unmanagedVmIds) {
         if (!unmanagedVmIds.isEmpty()) {
             backend.runInternalAction(
-                    VdcActionType.AddUnmanagedVms,
+                    ActionType.AddUnmanagedVms,
                     new AddUnmanagedVmsParameters(hostId, unmanagedVmIds),
                     ExecutionHandler.createInternalJobContext());
         }
@@ -478,7 +478,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void handleVdsMaintenanceTimeout(Guid vdsId) {
         // try to put the host to Maintenance again.
-        backend.runInternalAction(VdcActionType.MaintenanceNumberOfVdss,
+        backend.runInternalAction(ActionType.MaintenanceNumberOfVdss,
                 new MaintenanceNumberOfVdssParameters(Arrays.asList(vdsId), true));
     }
 
@@ -569,7 +569,7 @@ public class VdsEventListener implements IVdsEventListener {
                 }
 
                 if (!params.isEmpty()) {
-                    backend.runInternalAction(VdcActionType.VmSlaPolicy, params);
+                    backend.runInternalAction(ActionType.VmSlaPolicy, params);
                 }
             }
         });
@@ -594,7 +594,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void refreshHostCapabilities(Guid hostId) {
-        backend.runInternalAction(VdcActionType.RefreshHostCapabilities, new VdsActionParameters(hostId));
+        backend.runInternalAction(ActionType.RefreshHostCapabilities, new VdsActionParameters(hostId));
     }
 
     // TODO asynch event handler - design infra code to allow async events in segregated thread
@@ -643,7 +643,7 @@ public class VdsEventListener implements IVdsEventListener {
             for (Guid vmId : vmIds) {
                 resourceManagerProvider.get().removeAsyncRunningVm(vmId);
                 backend.runInternalAction(
-                        VdcActionType.RunVm,
+                        ActionType.RunVm,
                         buildRunVmParameters(vmId),
                         ExecutionHandler.createInternalJobContext(engineLock));
             }

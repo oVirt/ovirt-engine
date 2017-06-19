@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.api.resource.StorageDomainTemplateResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -69,7 +69,7 @@ public class BackendStorageDomainTemplateResource
             params.setAllowPartialImport(action.isAllowPartialImport());
         }
 
-        return doAction(VdcActionType.ImportVmTemplateFromConfiguration, params, action);
+        return doAction(ActionType.ImportVmTemplateFromConfiguration, params, action);
     }
 
     @Override
@@ -93,7 +93,7 @@ public class BackendStorageDomainTemplateResource
             }
         }
 
-        return doAction(VdcActionType.ImportVmTemplate, params, action);
+        return doAction(ActionType.ImportVmTemplate, params, action);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class BackendStorageDomainTemplateResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVmTemplateFromImportExport,
+        return performAction(ActionType.RemoveVmTemplateFromImportExport,
                 new VmTemplateImportExportParameters(guid,
                         parent.storageDomainId,
                         getDataCenterId(parent.storageDomainId)));

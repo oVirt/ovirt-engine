@@ -11,9 +11,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -42,7 +42,7 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
         addCustomValue("NicName", getNic().getName());
 
         VdcReturnValueBase result =
-                runInternalAction(VdcActionType.HostSetupNetworks,
+                runInternalAction(ActionType.HostSetupNetworks,
                         createHostSetupNetworksParameters(), cloneContextAndDetachFromParent());
 
         if (!result.getSucceeded()) {

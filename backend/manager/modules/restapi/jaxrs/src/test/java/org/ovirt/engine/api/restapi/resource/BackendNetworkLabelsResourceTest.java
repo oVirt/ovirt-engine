@@ -12,8 +12,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.NetworkLabel;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -31,7 +31,7 @@ public class BackendNetworkLabelsResourceTest
     @Test
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.LabelNetwork,
+        setUpCreationExpectations(ActionType.LabelNetwork,
                 LabelNetworkParameters.class,
                 new String[] { "NetworkId", "Label" },
                 new Object[] {NETWORK_ID, LABELS[0] },
@@ -60,7 +60,7 @@ public class BackendNetworkLabelsResourceTest
     }
 
     private void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.LabelNetwork,
+        setUriInfo(setUpActionExpectations(ActionType.LabelNetwork,
                 LabelNetworkParameters.class,
                 new String[] { "NetworkId", "Label" },
                 new Object[] {NETWORK_ID, LABELS[0] },

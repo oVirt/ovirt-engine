@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -51,6 +51,6 @@ public class BackendIscsiBondNetworkResource extends BackendNetworkResource {
         get();
         IscsiBond iscsiBond = parent.getIscsiBond();
         iscsiBond.getNetworkIds().remove(guid);
-        return performAction(VdcActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
+        return performAction(ActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
     }
 }

@@ -9,9 +9,9 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -142,7 +142,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
 
             VdcReturnValueBase result =
                     runInternalActionWithTasksContext(
-                            VdcActionType.UpdateVm,
+                            ActionType.UpdateVm,
                             updateParams,
                             getLock());
             getTaskIdList().addAll(result.getInternalVdsmTaskIdList());

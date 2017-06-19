@@ -18,10 +18,10 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.VolumeGroup;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -96,7 +96,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
                 new ArrayList<>());
 
-        setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
+        setUpCreationExpectations(ActionType.AddPosixFsStorageDomain,
                 StorageDomainManagementParameter.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
@@ -166,7 +166,7 @@ public class BackendStorageDomainsResourceTest
     }
 
     public void doTestAddStorageDomain(int idx, Host host, boolean existing) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
+        setUriInfo(setUpActionExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { ADDRESSES[idx] + ":" + PATHS[idx], STORAGE_TYPES_MAPPED[idx], GUIDS[0] },
@@ -187,8 +187,8 @@ public class BackendStorageDomainsResourceTest
                         ADDRESSES[idx] + ":" + PATHS[idx] },
                 getExistingStorageDomains(existing));
 
-        setUpCreationExpectations(!existing ? VdcActionType.AddNFSStorageDomain
-                : VdcActionType.AddExistingFileStorageDomain,
+        setUpCreationExpectations(!existing ? ActionType.AddNFSStorageDomain
+                : ActionType.AddExistingFileStorageDomain,
                 StorageDomainManagementParameter.class,
                 new String[] {},
                 new Object[] {},
@@ -212,7 +212,7 @@ public class BackendStorageDomainsResourceTest
 
     @Test
     public void testAddLocalStorageDomain() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
+        setUriInfo(setUpActionExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { PATHS[LOCAL_IDX], STORAGE_TYPES_MAPPED[LOCAL_IDX], GUIDS[0] },
@@ -226,7 +226,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { GUIDS[LOCAL_IDX].toString() },
                 setUpLocalStorageServerConnection(LOCAL_IDX));
 
-        setUpCreationExpectations(VdcActionType.AddLocalStorageDomain,
+        setUpCreationExpectations(ActionType.AddLocalStorageDomain,
                 StorageDomainManagementParameter.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
@@ -252,7 +252,7 @@ public class BackendStorageDomainsResourceTest
 
     @Test
     public void testAddPosixStorageDomain() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
+        setUriInfo(setUpActionExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection",
                         "StorageServerConnection.StorageType",
@@ -278,7 +278,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
                 new ArrayList<>());
 
-        setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
+        setUpCreationExpectations(ActionType.AddPosixFsStorageDomain,
                 StorageDomainManagementParameter.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
@@ -308,7 +308,7 @@ public class BackendStorageDomainsResourceTest
         host.setId(GUIDS[0].toString());
         model.setHost(host);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.ConnectStorageToVds,
+        setUriInfo(setUpActionExpectations(ActionType.ConnectStorageToVds,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "VdsId" },
                 new Object[] { ADDRESSES[0], GUIDS[0] },
@@ -328,7 +328,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { GUIDS[GUIDS.length - 1].toString() },
                 setUpLuns());
 
-        setUpCreationExpectations(VdcActionType.AddSANStorageDomain,
+        setUpCreationExpectations(ActionType.AddSANStorageDomain,
                 AddSANStorageDomainParameters.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
@@ -372,7 +372,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { GUIDS[GUIDS.length - 1].toString() },
                 luns);
 
-        setUpCreationExpectations(VdcActionType.AddSANStorageDomain,
+        setUpCreationExpectations(ActionType.AddSANStorageDomain,
                 AddSANStorageDomainParameters.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
@@ -415,7 +415,7 @@ public class BackendStorageDomainsResourceTest
 
     private void doTestBadAddStorageDomain(boolean valid, boolean success, String detail)
             throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
+        setUriInfo(setUpActionExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },
@@ -423,7 +423,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 GUIDS[0].toString()));
 
-        setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
+        setUpActionExpectations(ActionType.RemoveStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -436,7 +436,7 @@ public class BackendStorageDomainsResourceTest
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[0], TYPES_MAPPED[0], ADDRESSES[0] + ":" + PATHS[0] },
                 new ArrayList<>());
 
-        setUpActionExpectations(VdcActionType.AddNFSStorageDomain,
+        setUpActionExpectations(ActionType.AddNFSStorageDomain,
                 StorageDomainManagementParameter.class,
                 new String[] {},
                 new Object[] {},
@@ -466,7 +466,7 @@ public class BackendStorageDomainsResourceTest
     }
 
     private void doTestBadCnxAdd(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddStorageServerConnection,
+        setUriInfo(setUpActionExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { ADDRESSES[0] + ":" + PATHS[0], STORAGE_TYPES_MAPPED[0], GUIDS[0] },

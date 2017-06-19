@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -77,7 +77,7 @@ public class UserPortalTemplateListModel extends TemplateListModel {
                             !isBlankTemplateSelected());
             getRemoveCommand().setIsExecutionAllowed(
                     VdcActionUtils.canExecute(items, VmTemplate.class,
-                            VdcActionType.RemoveVmTemplate) &&
+                            ActionType.RemoveVmTemplate) &&
                             !isBlankTemplateSelected()
                     );
         } else {

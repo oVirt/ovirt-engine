@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -95,7 +95,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
                 StoragePoolManagementParameter parameters = new StoragePoolManagementParameter(dataCenter);
                 parameters.setCorrelationId(getCorrelationId());
-                Frontend.getInstance().runAction(VdcActionType.AddEmptyStoragePool, parameters,
+                Frontend.getInstance().runAction(ActionType.AddEmptyStoragePool, parameters,
                         result -> {
 
                             context.addDataCenterReturnValue = result.getReturnValue();
@@ -217,7 +217,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         if (enlistmentContext.getOldClusterId() != null) {
 
             // Switch host back to previous cluster.
-            Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
+            Frontend.getInstance().runAction(ActionType.ChangeVDSCluster,
                     new ChangeVDSClusterParameters(enlistmentContext.getOldClusterId(), host.getId()),
                     result -> {
 
@@ -244,7 +244,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             // Remove cluster.
             if (enlistmentContext.getClusterId() != null) {
 
-                Frontend.getInstance().runAction(VdcActionType.RemoveCluster,
+                Frontend.getInstance().runAction(ActionType.RemoveCluster,
                         new ClusterParametersBase(enlistmentContext.getClusterId()),
                         result -> rollback5());
             }
@@ -261,7 +261,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         // Try to remove data center.
         if (enlistmentContext.getDataCenterId() != null) {
-            Frontend.getInstance().runAction(VdcActionType.RemoveStoragePool,
+            Frontend.getInstance().runAction(ActionType.RemoveStoragePool,
                     new StoragePoolParametersBase(enlistmentContext.getDataCenterId()));
         }
 

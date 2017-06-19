@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -15,7 +15,7 @@ public class EditCpuProfileModel extends CpuProfileBaseModel {
         super(sourceModel,
                 dataCenterId,
                 profile.getQosId(),
-                VdcActionType.UpdateCpuProfile);
+                ActionType.UpdateCpuProfile);
         setTitle(ConstantsManager.getInstance().getConstants().cpuProfileTitle());
         setHelpTag(HelpTag.edit_cpu_profile);
         setHashName("edit_cpu_profile"); //$NON-NLS-1$

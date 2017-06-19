@@ -6,7 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTask;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -34,7 +34,7 @@ public interface TaskHelper {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap);
 
@@ -42,7 +42,7 @@ public interface TaskHelper {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand);
+            ActionType parentCommand);
 
     void cancelTasks(CommandBase<?> command);
 
@@ -52,12 +52,12 @@ public interface TaskHelper {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand);
+            ActionType parentCommand);
 
     AsyncTask createAsyncTask(
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand);
+            ActionType parentCommand);
 
     SPMTask construct(AsyncTaskCreationInfo creationInfo);
 

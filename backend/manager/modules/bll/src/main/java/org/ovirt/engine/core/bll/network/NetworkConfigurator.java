@@ -15,8 +15,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -230,12 +230,12 @@ public class NetworkConfigurator {
 
     private void configureManagementNetwork(HostSetupNetworksParameters parameters) {
         VdcReturnValueBase retVal =
-                getBackend().runInternalAction(VdcActionType.HostSetupNetworks,
+                getBackend().runInternalAction(ActionType.HostSetupNetworks,
                         parameters,
                         cloneContextAndDetachFromParent());
         if (retVal.getSucceeded()) {
             retVal =
-                    getBackend().runInternalAction(VdcActionType.CommitNetworkChanges,
+                    getBackend().runInternalAction(ActionType.CommitNetworkChanges,
                             new VdsActionParameters(parameters.getVdsId()), cloneContextAndDetachFromParent());
             if (!retVal.getSucceeded()) {
                 auditLogDirector.log(createEvent(), AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK);

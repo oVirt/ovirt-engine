@@ -5,9 +5,9 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.SshPublicKey;
 import org.ovirt.engine.api.resource.aaa.SshPublicKeyResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -41,7 +41,7 @@ public class BackendSSHPublicKeyResource
     public SshPublicKey update(SshPublicKey pubkey) {
         return performUpdate(pubkey,
                 new QueryIdResolver<>(VdcQueryType.GetUserProfile, IdQueryParameters.class),
-                VdcActionType.UpdateUserProfile,
+                ActionType.UpdateUserProfile,
                 new UpdateParametersProvider());
     }
 
@@ -80,6 +80,6 @@ public class BackendSSHPublicKeyResource
         UserProfileParameters parameters = new UserProfileParameters();
         parameters.setUserProfile(entity);
 
-        return performAction(VdcActionType.UpdateUserProfile, parameters);
+        return performAction(ActionType.UpdateUserProfile, parameters);
     }
 }

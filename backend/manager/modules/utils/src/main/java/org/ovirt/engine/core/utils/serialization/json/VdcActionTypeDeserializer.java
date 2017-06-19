@@ -6,23 +6,23 @@ import java.util.HashMap;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 
-public class VdcActionTypeDeserializer extends JsonDeserializer<VdcActionType> {
-    private static HashMap<String, VdcActionType> mappings = new HashMap<>();
+public class VdcActionTypeDeserializer extends JsonDeserializer<ActionType> {
+    private static HashMap<String, ActionType> mappings = new HashMap<>();
 
     static {
-        for (VdcActionType action : VdcActionType.values()) {
+        for (ActionType action : ActionType.values()) {
             mappings.put(action.name(), action);
         }
     }
 
     @Override
-    public VdcActionType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
+    public ActionType deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         String jsonValue = jsonParser.getText();
-        VdcActionType actionType = mappings.get(jsonValue);
+        ActionType actionType = mappings.get(jsonValue);
         if (actionType == null) {
-            actionType = VdcActionType.Unknown;
+            actionType = ActionType.Unknown;
         }
         return actionType;
     }

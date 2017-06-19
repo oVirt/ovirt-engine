@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.ovirt.engine.core.common.action.VdcActionType.AttachNetworkToCluster;
-import static org.ovirt.engine.core.common.action.VdcActionType.DetachNetworkToCluster;
-import static org.ovirt.engine.core.common.action.VdcActionType.UpdateNetworkOnCluster;
+import static org.ovirt.engine.core.common.action.ActionType.AttachNetworkToCluster;
+import static org.ovirt.engine.core.common.action.ActionType.DetachNetworkToCluster;
+import static org.ovirt.engine.core.common.action.ActionType.UpdateNetworkOnCluster;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,11 +22,11 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
@@ -96,31 +96,31 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
     private boolean attachNetworks(Collection<NetworkCluster> attachments) {
         return runNetworkClusterCommands(
                 attachments,
-                VdcActionType.AttachNetworkToClusterInternal,
+                ActionType.AttachNetworkToClusterInternal,
                 networkClusterToAttachNetworkToClusterParameterTransformer);
     }
 
     private boolean detachNetworks(Collection<NetworkCluster> detachments) {
         return runNetworkClusterCommands(
                 detachments,
-                VdcActionType.DetachNetworkFromClusterInternal,
+                ActionType.DetachNetworkFromClusterInternal,
                 networkClusterToAttachNetworkToClusterParameterTransformer);
     }
 
     private boolean updateNetworkAttachments(Collection<NetworkCluster> updates) {
         return runNetworkClusterCommands(
                 updates,
-                VdcActionType.UpdateNetworkOnCluster,
+                ActionType.UpdateNetworkOnCluster,
                 networkClusterParameterTransformer);
     }
 
     private void propagateLabeledNetworksChanges() {
-        runInternalAction(VdcActionType.PropagateLabeledNetworksToClusterHosts, getParameters());
+        runInternalAction(ActionType.PropagateLabeledNetworksToClusterHosts, getParameters());
     }
 
     private boolean runNetworkClusterCommands(
             Collection<NetworkCluster> networkClusters,
-            VdcActionType actionType,
+            ActionType actionType,
             Function<NetworkCluster, ? extends VdcActionParametersBase> networkClusterToParameterTransformer) {
         final List<? extends VdcActionParametersBase> parameters =
                 networkClusters.stream().map(networkClusterToParameterTransformer).collect(Collectors.toList());
@@ -135,7 +135,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
      * @return the execution status. <code>true</code> on success and <code>false</code> on faliure.
      */
     private boolean runMultipleInternalCommandsSynchronously(
-            VdcActionType actionType,
+            ActionType actionType,
             List<? extends VdcActionParametersBase> parameters) {
 
         for (VdcActionParametersBase param : parameters) {
@@ -157,20 +157,20 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             result.addAll(
                     attachPermissionChecker.findPermissionCheckSubjects(
                             attachment,
-                            VdcActionType.AttachNetworkToCluster));
+                            ActionType.AttachNetworkToCluster));
         }
         for (NetworkCluster detachment : getParameters().getDetachments()) {
             result.addAll(
                     detachPermissionFinder.findPermissionCheckSubjects(
                             detachment.getNetworkId(),
-                            VdcActionType.DetachNetworkToCluster));
+                            ActionType.DetachNetworkToCluster));
         }
         for (NetworkCluster update : getParameters().getUpdates()) {
             result.addAll(
                     updatePermissionChecker.findPermissionCheckSubjects(
                             update.getNetworkId(),
                             update.getClusterId(),
-                            VdcActionType.UpdateNetworkOnCluster));
+                            ActionType.UpdateNetworkOnCluster));
         }
         return result;
     }

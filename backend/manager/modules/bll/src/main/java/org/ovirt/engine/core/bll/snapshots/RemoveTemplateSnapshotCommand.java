@@ -8,8 +8,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -35,7 +35,7 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
 
     @Override
     protected void executeCommand() {
-        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveVmTemplate);
+        Guid taskId = persistAsyncTaskPlaceHolder(ActionType.RemoveVmTemplate);
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
                 postDeleteActionHandler.fixParameters(
@@ -49,7 +49,7 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
             getReturnValue().getInternalVdsmTaskIdList().add(
                     createTask(taskId,
                             vdsReturnValue.getCreationInfo(),
-                            VdcActionType.RemoveVmTemplate,
+                            ActionType.RemoveVmTemplate,
                             VdcObjectType.Storage,
                             getParameters().getStorageDomainId()));
 

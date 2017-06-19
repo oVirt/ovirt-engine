@@ -13,11 +13,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -235,7 +235,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             activateParameters.setSessionId(getParameters().getSessionId());
             activateParameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             returnValue = Backend.getInstance()
-                    .runInternalAction(VdcActionType.ActivateStorageDomain, activateParameters).getSucceeded();
+                    .runInternalAction(ActionType.ActivateStorageDomain, activateParameters).getSucceeded();
 
             // if activate domain failed then set domain status to inactive
             if (!returnValue) {

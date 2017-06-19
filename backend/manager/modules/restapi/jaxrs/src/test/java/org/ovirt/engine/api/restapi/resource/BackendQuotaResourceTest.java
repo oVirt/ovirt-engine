@@ -2,9 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Quota;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +29,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateQuota,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateQuota,
                 QuotaCRUDParameters.class,
                 new String[] { "QuotaId", "Quota.Description", "Quota.GraceClusterPercentage" },
                 new Object[] { QUOTA_ID, DESCRIPTIONS[0], 30 },
@@ -43,7 +43,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     public void testRemove() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
-                VdcActionType.RemoveQuota,
+                ActionType.RemoveQuota,
                 IdParameters.class,
                 new String[] { "Id" },
                 new Object[] { QUOTA_ID },

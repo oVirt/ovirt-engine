@@ -7,8 +7,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -43,7 +43,7 @@ public class BackendTagsResource
             tag.getParent().setId(getParentId(tag));
         }
 
-        return performCreate(VdcActionType.AddTag,
+        return performCreate(ActionType.AddTag,
                                new TagsOperationParameters(map(tag)),
                                new TagNameResolver(tag.getName()));
     }

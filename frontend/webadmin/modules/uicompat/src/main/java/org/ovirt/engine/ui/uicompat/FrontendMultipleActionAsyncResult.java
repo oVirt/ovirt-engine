@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.uicompat;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 public final class FrontendMultipleActionAsyncResult {
-    private VdcActionType privateActionType;
-    public VdcActionType getActionType() {
+    private ActionType privateActionType;
+    public ActionType getActionType() {
         return privateActionType;
     }
-    private void setActionType(VdcActionType value) {
+    private void setActionType(ActionType value) {
         privateActionType = value;
     }
     private java.util.List<VdcActionParametersBase> privateParameters;
@@ -34,13 +34,13 @@ public final class FrontendMultipleActionAsyncResult {
         privateState = value;
     }
 
-    public FrontendMultipleActionAsyncResult(VdcActionType actionType, java.util.List<VdcActionParametersBase> parameters, java.util.List<VdcReturnValueBase> returnValue) {
+    public FrontendMultipleActionAsyncResult(ActionType actionType, java.util.List<VdcActionParametersBase> parameters, java.util.List<VdcReturnValueBase> returnValue) {
         setActionType(actionType);
         setParameters(parameters);
         setReturnValues(returnValue);
     }
 
-    public FrontendMultipleActionAsyncResult(VdcActionType actionType, java.util.List<VdcActionParametersBase> parameters, java.util.List<VdcReturnValueBase> returnValue, Object state) {
+    public FrontendMultipleActionAsyncResult(ActionType actionType, java.util.List<VdcActionParametersBase> parameters, java.util.List<VdcReturnValueBase> returnValue, Object state) {
         this(actionType, parameters, returnValue);
         setState(state);
     }

@@ -4,10 +4,10 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.resource.MacPoolResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -27,7 +27,7 @@ public class BackendMacPoolResource extends AbstractBackendSubResource<MacPool,
     public MacPool update(MacPool macPool) {
         return performUpdate(macPool,
                 new QueryIdResolver<>(VdcQueryType.GetMacPoolById, IdQueryParameters.class),
-                VdcActionType.UpdateMacPool,
+                ActionType.UpdateMacPool,
                 new UpdateParametersProvider());
     }
 
@@ -42,6 +42,6 @@ public class BackendMacPoolResource extends AbstractBackendSubResource<MacPool,
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveMacPool, new RemoveMacPoolByIdParameters(guid));
+        return performAction(ActionType.RemoveMacPool, new RemoveMacPoolByIdParameters(guid));
     }
 }

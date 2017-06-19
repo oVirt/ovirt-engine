@@ -16,12 +16,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -70,12 +70,12 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         updateParameters();
 
         if (!moveDiskParametersList.isEmpty()) {
-            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(VdcActionType.MoveOrCopyDisk,
+            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.MoveOrCopyDisk,
                     getParametersList(moveDiskParametersList), false));
         }
 
         if (!liveMigrateVmDisksParametersList.isEmpty()) {
-            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(VdcActionType.LiveMigrateVmDisks,
+            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.LiveMigrateVmDisks,
                     getParametersList(liveMigrateVmDisksParametersList), false));
         }
 

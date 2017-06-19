@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -30,7 +30,7 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
         getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
-    protected abstract VdcActionType getRemoveActionType();
+    protected abstract ActionType getRemoveActionType();
 
     protected abstract VdcActionParametersBase getRemoveProfileParams(P profile);
 

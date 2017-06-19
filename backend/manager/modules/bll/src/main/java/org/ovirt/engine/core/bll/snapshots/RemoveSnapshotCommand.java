@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -162,7 +162,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         if (snapshotHasImages) {
             removeImages();
 
-            if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
+            if (getSnapshotActionType() == ActionType.RemoveSnapshotSingleDiskLive) {
                 persistCommand(getParameters().getParentCommand(), true);
                 useTaskManagerToRemoveMemory = true;
             }
@@ -190,9 +190,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private void removeMemory(final Snapshot snapshot, boolean useTaskManager) {
         RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId());
         if (useTaskManager) {
-            CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
+            CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
         } else {
-            VdcReturnValueBase ret = runInternalAction(VdcActionType.RemoveMemoryVolumes, parameters);
+            VdcReturnValueBase ret = runInternalAction(ActionType.RemoveMemoryVolumes, parameters);
             if (!ret.getSucceeded()) {
                 log.error("Cannot remove memory volumes for snapshot '{}'", snapshot.getId());
             }
@@ -216,7 +216,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 dest = images.get(0);
             }
 
-            if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
+            if (getSnapshotActionType() == ActionType.RemoveSnapshotSingleDiskLive) {
                 CommandCoordinatorUtil.executeAsyncCommand(
                         getSnapshotActionType(),
                         buildRemoveSnapshotSingleDiskParameters(source, dest, getSnapshotActionType()),
@@ -244,7 +244,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private void handleCinderSnapshotDisks(List<CinderDisk> cinderDisks) {
         for (CinderDisk cinderDisk : cinderDisks) {
             VdcReturnValueBase vdcReturnValueBase = runInternalAction(
-                    VdcActionType.RemoveCinderSnapshotDisk,
+                    ActionType.RemoveCinderSnapshotDisk,
                     buildRemoveCinderSnapshotDiskParameters(cinderDisk),
                     cloneContextAndDetachFromParent());
             if (!vdcReturnValueBase.getSucceeded()) {
@@ -263,7 +263,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private RemoveSnapshotSingleDiskParameters buildRemoveSnapshotSingleDiskParameters(final DiskImage source,
-            DiskImage dest, VdcActionType snapshotActionType) {
+            DiskImage dest, ActionType snapshotActionType) {
         RemoveSnapshotSingleDiskParameters parameters =
                 new RemoveSnapshotSingleDiskParameters(source.getImageId(), getVmId());
         parameters.setStorageDomainId(source.getStorageIds().get(0));
@@ -426,7 +426,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return topSnapshots
             .stream()
             .map(topSnapshot -> {
-                if (!isQemuimgCommitSupported() && getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDisk) {
+                if (!isQemuimgCommitSupported() && getSnapshotActionType() == ActionType.RemoveSnapshotSingleDisk) {
                     return new SubchainInfo(topSnapshot, baseSnapshotMap.get(topSnapshot.getParentId()));
                 } else {
                     return new SubchainInfo(baseSnapshotMap.get(topSnapshot.getParentId()), topSnapshot);
@@ -518,14 +518,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         }
     }
 
-    private VdcActionType getSnapshotActionType() {
+    private ActionType getSnapshotActionType() {
         if (getVm().isQualifiedForLiveSnapshotMerge()) {
-            return VdcActionType.RemoveSnapshotSingleDiskLive;
+            return ActionType.RemoveSnapshotSingleDiskLive;
         }
         if (isQemuimgCommitSupported()) {
-            return VdcActionType.ColdMergeSnapshotSingleDisk;
+            return ActionType.ColdMergeSnapshotSingleDisk;
         }
-        return VdcActionType.RemoveSnapshotSingleDisk;
+        return ActionType.RemoveSnapshotSingleDisk;
     }
 
     @Override

@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.model.AffinityLabels;
 import org.ovirt.engine.api.resource.AffinityLabelResource;
 import org.ovirt.engine.api.resource.AffinityLabelsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -29,7 +29,7 @@ public class BackendAffinityLabelsResource extends AbstractBackendCollectionReso
         org.ovirt.engine.core.common.businessentities.Label newLabel = map(label);
         LabelActionParameters params = new LabelActionParameters(newLabel);
 
-        return performCreate(VdcActionType.AddLabel, params,
+        return performCreate(ActionType.AddLabel, params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetLabelById, IdQueryParameters.class));
     }
 

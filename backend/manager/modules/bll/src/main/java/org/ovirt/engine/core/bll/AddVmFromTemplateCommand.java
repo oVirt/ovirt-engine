@@ -19,11 +19,11 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -107,8 +107,8 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
     }
 
     @Override
-    protected VdcActionType getDiskCreationCommandType() {
-        return VdcActionType.CreateCloneOfTemplate;
+    protected ActionType getDiskCreationCommandType() {
+        return ActionType.CreateCloneOfTemplate;
     }
 
     @Override
@@ -130,7 +130,7 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         params.setDestStorageDomainId(retrieveDestinationDomainForDisk(disk.getId()));
         params.setDiskAlias(diskInfoDestinationMap.get(disk.getId()).getDiskAlias());
         params.setVmSnapshotId(getVmSnapshotId());
-        params.setParentCommand(VdcActionType.AddVmFromTemplate);
+        params.setParentCommand(ActionType.AddVmFromTemplate);
         params.setParentParameters(getParameters());
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setQuotaId(diskInfoDestinationMap.get(disk.getId()).getQuotaId() != null ?

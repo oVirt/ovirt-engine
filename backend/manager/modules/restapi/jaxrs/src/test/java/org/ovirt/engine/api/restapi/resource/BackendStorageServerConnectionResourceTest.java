@@ -9,8 +9,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -112,7 +112,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         connection.setId(GUIDS[3].toString());
         connection.setConnection("/data1");
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStorageServerConnection,
+            ActionType.RemoveStorageServerConnection,
             StorageServerConnectionParametersBase.class,
             new String[] { "StorageServerConnection", "VdsId" },
             new Object[] { connection, GUIDS[1] },
@@ -157,7 +157,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         connection.setId(GUIDS[3].toString());
         connection.setConnection("/data1");
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStorageServerConnection,
+            ActionType.RemoveStorageServerConnection,
             StorageServerConnectionParametersBase.class,
             new String[] { "StorageServerConnection", "VdsId" },
             new Object[] { connection, GUIDS[1] },
@@ -190,7 +190,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         }
         // not passing parameters to update action is OK because validate and execute results
         // are mocked anyway, and the real command is not called, so parameters are meaningless.
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateStorageServerConnection,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] {},
                 new Object[] {},

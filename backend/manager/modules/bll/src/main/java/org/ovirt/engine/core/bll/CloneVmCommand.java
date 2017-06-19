@@ -17,11 +17,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -207,14 +207,14 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private void detachDisks() {
-        attachDetachDisks(VdcActionType.DetachDiskFromVm);
+        attachDetachDisks(ActionType.DetachDiskFromVm);
     }
 
     private void attachDisks() {
-        attachDetachDisks(VdcActionType.AttachDiskToVm);
+        attachDetachDisks(ActionType.AttachDiskToVm);
     }
 
-    private void attachDetachDisks(VdcActionType actionType) {
+    private void attachDetachDisks(ActionType actionType) {
         VdcQueryReturnValue vdcReturnValue = runInternalQuery(
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
@@ -228,7 +228,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         }
     }
 
-    private void attachDetachDisk(Disk disk, VdcActionType actionType) {
+    private void attachDetachDisk(Disk disk, ActionType actionType) {
         DiskVmElement oldDve = disk.getDiskVmElementForVm(oldVmId);
         runInternalAction(
                 actionType,

@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -37,7 +37,7 @@ public abstract class BackendQuotaLimitResource<T extends BaseResource> extends 
                 new IdQueryParameters(parentId),
                 parentId.toString());
         updateEntityForRemove(entity, asGuid(id));
-        return performAction(VdcActionType.UpdateQuota,
+        return performAction(ActionType.UpdateQuota,
                 new QuotaCRUDParameters(entity));
     }
 

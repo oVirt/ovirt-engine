@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -132,8 +132,8 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                 }
             }
 
-            if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
-                    && getParameters().getParentCommand() != VdcActionType.RemoveVmTemplateFromImportExport) {
+            if (getParameters().getParentCommand() != ActionType.RemoveVmFromImportExport
+                    && getParameters().getParentCommand() != ActionType.RemoveVmTemplateFromImportExport) {
                 performImageDbOperations();
             }
         } else {

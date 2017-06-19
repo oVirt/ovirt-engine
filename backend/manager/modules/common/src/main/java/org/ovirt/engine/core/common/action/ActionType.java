@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
-public enum VdcActionType {
+public enum ActionType {
     Unknown(0, QuotaDependency.NONE),
 
     // Vm Commands
@@ -572,36 +572,36 @@ public enum VdcActionType {
     private int intValue;
     private ActionGroup actionGroup;
     private boolean isActionMonitored;
-    private static final HashMap<Integer, VdcActionType> mappings = new HashMap<>();
+    private static final HashMap<Integer, ActionType> mappings = new HashMap<>();
     private QuotaDependency quotaDependency;
     private boolean quotaDependentAsInternalCommand = false;
 
     static {
-        for (VdcActionType action : values()) {
+        for (ActionType action : values()) {
             mappings.put(action.getValue(), action);
         }
     }
 
-    private VdcActionType(int value , QuotaDependency quotaDependency) {
+    private ActionType(int value , QuotaDependency quotaDependency) {
         this(value, null, quotaDependency);
     }
 
-    private VdcActionType(int value, boolean isActionMonitored, QuotaDependency quotaDependency) {
+    private ActionType(int value, boolean isActionMonitored, QuotaDependency quotaDependency) {
         this(value, null, isActionMonitored, quotaDependency);
     }
 
-    private VdcActionType(int value, ActionGroup actionGroupValue, QuotaDependency quotaDependency) {
+    private ActionType(int value, ActionGroup actionGroupValue, QuotaDependency quotaDependency) {
         this(value, actionGroupValue, true, quotaDependency);
     }
 
-    private VdcActionType(int value, ActionGroup actionGroupValue, boolean isActionMonitored, QuotaDependency quotaDependency) {
+    private ActionType(int value, ActionGroup actionGroupValue, boolean isActionMonitored, QuotaDependency quotaDependency) {
         this.intValue = value;
         this.actionGroup = actionGroupValue;
         this.isActionMonitored = isActionMonitored;
         this.quotaDependency = quotaDependency;
     }
 
-    private VdcActionType(int value,
+    private ActionType(int value,
             ActionGroup actionGroupValue,
             boolean isActionMonitored,
             QuotaDependency quotaDependency,
@@ -623,7 +623,7 @@ public enum VdcActionType {
         return isActionMonitored;
     }
 
-    public static VdcActionType forValue(int value) {
+    public static ActionType forValue(int value) {
         return mappings.get(value);
     }
 

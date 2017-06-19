@@ -8,7 +8,7 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -78,7 +78,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
         initResource(resource.parent);
         List<ActionGroup> actionGroups = new ArrayList<>();
         actionGroups.add(ActionGroup.forValue(1));
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
+        setUriInfo(setUpActionExpectations(ActionType.DetachActionGroupsFromRole,
                 ActionGroupsToRoleParameter.class,
                 new String[] { "RoleId", "ActionGroups" },
                 new Object[] { GUIDS[1], actionGroups },
@@ -101,7 +101,7 @@ public class BackendPermitResourceTest extends AbstractBackendSubResourceTest<Pe
         initResource(resource.parent);
         List<ActionGroup> actionGroups = new ArrayList<>();
         actionGroups.add(ActionGroup.forValue(1));
-        setUriInfo(setUpActionExpectations(VdcActionType.DetachActionGroupsFromRole,
+        setUriInfo(setUpActionExpectations(ActionType.DetachActionGroupsFromRole,
                 ActionGroupsToRoleParameter.class,
                 new String[] { "RoleId", "ActionGroups" },
                 new Object[] { GUIDS[1], actionGroups },

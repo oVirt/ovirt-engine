@@ -6,13 +6,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -584,7 +584,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
             addVmTemplateParameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
         }
 
-        Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
+        Frontend.getInstance().runAction(ActionType.AddVmTemplate, addVmTemplateParameters,
                 result -> {
                     stopProgress(result.getState());
                     cancel();
@@ -635,33 +635,33 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
                 && !selectedItem.isPool()
                 && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
-                VdcActionType.RemoveVm));
+                ActionType.RemoveVm));
 
         getRunOnceCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
                 && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
-                VdcActionType.RunVmOnce));
+                ActionType.RunVmOnce));
 
         getCloneVmCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
                 && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
-                VdcActionType.CloneVm));
+                ActionType.CloneVm));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
                 && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
                 (VM) selectedItem.getEntity()})),
                 VM.class,
-                VdcActionType.ChangeDisk));
+                ActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
                 && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
                 (VM) selectedItem.getEntity()})),
                 VM.class,
-                VdcActionType.AddVmTemplate));
+                ActionType.AddVmTemplate));
     }
 
     private void newInternal() {
@@ -772,7 +772,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
             paramsList.add(new RemoveVmParameters(vm.getId(), false));
         }
 
-        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVm, paramsList,
+        Frontend.getInstance().runMultipleActions(ActionType.RemoveVm, paramsList,
                 result -> {
                     ConfirmationModel model =
                             (ConfirmationModel) ((UserPortalListModel) result.getState()).getConfirmWindow();
@@ -852,7 +852,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
                 model.getIsoImage().getSelectedItem().equals(ConsoleModel.getEjectLabel()) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem();
 
-        Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
+        Frontend.getInstance().runAction(ActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 result -> {
                     stopProgress(result.getState());
                     cancel();
@@ -1011,7 +1011,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         }
 
         Frontend.getInstance().runAction(
-                model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,
+                model.getProvisioning().getEntity() ? ActionType.AddVmFromTemplate : ActionType.AddVm,
                         parameters,
                         new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager),
                         this);
@@ -1024,7 +1024,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         Guid oldClusterID = ((VM) selectedItem.getEntity()).getClusterId();
         Guid newClusterID = model.getSelectedCluster().getId();
         if (!oldClusterID.equals(newClusterID)) {
-            Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster,
+            Frontend.getInstance().runAction(ActionType.ChangeVMCluster,
                                              new ChangeVMClusterParameters(
                                                      newClusterID,
                                                      gettempVm().getId(),
@@ -1036,7 +1036,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
                             if (returnValueBase != null && returnValueBase.getSucceeded()) {
                                 VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
                                 Frontend.getInstance()
-                                    .runAction(VdcActionType.UpdateVm,
+                                    .runAction(ActionType.UpdateVm,
                                             param,
                                             new UnitVmModelNetworkAsyncCallback(model,
                                                     defaultNetworkCreatingManager,
@@ -1051,7 +1051,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         }
         else {
             VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
-            Frontend.getInstance().runAction(VdcActionType.UpdateVm,
+            Frontend.getInstance().runAction(ActionType.UpdateVm,
                     param,
                     new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()),
                     this);

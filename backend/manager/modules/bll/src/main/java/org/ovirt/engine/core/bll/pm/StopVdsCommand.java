@@ -10,10 +10,10 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RestartVdsVmsOperation;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -72,7 +72,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     protected void setStatus() {
 
         VDSStatus newStatus = VDSStatus.Down;
-        if (getParameters().getParentCommand() == VdcActionType.RestartVds) {
+        if (getParameters().getParentCommand() == ActionType.RestartVds) {
             // In case the stop was issued as a result of VDS command , we
             // cannot set the VDS to down -
             // According to bug fix #605215 it can be that backend will crash
@@ -119,7 +119,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
     @Override
     protected void freeLock() {
-        if (getParameters().getParentCommand() != VdcActionType.RestartVds) {
+        if (getParameters().getParentCommand() != ActionType.RestartVds) {
             super.freeLock();
         }
     }

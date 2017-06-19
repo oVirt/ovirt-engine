@@ -5,11 +5,11 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class DeactivateStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
-    public DeactivateStorageDomainsMultipleActionRunner(VdcActionType actionType,
+    public DeactivateStorageDomainsMultipleActionRunner(ActionType actionType,
             List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }

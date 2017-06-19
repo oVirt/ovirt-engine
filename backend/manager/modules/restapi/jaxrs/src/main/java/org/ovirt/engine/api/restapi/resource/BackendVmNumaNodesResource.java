@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -23,8 +23,8 @@ public class BackendVmNumaNodesResource
         extends AbstractBackendCollectionResource<VirtualNumaNode, VmNumaNode>
         implements VmNumaNodesResource {
 
-    private VdcActionType addAction;
-    private VdcActionType updateType;
+    private ActionType addAction;
+    private ActionType updateType;
     protected Class<VirtualNumaNodes> collectionType;
     protected Guid parentId;
     protected VdcQueryType queryType;
@@ -32,8 +32,8 @@ public class BackendVmNumaNodesResource
 
     public BackendVmNumaNodesResource(Guid parentId) {
         super(VirtualNumaNode.class, VmNumaNode.class);
-        this.addAction = VdcActionType.AddVmNumaNodes;
-        this.updateType = VdcActionType.UpdateVmNumaNodes;
+        this.addAction = ActionType.AddVmNumaNodes;
+        this.updateType = ActionType.UpdateVmNumaNodes;
         this.collectionType = VirtualNumaNodes.class;
         this.parentId = parentId;
         this.queryType = VdcQueryType.GetVmNumaNodesByVmId;

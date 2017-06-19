@@ -18,8 +18,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -65,8 +65,8 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableSingle() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<>(VdcActionType.AddEventSubscription, testParameter, mockCallback1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation =
+                new VdcOperation<>(ActionType.AddEventSubscription, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
@@ -79,10 +79,10 @@ public class OperationProcessorTest {
     public void testOnOperationAvailableList() {
         VdcActionParametersBase testActionParameter = new VdcActionParametersBase();
         VdcQueryParametersBase testQueryParameter = new VdcQueryParametersBase();
-        VdcOperation testOperation1 = new VdcOperation(VdcActionType.AddEventSubscription, testActionParameter,
+        VdcOperation testOperation1 = new VdcOperation(ActionType.AddEventSubscription, testActionParameter,
                 mockCallback1);
         VdcOperation testOperation2 = new VdcOperation(VdcQueryType.Search, testQueryParameter, mockCallback2);
-        VdcOperation testOperation3 = new VdcOperation(VdcActionType.AddEmptyStoragePool, testActionParameter,
+        VdcOperation testOperation3 = new VdcOperation(ActionType.AddEmptyStoragePool, testActionParameter,
                 mockCallback3);
         when(mockOperationManager.pollOperation()).thenReturn(testOperation1).thenReturn(testOperation2)
             .thenReturn(testOperation3).thenReturn(null);
@@ -101,8 +101,8 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableSingle_success() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<>(VdcActionType.AddEventSubscription, testParameter, mockCallback1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation =
+                new VdcOperation<>(ActionType.AddEventSubscription, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
@@ -115,8 +115,8 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableSingle_failure_action_noretry() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<>(VdcActionType.AddEventSubscription, testParameter, mockCallback1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation =
+                new VdcOperation<>(ActionType.AddEventSubscription, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
         verify(mockProvider).transmitOperationList(operationListCaptor.capture());
@@ -167,9 +167,9 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableMultiple_success() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
-        VdcOperation testOperation1 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation1 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback1);
-        VdcOperation testOperation2 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation2 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback2);
         when(mockOperationManager.pollOperation()).thenReturn(testOperation1).thenReturn(testOperation2).
             thenReturn(null);
@@ -196,9 +196,9 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableMultiple_success_samecallback() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
-        VdcOperation testOperation1 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation1 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback1);
-        VdcOperation testOperation2 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation2 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn(testOperation1).thenReturn(testOperation2).
             thenReturn(null);
@@ -217,11 +217,11 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableMultiple_success_with_retry() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
-        VdcOperation testOperation1 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation1 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback1);
         // This is the 'retry'.
         testOperation1 = new VdcOperation(testOperation1, mockCallback3);
-        VdcOperation testOperation2 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation2 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback2);
         when(mockOperationManager.pollOperation()).thenReturn(testOperation1).thenReturn(testOperation2).
             thenReturn(null);
@@ -246,9 +246,9 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableMultipleAction_failure() {
         VdcActionParametersBase testParameter = new VdcActionParametersBase();
-        VdcOperation testOperation1 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation1 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback1);
-        VdcOperation testOperation2 = new VdcOperation(VdcActionType.AddEventSubscription, testParameter,
+        VdcOperation testOperation2 = new VdcOperation(ActionType.AddEventSubscription, testParameter,
                 mockCallback2);
         when(mockOperationManager.pollOperation()).thenReturn(testOperation1).thenReturn(testOperation2).
             thenReturn(null);

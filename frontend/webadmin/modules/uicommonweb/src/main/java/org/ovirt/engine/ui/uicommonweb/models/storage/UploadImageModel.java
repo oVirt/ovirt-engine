@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -493,7 +493,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         setProgressStr("Initiating new upload"); //$NON-NLS-1$
 
         final TransferDiskImageParameters parameters = createInitParams();
-        Frontend.getInstance().runAction(VdcActionType.TransferDiskImage, parameters,
+        Frontend.getInstance().runAction(ActionType.TransferDiskImage, parameters,
                 result -> {
                     UploadImageModel model = (UploadImageModel) result.getState();
 
@@ -537,7 +537,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         final TransferImageStatusParameters parameters = new TransferImageStatusParameters();
         parameters.setDiskId(getDiskModel().getDisk().getId());
 
-        Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, parameters,
+        Frontend.getInstance().runAction(ActionType.TransferImageStatus, parameters,
                 result -> initiateResumeUploadCheckStatus(result), this);
     }
 
@@ -564,7 +564,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             final TransferImageStatusParameters parameters = new TransferImageStatusParameters(rv.getId());
             parameters.setUpdates(updates);
 
-            Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, parameters,
+            Frontend.getInstance().runAction(ActionType.TransferImageStatus, parameters,
                     this::initiateResumeUploadStartTransfer, model);
         } else {
             setProgressStr(messages.uploadImageFailedToResumeMessage(result.getReturnValue().getDescription()));
@@ -606,7 +606,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             updates.setMessage(getMessage() != null ? getMessage() : getProgressStr());
             statusParameters.setUpdates(updates);
 
-            Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
+            Frontend.getInstance().runAction(ActionType.TransferImageStatus, statusParameters,
                     result -> respondToPollStatus(result));
             if (!getContinuePolling()) {
                 manageWindowClosingHandler(false);
@@ -736,7 +736,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
         }
 
         log.info("Updating status to " + statusParameters.getUpdates().getPhase()); //$NON-NLS-1$
-        Frontend.getInstance().runAction(VdcActionType.TransferImageStatus, statusParameters,
+        Frontend.getInstance().runAction(ActionType.TransferImageStatus, statusParameters,
                 result -> {
                     if (!result.getReturnValue().getSucceeded()) {
                         if (++failedFinalizationAttempts < MAX_FAILED_POLL_ATTEMPTS) {
@@ -1126,7 +1126,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             list.add(parameters);
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.TransferImageStatus, list,
+        Frontend.getInstance().runMultipleAction(ActionType.TransferImageStatus, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
@@ -1144,7 +1144,7 @@ public class UploadImageModel extends Model implements ICommandTarget {
             parameters.setDiskId(disk.getId());
             list.add(parameters);
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.TransferImageStatus, list);
+        Frontend.getInstance().runMultipleAction(ActionType.TransferImageStatus, list);
     }
 
     public static boolean isCancelAllowed(List<? extends Disk> disks) {

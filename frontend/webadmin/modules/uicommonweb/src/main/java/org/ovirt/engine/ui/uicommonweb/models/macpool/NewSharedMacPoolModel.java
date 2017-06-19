@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.macpool;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class NewSharedMacPoolModel extends SharedMacPoolModel {
 
     public NewSharedMacPoolModel(Model sourceModel) {
-        super(sourceModel, VdcActionType.AddMacPool);
+        super(sourceModel, ActionType.AddMacPool);
         setTitle(ConstantsManager.getInstance().getConstants().newSharedMacPoolTitle());
         setHashName("new_shared_mac_pool"); //$NON-NLS-1$
         setHelpTag(HelpTag.new_shared_mac_pool);

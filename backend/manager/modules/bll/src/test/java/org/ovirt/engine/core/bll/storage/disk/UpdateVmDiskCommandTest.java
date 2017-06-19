@@ -40,8 +40,8 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -486,7 +486,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ArrayList<String> msgList = new ArrayList<>();
         msgList.add(EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION.toString());
         ret.setValidationMessages(msgList);
-        when(backend.runInternalAction(eq(VdcActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
+        when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
         verify(command, times(1)).amendDiskImage();
@@ -595,9 +595,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         doReturn(sdValidator).when(command).getStorageDomainValidator(any(DiskImage.class));
         VdcReturnValueBase ret = new VdcReturnValueBase();
         ret.setSucceeded(true);
-        when(backend.runInternalAction(eq(VdcActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
+        when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
         command.init();
-        doReturn(VdcActionType.UpdateVmDisk).when(command).getActionType();
+        doReturn(ActionType.UpdateVmDisk).when(command).getActionType();
     }
 
     @Test

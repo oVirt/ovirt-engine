@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -24,12 +24,12 @@ public class UpgradeHostValidator {
 
     public ValidationResult statusSupportedForHostUpgrade() {
         return ValidationResult.failWith(EngineMessage.CANNOT_UPGRADE_HOST_STATUS_ILLEGAL)
-                .unless(VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.UpgradeHost));
+                .unless(VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.UpgradeHost));
     }
 
     public ValidationResult statusSupportedForHostUpgradeCheck() {
         return ValidationResult.failWith(EngineMessage.CANNOT_CHECK_FOR_HOST_UPGRADE_STATUS_ILLEGAL)
-                .unless(VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.HostUpgradeCheck));
+                .unless(VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.HostUpgradeCheck));
     }
 
     public ValidationResult statusSupportedForHostUpgradeInternal() {

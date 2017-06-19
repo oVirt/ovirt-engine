@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -358,7 +358,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         }
 
         Frontend.getInstance().runAction(
-                model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,
+                model.getProvisioning().getEntity() ? ActionType.AddVmFromTemplate : ActionType.AddVm,
                 parameters,
                 createUnitVmModelNetworkAsyncCallback(vm, model),
                 this);

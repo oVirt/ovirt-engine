@@ -21,9 +21,9 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddInternalJobParameters;
 import org.ovirt.engine.core.common.action.AddStepParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -130,16 +130,16 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             return; //there's no need to monitor jobs that are failed or completed
         }
         StepEnum step = task.getType().getStep();
-        VdcActionType actionType;
+        ActionType actionType;
         switch (step) {
         case REBALANCING_VOLUME:
-            actionType = VdcActionType.StartRebalanceGlusterVolume;
+            actionType = ActionType.StartRebalanceGlusterVolume;
             break;
         case REMOVING_BRICKS:
-            actionType = VdcActionType.StartRemoveGlusterVolumeBricks;
+            actionType = ActionType.StartRemoveGlusterVolumeBricks;
             break;
         default:
-            actionType = VdcActionType.Unknown;
+            actionType = ActionType.Unknown;
         }
 
         String volumeName = task.getTaskParameters().getVolumeName();
@@ -167,7 +167,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private Guid addAsyncTaskStep(Cluster cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
         VdcReturnValueBase result;
-        result = backendInternal.runInternalAction(VdcActionType.AddInternalStep,
+        result = backendInternal.runInternalAction(ActionType.AddInternalStep,
                 new AddStepParameters(execStepId, glusterTaskUtils.getTaskMessage(cluster, step, task), step));
 
         if (!result.getSucceeded()) {
@@ -180,7 +180,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private Guid addExecutingStep(Guid jobId) {
         VdcReturnValueBase result;
-        result = backendInternal.runInternalAction(VdcActionType.AddInternalStep,
+        result = backendInternal.runInternalAction(ActionType.AddInternalStep,
                 new AddStepParameters(jobId, ExecutionMessageDirector.resolveStepMessage(StepEnum.EXECUTING, null), StepEnum.EXECUTING));
         if (!result.getSucceeded()) {
             //log and return
@@ -190,9 +190,9 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         return result.getActionReturnValue();
     }
 
-    private Guid addJob(Cluster cluster, GlusterAsyncTask task, VdcActionType actionType, final GlusterVolumeEntity vol) {
+    private Guid addJob(Cluster cluster, GlusterAsyncTask task, ActionType actionType, final GlusterVolumeEntity vol) {
 
-        VdcReturnValueBase result = backendInternal.runInternalAction(VdcActionType.AddInternalJob,
+        VdcReturnValueBase result = backendInternal.runInternalAction(ActionType.AddInternalJob,
                 new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, glusterTaskUtils.getMessageMap(cluster, task)),
                         actionType, true, VdcObjectType.GlusterVolume, vol.getId()) );
         if (!result.getSucceeded()) {

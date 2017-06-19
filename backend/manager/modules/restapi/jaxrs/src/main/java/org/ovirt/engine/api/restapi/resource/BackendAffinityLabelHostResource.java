@@ -5,8 +5,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.resource.AffinityLabelHostResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -46,6 +46,6 @@ public class BackendAffinityLabelHostResource
         Label updatedLabel = new LabelBuilder(label)
             .removeEntity(entity)
             .build();
-        return performAction(VdcActionType.UpdateLabel, new LabelActionParameters(updatedLabel));
+        return performAction(ActionType.UpdateLabel, new LabelActionParameters(updatedLabel));
     }
 }

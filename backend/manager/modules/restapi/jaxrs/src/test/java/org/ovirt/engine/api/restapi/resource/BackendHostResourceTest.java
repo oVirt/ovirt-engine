@@ -30,6 +30,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
@@ -38,7 +39,6 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
@@ -136,7 +136,7 @@ public class BackendHostResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
                                            new Object[] { ROOT_PASSWORD },
@@ -149,7 +149,7 @@ public class BackendHostResourceTest
     @Test
     public void testUpdateWithClusterId() throws Exception {
         setUpGetEntityExpectations(3);
-        setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
+        setUriInfo(setUpActionExpectations(ActionType.ChangeVDSCluster,
                 ChangeVDSClusterParameters.class,
                 new String[] { "ClusterId", "VdsId" },
                 new Object[] { GUIDS[1],  GUIDS[0]},
@@ -158,7 +158,7 @@ public class BackendHostResourceTest
                 new VdcReturnValueBase(),
                 false));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
                 new String[] { "RootPassword" },
                 new Object[] { ROOT_PASSWORD },
@@ -183,7 +183,7 @@ public class BackendHostResourceTest
                 new Object[] { clusterName },
                 getCluster(clusterName, GUIDS[1]));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
+        setUriInfo(setUpActionExpectations(ActionType.ChangeVDSCluster,
                 ChangeVDSClusterParameters.class,
                 new String[] { "ClusterId", "VdsId" },
                 new Object[] { GUIDS[1], GUIDS[0] },
@@ -192,7 +192,7 @@ public class BackendHostResourceTest
                 new VdcReturnValueBase(),
                 false));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
                 new String[] { "RootPassword" },
                 new Object[] { ROOT_PASSWORD },
@@ -225,7 +225,7 @@ public class BackendHostResourceTest
 
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
                                            new Object[] { ROOT_PASSWORD },
@@ -257,7 +257,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testActivate() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ActivateVds,
+        setUriInfo(setUpActionExpectations(ActionType.ActivateVds,
                                            VdsActionParameters.class,
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] }));
@@ -281,7 +281,7 @@ public class BackendHostResourceTest
     }
 
     private void doTestActivateAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ActivateVds,
+        setUriInfo(setUpActionExpectations(ActionType.ActivateVds,
                                            VdsActionParameters.class,
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] },
@@ -298,7 +298,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testApprove() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ApproveVds,
+        setUriInfo(setUpActionExpectations(ActionType.ApproveVds,
                                            ApproveVdsParameters.class,
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] }));
@@ -310,7 +310,7 @@ public class BackendHostResourceTest
     public void testApproveChangingCluster() throws Exception {
         setUpGetEntityExpectations(4);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.ChangeVDSCluster,
+        setUriInfo(setUpActionExpectations(ActionType.ChangeVDSCluster,
                                            ChangeVDSClusterParameters.class,
                                            new String[] { "ClusterId", "VdsId" },
                                            new Object[] { GUIDS[0],  GUIDS[0]},
@@ -319,14 +319,14 @@ public class BackendHostResourceTest
                                            new VdcReturnValueBase(),
                                            false));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { },
                                            new Object[] { },
                                            true,
                                            true));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.ApproveVds,
+        setUriInfo(setUpActionExpectations(ActionType.ApproveVds,
                                            ApproveVdsParameters.class,
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] }));
@@ -340,7 +340,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testIscsiLogin() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ConnectStorageToVds,
+        setUriInfo(setUpActionExpectations(ActionType.ConnectStorageToVds,
                                            StorageServerConnectionParametersBase.class,
                                            new String[] { "VdsId",
                                                           "StorageServerConnection.Connection",
@@ -399,7 +399,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testDeactivate() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.MaintenanceNumberOfVdss,
+        setUriInfo(setUpActionExpectations(ActionType.MaintenanceNumberOfVdss,
                                            MaintenanceNumberOfVdssParameters.class,
                                            new String[] { "VdsIdList" },
                                            new Object[] { asList(GUIDS[0]) }));
@@ -409,7 +409,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testForceSelect() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ForceSelectSPM,
+        setUriInfo(setUpActionExpectations(ActionType.ForceSelectSPM,
                                            ForceSelectSPMParameters.class,
                                            new String[] { "PreferredSPMId" },
                                            new Object[] { GUIDS[0] }));
@@ -421,7 +421,7 @@ public class BackendHostResourceTest
     public void testInstall() throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
                                            new Object[] { NAMES[2] }));
@@ -433,7 +433,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testUpgrade() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.UpgradeHost,
+        setUriInfo(setUpActionExpectations(ActionType.UpgradeHost,
                                            UpgradeHostParameters.class,
                                            new String[] { "VdsId", "oVirtIsoFile" },
                                            new Object[] { GUIDS[0], NAMES[0] }));
@@ -445,7 +445,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testCommitNetConfig() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.CommitNetworkChanges,
+        setUriInfo(setUpActionExpectations(ActionType.CommitNetworkChanges,
                                            VdsActionParameters.class,
                                            new String[] { "VdsId" },
                                            new Object[] { GUIDS[0] }));
@@ -457,7 +457,7 @@ public class BackendHostResourceTest
     public void testManualFence() throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.FenceVdsManualy,
+        setUriInfo(setUpActionExpectations(ActionType.FenceVdsManualy,
                                            FenceVdsManualyParameters.class,
                                            new String[] { "VdsId", "StoragePoolId" },
                                            new Object[] { GUIDS[0], GUIDS[1] }));
@@ -471,23 +471,23 @@ public class BackendHostResourceTest
     @Test
     public void testRestartFence() throws Exception {
         doTestFence(FenceType.RESTART,
-                    VdcActionType.RestartVds);
+                    ActionType.RestartVds);
     }
 
     @Test
     public void testStartFence() throws Exception {
         doTestFence(FenceType.START,
-                    VdcActionType.StartVds);
+                    ActionType.StartVds);
     }
 
     @Test
     public void testStopFence() throws Exception {
         doTestFence(FenceType.STOP,
-                    VdcActionType.StopVds);
+                    ActionType.StopVds);
     }
 
     public void doTestFence(FenceType fenceType,
-                            VdcActionType actionType) throws Exception {
+                            ActionType actionType) throws Exception {
         setUriInfo(setUpActionExpectations(actionType,
                                            FenceVdsActionParameters.class,
                                            new String[] { "VdsId" },
@@ -567,7 +567,7 @@ public class BackendHostResourceTest
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVds,
+                ActionType.RemoveVds,
                 RemoveVdsParameters.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
@@ -596,7 +596,7 @@ public class BackendHostResourceTest
     public void testRemoveForced() throws Exception {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveVds,
+            ActionType.RemoveVds,
             RemoveVdsParameters.class,
             new String[] { "VdsId", "ForceAction" },
             new Object[] { GUIDS[0], Boolean.TRUE },
@@ -613,7 +613,7 @@ public class BackendHostResourceTest
     public void testRemoveForcedIncomplete() throws Exception {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveVds,
+            ActionType.RemoveVds,
             RemoveVdsParameters.class,
             new String[] { "VdsId", "ForceAction" },
             new Object[] { GUIDS[0], Boolean.FALSE },
@@ -641,7 +641,7 @@ public class BackendHostResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVds,
+                ActionType.RemoveVds,
                 RemoveVdsParameters.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] },
@@ -660,7 +660,7 @@ public class BackendHostResourceTest
 
     @Test
     public void testEnrollCertificate() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.HostEnrollCertificate,
+        setUriInfo(setUpActionExpectations(ActionType.HostEnrollCertificate,
                 VdsActionParameters.class,
                 new String[] { "VdsId" },
                 new Object[] { GUIDS[0] }));
@@ -692,14 +692,14 @@ public class BackendHostResourceTest
         assertEquals(GUIDS[0].toString(), adopted.getHost().getId());
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,

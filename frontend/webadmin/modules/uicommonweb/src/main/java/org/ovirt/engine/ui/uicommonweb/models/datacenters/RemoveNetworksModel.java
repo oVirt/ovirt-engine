@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -156,7 +156,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
                 pb.add(new RemoveNetworkParameters(network.getId()));
             }
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveNetwork, pb);
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveNetwork, pb);
 
         sourceListModel.setConfirmWindow(null);
     }

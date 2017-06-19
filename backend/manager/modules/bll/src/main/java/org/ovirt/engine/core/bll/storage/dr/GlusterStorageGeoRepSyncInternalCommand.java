@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionConfigParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
@@ -54,7 +54,7 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
         if (getSession().getStatus() != GeoRepSessionStatus.ACTIVE) {
             // Start geo-replication
             Future<VdcReturnValueBase> geoRepCmd =
-                    CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.StartGlusterVolumeGeoRep,
+                    CommandCoordinatorUtil.executeAsyncCommand(ActionType.StartGlusterVolumeGeoRep,
                             new GlusterVolumeGeoRepSessionParameters(getSession().getMasterVolumeId(),
                                     getSession().getId()),
                             cloneContext());
@@ -77,7 +77,7 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
                         getSession().getId(),
                         GlusterConstants.GEOREP_CHECKPOINT_OPTION,
                         GlusterConstants.GEOREP_CHECKPOINT_VALUE);
-        VdcReturnValueBase result = runInternalAction(VdcActionType.SetGeoRepConfig, configParams);
+        VdcReturnValueBase result = runInternalAction(ActionType.SetGeoRepConfig, configParams);
         if (!result.getSucceeded()) {
             propagateFailure(result);
             return;

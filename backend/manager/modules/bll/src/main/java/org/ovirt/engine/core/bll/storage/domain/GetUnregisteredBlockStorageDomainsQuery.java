@@ -12,8 +12,8 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -274,7 +274,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
     /* Execute wrappers (for testing/mocking necessities) */
 
     protected VdcReturnValueBase executeConnectStorageToVds(StorageServerConnectionParametersBase parameters) {
-        return backend.runInternalAction(VdcActionType.ConnectStorageToVds, parameters);
+        return backend.runInternalAction(ActionType.ConnectStorageToVds, parameters);
     }
 
     protected VdcQueryReturnValue executeGetDeviceList(GetDeviceListQueryParameters parameters) {

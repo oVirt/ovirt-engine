@@ -10,10 +10,10 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.RefreshVolumeParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -67,11 +67,11 @@ public class MergeExtendCommand<T extends MergeParameters>
         parameters.setStoragePoolId(getParameters().getBaseImage().getStoragePoolId());
         parameters.setStorageDomainId(getParameters().getBaseImage().getStorageIds().get(0));
         parameters.setImageGroupID(getParameters().getBaseImage().getId());
-        parameters.setParentCommand(VdcActionType.MergeExtend);
+        parameters.setParentCommand(ActionType.MergeExtend);
         parameters.setParentParameters(getParameters());
 
         CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.ExtendImageSize,
+                ActionType.ExtendImageSize,
                 parameters,
                 cloneContextAndDetachFromParent());
     }
@@ -86,10 +86,10 @@ public class MergeExtendCommand<T extends MergeParameters>
                 getParameters().getStorageDomainId(),
                 getParameters().getImageGroupId(),
                 getParameters().getBaseImage().getImageId());
-        parameters.setParentCommand(VdcActionType.MergeExtend);
+        parameters.setParentCommand(ActionType.MergeExtend);
         parameters.setParentParameters(getParameters());
 
-        VdcReturnValueBase returnValue = runInternalAction(VdcActionType.RefreshVolume, parameters);
+        VdcReturnValueBase returnValue = runInternalAction(ActionType.RefreshVolume, parameters);
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {
             log.error("Error refreshing volume {} on host {}, VMs using the volume"

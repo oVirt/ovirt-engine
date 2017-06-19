@@ -5,10 +5,10 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
 import org.ovirt.engine.api.resource.StorageServerConnectionExtensionResource;
 import org.ovirt.engine.api.restapi.types.StorageServerConnectionExtensionMapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -32,7 +32,7 @@ public class BackendStorageServerConnectionExtensionResource
     public StorageConnectionExtension update(StorageConnectionExtension incoming) {
         QueryIdResolver resolver = new QueryIdResolver<>(VdcQueryType.GetStorageServerConnectionExtensionById,
                 IdQueryParameters.class);
-        return performUpdate(incoming, resolver, VdcActionType.UpdateStorageServerConnectionExtension , new UpdateParametersProvider());
+        return performUpdate(incoming, resolver, ActionType.UpdateStorageServerConnectionExtension , new UpdateParametersProvider());
     }
 
     public BackendStorageServerConnectionExtensionsResource getParent() {
@@ -42,7 +42,7 @@ public class BackendStorageServerConnectionExtensionResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveStorageServerConnectionExtension, new IdParameters(guid));
+        return performAction(ActionType.RemoveStorageServerConnectionExtension, new IdParameters(guid));
     }
 
     protected static class UpdateParametersProvider implements ParametersProvider<StorageConnectionExtension, StorageServerConnectionExtension> {

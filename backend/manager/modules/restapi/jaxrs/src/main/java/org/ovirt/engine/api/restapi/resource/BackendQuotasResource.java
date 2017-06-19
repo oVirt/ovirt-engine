@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Quotas;
 import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotasResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,7 +39,7 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
         validateParameters(quota, "name");
         org.ovirt.engine.core.common.businessentities.Quota entity = map(quota);
         entity.setStoragePoolId(dataCenterId);
-        return performCreate(VdcActionType.AddQuota,
+        return performCreate(ActionType.AddQuota,
                 new QuotaCRUDParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetQuotaByQuotaId, IdQueryParameters.class));
     }

@@ -7,7 +7,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -25,7 +25,7 @@ public class JobDaoImpl extends DefaultGenericDao<Job, Guid> implements JobDao {
         Job job = new Job();
 
         job.setId(getGuidDefaultEmpty(rs, "job_id"));
-        job.setActionType(VdcActionType.valueOf(rs.getString("action_type")));
+        job.setActionType(ActionType.valueOf(rs.getString("action_type")));
         job.setDescription(rs.getString("description"));
         job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
         job.setOwnerId(getGuid(rs, "owner_id"));

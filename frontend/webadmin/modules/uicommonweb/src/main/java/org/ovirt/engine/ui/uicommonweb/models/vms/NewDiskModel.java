@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -199,7 +199,7 @@ public class NewDiskModel extends AbstractDiskModel {
             postSave();
         };
 
-        Frontend.getInstance().runAction(VdcActionType.AddDisk, parameters, onFinished, this);
+        Frontend.getInstance().runAction(ActionType.AddDisk, parameters, onFinished, this);
     }
 
     protected void postSave() {

@@ -13,11 +13,11 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -77,7 +77,7 @@ public class BackendAttachedStorageDomainResourceTest
     public void testActivate() throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.ActivateStorageDomain,
+                ActionType.ActivateStorageDomain,
                 StorageDomainPoolParametersBase.class,
                 new String[]{"StorageDomainId", "StoragePoolId"},
                 new Object[]{STORAGE_DOMAIN_ID, DATA_CENTER_ID}
@@ -105,7 +105,7 @@ public class BackendAttachedStorageDomainResourceTest
     private void doTestActivateAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.ActivateStorageDomain,
+                ActionType.ActivateStorageDomain,
                 StorageDomainPoolParametersBase.class,
                 new String[] { "StorageDomainId", "StoragePoolId" },
                 new Object[] { STORAGE_DOMAIN_ID, DATA_CENTER_ID },
@@ -129,7 +129,7 @@ public class BackendAttachedStorageDomainResourceTest
     public void testDeactivate() throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DeactivateStorageDomainWithOvfUpdate,
+                ActionType.DeactivateStorageDomainWithOvfUpdate,
                 StorageDomainPoolParametersBase.class,
                 new String[]{"StorageDomainId", "StoragePoolId"},
                 new Object[]{STORAGE_DOMAIN_ID, DATA_CENTER_ID}
@@ -145,7 +145,7 @@ public class BackendAttachedStorageDomainResourceTest
         setUpGetConnectionExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachStorageDomainFromPool,
+                ActionType.DetachStorageDomainFromPool,
                 DetachStorageDomainFromPoolParameters.class,
                 new String[] { "StorageDomainId", "StoragePoolId" },
                 new Object[] { STORAGE_DOMAIN_ID, DATA_CENTER_ID },
@@ -176,7 +176,7 @@ public class BackendAttachedStorageDomainResourceTest
         setUpGetConnectionExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveStorageDomain,
+                ActionType.RemoveStorageDomain,
                 RemoveStorageDomainParameters.class,
                 new String[] { "StorageDomainId"},
                 new Object[] { STORAGE_DOMAIN_ID },
@@ -202,7 +202,7 @@ public class BackendAttachedStorageDomainResourceTest
         setUpGetConnectionExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachStorageDomainFromPool,
+                ActionType.DetachStorageDomainFromPool,
                 DetachStorageDomainFromPoolParameters.class,
                 new String[]{"StorageDomainId", "StoragePoolId"},
                 new Object[]{STORAGE_DOMAIN_ID, DATA_CENTER_ID},
@@ -229,14 +229,14 @@ public class BackendAttachedStorageDomainResourceTest
         );
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,

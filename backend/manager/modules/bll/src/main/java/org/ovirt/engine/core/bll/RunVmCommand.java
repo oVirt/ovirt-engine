@@ -32,13 +32,13 @@ import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
@@ -468,7 +468,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().getName(), getVm().getId());
         CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
-        VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
+        VdcReturnValueBase vdcReturnValue = runInternalAction(ActionType.CreateAllSnapshotsFromVm,
                 createAllSnapshotsFromVmParameters,
                 createContextForStatelessSnapshotCreation());
 
@@ -532,7 +532,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private void removeStatlessSnapshot() {
-        runInternalAction(VdcActionType.ProcessDownVm,
+        runInternalAction(ActionType.ProcessDownVm,
                 new ProcessDownVmParameters(getVm().getId(), true),
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         // setting lock to null in order not to release lock twice
@@ -1105,7 +1105,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endSuccessfully() {
         if (shouldEndSnapshotCreation()) {
-            getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
+            getBackend().endAction(ActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0),
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
@@ -1166,7 +1166,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endWithFailure() {
         if (shouldEndSnapshotCreation()) {
-            VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
+            VdcReturnValueBase vdcReturnValue = getBackend().endAction(ActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), cloneContext().withoutExecutionContext()
                             .withoutLock());
 

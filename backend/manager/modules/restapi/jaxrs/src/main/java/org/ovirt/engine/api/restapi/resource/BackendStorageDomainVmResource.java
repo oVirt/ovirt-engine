@@ -18,9 +18,9 @@ import org.ovirt.engine.api.resource.StorageDomainVmResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.ExternalVnicProfileMappingMapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.ExternalVnicProfileMapping;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -83,7 +83,7 @@ public class BackendStorageDomainVmResource
         if (action.isSetAllowPartialImport()) {
             params.setAllowPartialImport(action.isAllowPartialImport());
         }
-        return doAction(VdcActionType.ImportVmFromConfiguration, params, action);
+        return doAction(ActionType.ImportVmFromConfiguration, params, action);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class BackendStorageDomainVmResource
             }
         }
 
-        return doAction(VdcActionType.ImportVm, params, action);
+        return doAction(ActionType.ImportVm, params, action);
     }
 
     private void validateVnicMappings(Action action) {
@@ -217,7 +217,7 @@ public class BackendStorageDomainVmResource
                 guid,
                 parent.storageDomainId,
                 getDataCenterId(parent.storageDomainId));
-        return performAction(VdcActionType.RemoveVmFromImportExport, params);
+        return performAction(ActionType.RemoveVmFromImportExport, params);
     }
 
 }

@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuProfiles;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Qos;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -70,7 +70,7 @@ public abstract class AbstractBackendCpuProfilesResource
         org.ovirt.engine.core.common.businessentities.profiles.CpuProfile map = map(cpuProfile);
         parameters.setProfile(map);
         parameters.setAddPermissions(true);
-        return performCreate(VdcActionType.AddCpuProfile,
+        return performCreate(ActionType.AddCpuProfile,
                 parameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetCpuProfileById, IdQueryParameters.class));
     }

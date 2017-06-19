@@ -5,9 +5,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
@@ -264,7 +264,7 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(ActionType.ChangeQuotaForDisk, paramerterList,
                 result -> cancel(),
                 this);
     }

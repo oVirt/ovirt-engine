@@ -5,12 +5,12 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -182,7 +182,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
         confirmationModel.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate, pb, result -> {
+        Frontend.getInstance().runMultipleAction(ActionType.DeactivateStorageDomainWithOvfUpdate, pb, result -> {
             confirmationModel.stopProgress();
             setWindow(null);
         });
@@ -214,7 +214,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             pb.add(new StorageDomainPoolParametersBase(a.getId(), getEntity().getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ActivateStorageDomain, pb);
+        Frontend.getInstance().runMultipleAction(ActionType.ActivateStorageDomain, pb);
     }
 
     public void attachBackup() {
@@ -416,7 +416,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         for (StorageDomain storageDomain : selectedStorageDomains) {
             pb.add(new AttachStorageDomainToPoolParameters(storageDomain.getId(), getEntity().getId()));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.AttachStorageDomainToPool, pb);
+        Frontend.getInstance().runMultipleAction(ActionType.AttachStorageDomainToPool, pb);
         cancel();
     }
 
@@ -525,14 +525,14 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     }
 
     public void postDetach(Model model) {
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveStorageDomain, getpb_remove(),
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveStorageDomain, getpb_remove(),
                 outerResult -> {
 
                     Object[] array = (Object[]) outerResult.getState();
                     ConfirmationModel localModel1 = (ConfirmationModel) array[0];
                     ArrayList<VdcActionParametersBase> parameters =
                             (ArrayList<VdcActionParametersBase>) array[1];
-                    Frontend.getInstance().runMultipleAction(VdcActionType.DetachStorageDomainFromPool, parameters,
+                    Frontend.getInstance().runMultipleAction(ActionType.DetachStorageDomainFromPool, parameters,
                             innerResult -> {
                                 ConfirmationModel localModel2 = (ConfirmationModel) innerResult.getState();
                                 localModel2.stopProgress();
@@ -625,15 +625,15 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         getDetachCommand().setIsExecutionAllowed(selectedItems.size() > 0
                 && VdcActionUtils.canExecute(selectedItems,
                 StorageDomain.class,
-                VdcActionType.DetachStorageDomainFromPool));
+                ActionType.DetachStorageDomainFromPool));
 
         getActivateCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && VdcActionUtils.canExecute(selectedItems, StorageDomain.class, VdcActionType.ActivateStorageDomain));
+                && VdcActionUtils.canExecute(selectedItems, StorageDomain.class, ActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(selectedItems.size() == 1
                 && VdcActionUtils.canExecute(selectedItems,
                 StorageDomain.class,
-                VdcActionType.DeactivateStorageDomainWithOvfUpdate));
+                ActionType.DeactivateStorageDomainWithOvfUpdate));
     }
 
     private boolean isDomainMasterAndActive(StorageDomain domain) {

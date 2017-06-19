@@ -23,9 +23,9 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -263,7 +263,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
                 if (executePlugOrUnplug(PlugAction.PLUG)) {
                     if (isPassthrough()) {
-                        runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
+                        runInternalAction(ActionType.RefreshHost, new VdsActionParameters(getVdsId()));
                     }
                 } else {
                     clearPassthroughData(vfToUse);
@@ -284,7 +284,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             if (executePlugOrUnplug(PlugAction.UNPLUG)) {
                 if (isPassthrough()) {
                     clearPassthroughData(vmDevice.getHostDevice());
-                    runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(getVdsId()));
+                    runInternalAction(ActionType.RefreshHost, new VdsActionParameters(getVdsId()));
                 }
             }
         }

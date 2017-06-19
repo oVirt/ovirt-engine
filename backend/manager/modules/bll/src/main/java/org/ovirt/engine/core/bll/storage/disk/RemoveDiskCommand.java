@@ -36,13 +36,13 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -336,7 +336,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         switch (getDisk().getDiskStorageType()) {
             case IMAGE:
                 VdcReturnValueBase vdcReturnValue =
-                        runInternalActionWithTasksContext(VdcActionType.RemoveImage,
+                        runInternalActionWithTasksContext(ActionType.RemoveImage,
                                 buildRemoveImageParameters(getDiskImage()));
                 if (vdcReturnValue.getSucceeded()) {
                     incrementVmsGeneration();
@@ -351,7 +351,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 RemoveCinderDiskParameters params = new RemoveCinderDiskParameters(getParameters().getDiskId());
                 params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                        VdcActionType.RemoveCinderDisk,
+                        ActionType.RemoveCinderDisk,
                         params,
                         cloneContextAndDetachFromParent());
                 try {
@@ -371,7 +371,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         RemoveImageParameters result = new RemoveImageParameters(diskImage.getImageId());
         result.setTransactionScopeOption(TransactionScopeOption.Suppress);
         result.setDiskImage(diskImage);
-        result.setParentCommand(VdcActionType.RemoveDisk);
+        result.setParentCommand(ActionType.RemoveDisk);
         result.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getDiskId()));
         result.setParentParameters(getParameters());
         result.setRemoveFromSnapshots(true);

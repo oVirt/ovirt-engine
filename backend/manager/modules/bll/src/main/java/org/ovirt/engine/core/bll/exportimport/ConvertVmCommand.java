@@ -18,11 +18,11 @@ import org.ovirt.engine.core.bll.storage.ovfstore.OvfHelper;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.V2VJobInfo.JobStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -287,7 +287,7 @@ public class ConvertVmCommand<T extends ConvertVmParameters> extends VmCommand<T
 
     private void removeVm() {
         runInternalAction(
-                VdcActionType.RemoveVm,
+                ActionType.RemoveVm,
                 new RemoveVmParameters(getVmId(), true));
     }
 

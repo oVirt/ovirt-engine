@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -304,7 +304,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 storageDomain.getId());
         parameters.setVdsId(vdsId);
         return Backend.getInstance()
-                .runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters)
+                .runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters)
                 .getSucceeded();
     }
 }

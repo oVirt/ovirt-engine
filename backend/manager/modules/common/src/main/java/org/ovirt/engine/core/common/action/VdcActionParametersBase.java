@@ -36,12 +36,12 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
      */
     private boolean compensationEnabled;
 
-    private VdcActionType parentCommand;
+    private ActionType parentCommand;
 
     /**
      * Used to determine the correct command to construct for these parameters.
      */
-    private VdcActionType commandType;
+    private ActionType commandType;
 
     private transient VdcActionParametersBase parentParameters;
     // this flag marks if the command ran with MultipleAction for ProcessExceptionToClient
@@ -91,11 +91,11 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
         shouldbelogged = true;
         transctionOption = TransactionScopeOption.Required;
         setTaskGroupSuccess(true);
-        setParentCommand(VdcActionType.Unknown);
+        setParentCommand(ActionType.Unknown);
         executionReason = CommandExecutionReason.REGULAR_FLOW;
         compensationEnabled = false;
-        parentCommand = VdcActionType.Unknown;
-        commandType = VdcActionType.Unknown;
+        parentCommand = ActionType.Unknown;
+        commandType = ActionType.Unknown;
         imagesParameters = new ArrayList<>();
         prevVdsStatus = VDSStatus.Unassigned;
     }
@@ -172,19 +172,19 @@ public class VdcActionParametersBase implements Serializable, HasCorrelationId {
         this.compensationEnabled = compensationEnabled;
     }
 
-    public VdcActionType getParentCommand() {
+    public ActionType getParentCommand() {
         return parentCommand;
     }
 
-    public void setParentCommand(VdcActionType value) {
+    public void setParentCommand(ActionType value) {
         parentCommand = value;
     }
 
-    public VdcActionType getCommandType() {
+    public ActionType getCommandType() {
         return commandType;
     }
 
-    public void setCommandType(VdcActionType commandType) {
+    public void setCommandType(ActionType commandType) {
         this.commandType = commandType;
     }
 

@@ -20,8 +20,8 @@ import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.restapi.types.GroupMapper;
 import org.ovirt.engine.api.restapi.types.UserMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -108,7 +108,7 @@ public class BackendAssignedPermissionsResource
                            : new String[] {"role.id|name", "user|group.id"});
         PermissionsOperationsParameters parameters = getParameters(permission);
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetPermissionById, IdQueryParameters.class);
-        return performCreate(VdcActionType.AddPermission, parameters, resolver);
+        return performCreate(ActionType.AddPermission, parameters, resolver);
     }
 
     @Override

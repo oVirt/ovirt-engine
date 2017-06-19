@@ -24,8 +24,8 @@ import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.resource.openstack.OpenstackImageResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -90,6 +90,6 @@ public class BackendOpenStackImageResource
                 VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class
         );
-        return doAction(VdcActionType.ImportRepoImage, parameters, action, resolver);
+        return doAction(ActionType.ImportRepoImage, parameters, action, resolver);
     }
 }

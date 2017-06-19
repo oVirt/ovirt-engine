@@ -16,7 +16,7 @@ public class CopyImageGroupVolumesDataCommandParameters extends ImagesActionsPar
                                                             Guid srcDomain,
                                                             Guid imageGroupId,
                                                             Guid destDomain,
-                                                            VdcActionType parentType,
+                                                            ActionType parentType,
                                                             VdcActionParametersBase parentParams) {
         this.destDomain = destDomain;
         this.srcDomain = srcDomain;

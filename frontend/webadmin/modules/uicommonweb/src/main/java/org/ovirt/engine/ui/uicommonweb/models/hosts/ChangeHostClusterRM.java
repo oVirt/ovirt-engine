@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -38,7 +38,7 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
             ChangeVDSClusterParameters parameters =
                     new ChangeVDSClusterParameters(enlistmentContext.getClusterId(), host.getId());
             parameters.setCorrelationId(getCorrelationId());
-            Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
+            Frontend.getInstance().runAction(ActionType.ChangeVDSCluster,
                     parameters,
                     result -> {
 

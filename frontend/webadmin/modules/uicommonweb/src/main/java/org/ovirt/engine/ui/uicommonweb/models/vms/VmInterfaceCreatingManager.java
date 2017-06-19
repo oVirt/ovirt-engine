@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,17 +49,17 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
             final boolean isAddingNewVm,
             final Guid id,
             final UnitVmModel unitVmModel) {
-        Frontend.getInstance().runMultipleActions(VdcActionType.AddVmInterface,
+        Frontend.getInstance().runMultipleActions(ActionType.AddVmInterface,
                 createVnicParameters,
                 addInterfaceResult ->
-                        Frontend.getInstance().runMultipleActions(VdcActionType.UpdateVmInterface,
+                        Frontend.getInstance().runMultipleActions(ActionType.UpdateVmInterface,
                         updateVnicParameters,
-                        updateInterfaceResult-> Frontend.getInstance().runMultipleActions(VdcActionType.RemoveVmInterface,
+                        updateInterfaceResult-> Frontend.getInstance().runMultipleActions(ActionType.RemoveVmInterface,
                                 removeVnicParameters,
                                 removeInterfaceResult -> {
                                     if (isAddingNewVm) {
                                         VmOperationParameterBase reorderParams = new VmOperationParameterBase(id);
-                                        Frontend.getInstance().runAction(VdcActionType.ReorderVmNics, reorderParams,
+                                        Frontend.getInstance().runAction(ActionType.ReorderVmNics, reorderParams,
                                                 reorderResult -> getCallback().vnicCreated(id, unitVmModel));
                                     } else {
                                         getCallback().vnicCreated(id, unitVmModel);

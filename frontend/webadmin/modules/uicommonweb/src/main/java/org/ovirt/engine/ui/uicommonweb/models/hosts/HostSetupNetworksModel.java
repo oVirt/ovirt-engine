@@ -14,9 +14,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -1151,7 +1151,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private UiAction createSetupNetworksAction() {
         final HostSetupNetworksParameters hostSetupNetworksParameters = createHostSetupNetworksParameters();
-        return new UiVdcAction(VdcActionType.HostSetupNetworks, hostSetupNetworksParameters, this, true) {
+        return new UiVdcAction(ActionType.HostSetupNetworks, hostSetupNetworksParameters, this, true) {
             @Override
             protected boolean shouldExecute() {
                 return !hostSetupNetworksParameters.isEmptyRequest();
@@ -1160,7 +1160,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     public UiAction getCommitNetworkChangesAction() {
-        return new UiVdcAction(VdcActionType.CommitNetworkChanges,
+        return new UiVdcAction(ActionType.CommitNetworkChanges,
                 new VdsActionParameters(getEntity().getId()),
                 HostSetupNetworksModel.this, true) {
             @Override

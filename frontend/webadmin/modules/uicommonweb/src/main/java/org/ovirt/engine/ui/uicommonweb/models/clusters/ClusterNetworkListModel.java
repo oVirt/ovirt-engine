@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -115,7 +115,7 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
         final NetworkClusterParameters networkClusterParameters = new NetworkClusterParameters(network.getCluster());
 
-        Frontend.getInstance().runAction(VdcActionType.UpdateNetworkOnCluster, networkClusterParameters);
+        Frontend.getInstance().runAction(ActionType.UpdateNetworkOnCluster, networkClusterParameters);
     }
 
     public void manage() {

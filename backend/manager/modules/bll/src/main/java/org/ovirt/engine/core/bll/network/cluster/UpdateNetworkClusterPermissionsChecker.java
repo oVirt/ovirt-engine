@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.ClusterPermissionsFinder;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -27,7 +27,7 @@ class UpdateNetworkClusterPermissionsChecker {
         this.clusterPermissionsFinder = clusterPermissionsFinder;
     }
 
-    public boolean checkPermissions(CommandBase<?> command, Guid networkId, Guid clusterId, VdcActionType actionType) {
+    public boolean checkPermissions(CommandBase<?> command, Guid networkId, Guid clusterId, ActionType actionType) {
         final List<PermissionSubject> permissionCheckSubjects =
                 findPermissionCheckSubjects(networkId, clusterId, actionType);
 
@@ -51,7 +51,7 @@ class UpdateNetworkClusterPermissionsChecker {
         return false;
     }
 
-    public List<PermissionSubject> findPermissionCheckSubjects(Guid networkId, Guid clusterId, VdcActionType actionType) {
+    public List<PermissionSubject> findPermissionCheckSubjects(Guid networkId, Guid clusterId, ActionType actionType) {
 
         List<PermissionSubject> permissions =
                 clusterPermissionsFinder.findPermissionCheckSubjects(clusterId, actionType);

@@ -13,7 +13,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -120,7 +120,7 @@ public class VmSlaPolicyUtils {
     public void refreshVmsCpuQos(List<Guid> vmIds, CpuQos newQos) {
         for (Guid vmId : vmIds) {
             ThreadPoolUtil.execute(() ->
-                    backend.runInternalAction(VdcActionType.VmSlaPolicy,
+                    backend.runInternalAction(ActionType.VmSlaPolicy,
                             new VmSlaPolicyParameters(vmId, newQos)));
         }
     }
@@ -167,7 +167,7 @@ public class VmSlaPolicyUtils {
                 cmdParams.getStorageQos().put(img, newQos);
             }
 
-            ThreadPoolUtil.execute(() -> backend.runInternalAction(VdcActionType.VmSlaPolicy, cmdParams));
+            ThreadPoolUtil.execute(() -> backend.runInternalAction(ActionType.VmSlaPolicy, cmdParams));
         }
     }
 

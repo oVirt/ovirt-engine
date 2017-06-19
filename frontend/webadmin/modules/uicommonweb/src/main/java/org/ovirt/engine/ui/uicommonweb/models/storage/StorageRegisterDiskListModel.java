@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -99,7 +99,7 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
             parametersList.add(parameters);
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RegisterCinderDisk, parametersList, result -> {}, this);
+        Frontend.getInstance().runMultipleAction(ActionType.RegisterCinderDisk, parametersList, result -> {}, this);
     }
 
     private void onRegister() {

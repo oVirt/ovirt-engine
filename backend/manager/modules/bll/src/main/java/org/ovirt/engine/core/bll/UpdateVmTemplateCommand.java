@@ -23,9 +23,9 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -378,7 +378,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         for (VM vm : vmsToUpdate) {
             VmManagementParametersBase params = new VmManagementParametersBase(vm);
             params.setApplyChangesLater(true);
-            runInternalAction(VdcActionType.UpdateVm, params);
+            runInternalAction(ActionType.UpdateVm, params);
         }
     }
 
@@ -534,18 +534,18 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
                     GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
                     parameters.setVm(false);
-                    getBackend().runInternalAction(VdcActionType.AddGraphicsDevice, parameters);
+                    getBackend().runInternalAction(ActionType.AddGraphicsDevice, parameters);
                 }
             } else {
                 if (getParameters().getGraphicsDevices().get(type) == null) {
                     GraphicsParameters parameters = new GraphicsParameters(vmGraphicsDevice);
                     parameters.setVm(false);
-                    getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice, parameters);
+                    getBackend().runInternalAction(ActionType.RemoveGraphicsDevice, parameters);
                 } else {
                     getParameters().getGraphicsDevices().get(type).setVmId(getVmTemplateId());
                     GraphicsParameters parameters = new GraphicsParameters(getParameters().getGraphicsDevices().get(type));
                     parameters.setVm(false);
-                    getBackend().runInternalAction(VdcActionType.UpdateGraphicsDevice, parameters);
+                    getBackend().runInternalAction(ActionType.UpdateGraphicsDevice, parameters);
                 }
             }
         }

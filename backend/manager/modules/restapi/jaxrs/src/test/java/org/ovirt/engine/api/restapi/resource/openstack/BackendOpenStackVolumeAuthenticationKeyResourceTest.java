@@ -27,8 +27,8 @@ import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKeyUsageType;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -122,7 +122,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2, false);
         setUriInfo(setUpActionExpectations(
-                VdcActionType.UpdateLibvirtSecret,
+                ActionType.UpdateLibvirtSecret,
                 LibvirtSecretParameters.class,
                 new String[] {},
                 new Object[] {},

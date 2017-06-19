@@ -48,6 +48,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
@@ -56,7 +57,6 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
@@ -805,7 +805,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean checkTemplateImages(List<String> reasons) {
-        if (getParameters().getParentCommand() == VdcActionType.AddVmPool) {
+        if (getParameters().getParentCommand() == ActionType.AddVmPool) {
             return true;
         }
 
@@ -1026,7 +1026,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             }
 
             graphicsDevice.setVmId(getVmId());
-            getBackend().runInternalAction(VdcActionType.AddGraphicsDevice, new GraphicsParameters(graphicsDevice));
+            getBackend().runInternalAction(ActionType.AddGraphicsDevice, new GraphicsParameters(graphicsDevice));
         }
     }
 
@@ -1042,8 +1042,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private void addVmWatchdog() {
         VmWatchdog vmWatchdog = getParameters().getWatchdog();
         if (vmWatchdog != null) {
-            VdcActionType actionType = getVmDeviceUtils().hasWatchdog(getVmTemplateId()) ?
-                    VdcActionType.UpdateWatchdog : VdcActionType.AddWatchdog;
+            ActionType actionType = getVmDeviceUtils().hasWatchdog(getVmTemplateId()) ?
+                    ActionType.UpdateWatchdog : ActionType.AddWatchdog;
             runInternalAction(
                     actionType,
                     buildWatchdogParameters(vmWatchdog),
@@ -1064,7 +1064,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (rngDev != null) {
             rngDev.setVmId(getVmId());
             RngDeviceParameters params = new RngDeviceParameters(rngDev, true);
-            VdcReturnValueBase result = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
+            VdcReturnValueBase result = runInternalAction(ActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
             if (!result.getSucceeded()) {
                 log.error("Couldn't add RNG device for new VM.");
                 throw new IllegalArgumentException("Couldn't add RNG device for new VM.");
@@ -1176,7 +1176,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getParameters().getVm(), numaNodes);
 
-        VdcReturnValueBase returnValueBase = getBackend().runInternalAction(VdcActionType.AddVmNumaNodes, params);
+        VdcReturnValueBase returnValueBase = getBackend().runInternalAction(ActionType.AddVmNumaNodes, params);
         if (!returnValueBase.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
         }
@@ -1262,8 +1262,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return true;
     }
 
-    protected VdcActionType getDiskCreationCommandType() {
-        return VdcActionType.CreateSnapshotFromTemplate;
+    protected ActionType getDiskCreationCommandType() {
+        return ActionType.CreateSnapshotFromTemplate;
     }
 
     protected void lockVM() {
@@ -1277,7 +1277,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         tempVar.setDiskAlias(diskInfoDestinationMap.get(image.getId()).getDiskAlias());
         tempVar.setStorageDomainId(image.getStorageIds().get(0));
         tempVar.setVmSnapshotId(getVmSnapshotId());
-        tempVar.setParentCommand(VdcActionType.AddVm);
+        tempVar.setParentCommand(ActionType.AddVm);
         tempVar.setEntityInfo(getParameters().getEntityInfo());
         tempVar.setParentParameters(getParameters());
         tempVar.setQuotaId(diskInfoDestinationMap.get(image.getId()).getQuotaId());
@@ -1300,7 +1300,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         for (CinderDisk cinderDisk : cinderDisks) {
             ImagesContainterParametersBase params = buildCloneCinderDiskCommandParameters(cinderDisk);
             VdcReturnValueBase vdcReturnValueBase = runInternalAction(
-                    VdcActionType.CloneSingleCinderDisk,
+                    ActionType.CloneSingleCinderDisk,
                     params,
                     cloneContext().withoutExecutionContext().withoutLock());
             if (!vdcReturnValueBase.getSucceeded()) {
@@ -1331,7 +1331,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(), getVmId());
         parameters.setShouldBeLogged(false);
         VdcReturnValueBase result = runInternalActionWithTasksContext(
-                VdcActionType.AddVmToPool,
+                ActionType.AddVmToPool,
                 parameters);
         setSucceeded(result.getSucceeded());
         if (!result.getSucceeded()) {
@@ -1359,8 +1359,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     @Override
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.CreateSnapshotFromTemplate;
+    protected ActionType getChildActionType() {
+        return ActionType.CreateSnapshotFromTemplate;
     }
 
     @Override

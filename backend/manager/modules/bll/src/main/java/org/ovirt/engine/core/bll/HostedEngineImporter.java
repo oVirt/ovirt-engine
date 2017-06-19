@@ -9,10 +9,10 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -121,13 +121,13 @@ public class HostedEngineImporter {
         RemoveVmParameters parameters = new RemoveVmParameters(vm.getId(), true);
         parameters.setRemoveDisks(false);
         return backend.runInternalAction(
-                VdcActionType.RemoveVm,
+                ActionType.RemoveVm,
                 parameters).getSucceeded();
     }
 
     private VdcReturnValueBase importHEVM(VM vm, StorageDomain sd) {
         return backend.runInternalAction(
-                VdcActionType.ImportVm,
+                ActionType.ImportVm,
                 createImportParams(vm, sd));
     }
 
@@ -174,7 +174,7 @@ public class HostedEngineImporter {
         importParams.setStorageDomainId(storageDomainId);
         importParams.setVdsId(vm.getRunOnVds());
         return backend.runInternalAction(
-                    VdcActionType.ImportHostedEngineStorageDomain,
+                    ActionType.ImportHostedEngineStorageDomain,
                     importParams).getActionReturnValue();
     }
 }

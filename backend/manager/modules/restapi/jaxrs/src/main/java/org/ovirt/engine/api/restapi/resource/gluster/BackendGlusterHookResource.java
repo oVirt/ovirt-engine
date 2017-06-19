@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.model.ResolutionType;
 import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -56,12 +56,12 @@ public class BackendGlusterHookResource
 
     @Override
     public Response enable(Action action) {
-        return doAction(VdcActionType.EnableGlusterHook, new GlusterHookParameters(guid), action);
+        return doAction(ActionType.EnableGlusterHook, new GlusterHookParameters(guid), action);
     }
 
     @Override
     public Response disable(Action action) {
-        return doAction(VdcActionType.DisableGlusterHook, new GlusterHookParameters(guid), action);
+        return doAction(ActionType.DisableGlusterHook, new GlusterHookParameters(guid), action);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class BackendGlusterHookResource
     }
 
     private Response addToMissingServers(Action action) {
-        return doAction(VdcActionType.AddGlusterHook, new GlusterHookManageParameters(guid), action);
+        return doAction(ActionType.AddGlusterHook, new GlusterHookManageParameters(guid), action);
     }
 
     private Response copy(Action action) {
@@ -91,7 +91,7 @@ public class BackendGlusterHookResource
             Guid hostId = getHostId(action);
             params.setSourceServerId(hostId);
         }
-        return doAction(VdcActionType.UpdateGlusterHook, params, action);
+        return doAction(ActionType.UpdateGlusterHook, params, action);
     }
 
 
@@ -110,6 +110,6 @@ public class BackendGlusterHookResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveGlusterHook, new GlusterHookManageParameters(guid));
+        return performAction(ActionType.RemoveGlusterHook, new GlusterHookManageParameters(guid));
     }
 }

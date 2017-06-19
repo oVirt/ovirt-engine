@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmHostDeviceResource;
 import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -55,7 +55,7 @@ public class BackendVmHostDevicesResource
             deviceName = HexUtils.hex2string(hostDevice.getId());
         }
 
-        return performCreate(VdcActionType.AddVmHostDevices,
+        return performCreate(ActionType.AddVmHostDevices,
                 new VmHostDevicesParameters(vmId, deviceName),
                 new DeviceNameResolver(deviceName));
     }

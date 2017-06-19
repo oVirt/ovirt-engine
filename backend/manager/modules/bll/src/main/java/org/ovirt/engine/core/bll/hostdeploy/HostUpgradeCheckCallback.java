@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -89,13 +89,13 @@ public class HostUpgradeCheckCallback implements CommandCallback {
     private Guid getHostUpgradeInternalCmdId(List<Guid> childCmdIds) {
         if (checkForHostUpgradeInternalCmdId == null) {
             checkForHostUpgradeInternalCmdId =
-                    findChildCommandByActionType(VdcActionType.UpgradeHostInternal, childCmdIds);
+                    findChildCommandByActionType(ActionType.UpgradeHostInternal, childCmdIds);
         }
 
         return checkForHostUpgradeInternalCmdId;
     }
 
-    private Guid findChildCommandByActionType(VdcActionType commandType, List<Guid> childCmdIds) {
+    private Guid findChildCommandByActionType(ActionType commandType, List<Guid> childCmdIds) {
         return childCmdIds.stream()
                 .filter(cmdId -> CommandCoordinatorUtil.getCommandEntity(cmdId).getCommandType() == commandType)
                 .findFirst().orElse(null);

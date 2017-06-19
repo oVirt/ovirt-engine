@@ -22,10 +22,10 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -101,7 +101,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         // not using getVm() since its overridden to get vm from export domain
         VM vm = vmDao.get(getVmId());
         if (vm != null && vm.getStatus() == VMStatus.ImageLocked) {
-            if (CommandCoordinatorUtil.hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
+            if (CommandCoordinatorUtil.hasTasksForEntityIdAndAction(vm.getId(), ActionType.ExportVm)) {
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
             }
         }

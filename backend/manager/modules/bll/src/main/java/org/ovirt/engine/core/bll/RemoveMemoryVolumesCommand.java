@@ -7,9 +7,9 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.GuidUtils;
@@ -41,11 +41,11 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
 
             RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
             removeMemoryDumpDiskParameters.setShouldBeLogged(false);
-            runInternalAction(VdcActionType.RemoveDisk, removeMemoryDumpDiskParameters);
+            runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
 
             RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(guids.get(4));
             removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
-            runInternalAction(VdcActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
+            runInternalAction(ActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         }
         setSucceeded(true);
     }

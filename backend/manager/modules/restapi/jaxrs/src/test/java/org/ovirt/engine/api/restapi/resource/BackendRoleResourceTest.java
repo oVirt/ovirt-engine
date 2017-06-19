@@ -4,9 +4,9 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Role;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -25,7 +25,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateRole,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateRole,
                                            RolesOperationsParameters.class,
                                            new String[] { "RoleId", "Role" },
                                            new Object[] { GUIDS[0], getEntity(0) },
@@ -38,7 +38,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveRole,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveRole,
                                            RolesParameterBase.class,
                                            new String[] { "RoleId" },
                                            new Object[] { GUIDS[0] },
@@ -75,7 +75,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveRole,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveRole,
                                            RolesParameterBase.class,
                                            new String[] { "RoleId" },
                                            new Object[] { GUIDS[0] },

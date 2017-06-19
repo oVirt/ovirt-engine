@@ -12,8 +12,8 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -62,7 +62,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     @Test
     public void testAddPermission() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddPermission,
+        setUpCreationExpectations(ActionType.AddPermission,
                                   PermissionsOperationsParameters.class,
                                   new String[] { principalParameterName,
                                                  "Permission.AdElementId",

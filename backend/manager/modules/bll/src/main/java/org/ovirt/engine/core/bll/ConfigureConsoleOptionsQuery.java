@@ -9,8 +9,8 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.branding.BrandingManager;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -289,7 +289,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         parameters.setSessionId(getEngineContext().getSessionId());
         parameters.setParametersCurrentUser(getUser());
 
-        VdcReturnValueBase result = backend.runAction(VdcActionType.SetVmTicket, parameters);
+        VdcReturnValueBase result = backend.runAction(ActionType.SetVmTicket, parameters);
 
         if (!result.getSucceeded()) {
             throw new TicketGenerationException(result);

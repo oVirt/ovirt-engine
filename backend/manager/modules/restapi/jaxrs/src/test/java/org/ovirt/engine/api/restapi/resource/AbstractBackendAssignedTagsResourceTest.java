@@ -9,8 +9,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -25,7 +25,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     protected static String parentIdName;
     protected static VdcQueryType queryType;
     protected static Class<? extends VdcQueryParametersBase> queryParams;
-    protected static VdcActionType attachAction;
+    protected static ActionType attachAction;
     protected static Class<? extends TagsActionParametersBase> attachParams;
 
     public AbstractBackendAssignedTagsResourceTest(C collection) {

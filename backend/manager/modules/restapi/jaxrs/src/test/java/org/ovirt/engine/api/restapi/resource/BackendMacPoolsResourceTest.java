@@ -16,8 +16,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.MacPool;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -44,7 +44,7 @@ public class BackendMacPoolsResourceTest
     @Test
     public void testAddMacPool() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddMacPool,
+        setUpCreationExpectations(ActionType.AddMacPool,
                 MacPoolParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -75,7 +75,7 @@ public class BackendMacPoolsResourceTest
     }
 
     private void doTestBadAddMacPool(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddMacPool,
+        setUriInfo(setUpActionExpectations(ActionType.AddMacPool,
                 MacPoolParameters.class,
                 new String[] {},
                 new Object[] {},

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -39,8 +39,8 @@ public class RemoveHostNetworkQosModel extends RemoveQosModel<HostNetworkQos> {
     }
 
     @Override
-    protected VdcActionType getRemoveActionType() {
-        return VdcActionType.RemoveHostNetworkQos;
+    protected ActionType getRemoveActionType() {
+        return ActionType.RemoveHostNetworkQos;
     }
 
 }

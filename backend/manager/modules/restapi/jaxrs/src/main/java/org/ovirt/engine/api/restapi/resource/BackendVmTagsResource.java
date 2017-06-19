@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.AssignedTagResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVmTagsResource extends AbstractBackendAssignedTagsResource {
     public BackendVmTagsResource(String parentId) {
-        super(Vm.class, parentId, VdcActionType.AttachVmsToTag);
+        super(Vm.class, parentId, ActionType.AttachVmsToTag);
     }
 
     public List<Tags> getCollection() {

@@ -25,6 +25,7 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
@@ -33,7 +34,6 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -74,7 +74,7 @@ public class BackendDiskResource
     @Override
     public Response export(Action action) {
         validateParameters(action, "storageDomain.id|name");
-        return doAction(VdcActionType.ExportRepoImage,
+        return doAction(ActionType.ExportRepoImage,
                 new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
     }
 
@@ -85,7 +85,7 @@ public class BackendDiskResource
             return performUpdate(
                     incoming,
                     new QueryIdResolver<>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class),
-                    VdcActionType.AmendImageGroupVolumes,
+                    ActionType.AmendImageGroupVolumes,
                     new UpdateParametersProvider());
         }
 
@@ -121,7 +121,7 @@ public class BackendDiskResource
         innerParams.setImageGroupID(asGuid(disk.getId()));
         MoveDisksParameters params =
                 new MoveDisksParameters(Collections.singletonList(innerParams));
-        return doAction(VdcActionType.MoveDisks, params, action);
+        return doAction(ActionType.MoveDisks, params, action);
     }
 
     protected Guid getSourceStorageDomainId(Disk disk) {
@@ -167,7 +167,7 @@ public class BackendDiskResource
             }
         }
 
-        return doAction(VdcActionType.MoveOrCopyDisk, params, action);
+        return doAction(ActionType.MoveOrCopyDisk, params, action);
     }
 
     @Override
@@ -203,7 +203,7 @@ public class BackendDiskResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(guid));
+        return performAction(ActionType.RemoveDisk, new RemoveDiskParameters(guid));
     }
 
     @Override
@@ -214,7 +214,7 @@ public class BackendDiskResource
         }
         Guid imageId = getDiskImageId(disk.getImageId());
         StorageJobCommandParameters params = new StorageJobCommandParameters(imageId);
-        return doAction(VdcActionType.SparsifyImage, params, action);
+        return doAction(ActionType.SparsifyImage, params, action);
     }
 
     protected Disk addLinks(Disk model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {

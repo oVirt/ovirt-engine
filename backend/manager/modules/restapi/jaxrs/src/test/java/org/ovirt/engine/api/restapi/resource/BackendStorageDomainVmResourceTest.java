@@ -20,10 +20,10 @@ import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.DiskAttachments;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -217,7 +217,7 @@ public class BackendStorageDomainVmResourceTest
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
         String[] names = new String[] { "VmId", "StorageDomainId", "StoragePoolId" };
         Object[] values = new Object[] { GUIDS[1], GUIDS[3], DATA_CENTER_ID };
-        setUpActionExpectations(VdcActionType.RemoveVmFromImportExport,
+        setUpActionExpectations(ActionType.RemoveVmFromImportExport,
                 RemoveVmFromImportExportParameters.class,
                 names,
                 values,
@@ -277,7 +277,7 @@ public class BackendStorageDomainVmResourceTest
     public void doTestImport(StorageDomain storageDomain, org.ovirt.engine.api.model.Cluster cluster, boolean collapseSnapshots, boolean importAsNewEntity) throws Exception {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.ImportVm,
+            ActionType.ImportVm,
             ImportVmParameters.class,
             new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId", "CopyCollapse", "ImportAsNewEntity" },
             new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], collapseSnapshots, importAsNewEntity },
@@ -299,7 +299,7 @@ public class BackendStorageDomainVmResourceTest
     }
 
     public void doTestRegister(org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ImportVmFromConfiguration,
+        setUriInfo(setUpActionExpectations(ActionType.ImportVmFromConfiguration,
                                            ImportVmParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "ClusterId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
                                            new Object[] { VM_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true}));
@@ -333,7 +333,7 @@ public class BackendStorageDomainVmResourceTest
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3]);
 
         setUriInfo(setUpActionExpectations(
-                VdcActionType.ImportVm,
+                ActionType.ImportVm,
                 ImportVmParameters.class,
                 new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId" },
                 new Object[] { VM_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1] },
@@ -425,14 +425,14 @@ public class BackendStorageDomainVmResourceTest
         }
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,

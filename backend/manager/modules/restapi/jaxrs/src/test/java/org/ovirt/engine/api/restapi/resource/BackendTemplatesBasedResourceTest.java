@@ -12,8 +12,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
@@ -43,7 +43,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     }
 
     protected void setUpCreationExpectations() {
-        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+        setUpCreationExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[]{"Name", "Description"},
                 new Object[]{NAMES[0], DESCRIPTIONS[0]},
@@ -70,7 +70,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     }
 
     protected void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.AddVmTemplate,
                 AddVmTemplateParameters.class,
                 new String[]{"Name", "Description"},
                 new Object[]{NAMES[0], DESCRIPTIONS[0]},

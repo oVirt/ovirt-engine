@@ -16,11 +16,11 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -99,7 +99,7 @@ public class BackendTemplateDiskResourceTest
 
     @Test
     public void testExport() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ExportRepoImage,
+        setUriInfo(setUpActionExpectations(ActionType.ExportRepoImage,
                 ExportRepoImageParameters.class,
                 new String[]{"ImageGroupID", "DestinationDomainId"},
                 new Object[]{GUIDS[1], GUIDS[3]}, true, true, null, null, true));
@@ -139,7 +139,7 @@ public class BackendTemplateDiskResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getEntity(3));
-        setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk,
+        setUriInfo(setUpActionExpectations(ActionType.MoveOrCopyDisk,
                                            MoveOrCopyImageGroupParameters.class,
                                            new String[] { "ImageId", "ImageGroupID", "SourceDomainId",
                                                    "StorageDomainId", "Operation" },
@@ -162,7 +162,7 @@ public class BackendTemplateDiskResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveDisk,
                 RemoveDiskParameters.class,
                 new String[] { "DiskId" },
                 new Object[] { GUIDS[1] },
@@ -175,7 +175,7 @@ public class BackendTemplateDiskResourceTest
     public void testRemoveByStorageDomain() throws Exception {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveDisk,
+            ActionType.RemoveDisk,
             RemoveDiskParameters.class,
             new String[] { "DiskId" },
             new Object[] { GUIDS[1] },
@@ -192,7 +192,7 @@ public class BackendTemplateDiskResourceTest
     public void testRemoveForced() throws Exception {
         setUpGetEntityExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveDisk,
+            ActionType.RemoveDisk,
             RemoveDiskParameters.class,
             new String[] { "DiskId" },
             new Object[] { GUIDS[1] },
@@ -227,7 +227,7 @@ public class BackendTemplateDiskResourceTest
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveDisk,
                 RemoveDiskParameters.class,
                 new String[] { "DiskId" },
                 new Object[] { GUIDS[1] },
@@ -264,7 +264,7 @@ public class BackendTemplateDiskResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getEntity(3));
-        setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk,
+        setUriInfo(setUpActionExpectations(ActionType.MoveOrCopyDisk,
                 MoveOrCopyImageGroupParameters.class,
                 new String[] { "ImageId", "ImageGroupID", "SourceDomainId", "StorageDomainId", "Operation" },
                 new Object[] { GUIDS[1], GUIDS[3], Guid.Empty, GUIDS[3], ImageOperation.Copy }));
@@ -329,7 +329,7 @@ public class BackendTemplateDiskResourceTest
         }
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values) {

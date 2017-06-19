@@ -10,10 +10,10 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainDisksResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,14 +37,14 @@ public class BackendAttachedStorageDomainResource
 
     @Override
     public Response activate(Action action) {
-        return doAction(VdcActionType.ActivateStorageDomain,
+        return doAction(ActionType.ActivateStorageDomain,
                         new StorageDomainPoolParametersBase(guid, dataCenterId),
                         action);
     }
 
     @Override
     public Response deactivate(Action action) {
-        return doAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate,
+        return doAction(ActionType.DeactivateStorageDomainWithOvfUpdate,
                         new StorageDomainPoolParametersBase(guid, dataCenterId),
                         action);
     }
@@ -84,11 +84,11 @@ public class BackendAttachedStorageDomainResource
         if (storageDomain.getStorage().getType().equals(StorageType.LOCALFS)) {
             RemoveStorageDomainParameters params = new RemoveStorageDomainParameters(guid);
             params.setDoFormat(true);
-            return performAction(VdcActionType.RemoveStorageDomain, params);
+            return performAction(ActionType.RemoveStorageDomain, params);
         }
         else {
             DetachStorageDomainFromPoolParameters params = new DetachStorageDomainFromPoolParameters(guid, dataCenterId);
-            return performAction(VdcActionType.DetachStorageDomainFromPool, params);
+            return performAction(ActionType.DetachStorageDomainFromPool, params);
         }
     }
 }

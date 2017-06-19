@@ -8,7 +8,7 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.Cluster;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
@@ -47,7 +47,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2, true);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.EditAffinityGroup,
+        setUriInfo(setUpActionExpectations(ActionType.EditAffinityGroup,
                 AffinityGroupCRUDParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -62,7 +62,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
         setUpActionExpectations(
-            VdcActionType.RemoveAffinityGroup,
+            ActionType.RemoveAffinityGroup,
             AffinityGroupCRUDParameters.class,
             new String[] { "AffinityGroupId" },
             new Object[] { GUIDS[0] },

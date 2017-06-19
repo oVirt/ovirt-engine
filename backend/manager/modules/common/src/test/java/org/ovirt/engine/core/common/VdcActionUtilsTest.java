@@ -7,7 +7,7 @@ import java.util.Collections;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -44,13 +44,13 @@ public class VdcActionUtilsTest {
         downStorageDomain.setStatus(StorageDomainStatus.Inactive);
 
         return new Object[][] {
-                { upVm, VdcActionType.MigrateVm, true },
-                { downVm, VdcActionType.MigrateVm, false },
-                { upVds, VdcActionType.RefreshHostCapabilities, true },
-                { downVds, VdcActionType.RefreshHostCapabilities, false },
-                { upStorageDomain, VdcActionType.DeactivateStorageDomainWithOvfUpdate, true },
-                { downStorageDomain, VdcActionType.DetachStorageDomainFromPool, false },
-                { new StoragePool(), VdcActionType.UpdateStoragePool, true }
+                { upVm, ActionType.MigrateVm, true },
+                { downVm, ActionType.MigrateVm, false },
+                { upVds, ActionType.RefreshHostCapabilities, true },
+                { downVds, ActionType.RefreshHostCapabilities, false },
+                { upStorageDomain, ActionType.DeactivateStorageDomainWithOvfUpdate, true },
+                { downStorageDomain, ActionType.DetachStorageDomainFromPool, false },
+                { new StoragePool(), ActionType.UpdateStoragePool, true }
         };
     }
 
@@ -60,7 +60,7 @@ public class VdcActionUtilsTest {
 
     /** The action to test */
     @Parameterized.Parameter(1)
-    public VdcActionType action;
+    public ActionType action;
 
     /** The expected result. */
     @Parameterized.Parameter(2)

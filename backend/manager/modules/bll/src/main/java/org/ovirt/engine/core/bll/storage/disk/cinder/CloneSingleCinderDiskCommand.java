@@ -11,9 +11,9 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -144,7 +144,7 @@ public class CloneSingleCinderDiskCommand<T extends ImagesContainterParametersBa
     }
 
     private void removeCinderDisk() {
-        runInternalAction(VdcActionType.RemoveCinderDisk,
+        runInternalAction(ActionType.RemoveCinderDisk,
                 buildRevertParameters(getParameters().getDestinationImageId()),
                 null);
     }

@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -60,8 +60,8 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
     }
 
     @Override
-    protected VdcActionType getActionType() {
-        return VdcActionType.MoveOrCopyDisk;
+    protected ActionType getActionType() {
+        return ActionType.MoveOrCopyDisk;
     }
 
     @Override

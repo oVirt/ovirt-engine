@@ -26,10 +26,10 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -59,7 +59,7 @@ public class BackendTemplateResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateManagementParameters(guid));
+        return performAction(ActionType.RemoveVmTemplate, new VmTemplateManagementParameters(guid));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class BackendTemplateResource
         Template result = performUpdate(
             incoming,
             new QueryIdResolver<>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
-            VdcActionType.UpdateVmTemplate,
+            ActionType.UpdateVmTemplate,
             new UpdateParametersProvider()
         );
         if (result != null) {
@@ -95,7 +95,7 @@ public class BackendTemplateResource
             params.setForceOverride(true);
         }
 
-        return doAction(VdcActionType.ExportVmTemplate, params, action, PollingType.JOB);
+        return doAction(ActionType.ExportVmTemplate, params, action, PollingType.JOB);
     }
 
     @Override

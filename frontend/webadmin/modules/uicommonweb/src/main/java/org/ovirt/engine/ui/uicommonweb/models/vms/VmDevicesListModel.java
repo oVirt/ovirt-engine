@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HotUnplugMemoryParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -135,7 +135,7 @@ public class VmDevicesListModel<E extends VM>
         });
         updateItems();
         Frontend.getInstance().runAction(
-                VdcActionType.HotUnplugMemory,
+                ActionType.HotUnplugMemory,
                 new HotUnplugMemoryParameters(deviceEntity.getVmDevice().getId()), true);
     }
 

@@ -43,8 +43,8 @@ import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
 import org.ovirt.engine.core.common.EngineWorkingMode;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -417,12 +417,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public VdcReturnValueBase runInternalAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+    public VdcReturnValueBase runInternalAction(ActionType actionType, VdcActionParametersBase parameters) {
         return runActionImpl(actionType, parameters, true, null);
     }
 
     @Override
-    public VdcReturnValueBase runAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+    public VdcReturnValueBase runAction(ActionType actionType, VdcActionParametersBase parameters) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
             return returnValue;
@@ -430,7 +430,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return runActionImpl(actionType, parameters, false, null);
     }
 
-    private VdcReturnValueBase notAllowToRunAction(VdcActionType actionType) {
+    private VdcReturnValueBase notAllowToRunAction(ActionType actionType) {
         // Since reload of configuration values is not fully supported, we have to get this value from DB
         // and can not use the cached configuration.
         String mode =
@@ -457,7 +457,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
      *            The required information for running the command.
      * @return The result of executing the action
      */
-    private VdcReturnValueBase runActionImpl(VdcActionType actionType,
+    private VdcReturnValueBase runActionImpl(ActionType actionType,
             VdcActionParametersBase parameters,
             boolean runAsInternal,
             CommandContext context) {
@@ -479,8 +479,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return result;
     }
 
-    private boolean isActionExternal(VdcActionType actionType){
-        return actionType == VdcActionType.EndExternalJob || actionType == VdcActionType.EndExternalStep || actionType == VdcActionType.ClearExternalJob;
+    private boolean isActionExternal(ActionType actionType){
+        return actionType == ActionType.EndExternalJob || actionType == ActionType.EndExternalStep || actionType == ActionType.ClearExternalJob;
     }
 
     protected VdcReturnValueBase runAction(CommandBase<?> command,
@@ -516,7 +516,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcReturnValueBase endAction(VdcActionType actionType,
+    public VdcReturnValueBase endAction(ActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext context) {
         return CommandsFactory.createCommand(actionType, parameters, context).endAction();
@@ -575,13 +575,13 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+    public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass) {
         return runMultipleActions(actionType, parameters, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
-    public List<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
+    public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllValidationPass, boolean waitForResult) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
@@ -595,7 +595,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+    public List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters) {
         return runMultipleActionsImpl(actionType, parameters, true, false, false, null);
     }
@@ -603,13 +603,13 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+    public List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters, CommandContext commandContext) {
         return runMultipleActionsImpl(actionType, parameters, true, false, false, commandContext);
 
     }
 
-    private List<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
+    private List<VdcReturnValueBase> runMultipleActionsImpl(ActionType actionType,
             List<VdcActionParametersBase> parameters,
             boolean isInternal,
             boolean isRunOnlyIfAllValidationPass,
@@ -636,7 +636,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public VdcReturnValueBase logoff(VdcActionParametersBase parameters) {
-        return runAction(VdcActionType.LogoutSession, parameters);
+        return runAction(ActionType.LogoutSession, parameters);
     }
 
     @Override
@@ -676,7 +676,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public VdcReturnValueBase runInternalAction(VdcActionType actionType,
+    public VdcReturnValueBase runInternalAction(ActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext context) {
         return runActionImpl(actionType, parameters, true, context);
@@ -689,7 +689,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return returnValue;
     }
 
-    private VdcReturnValueBase notAllowedInPrepForMaintMode(VdcActionType action) {
+    private VdcReturnValueBase notAllowedInPrepForMaintMode(ActionType action) {
         Class<?> clazz = CommandsFactory.getCommandClass(action.name());
         if (clazz.isAnnotationPresent(DisableInPrepareMode.class)) {
             return getErrorCommandReturnValue(EngineMessage.ENGINE_IS_RUNNING_IN_PREPARE_MODE);
@@ -729,7 +729,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
    @Override
-    public CommandBase<?> createAction(VdcActionType actionType, VdcActionParametersBase parameters, CommandContext context) {
+    public CommandBase<?> createAction(ActionType actionType, VdcActionParametersBase parameters, CommandContext context) {
         return CommandsFactory.createCommand(actionType, parameters, context);
     }
 

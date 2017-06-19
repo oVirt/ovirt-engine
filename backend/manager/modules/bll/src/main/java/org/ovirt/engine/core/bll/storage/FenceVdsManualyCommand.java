@@ -11,10 +11,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -111,7 +111,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
             VdsActionParameters tempVar = new VdsActionParameters(problematicVds.getId());
             tempVar.setSessionId(getParameters().getSessionId());
             runInternalActionWithTasksContext(
-                    VdcActionType.ClearNonResponsiveVdsVms,
+                    ActionType.ClearNonResponsiveVdsVms,
                     tempVar);
         }
         setSucceeded(true);
@@ -204,7 +204,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     @Override
     protected void freeLock() {
-        if (getParameters().getParentCommand() != VdcActionType.RestartVds) {
+        if (getParameters().getParentCommand() != ActionType.RestartVds) {
             super.freeLock();
         }
     }

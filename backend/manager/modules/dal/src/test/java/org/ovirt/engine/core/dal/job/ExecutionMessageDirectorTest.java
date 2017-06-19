@@ -8,7 +8,7 @@ import static org.ovirt.engine.core.dal.job.ExecutionMessageDirector.STEP_MESSAG
 import java.util.ResourceBundle;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.StepEnum;
 
 public class ExecutionMessageDirectorTest {
@@ -20,7 +20,7 @@ public class ExecutionMessageDirectorTest {
     private static final String INVALID_STEP_KEY_TEST_BUNDLE_NAME = "InvalidStepKeyExecutionMessages";
 
     /**
-     * Verifies the engine-core execution messages are aligned with the enumerators {@code VdcActionType} and
+     * Verifies the engine-core execution messages are aligned with the enumerators {@code ActionType} and
      * {@code StepEnum}.
      */
     @Test
@@ -28,7 +28,7 @@ public class ExecutionMessageDirectorTest {
         ResourceBundle bundle = ResourceBundle.getBundle(EXECUTION_MESSAGES_FILE_PATH);
         for (String key : bundle.keySet()) {
             if (key.startsWith(ExecutionMessageDirector.JOB_MESSAGE_PREFIX)) {
-                VdcActionType.valueOf(key.substring(JOB_MESSAGE_PREFIX.length()));
+                ActionType.valueOf(key.substring(JOB_MESSAGE_PREFIX.length()));
             } else if (key.startsWith(ExecutionMessageDirector.STEP_MESSAGE_PREFIX)) {
                 StepEnum.valueOf(key.substring(STEP_MESSAGE_PREFIX.length()));
             }
@@ -43,7 +43,7 @@ public class ExecutionMessageDirectorTest {
         ExecutionMessageDirector messageDirector = ExecutionMessageDirector.getInstance();
         messageDirector.initialize(TEST_BUNDLE_NAME);
 
-        String updateClusterMessage = messageDirector.getJobMessage(VdcActionType.UpdateCluster);
+        String updateClusterMessage = messageDirector.getJobMessage(ActionType.UpdateCluster);
         assertEquals(UPDATE_CLUSTER_CLUSTERS_MESSAGE, updateClusterMessage);
     }
 
@@ -55,7 +55,7 @@ public class ExecutionMessageDirectorTest {
         ExecutionMessageDirector messageDirector = ExecutionMessageDirector.getInstance();
         messageDirector.initialize(TEST_BUNDLE_NAME);
 
-        assertEquals(VdcActionType.Unknown.name(), messageDirector.getJobMessage(VdcActionType.Unknown));
+        assertEquals(ActionType.Unknown.name(), messageDirector.getJobMessage(ActionType.Unknown));
     }
 
     /**

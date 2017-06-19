@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -132,7 +132,7 @@ public class IscsiBondModel extends Model {
         AddIscsiBondParameters params = new AddIscsiBondParameters(createIscsiBond());
 
         startProgress();
-        Frontend.getInstance().runAction(VdcActionType.AddIscsiBond, params, result -> {
+        Frontend.getInstance().runAction(ActionType.AddIscsiBond, params, result -> {
             IscsiBondModel model = (IscsiBondModel) result.getState();
             model.stopProgress();
             model.cancel();
@@ -146,7 +146,7 @@ public class IscsiBondModel extends Model {
         EditIscsiBondParameters params = new EditIscsiBondParameters(newIscsiBond);
 
         startProgress();
-        Frontend.getInstance().runAction(VdcActionType.EditIscsiBond, params, result -> {
+        Frontend.getInstance().runAction(ActionType.EditIscsiBond, params, result -> {
             IscsiBondModel model = (IscsiBondModel) result.getState();
             model.stopProgress();
             model.cancel();

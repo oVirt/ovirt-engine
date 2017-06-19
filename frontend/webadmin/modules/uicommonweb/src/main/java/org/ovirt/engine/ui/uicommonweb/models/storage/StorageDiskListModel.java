@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -201,7 +201,7 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveDisk, paramerterList,
                 result -> {
                     StorageDiskListModel localModel = (StorageDiskListModel) result.getState();
                     localModel.stopProgress();

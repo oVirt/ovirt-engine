@@ -25,10 +25,10 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.TemplateNicResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -72,7 +72,7 @@ public class BackendTemplateNicResource
         return performUpdate(
             nic,
             new NicResolver(),
-            VdcActionType.UpdateVmTemplateInterface, new UpdateParametersProvider()
+            ActionType.UpdateVmTemplateInterface, new UpdateParametersProvider()
         );
     }
 
@@ -80,7 +80,7 @@ public class BackendTemplateNicResource
     public Response remove() {
         get();
         return performAction(
-            VdcActionType.RemoveVmTemplateInterface,
+            ActionType.RemoveVmTemplateInterface,
             new RemoveVmTemplateInterfaceParameters(templateId, guid)
         );
     }

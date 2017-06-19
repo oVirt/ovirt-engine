@@ -9,8 +9,8 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.predicate.NetworkNotInSyncPredicate;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -31,7 +31,7 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
     @Override
     protected void executeCommand() {
         PersistentHostSetupNetworksParameters parameters = generateSyncAllHostNetworksParameters();
-        VdcReturnValueBase retVal = runInternalAction(VdcActionType.PersistentHostSetupNetworks,
+        VdcReturnValueBase retVal = runInternalAction(ActionType.PersistentHostSetupNetworks,
                 parameters,
                 cloneContextAndDetachFromParent());
         if (!retVal.getSucceeded()) {

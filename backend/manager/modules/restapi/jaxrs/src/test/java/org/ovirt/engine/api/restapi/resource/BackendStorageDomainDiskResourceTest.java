@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
@@ -67,7 +67,7 @@ public class BackendStorageDomainDiskResourceTest
 
     @Test
     public void testExport() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ExportRepoImage,
+        setUriInfo(setUpActionExpectations(ActionType.ExportRepoImage,
                 ExportRepoImageParameters.class,
                 new String[]{"ImageGroupID", "DestinationDomainId"},
                 new Object[]{DISK_ID, GUIDS[3]}, true, true, null, null, true));

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.GlusterStorageSyncCommandParameters;
 import org.ovirt.engine.core.common.action.GlusterStorageSyncCommandParameters.DRStep;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -91,7 +91,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
         for (VM vm : vms) {
             try {
                 Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                        VdcActionType.CreateAllSnapshotsFromVm,
+                        ActionType.CreateAllSnapshotsFromVm,
                         getCreateSnapshotParameters(vm),
                         cloneContextAndDetachFromParent());
                 vmIdSnapshotIdMap.put(vm.getId(), future.get().getActionReturnValue());
@@ -133,7 +133,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
             removeSnapshotParameters.setParentParameters(getParameters());
             removeSnapshotParameters.setNeedsLocking(false);
 
-            CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveSnapshot,
+            CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshot,
                     removeSnapshotParameters,
                     cloneContextAndDetachFromParent());
         }
@@ -184,7 +184,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
             parameters.setParentCommand(getActionType());
             parameters.setParentParameters(getParameters());
             getParameters().setNextStep(DRStep.REMOVE_TMP_SNAPSHOTS);
-            runInternalActionWithTasksContext(VdcActionType.GlusterStorageGeoRepSyncInternal, parameters);
+            runInternalActionWithTasksContext(ActionType.GlusterStorageGeoRepSyncInternal, parameters);
             persistCommandIfNeeded();
             break;
         case REMOVE_TMP_SNAPSHOTS:

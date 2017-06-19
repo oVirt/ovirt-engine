@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CloneImageGroupVolumesStructureCommandParameters;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
 import org.ovirt.engine.core.common.action.CopyImageGroupVolumesDataCommandParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParamete
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters.CopyStage;
 import org.ovirt.engine.core.common.action.CreateVolumeContainerCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LocationInfo;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -84,7 +84,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         p.setParentCommand(getActionType());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         p.setJobWeight(getParameters().getOperationsJobWeight().get(CopyStage.DEST_CREATION.name()));
-        runInternalAction(VdcActionType.CloneImageGroupVolumesStructure, p);
+        runInternalAction(ActionType.CloneImageGroupVolumesStructure, p);
     }
 
     private void populateDiskSnapshotsInfoFromStorage() {
@@ -127,7 +127,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        runInternalAction(VdcActionType.CreateVolumeContainer, parameters);
+        runInternalAction(ActionType.CreateVolumeContainer, parameters);
     }
 
     @Override
@@ -146,7 +146,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 parameters.setParentCommand(getActionType());
                 parameters.setParentParameters(getParameters());
                 parameters.setJobWeight(weight);
-                runInternalAction(VdcActionType.CopyData, parameters);
+                runInternalAction(ActionType.CopyData, parameters);
             } else {
                 CopyImageGroupVolumesDataCommandParameters p = new CopyImageGroupVolumesDataCommandParameters(
                         getParameters().getStoragePoolId(),
@@ -158,7 +158,7 @@ public class CopyImageGroupWithDataCommand<T extends CopyImageGroupWithDataComma
                 );
                 p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
                 p.setJobWeight(weight);
-                runInternalAction(VdcActionType.CopyImageGroupVolumesData, p);
+                runInternalAction(ActionType.CopyImageGroupVolumesData, p);
             }
             return true;
         }

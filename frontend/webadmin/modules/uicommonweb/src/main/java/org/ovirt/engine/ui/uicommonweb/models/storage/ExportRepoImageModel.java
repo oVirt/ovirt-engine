@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -66,7 +66,7 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
             );
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ExportRepoImage, actionParameters,
+        Frontend.getInstance().runMultipleAction(ActionType.ExportRepoImage, actionParameters,
                 result -> {
                     ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) result.getState();
                     model.stopProgress();

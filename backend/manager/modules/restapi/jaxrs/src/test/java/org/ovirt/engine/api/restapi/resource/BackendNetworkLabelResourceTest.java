@@ -11,8 +11,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.NetworkLabel;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -58,7 +58,7 @@ public class BackendNetworkLabelResourceTest
         setUpEntityQueryExpectations(getEntityList());
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UnlabelNetwork,
+                ActionType.UnlabelNetwork,
                 UnlabelNetworkParameters.class,
                 new String[] { "NetworkId" },
                 new Object[] { NETWORK_ID },
@@ -98,7 +98,7 @@ public class BackendNetworkLabelResourceTest
     private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UnlabelNetwork,
+                ActionType.UnlabelNetwork,
                 UnlabelNetworkParameters.class,
                 new String[] { "NetworkId" },
                 new Object[] { NETWORK_ID },

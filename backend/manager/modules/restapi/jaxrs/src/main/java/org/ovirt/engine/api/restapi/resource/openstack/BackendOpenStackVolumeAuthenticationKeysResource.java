@@ -27,8 +27,8 @@ import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeyR
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeysResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -54,7 +54,7 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
     public Response add(OpenstackVolumeAuthenticationKey authenticationKey) {
         validateParameters(authenticationKey, "uuid", "value", "usageType");
         return performCreate(
-                VdcActionType.AddLibvirtSecret,
+                ActionType.AddLibvirtSecret,
                 new LibvirtSecretParameters(map(addProvider(authenticationKey))),
                 new QueryIdResolver<Guid>(VdcQueryType.GetLibvirtSecretById, IdQueryParameters.class)
         );

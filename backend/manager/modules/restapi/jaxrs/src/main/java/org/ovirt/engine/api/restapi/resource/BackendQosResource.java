@@ -5,9 +5,9 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -51,16 +51,16 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
                 });
     }
 
-    private VdcActionType updateActionTypeForQosType(QosType qosType) {
+    private ActionType updateActionTypeForQosType(QosType qosType) {
         switch (qosType) {
         case STORAGE:
-            return VdcActionType.UpdateStorageQos;
+            return ActionType.UpdateStorageQos;
         case CPU:
-            return VdcActionType.UpdateCpuQos;
+            return ActionType.UpdateCpuQos;
         case NETWORK:
-            return VdcActionType.UpdateNetworkQoS;
+            return ActionType.UpdateNetworkQoS;
         case HOSTNETWORK:
-            return VdcActionType.UpdateHostNetworkQos;
+            return ActionType.UpdateHostNetworkQos;
         default:
             throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
         }
@@ -82,6 +82,6 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
         get();
         QosParametersBase<?> params = new QosParametersBase<>();
         params.setQosId(GuidUtils.asGuid(id));
-        return performAction(VdcActionType.RemoveStorageQos, params);
+        return performAction(ActionType.RemoveStorageQos, params);
     }
 }

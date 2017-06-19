@@ -18,9 +18,9 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -130,7 +130,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             - We don't want to fail the whole storage pool upgrade because some of the
               luns could not be synced, so SyncAllUsedLuns only logs errors on such cases.
              */
-            runInternalAction(VdcActionType.SyncAllUsedLuns, new SyncLunsParameters(getStoragePoolId()));
+            runInternalAction(ActionType.SyncAllUsedLuns, new SyncLunsParameters(getStoragePoolId()));
         }
     }
 

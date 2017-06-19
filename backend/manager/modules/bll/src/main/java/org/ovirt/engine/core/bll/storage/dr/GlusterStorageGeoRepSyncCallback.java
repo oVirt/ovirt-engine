@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
@@ -55,7 +55,7 @@ public class GlusterStorageGeoRepSyncCallback implements CommandCallback {
     }
 
     private void stopGeoRepSessionCommand(CommandBase<?> command, GlusterGeoRepSession session) {
-        CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.StopGeoRepSession,
+        CommandCoordinatorUtil.executeAsyncCommand(ActionType.StopGeoRepSession,
                 new GlusterVolumeGeoRepSessionParameters(session.getMasterVolumeId(), session.getId()),
                 command.cloneContextAndDetachFromParent());
     }

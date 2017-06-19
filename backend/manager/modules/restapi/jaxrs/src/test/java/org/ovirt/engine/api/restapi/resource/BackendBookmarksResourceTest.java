@@ -8,8 +8,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Bookmark;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -26,7 +26,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     @Test
     public void testAddBookmark() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddBookmark, BookmarksOperationParameters.class,
+        setUpCreationExpectations(ActionType.AddBookmark, BookmarksOperationParameters.class,
                 new String[] { "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { NAMES[0], VALUES[0] }, true, true, null, VdcQueryType.GetBookmarkByBookmarkName,
                 NameQueryParameters.class, new String[] { "Name" }, new Object[] { NAMES[0] }, getEntity(0));
@@ -63,7 +63,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
      *************************************************************************************/
 
     private void doTestBadAddBookmark(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddBookmark, BookmarksOperationParameters.class,
+        setUriInfo(setUpActionExpectations(ActionType.AddBookmark, BookmarksOperationParameters.class,
                 new String[] { "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { NAMES[0], VALUES[0] }, valid, success));
         try {

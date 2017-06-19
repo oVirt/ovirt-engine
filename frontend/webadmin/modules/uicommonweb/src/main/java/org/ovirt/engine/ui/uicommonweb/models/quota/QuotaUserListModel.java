@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
@@ -235,7 +235,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
             list.add(permissionParams);
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.AddPermission, list,
+        Frontend.getInstance().runMultipleAction(ActionType.AddPermission, list,
                 result -> {
 
                     QuotaUserListModel localModel = (QuotaUserListModel) result.getState();
@@ -263,7 +263,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
             model.startProgress();
 
-            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(ActionType.RemovePermission, list,
                     result -> {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();

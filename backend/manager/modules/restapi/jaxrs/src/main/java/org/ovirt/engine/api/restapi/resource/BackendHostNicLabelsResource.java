@@ -5,8 +5,8 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -30,7 +30,7 @@ public class BackendHostNicLabelsResource
 
     @Override
     protected Response performCreate(String labelId) {
-        return performCreate(VdcActionType.LabelNic,
+        return performCreate(ActionType.LabelNic,
                 new LabelNicParameters(nicId, labelId),
                 new NetworkLabelIdResolver(nicId));
     }

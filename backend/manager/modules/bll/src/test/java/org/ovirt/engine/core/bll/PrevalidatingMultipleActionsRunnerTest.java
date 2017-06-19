@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 public class PrevalidatingMultipleActionsRunnerTest extends MultipleActionsRunnerBaseTest{
@@ -23,7 +23,7 @@ public class PrevalidatingMultipleActionsRunnerTest extends MultipleActionsRunne
             DiskProfileParameters().getSessionId()).withCompensationContext(NoOpCompensationContext.getInstance());
 
     @InjectMocks
-    private MultipleActionsRunner runner = new PrevalidatingMultipleActionsRunner(VdcActionType
+    private MultipleActionsRunner runner = new PrevalidatingMultipleActionsRunner(ActionType
             .RemoveDiskProfile,
             Arrays.asList(new DiskProfileParameters(), new DiskProfileParameters(), new DiskProfileParameters()),
             commandContext,

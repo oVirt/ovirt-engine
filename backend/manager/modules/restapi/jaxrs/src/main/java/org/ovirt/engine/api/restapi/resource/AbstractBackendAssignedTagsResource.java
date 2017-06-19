@@ -9,9 +9,9 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -24,11 +24,11 @@ public abstract class AbstractBackendAssignedTagsResource
 
     protected Class<? extends BaseResource> parentType;
     protected String parentId;
-    protected VdcActionType attachAction;
+    protected ActionType attachAction;
 
     public AbstractBackendAssignedTagsResource(Class<? extends BaseResource> parentType,
                                                String parentId,
-                                               VdcActionType attachAction) {
+                                               ActionType attachAction) {
         super(Tag.class, Tags.class);
         this.parentType = parentType;
         this.parentId = parentId;

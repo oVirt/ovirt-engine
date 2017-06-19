@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -340,7 +340,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ExportVmTemplate, list,
+        Frontend.getInstance().runMultipleAction(ActionType.ExportVmTemplate, list,
                 result -> {
 
                     ExportVmModel localModel = (ExportVmModel) result.getState();
@@ -515,7 +515,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplate, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveVmTemplate, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -665,7 +665,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             parameters.getVmTemplateData().setDefaultDisplayType(DisplayType.none);
         }
 
-        Frontend.getInstance().runAction(VdcActionType.UpdateVmTemplate, parameters,
+        Frontend.getInstance().runAction(ActionType.UpdateVmTemplate, parameters,
                 result -> {
                     TemplateListModel localModel = (TemplateListModel) result.getState();
                     localModel.postUpdateVmTemplate(result.getReturnValue());
@@ -766,7 +766,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                 && item.getStatus() != VmTemplateStatus.Locked);
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VmTemplate.class, VdcActionType.RemoveVmTemplate));
+                && VdcActionUtils.canExecute(items, VmTemplate.class, ActionType.RemoveVmTemplate));
         if (getRemoveCommand().getIsExecutionAllowed() && blankSelected) {
             getRemoveCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
@@ -775,7 +775,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
 
         getExportCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VmTemplate.class, VdcActionType.ExportVmTemplate));
+                && VdcActionUtils.canExecute(items, VmTemplate.class, ActionType.ExportVmTemplate));
 
         if (getExportCommand().getIsExecutionAllowed() && blankSelected) {
             getExportCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()

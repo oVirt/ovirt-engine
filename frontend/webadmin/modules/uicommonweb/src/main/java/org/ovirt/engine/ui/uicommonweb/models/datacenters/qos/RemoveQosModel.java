@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -51,7 +51,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
 
     protected abstract HelpTag getRemoveQosHelpTag();
 
-    protected abstract VdcActionType getRemoveActionType();
+    protected abstract ActionType getRemoveActionType();
 
     private void setMessage() {
         ArrayList<VdcQueryParametersBase> parameters = new ArrayList<>();

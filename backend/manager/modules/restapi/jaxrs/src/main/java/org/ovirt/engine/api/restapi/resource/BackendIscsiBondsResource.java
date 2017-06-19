@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.IscsiBonds;
 import org.ovirt.engine.api.resource.IscsiBondResource;
 import org.ovirt.engine.api.resource.IscsiBondsResource;
 import org.ovirt.engine.api.restapi.types.IscsiBondMapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,7 +39,7 @@ public class BackendIscsiBondsResource extends AbstractBackendCollectionResource
                 getMapper(IscsiBond.class, org.ovirt.engine.core.common.businessentities.IscsiBond.class).map(iscsiBond, null);
         entity.setStoragePoolId(dataCenterId);
 
-        return performCreate(VdcActionType.AddIscsiBond,
+        return performCreate(ActionType.AddIscsiBond,
                 new AddIscsiBondParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetIscsiBondById, IdQueryParameters.class));
     }

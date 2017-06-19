@@ -7,8 +7,8 @@ import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -26,7 +26,7 @@ public class BackendNetworksResource
     }
 
     public BackendNetworksResource(VdcQueryType queryType) {
-        super(queryType, VdcActionType.AddNetwork);
+        super(queryType, ActionType.AddNetwork);
     }
 
     @Override

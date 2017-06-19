@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostStatus;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -71,7 +71,7 @@ public class BackendHostsResourceTest
                 new Object[] { "Default" },
                 setUpCluster(GUIDS[1]));
 
-        setUpCreationExpectations(VdcActionType.AddVds,
+        setUpCreationExpectations(ActionType.AddVds,
                                   AddVdsActionParameters.class,
                                   new String[] { "RootPassword" },
                                   new Object[] { ROOT_PASSWORD },
@@ -102,7 +102,7 @@ public class BackendHostsResourceTest
                 new Object[] { NAMES[1] },
                 setUpCluster(GUIDS[1]));
 
-        setUpCreationExpectations(VdcActionType.AddVds,
+        setUpCreationExpectations(ActionType.AddVds,
                                   AddVdsActionParameters.class,
                                   new String[] { "RootPassword" },
                                   new Object[] { ROOT_PASSWORD },
@@ -128,7 +128,7 @@ public class BackendHostsResourceTest
     @Test
     public void testAddHostClusterById() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddVds,
+        setUpCreationExpectations(ActionType.AddVds,
                                   AddVdsActionParameters.class,
                                   new String[] { "RootPassword" },
                                   new Object[] { ROOT_PASSWORD },
@@ -181,7 +181,7 @@ public class BackendHostsResourceTest
                 new Object[] { "Default" },
                 setUpCluster(GUIDS[1]));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.AddVds,
+        setUriInfo(setUpActionExpectations(ActionType.AddVds,
                                            AddVdsActionParameters.class,
                                            new String[] { "RootPassword" },
                                            new Object[] { ROOT_PASSWORD },

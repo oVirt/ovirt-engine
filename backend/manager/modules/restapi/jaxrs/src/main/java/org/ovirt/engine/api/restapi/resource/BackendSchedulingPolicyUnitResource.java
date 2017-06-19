@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.resource.SchedulingPolicyUnitResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -25,7 +25,7 @@ public class BackendSchedulingPolicyUnitResource extends AbstractBackendSubResou
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveExternalPolicyUnit, new RemoveExternalPolicyUnitParameters(guid));
+        return performAction(ActionType.RemoveExternalPolicyUnit, new RemoveExternalPolicyUnitParameters(guid));
     }
 
 }

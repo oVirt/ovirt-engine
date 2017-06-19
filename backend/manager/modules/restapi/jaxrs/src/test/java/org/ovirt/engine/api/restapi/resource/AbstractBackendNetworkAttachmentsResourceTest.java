@@ -17,8 +17,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -45,7 +45,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     public void testAddNetworkAttachment() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpVerifyHostExpectations();
-        setUpCreationExpectations(VdcActionType.AddNetworkAttachment,
+        setUpCreationExpectations(ActionType.AddNetworkAttachment,
                 NetworkAttachmentParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -212,7 +212,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     private void doTestBadAddNetworkAttachment(boolean valid, boolean success, String detail) throws Exception {
         setUpVerifyHostExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.AddNetworkAttachment,
+        setUriInfo(setUpActionExpectations(ActionType.AddNetworkAttachment,
                 NetworkAttachmentParameters.class,
                 new String[] {},
                 new Object[] {},

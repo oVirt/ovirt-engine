@@ -13,9 +13,9 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -159,7 +159,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private void refreshHostIfNeeded(Guid hostId) {
         // refresh host to get the host devices that were detached from the VM and re-attached to the host
         if (!getParameters().isSkipHostRefresh() && hostId != null) {
-            runInternalAction(VdcActionType.RefreshHost, new VdsActionParameters(hostId));
+            runInternalAction(ActionType.RefreshHost, new VdsActionParameters(hostId));
         }
     }
 
@@ -174,7 +174,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         if (users == null || users.isEmpty()) {
             // if not, check if new version or need to restore stateless
             if (!templateVersionChanged) { // if template version was changed, no need to restore
-                runInternalActionWithTasksContext(VdcActionType.RestoreStatelessVm,
+                runInternalActionWithTasksContext(ActionType.RestoreStatelessVm,
                         new VmOperationParameterBase(getVmId()),
                         getLock());
             }
@@ -183,7 +183,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         if (getVmPoolType() == VmPoolType.AUTOMATIC) {
             // should be only one user in the collection
             for (DbUser dbUser : users) {
-                runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
+                runInternalActionWithTasksContext(ActionType.DetachUserFromVmFromPool,
                         new DetachUserFromVmFromPoolParameters(getVm().getVmPoolId(),
                                 dbUser.getId(),
                                 getVmId(),
@@ -232,10 +232,10 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                 // override creation date because the value in the config is the creation date of the config, not the vm
                 getVm().setVmCreationDate(originalCreationDate);
 
-                VdcReturnValueBase result = runInternalAction(VdcActionType.UpdateVm, createUpdateVmParameters(),
+                VdcReturnValueBase result = runInternalAction(ActionType.UpdateVm, createUpdateVmParameters(),
                         ExecutionHandler.createInternalJobContext(updateVmLock));
                 if (result.getActionReturnValue() != null && result.getActionReturnValue()
-                        .equals(VdcActionType.UpdateVmVersion)) { // Template-version changed
+                        .equals(ActionType.UpdateVmVersion)) { // Template-version changed
                     templateVersionChanged = true;
                 }
             } else {
@@ -311,7 +311,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
     private void removeVmStatelessImages() {
         if (snapshotDao.exists(getVmId(), SnapshotType.STATELESS) && getVmPoolType() != VmPoolType.MANUAL) {
             log.info("Deleting snapshot for stateless vm '{}'", getVmId());
-            runInternalAction(VdcActionType.RestoreStatelessVm,
+            runInternalAction(ActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),
                     ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         }

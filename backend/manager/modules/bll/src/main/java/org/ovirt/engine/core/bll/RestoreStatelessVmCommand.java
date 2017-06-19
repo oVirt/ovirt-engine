@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -51,7 +51,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
     protected void executeCommand() {
         VdcReturnValueBase result =
                 runInternalActionWithTasksContext(
-                        VdcActionType.UpdateVmVersion,
+                        ActionType.UpdateVmVersion,
                         buildUpdateVmVersionParameters());
 
         // if it fail because of validate, its safe to restore the snapshot
@@ -87,7 +87,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
             return false;
         }
 
-        return runInternalActionWithTasksContext(VdcActionType.RestoreAllSnapshots,
+        return runInternalActionWithTasksContext(ActionType.RestoreAllSnapshots,
                 buildRestoreAllSnapshotsParameters(statelessDiskSnapshots),
                 getLock()).getSucceeded();
     }
@@ -100,7 +100,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         for (DiskImage activeDiskSnapshot : activeDiskSnapshots) {
             if (!disksWithStatelessSnapshot.contains(activeDiskSnapshot.getId())) {
                 VdcReturnValueBase returnValue = runInternalAction (
-                        VdcActionType.DetachDiskFromVm,
+                        ActionType.DetachDiskFromVm,
                         buildDetachDetachVmDiskParameters(activeDiskSnapshot));
 
                 if (!returnValue.getSucceeded()) {

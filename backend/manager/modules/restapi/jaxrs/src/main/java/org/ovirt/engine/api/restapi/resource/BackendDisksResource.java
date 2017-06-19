@@ -14,8 +14,8 @@ import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -43,7 +43,7 @@ public class BackendDisksResource
         if (disk.isSetLunStorage() && disk.getLunStorage().isSetHost()) {
             params.setVdsId(getHostId(disk.getLunStorage().getHost()));
         }
-        return performCreate(VdcActionType.AddDisk, params,
+        return performCreate(ActionType.AddDisk, params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class));
     }
 

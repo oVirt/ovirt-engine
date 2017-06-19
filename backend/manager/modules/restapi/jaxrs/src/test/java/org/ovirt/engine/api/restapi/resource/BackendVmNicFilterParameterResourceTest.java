@@ -27,8 +27,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.NetworkFilterParameter;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmNicFilterParameterParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
@@ -102,7 +102,7 @@ public class BackendVmNicFilterParameterResourceTest
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVmNicFilterParameter,
+                ActionType.UpdateVmNicFilterParameter,
                 VmNicFilterParameterParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },
@@ -118,7 +118,7 @@ public class BackendVmNicFilterParameterResourceTest
     public void testRemove() throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVmNicFilterParameter,
+                ActionType.RemoveVmNicFilterParameter,
                     RemoveVmNicFilterParameterParameters.class,
                 new String[] { "VmId", "FilterParameterId" },
                 new Object[] { VM_ID, PARAMETER_ID },
@@ -142,7 +142,7 @@ public class BackendVmNicFilterParameterResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
                 setUpActionExpectations(
-                        VdcActionType.RemoveVmNicFilterParameter,
+                        ActionType.RemoveVmNicFilterParameter,
                         RemoveVmNicFilterParameterParameters.class,
                         new String[] { "VmId", "FilterParameterId" },
                         new Object[] { VM_ID, PARAMETER_ID },

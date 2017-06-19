@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -62,7 +62,7 @@ public class SparsifyDiskModel extends ConfirmationModel {
 
         startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.SparsifyImage,
+        Frontend.getInstance().runMultipleAction(ActionType.SparsifyImage,
                 parameterList,
                 result -> {
                     stopProgress();

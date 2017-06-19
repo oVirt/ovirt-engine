@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -18,7 +19,7 @@ import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 
 /**
  * Factory creates parameters to be used to refresh out of sync networks using
- * {@link org.ovirt.engine.core.common.action.VdcActionType#PersistentHostSetupNetworks}
+ * {@link ActionType#PersistentHostSetupNetworks}
  */
 public class PersistentHostSetupNetworksParametersFactory {
 

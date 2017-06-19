@@ -6,8 +6,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepository;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddJobParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +35,7 @@ public abstract class AddJobCommand<T extends AddJobParameters> extends CommandB
         return retValue;
     }
 
-    protected void createJob(VdcActionType actionType, boolean isExternal) {
+    protected void createJob(ActionType actionType, boolean isExternal) {
         Job job = ExecutionHandler.createJob(actionType, this);
         job.setDescription(getParameters().getDescription());
         job.setAutoCleared(getParameters().isAutoCleared());

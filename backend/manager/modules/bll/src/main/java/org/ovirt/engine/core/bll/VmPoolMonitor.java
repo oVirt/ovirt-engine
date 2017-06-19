@@ -17,8 +17,8 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -205,7 +205,7 @@ public class VmPoolMonitor implements BackendService {
         RunVmParams runVmParams = new RunVmParams(vmToRun.getId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRun.getId()));
         runVmParams.setRunAsStateless(runAsStateless);
-        VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
+        VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(ActionType.RunVm,
                 runVmParams,
                 ExecutionHandler.createInternalJobContext().withLock(vmPoolHandler.createLock(vmToRun.getId())));
         boolean prestartingVmSucceeded = vdcReturnValue.getSucceeded();

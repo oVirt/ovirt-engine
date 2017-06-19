@@ -7,7 +7,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.VnicProfile;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -31,7 +31,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVnicProfile,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVnicProfile,
                 VnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -69,7 +69,7 @@ public abstract class AbstractBackendVnicProfileResourceTest<C extends AbstractB
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVnicProfile,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVnicProfile,
                 VnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},

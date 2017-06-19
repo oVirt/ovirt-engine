@@ -11,8 +11,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByTemplateIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -33,7 +33,7 @@ public class BackendTemplateTagResourceTest
         setUpGetTagsExpectations(true);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachTemplateFromTag,
+                ActionType.DetachTemplateFromTag,
                 AttachEntityToTagParameters.class,
                 new String[] { "TagId", "EntitiesId" },
                 new Object[] { TAG_ID, asList(TEMPLATE_ID) },
@@ -58,7 +58,7 @@ public class BackendTemplateTagResourceTest
         setUpGetTagsExpectations(true);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachTemplateFromTag,
+                ActionType.DetachTemplateFromTag,
                 AttachEntityToTagParameters.class,
                 new String[] { "TagId", "EntitiesId" },
                 new Object[] { TAG_ID, asList(TEMPLATE_ID) },

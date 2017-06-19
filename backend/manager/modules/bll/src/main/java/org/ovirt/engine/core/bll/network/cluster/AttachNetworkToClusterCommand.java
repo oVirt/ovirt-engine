@@ -9,9 +9,9 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.compat.Version;
 
@@ -36,7 +36,7 @@ public class AttachNetworkToClusterCommand extends NetworkClusterCommandBase<Att
         final AttachNetworkToClusterParameter attachNetworkToClusterParameter = getParameters();
 
         final VdcReturnValueBase returnValue =
-                runInternalAction(VdcActionType.AttachNetworkToClusterInternal, attachNetworkToClusterParameter);
+                runInternalAction(ActionType.AttachNetworkToClusterInternal, attachNetworkToClusterParameter);
 
         setSucceeded(returnValue.getSucceeded());
 
@@ -51,7 +51,7 @@ public class AttachNetworkToClusterCommand extends NetworkClusterCommandBase<Att
         final AttachNetworkToClusterParameter attachNetworkToClusterParameter = getParameters();
 
         runInternalAction(
-                VdcActionType.PropagateLabeledNetworksToClusterHosts,
+                ActionType.PropagateLabeledNetworksToClusterHosts,
                 new ManageNetworkClustersParameters(new ArrayList<>(Collections.singleton(attachNetworkToClusterParameter.getNetworkCluster()))));
     }
 

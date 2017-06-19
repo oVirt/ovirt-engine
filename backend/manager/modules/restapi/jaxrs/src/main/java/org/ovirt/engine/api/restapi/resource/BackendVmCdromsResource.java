@@ -23,7 +23,7 @@ import org.ovirt.engine.api.model.Cdroms;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmCdromResource;
 import org.ovirt.engine.api.resource.VmCdromsResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -58,7 +58,7 @@ public class BackendVmCdromsResource
         VM vm = getVm();
         vm = map(cdrom, vm);
         VmManagementParametersBase parameters = new VmManagementParametersBase(vm);
-        return performCreate(VdcActionType.UpdateVm, parameters, new VmResolver());
+        return performCreate(ActionType.UpdateVm, parameters, new VmResolver());
     }
 
     @Override

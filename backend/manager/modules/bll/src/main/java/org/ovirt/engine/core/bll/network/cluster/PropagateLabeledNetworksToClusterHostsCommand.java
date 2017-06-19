@@ -22,9 +22,9 @@ import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformer;
 import org.ovirt.engine.core.bll.network.cluster.transformer.NetworkClustersToSetupNetworksParametersTransformerFactory;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -59,7 +59,7 @@ public class PropagateLabeledNetworksToClusterHostsCommand extends CommandBase<M
         );
 
         HostSetupNetworksParametersBuilder.updateParametersSequencing(setupNetworksParams);
-        runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, setupNetworksParams);
+        runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, setupNetworksParams);
     }
 
     private NetworkClustersToSetupNetworksParametersTransformer createNetworkClustersToSetupNetworksParametersTransformer() {

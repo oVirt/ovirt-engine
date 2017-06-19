@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.DateTime;
 
 public interface BackendInternal extends BackendLocal {
 
-    VdcReturnValueBase runInternalAction(VdcActionType actionType, VdcActionParametersBase parameters);
+    VdcReturnValueBase runInternalAction(ActionType actionType, VdcActionParametersBase parameters);
 
     /**
      * Executes an action internally.
@@ -28,7 +28,7 @@ public interface BackendInternal extends BackendLocal {
      *            The context by which the command is being executed.
      * @return The result of executing the action
      */
-    VdcReturnValueBase runInternalAction(VdcActionType actionType,
+    VdcReturnValueBase runInternalAction(ActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext context);
 
@@ -44,7 +44,7 @@ public interface BackendInternal extends BackendLocal {
      *            The context by which the command should be ended
      * @return The result of the command ending.
      */
-    VdcReturnValueBase endAction(VdcActionType actionType,
+    VdcReturnValueBase endAction(ActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext context);
 
@@ -52,7 +52,7 @@ public interface BackendInternal extends BackendLocal {
             VdcQueryParametersBase parameters,
             EngineContext context);
 
-    List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+    List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters);
 
     /**
@@ -75,7 +75,7 @@ public interface BackendInternal extends BackendLocal {
      *            Determines the visibility of the actions.
      * @return A collection of the results of each action validation.
      */
-    List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+    List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters, CommandContext commandContext);
 
     DateTime getStartedAt();

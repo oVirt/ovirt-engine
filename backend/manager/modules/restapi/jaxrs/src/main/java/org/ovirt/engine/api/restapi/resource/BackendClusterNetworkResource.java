@@ -2,10 +2,10 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterNetworkResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendClusterNetworkResource
     extends AbstractBackendNetworkResource
@@ -14,7 +14,7 @@ public class BackendClusterNetworkResource
     protected BackendClusterNetworksResource cluster;
 
     public BackendClusterNetworkResource(String id, BackendClusterNetworksResource parent) {
-        super(id, parent, VdcActionType.DetachNetworkToCluster);
+        super(id, parent, ActionType.DetachNetworkToCluster);
         this.cluster = parent;
     }
 
@@ -23,7 +23,7 @@ public class BackendClusterNetworkResource
         org.ovirt.engine.core.common.businessentities.network.Network network = map(incoming, map(get()));
         network.getCluster().setNetworkId(network.getId());
         network.getCluster().setClusterId(cluster.getCluster().getId());
-        performAction(VdcActionType.UpdateNetworkOnCluster,
+        performAction(ActionType.UpdateNetworkOnCluster,
                       new NetworkClusterParameters(network.getCluster()));
         return get();
     }

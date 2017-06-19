@@ -7,8 +7,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmStaticDao;
 
@@ -17,7 +17,7 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
     @Inject
     private VmStaticDao vmStaticDao;
 
-    public RunVMActionRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
+    public RunVMActionRunner(ActionType actionType, List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }
 

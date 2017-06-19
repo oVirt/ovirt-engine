@@ -60,10 +60,10 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -292,7 +292,7 @@ public class BackendVmsResource extends
         if (initialization.isSetRegenerateIds()) {
             parameters.setImportAsNewEntity(initialization.isRegenerateIds());
         }
-        return performCreate(VdcActionType.ImportVmFromConfiguration,
+        return performCreate(ActionType.ImportVmFromConfiguration,
                 parameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
@@ -363,7 +363,7 @@ public class BackendVmsResource extends
 
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
-        return performCreate(VdcActionType.AddVmFromSnapshot,
+        return performCreate(ActionType.AddVmFromSnapshot,
                                 params,
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
@@ -380,7 +380,7 @@ public class BackendVmsResource extends
         setupCloneTemplatePermissions(params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
-        return performCreate(VdcActionType.AddVmFromTemplate,
+        return performCreate(ActionType.AddVmFromTemplate,
                 params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
@@ -528,7 +528,7 @@ public class BackendVmsResource extends
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
-        return performCreate(VdcActionType.AddVm,
+        return performCreate(ActionType.AddVm,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
@@ -548,7 +548,7 @@ public class BackendVmsResource extends
         IconHelper.setIconToParams(vm, params);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
-        return performCreate(VdcActionType.AddVmFromScratch,
+        return performCreate(ActionType.AddVmFromScratch,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }

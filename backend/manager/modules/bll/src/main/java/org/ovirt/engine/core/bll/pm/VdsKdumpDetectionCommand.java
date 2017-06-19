@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.ExternalVariable;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.KdumpFlowStatus;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -114,11 +114,11 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
         fenceVdsManuallyParams.setStoragePoolId(getVds().getStoragePoolId());
         fenceVdsManuallyParams.setVdsId(getVdsId());
         fenceVdsManuallyParams.setSessionId(getParameters().getSessionId());
-        fenceVdsManuallyParams.setParentCommand(VdcActionType.RestartVds);
+        fenceVdsManuallyParams.setParentCommand(ActionType.RestartVds);
 
         // if fencing succeeded, call to reset irs in order to try select new spm
         runInternalAction(
-                VdcActionType.FenceVdsManualy,
+                ActionType.FenceVdsManualy,
                 fenceVdsManuallyParams,
                 getContext());
     }

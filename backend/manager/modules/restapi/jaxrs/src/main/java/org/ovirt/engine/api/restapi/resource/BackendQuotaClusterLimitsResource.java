@@ -6,8 +6,8 @@ import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.QuotaClusterLimits;
 import org.ovirt.engine.api.resource.QuotaClusterLimitResource;
 import org.ovirt.engine.api.resource.QuotaClusterLimitsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -49,7 +49,7 @@ public class BackendQuotaClusterLimitsResource
     public Response add(QuotaClusterLimit incoming) {
         Quota entity = getQuota();
         QuotaCRUDParameters parameters = new QuotaCRUDParameters(map(incoming, entity));
-        performAction(VdcActionType.UpdateQuota, parameters);
+        performAction(ActionType.UpdateQuota, parameters);
         entity = getQuota();
         updateIncomingId(incoming, entity);
         QuotaClusterLimit model = map(entity, incoming);

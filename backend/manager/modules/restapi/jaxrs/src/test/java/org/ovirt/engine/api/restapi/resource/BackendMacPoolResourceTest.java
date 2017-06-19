@@ -7,9 +7,9 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.MacPool;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -70,7 +70,7 @@ public class BackendMacPoolResourceTest
     public void testUpdate() throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateMacPool,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateMacPool,
                 MacPoolParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -93,7 +93,7 @@ public class BackendMacPoolResourceTest
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateMacPool,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateMacPool,
                 MacPoolParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -126,7 +126,7 @@ public class BackendMacPoolResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveMacPool,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveMacPool,
                 RemoveMacPoolByIdParameters.class,
                 new String[] { "MacPoolId" },
                 new Object[] { MAC_POOL_ID },
@@ -175,7 +175,7 @@ public class BackendMacPoolResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveMacPool,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveMacPool,
                 RemoveMacPoolByIdParameters.class,
                 new String[] {},
                 new Object[] {},

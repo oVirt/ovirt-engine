@@ -21,9 +21,9 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleVmsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -152,7 +152,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCorrelationId(getParameters().getCorrelationId());
             VdcReturnValueBase result =
-                    runInternalAction(VdcActionType.MaintenanceVds,
+                    runInternalAction(ActionType.MaintenanceVds,
                             tempVar,
                             ExecutionHandler.createInternalJobContext(getContext()));
             if (!result.isValid()) {

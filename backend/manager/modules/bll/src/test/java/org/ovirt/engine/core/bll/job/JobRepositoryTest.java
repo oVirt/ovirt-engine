@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
@@ -78,7 +78,7 @@ public class JobRepositoryTest {
 
     @Test
     public void getJobByEntityIdAndActionType() {
-        job.setActionType(VdcActionType.UpdateVm);
+        job.setActionType(ActionType.UpdateVm);
         List<Job> searchedJob =
                 jobRepository.getJobsByEntityAndAction(Guid.Empty, job.getActionType());
         assertNotNull(searchedJob);

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -205,7 +205,7 @@ public class SpiceConsoleModel extends ConsoleModel {
             getLogger().info("SpiceConsoleManager::Connect: Attempting to perform SSO on Desktop " //$NON-NLS-1$
                     + getEntity().getName());
 
-            Frontend.getInstance().runAction(VdcActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
+            Frontend.getInstance().runAction(ActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
                     result -> {
                         final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();
                         boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();

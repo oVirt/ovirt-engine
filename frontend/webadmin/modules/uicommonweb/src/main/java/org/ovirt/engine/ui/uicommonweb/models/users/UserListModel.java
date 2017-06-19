@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
@@ -252,10 +252,10 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             }
         }
         if (usersToAttach.size() > 0) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.AttachUserToTag, usersToAttach);
+            Frontend.getInstance().runMultipleAction(ActionType.AttachUserToTag, usersToAttach);
         }
         if (grpsToAttach.size() > 0) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.AttachUserGroupToTag, grpsToAttach);
+            Frontend.getInstance().runMultipleAction(ActionType.AttachUserGroupToTag, grpsToAttach);
         }
 
         ArrayList<VdcActionParametersBase> usersToDetach = new ArrayList<>();
@@ -269,10 +269,10 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             }
         }
         if (usersToDetach.size() > 0) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.DetachUserFromTag, usersToDetach);
+            Frontend.getInstance().runMultipleAction(ActionType.DetachUserFromTag, usersToDetach);
         }
         if (grpsToDetach.size() > 0) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.DetachUserGroupFromTag, grpsToDetach);
+            Frontend.getInstance().runMultipleAction(ActionType.DetachUserGroupFromTag, grpsToDetach);
         }
 
         cancel();
@@ -399,12 +399,12 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             }
         }
 
-        List<VdcActionType> actionsList = new ArrayList<>(selectedItems.size());
+        List<ActionType> actionsList = new ArrayList<>(selectedItems.size());
         List<VdcActionParametersBase> parametersList = new ArrayList<>(selectedItems.size());
         VdcActionParametersBase parameters = null;
         for (EntityModel<DbUser> item : selectedItems) {
             if (item.getEntity().isGroup()) {
-                actionsList.add(VdcActionType.AddGroup);
+                actionsList.add(ActionType.AddGroup);
                 DbGroup grp = new DbGroup();
                 grp.setExternalId(item.getEntity().getExternalId());
                 grp.setName(item.getEntity().getFirstName());
@@ -414,7 +414,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
                 parameters = new AddGroupParameters(grp);
             }
             else {
-                actionsList.add(VdcActionType.AddUser);
+                actionsList.add(ActionType.AddUser);
                 parameters = new AddUserParameters(item.getEntity());
             }
             parametersList.add(parameters);
@@ -468,11 +468,11 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         });
         if (getUserOrGroup() == UserOrGroup.User) {
             if (userPrms.size() > 0) {
-                Frontend.getInstance().runMultipleAction(VdcActionType.RemoveUser, userPrms, lastCallback);
+                Frontend.getInstance().runMultipleAction(ActionType.RemoveUser, userPrms, lastCallback);
             }
         } else if (getUserOrGroup() == UserOrGroup.Group) {
             if (groupPrms.size() > 0) {
-                Frontend.getInstance().runMultipleAction(VdcActionType.RemoveGroup, groupPrms, lastCallback);
+                Frontend.getInstance().runMultipleAction(ActionType.RemoveGroup, groupPrms, lastCallback);
             }
         }
     }
@@ -495,7 +495,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
                         : new ArrayList();
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, DbUser.class, VdcActionType.RemoveUser));
+                && VdcActionUtils.canExecute(items, DbUser.class, ActionType.RemoveUser));
 
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
     }

@@ -18,11 +18,11 @@ import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.pool.RefreshPoolSingleAsyncOperationFactory;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -172,7 +172,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                     new SetNonOperationalVdsParameters(vdsId, STORAGE_DOMAIN_UNREACHABLE, customLogValues);
             tempVar.setStorageDomainId(getStorageDomain().getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            runInternalAction(VdcActionType.SetNonOperationalVds,
+            runInternalAction(ActionType.SetNonOperationalVds,
                     tempVar,
                     ExecutionHandler.createInternalJobContext(getContext()));
         }

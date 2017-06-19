@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_gro
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -159,7 +159,7 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveAffinityGroup, parameters,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveAffinityGroup, parameters,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();

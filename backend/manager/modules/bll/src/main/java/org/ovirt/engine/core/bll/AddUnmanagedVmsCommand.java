@@ -18,9 +18,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddUnmanagedVmsParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -211,7 +211,7 @@ public class AddUnmanagedVmsCommand<T extends AddUnmanagedVmsParameters> extends
     // Visible for testing
     protected void addExternallyManagedVm(VmStatic vmStatic) {
         VdcReturnValueBase returnValue =
-                runInternalAction(VdcActionType.AddVmFromScratch,
+                runInternalAction(ActionType.AddVmFromScratch,
                         new AddVmParameters(vmStatic),
                         createAddExternalVmContext(vmStatic));
         if (!returnValue.getSucceeded()) {

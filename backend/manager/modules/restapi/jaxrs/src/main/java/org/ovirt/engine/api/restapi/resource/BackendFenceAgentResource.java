@@ -4,9 +4,9 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.resource.FenceAgentResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -32,7 +32,7 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
                 entity,
                 map(entity),
                 agentResolver,
-                VdcActionType.UpdateFenceAgent,
+                ActionType.UpdateFenceAgent,
                 new UpdateParametersProvider());
     }
 
@@ -53,6 +53,6 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
         FenceAgent agent = new FenceAgent();
         agent.setId(guid);
         params.setAgent(agent);
-        return performAction(VdcActionType.RemoveFenceAgent, params);
+        return performAction(ActionType.RemoveFenceAgent, params);
     }
 }

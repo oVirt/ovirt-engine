@@ -5,10 +5,10 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -36,7 +36,7 @@ public abstract class AbstractBackendNetworkAttachmentResource<T extends Abstrac
     public NetworkAttachment update(NetworkAttachment resource) {
         return performUpdate(resource,
                 new QueryIdResolver<>(VdcQueryType.GetNetworkAttachmentById, IdQueryParameters.class),
-                VdcActionType.UpdateNetworkAttachment,
+                ActionType.UpdateNetworkAttachment,
                 new UpdateParametersProvider());
     }
 
@@ -67,6 +67,6 @@ public abstract class AbstractBackendNetworkAttachmentResource<T extends Abstrac
     public Response remove() {
         get();
         RemoveNetworkAttachmentParameters params = new RemoveNetworkAttachmentParameters(parent.getHostId(), guid);
-        return performAction(VdcActionType.RemoveNetworkAttachment, params);
+        return performAction(ActionType.RemoveNetworkAttachment, params);
     }
 }

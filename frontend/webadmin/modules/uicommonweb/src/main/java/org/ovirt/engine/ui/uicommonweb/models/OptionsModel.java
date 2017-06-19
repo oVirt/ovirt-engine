@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -65,9 +65,9 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
     private void onSave() {
         EditOptionsModel model = (EditOptionsModel) getWindow();
         UserProfileParameters params = new UserProfileParameters();
-        VdcActionType action = VdcActionType.AddUserProfile;
+        ActionType action = ActionType.AddUserProfile;
         if (getUserProfile() != null) {
-            action = VdcActionType.UpdateUserProfile;
+            action = ActionType.UpdateUserProfile;
             params.setUserProfile(getUserProfile());
         }
         params.getUserProfile().setUserPortalVmLoginAutomatically(model.getEnableConnectAutomatically().getEntity().booleanValue());

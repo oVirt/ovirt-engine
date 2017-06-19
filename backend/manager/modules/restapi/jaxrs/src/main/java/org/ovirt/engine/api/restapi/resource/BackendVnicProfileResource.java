@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.VnicProfileResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,7 +24,7 @@ public class BackendVnicProfileResource extends AbstractBackendVnicProfileResour
     public VnicProfile update(VnicProfile resource) {
         return performUpdate(resource,
                 new QueryIdResolver<>(VdcQueryType.GetVnicProfileById, IdQueryParameters.class),
-                VdcActionType.UpdateVnicProfile,
+                ActionType.UpdateVnicProfile,
                 new UpdateParametersProvider());
     }
 

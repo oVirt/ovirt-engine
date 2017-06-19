@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
 import org.ovirt.engine.core.common.action.HotSetNumberOfCpusParameters;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
@@ -328,7 +328,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (getVm().getStatus() == VMStatus.Down) {
             VdcReturnValueBase result =
                     runInternalActionWithTasksContext(
-                            VdcActionType.UpdateVmVersion,
+                            ActionType.UpdateVmVersion,
                             new UpdateVmVersionParameters(getVmId(),
                                     getParameters().getVm().getVmtGuid(),
                                     getParameters().getVm().isUseLatestVersion()),
@@ -338,7 +338,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
             }
             setSucceeded(result.getSucceeded());
-            setActionReturnValue(VdcActionType.UpdateVmVersion);
+            setActionReturnValue(ActionType.UpdateVmVersion);
         } else {
             vmHandler.createNextRunSnapshot(
                     getVm(), getParameters().getVmStaticData(), getParameters(), getCompensationContext());
@@ -360,16 +360,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (rngDevs.isEmpty()) {
             if (getParameters().getRngDevice() != null) {
                 RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
-                rngCommandResult = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
+                rngCommandResult = runInternalAction(ActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
             }
         } else {
             if (getParameters().getRngDevice() == null) {
                 RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), true);
-                rngCommandResult = runInternalAction(VdcActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
+                rngCommandResult = runInternalAction(ActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
             } else {
                 RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
                 params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
-                rngCommandResult = runInternalAction(VdcActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
+                rngCommandResult = runInternalAction(ActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
             }
         }
 
@@ -408,7 +408,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             currentSockets < newNumOfSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
             VdcReturnValueBase setNumberOfCpusResult =
                     runInternalAction(
-                            VdcActionType.HotSetNumberOfCpus,
+                            ActionType.HotSetNumberOfCpus,
                             params, cloneContextAndDetachFromParent());
             // Hosted engine VM does not care if hotplug failed. The requested CPU count is serialized
             // into the OVF store and automatically used during the next HE VM start
@@ -502,7 +502,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         VdcReturnValueBase setAmountOfMemoryResult =
                 runInternalAction(
-                        VdcActionType.HotSetAmountOfMemory,
+                        ActionType.HotSetAmountOfMemory,
                         params, cloneContextAndDetachFromParent());
         // Hosted engine VM does not care if hostplug failed. The requested memory size is serialized
         // into the OVF store and automatically used during the next HE VM start
@@ -552,19 +552,19 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     parameters.setId(getParameters().getVmId());
                     parameters.setAction(getParameters().getWatchdog().getAction());
                     parameters.setModel(getParameters().getWatchdog().getModel());
-                    runInternalAction(VdcActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
+                    runInternalAction(ActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
                 }
             } else {
                 WatchdogParameters watchdogParameters = new WatchdogParameters();
                 watchdogParameters.setId(getParameters().getVmId());
                 if (getParameters().getWatchdog() == null) {
                     // there is a watchdog in the vm, there should not be any, so let's delete
-                    runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
+                    runInternalAction(ActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 } else {
                     // there is a watchdog in the vm, we have to update.
                     watchdogParameters.setAction(getParameters().getWatchdog().getAction());
                     watchdogParameters.setModel(getParameters().getWatchdog().getModel());
-                    runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
+                    runInternalAction(ActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 }
             }
 
@@ -583,7 +583,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void removeGraphicsDevice(GraphicsType type) {
         GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(type);
         if (existingGraphicsDevice != null) {
-            getBackend().runInternalAction(VdcActionType.RemoveGraphicsDevice,
+            getBackend().runInternalAction(ActionType.RemoveGraphicsDevice,
                     new GraphicsParameters(existingGraphicsDevice));
         }
     }
@@ -592,7 +592,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         GraphicsDevice existingGraphicsDevice = getGraphicsDevOfType(device.getGraphicsType());
         device.setVmId(getVmId());
         getBackend().runInternalAction(
-                existingGraphicsDevice == null ? VdcActionType.AddGraphicsDevice : VdcActionType.UpdateGraphicsDevice,
+                existingGraphicsDevice == null ? ActionType.AddGraphicsDevice : ActionType.UpdateGraphicsDevice,
                 new GraphicsParameters(device));
     }
 
@@ -666,7 +666,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         List<VmNumaNode> newList = getParameters().getVmStaticData().getvNumaNodeList();
         VmNumaNodeOperationParameters params =
                 new VmNumaNodeOperationParameters(getParameters().getVm(), new ArrayList<>(newList));
-            addLogMessages(getBackend().runInternalAction(VdcActionType.SetVmNumaNodes, params));
+            addLogMessages(getBackend().runInternalAction(ActionType.SetVmNumaNodes, params));
 
     }
 

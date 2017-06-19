@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
@@ -57,8 +57,8 @@ public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
             return;
         }
 
-        VdcActionType actionType = isNew() ?
-                VdcActionType.AddLibvirtSecret : VdcActionType.UpdateLibvirtSecret;
+        ActionType actionType = isNew() ?
+                ActionType.AddLibvirtSecret : ActionType.UpdateLibvirtSecret;
         flush();
         Frontend.getInstance().runAction(actionType, new LibvirtSecretParameters(getEntity()),
                 result -> {

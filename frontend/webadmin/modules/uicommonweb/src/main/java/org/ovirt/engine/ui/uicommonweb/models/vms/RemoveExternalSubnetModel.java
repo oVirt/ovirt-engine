@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -49,7 +49,7 @@ public class RemoveExternalSubnetModel extends ConfirmationModel {
 
         startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveSubnetFromProvider,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveSubnetFromProvider,
                 list,
                 false,
                 result -> {

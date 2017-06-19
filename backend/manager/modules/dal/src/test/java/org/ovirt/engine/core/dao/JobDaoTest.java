@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -59,8 +59,8 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     protected Job generateNewEntity() {
         Job job = new Job();
         job.setId(Guid.newGuid());
-        job.setActionType(VdcActionType.ActivateStorageDomain);
-        job.setDescription(VdcActionType.ActivateStorageDomain.name());
+        job.setActionType(ActionType.ActivateStorageDomain);
+        job.setDescription(ActionType.ActivateStorageDomain.name());
         job.setStatus(JobExecutionStatus.STARTED);
         job.setOwnerId(Guid.newGuid());
         job.setVisible(true);

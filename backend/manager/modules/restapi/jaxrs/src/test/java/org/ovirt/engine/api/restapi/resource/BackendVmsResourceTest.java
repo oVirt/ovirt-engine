@@ -32,10 +32,10 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -159,7 +159,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 getTemplateEntity(0));
-        setUpCreationExpectations(VdcActionType.AddVmFromScratch,
+        setUpCreationExpectations(ActionType.AddVmFromScratch,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{Guid.Empty},
@@ -217,7 +217,7 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[0]},
                 getTemplateEntity(0));
 
-        setUpCreationExpectations(VdcActionType.AddVmFromScratch,
+        setUpCreationExpectations(ActionType.AddVmFromScratch,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{Guid.Empty},
@@ -274,7 +274,7 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[0] },
                 getTemplateEntity(0));
 
-        setUpCreationExpectations(VdcActionType.AddVmFromScratch,
+        setUpCreationExpectations(ActionType.AddVmFromScratch,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { Guid.Empty },
@@ -326,7 +326,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getClusterEntity());
-        setUriInfo(setUpActionExpectations(VdcActionType.AddVmFromScratch,
+        setUriInfo(setUpActionExpectations(ActionType.AddVmFromScratch,
                                            AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
                                            new Object[] { Guid.Empty },
@@ -369,7 +369,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getClusterEntity());
-        setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
+        setUpCreationExpectations(ActionType.AddVmFromTemplate,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
@@ -411,7 +411,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 vmConfiguration);
-        setUpCreationExpectations(VdcActionType.AddVmFromSnapshot,
+        setUpCreationExpectations(ActionType.AddVmFromSnapshot,
                 AddVmFromSnapshotParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
@@ -454,7 +454,7 @@ public class BackendVmsResourceTest
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
                 getClusterEntity());
-        setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
+        setUpCreationExpectations(ActionType.AddVmFromTemplate,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
@@ -501,7 +501,7 @@ public class BackendVmsResourceTest
         vm.setStateless(true);
         vm.setUseLatestVersion(true);
 
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
@@ -531,7 +531,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
         setupAddExpectations();
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
@@ -557,7 +557,7 @@ public class BackendVmsResourceTest
                 new Object[] { NAMES[1], GUIDS[3] },
                 getTemplateEntity(1));
         setupAddExpectations();
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
@@ -622,7 +622,7 @@ public class BackendVmsResourceTest
                 new Object[]{model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
                 returnedVM);
         Guid newId = GUIDS[3];
-        setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
+        setUpCreationExpectations(ActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
                 new String[] { "Vm", "ClusterId", "ImportAsNewEntity" },
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), true},
@@ -666,7 +666,7 @@ public class BackendVmsResourceTest
                 new String[] { "VmConfiguration", "ConfigurationType" },
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
                 returnedVM);
-        setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
+        setUpCreationExpectations(ActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
                 new String[] { "Vm", "ClusterId", "ImportAsNewEntity"},
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()), false},
@@ -714,7 +714,7 @@ public class BackendVmsResourceTest
                 new String[] { "VmConfiguration", "ConfigurationType" },
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
                 returnedVM);
-        setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
+        setUpCreationExpectations(ActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
                 new String[] { "Vm", "ClusterId" },
                 new Object[] { returnedVM, GUIDS[1] },
@@ -755,7 +755,7 @@ public class BackendVmsResourceTest
                 new String[] { "VmConfiguration", "ConfigurationType" },
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
                 returnedVM);
-        setUriInfo(setUpActionExpectations(VdcActionType.ImportVmFromConfiguration,
+        setUriInfo(setUpActionExpectations(ActionType.ImportVmFromConfiguration,
                 ImportVmParameters.class,
                 new String[] { "Vm", "ClusterId" },
                 new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId())},
@@ -787,7 +787,7 @@ public class BackendVmsResourceTest
     public void testAddWithPlacementPolicySingleHostName() throws Exception {
         setUpAddVm();
         setUpGetHostByNameExpectations(1);
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
@@ -814,7 +814,7 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithPlacementPolicySingleHostId() throws Exception {
         setUpAddVm();
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
@@ -841,7 +841,7 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithPlacementPolicyHostsIds() throws Exception {
         setUpAddVm();
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
@@ -875,7 +875,7 @@ public class BackendVmsResourceTest
         for (int i =0; i < NAMES.length; i++){
             setUpGetHostByNameExpectations(i);
         }
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
@@ -930,7 +930,7 @@ public class BackendVmsResourceTest
     @Test
     public void testAddWithStorageDomain() throws Exception {
         setUpAddVm();
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[1] },
@@ -975,7 +975,7 @@ public class BackendVmsResourceTest
                 new Object[] { NAMES[2] },
                 setUpCluster(GUIDS[2]));
 
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
@@ -1035,7 +1035,7 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[2] },
                                      getClusterEntity());
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId", "CopyTemplatePermissions" },
                                   new Object[] { GUIDS[0], copy },
@@ -1093,7 +1093,7 @@ public class BackendVmsResourceTest
                                      new Object[]{GUIDS[2]},
                                      getClusterEntity());
 
-        setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
+        setUpCreationExpectations(ActionType.AddVmFromTemplate,
                                   AddVmParameters.class,
                                   new String[] { "StorageDomainId", "CopyTemplatePermissions" },
                                   new Object[] { GUIDS[0], copy },
@@ -1231,7 +1231,7 @@ public class BackendVmsResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getClusterEntity());
-        setUriInfo(setUpActionExpectations(VdcActionType.AddVm,
+        setUriInfo(setUpActionExpectations(ActionType.AddVm,
                                            AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
                                            new Object[] { GUIDS[0] },
@@ -1280,7 +1280,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
         setupAddExpectations();
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[] { "StorageDomainId", "VmLargeIcon" },
                 new Object[] { GUIDS[0],
@@ -1310,7 +1310,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
         setupAddExpectations();
-        setUpCreationExpectations(VdcActionType.AddVm,
+        setUpCreationExpectations(ActionType.AddVm,
                 AddVmParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },

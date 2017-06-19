@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -179,7 +179,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         getService(new ServiceCallback() {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.runAction((VdcActionType) operation.getOperation(),
+                service.runAction((ActionType) operation.getOperation(),
                         (VdcActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
                     @Override
                     public void onFailure(final Throwable exception) {
@@ -207,14 +207,14 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         // Operations can be either actions or queries. Both require different handling so lets
         // Split them out into two lists so we can process them independently.
         List<VdcOperation<?, ?>> queriesList = new ArrayList<>();
-        Map<VdcActionType, List<VdcOperation<?, ?>>> actionsMap = new HashMap<>();
+        Map<ActionType, List<VdcOperation<?, ?>>> actionsMap = new HashMap<>();
 
         for (VdcOperation<?, ?> operation: operations) {
             if (operation.isAction()) {
                 List<VdcOperation<?, ?>> actionsList = actionsMap.get(operation.getOperation());
                 if (actionsList == null) {
                     actionsList = new ArrayList<>();
-                    actionsMap.put((VdcActionType) operation.getOperation(), actionsList);
+                    actionsMap.put((ActionType) operation.getOperation(), actionsList);
                 }
                 actionsList.add(operation);
             } else {
@@ -318,14 +318,14 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
     /**
      * Call the back-end using either RunAction or RunMultiple actions based on the fact that the map being
-     * passed is keyed on the {@code VdcActionType} this allows us to determine if there are one or more actions
+     * passed is keyed on the {@code ActionType} this allows us to determine if there are one or more actions
      * pending per action type.
      * When the action completes call back the appropriate callback methods with the appropriate results.
-     * @param actions A {@code Map} of {@code VdcActionType}s with a list of operations associated with that
+     * @param actions A {@code Map} of {@code ActionType}s with a list of operations associated with that
      * type
      */
-    private void transmitMultipleActions(final Map<VdcActionType, List<VdcOperation<?, ?>>> actions) {
-        for (final Map.Entry<VdcActionType, List<VdcOperation<?, ?>>> actionEntry: actions.entrySet()) {
+    private void transmitMultipleActions(final Map<ActionType, List<VdcOperation<?, ?>>> actions) {
+        for (final Map.Entry<ActionType, List<VdcOperation<?, ?>>> actionEntry: actions.entrySet()) {
             List<VdcActionParametersBase> parameters = new ArrayList<>();
             final List<VdcOperation<?, ?>> allActionOperations = actionEntry.getValue();
 
@@ -364,7 +364,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         return result;
     }
 
-    private void runMultipleActions(final VdcActionType actionType, final List<VdcOperation<?, ?>> operations,
+    private void runMultipleActions(final ActionType actionType, final List<VdcOperation<?, ?>> operations,
             final List<VdcActionParametersBase> parameters, final List<VdcOperation<?, ?>> allActionOperations,
             final boolean waitForResults, final boolean runOnlyIfAllValidationPass) {
         getService(new ServiceCallback() {

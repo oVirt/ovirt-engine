@@ -7,9 +7,9 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
@@ -36,7 +36,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         RemoveImageParameters removeImageParams =
                 new RemoveImageParameters(getParameters().getImageId());
         removeImageParams.setStorageDomainId(storageDomainId);
-        removeImageParams.setParentCommand(VdcActionType.RemoveImage);
+        removeImageParams.setParentCommand(ActionType.RemoveImage);
         removeImageParams.setDbOperationScope(ImageDbOperationScope.NONE);
         removeImageParams.setShouldLockImage(false);
         removeImageParams.setCorrelationId(getParameters().getCorrelationId());
@@ -47,7 +47,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         // other operations on the image shouldn't be dependent and wait for it.
         removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, Guid.newGuid()));
         VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
-                VdcActionType.RemoveImage,
+                ActionType.RemoveImage,
                 removeImageParams);
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());

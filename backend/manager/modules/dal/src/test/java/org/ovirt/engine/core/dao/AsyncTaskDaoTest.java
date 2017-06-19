@@ -13,8 +13,8 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
@@ -52,7 +52,7 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
         newAsyncTask.setTaskId(Guid.newGuid());
         newAsyncTask.setVdsmTaskId(Guid.newGuid());
         newAsyncTask.setStartTime(new Date());
-        newAsyncTask.setActionType(VdcActionType.AddDisk);
+        newAsyncTask.setActionType(ActionType.AddDisk);
         newAsyncTask.setstatus(AsyncTaskStatusEnum.running);
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
         newAsyncTask.setActionParameters(params);
@@ -155,7 +155,7 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
     public void testUpdate() {
         existingAsyncTask.setstatus(AsyncTaskStatusEnum.aborting);
         existingAsyncTask.setresult(AsyncTaskResultEnum.failure);
-        existingAsyncTask.setActionType(VdcActionType.AddDisk);
+        existingAsyncTask.setActionType(ActionType.AddDisk);
         dao.update(existingAsyncTask);
 
         AsyncTask result = dao.get(existingAsyncTask.getTaskId());
@@ -214,7 +214,7 @@ public class AsyncTaskDaoTest extends BaseDaoTestCase {
     public void testSaveOrUpdate() {
         existingAsyncTask.setstatus(AsyncTaskStatusEnum.aborting);
         existingAsyncTask.setresult(AsyncTaskResultEnum.failure);
-        existingAsyncTask.setActionType(VdcActionType.AddDisk);
+        existingAsyncTask.setActionType(ActionType.AddDisk);
         List<AsyncTask> tasks = dao.getAll();
         assertNotNull(tasks);
         int tasksNumber = tasks.size();

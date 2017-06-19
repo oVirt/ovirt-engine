@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.macpool;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -18,7 +18,7 @@ public class SharedMacPoolModel extends MacPoolModel {
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
     protected final Model sourceModel;
-    private final VdcActionType actionType;
+    private final ActionType actionType;
 
     private final EntityModel<String> name = new EntityModel<>();
     private final EntityModel<String> description = new EntityModel<>();
@@ -31,7 +31,7 @@ public class SharedMacPoolModel extends MacPoolModel {
         return description;
     }
 
-    public SharedMacPoolModel(Model sourceModel, VdcActionType actionType) {
+    public SharedMacPoolModel(Model sourceModel, ActionType actionType) {
         this.sourceModel = sourceModel;
         this.actionType = actionType;
 

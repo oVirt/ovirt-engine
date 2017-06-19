@@ -11,10 +11,10 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -73,7 +73,7 @@ public class BackendTemplateDiskResource
                         storageDomainId,
                         ImageOperation.Copy);
         params.setImageGroupID(asGuid(disk.getId()));
-        return doAction(VdcActionType.MoveOrCopyDisk, params, action);
+        return doAction(ActionType.MoveOrCopyDisk, params, action);
     }
 
     protected Disk getDisk() {
@@ -83,7 +83,7 @@ public class BackendTemplateDiskResource
     @Override
     public Response export(Action action) {
         validateParameters(action, "storageDomain.id|name");
-        return doAction(VdcActionType.ExportRepoImage,
+        return doAction(ActionType.ExportRepoImage,
                 new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
     }
 
@@ -99,6 +99,6 @@ public class BackendTemplateDiskResource
         if (storageDomain != null) {
             params.setStorageDomainId(asGuid(storageDomain));
         }
-        return performAction(VdcActionType.RemoveDisk, params);
+        return performAction(ActionType.RemoveDisk, params);
     }
 }

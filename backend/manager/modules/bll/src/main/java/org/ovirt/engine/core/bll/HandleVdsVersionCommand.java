@@ -11,8 +11,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -114,6 +114,6 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                 reason,
                 customLogValues);
-        runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext(getContext()));
+        runInternalAction(ActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext(getContext()));
     }
 }

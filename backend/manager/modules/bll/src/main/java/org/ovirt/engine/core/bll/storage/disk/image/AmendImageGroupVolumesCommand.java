@@ -22,11 +22,11 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.AmendVolumeCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -148,7 +148,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
         parameters.setJobWeight(getParameters().getOperationsJobWeight().get(imageId.toString()));
-        runInternalActionWithTasksContext(VdcActionType.AmendVolume, parameters);
+        runInternalActionWithTasksContext(ActionType.AmendVolume, parameters);
     }
 
     @Override

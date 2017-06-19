@@ -13,8 +13,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -178,7 +178,7 @@ public class BackendVmNicsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setGetGuestAgentQueryExpectations(1);
         setUpCreationExpectations(
-            VdcActionType.AddVmInterface,
+            ActionType.AddVmInterface,
             AddVmInterfaceParameters.class,
             new String[] { "VmId" },
             new Object[] { VM_ID },
@@ -212,7 +212,7 @@ public class BackendVmNicsResourceTest
     private void doTestBadAddNic(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.AddVmInterface,
+                ActionType.AddVmInterface,
                 AddVmInterfaceParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },

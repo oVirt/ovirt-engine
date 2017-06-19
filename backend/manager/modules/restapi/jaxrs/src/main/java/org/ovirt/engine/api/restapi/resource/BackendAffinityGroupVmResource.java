@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.AffinityGroupVmResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -30,7 +30,7 @@ public class BackendAffinityGroupVmResource
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         return performAction(
-            VdcActionType.EditAffinityGroup,
+            ActionType.EditAffinityGroup,
             new AffinityGroupCRUDParameters(groupId, group)
         );
     }

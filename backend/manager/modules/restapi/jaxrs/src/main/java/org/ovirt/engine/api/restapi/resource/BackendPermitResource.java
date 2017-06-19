@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -46,7 +46,7 @@ public class BackendPermitResource
             notFound();
             return null;
         }
-        return performAction(VdcActionType.DetachActionGroupsFromRole,
+        return performAction(ActionType.DetachActionGroupsFromRole,
                 new ActionGroupsToRoleParameter(parent.roleId, asList(entity)));
     }
 

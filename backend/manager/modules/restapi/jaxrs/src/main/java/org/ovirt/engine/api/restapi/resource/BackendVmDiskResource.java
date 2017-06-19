@@ -38,12 +38,12 @@ import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -98,13 +98,13 @@ public class BackendVmDiskResource
     @Override
     public Response activate(Action action) {
         VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(guid, vmId));
-        return doAction(VdcActionType.HotPlugDiskToVm, params, action);
+        return doAction(ActionType.HotPlugDiskToVm, params, action);
     }
 
     @Override
     public Response deactivate(Action action) {
         VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(guid, vmId));
-        return doAction(VdcActionType.HotUnPlugDiskFromVm, params, action);
+        return doAction(ActionType.HotUnPlugDiskFromVm, params, action);
     }
 
     @Override
@@ -121,7 +121,7 @@ public class BackendVmDiskResource
         innerParams.setImageGroupID(asGuid(disk.getId()));
         MoveDisksParameters params =
                 new MoveDisksParameters(Collections.singletonList(innerParams));
-        return doAction(VdcActionType.MoveDisks, params, action);
+        return doAction(ActionType.MoveDisks, params, action);
     }
 
     protected Disk getDisk() {
@@ -184,19 +184,19 @@ public class BackendVmDiskResource
     @Override
     public Response export(Action action) {
         validateParameters(action, "storageDomain.id|name");
-        return doAction(VdcActionType.ExportRepoImage,
+        return doAction(ActionType.ExportRepoImage,
             new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
     }
 
     @Override
     public Disk update(Disk disk) {
-        return performUpdate(disk, new DiskResolver(), VdcActionType.UpdateVmDisk, new UpdateParametersProvider());
+        return performUpdate(disk, new DiskResolver(), ActionType.UpdateVmDisk, new UpdateParametersProvider());
     }
 
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(new DiskVmElement(guid, vmId)));
+        return performAction(ActionType.DetachDiskFromVm, new AttachDetachVmDiskParameters(new DiskVmElement(guid, vmId)));
     }
 
     @Override

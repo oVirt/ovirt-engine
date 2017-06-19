@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.parameters.RemoveExternalPolicyUnitParameters;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -28,7 +28,7 @@ public class ManagePolicyUnitModel extends Model {
     }
 
     public void remove(final PolicyUnit policyUnit) {
-        Frontend.getInstance().runAction(VdcActionType.RemoveExternalPolicyUnit,
+        Frontend.getInstance().runAction(ActionType.RemoveExternalPolicyUnit,
                 new RemoveExternalPolicyUnitParameters(policyUnit.getId()), new IFrontendActionAsyncCallback() {
 
                     @Override

@@ -12,10 +12,10 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -92,7 +92,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         }
     }
 
-    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList, VdcActionType actionType) {
+    protected DestroyImageParameters buildDestroyImageParameters(Guid imageGroupId, List<Guid> imageList, ActionType actionType) {
         DestroyImageParameters parameters = new DestroyImageParameters(
                 getVdsId(),
                 getVmId(),
@@ -178,8 +178,8 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         });
     }
 
-    protected Pair<VdcActionType, DestroyImageParameters> buildDestroyCommand(VdcActionType actionToRun,
-                                                                              VdcActionType parentCommand,
+    protected Pair<ActionType, DestroyImageParameters> buildDestroyCommand(ActionType actionToRun,
+                                                                              ActionType parentCommand,
                                                                               List<Guid> images) {
         return new Pair<>(actionToRun, buildDestroyImageParameters(getActiveDiskImage().getId(),
                 images, parentCommand));

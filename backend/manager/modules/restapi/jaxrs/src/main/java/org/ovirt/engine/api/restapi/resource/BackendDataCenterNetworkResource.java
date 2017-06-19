@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.DataCenterNetworkResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendDataCenterNetworkResource
     extends AbstractBackendNetworkResource
@@ -16,7 +16,7 @@ public class BackendDataCenterNetworkResource
     private BackendDataCenterNetworksResource parent;
 
     public BackendDataCenterNetworkResource(String id, BackendDataCenterNetworksResource parent) {
-        super(id, parent, VdcActionType.RemoveNetwork);
+        super(id, parent, ActionType.RemoveNetwork);
         this.parent = parent;
     }
 
@@ -49,7 +49,7 @@ public class BackendDataCenterNetworkResource
         return performUpdate(
             incoming,
             getParent().getNetworkIdResolver(),
-            VdcActionType.UpdateNetwork,
+            ActionType.UpdateNetwork,
             new UpdateParametersProvider()
         );
     }

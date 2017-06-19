@@ -6,8 +6,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,7 +24,7 @@ public class BackendDataCenterNetworksResourceTest
     @Test
     public void testAddNetwork() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddNetwork,
+        setUpCreationExpectations(ActionType.AddNetwork,
                                   AddNetworkStoragePoolParameters.class,
                                   new String[] { "StoragePoolId" },
                                   new Object[] { DATA_CENTER_ID },
@@ -57,7 +57,7 @@ public class BackendDataCenterNetworksResourceTest
     }
 
     private void doTestBadAddNetwork(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddNetwork,
+        setUriInfo(setUpActionExpectations(ActionType.AddNetwork,
                                            AddNetworkStoragePoolParameters.class,
                                            new String[] { "StoragePoolId" },
                                            new Object[] { DATA_CENTER_ID },

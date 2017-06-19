@@ -48,6 +48,7 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters.Phase;
 import org.ovirt.engine.core.common.action.CreateAllTemplateDisksParameters;
@@ -58,7 +59,6 @@ import org.ovirt.engine.core.common.action.SealVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -409,8 +409,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return parameters;
     }
 
-    protected VdcActionType getAddAllTemplateDisksActionType() {
-        return VdcActionType.CreateAllTemplateDisks;
+    protected ActionType getAddAllTemplateDisksActionType() {
+        return ActionType.CreateAllTemplateDisks;
     }
 
     private Version getMasterVmCompatibilityVersion() {
@@ -434,7 +434,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
             graphicsDevice.setVmId(getVmTemplateId());
             GraphicsParameters parameters = new GraphicsParameters(graphicsDevice).setVm(false);
-            getBackend().runInternalAction(VdcActionType.AddGraphicsDevice, parameters);
+            getBackend().runInternalAction(ActionType.AddGraphicsDevice, parameters);
         }
     }
 
@@ -484,7 +484,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void assignLegalAndShared(boolean legalAndShared) {
-        VdcReturnValueBase returnValue = runInternalAction(VdcActionType.UpdateAllTemplateDisks,
+        VdcReturnValueBase returnValue = runInternalAction(ActionType.UpdateAllTemplateDisks,
                 buildUpdateAllTemplateDisksParameters(legalAndShared),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
 
@@ -504,7 +504,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void sealVmTemplate() {
-        VdcReturnValueBase returnValue = runInternalAction(VdcActionType.SealVmTemplate,
+        VdcReturnValueBase returnValue = runInternalAction(ActionType.SealVmTemplate,
                 buildSealVmTemplateParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
 
@@ -1020,7 +1020,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
             UpdateVmVersionParameters params = new UpdateVmVersionParameters(vmId);
             params.setSessionId(getParameters().getSessionId());
-            getBackend().runInternalAction(VdcActionType.UpdateVmVersion, params, cloneContextAndDetachFromParent());
+            getBackend().runInternalAction(ActionType.UpdateVmVersion, params, cloneContextAndDetachFromParent());
         }
         updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
     }

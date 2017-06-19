@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
@@ -163,7 +163,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
         for (EntityModel<HostDeviceView> model : items) {
             deviceNamesToAttach.add(model.getEntity().getDeviceName());
         }
-        Frontend.getInstance().runAction(VdcActionType.AddVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNamesToAttach),
+        Frontend.getInstance().runAction(ActionType.AddVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNamesToAttach),
                 result -> {
                     syncSearch();
                     getWindow().stopProgress();
@@ -173,7 +173,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
 
     private void pinVmToHost(Guid hostId, IFrontendActionAsyncCallback callback) {
         getEntity().setDedicatedVmForVdsList(hostId);
-        Frontend.getInstance().runAction(VdcActionType.UpdateVm, new VmManagementParametersBase(getEntity().getStaticData()), callback);
+        Frontend.getInstance().runAction(ActionType.UpdateVm, new VmManagementParametersBase(getEntity().getStaticData()), callback);
     }
 
     private void onRemove() {
@@ -185,7 +185,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
 
         model.startProgress();
         ArrayList<String> deviceNames = getSelectedPrimaryDeviceNames();
-        Frontend.getInstance().runAction(VdcActionType.RemoveVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNames),
+        Frontend.getInstance().runAction(ActionType.RemoveVmHostDevices, new VmHostDevicesParameters(getEntity().getId(), deviceNames),
                 result -> {
                     model.stopProgress();
                     setConfirmWindow(null);

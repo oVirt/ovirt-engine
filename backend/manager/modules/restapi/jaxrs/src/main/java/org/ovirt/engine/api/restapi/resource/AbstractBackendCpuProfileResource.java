@@ -5,8 +5,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -51,7 +51,7 @@ public abstract class AbstractBackendCpuProfileResource
         get();
         org.ovirt.engine.core.common.businessentities.profiles.CpuProfile cpuProfile = getCpuProfile(id);
         return performAction(
-            VdcActionType.RemoveCpuProfile,
+            ActionType.RemoveCpuProfile,
             new CpuProfileParameters(cpuProfile)
         );
     }

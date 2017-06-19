@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
@@ -56,7 +56,7 @@ public class CommandCoordinatorUtil {
      * @param id The entity id
      * @param type The action type
      */
-    public static boolean hasTasksForEntityIdAndAction(Guid id, VdcActionType type) {
+    public static boolean hasTasksForEntityIdAndAction(Guid id, ActionType type) {
         return getAsyncTaskManager().hasTasksForEntityIdAndAction(id, type);
     }
 
@@ -105,7 +105,7 @@ public class CommandCoordinatorUtil {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
         return coco.createTask(taskId,
@@ -127,7 +127,7 @@ public class CommandCoordinatorUtil {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return coco.concreteCreateTask(taskId,
                 command,
                 asyncTaskCreationInfo,
@@ -161,7 +161,7 @@ public class CommandCoordinatorUtil {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return coco.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
@@ -174,7 +174,7 @@ public class CommandCoordinatorUtil {
     public static AsyncTask createAsyncTask(
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return coco.createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
     }
 
@@ -282,7 +282,7 @@ public class CommandCoordinatorUtil {
      * @param childActionType The action type of the child command
      * @param status The status of the child command, can be null
      */
-    public static List<Guid> getChildCommandIds(Guid commandId, VdcActionType childActionType, CommandStatus status) {
+    public static List<Guid> getChildCommandIds(Guid commandId, ActionType childActionType, CommandStatus status) {
         return coco.getChildCommandIds(commandId, childActionType, status);
     }
 
@@ -398,7 +398,7 @@ public class CommandCoordinatorUtil {
      * @param cmdContext The command context for the command
      * @return The future object for the command submitted to the thread pool
      */
-    public static Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
+    public static Future<VdcReturnValueBase> executeAsyncCommand(ActionType actionType,
                                                                  VdcActionParametersBase parameters,
                                                                  CommandContext cmdContext) {
         return coco.executeAsyncCommand(actionType, parameters, cmdContext);

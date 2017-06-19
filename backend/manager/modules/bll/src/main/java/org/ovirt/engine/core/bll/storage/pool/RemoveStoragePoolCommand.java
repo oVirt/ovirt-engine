@@ -16,10 +16,10 @@ import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -278,7 +278,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             // Compensation context is not passed, as we do not want to compensate in case of failure
             // in detach of one of storage domains
             if (!Backend.getInstance()
-                    .runInternalAction(VdcActionType.DetachStorageDomainFromPool,
+                    .runInternalAction(ActionType.DetachStorageDomainFromPool,
                             tempVar,
                             cloneContext().withoutCompensationContext().withoutExecutionContext())
                     .getSucceeded()) {
@@ -289,7 +289,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             tempVar.setDestroyingPool(true);
             tempVar.setDoFormat(true);
             tempVar.setVdsId(vds.getId());
-            if (!runInternalAction(VdcActionType.RemoveStorageDomain, tempVar, cloneContext().withoutLock().withoutExecutionContext())
+            if (!runInternalAction(ActionType.RemoveStorageDomain, tempVar, cloneContext().withoutLock().withoutExecutionContext())
                     .getSucceeded()) {
                 return false;
             }

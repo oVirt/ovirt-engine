@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -126,7 +126,7 @@ public class GuideModel<T> extends EntityModel<T> {
     protected void activateHostsAfterClusterChange(
             final String searchStr,
             final List<VdcActionParametersBase> activateVdsParameterList) {
-        Frontend.getInstance().runMultipleAction(VdcActionType.ActivateVds, activateVdsParameterList,
+        Frontend.getInstance().runMultipleAction(ActionType.ActivateVds, activateVdsParameterList,
                 result -> {
                     Timer timer = new Timer() {
                         public void run() {

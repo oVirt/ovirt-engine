@@ -10,10 +10,10 @@ import org.ovirt.engine.core.bll.snapshots.CreateSnapshotFromTemplateCommand;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -81,10 +81,10 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
             p.setParentParameters(getParameters());
             p.setParentCommand(getActionType());
             p.setEndProcedure(VdcActionParametersBase.EndProcedure.COMMAND_MANAGED);
-            runInternalAction(VdcActionType.CopyImageGroupWithData, p);
+            runInternalAction(ActionType.CopyImageGroupWithData, p);
             return true;
         } else {
-            Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
+            Guid taskId = persistAsyncTaskPlaceHolder(ActionType.AddVmFromTemplate);
             VDSReturnValue vdsReturnValue;
             try {
                 vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
@@ -107,7 +107,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                 getTaskIdList().add(
                         createTask(taskId,
                                 vdsReturnValue.getCreationInfo(),
-                                VdcActionType.AddVmFromTemplate,
+                                ActionType.AddVmFromTemplate,
                                 VdcObjectType.Storage,
                                 getParameters().getStorageDomainId(),
                                 getDestinationStorageDomainId()));

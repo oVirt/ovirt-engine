@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -49,7 +49,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         final VDS host = model.getSelectedItem();
         VdsActionParameters parameters = new VdsActionParameters(host.getId());
         parameters.setCorrelationId(getCorrelationId());
-        Frontend.getInstance().runAction(VdcActionType.ActivateVds, parameters,
+        Frontend.getInstance().runAction(ActionType.ActivateVds, parameters,
                 result -> {
                     VdcReturnValueBase returnValue = result.getReturnValue();
                     context.activateVdsReturnValue = returnValue;
@@ -128,7 +128,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             StorageServerConnectionParametersBase parameters =
                     new StorageServerConnectionParametersBase(connection, context.host.getId(), false);
             parameters.setCorrelationId(getCorrelationId());
-            Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection,
+            Frontend.getInstance().runAction(ActionType.AddStorageServerConnection,
                     parameters,
                     result -> {
 
@@ -165,7 +165,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             parameters.setVdsId(context.host.getId());
             parameters.setCorrelationId(getCorrelationId());
 
-            Frontend.getInstance().runAction(VdcActionType.AddLocalStorageDomain, parameters,
+            Frontend.getInstance().runAction(ActionType.AddLocalStorageDomain, parameters,
                     result -> {
 
                         VdcReturnValueBase returnValue1 = result.getReturnValue();
@@ -184,7 +184,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             StorageServerConnectionParametersBase parameter =
                     new StorageServerConnectionParametersBase(context.connection, context.host.getId(), false);
             parameter.setCorrelationId(getCorrelationId());
-            Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
+            Frontend.getInstance().runAction(ActionType.DisconnectStorageServerConnection,
                     parameter,
                     result -> {
 

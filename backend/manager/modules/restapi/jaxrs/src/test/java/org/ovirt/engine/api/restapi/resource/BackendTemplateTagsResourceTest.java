@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetTagsByTemplateIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -11,7 +11,7 @@ public class BackendTemplateTagsResourceTest extends AbstractBackendAssignedTags
         parentIdName = "TemplateId";
         queryType = VdcQueryType.GetTagsByTemplateId;
         queryParams = GetTagsByTemplateIdParameters.class;
-        attachAction = VdcActionType.AttachTemplatesToTag;
+        attachAction = ActionType.AttachTemplatesToTag;
         attachParams = AttachEntityToTagParameters.class;
     }
 }

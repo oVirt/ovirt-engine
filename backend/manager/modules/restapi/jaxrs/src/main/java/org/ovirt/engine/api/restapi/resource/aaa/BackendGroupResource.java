@@ -12,8 +12,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendGroupTagsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -71,6 +71,6 @@ public class BackendGroupResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveGroup, new IdParameters(guid));
+        return performAction(ActionType.RemoveGroup, new IdParameters(guid));
     }
 }

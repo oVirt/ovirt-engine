@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.resource.AffinityLabelHostResource;
 import org.ovirt.engine.api.resource.AffinityLabelHostsResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -43,7 +43,7 @@ public class BackendAffinityLabelHostsResource
         // so we ignore the result and return a link to the added host:
         LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
         try {
-            doAction(VdcActionType.UpdateLabel, updateParams);
+            doAction(ActionType.UpdateLabel, updateParams);
         }
         catch (BackendFailureException exception) {
             handleError(exception, false);

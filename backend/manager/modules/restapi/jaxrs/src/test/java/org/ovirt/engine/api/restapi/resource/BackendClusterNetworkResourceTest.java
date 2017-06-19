@@ -11,9 +11,9 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkUsage;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -66,7 +66,7 @@ public class BackendClusterNetworkResourceTest
         setUpEntityQueryExpectations(1, false, false, false, false);
         setUpEntityQueryExpectations(1, true, true, true, true);
         setUpClusterExpectations(GUIDS[1]);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkOnCluster,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateNetworkOnCluster,
                                            NetworkClusterParameters.class,
                                            new String[] {},
                                            new Object[] {},
@@ -99,7 +99,7 @@ public class BackendClusterNetworkResourceTest
         setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachNetworkToCluster,
+                ActionType.DetachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
                 new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },
@@ -125,7 +125,7 @@ public class BackendClusterNetworkResourceTest
         setUpEntityQueryExpectations(2, false, false, false, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachNetworkToCluster,
+                ActionType.DetachNetworkToCluster,
                 AttachNetworkToClusterParameter.class,
                 new String[] { "ClusterId" },
                 new Object[] { CLUSTER_ID },

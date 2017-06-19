@@ -28,10 +28,10 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -325,7 +325,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
     private void removeCinderDisks(List<CinderDisk> cinderDisks) {
         RemoveAllVmCinderDisksParameters removeParam = new RemoveAllVmCinderDisksParameters(getVmTemplateId(), cinderDisks);
         Future<VdcReturnValueBase> future =
-                CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveAllVmCinderDisks,
+                CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveAllVmCinderDisks,
                         withRootCommandInfo(removeParam),
                         cloneContextAndDetachFromParent());
         try {
@@ -359,7 +359,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         getParameters().setParentCommand(getActionType());
         getParameters().setParentParameters(getParameters());
         VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
-                VdcActionType.RemoveAllVmTemplateImageTemplates,
+                ActionType.RemoveAllVmTemplateImageTemplates,
                 getParameters());
 
         if (!vdcReturnValue.getSucceeded()) {

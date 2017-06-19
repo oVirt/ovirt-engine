@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
@@ -54,7 +54,7 @@ public class JsonObjectSerializerTest {
     @Test
     public void serializeParametersMap() {
         Map<String, Serializable> data = new HashMap<>();
-        data.put("NEXT_COMMAND_TYPE", VdcActionType.DestroyImage);
+        data.put("NEXT_COMMAND_TYPE", ActionType.DestroyImage);
         JsonObjectSerializer serializer = new JsonObjectSerializer();
         assertTrue(serializer.serialize(data).length() > 0);
     }

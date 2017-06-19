@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -70,7 +70,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 new Object[] { GUIDS[2] },
                 getStorageDomains().get(0));
         Disk model = getModel();
-        setUpCreationExpectations(VdcActionType.AddDisk,
+        setUpCreationExpectations(ActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {"StorageDomainId"},
                 new Object[] {GUIDS[2]},
@@ -113,7 +113,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 new String[] {},
                 new Object[] {},
                 getStorageDomains());
-        setUpCreationExpectations(VdcActionType.AddDisk,
+        setUpCreationExpectations(ActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {},
                 new Object[] {},

@@ -17,11 +17,11 @@ import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
@@ -146,10 +146,10 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         boolean shouldBeFenced = getVds().shouldVdsBeFenced();
         VdcReturnValueBase restartVdsResult = null;
         if (shouldBeFenced) {
-            getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
+            getParameters().setParentCommand(ActionType.VdsNotRespondingTreatment);
             VdcReturnValueBase retVal;
 
-            retVal = runInternalAction(VdcActionType.SshSoftFencing,
+            retVal = runInternalAction(ActionType.SshSoftFencing,
                     getParameters(),
                     cloneContext().withoutExecutionContext());
             if (retVal.getSucceeded()) {
@@ -166,7 +166,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 return;
             }
 
-            retVal = runInternalAction(VdcActionType.VdsKdumpDetection,
+            retVal = runInternalAction(ActionType.VdsKdumpDetection,
                     getParameters(),
                     cloneContext().withoutExecutionContext());
             if (retVal.getSucceeded()) {
@@ -180,7 +180,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             getParameters().setFencingPolicy(fencingPolicy);
 
             waitUntilSkipFencingIfSDActiveAllowed(fencingPolicy.isSkipFencingIfSDActive());
-            restartVdsResult = runInternalAction(VdcActionType.RestartVds,
+            restartVdsResult = runInternalAction(ActionType.RestartVds,
                     getParameters(), cloneContext().withoutExecutionContext());
         } else {
             setCommandShouldBeLogged(false);
@@ -208,7 +208,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         // So ExecutionContext is cloned here manually to prevent a bug (BZ1145099).
         commandContext.withExecutionContext(new ExecutionContext(commandContext.getExecutionContext()));
         runInternalAction(
-                VdcActionType.SetStoragePoolStatus,
+                ActionType.SetStoragePoolStatus,
                 new SetStoragePoolStatusParameters(getVds().getStoragePoolId(),
                         StoragePoolStatus.NotOperational,
                         AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM), commandContext);

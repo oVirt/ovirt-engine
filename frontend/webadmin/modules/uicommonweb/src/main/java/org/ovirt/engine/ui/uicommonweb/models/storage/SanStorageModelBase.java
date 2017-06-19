@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -307,7 +307,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             return;
         }
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
@@ -325,7 +325,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             connection.setConnection(model.getAddress());
             connection.setPort(String.valueOf(model.getPort()));
 
-            actionTypes.add(VdcActionType.ConnectStorageToVds);
+            actionTypes.add(ActionType.ConnectStorageToVds);
             parameters.add(new StorageServerConnectionParametersBase(connection, host.getId(), false));
             callbacks.add(loginCallback);
         }

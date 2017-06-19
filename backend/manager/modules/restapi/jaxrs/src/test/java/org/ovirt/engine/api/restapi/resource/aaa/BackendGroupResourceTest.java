@@ -5,8 +5,8 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -57,7 +57,7 @@ public class BackendGroupResourceTest
     public void testRemove() throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
-                VdcActionType.RemoveGroup,
+                ActionType.RemoveGroup,
                 IdParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -100,7 +100,7 @@ public class BackendGroupResourceTest
     private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(
-                VdcActionType.RemoveGroup,
+                ActionType.RemoveGroup,
                 IdParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

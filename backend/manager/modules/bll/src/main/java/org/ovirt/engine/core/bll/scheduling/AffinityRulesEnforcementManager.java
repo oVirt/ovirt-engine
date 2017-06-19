@@ -13,8 +13,8 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.arem.AffinityRulesEnforcer;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
@@ -95,7 +95,7 @@ public class AffinityRulesEnforcementManager implements BackendService {
 
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_AFFINITY_ENFORCEMENT));
 
-        backend.runInternalAction(VdcActionType.BalanceVm,
+        backend.runInternalAction(ActionType.BalanceVm,
                 parameters,
                 ExecutionHandler.createInternalJobContext());
     }

@@ -10,10 +10,10 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -84,7 +84,7 @@ public class BackendTagResourceTest
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateTag,
                                            TagsOperationParameters.class,
                                            new String[] { "Tag.TagName", "Tag.ParentId" },
                                            new Object[] { NAMES[0], PARENT_GUID },
@@ -116,7 +116,7 @@ public class BackendTagResourceTest
 
     protected void doTestMove(Tag model, int index) throws Exception {
         model.getParent().setId(NEW_PARENT_ID.toString());
-        setUpActionExpectations(VdcActionType.MoveTag,
+        setUpActionExpectations(ActionType.MoveTag,
                                 MoveTagParameters.class,
                                 new String[] { "TagId", "NewParentId" },
                 new Object[] { GUIDS[index], NEW_PARENT_ID },
@@ -128,7 +128,7 @@ public class BackendTagResourceTest
 
         setUpGetEntityExpectations(index);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateTag,
                                            TagsOperationParameters.class,
                                            new String[] { "Tag.TagName", "Tag.ParentId" },
                 new Object[] { NAMES[index], NEW_PARENT_ID },
@@ -154,7 +154,7 @@ public class BackendTagResourceTest
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateTag,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateTag,
                                            TagsOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
@@ -188,7 +188,7 @@ public class BackendTagResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExcpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveTag,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveTag,
                 TagsActionParametersBase.class,
                 new String[] { "TagId" },
                 new Object[] { GUIDS[0] },
@@ -225,7 +225,7 @@ public class BackendTagResourceTest
 
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExcpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveTag,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveTag,
                 TagsActionParametersBase.class,
                 new String[] { "TagId" },
                 new Object[] { GUIDS[0] },

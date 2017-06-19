@@ -13,9 +13,9 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -146,7 +146,7 @@ public class CreateCinderSnapshotCommand<T extends CreateCinderSnapshotParameter
                 new RemoveCinderDiskVolumeParameters(diskVolumeVolume);
 
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.RemoveCinderDiskVolume,
+                ActionType.RemoveCinderDiskVolume,
                 removeDiskVolumeParam,
                 null);
         try {

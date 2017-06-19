@@ -7,7 +7,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -258,7 +258,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private void updateInstanceImages() {
         AsyncDataProvider.getInstance().getVmDiskList(asyncQuery(disks -> {
             List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
-            boolean isChangeable = vm == null || VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk);
+            boolean isChangeable = vm == null || VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateVmDisk);
 
             Collections.sort(disks, new DiskByDiskAliasComparator());
             for (Disk disk : disks) {

@@ -15,8 +15,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -141,7 +141,7 @@ public class BackendInstanceTypeResourceTest
         setUpUpdateExpectations();
         setUpGetBallooningExpectations();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
                 new String[]{},
                 new Object[]{},
@@ -163,7 +163,7 @@ public class BackendInstanceTypeResourceTest
 
     protected void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
                 new String[]{},
                 new Object[]{},
@@ -225,7 +225,7 @@ public class BackendInstanceTypeResourceTest
         setUpGetEntityExpectations(1);
         setUpGetBallooningExpectations();
         setUriInfo(setUpActionExpectations(
-                VdcActionType.RemoveVmTemplate,
+                ActionType.RemoveVmTemplate,
                 VmTemplateManagementParameters.class,
                 new String[] { "VmTemplateId" },
                 new Object[] { GUIDS[0] },

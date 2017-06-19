@@ -7,9 +7,9 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkAttachmentParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -74,7 +74,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     public void testUpdate() throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkAttachment,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateNetworkAttachment,
                 NetworkAttachmentParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -112,7 +112,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveNetworkAttachment,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveNetworkAttachment,
             RemoveNetworkAttachmentParameters.class,
             new String[] {},
             new Object[] {},
@@ -134,7 +134,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveNetworkAttachment,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveNetworkAttachment,
             RemoveNetworkAttachmentParameters.class,
             new String[] {},
             new Object[] {},
@@ -225,7 +225,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateNetworkAttachment,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateNetworkAttachment,
                 NetworkAttachmentParameters.class,
                 new String[] {},
                 new Object[] {},

@@ -9,12 +9,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -340,7 +340,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         VM vm = getEntity();
         if (vm != null) {
-            Frontend.getInstance().runAction(VdcActionType.RemoveSnapshot,
+            Frontend.getInstance().runAction(ActionType.RemoveSnapshot,
                     new RemoveSnapshotParameters(snapshot.getId(), vm.getId()), null, null);
         }
 
@@ -352,7 +352,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     private void undo() {
         VM vm = getEntity();
         if (vm != null) {
-            Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
+            Frontend.getInstance().runAction(ActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.UNDO),
                     null,
                     null);
@@ -362,7 +362,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     private void commit() {
         VM vm = getEntity();
         if (vm != null) {
-            Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
+            Frontend.getInstance().runAction(ActionType.RestoreAllSnapshots,
                     new RestoreAllSnapshotsParameters(vm.getId(), SnapshotActionEnum.COMMIT),
                     null,
                     null);
@@ -521,7 +521,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             model.startProgress();
         }
 
-        Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(
+        Frontend.getInstance().runAction(ActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(
             vm.getId(), snapshot.getId(), memory, disks),
                 result -> {
                     if (model != null) {
@@ -661,7 +661,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                         getSelectedItem().getId());
         BuilderExecutor.build(model, parameters, new UnitToAddVmTemplateParametersBuilder());
         model.startProgress();
-        Frontend.getInstance().runAction(VdcActionType.AddVmTemplateFromSnapshot,
+        Frontend.getInstance().runAction(ActionType.AddVmTemplateFromSnapshot,
                 parameters,
                 result -> {
 
@@ -767,7 +767,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.AddVmFromSnapshot, parameters,
+        Frontend.getInstance().runAction(ActionType.AddVmFromSnapshot, parameters,
                 result -> {
 
                     VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) result.getState();
@@ -809,7 +809,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isVmConfigurationBroken = snapshot != null && snapshot.isVmConfigurationBroken();
 
                 getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
-                && VdcActionUtils.canExecute(vmList, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
+                && VdcActionUtils.canExecute(vmList, VM.class, ActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCustomPreviewCommand().setIsExecutionAllowed(getPreviewCommand().getIsExecutionAllowed());

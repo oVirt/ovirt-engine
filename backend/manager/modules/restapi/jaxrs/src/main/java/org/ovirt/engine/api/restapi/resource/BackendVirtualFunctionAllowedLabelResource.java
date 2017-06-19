@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.NetworkLabelResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 
 public class BackendVirtualFunctionAllowedLabelResource
@@ -26,7 +26,7 @@ public class BackendVirtualFunctionAllowedLabelResource
 
     @Override
     protected Response performRemove() {
-        return performAction(VdcActionType.RemoveVfsConfigLabel,
+        return performAction(ActionType.RemoveVfsConfigLabel,
                 new VfsConfigLabelParameters(parent.getHostNicId(), id));
     }
 }

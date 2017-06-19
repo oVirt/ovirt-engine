@@ -7,8 +7,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.UnmanagedNetwork;
 import org.ovirt.engine.api.resource.UnmanagedNetworkResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.UnmanagedNetworkParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +35,7 @@ public class BackendUnmanagedNetworkResource extends AbstractBackendSubResource<
 
         HostSetupNetworksParameters parameters = new HostSetupNetworksParameters(hostId);
         parameters.setRemovedUnmanagedNetworks(Collections.singleton(id));
-        return performAction(VdcActionType.HostSetupNetworks, parameters);
+        return performAction(ActionType.HostSetupNetworks, parameters);
     }
 
     @Override

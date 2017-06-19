@@ -33,8 +33,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator.NetworkConfiguratorException;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -170,7 +170,7 @@ public class NetworkConfiguratorTest {
         final NetworkConfigurator spiedUnderTest = spy(underTest);
         doReturn(backend).when(spiedUnderTest).getBackend();
         when(backend.runInternalAction(
-                eq(VdcActionType.HostSetupNetworks),
+                eq(ActionType.HostSetupNetworks),
                 any(HostSetupNetworksParameters.class),
                 any(CommandContext.class)))
                 .thenReturn(createReturnValue(false));
@@ -187,12 +187,12 @@ public class NetworkConfiguratorTest {
         final NetworkConfigurator spiedUnderTest = spy(underTest);
         doReturn(backend).when(spiedUnderTest).getBackend();
         when(backend.runInternalAction(
-                eq(VdcActionType.HostSetupNetworks),
+                eq(ActionType.HostSetupNetworks),
                 any(HostSetupNetworksParameters.class),
                 any(CommandContext.class)))
                 .thenReturn(createReturnValue(true));
         when(backend.runInternalAction(
-                eq(VdcActionType.CommitNetworkChanges),
+                eq(ActionType.CommitNetworkChanges),
                 any(VdsActionParameters.class),
                 any(CommandContext.class)))
                 .thenReturn(createReturnValue(false));

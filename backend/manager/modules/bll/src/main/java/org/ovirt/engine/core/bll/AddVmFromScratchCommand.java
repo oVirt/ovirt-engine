@@ -10,10 +10,10 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -97,8 +97,8 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
     }
 
     @Override
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.AddImageFromScratch;
+    protected ActionType getChildActionType() {
+        return ActionType.AddImageFromScratch;
     }
 
     @Override

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -15,7 +15,7 @@ public class EditDiskProfileModel extends DiskProfileBaseModel {
         super(sourceModel,
                 dataCenterId,
                 profile.getQosId(),
-                VdcActionType.UpdateDiskProfile);
+                ActionType.UpdateDiskProfile);
         setTitle(ConstantsManager.getInstance().getConstants().diskProfileTitle());
         setHelpTag(HelpTag.edit_disk_profile);
         setHashName("edit_disk_profile"); //$NON-NLS-1$

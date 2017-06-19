@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateBrickParameters;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
@@ -142,7 +142,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
 
     private void syncStorageDevices() {
         Frontend.getInstance()
-                .runAction(VdcActionType.SyncStorageDevices,
+                .runAction(ActionType.SyncStorageDevices,
                         new SyncGlusterStorageDevicesParameter(getEntity().getId()),
                         null,
                         true,
@@ -219,7 +219,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
                         lvModel.getStripeSize().getEntity(),
                         selectedDevices);
 
-        Frontend.getInstance().runAction(VdcActionType.CreateBrick, parameters,
+        Frontend.getInstance().runAction(ActionType.CreateBrick, parameters,
                 result -> postCreateBrick(result.getReturnValue()), this);
 
     }

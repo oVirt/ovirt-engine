@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.ProfileParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
@@ -26,8 +26,8 @@ public abstract class DiskProfileBaseModel extends ProfileBaseModel<DiskProfile,
     public DiskProfileBaseModel(IModel sourceModel,
             Guid dcId,
             Guid defaultQosId,
-            VdcActionType vdcActionType) {
-        super(sourceModel, dcId, defaultQosId, vdcActionType);
+            ActionType actionType) {
+        super(sourceModel, dcId, defaultQosId, actionType);
     }
 
     @Override

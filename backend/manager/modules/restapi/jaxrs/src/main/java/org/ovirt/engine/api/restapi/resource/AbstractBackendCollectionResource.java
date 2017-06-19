@@ -15,8 +15,8 @@ import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.QueryHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -127,14 +127,14 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return id;
     }
 
-    protected final <T> Response performCreate(VdcActionType task,
+    protected final <T> Response performCreate(ActionType task,
             VdcActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
             boolean block) {
         return performCreate(task, taskParams, entityResolver, block, null);
     }
 
-    protected final <T> Response performCreate(VdcActionType task,
+    protected final <T> Response performCreate(ActionType task,
             VdcActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
             boolean block,
@@ -147,13 +147,13 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return fetchCreatedEntity(entityResolver, block, suggestedParentType, createResult);
     }
 
-    protected final <T> Response performCreate(VdcActionType task,
+    protected final <T> Response performCreate(ActionType task,
             VdcActionParametersBase taskParams,
             IResolver<T, Q> entityResolver) {
         return performCreate(task, taskParams, entityResolver, expectBlocking());
     }
 
-    protected final <T> Response performCreate(VdcActionType task,
+    protected final <T> Response performCreate(ActionType task,
             VdcActionParametersBase taskParams,
             IResolver<T, Q> entityResolver,
             Class<? extends BaseResource> suggestedParentType) {
@@ -224,7 +224,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return response;
     }
 
-    protected VdcReturnValueBase doCreateEntity(VdcActionType task, VdcActionParametersBase taskParams) {
+    protected VdcReturnValueBase doCreateEntity(ActionType task, VdcActionParametersBase taskParams) {
         VdcReturnValueBase createResult;
         try {
             createResult = doAction(task, taskParams);

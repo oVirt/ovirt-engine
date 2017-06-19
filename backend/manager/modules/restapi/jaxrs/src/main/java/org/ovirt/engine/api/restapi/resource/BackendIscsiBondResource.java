@@ -6,9 +6,9 @@ import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.api.resource.IscsiBondResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -29,7 +29,7 @@ public class BackendIscsiBondResource
     public IscsiBond update(IscsiBond iscsiBond) {
         return performUpdate(iscsiBond,
                 new QueryIdResolver<>(VdcQueryType.GetIscsiBondById, IdQueryParameters.class),
-                VdcActionType.EditIscsiBond,
+                ActionType.EditIscsiBond,
                 (incoming, entity) -> new EditIscsiBondParameters(
                         getMapper(modelType, org.ovirt.engine.core.common.businessentities.IscsiBond.class).map(incoming, entity)
                 ));
@@ -48,6 +48,6 @@ public class BackendIscsiBondResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveIscsiBond, new RemoveIscsiBondParameters(guid));
+        return performAction(ActionType.RemoveIscsiBond, new RemoveIscsiBondParameters(guid));
     }
 }

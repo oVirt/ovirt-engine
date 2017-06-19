@@ -20,11 +20,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
@@ -119,7 +119,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         }
         else {
             // execute StopVds action
-            returnValue = executeVdsFenceAction(vdsId, sessionId, VdcActionType.StopVds);
+            returnValue = executeVdsFenceAction(vdsId, sessionId, ActionType.StopVds);
         }
         if (wasSkippedDueToPolicy(returnValue)) {
             // fence execution was skipped due to fencing policy, host should be alive
@@ -133,7 +133,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
             executeFenceVdsManuallyAction(vdsId, sessionId);
 
             // execute StartVds action
-            returnValue = executeVdsFenceAction(vdsId, sessionId, VdcActionType.StartVds);
+            returnValue = executeVdsFenceAction(vdsId, sessionId, ActionType.StartVds);
             setSucceeded(returnValue.getSucceeded());
         } else {
             handleError();
@@ -152,21 +152,21 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         fenceVdsManuallyParams.setStoragePoolId(getVds().getStoragePoolId());
         fenceVdsManuallyParams.setVdsId(vdsId);
         fenceVdsManuallyParams.setSessionId(sessionId);
-        fenceVdsManuallyParams.setParentCommand(VdcActionType.RestartVds);
+        fenceVdsManuallyParams.setParentCommand(ActionType.RestartVds);
 
         // if fencing succeeded, call to reset irs in order to try select new spm
-        runInternalAction(VdcActionType.FenceVdsManualy, fenceVdsManuallyParams, getContext());
+        runInternalAction(ActionType.FenceVdsManualy, fenceVdsManuallyParams, getContext());
     }
 
     private VdcReturnValueBase executeVdsFenceAction(final Guid vdsId,
                         String sessionId,
-                        VdcActionType action) {
+                        ActionType action) {
         FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId);
-        params.setParentCommand(VdcActionType.RestartVds);
+        params.setParentCommand(ActionType.RestartVds);
         params.setSessionId(sessionId);
         params.setFencingPolicy(getParameters().getFencingPolicy());
         // If Host was in Maintenance, and was restarted manually , it should preserve its status after reboot
-        if (getParameters().getParentCommand() != VdcActionType.VdsNotRespondingTreatment && getVds().getStatus() == VDSStatus.Maintenance) {
+        if (getParameters().getParentCommand() != ActionType.VdsNotRespondingTreatment && getVds().getStatus() == VDSStatus.Maintenance) {
             params.setChangeHostToMaintenanceOnStart(true);
         }
         return runInternalAction(action, params, cloneContext().withoutExecutionContext());

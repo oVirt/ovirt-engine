@@ -36,12 +36,12 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -233,7 +233,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                             continue;
                         }
                         VdcReturnValueBase vdcReturnValue =
-                                runInternalActionWithTasksContext(VdcActionType.TryBackToSnapshot,
+                                runInternalActionWithTasksContext(ActionType.TryBackToSnapshot,
                                         buildTryBackToSnapshotParameters(newActiveSnapshotId, image));
 
                         if (vdcReturnValue.getSucceeded()) {
@@ -257,7 +257,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 private ImagesContainterParametersBase buildTryBackToSnapshotParameters(
                         final Guid newActiveSnapshotId, DiskImage image) {
                     ImagesContainterParametersBase params = new ImagesContainterParametersBase(image.getImageId());
-                    params.setParentCommand(VdcActionType.TryBackToAllSnapshotsOfVm);
+                    params.setParentCommand(ActionType.TryBackToAllSnapshotsOfVm);
                     params.setVmSnapshotId(newActiveSnapshotId);
                     params.setEntityInfo(getParameters().getEntityInfo());
                     params.setParentParameters(getParameters());
@@ -311,7 +311,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         }
 
         VdcReturnValueBase result = runInternalAction(
-                VdcActionType.UpdateVm,
+                ActionType.UpdateVm,
                 updateParams,
                 context);
 
@@ -332,7 +332,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         for (CinderDisk disk : cinderDisks) {
             ImagesContainterParametersBase params = buildCinderChildCommandParameters(disk, newSnapshotId);
             VdcReturnValueBase vdcReturnValueBase = runInternalAction(
-                    VdcActionType.TryBackToCinderSnapshot,
+                    ActionType.TryBackToCinderSnapshot,
                     params,
                     cloneContextAndDetachFromParent());
             if (!vdcReturnValueBase.getSucceeded()) {
@@ -509,8 +509,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     @Override
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.TryBackToSnapshot;
+    protected ActionType getChildActionType() {
+        return ActionType.TryBackToSnapshot;
     }
 
     @Override

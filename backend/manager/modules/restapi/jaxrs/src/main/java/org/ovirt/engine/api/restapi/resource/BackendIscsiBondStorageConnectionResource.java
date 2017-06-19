@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.StorageConnection;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -43,6 +43,6 @@ public class BackendIscsiBondStorageConnectionResource extends BackendStorageSer
         get();
         IscsiBond iscsiBond = parent.getIscsiBond();
         iscsiBond.getStorageConnectionIds().remove(id);
-        return performAction(VdcActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
+        return performAction(ActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
     }
 }

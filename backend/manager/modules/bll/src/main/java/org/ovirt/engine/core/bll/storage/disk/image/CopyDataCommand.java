@@ -12,10 +12,10 @@ import org.ovirt.engine.core.bll.storage.EntityPollingCommand;
 import org.ovirt.engine.core.bll.storage.StorageJobCommand;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CopyDataCommandParameters;
 import org.ovirt.engine.core.common.action.FenceVolumeJobCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.HostJobInfo.HostJobStatus;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -93,7 +93,7 @@ public class CopyDataCommand<T extends CopyDataCommandParameters> extends
             p.setParentParameters(getParameters());
             p.setStoragePoolId(getParameters().getStoragePoolId());
             p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-            runInternalActionWithTasksContext(VdcActionType.FenceVolumeJob, p);
+            runInternalActionWithTasksContext(ActionType.FenceVolumeJob, p);
         }
     }
 

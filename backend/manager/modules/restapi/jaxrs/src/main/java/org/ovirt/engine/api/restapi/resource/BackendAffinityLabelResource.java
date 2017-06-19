@@ -6,10 +6,10 @@ import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.resource.AffinityLabelHostsResource;
 import org.ovirt.engine.api.resource.AffinityLabelResource;
 import org.ovirt.engine.api.resource.AffinityLabelVmsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.action.LabelActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -36,7 +36,7 @@ public class BackendAffinityLabelResource extends AbstractBackendActionableResou
                 entity,
                 map(entity),
                 labelResolver,
-                VdcActionType.UpdateLabel,
+                ActionType.UpdateLabel,
                 new UpdateParametersProvider());
 
         return label;
@@ -44,7 +44,7 @@ public class BackendAffinityLabelResource extends AbstractBackendActionableResou
 
     @Override
     public Response remove() {
-        return performAction(VdcActionType.RemoveLabel, new LabelActionParametersBase(guid));
+        return performAction(ActionType.RemoveLabel, new LabelActionParametersBase(guid));
     }
 
     protected static class UpdateParametersProvider implements ParametersProvider<AffinityLabel, Label> {

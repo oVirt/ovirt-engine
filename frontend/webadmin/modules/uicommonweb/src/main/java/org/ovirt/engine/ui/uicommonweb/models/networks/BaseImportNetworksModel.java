@@ -10,11 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -250,7 +250,7 @@ public class BaseImportNetworksModel extends Model {
             });
         }
 
-        Frontend.getInstance().runMultipleActions(VdcActionType.AddNetwork, multipleActionParameters, callbacks);
+        Frontend.getInstance().runMultipleActions(ActionType.AddNetwork, multipleActionParameters, callbacks);
         cancel();
     }
 
@@ -276,7 +276,7 @@ public class BaseImportNetworksModel extends Model {
         }
 
         Frontend.getInstance().runAction(
-                VdcActionType.ManageNetworkClusters,
+                ActionType.ManageNetworkClusters,
                 new ManageNetworkClustersParameters(networkAttachments),
                 result -> addVnicProfile(network, publicUse));
     }
@@ -287,7 +287,7 @@ public class BaseImportNetworksModel extends Model {
         vnicProfile.setNetworkId(network.getId());
         AddVnicProfileParameters parameters = new AddVnicProfileParameters(vnicProfile, true);
         parameters.setPublicUse(publicUse);
-        Frontend.getInstance().runAction(VdcActionType.AddVnicProfile, parameters,
+        Frontend.getInstance().runAction(ActionType.AddVnicProfile, parameters,
                 result -> sourceListModel.getSearchCommand().execute());
     }
 

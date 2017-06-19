@@ -18,7 +18,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -201,7 +201,7 @@ public final class AsyncTaskManager {
         return retVal;
     }
 
-    public synchronized boolean hasTasksForEntityIdAndAction(Guid id, VdcActionType type) {
+    public synchronized boolean hasTasksForEntityIdAndAction(Guid id, ActionType type) {
         if (_tasks != null) {
             for (SPMTask task : _tasks.values()) {
                 if (isCurrentTaskLookedFor(id, task)
@@ -284,7 +284,7 @@ public final class AsyncTaskManager {
                 task.getTaskId(),
                 task.getActionType());
         task.getTaskParameters().setTaskGroupSuccess(false);
-        if (task.getActionType() == VdcActionType.Unknown) {
+        if (task.getActionType() == ActionType.Unknown) {
             removeTaskFromDbByTaskId(task.getTaskId());
             log.info(
                     "Not calling endAction for partially submitted task and AsyncTaskType '{}': Task '{}' Parent Command '{}'",
@@ -544,8 +544,8 @@ public final class AsyncTaskManager {
                 addTaskToMap(task.getVdsmTaskId(), task);
             } else {
                 SPMTask existingTask = _tasks.get(task.getVdsmTaskId());
-                if (existingTask.getParameters().getDbAsyncTask().getActionType() == VdcActionType.Unknown
-                        && task.getParameters().getDbAsyncTask().getActionType() != VdcActionType.Unknown) {
+                if (existingTask.getParameters().getDbAsyncTask().getActionType() == ActionType.Unknown
+                        && task.getParameters().getDbAsyncTask().getActionType() != ActionType.Unknown) {
                     log.info(
                             "Task '{}' already exists with action type 'Unknown', now overriding it with action type '{}'",
                             task.getVdsmTaskId(),

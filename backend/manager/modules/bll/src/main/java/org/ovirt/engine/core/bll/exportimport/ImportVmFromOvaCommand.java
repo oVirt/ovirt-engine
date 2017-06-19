@@ -4,9 +4,9 @@ import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConvertOvaParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 
 @DisableInPrepareMode
@@ -24,7 +24,7 @@ public class ImportVmFromOvaCommand<T extends ImportVmFromOvaParameters> extends
     @Override
     protected void convert() {
         CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.ConvertOva,
+                ActionType.ConvertOva,
                 buildConvertOvaParameters(),
                 cloneContextAndDetachFromParent());
     }

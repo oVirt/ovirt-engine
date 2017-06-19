@@ -24,12 +24,12 @@ import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
@@ -138,7 +138,7 @@ public class BackendStorageDomainResourceTest
         setUpGetEntityExpectations(2, getEntity(0));
         setUpGetStorageServerConnectionExpectations(2);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateStorageDomain,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateStorageDomain,
                                            StorageDomainManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},
@@ -162,7 +162,7 @@ public class BackendStorageDomainResourceTest
         setUpGetEntityExpectations(1, getEntity(0));
         setUpGetStorageServerConnectionExpectations(1);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateStorageDomain,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateStorageDomain,
                                            StorageDomainManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},
@@ -209,7 +209,7 @@ public class BackendStorageDomainResourceTest
     public void testRemoveWithHostId() throws Exception {
         setUpGetEntityExpectations();
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStorageDomain,
+            ActionType.RemoveStorageDomain,
             RemoveStorageDomainParameters.class,
             new String[] { "StorageDomainId", "VdsId", "DoFormat" },
             new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
@@ -226,7 +226,7 @@ public class BackendStorageDomainResourceTest
     public void testRemoveWithFormat() throws Exception {
         setUpGetEntityExpectations();
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStorageDomain,
+            ActionType.RemoveStorageDomain,
             RemoveStorageDomainParameters.class,
             new String[] { "StorageDomainId", "VdsId", "DoFormat" },
             new Object[] { GUIDS[0], GUIDS[1], Boolean.TRUE },
@@ -246,7 +246,7 @@ public class BackendStorageDomainResourceTest
     public void testRemoveWithDestroy() throws Exception {
         setUpGetEntityExpectations();
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.ForceRemoveStorageDomain,
+            ActionType.ForceRemoveStorageDomain,
             StorageDomainParametersBase.class,
             new String[] { "StorageDomainId", "VdsId" },
             new Object[] { GUIDS[0], GUIDS[1] },
@@ -273,7 +273,7 @@ public class BackendStorageDomainResourceTest
             setUpVDStatic(1)
         );
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStorageDomain,
+            ActionType.RemoveStorageDomain,
             RemoveStorageDomainParameters.class,
             new String[] { "StorageDomainId", "VdsId", "DoFormat" },
             new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
@@ -299,7 +299,7 @@ public class BackendStorageDomainResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations();
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStorageDomain,
+            ActionType.RemoveStorageDomain,
             RemoveStorageDomainParameters.class,
             new String[] { "StorageDomainId", "VdsId", "DoFormat" },
             new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE },
@@ -371,7 +371,7 @@ public class BackendStorageDomainResourceTest
     public void testRefreshLunsSize() throws Exception {
         List<String> lunsArray = new ArrayList();
         lunsArray.add(GUIDS[2].toString());
-        setUriInfo(setUpActionExpectations(VdcActionType.RefreshLunsSize,
+        setUriInfo(setUpActionExpectations(ActionType.RefreshLunsSize,
                 ExtendSANStorageDomainParameters.class,
                 new String[]{"LunIds"},
                 new Object[]{lunsArray},
@@ -391,7 +391,7 @@ public class BackendStorageDomainResourceTest
         List<String> paramsLuns = new LinkedList<>();
         paramsLuns.add(GUIDS[2].toString());
         paramsLuns.add(GUIDS[3].toString());
-        setUriInfo(setUpActionExpectations(VdcActionType.ReduceSANStorageDomainDevices,
+        setUriInfo(setUpActionExpectations(ActionType.ReduceSANStorageDomainDevices,
                 ReduceSANStorageDomainDevicesCommandParameters.class,
                 new String[]{"DevicesToReduce", "StorageDomainId"},
                 new Object[]{paramsLuns, GUIDS[0]},

@@ -6,11 +6,11 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -33,8 +33,8 @@ public class UpdateOvfStoreForStorageDomainCommand<T extends StorageDomainParame
     protected void executeCommand() {
         StoragePoolParametersBase parameters =
                 new StoragePoolParametersBase(getStoragePoolId());
-        runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters, getContext());
-        runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain,
+        runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters, getContext());
+        runInternalActionWithTasksContext(ActionType.ProcessOvfUpdateForStorageDomain,
                 createProcessOvfUpdateForDomainParams());
         setSucceeded(true);
     }

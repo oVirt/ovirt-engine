@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
@@ -50,21 +50,21 @@ public class VfsConfigAction extends SyncUiAction {
             }
         }
 
-        UiAction updateAction = new UiVdcMultipleAction(VdcActionType.UpdateHostNicVfsConfig,
+        UiAction updateAction = new UiVdcMultipleAction(ActionType.UpdateHostNicVfsConfig,
                 updatedVfsConfigsParams,
                 getModel(), true, false);
 
         updateAction.
-                then(new UiVdcMultipleAction(VdcActionType.AddVfsConfigNetwork,
+                then(new UiVdcMultipleAction(ActionType.AddVfsConfigNetwork,
                         addedNetworksParams,
                         getModel())).
-                and(new UiVdcMultipleAction(VdcActionType.RemoveVfsConfigNetwork,
+                and(new UiVdcMultipleAction(ActionType.RemoveVfsConfigNetwork,
                         removedNetworksParams,
                         getModel())).
-                and(new UiVdcMultipleAction(VdcActionType.AddVfsConfigLabel,
+                and(new UiVdcMultipleAction(ActionType.AddVfsConfigLabel,
                         addedLabelsParams,
                         getModel())).
-                and(new UiVdcMultipleAction(VdcActionType.RemoveVfsConfigLabel,
+                and(new UiVdcMultipleAction(ActionType.RemoveVfsConfigLabel,
                         removedLabelsParams,
                         getModel())).
                 then(getNextAction());

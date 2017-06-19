@@ -36,9 +36,9 @@ import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.compat.Guid;
@@ -76,7 +76,7 @@ public class BackendGraphicsConsoleHelper {
         return devices.stream()
             .filter(device -> device.getGraphicsType().equals(graphicsType))
             .findFirst()
-            .map(device -> resource.performAction(VdcActionType.RemoveGraphicsAndVideoDevices, new GraphicsParameters(device)))
+            .map(device -> resource.performAction(ActionType.RemoveGraphicsAndVideoDevices, new GraphicsParameters(device)))
             .orElseThrow(() -> new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build()));
     }
 
@@ -102,7 +102,7 @@ public class BackendGraphicsConsoleHelper {
 
     public static Response setTicket(BackendResource resource, Action action, Guid vmId,
                                      org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType) {
-        final Response response = resource.performAction(VdcActionType.SetVmTicket,
+        final Response response = resource.performAction(ActionType.SetVmTicket,
                 new SetVmTicketParameters(vmId,
                         getTicketValue(action),
                         getTicketExpiry(action),

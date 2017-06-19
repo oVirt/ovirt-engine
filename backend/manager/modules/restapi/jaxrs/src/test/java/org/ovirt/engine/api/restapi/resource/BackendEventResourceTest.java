@@ -9,8 +9,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -27,7 +27,7 @@ public class BackendEventResourceTest extends AbstractBackendSubResourceTest<Eve
         setUpGetEntityExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveAuditLogById,
+                ActionType.RemoveAuditLogById,
                 RemoveAuditLogByIdParameters.class,
                 new String[] { "AuditLogId" },
                 new Object[] { LOG_IDS[0] },

@@ -4,8 +4,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,16 +14,16 @@ public class BackendVmNumaNodeResource
     extends AbstractBackendActionableResource<VirtualNumaNode, VmNumaNode>
         implements VmNumaNodeResource {
 
-    private VdcActionType updateType;
+    private ActionType updateType;
     private ParametersProvider<VirtualNumaNode, VmNumaNode> updateParametersProvider;
     private EntityIdResolver<Guid> entityResolver;
     private String[] requiredUpdateFields;
     private BackendVmNumaNodesResource collection;
-    private VdcActionType removeAction;
+    private ActionType removeAction;
 
     public BackendVmNumaNodeResource(String id,
             final BackendVmNumaNodesResource collection,
-            VdcActionType updateType,
+            ActionType updateType,
             AbstractBackendSubResource.ParametersProvider<VirtualNumaNode, VmNumaNode> updateParametersProvider,
             String[] requiredUpdateFields) {
         super(id, VirtualNumaNode.class, VmNumaNode.class);
@@ -31,7 +31,7 @@ public class BackendVmNumaNodeResource
         this.updateParametersProvider = updateParametersProvider;
         this.requiredUpdateFields = requiredUpdateFields;
         this.collection = collection;
-        this.removeAction = VdcActionType.RemoveVmNumaNodes;
+        this.removeAction = ActionType.RemoveVmNumaNodes;
         entityResolver = new EntityIdResolver<Guid>() {
             @Override
             public VmNumaNode lookupEntity(Guid id) throws BackendFailureException {

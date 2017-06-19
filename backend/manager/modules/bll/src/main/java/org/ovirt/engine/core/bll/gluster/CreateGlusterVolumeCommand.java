@@ -11,9 +11,9 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
@@ -233,7 +233,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     /**
-     * Sets all options of a volume by invoking the action {@link VdcActionType#SetGlusterVolumeOption} in a loop. <br>
+     * Sets all options of a volume by invoking the action {@link ActionType#SetGlusterVolumeOption} in a loop. <br>
      * Errors if any are collected and added to "executeFailedMessages"
      */
     private void setVolumeOptions(GlusterVolumeEntity volume) {
@@ -244,7 +244,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
 
             VdcReturnValueBase setOptionReturnValue =
                     runInternalAction(
-                            VdcActionType.SetGlusterVolumeOption,
+                            ActionType.SetGlusterVolumeOption,
                             new GlusterVolumeOptionParameters(option),
                             createCommandContext(volume, option));
             if (!setOptionReturnValue.getSucceeded()) {

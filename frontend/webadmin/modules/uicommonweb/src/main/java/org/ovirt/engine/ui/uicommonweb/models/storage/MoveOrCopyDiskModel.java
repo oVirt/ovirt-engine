@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -77,7 +77,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
     protected abstract void initStorageDomains();
 
-    protected abstract VdcActionType getActionType();
+    protected abstract ActionType getActionType();
 
     protected abstract String getWarning(List<String> disks);
 

@@ -9,10 +9,10 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -49,7 +49,7 @@ public class BackendDiskResourceTest
 
     @Test
     public void testExport() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ExportRepoImage,
+        setUriInfo(setUpActionExpectations(ActionType.ExportRepoImage,
                 ExportRepoImageParameters.class,
                 new String[]{"ImageGroupID", "DestinationDomainId"},
                 new Object[]{DISK_ID, GUIDS[3]}, true, true, null, null, true));
@@ -68,7 +68,7 @@ public class BackendDiskResourceTest
                 new String[] {"Id"},
                 new Object[] {DISK_ID},
                 getEntity(1));
-        setUriInfo(setUpActionExpectations(VdcActionType.MoveDisks,
+        setUriInfo(setUpActionExpectations(ActionType.MoveDisks,
                 MoveDisksParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -83,7 +83,7 @@ public class BackendDiskResourceTest
                 new String[] {"Id"},
                 new Object[] {DISK_ID},
                 getEntity(3));
-        setUriInfo(setUpActionExpectations(VdcActionType.MoveOrCopyDisk, MoveOrCopyImageGroupParameters.class,
+        setUriInfo(setUpActionExpectations(ActionType.MoveOrCopyDisk, MoveOrCopyImageGroupParameters.class,
                 new String[] {"ImageId", "ImageGroupID", "SourceDomainId", "StorageDomainId", "Operation"},
                 new Object[] {GUIDS[1], GUIDS[3], Guid.Empty, GUIDS[3], ImageOperation.Copy},
                 true, true, null, null, true));

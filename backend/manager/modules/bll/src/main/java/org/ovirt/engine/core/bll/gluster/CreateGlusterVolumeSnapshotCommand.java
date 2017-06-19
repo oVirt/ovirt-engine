@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
@@ -97,7 +97,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                     VdcReturnValueBase sessionPauseRetVal = null;
                     try (EngineLock lock = acquireEngineLock(slaveVolume.getId(), LockingGroup.GLUSTER_SNAPSHOT)) {
                         sessionPauseRetVal =
-                                runInternalAction(VdcActionType.PauseGlusterVolumeGeoRepSession,
+                                runInternalAction(ActionType.PauseGlusterVolumeGeoRepSession,
                                         new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(),
                                                 session.getId()));
                     }
@@ -183,7 +183,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             if (session.getStatus() == GeoRepSessionStatus.PAUSED) {
                 try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
                     VdcReturnValueBase sessionResumeRetVal =
-                            runInternalAction(VdcActionType.ResumeGeoRepSession,
+                            runInternalAction(ActionType.ResumeGeoRepSession,
                                     new GlusterVolumeGeoRepSessionParameters(volume.getId(), session.getId()));
                     if (!sessionResumeRetVal.getSucceeded()) {
                         handleVdsErrors(AuditLogType.GLUSTER_VOLUME_GEO_REP_RESUME_FAILED,

@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.storage.disk.image.BaseImagesCommand;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -119,7 +119,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
                             : Guid.Empty;
             Guid imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId() : Guid.Empty;
 
-            Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RestoreAllSnapshots);
+            Guid taskId = persistAsyncTaskPlaceHolder(ActionType.RestoreAllSnapshots);
 
             vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,
                     postDeleteActionHandler.fixParameters(
@@ -131,7 +131,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
                 getReturnValue().getInternalVdsmTaskIdList().add(
                         createTask(taskId,
                                 vdsReturnValue.getCreationInfo(),
-                                VdcActionType.RestoreAllSnapshots,
+                                ActionType.RestoreAllSnapshots,
                                 VdcObjectType.Storage,
                                 storageDomainId));
             }

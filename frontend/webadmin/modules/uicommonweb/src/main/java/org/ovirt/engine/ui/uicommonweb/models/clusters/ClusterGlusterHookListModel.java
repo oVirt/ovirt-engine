@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterClusterParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
@@ -107,7 +107,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
         for (GlusterHookEntity hook : getSelectedItems()) {
             list.add(new GlusterHookParameters(hook.getId()));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.EnableGlusterHook, list, null, null);
+        Frontend.getInstance().runMultipleAction(ActionType.EnableGlusterHook, list, null, null);
     }
 
     private void disableHook() {
@@ -158,7 +158,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DisableGlusterHook, list,
+        Frontend.getInstance().runMultipleAction(ActionType.DisableGlusterHook, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -302,12 +302,12 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
 
         GlusterHookEntity hookEntity = resolveConflictsModel.getGlusterHookEntity();
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<ActionType> actionTypes = new ArrayList<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
         if (resolveConflictsModel.getResolveContentConflict().getEntity()) {
-            actionTypes.add(VdcActionType.UpdateGlusterHook);
+            actionTypes.add(ActionType.UpdateGlusterHook);
             GlusterServerHook serverHook =
                     resolveConflictsModel.getServerHooksList().getSelectedItem();
             Guid serverId = (serverHook == null) ? null : serverHook.getServerId();
@@ -323,7 +323,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
 
         if (resolveConflictsModel.getResolveStatusConflict().getEntity()) {
             boolean isEnable = resolveConflictsModel.getResolveStatusConflictEnable().getEntity();
-            actionTypes.add(isEnable ? VdcActionType.EnableGlusterHook : VdcActionType.DisableGlusterHook);
+            actionTypes.add(isEnable ? ActionType.EnableGlusterHook : ActionType.DisableGlusterHook);
             parameters.add(new GlusterHookParameters(hookEntity.getId()));
             IFrontendActionAsyncCallback callback = result -> {
                 if (result.getReturnValue().getSucceeded()) {
@@ -336,7 +336,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
 
         if (resolveConflictsModel.getResolveMissingConflict().getEntity()) {
             boolean isAdd = resolveConflictsModel.getResolveMissingConflictCopy().getEntity();
-            actionTypes.add(isAdd ? VdcActionType.AddGlusterHook : VdcActionType.RemoveGlusterHook);
+            actionTypes.add(isAdd ? ActionType.AddGlusterHook : ActionType.RemoveGlusterHook);
             parameters.add(new GlusterHookManageParameters(hookEntity.getId()));
             IFrontendActionAsyncCallback callback = result -> {
                 if (result.getReturnValue().getSucceeded()) {
@@ -366,7 +366,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel<Cluster, Gl
     }
 
     private void syncWithServers() {
-        Frontend.getInstance().runAction(VdcActionType.RefreshGlusterHooks, new GlusterClusterParameters(getEntity().getId()));
+        Frontend.getInstance().runAction(ActionType.RefreshGlusterHooks, new GlusterClusterParameters(getEntity().getId()));
     }
 
     @Override

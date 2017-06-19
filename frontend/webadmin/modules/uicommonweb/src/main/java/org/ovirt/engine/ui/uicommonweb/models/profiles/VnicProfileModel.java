@@ -6,8 +6,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VersionQueryParameters;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
@@ -268,7 +268,7 @@ public abstract class VnicProfileModel extends Model {
 
         startProgress();
 
-        Frontend.getInstance().runAction(getVdcActionType(),
+        Frontend.getInstance().runAction(getActionType(),
                 getActionParameters(),
                 result -> {
                     VdcReturnValueBase returnValue = result.getReturnValue();
@@ -428,7 +428,7 @@ public abstract class VnicProfileModel extends Model {
 
     protected abstract void initCustomProperties();
 
-    protected abstract VdcActionType getVdcActionType();
+    protected abstract ActionType getActionType();
 
     protected VdcActionParametersBase getActionParameters() {
         return new VnicProfileParameters(vnicProfile);

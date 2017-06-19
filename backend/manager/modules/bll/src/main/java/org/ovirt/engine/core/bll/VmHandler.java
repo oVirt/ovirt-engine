@@ -32,7 +32,7 @@ import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -749,7 +749,7 @@ public class VmHandler implements BackendService {
         return null;
     }
 
-    public static ValidationResult canRunActionOnNonManagedVm(VM vm, VdcActionType actionType) {
+    public static ValidationResult canRunActionOnNonManagedVm(VM vm, ActionType actionType) {
         ValidationResult validationResult = ValidationResult.VALID;
 
         if (!VmActionByVmOriginTypeValidator.isCommandAllowed(vm, actionType)) {

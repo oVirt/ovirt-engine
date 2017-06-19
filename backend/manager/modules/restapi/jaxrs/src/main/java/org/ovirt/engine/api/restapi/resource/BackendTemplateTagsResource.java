@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.AssignedTagResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByTemplateIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendTemplateTagsResource extends AbstractBackendAssignedTagsResource {
 
     public BackendTemplateTagsResource(String parentId) {
-        super(Template.class, parentId, VdcActionType.AttachTemplatesToTag);
+        super(Template.class, parentId, ActionType.AttachTemplatesToTag);
     }
 
     public List<Tags> getCollection() {

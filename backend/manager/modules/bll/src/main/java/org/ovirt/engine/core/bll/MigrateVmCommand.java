@@ -31,13 +31,13 @@ import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -270,11 +270,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 PlugAction.UNPLUG);
 
         log.debug("About to call {} with parameters: {}",
-                VdcActionType.ActivateDeactivateVmNic,
+                ActionType.ActivateDeactivateVmNic,
                 Arrays.toString(parametersList.toArray()));
 
         for (ActivateDeactivateVmNicParameters parameter : parametersList) {
-            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
+            VdcReturnValueBase returnValue = runInternalAction(ActionType.ActivateDeactivateVmNic, parameter);
             if (!returnValue.getSucceeded()) {
                 returnValue.getValidationMessages().forEach(this::addValidationMessage);
                 return false;
@@ -318,13 +318,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     private List<VmNic> replugNics(List<ActivateDeactivateVmNicParameters> parametersList) {
         log.debug("About to call {} with parameters: {}",
-                VdcActionType.ActivateDeactivateVmNic,
+                ActionType.ActivateDeactivateVmNic,
                 Arrays.toString(parametersList.toArray()));
 
         List<VmNic> notRepluggedNics = new ArrayList<>();
 
         for (ActivateDeactivateVmNicParameters parameter : parametersList) {
-            VdcReturnValueBase returnValue = runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameter);
+            VdcReturnValueBase returnValue = runInternalAction(ActionType.ActivateDeactivateVmNic, parameter);
 
             boolean nicPlugSucceeded = returnValue.getSucceeded();
             if (!nicPlugSucceeded) {
@@ -542,7 +542,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getParameters().getTargetClusterId(),
                 getVmId(),
                 getVm().getCustomCompatibilityVersion());
-        setSucceeded(getBackend().runInternalAction(VdcActionType.ChangeVMCluster, params).getSucceeded());
+        setSucceeded(getBackend().runInternalAction(ActionType.ChangeVMCluster, params).getSucceeded());
     }
 
     private Boolean getAutoConverge() {

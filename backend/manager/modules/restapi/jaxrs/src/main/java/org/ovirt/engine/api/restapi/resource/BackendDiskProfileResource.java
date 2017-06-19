@@ -4,9 +4,9 @@ import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DiskProfileResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -26,7 +26,7 @@ public class BackendDiskProfileResource extends AbstractBackendDiskProfileResour
     public DiskProfile update(DiskProfile resource) {
         return performUpdate(resource,
                 new QueryIdResolver<>(VdcQueryType.GetDiskProfileById, IdQueryParameters.class),
-                VdcActionType.UpdateDiskProfile,
+                ActionType.UpdateDiskProfile,
                 new UpdateParametersProvider());
     }
 

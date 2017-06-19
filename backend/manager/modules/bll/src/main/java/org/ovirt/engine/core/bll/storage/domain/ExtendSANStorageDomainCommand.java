@@ -12,9 +12,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunResult;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -138,7 +138,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
 
     protected VdcReturnValueBase connectAllHostsToLun() {
         return runInternalAction(
-                VdcActionType.ConnectAllHostsToLun,
+                ActionType.ConnectAllHostsToLun,
                 new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(),
                         getParameters().getLunIds()));
     }

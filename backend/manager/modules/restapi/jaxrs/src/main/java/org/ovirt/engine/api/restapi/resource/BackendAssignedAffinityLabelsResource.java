@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.AffinityLabels;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelResource;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelsResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
@@ -58,7 +58,7 @@ public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollec
         // the result of the operation, we can fetch it using a simple "identity" resolver, that just returns the same
         // value it is passed.
         LabelActionParameters updateParams = new LabelActionParameters(updatedLabel);
-        return performCreate(VdcActionType.UpdateLabel, updateParams, (IResolver<Label, Label>) result -> result);
+        return performCreate(ActionType.UpdateLabel, updateParams, (IResolver<Label, Label>) result -> result);
     }
 
     @Override

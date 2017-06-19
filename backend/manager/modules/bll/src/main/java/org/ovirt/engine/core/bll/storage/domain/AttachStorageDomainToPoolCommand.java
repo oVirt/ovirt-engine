@@ -16,11 +16,11 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationVa
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -101,7 +101,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
 
             VdcReturnValueBase returnValue = runInternalAction(
-                    VdcActionType.AddStoragePoolWithStorages,
+                    ActionType.AddStoragePoolWithStorages,
                     parameters,
                     getContext().clone().withoutCompensationContext());
             setSucceeded(returnValue.getSucceeded());
@@ -239,7 +239,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         StorageDomainPoolParametersBase activateParameters = new StorageDomainPoolParametersBase(getStorageDomain().getId(),
                 getStoragePool().getId());
         getBackend()
-                .runInternalAction(VdcActionType.ActivateStorageDomain,
+                .runInternalAction(ActionType.ActivateStorageDomain,
                         activateParameters,
                         cloneContext().withoutCompensationContext().withoutExecutionContext());
     }

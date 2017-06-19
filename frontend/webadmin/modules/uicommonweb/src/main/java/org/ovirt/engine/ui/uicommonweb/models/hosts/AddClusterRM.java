@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
@@ -97,7 +97,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
                 ClusterOperationParameters parameters = new ManagementNetworkOnClusterOperationParameters(cluster);
                 parameters.setCorrelationId(getCorrelationId());
-                Frontend.getInstance().runAction(VdcActionType.AddCluster, parameters,
+                Frontend.getInstance().runAction(ActionType.AddCluster, parameters,
                         result -> {
 
                             VdcReturnValueBase returnValue = result.getReturnValue();

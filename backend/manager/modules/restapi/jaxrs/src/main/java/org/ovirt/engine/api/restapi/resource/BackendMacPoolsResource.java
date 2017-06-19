@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.MacPools;
 import org.ovirt.engine.api.resource.MacPoolResource;
 import org.ovirt.engine.api.resource.MacPoolsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -41,7 +41,7 @@ public class BackendMacPoolsResource
     public Response add(MacPool macPool) {
         validateParameters(macPool, "name");
         final org.ovirt.engine.core.common.businessentities.MacPool entity = map(macPool);
-        return performCreate(VdcActionType.AddMacPool,
+        return performCreate(ActionType.AddMacPool,
                 new MacPoolParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetMacPoolById, IdQueryParameters.class));
     }

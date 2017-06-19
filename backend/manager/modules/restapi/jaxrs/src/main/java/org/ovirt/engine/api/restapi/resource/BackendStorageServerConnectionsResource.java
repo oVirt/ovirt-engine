@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -74,7 +74,7 @@ public class BackendStorageServerConnectionsResource
         default:
             break;
         }
-        return performCreate(VdcActionType.AddStorageServerConnection,
+        return performCreate(ActionType.AddStorageServerConnection,
                 getAddParams(storageConnection, hostId),
                 ENTITY_RETRIEVER);
     }

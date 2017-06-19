@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.api.restapi.DeprecatedVersionInfo;
 import org.ovirt.engine.api.restapi.LocalConfig;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDeprecatedApiEventParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,7 +146,7 @@ public class VersionFilter implements Filter {
             DeprecatedVersionInfo versionInfo = deprecatedVersionsMap.get(version);
             AddDeprecatedApiEventParameters parameters = new AddDeprecatedApiEventParameters(version, remoteAddress,
                 versionInfo.getDeprecating(), versionInfo.getRemoving());
-            backend.runAction(VdcActionType.AddDeprecatedApiEvent, parameters);
+            backend.runAction(ActionType.AddDeprecatedApiEvent, parameters);
         }
 
         // Copy the version, the source and the path to the object that stores information to the current request:

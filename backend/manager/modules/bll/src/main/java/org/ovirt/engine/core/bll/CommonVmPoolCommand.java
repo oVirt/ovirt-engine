@@ -29,10 +29,10 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -234,7 +234,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         for (int i = 0; i < getParameters().getVmsCount(); i++) {
             String currentVmName = generateUniqueVmName();
             VdcReturnValueBase returnValue =
-                    runInternalAction(VdcActionType.AddVm,
+                    runInternalAction(ActionType.AddVm,
                             buildAddVmParameters(currentVmName),
                             createAddVmStepContext(currentVmName));
 
@@ -372,7 +372,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
         VmPool pool = vmPoolDao.getByName(getParameters().getVmPool().getName());
         if (pool != null
-                && (getActionType() == VdcActionType.AddVmPool || !pool.getVmPoolId().equals(
+                && (getActionType() == ActionType.AddVmPool || !pool.getVmPoolId().equals(
                         getParameters().getVmPoolId()))) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
         }
@@ -410,7 +410,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
             storageIds.add(storageId);
         }
 
-        if (getActionType() == VdcActionType.AddVmPool && getParameters().getVmsCount() < 1) {
+        if (getActionType() == ActionType.AddVmPool && getParameters().getVmsCount() < 1) {
             return failValidation(EngineMessage.VM_POOL_CANNOT_CREATE_WITH_NO_VMS);
         }
 

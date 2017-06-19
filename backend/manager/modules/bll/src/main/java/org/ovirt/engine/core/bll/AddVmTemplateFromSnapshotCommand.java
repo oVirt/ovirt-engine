@@ -15,10 +15,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -160,8 +160,8 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     }
 
     @Override
-    protected VdcActionType getAddAllTemplateDisksActionType() {
-        return VdcActionType.CreateAllTemplateDisksFromSnapshot;
+    protected ActionType getAddAllTemplateDisksActionType() {
+        return ActionType.CreateAllTemplateDisksFromSnapshot;
     }
 
     /**

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -65,7 +65,7 @@ public class GlusterSnapshotScheduleJob implements Serializable {
         snapshot.setSnapshotName(snapshotNamePrefix);
         snapshot.setDescription(description);
 
-        VdcReturnValueBase returnValue = backend.runInternalAction(VdcActionType.CreateGlusterVolumeSnapshot,
+        VdcReturnValueBase returnValue = backend.runInternalAction(ActionType.CreateGlusterVolumeSnapshot,
                 new CreateGlusterVolumeSnapshotParameters(snapshot, force));
         if (!returnValue.getSucceeded()) {
             log.error("Error while creating snapshot for volume '{}': {}",

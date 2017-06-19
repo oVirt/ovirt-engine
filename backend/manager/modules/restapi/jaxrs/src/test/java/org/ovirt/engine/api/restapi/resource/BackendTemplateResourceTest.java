@@ -19,10 +19,10 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -169,7 +169,7 @@ public class BackendTemplateResourceTest
 
     protected void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
                 new String[]{},
                 new Object[]{},
@@ -232,7 +232,7 @@ public class BackendTemplateResourceTest
         setUpUpdateExpectations();
         setUpGetBallooningExpectations();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
                 new String[]{},
                 new Object[]{},
@@ -247,7 +247,7 @@ public class BackendTemplateResourceTest
         setUpGetEntityExpectations(1);
         setUpGetGraphicsExpectations(1);
         setUpGetBallooningExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplate,
                 VmTemplateManagementParameters.class,
                 new String[] { "VmTemplateId" },
                 new Object[] { GUIDS[0] },
@@ -286,7 +286,7 @@ public class BackendTemplateResourceTest
         setUpGetEntityExpectations(1);
         setUpGetGraphicsExpectations(1);
         setUpGetBallooningExpectations();
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplate,
                 VmTemplateManagementParameters.class,
                 new String[] { "VmTemplateId" },
                 new Object[] { GUIDS[0] },
@@ -331,7 +331,7 @@ public class BackendTemplateResourceTest
     }
 
     protected void doTestExport(StorageDomain storageDomain, boolean exclusive) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ExportVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.ExportVmTemplate,
                 MoveOrCopyParameters.class,
                 new String[]{"ContainerId", "StorageDomainId", "ForceOverride"},
                 new Object[]{GUIDS[0], GUIDS[2], exclusive}));
@@ -376,7 +376,7 @@ public class BackendTemplateResourceTest
         setUpGetBallooningExpectations();
         setUpUpdateExpectations();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
                 new String[] { "VmLargeIcon" },
                 new Object[] { VmIcon.typeAndDataToDataUrl(IconTestHelpler.MEDIA_TYPE, IconTestHelpler.DATA_URL) },
@@ -394,7 +394,7 @@ public class BackendTemplateResourceTest
         setUpUpdateExpectations();
         setUpGetBallooningExpectations();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVmTemplate,
                 UpdateVmTemplateParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -421,7 +421,7 @@ public class BackendTemplateResourceTest
     }
 
     private void doTestExportAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ExportVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.ExportVmTemplate,
                                            MoveOrCopyParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "ForceOverride" },
                                            new Object[] { GUIDS[0], GUIDS[2], false },
@@ -445,14 +445,14 @@ public class BackendTemplateResourceTest
         return setUpEntityExpectations(mock(VmTemplate.class), index);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,

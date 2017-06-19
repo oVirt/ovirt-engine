@@ -33,7 +33,7 @@ public abstract class CtorsTestBase {
                 .map(Enum::name)
                 // Filter out the Unknown value.
                 .filter(e -> !e.equals("Unknown"))
-                // Map each vdcActionType to its appropriate class.
+                // Map each ActionType to its appropriate class.
                 .map(f)
                 .collect(Collectors.toList());
     }

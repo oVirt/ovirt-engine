@@ -12,9 +12,9 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -80,7 +80,7 @@ public class AutoRecoveryManager implements BackendService {
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer() {
         check(vdsDao,
-                VdcActionType.ActivateVds,
+                ActionType.ActivateVds,
                 arg -> {
                     final VdsActionParameters params = new VdsActionParameters(arg.getId());
                     params.setRunSilent(true);
@@ -108,7 +108,7 @@ public class AutoRecoveryManager implements BackendService {
                     return filtered;
         }, "hosts");
         check(storageDomainDao,
-                VdcActionType.ConnectDomainToStorage,
+                ActionType.ConnectDomainToStorage,
                 arg -> {
                     final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(
                             arg.getId(), arg.getStoragePoolId());
@@ -126,7 +126,7 @@ public class AutoRecoveryManager implements BackendService {
      * @param logMsg            a user-readable name for the failing resource type
      */
     <T extends BusinessEntity<Guid>> void check(final AutoRecoverDao<T> dao,
-            final VdcActionType actionType,
+            final ActionType actionType,
             final Function<T, VdcActionParametersBase> paramsCallback,
             final Function<List<T>, List<T>> filter,
             final String logMsg) {

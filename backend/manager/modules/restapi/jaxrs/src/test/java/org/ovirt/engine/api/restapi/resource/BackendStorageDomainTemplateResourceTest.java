@@ -20,9 +20,9 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -134,7 +134,7 @@ public class BackendStorageDomainTemplateResourceTest
     }
 
     public void doTestRegister(org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ImportVmTemplateFromConfiguration,
+        setUriInfo(setUpActionExpectations(ActionType.ImportVmTemplateFromConfiguration,
                                            ImportVmTemplateParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "ClusterId", "ImportAsNewEntity", "ImagesExistOnTargetStorageDomain"},
                                            new Object[] { TEMPLATE_ID, GUIDS[3], GUIDS[1], importAsNewEntity, true }));
@@ -201,7 +201,7 @@ public class BackendStorageDomainTemplateResourceTest
     public void testRemove() throws Exception {
         setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplateFromImportExport,
                 VmTemplateImportExportParameters.class,
                 new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
                 new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
@@ -223,7 +223,7 @@ public class BackendStorageDomainTemplateResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpQueryExpectations("", null, StorageDomainType.ImportExport);
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3], 2);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplateFromImportExport,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVmTemplateFromImportExport,
                 VmTemplateImportExportParameters.class,
                 new String[] { "VmTemplateId", "StorageDomainId", "StoragePoolId" },
                 new Object[] { GUIDS[1], GUIDS[3], GUIDS[0] },
@@ -253,7 +253,7 @@ public class BackendStorageDomainTemplateResourceTest
 
     public void doTestImport(StorageDomain storageDomain, org.ovirt.engine.api.model.Cluster cluster, boolean importAsNewEntity) throws Exception {
         setUpGetEntityExpectations(1, StorageDomainType.ImportExport, GUIDS[2]);
-        setUriInfo(setUpActionExpectations(VdcActionType.ImportVmTemplate,
+        setUriInfo(setUpActionExpectations(ActionType.ImportVmTemplate,
                                            ImportVmTemplateParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId", "ImportAsNewEntity" },
                                            new Object[] { TEMPLATE_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1], importAsNewEntity }));
@@ -286,7 +286,7 @@ public class BackendStorageDomainTemplateResourceTest
         setUpGetDataCenterByStorageDomainExpectations(GUIDS[3]);
 
         setUriInfo(setUpActionExpectations(
-                VdcActionType.ImportVmTemplate,
+                ActionType.ImportVmTemplate,
                 ImportVmTemplateParameters.class,
                 new String[] { "ContainerId", "StorageDomainId", "SourceDomainId", "DestDomainId", "StoragePoolId", "ClusterId" },
                 new Object[] { TEMPLATE_ID, GUIDS[2], STORAGE_DOMAIN_ID, GUIDS[2], DATA_CENTER_ID, GUIDS[1] },
@@ -364,14 +364,14 @@ public class BackendStorageDomainTemplateResourceTest
         }
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,

@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
@@ -50,7 +50,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
     @Override
     public void importVms(IFrontendMultipleActionAsyncCallback callback) {
         Frontend.getInstance().runMultipleAction(
-                VdcActionType.ImportVmFromOva,
+                ActionType.ImportVmFromOva,
                 buildImportVmFromOvaParameters(),
                 true,
                 callback,

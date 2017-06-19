@@ -22,8 +22,8 @@ import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
@@ -170,7 +170,7 @@ public class BackendUsersResource
         }
         AddUserParameters parameters = new AddUserParameters(new DbUser(directoryUser));
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
-        return performCreate(VdcActionType.AddUser, parameters, resolver, BaseResource.class);
+        return performCreate(ActionType.AddUser, parameters, resolver, BaseResource.class);
     }
 
     /**

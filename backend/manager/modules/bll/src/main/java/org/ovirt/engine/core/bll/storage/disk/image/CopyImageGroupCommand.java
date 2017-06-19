@@ -11,12 +11,12 @@ import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -122,7 +122,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private boolean isUsingSPDMFlow() {
         return isDataOperationsByHSM() && !getParameters().getUseCopyCollapse()
-                && getParameters().getParentCommand() == VdcActionType.MoveOrCopyDisk
+                && getParameters().getParentCommand() == ActionType.MoveOrCopyDisk
                 && getParameters().getOperation() == ImageOperation.Move;
     }
 
@@ -144,7 +144,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             p.setParentCommand(getActionType());
             p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
             p.setJobWeight(getParameters().getJobWeight());
-            runInternalAction(VdcActionType.CopyImageGroupWithData, p);
+            runInternalAction(ActionType.CopyImageGroupWithData, p);
             return true;
         } else {
             VDSReturnValue vdsReturnValue;
@@ -310,7 +310,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     private boolean shouldUpdateStorageDisk() {
         return getParameters().getOperation() == ImageOperation.Move ||
-                getParameters().getParentCommand() == VdcActionType.ImportVm;
+                getParameters().getParentCommand() == ActionType.ImportVm;
     }
 
     @Override
@@ -335,12 +335,12 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             Guid destImageId = getParameters().getDestinationImageId();
             RemoveImageParameters removeImageParams =
                     new RemoveImageParameters(destImageId);
-            if (getParameters().getParentCommand() == VdcActionType.AddVmFromSnapshot) {
+            if (getParameters().getParentCommand() == ActionType.AddVmFromSnapshot) {
                 removeImageParams.setParentParameters(getParameters());
-                removeImageParams.setParentCommand(VdcActionType.CopyImageGroup);
+                removeImageParams.setParentCommand(ActionType.CopyImageGroup);
             } else {
                 removeImageParams.setParentParameters(removeImageParams);
-                removeImageParams.setParentCommand(VdcActionType.RemoveImage);
+                removeImageParams.setParentCommand(ActionType.RemoveImage);
                 removeImageParams.setStorageDomainId(getParameters().getStorageDomainId());
                 removeImageParams.setDbOperationScope(getParameters().getRevertDbOperationScope());
                 removeImageParams.setShouldLockImage(getParameters().isShouldLockImageOnRevert());
@@ -348,7 +348,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getDestinationImageId()));
             // Setting the image as the monitored entity, so there will not be dependency
             VdcReturnValueBase returnValue =
-                    checkAndPerformRollbackUsingCommand(VdcActionType.RemoveImage, removeImageParams, null);
+                    checkAndPerformRollbackUsingCommand(ActionType.RemoveImage, removeImageParams, null);
             if (returnValue.getSucceeded()) {
                 // Starting to monitor the the tasks - RemoveImage is an internal command
                 // which adds the taskId on the internal task ID list
@@ -358,7 +358,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     @Override
-    protected boolean canPerformRollbackUsingCommand(VdcActionType commandType, VdcActionParametersBase params) {
+    protected boolean canPerformRollbackUsingCommand(ActionType commandType, VdcActionParametersBase params) {
         return diskImageDao.get(getParameters().getDestinationImageId()) != null;
     }
 

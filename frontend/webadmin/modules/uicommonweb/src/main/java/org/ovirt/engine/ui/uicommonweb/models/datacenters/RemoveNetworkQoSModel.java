@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -80,7 +80,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
             parameter.setQos(tempQos);
             parameters.add(parameter);
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveNetworkQoS, parameters);
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveNetworkQoS, parameters);
 
         cancel();
     }

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
@@ -91,7 +91,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
         });
     }
 
-    protected abstract VdcActionType getVdcAction();
+    protected abstract ActionType getVdcAction();
 
     protected abstract QosParametersBase<T> getParameters();
 

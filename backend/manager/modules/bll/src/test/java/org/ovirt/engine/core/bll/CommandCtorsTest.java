@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 
 import org.junit.BeforeClass;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CommandCtorsTest extends CtorsTestBase {
@@ -15,7 +15,7 @@ public class CommandCtorsTest extends CtorsTestBase {
 
     @BeforeClass
     public static void initCommandsCollection() {
-        commandClasses = commandsFromEnum(VdcActionType.class, CommandsFactory::getCommandClass);
+        commandClasses = commandsFromEnum(ActionType.class, CommandsFactory::getCommandClass);
     }
 
     @Override

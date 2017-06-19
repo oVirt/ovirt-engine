@@ -27,8 +27,8 @@ import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -137,7 +137,7 @@ public class BackendTemplatesResource
         IconHelper.setIconToParams(template, params);
 
         Response response = performCreate(
-            VdcActionType.AddVmTemplate,
+            ActionType.AddVmTemplate,
             params,
             new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class)
         );

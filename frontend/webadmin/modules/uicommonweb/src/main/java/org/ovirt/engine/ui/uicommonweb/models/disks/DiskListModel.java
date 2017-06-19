@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -345,7 +345,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.GetDiskAlignment, parameterList,
+        Frontend.getInstance().runMultipleAction(ActionType.GetDiskAlignment, parameterList,
                 result -> {
                 },
                 this);
@@ -411,7 +411,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeQuotaForDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(ActionType.ChangeQuotaForDisk, paramerterList,
                 result -> {
                     DiskListModel localModel = (DiskListModel) result.getState();
                     localModel.stopProgress();
@@ -460,7 +460,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveDisk, paramerterList,
                 result -> {
                     DiskListModel localModel = (DiskListModel) result.getState();
                     localModel.stopProgress();

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -228,7 +228,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     public void onRemove() {
         for (Object item : getSelectedItems()) {
             ClusterPolicy clusterPolicy = (ClusterPolicy) item;
-            Frontend.getInstance().runAction(VdcActionType.RemoveClusterPolicy,
+            Frontend.getInstance().runAction(ActionType.RemoveClusterPolicy,
                     new ClusterPolicyCRUDParameters(clusterPolicy.getId(), clusterPolicy));
         }
 

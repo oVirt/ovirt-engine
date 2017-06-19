@@ -38,9 +38,9 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -196,7 +196,7 @@ public class BackendVmDisksResourceTest
     public void testAttachDisk() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
-            VdcActionType.AttachDiskToVm,
+            ActionType.AttachDiskToVm,
             AttachDetachVmDiskParameters.class,
             new String[] { "VmId", "EntityInfo", },
             new Object[] { VM_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
@@ -227,7 +227,7 @@ public class BackendVmDisksResourceTest
         model.getSnapshot().setId(snapshotId.toString());
         model.setId(DISK_ID.toString()); //means this is an existing disk --> attach
         setUpCreationExpectations(
-            VdcActionType.AttachDiskToVm,
+            ActionType.AttachDiskToVm,
             AttachDetachVmDiskParameters.class,
             new String[] { "VmId", "EntityInfo", "SnapshotId" },
             new Object[] { VM_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID), snapshotId },
@@ -256,7 +256,7 @@ public class BackendVmDisksResourceTest
             getStorageDomain(GUIDS[2])
         );
         setUpCreationExpectations(
-            VdcActionType.AddDisk,
+            ActionType.AddDisk,
             AddDiskParameters.class,
             new String[] { "VmId" },
             new Object[] { VM_ID },
@@ -358,7 +358,7 @@ public class BackendVmDisksResourceTest
             getStorageDomain(GUIDS[2])
         );
         setUpCreationExpectations(
-            VdcActionType.AddDisk,
+            ActionType.AddDisk,
             AddDiskParameters.class,
             new String[] { "VmId", "StorageDomainId" },
             new Object[] { VM_ID, GUIDS[2] },
@@ -415,7 +415,7 @@ public class BackendVmDisksResourceTest
             getStorageDomain(GUIDS[2])
         );
         setUpCreationExpectations(
-            VdcActionType.AddDisk,
+            ActionType.AddDisk,
             AddDiskParameters.class,
             new String[] { "VmId", "StorageDomainId" },
             new Object[] { VM_ID, GUIDS[2] },
@@ -468,7 +468,7 @@ public class BackendVmDisksResourceTest
             getStorageDomain(GUIDS[3])
         );
         setUpCreationExpectations(
-            VdcActionType.AddDisk,
+            ActionType.AddDisk,
             AddDiskParameters.class,
             new String[] { "VmId", "StorageDomainId" },
             new Object[] { VM_ID, GUIDS[3] },
@@ -517,7 +517,7 @@ public class BackendVmDisksResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.AddDisk,
+                ActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },

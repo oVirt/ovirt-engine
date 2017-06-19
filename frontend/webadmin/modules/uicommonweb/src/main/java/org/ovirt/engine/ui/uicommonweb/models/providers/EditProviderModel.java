@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -34,7 +34,7 @@ public class EditProviderModel extends ProviderModel {
     private Collection<Network> providedNetworks = new ArrayList<>();
 
     public EditProviderModel(SearchableListModel sourceListModel, Provider provider) {
-        super(sourceListModel, VdcActionType.UpdateProvider, provider);
+        super(sourceListModel, ActionType.UpdateProvider, provider);
         setTitle(ConstantsManager.getInstance().getConstants().editProviderTitle());
         setHelpTag(HelpTag.edit_provider);
         setHashName("edit_provider"); //$NON-NLS-1$

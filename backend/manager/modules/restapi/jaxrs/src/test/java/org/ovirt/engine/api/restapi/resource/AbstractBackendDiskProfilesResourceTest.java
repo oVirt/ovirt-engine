@@ -17,8 +17,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -44,7 +44,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
     public void testAddDiskProfile() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpStorageDomainQueryExpectations();
-        setUpCreationExpectations(VdcActionType.AddDiskProfile,
+        setUpCreationExpectations(ActionType.AddDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -79,7 +79,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
     }
 
     private void doTestBadAddDiskProfile(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddDiskProfile,
+        setUriInfo(setUpActionExpectations(ActionType.AddDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},

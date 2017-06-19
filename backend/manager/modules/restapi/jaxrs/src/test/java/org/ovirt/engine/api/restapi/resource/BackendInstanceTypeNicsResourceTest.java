@@ -29,8 +29,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.NicInterface;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -157,7 +157,7 @@ public class BackendInstanceTypeNicsResourceTest
     public void testAddNic() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
-            VdcActionType.AddVmTemplateInterface,
+            ActionType.AddVmTemplateInterface,
             AddVmTemplateInterfaceParameters.class,
             new String[] {},
             new Object[] {},
@@ -191,7 +191,7 @@ public class BackendInstanceTypeNicsResourceTest
     private void doTestBadAddNic(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.AddVmTemplateInterface,
+                ActionType.AddVmTemplateInterface,
                 AddVmTemplateInterfaceParameters.class,
                 new String[] { "VmTemplateId" },
                 new Object[] { INSTANCE_TYPE_ID },

@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
@@ -52,7 +52,7 @@ public class BackendVmWatchdogResourceTest
         setUpEntityQueryExpectations(2);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateWatchdog,
+                ActionType.UpdateWatchdog,
                 WatchdogParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },
@@ -69,7 +69,7 @@ public class BackendVmWatchdogResourceTest
         setUpEntityQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveWatchdog,
+                ActionType.RemoveWatchdog,
                 WatchdogParameters.class,
                 new String[]{"Id"},
                 new Object[]{VM_ID},

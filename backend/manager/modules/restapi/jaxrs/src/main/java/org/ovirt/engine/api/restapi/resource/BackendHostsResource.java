@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.Hosts;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostsResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -82,7 +82,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         addParams.setHostedEngineDeployConfiguration(HostResourceParametersUtil.getHostedEngineDeployConfiguration(this));
         addParams = (AddVdsActionParameters) getMapper
             (Host.class, VdsOperationActionParameters.class).map(host, addParams);
-        return performCreate(VdcActionType.AddVds,
+        return performCreate(ActionType.AddVds,
                                addParams,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class));
     }

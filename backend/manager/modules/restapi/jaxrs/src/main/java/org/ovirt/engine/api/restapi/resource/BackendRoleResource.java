@@ -6,10 +6,10 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.PermitsResource;
 import org.ovirt.engine.api.resource.RoleResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,7 +53,7 @@ public class BackendRoleResource
     public Role update(Role role) {
         return performUpdate(role,
                 new QueryIdResolver<>(VdcQueryType.GetRoleById, IdQueryParameters.class),
-                VdcActionType.UpdateRole,
+                ActionType.UpdateRole,
                 new UpdateParametersProvider());
     }
 
@@ -70,6 +70,6 @@ public class BackendRoleResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveRole, new RolesParameterBase(guid));
+        return performAction(ActionType.RemoveRole, new RolesParameterBase(guid));
     }
 }

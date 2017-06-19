@@ -11,10 +11,10 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -23,7 +23,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
-    public AttachStorageDomainsMultipleActionRunner(VdcActionType actionType,
+    public AttachStorageDomainsMultipleActionRunner(ActionType actionType,
             List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);
     }
@@ -52,10 +52,10 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
                         storageDomainIds,
                         storagePoolParameter.getSessionId()));
                 if (isInternal) {
-                    return backend.runInternalMultipleActions(VdcActionType.AddStoragePoolWithStorages,
+                    return backend.runInternalMultipleActions(ActionType.AddStoragePoolWithStorages,
                             parameters);
                 } else {
-                    return backend.runMultipleActions(VdcActionType.AddStoragePoolWithStorages,
+                    return backend.runMultipleActions(ActionType.AddStoragePoolWithStorages,
                             parameters, false);
                 }
             } else {

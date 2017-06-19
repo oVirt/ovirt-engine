@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.model.Qoss;
 import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.resource.QossResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
@@ -68,16 +68,16 @@ public class BackendQossResource extends AbstractBackendCollectionResource<Qos, 
         }
     }
 
-    private VdcActionType addActionTypeForQosType(QosType qosType) {
+    private ActionType addActionTypeForQosType(QosType qosType) {
         switch (qosType) {
         case STORAGE:
-            return VdcActionType.AddStorageQos;
+            return ActionType.AddStorageQos;
         case CPU:
-            return VdcActionType.AddCpuQos;
+            return ActionType.AddCpuQos;
         case NETWORK:
-            return VdcActionType.AddNetworkQoS;
+            return ActionType.AddNetworkQoS;
         case HOSTNETWORK:
-            return VdcActionType.AddHostNetworkQos;
+            return ActionType.AddHostNetworkQos;
         default:
             throw new IllegalArgumentException("Unsupported QoS type \"" + qosType + "\"");
 

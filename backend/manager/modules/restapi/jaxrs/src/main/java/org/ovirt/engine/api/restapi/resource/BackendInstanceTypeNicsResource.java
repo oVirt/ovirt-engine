@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.resource.InstanceTypeNicResource;
 import org.ovirt.engine.api.resource.InstanceTypeNicsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -40,7 +40,7 @@ public class BackendInstanceTypeNicsResource extends AbstractBackendNicsResource
     public Response add(Nic nic) {
         validateParameters(nic, "name");
         return performCreate(
-            VdcActionType.AddVmTemplateInterface,
+            ActionType.AddVmTemplateInterface,
             new AddVmTemplateInterfaceParameters(instanceTypeId, map(nic)),
             new NicResolver(nic.getName())
         );

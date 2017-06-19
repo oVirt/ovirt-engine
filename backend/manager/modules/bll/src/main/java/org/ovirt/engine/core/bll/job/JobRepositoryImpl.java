@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -183,7 +183,7 @@ public class JobRepositoryImpl implements JobRepository {
     }
 
     @Override
-    public List<Job> getJobsByEntityAndAction(Guid entityId, VdcActionType actionType) {
+    public List<Job> getJobsByEntityAndAction(Guid entityId, ActionType actionType) {
         List<Job> jobList = new ArrayList<>();
         List<Guid> jobIdsList = jobSubjectEntityDao.getJobIdByEntityId(entityId);
 

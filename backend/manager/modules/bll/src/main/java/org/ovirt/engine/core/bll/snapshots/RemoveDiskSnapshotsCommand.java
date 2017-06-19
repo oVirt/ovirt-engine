@@ -35,6 +35,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -42,7 +43,6 @@ import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -290,7 +290,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         updateParameters(completedChildren, parameters.getDestinationImageId());
         persistCommandIfNeeded();
 
-        CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveSnapshotSingleDiskLive,
+        CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshotSingleDiskLive,
                 parameters,
                 cloneContextAndDetachFromParent());
 
@@ -311,7 +311,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
         ImagesContainterParametersBase parameters = buildRemoveSnapshotSingleDiskParameters(nextImageId);
 
-        CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveSnapshotSingleDisk,
+        CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveSnapshotSingleDisk,
                 parameters,
                 cloneContextAndDetachFromParent());
 
@@ -347,7 +347,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
         parameters.setParentCommand(getActionType());
-        parameters.setCommandType(VdcActionType.RemoveSnapshotSingleDiskLive);
+        parameters.setCommandType(ActionType.RemoveSnapshotSingleDiskLive);
         parameters.setVdsId(getVm().getRunOnVds());
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
@@ -387,7 +387,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             return;
         }
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.RemoveAllCinderSnapshotDisks,
+                ActionType.RemoveAllCinderSnapshotDisks,
                 buildRemoveCinderSnapshotDiskParameters(cinderDisks),
                 cloneContextAndDetachFromParent());
         try {

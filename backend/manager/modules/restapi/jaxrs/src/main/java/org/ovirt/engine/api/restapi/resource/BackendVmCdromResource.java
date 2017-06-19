@@ -23,8 +23,8 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmCdromResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -61,13 +61,13 @@ public class BackendVmCdromResource
         boolean current = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, CURRENT, true, false);
         if (current) {
             ChangeDiskCommandParameters parameters = new ChangeDiskCommandParameters(vmId, cdrom.getFile().getId());
-            performAction(VdcActionType.ChangeDisk, parameters);
+            performAction(ActionType.ChangeDisk, parameters);
         }
         else {
             VM vm = getVm();
             vm = map(cdrom, vm);
             VmManagementParametersBase parameters = new VmManagementParametersBase(vm);
-            performAction(VdcActionType.UpdateVm, parameters);
+            performAction(ActionType.UpdateVm, parameters);
         }
         return get();
     }
@@ -94,7 +94,7 @@ public class BackendVmCdromResource
         VM vm = getVm();
         vm.setIsoPath(null);
         VmManagementParametersBase parameters = new VmManagementParametersBase(vm);
-        return performAction(VdcActionType.UpdateVm, parameters);
+        return performAction(ActionType.UpdateVm, parameters);
     }
 
     @Override

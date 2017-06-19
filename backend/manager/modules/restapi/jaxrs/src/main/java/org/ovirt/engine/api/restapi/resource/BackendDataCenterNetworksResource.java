@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.DataCenterNetworkResource;
 import org.ovirt.engine.api.resource.DataCenterNetworksResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -25,7 +25,7 @@ public class BackendDataCenterNetworksResource
     protected Guid dataCenterId;
 
     public BackendDataCenterNetworksResource(String dataCenterId) {
-        super(VdcQueryType.GetNetworksByDataCenterId, VdcActionType.AddNetwork);
+        super(VdcQueryType.GetNetworksByDataCenterId, ActionType.AddNetwork);
         this.dataCenterId = asGuid(dataCenterId);
     }
 

@@ -5,8 +5,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.AffinityLabel;
 import org.ovirt.engine.api.resource.AssignedAffinityLabelResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -42,7 +42,7 @@ public class BackendAssignedAffinityLabelResource extends AbstractBackendActiona
                 .removeEntity(parent)
                 .build();
 
-        return performAction(VdcActionType.UpdateLabel,
+        return performAction(ActionType.UpdateLabel,
                 new LabelActionParameters(updatedLabel));
     }
 }

@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -77,8 +77,8 @@ public class GlusterStorageModel extends PosixStorageModel {
     }
 
     @Override
-    public VdcActionType getAddStorageDomainVdcAction() {
-        return VdcActionType.AddGlusterFsStorageDomain;
+    public ActionType getAddStorageDomainVdcAction() {
+        return ActionType.AddGlusterFsStorageDomain;
     }
 
     @Override

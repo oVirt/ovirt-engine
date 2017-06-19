@@ -27,7 +27,7 @@ import org.ovirt.engine.api.model.Watchdogs;
 import org.ovirt.engine.api.resource.InstanceTypeWatchdogResource;
 import org.ovirt.engine.api.resource.InstanceTypeWatchdogsResource;
 import org.ovirt.engine.api.restapi.types.WatchdogMapper;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -69,7 +69,7 @@ public class BackendInstanceTypeWatchdogsResource
         }
         parameters.setId(instanteTypeId);
         parameters.setVm(false);
-        return performCreate(VdcActionType.AddWatchdog, parameters, new WatchdogResolver());
+        return performCreate(ActionType.AddWatchdog, parameters, new WatchdogResolver());
     }
 
     @Override

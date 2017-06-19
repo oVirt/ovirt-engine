@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
@@ -28,7 +28,7 @@ public class BackendAffinityGroupResource
     public AffinityGroup update(final AffinityGroup incoming) {
         return performUpdate(incoming,
                 new QueryIdResolver<>(VdcQueryType.GetAffinityGroupById, IdQueryParameters.class),
-                VdcActionType.EditAffinityGroup,
+                ActionType.EditAffinityGroup,
                 (model, entity) -> new AffinityGroupCRUDParameters(guid, map(incoming, entity)));
     }
 
@@ -43,6 +43,6 @@ public class BackendAffinityGroupResource
         get();
         AffinityGroupCRUDParameters params = new AffinityGroupCRUDParameters();
         params.setAffinityGroupId(asGuid(id));
-        return performAction(VdcActionType.RemoveAffinityGroup, params);
+        return performAction(ActionType.RemoveAffinityGroup, params);
     }
 }

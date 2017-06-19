@@ -14,8 +14,8 @@ import org.ovirt.engine.api.resource.InstanceTypesResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -80,7 +80,7 @@ public class BackendInstanceTypesResource
 
         DisplayHelper.setGraphicsToParams(instanceType.getDisplay(), addInstanceTypeParameters);
 
-        Response response = performCreate(VdcActionType.AddVmTemplate,
+        Response response = performCreate(ActionType.AddVmTemplate,
                 addInstanceTypeParameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetInstanceType,
                         GetVmTemplateParameters.class));

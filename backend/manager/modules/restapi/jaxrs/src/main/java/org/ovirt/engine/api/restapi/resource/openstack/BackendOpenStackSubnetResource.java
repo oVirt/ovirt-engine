@@ -27,8 +27,8 @@ import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.resource.openstack.OpenstackSubnetResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExternalSubnetParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -92,7 +92,7 @@ public class BackendOpenStackSubnetResource
         if (subnet != null) {
             ExternalSubnetParameters parameters = new ExternalSubnetParameters();
             parameters.setSubnet(subnet);
-            return performAction(VdcActionType.RemoveSubnetFromProvider, parameters);
+            return performAction(ActionType.RemoveSubnetFromProvider, parameters);
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }

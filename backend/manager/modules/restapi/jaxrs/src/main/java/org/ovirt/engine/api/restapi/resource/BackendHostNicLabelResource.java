@@ -3,8 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.NetworkLabelResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendHostNicLabelResource
     extends AbstractBaseHostNicLabelResource
@@ -29,6 +29,6 @@ public class BackendHostNicLabelResource
 
     @Override
     protected Response performRemove() {
-        return performAction(VdcActionType.UnlabelNic, new LabelNicParameters(parent.getHostNicId(), id));
+        return performAction(ActionType.UnlabelNic, new LabelNicParameters(parent.getHostNicId(), id));
     }
 }

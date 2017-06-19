@@ -7,9 +7,9 @@ import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.StepsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -31,14 +31,14 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
             action.isSetSucceeded() ? action.isSucceeded() : true,
             action.isSetForce() ? action.isForce() : false
         );
-        return doAction(VdcActionType.EndExternalJob, parameters, action);
+        return doAction(ActionType.EndExternalJob, parameters, action);
     }
 
     @Override
     public Response clear(Action action) {
         VdcActionParametersBase params = new VdcActionParametersBase();
         params.setJobId(guid);
-        return doAction(VdcActionType.ClearExternalJob, params, action);
+        return doAction(ActionType.ClearExternalJob, params, action);
     }
 
     @Override

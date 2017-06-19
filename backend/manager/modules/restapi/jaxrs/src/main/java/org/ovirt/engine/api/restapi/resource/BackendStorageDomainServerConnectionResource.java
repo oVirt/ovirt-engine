@@ -5,8 +5,8 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -37,7 +37,7 @@ public class BackendStorageDomainServerConnectionResource extends
         AttachDetachStorageConnectionParameters params =
                 new AttachDetachStorageConnectionParameters(parent.storageDomainId, id);
 
-        return performAction(VdcActionType.DetachStorageConnectionFromStorageDomain, params);
+        return performAction(ActionType.DetachStorageConnectionFromStorageDomain, params);
     }
 
 }

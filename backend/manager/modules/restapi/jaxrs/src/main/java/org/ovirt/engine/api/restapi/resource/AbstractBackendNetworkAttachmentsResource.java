@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.model.NetworkAttachments;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -49,7 +49,7 @@ public abstract class AbstractBackendNetworkAttachmentsResource
         validateParameters(attachment, "network.id|name");
         org.ovirt.engine.core.common.businessentities.network.NetworkAttachment networkAttachment = map(attachment);
         NetworkAttachmentParameters params = new NetworkAttachmentParameters(hostId, networkAttachment);
-        return performCreate(VdcActionType.AddNetworkAttachment,
+        return performCreate(ActionType.AddNetworkAttachment,
                 params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetNetworkAttachmentById, IdQueryParameters.class));
     }

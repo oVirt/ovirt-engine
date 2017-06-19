@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,7 +32,7 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
     /**
      * The action type which the Job describes
      */
-    private VdcActionType actionType;
+    private ActionType actionType;
 
     /**
      * The description of the job
@@ -124,11 +124,11 @@ public class Job implements IVdcQueryable, BusinessEntity<Guid> {
         this.steps = list;
     }
 
-    public void setActionType(VdcActionType actionType) {
+    public void setActionType(ActionType actionType) {
         this.actionType = actionType;
     }
 
-    public VdcActionType getActionType() {
+    public ActionType getActionType() {
         return actionType;
     }
 

@@ -43,6 +43,7 @@ import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
@@ -60,7 +61,6 @@ import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -228,7 +228,7 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -255,7 +255,7 @@ public class BackendVmResourceTest
         setUpGetRngDeviceExpectations(0);
 
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
                                            new Object[] {},
@@ -278,7 +278,7 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -302,7 +302,7 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[]{},
                 new Object[]{},
@@ -343,7 +343,7 @@ public class BackendVmResourceTest
     public void testUpdateVmPolicySingleHostName() throws Exception {
         setUpUdpateVm();
         setUpGetHostByNameExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -362,7 +362,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateVmPolicySingleHostId() throws Exception {
         setUpUdpateVm();
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -380,7 +380,7 @@ public class BackendVmResourceTest
     @Test
     public void testUpdateVmPolicyHostsIds() throws Exception {
         setUpUdpateVm();
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -405,7 +405,7 @@ public class BackendVmResourceTest
         for (int i =0; i < NAMES.length; i++){
             setUpGetHostByNameExpectations(i);
         }
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -452,7 +452,7 @@ public class BackendVmResourceTest
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
         setUpGetGraphicsExpectations(2);
-        setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
+        setUriInfo(setUpActionExpectations(ActionType.ChangeVMCluster,
                 ChangeVMClusterParameters.class,
                 new String[]{"ClusterId", "VmId"},
                 new Object[]{GUIDS[1], GUIDS[0]},
@@ -460,7 +460,7 @@ public class BackendVmResourceTest
                 true,
                 false));
 
-        setUpActionExpectations(VdcActionType.UpdateVm,
+        setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[]{},
                 new Object[]{},
@@ -490,7 +490,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -527,7 +527,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStart() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVm,
+        setUriInfo(setUpActionExpectations(ActionType.RunVm,
                 RunVmParams.class,
                 new String[] { "VmId" },
                 new Object[] { GUIDS[0] }));
@@ -541,7 +541,7 @@ public class BackendVmResourceTest
     public void testStartWithVm() throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+        setUriInfo(setUpActionExpectations(ActionType.RunVmOnce,
                 RunVmOnceParams.class,
                 new String[]{"VmId"},
                 new Object[]{GUIDS[0]}));
@@ -556,7 +556,7 @@ public class BackendVmResourceTest
     @Test
     public void testStartWithPauseAndStateless() throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+        setUriInfo(setUpActionExpectations(ActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "RunAndPause", "RunAsStateless" },
                                            new Object[] { GUIDS[0], true, Boolean.TRUE }));
@@ -581,7 +581,7 @@ public class BackendVmResourceTest
 
     private void testStartWithModifiedGraphics(GraphicsType graphicsType) throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+        setUriInfo(setUpActionExpectations(ActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "RunOnceGraphics" },
                                            new Object[] { GUIDS[0], Collections.singleton(graphicsType) }));
@@ -600,7 +600,7 @@ public class BackendVmResourceTest
     @Test
     public void testStartWithBootDev() throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+        setUriInfo(setUpActionExpectations(ActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "BootSequence" },
                                            new Object[] { GUIDS[0], BootSequence.N }));
@@ -618,7 +618,7 @@ public class BackendVmResourceTest
     @Test
     public void testStartWithBootMenu() throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+        setUriInfo(setUpActionExpectations(ActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "BootMenuEnabled" },
                                            new Object[] { GUIDS[0], true }));
@@ -634,7 +634,7 @@ public class BackendVmResourceTest
     @Test
     public void testStartWithCdRomAndFloppy() throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+        setUriInfo(setUpActionExpectations(ActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "DiskPath", "FloppyPath" },
                                            new Object[] { GUIDS[0], ISO_ID, FLOPPY_ID }));
@@ -673,7 +673,7 @@ public class BackendVmResourceTest
 
     protected void testStartWithHost(Host host, Guid hostId) throws Exception {
         setUpWindowsGetEntityExpectations(1, false);
-        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+        setUriInfo(setUpActionExpectations(ActionType.RunVmOnce,
                                            RunVmOnceParams.class,
                                            new String[] { "VmId", "DestinationVdsId" },
                                            new Object[] { GUIDS[0], hostId }));
@@ -690,7 +690,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testSuspend() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.HibernateVm,
+        setUriInfo(setUpActionExpectations(ActionType.HibernateVm,
                 VmOperationParameterBase.class,
                 new String[] { "VmId" },
                 new Object[] { GUIDS[0] }));
@@ -714,7 +714,7 @@ public class BackendVmResourceTest
     }
 
     private void doTestSuspendAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.HibernateVm,
+        setUriInfo(setUpActionExpectations(ActionType.HibernateVm,
                                                 VmOperationParameterBase.class,
                                                 new String[] { "VmId" },
                                                 new Object[] { GUIDS[0] },
@@ -731,7 +731,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testShutdown() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ShutdownVm,
+        setUriInfo(setUpActionExpectations(ActionType.ShutdownVm,
                 ShutdownVmParameters.class,
                 new String[] { "VmId" },
                 new Object[] { GUIDS[0] }));
@@ -741,7 +741,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testReboot() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RebootVm,
+        setUriInfo(setUpActionExpectations(ActionType.RebootVm,
                                            VmOperationParameterBase.class,
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
@@ -758,7 +758,7 @@ public class BackendVmResourceTest
                 new Object[] { GUIDS[0] },
                 mock(org.ovirt.engine.core.common.businessentities.VM.class));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.ReorderVmNics,
+        setUriInfo(setUpActionExpectations(ActionType.ReorderVmNics,
                                            VmOperationParameterBase.class,
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
@@ -768,7 +768,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testStop() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.StopVm,
+        setUriInfo(setUpActionExpectations(ActionType.StopVm,
                                            StopVmParameters.class,
                                            new String[] { "VmId", "StopVmType" },
                                            new Object[] { GUIDS[0], StopVmTypeEnum.NORMAL }));
@@ -778,7 +778,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testCancelMigration() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.CancelMigrateVm,
+        setUriInfo(setUpActionExpectations(ActionType.CancelMigrateVm,
                                            VmOperationParameterBase.class,
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
@@ -788,7 +788,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testDetach() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmFromPool,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVmFromPool,
                                            RemoveVmFromPoolParameters.class,
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
@@ -799,7 +799,7 @@ public class BackendVmResourceTest
     @Test
     public void testTicket() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.SetVmTicket,
+        setUriInfo(setUpActionExpectations(ActionType.SetVmTicket,
                                            SetVmTicketParameters.class,
                                            new String[] { "VmId", "Ticket" },
                                            new Object[] { GUIDS[0], NAMES[1] }));
@@ -812,7 +812,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testLogon() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.VmLogon,
+        setUriInfo(setUpActionExpectations(ActionType.VmLogon,
                                            VmOperationParameterBase.class,
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
@@ -823,7 +823,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testFreezeFilesystems() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.FreezeVm,
+        setUriInfo(setUpActionExpectations(ActionType.FreezeVm,
                 VmOperationParameterBase.class,
                 new String[] { "VmId" },
                 new Object[] { GUIDS[0] }));
@@ -834,7 +834,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testThawFilesystems() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ThawVm,
+        setUriInfo(setUpActionExpectations(ActionType.ThawVm,
                 VmOperationParameterBase.class,
                 new String[] { "VmId" },
                 new Object[] { GUIDS[0] }));
@@ -845,7 +845,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testMigrateWithHostId() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.MigrateVmToServer,
+        setUriInfo(setUpActionExpectations(ActionType.MigrateVmToServer,
                                            MigrateVmToServerParameters.class,
                                            new String[] { "VmId", "VdsId", "ForceMigrationForNonMigratableVm" },
                                            new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE }));
@@ -858,7 +858,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testPreviewSnapshot() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.TryBackToAllSnapshotsOfVm,
+        setUriInfo(setUpActionExpectations(ActionType.TryBackToAllSnapshotsOfVm,
                                            TryBackToAllSnapshotsOfVmParameters.class,
                                            new String[] { "VmId", "DstSnapshotId" },
                                            new Object[] { GUIDS[0], GUIDS[1] }));
@@ -875,7 +875,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testUndoSnapshot() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RestoreAllSnapshots,
+        setUriInfo(setUpActionExpectations(ActionType.RestoreAllSnapshots,
                                            RestoreAllSnapshotsParameters.class,
                                            new String[] { "VmId", "SnapshotAction" },
                                            new Object[] { GUIDS[0], SnapshotActionEnum.UNDO }));
@@ -888,7 +888,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testCommitSnapshot() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.RestoreAllSnapshots,
+        setUriInfo(setUpActionExpectations(ActionType.RestoreAllSnapshots,
                                            RestoreAllSnapshotsParameters.class,
                                            new String[] { "VmId", "SnapshotAction" },
                                            new Object[] { GUIDS[0], SnapshotActionEnum.COMMIT }));
@@ -907,7 +907,7 @@ public class BackendVmResourceTest
 
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId, IdQueryParameters.class, new String[]{"Id"}, new Object[]{GUIDS[0]}, mockedVm);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.CloneVm,
+        setUriInfo(setUpActionExpectations(ActionType.CloneVm,
                 CloneVmParameters.class,
                 new String[] { "VmStaticData", "NewName" },
                 new Object[] { vmStatic, "someNewName" }));
@@ -927,7 +927,7 @@ public class BackendVmResourceTest
     public void testMigrateWithHostName() throws Exception {
         setUpGetHostByNameExpectations(1);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.MigrateVmToServer,
+        setUriInfo(setUpActionExpectations(ActionType.MigrateVmToServer,
                                            MigrateVmToServerParameters.class,
                                            new String[] { "VmId", "VdsId", "ForceMigrationForNonMigratableVm" },
                                            new Object[] { GUIDS[0], GUIDS[1], Boolean.FALSE }));
@@ -940,7 +940,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testMigrateNoHost() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.MigrateVm,
+        setUriInfo(setUpActionExpectations(ActionType.MigrateVm,
                 MigrateVmParameters.class,
                 new String[] { "VmId", "ForceMigrationForNonMigratableVm" },
                 new Object[] { GUIDS[0], Boolean.FALSE }));
@@ -950,7 +950,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testMigrateWithClusterId() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.MigrateVm,
+        setUriInfo(setUpActionExpectations(ActionType.MigrateVm,
                 MigrateVmParameters.class,
                 new String[] { "VmId", "ForceMigrationForNonMigratableVm", "TargetClusterId"},
                 new Object[] { GUIDS[0], Boolean.FALSE, GUIDS[1]}));
@@ -996,7 +996,7 @@ public class BackendVmResourceTest
     protected void doTestExport(StorageDomain storageDomain,
                                 boolean exclusive,
                                 boolean discardSnapshots) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.ExportVm,
+        setUriInfo(setUpActionExpectations(ActionType.ExportVm,
                                            MoveOrCopyParameters.class,
                                            new String[] { "ContainerId", "StorageDomainId", "ForceOverride", "CopyCollapse" },
                                            new Object[] { GUIDS[0], GUIDS[2], exclusive, discardSnapshots }));
@@ -1038,7 +1038,7 @@ public class BackendVmResourceTest
     @Test
     public void testMaintenance() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.SetHaMaintenance,
+        setUriInfo(setUpActionExpectations(ActionType.SetHaMaintenance,
                                            SetHaMaintenanceParameters.class,
                                            new String[] { "IsEnabled" },
                                            new Object[] { true }));
@@ -1055,7 +1055,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveVm, RemoveVmParameters.class, new String[] {
+        setUpActionExpectations(ActionType.RemoveVm, RemoveVmParameters.class, new String[] {
                 "VmId", "Force" }, new Object[] { GUIDS[0], Boolean.FALSE }, true, true);
         verifyRemove(resource.remove());
     }
@@ -1067,7 +1067,7 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveVm,
+            ActionType.RemoveVm,
             RemoveVmParameters.class,
             new String[] { "VmId", "Force" },
             new Object[] { GUIDS[0], Boolean.TRUE },
@@ -1087,7 +1087,7 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveVm,
+            ActionType.RemoveVm,
             RemoveVmParameters.class,
             new String[] { "VmId", "RemoveDisks" },
             new Object[] { GUIDS[0], Boolean.FALSE },
@@ -1107,7 +1107,7 @@ public class BackendVmResourceTest
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveVm,
+            ActionType.RemoveVm,
             RemoveVmParameters.class,
             new String[] { "VmId", "Force" },
             new Object[] { GUIDS[0], Boolean.FALSE },
@@ -1160,7 +1160,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
         setUpGetGraphicsExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVm,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVm,
                 RemoveVmParameters.class,
                 new String[] { "VmId", "Force" },
                 new Object[] { GUIDS[0], Boolean.FALSE },
@@ -1233,14 +1233,14 @@ public class BackendVmResourceTest
                 getEntity(0));
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values) {
         return setUpActionExpectations(task, clz, names, values, true, true, null, null, true);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,

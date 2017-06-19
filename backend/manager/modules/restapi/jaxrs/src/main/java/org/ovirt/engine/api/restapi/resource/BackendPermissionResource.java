@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.resource.PermissionResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -60,7 +60,7 @@ public class BackendPermissionResource
     public Response remove() {
         get();
         return performAction(
-            VdcActionType.RemovePermission,
+            ActionType.RemovePermission,
             new PermissionsOperationsParameters(getPermissions(), targetId)
         );
     }

@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -29,8 +29,8 @@ public class RemoveVmTemplateInterfaceModel extends RemoveVmInterfaceModel{
     }
 
     @Override
-    protected VdcActionType getActionType() {
-        return VdcActionType.RemoveVmTemplateInterface;
+    protected ActionType getActionType() {
+        return ActionType.RemoveVmTemplateInterface;
     }
 
 }

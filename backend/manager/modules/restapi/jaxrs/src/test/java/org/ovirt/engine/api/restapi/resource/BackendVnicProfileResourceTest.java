@@ -7,7 +7,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.VnicProfile;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -66,7 +66,7 @@ public class BackendVnicProfileResourceTest
     public void testUpdate() throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVnicProfile,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVnicProfile,
                 VnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -89,7 +89,7 @@ public class BackendVnicProfileResourceTest
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateVnicProfile,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateVnicProfile,
                 VnicProfileParameters.class,
                 new String[] {},
                 new Object[] {},

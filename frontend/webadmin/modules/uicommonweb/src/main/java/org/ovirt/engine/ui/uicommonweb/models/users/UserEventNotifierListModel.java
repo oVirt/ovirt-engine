@@ -9,9 +9,9 @@ import java.util.MissingResourceException;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.EventNotificationMethod;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -234,10 +234,10 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
         if (toRemoveList.size() > 0) {
             EventSubscriptionFrontendActionAsyncCallback callback = new EventSubscriptionFrontendActionAsyncCallback(toAddList, toRemoveList);
             for (VdcActionParametersBase param : toRemoveList) {
-                Frontend.getInstance().runAction(VdcActionType.RemoveEventSubscription, param, callback);
+                Frontend.getInstance().runAction(ActionType.RemoveEventSubscription, param, callback);
             }
         } else if (toAddList.size() > 0) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.AddEventSubscription, toAddList);
+            Frontend.getInstance().runMultipleAction(ActionType.AddEventSubscription, toAddList);
         }
         cancel();
     }
@@ -260,7 +260,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
                 // we wait until all subscribed events have been removed and then
                 // invoke the AddEventSubscription action
                 if (toAddList.size() > 0 && sucessCount == toRemoveList.size()) {
-                    Frontend.getInstance().runMultipleAction(VdcActionType.AddEventSubscription, toAddList);
+                    Frontend.getInstance().runMultipleAction(ActionType.AddEventSubscription, toAddList);
                 }
             }
         }

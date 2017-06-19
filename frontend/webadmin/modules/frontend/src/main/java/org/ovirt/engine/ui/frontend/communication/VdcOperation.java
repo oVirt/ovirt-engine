@@ -2,18 +2,18 @@ package org.ovirt.engine.ui.frontend.communication;
 
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 /**
  * This class represents a single operation, which is either a query or an action.
- * @param <T> The type of operation, either {@code VdcQueryType} or {@code VdcActionType}.
+ * @param <T> The type of operation, either {@code VdcQueryType} or {@code ActionType}.
  * @param <P> The parameter type for the operation.
  */
 public class VdcOperation<T, P> {
 
     /**
-     * The actual operation, can be either {@code VdcQueryType} or {@code VdcActionType}.
+     * The actual operation, can be either {@code VdcQueryType} or {@code ActionType}.
      */
     private final T operationType;
 
@@ -61,13 +61,13 @@ public class VdcOperation<T, P> {
     private VdcOperation(final T operation, final P param, final VdcOperationCallback<?, ?> callback,
             final VdcOperation<T, P> sourceOperation, final boolean isPublicOperation, final boolean fromList,
             final boolean isRunOnlyIfAllValidationPass) {
-        if (operation instanceof VdcActionType) {
+        if (operation instanceof ActionType) {
             this.isAction = true;
         } else if (operation instanceof VdcQueryType) {
             this.isAction = false;
         } else {
             throw new IllegalArgumentException(
-                    "Operation type must be either VdcActionType or VdcQueryType"); //$NON-NLS-1$
+                    "Operation type must be either ActionType or VdcQueryType"); //$NON-NLS-1$
         }
 
         this.operationType = operation;

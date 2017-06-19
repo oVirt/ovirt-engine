@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -226,7 +226,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     public void onRemove() {
         for (Object item : getSelectedItems()) {
             Role role = (Role) item;
-            Frontend.getInstance().runAction(VdcActionType.RemoveRole, new RolesParameterBase(role.getId()));
+            Frontend.getInstance().runAction(ActionType.RemoveRole, new RolesParameterBase(role.getId()));
         }
 
         cancel();
@@ -425,7 +425,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
             RoleWithActionGroupsParameters tempVar = new RoleWithActionGroupsParameters();
             tempVar.setRole(role);
             tempVar.setActionGroups(actions);
-            Frontend.getInstance().runAction(VdcActionType.AddRoleWithActionGroups, tempVar,
+            Frontend.getInstance().runAction(ActionType.AddRoleWithActionGroups, tempVar,
                     result -> {
 
                         RoleListModel localModel = (RoleListModel) result.getState();
@@ -441,7 +441,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
             attachActionGroup = actions;
             attachActionGroup.removeAll(publicAttachedActions);
 
-            Frontend.getInstance().runAction(VdcActionType.UpdateRole, new RolesOperationsParameters(role),
+            Frontend.getInstance().runAction(ActionType.UpdateRole, new RolesOperationsParameters(role),
                     result -> {
 
                         RoleListModel roleListModel = (RoleListModel) result.getState();
@@ -451,13 +451,13 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                                 ActionGroupsToRoleParameter tempVar2 = new ActionGroupsToRoleParameter();
                                 tempVar2.setActionGroups(roleListModel.detachActionGroup);
                                 tempVar2.setRoleId(roleListModel.role.getId());
-                                Frontend.getInstance().runAction(VdcActionType.DetachActionGroupsFromRole, tempVar2);
+                                Frontend.getInstance().runAction(ActionType.DetachActionGroupsFromRole, tempVar2);
                             }
                             if (roleListModel.attachActionGroup.size() > 0) {
                                 ActionGroupsToRoleParameter tempVar3 = new ActionGroupsToRoleParameter();
                                 tempVar3.setActionGroups(roleListModel.attachActionGroup);
                                 tempVar3.setRoleId(roleListModel.role.getId());
-                                Frontend.getInstance().runAction(VdcActionType.AttachActionGroupsToRole, tempVar3);
+                                Frontend.getInstance().runAction(ActionType.AttachActionGroupsToRole, tempVar3);
                             }
                             roleListModel.getWindow().stopProgress();
                             roleListModel.cancel();

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -21,7 +21,7 @@ public class SaveNetworkConfigAction {
     }
 
     public void execute() {
-        Frontend.getInstance().runAction(VdcActionType.CommitNetworkChanges, new VdsActionParameters(host.getId()),
+        Frontend.getInstance().runAction(ActionType.CommitNetworkChanges, new VdsActionParameters(host.getId()),
                 result -> {
 
                     VdcReturnValueBase returnValueBase = result.getReturnValue();

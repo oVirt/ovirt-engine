@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -91,7 +91,7 @@ public class BackendPermissionResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemovePermission,
+                ActionType.RemovePermission,
                 PermissionsOperationsParameters.class,
                 new String[] { "Permission.Id" },
                 new Object[] { GUIDS[0] },
@@ -143,7 +143,7 @@ public class BackendPermissionResourceTest
         setUpGetEntityExpectations(2);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemovePermission,
+                ActionType.RemovePermission,
                 PermissionsOperationsParameters.class,
                 new String[] { "Permission.Id" },
                 new Object[] { GUIDS[0] },

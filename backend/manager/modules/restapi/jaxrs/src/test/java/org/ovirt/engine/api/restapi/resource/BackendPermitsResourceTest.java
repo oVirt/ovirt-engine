@@ -9,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -29,7 +29,7 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
     @Test
     public void testAddPermit() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AttachActionGroupsToRole,
+        setUpCreationExpectations(ActionType.AttachActionGroupsToRole,
                                   ActionGroupsToRoleParameter.class,
                                   new String[] { "RoleId" },
                                   new Object[] { GUIDS[1] },

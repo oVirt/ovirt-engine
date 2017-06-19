@@ -13,8 +13,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -115,7 +115,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         StorageServerConnections connection = new StorageServerConnections();
         connection.setConnection("1.1.1.1:/data1");
         connection.setStorageType(STORAGE_TYPES_MAPPED[0]);
-        setUpCreationExpectations(VdcActionType.AddStorageServerConnection,
+        setUpCreationExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { connection.getConnection(), STORAGE_TYPES_MAPPED[0], GUIDS[1] },
@@ -142,7 +142,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         StorageServerConnections connection = new StorageServerConnections();
         connection.setConnection("/data1");
         connection.setStorageType(STORAGE_TYPES_MAPPED[1]);
-        setUpCreationExpectations(VdcActionType.AddStorageServerConnection,
+        setUpCreationExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { connection.getConnection(), STORAGE_TYPES_MAPPED[1], GUIDS[1] },
@@ -169,7 +169,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         StorageServerConnections connection = new StorageServerConnections();
         connection.setConnection("1.1.1.1:/data1");
         connection.setStorageType(STORAGE_TYPES_MAPPED[0]);
-        setUpCreationExpectations(VdcActionType.AddStorageServerConnection,
+        setUpCreationExpectations(ActionType.AddStorageServerConnection,
                 StorageServerConnectionParametersBase.class,
                 new String[] { "StorageServerConnection.Connection", "StorageServerConnection.StorageType", "VdsId" },
                 new Object[] { connection.getConnection(), STORAGE_TYPES_MAPPED[0], GUIDS[1] },

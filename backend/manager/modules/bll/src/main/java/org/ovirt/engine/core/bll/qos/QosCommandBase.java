@@ -10,9 +10,9 @@ import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -103,7 +103,7 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
     protected void refreshNetworks(ArrayList<VdcActionParametersBase> parameters) {
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
-            runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, parameters);
+            runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, parameters);
         }
     }
 }

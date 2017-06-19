@@ -5,8 +5,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
@@ -60,7 +60,7 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
                     parameters.setId(templateId);
                     parameters.setAction(getParameters().getWatchdog().getAction());
                     parameters.setModel(getParameters().getWatchdog().getModel());
-                    runInternalAction(VdcActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
+                    runInternalAction(ActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
                 }
             } else {
                 WatchdogParameters watchdogParameters = new WatchdogParameters();
@@ -70,12 +70,12 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
                 watchdogParameters.setId(templateId);
                 if (getParameters().getWatchdog() == null) {
                     // there is a watchdog in the vm, there should not be any, so let's delete
-                    runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
+                    runInternalAction(ActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 } else {
                     // there is a watchdog in the vm, we have to update.
                     watchdogParameters.setAction(getParameters().getWatchdog().getAction());
                     watchdogParameters.setModel(getParameters().getWatchdog().getModel());
-                    runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
+                    runInternalAction(ActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 }
             }
         }
@@ -97,16 +97,16 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
             if (rngDevs.isEmpty()) {
                 if (getParameters().getRngDevice() != null) {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
-                    rngCommandResult = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
+                    rngCommandResult = runInternalAction(ActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
                 }
             } else {
                 if (getParameters().getRngDevice() == null) {
                     RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), false);
-                    rngCommandResult = runInternalAction(VdcActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
+                    rngCommandResult = runInternalAction(ActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
                 } else {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
                     params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
-                    rngCommandResult = runInternalAction(VdcActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
+                    rngCommandResult = runInternalAction(ActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
                 }
             }
 

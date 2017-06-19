@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -19,11 +19,11 @@ public interface CommandCRUDOperations {
 
     boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId);
 
-    CommandEntity createCommandEntity(Guid cmdId, VdcActionType actionType, VdcActionParametersBase params);
+    CommandEntity createCommandEntity(Guid cmdId, ActionType actionType, VdcActionParametersBase params);
 
     List<Guid> getChildCommandIds(Guid commandId);
 
-    List<Guid> getChildCommandIds(Guid commandId, VdcActionType childActionType, CommandStatus status);
+    List<Guid> getChildCommandIds(Guid commandId, ActionType childActionType, CommandStatus status);
 
     List<Guid> getCommandIdsBySessionSeqId(long engineSessionSeqId);
 

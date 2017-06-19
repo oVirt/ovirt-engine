@@ -5,8 +5,8 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
@@ -31,11 +31,11 @@ public class LiveStorageMigrationHelper {
         RemoveImageParameters removeImageParams =
                 new RemoveImageParameters(imageId);
         removeImageParams.setStorageDomainId(storageDomainId);
-        removeImageParams.setParentCommand(VdcActionType.RemoveImage);
+        removeImageParams.setParentCommand(ActionType.RemoveImage);
         removeImageParams.setDbOperationScope(ImageDbOperationScope.NONE);
         removeImageParams.setShouldLockImage(false);
         VdcReturnValueBase returnValue = cmd.runInternalActionWithTasksContext(
-                VdcActionType.RemoveImage,
+                ActionType.RemoveImage,
                 removeImageParams);
         if (returnValue.getSucceeded()) {
             cmd.startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());

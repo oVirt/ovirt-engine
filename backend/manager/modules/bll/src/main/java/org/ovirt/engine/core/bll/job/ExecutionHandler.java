@@ -19,8 +19,8 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.HasCorrelationId;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Job;
@@ -89,7 +89,7 @@ public class ExecutionHandler {
      *            The {@code CommandBase} instance which the job entity describes.
      * @return An initialized {@code Job} instance.
      */
-    public static Job createJob(VdcActionType actionType, CommandBase<?> command) {
+    public static Job createJob(ActionType actionType, CommandBase<?> command) {
         Job job = new Job();
 
         job.setId(Guid.newGuid());
@@ -208,7 +208,7 @@ public class ExecutionHandler {
      *            Indicates if the command should be run as internal action or not
      */
     public void prepareCommandForMonitoring(CommandBase<?> command,
-            VdcActionType actionType,
+            ActionType actionType,
             boolean runAsInternal) {
 
         ExecutionContext context = command.getExecutionContext();
@@ -236,7 +236,7 @@ public class ExecutionHandler {
         }
     }
 
-    private Job getJob(CommandBase<?> command, VdcActionType actionType) {
+    private Job getJob(CommandBase<?> command, ActionType actionType) {
         VdcActionParametersBase params = command.getParameters();
         Job job;
         // if Job is external, we had already created the Job by AddExternalJobCommand, so just get it from DB
@@ -253,7 +253,7 @@ public class ExecutionHandler {
     /**
      * Determines if a specific action should be monitored by the following criteria:
      * <ul>
-     * <li>{@code VdcActionType.isMonitored} - defined for a specific action type</li>
+     * <li>{@code ActionType.isMonitored} - defined for a specific action type</li>
      * <li>{@code isInternal} - By default, only non-internal commands are monitored</li>
      * </ul>
      *
@@ -263,7 +263,7 @@ public class ExecutionHandler {
      *            Indicator of action invocation method
      * @return true if the command should be monitored, else false.
      */
-    private static boolean shouldMonitorCommand(VdcActionType actionType, boolean isInternal) {
+    private static boolean shouldMonitorCommand(ActionType actionType, boolean isInternal) {
 
         return actionType.isActionMonitored() && !isInternal;
     }
@@ -909,7 +909,7 @@ public class ExecutionHandler {
      * @param status
      *            The exist status to be set for the job
      */
-    public void updateSpecificActionJobCompleted(Guid entityId, VdcActionType actionType, boolean status) {
+    public void updateSpecificActionJobCompleted(Guid entityId, ActionType actionType, boolean status) {
         try {
             List<Job> jobs = jobRepository.getJobsByEntityAndAction(entityId, actionType);
             for (Job job : jobs) {

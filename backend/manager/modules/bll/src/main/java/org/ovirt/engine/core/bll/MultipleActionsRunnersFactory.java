@@ -10,9 +10,9 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.AttachStorageDomainsMultipleActionRunner;
 import org.ovirt.engine.core.bll.storage.domain.DeactivateStorageDomainsMultipleActionRunner;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +29,7 @@ public class MultipleActionsRunnersFactory {
     @Inject
     private ClusterDao clusterDao;
 
-    public MultipleActionsRunner createMultipleActionsRunner(VdcActionType actionType,
+    public MultipleActionsRunner createMultipleActionsRunner(ActionType actionType,
                                                              List<VdcActionParametersBase> parameters,
                                                              boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;

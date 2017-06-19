@@ -8,9 +8,9 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Bookmark;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -71,7 +71,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUpGetEntityExpectations(0);
         setUpGetEntityExpectations(0);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateBookmark, BookmarksOperationParameters.class,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateBookmark, BookmarksOperationParameters.class,
                 new String[] { "Bookmark.Id", "Bookmark.Name", "Bookmark.Value" },
                 new Object[] { GUIDS[0], NAMES[0], VALUES[0] }, true, true));
 
@@ -92,7 +92,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUpGetEntityExpectations(0);
 
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateBookmark, BookmarksOperationParameters.class,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateBookmark, BookmarksOperationParameters.class,
                 new String[] {}, new Object[] {}, valid, success));
 
         try {
@@ -108,7 +108,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUpGetEntityExpectations(0);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveBookmark,
+                ActionType.RemoveBookmark,
                 BookmarksParametersBase.class,
                 new String[] { "BookmarkId" },
                 new Object[] { GUIDS[0] },
@@ -146,7 +146,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
         setUpGetEntityExpectations(0);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveBookmark,
+                ActionType.RemoveBookmark,
                 BookmarksParametersBase.class,
                 new String[] { "BookmarkId" },
                 new Object[] { GUIDS[0] },

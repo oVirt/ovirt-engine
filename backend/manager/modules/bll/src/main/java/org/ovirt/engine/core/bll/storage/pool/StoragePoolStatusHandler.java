@@ -7,8 +7,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -110,7 +110,7 @@ public final class StoragePoolStatusHandler {
                     pool.getName(),
                     pool.getId());
             Backend.getInstance().runInternalAction(
-                    VdcActionType.SetStoragePoolStatus,
+                    ActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(pool.getId(), StoragePoolStatus.NonResponsive,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_FROM_NON_OPERATIONAL));
             synchronized (nonOperationalPools) {

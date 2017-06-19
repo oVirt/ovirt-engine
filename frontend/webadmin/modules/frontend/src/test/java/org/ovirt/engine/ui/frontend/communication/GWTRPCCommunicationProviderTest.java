@@ -16,8 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -74,53 +74,53 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitOperationAction_success() {
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
-        final List<VdcOperation<VdcActionType, VdcActionParametersBase>> operationList = new ArrayList<>();
-        final VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<>(VdcActionType.AddDisk, testParameters,
-                new VdcOperationCallback<VdcOperation<VdcActionType, VdcActionParametersBase>, VdcReturnValueBase>() {
+        final List<VdcOperation<ActionType, VdcActionParametersBase>> operationList = new ArrayList<>();
+        final VdcOperation<ActionType, VdcActionParametersBase> testOperation =
+                new VdcOperation<>(ActionType.AddDisk, testParameters,
+                new VdcOperationCallback<VdcOperation<ActionType, VdcActionParametersBase>, VdcReturnValueBase>() {
 
             @Override
-            public void onSuccess(VdcOperation<VdcActionType, VdcActionParametersBase> operation,
+            public void onSuccess(VdcOperation<ActionType, VdcActionParametersBase> operation,
                     VdcReturnValueBase result) {
                 assertEquals("Test results should match", testResult, result); //$NON-NLS-1$
                 assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
             }
 
             @Override
-            public void onFailure(VdcOperation<VdcActionType, VdcActionParametersBase> operation, Throwable caught) {
+            public void onFailure(VdcOperation<ActionType, VdcActionParametersBase> operation, Throwable caught) {
                 fail("Should not get here"); //$NON-NLS-1$
             }
         });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
-        verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(ActionType.AddDisk), eq(testParameters), actionCallback.capture());
         actionCallback.getValue().onSuccess(testResult);
     }
 
     @Test
     public void testTransmitOperationAction_failure() {
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        final List<VdcOperation<VdcActionType, VdcActionParametersBase>> operationList = new ArrayList<>();
+        final List<VdcOperation<ActionType, VdcActionParametersBase>> operationList = new ArrayList<>();
         final Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
-        final VdcOperation<VdcActionType, VdcActionParametersBase> testOperation =
-                new VdcOperation<>(VdcActionType.AddDisk, testParameters,
-                new VdcOperationCallback<VdcOperation<VdcActionType, VdcActionParametersBase>, VdcReturnValueBase>() {
+        final VdcOperation<ActionType, VdcActionParametersBase> testOperation =
+                new VdcOperation<>(ActionType.AddDisk, testParameters,
+                new VdcOperationCallback<VdcOperation<ActionType, VdcActionParametersBase>, VdcReturnValueBase>() {
 
             @Override
-            public void onSuccess(VdcOperation<VdcActionType, VdcActionParametersBase> operation,
+            public void onSuccess(VdcOperation<ActionType, VdcActionParametersBase> operation,
                     VdcReturnValueBase result) {
                 fail("Should not get here"); //$NON-NLS-1$
             }
 
             @Override
-            public void onFailure(VdcOperation<VdcActionType, VdcActionParametersBase> operation, Throwable exception) {
+            public void onFailure(VdcOperation<ActionType, VdcActionParametersBase> operation, Throwable exception) {
                 assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
                 assertEquals("Exceptions should match", testException, exception); //$NON-NLS-1$
             }
         });
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
-        verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(ActionType.AddDisk), eq(testParameters), actionCallback.capture());
         actionCallback.getValue().onFailure(testException);
     }
 
@@ -189,8 +189,8 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testGetOperationResult_One() {
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, new VdcActionParametersBase(), null);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, new VdcActionParametersBase(), null);
         List<VdcOperation<?, ?>> testOperationList = new ArrayList<>();
         testOperationList.add(testOperation1);
         List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
@@ -204,10 +204,10 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testGetOperationResult_One_of_Two() {
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, new VdcActionParametersBase(), null);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<>(VdcActionType.AddBookmark, new VdcActionParametersBase(), null);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, new VdcActionParametersBase(), null);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation2 =
+                new VdcOperation<>(ActionType.AddBookmark, new VdcActionParametersBase(), null);
         List<VdcOperation<?, ?>> testOperationList = new ArrayList<>();
         testOperationList.add(testOperation2);
         List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
@@ -228,11 +228,11 @@ public class GWTRPCCommunicationProviderTest {
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
-        verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(ActionType.ActivateVds), eq(testParameters), actionCallback.capture());
         actionCallback.getValue().onSuccess(testResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testResult);
     }
@@ -241,11 +241,11 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitOperationList_oneAction_failure() {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
-        verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testParameters), actionCallback.capture());
+        verify(mockService).runAction(eq(ActionType.ActivateVds), eq(testParameters), actionCallback.capture());
         Exception testException = new Exception("Failure"); //$NON-NLS-1$
         actionCallback.getValue().onFailure(testException);
         verify(mockOperationCallbackSingle1).onFailure(testOperation1, testException);
@@ -256,16 +256,16 @@ public class GWTRPCCommunicationProviderTest {
         final VdcReturnValueBase testResult = new VdcReturnValueBase();
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation2 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         List<VdcActionParametersBase> testParameterList = createActionParameterList(testParameters, 2);
         List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(ActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(testParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
         actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
@@ -276,15 +276,15 @@ public class GWTRPCCommunicationProviderTest {
     public void testTransmitOperationList_twoItems_failure() {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation2 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         List<VdcActionParametersBase> testParameterList = createActionParameterList(testParameters, 2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(ActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(testParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
         Exception testException = new Exception("Failure"); //$NON-NLS-1$
@@ -298,12 +298,12 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         List<VdcOperation<?, ?>> activateVdsList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation3 =
-                new VdcOperation<>(VdcActionType.ActivateStorageDomain, testParameters, mockOperationCallbackSingle2);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation2 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation3 =
+                new VdcOperation<>(ActionType.ActivateStorageDomain, testParameters, mockOperationCallbackSingle2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         testList.add(testOperation3);
@@ -313,10 +313,10 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 3);
         List<VdcReturnValueBase> activateVdsResultList = createActionResultList(testResult, 2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(ActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(activateVdsParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
-        verify(mockService).runAction(eq(VdcActionType.ActivateStorageDomain), eq(testParameters),
+        verify(mockService).runAction(eq(ActionType.ActivateStorageDomain), eq(testParameters),
                 actionCallback.capture());
         actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
         actionCallback.getValue().onSuccess(testResult);
@@ -330,12 +330,12 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         List<VdcOperation<?, ?>> activateVdsList = new ArrayList<>();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation1 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testParameters, mockOperationCallbackList1);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation3 =
-                new VdcOperation<>(VdcActionType.ActivateStorageDomain, testParameters, mockOperationCallbackSingle2);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation1 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation2 =
+                new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation3 =
+                new VdcOperation<>(ActionType.ActivateStorageDomain, testParameters, mockOperationCallbackSingle2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         testList.add(testOperation3);
@@ -345,10 +345,10 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 3);
         List<VdcReturnValueBase> activateVdsResultList = createActionResultList(testResult, 2);
         testProvider.transmitOperationList(testList);
-        verify(mockService).runMultipleActions(eq(VdcActionType.ActivateVds),
+        verify(mockService).runMultipleActions(eq(ActionType.ActivateVds),
                 (ArrayList<VdcActionParametersBase>) eq(activateVdsParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
-        verify(mockService).runAction(eq(VdcActionType.ActivateStorageDomain), eq(testParameters),
+        verify(mockService).runAction(eq(ActionType.ActivateStorageDomain), eq(testParameters),
                 actionCallback.capture());
         actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
         Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
@@ -444,8 +444,8 @@ public class GWTRPCCommunicationProviderTest {
         VdcActionParametersBase testActionParameters = new VdcActionParametersBase();
         VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation1 =
                 new VdcOperation<>(VdcQueryType.Search, testQueryParameters, mockOperationCallbackSingle1);
-        VdcOperation<VdcActionType, VdcActionParametersBase> testOperation2 =
-                new VdcOperation<>(VdcActionType.ActivateVds, testActionParameters, mockOperationCallbackSingle2);
+        VdcOperation<ActionType, VdcActionParametersBase> testOperation2 =
+                new VdcOperation<>(ActionType.ActivateVds, testActionParameters, mockOperationCallbackSingle2);
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
         operationList.add(testOperation2);
@@ -455,7 +455,7 @@ public class GWTRPCCommunicationProviderTest {
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
         VdcReturnValueBase testActionResult = new VdcReturnValueBase();
-        verify(mockService).runAction(eq(VdcActionType.ActivateVds), eq(testActionParameters),
+        verify(mockService).runAction(eq(ActionType.ActivateVds), eq(testActionParameters),
                 actionCallback.capture());
         actionCallback.getValue().onSuccess(testActionResult);
         verify(mockOperationCallbackSingle2).onSuccess(testOperation2, testActionResult);

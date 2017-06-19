@@ -44,12 +44,12 @@ import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.CommandExecutionReason;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -125,7 +125,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     private T parameters;
     private VdcReturnValueBase returnValue;
     private CommandActionState actionState = CommandActionState.EXECUTE;
-    private VdcActionType actionType;
+    private ActionType actionType;
     private final List<Class<?>> validationGroups = new ArrayList<>();
     private final Guid commandId;
     private boolean quotaChanged = false;
@@ -274,7 +274,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      *            context for the rollback
      * @return result of the command execution
      */
-    protected VdcReturnValueBase attemptRollback(VdcActionType commandType,
+    protected VdcReturnValueBase attemptRollback(ActionType commandType,
             VdcActionParametersBase params, CommandContext context) {
         if (canPerformRollbackUsingCommand(commandType, params)) {
             params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
@@ -299,7 +299,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      *            context for the rollback
      * @return result of the command execution
      */
-    protected VdcReturnValueBase checkAndPerformRollbackUsingCommand(VdcActionType commandType,
+    protected VdcReturnValueBase checkAndPerformRollbackUsingCommand(ActionType commandType,
             VdcActionParametersBase params, CommandContext context) {
         return attemptRollback(commandType, params, context);
     }
@@ -314,7 +314,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @return true if it is possible to run rollback using command
      */
     protected boolean canPerformRollbackUsingCommand
-            (VdcActionType commandType,
+            (ActionType commandType,
                     VdcActionParametersBase params) {
         return true;
     }
@@ -907,7 +907,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected boolean isQuotaDependant() {
-        if (getActionType().getQuotaDependency() == VdcActionType.QuotaDependency.NONE) {
+        if (getActionType().getQuotaDependency() == ActionType.QuotaDependency.NONE) {
             return false;
         }
 
@@ -1224,7 +1224,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected boolean isExecutedAsChildCommand() {
-        return getParameters().getParentCommand() != VdcActionType.Unknown;
+        return getParameters().getParentCommand() != ActionType.Unknown;
     }
 
     /**
@@ -1232,12 +1232,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @param parentCommandType parent command type for which the task is created
      * @param parameters parameter of the creating command
      */
-    protected VdcActionParametersBase getParametersForTask(VdcActionType parentCommandType,
+    protected VdcActionParametersBase getParametersForTask(ActionType parentCommandType,
                                                            VdcActionParametersBase parameters) {
         // If there is no parent command, the command that its type
         // will be stored in the DB for thr task is the one creating the command
         VdcActionParametersBase parentParameters = parameters.getParentParameters();
-        if (parentCommandType == VdcActionType.Unknown || parentParameters == null) {
+        if (parentCommandType == ActionType.Unknown || parentParameters == null) {
             return parameters;
         }
 
@@ -1562,17 +1562,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         this.returnValue = returnValue;
     }
 
-    public VdcActionType getActionType() {
+    public ActionType getActionType() {
         try {
             if (actionType == null) {
                 String name = getClass().getName();
                 name = name.substring(0, name.length() - 7);
                 name = name.substring(name.lastIndexOf('.') + 1);
-                actionType = VdcActionType.valueOf(name);
+                actionType = ActionType.valueOf(name);
             }
             return actionType;
         } catch (Exception e) {
-            return VdcActionType.Unknown;
+            return ActionType.Unknown;
         }
     }
 
@@ -1592,11 +1592,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     Map<String, Guid> taskKeyToTaskIdMap = new HashMap<>();
 
-    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand) {
+    public Guid persistAsyncTaskPlaceHolder(ActionType parentCommand) {
         return persistAsyncTaskPlaceHolder(parentCommand, DEFAULT_TASK_KEY);
     }
 
-    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand, final String taskKey) {
+    public Guid persistAsyncTaskPlaceHolder(ActionType parentCommand, final String taskKey) {
         Guid taskId = Guid.Empty;
         try {
             AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo();
@@ -1660,32 +1660,32 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @param asyncTaskCreationInfo
      *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
+     *            ActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param entitiesMap
      *            maps ID of entity to its type.
      * @return Guid of the created task.
      */
     protected Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             Map<Guid, VdcObjectType> entitiesMap) {
         return createTask(taskId, asyncTaskCreationInfo, parentCommand, null, entitiesMap);
     }
 
     /**
-     * Same as {@link #createTask(Guid, AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * Same as {@link #createTask(Guid, AsyncTaskCreationInfo, ActionType, VdcObjectType, Guid...)}
      * but without suspending the current transaction.
      *
-     * Note: it is better to use {@link #createTask(Guid, AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * Note: it is better to use {@link #createTask(Guid, AsyncTaskCreationInfo, ActionType, VdcObjectType, Guid...)}
      * since it suspend the current transaction, thus the changes are being updated in the
      * DB right away. call this method only you have a good reason for it and
      * the current transaction is short.
      *
-     * @see {@link #createTask(Guid, AsyncTaskCreationInfo, VdcActionType, VdcObjectType, Guid...)}
+     * @see {@link #createTask(Guid, AsyncTaskCreationInfo, ActionType, VdcObjectType, Guid...)}
      */
     protected Guid createTaskInCurrentTransaction(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             VdcObjectType entityType,
             Guid... entityIds) {
         return createTaskImpl(taskId, asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
@@ -1700,10 +1700,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @param asyncTaskCreationInfo
      *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
+     *            ActionType of the command that its endAction we want to invoke when tasks are finished.
      * @return Guid of the created task.
      */
-    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand) {
+    public Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, ActionType parentCommand) {
         return createTask(taskId,
                 asyncTaskCreationInfo,
                 parentCommand,
@@ -1714,7 +1714,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     }
 
     protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             VdcObjectType vdcObjectType,
             Guid... entityIds) {
 
@@ -1726,7 +1726,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     protected Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             String description,
             VdcObjectType entityType,
             Guid... entityIds) {
@@ -1745,13 +1745,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
      * @param asyncTaskCreationInfo
      *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
+     *            ActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param description
      *            A message which describes the task
      * @param entitiesMap - map of entities
      */
     protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             String description, Map<Guid, VdcObjectType> entitiesMap) {
 
         Transaction transaction = TransactionSupport.suspend();
@@ -1768,7 +1768,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return Guid.Empty;
     }
 
-    private Guid createTaskImpl(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
+    private Guid createTaskImpl(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, ActionType parentCommand,
             String description, VdcObjectType entityType, Guid... entityIds) {
         return createTaskImpl(taskId,
                 asyncTaskCreationInfo,
@@ -1787,7 +1787,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private Guid createTaskImpl(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
         return CommandCoordinatorUtil.createTask(taskId,
@@ -1808,7 +1808,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
     public SPMTask concreteCreateTask(
             Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return CommandCoordinatorUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
     }
 
@@ -1820,7 +1820,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return Collections.emptyList();
     }
 
-    public VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
+    public VdcActionParametersBase getParentParameters(ActionType parentCommand) {
         VdcActionParametersBase parentParameters = getParametersForTask(parentCommand, getParameters());
         if (parentParameters.getParametersCurrentUser() == null && getCurrentUser() != null) {
             parentParameters.setParametersCurrentUser(getCurrentUser());
@@ -1830,7 +1830,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
 
     private AsyncTask createAsyncTask(
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return CommandCoordinatorUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);
     }
 
@@ -2323,11 +2323,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         CommandCoordinatorUtil.updateCommandData(getCommandId(), commandData);
     }
 
-    public void persistCommand(VdcActionType parentCommand) {
+    public void persistCommand(ActionType parentCommand) {
         persistCommand(parentCommand, getContext(), getCallback() != null, callbackTriggeredByEvent());
     }
 
-    public void persistCommand(VdcActionType parentCommand, boolean enableCallback) {
+    public void persistCommand(ActionType parentCommand, boolean enableCallback) {
         persistCommand(parentCommand, getContext(), enableCallback, callbackTriggeredByEvent());
     }
 
@@ -2347,7 +2347,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         }
     }
 
-    public void persistCommand(VdcActionType parentCommand,
+    public void persistCommand(ActionType parentCommand,
             CommandContext cmdContext,
             boolean enableCallback,
             boolean callbackWaitingForEvent) {
@@ -2459,11 +2459,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return null;
     }
 
-    protected VdcReturnValueBase runInternalAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+    protected VdcReturnValueBase runInternalAction(ActionType actionType, VdcActionParametersBase parameters) {
         return getBackend().runInternalAction(actionType, parameters, context.clone());
     }
 
-    protected VdcReturnValueBase runInternalAction(VdcActionType actionType,
+    protected VdcReturnValueBase runInternalAction(ActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext internalCommandContext) {
         return getBackend().runInternalAction(actionType,
@@ -2471,12 +2471,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 internalCommandContext);
     }
 
-    protected List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+    protected List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters) {
         return getBackend().runInternalMultipleActions(actionType, parameters, context.clone());
     }
 
-    protected List<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
+    protected List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
             List<VdcActionParametersBase> parameters,
             ExecutionContext executionContext) {
         return getBackend().runInternalMultipleActions(actionType,
@@ -2484,12 +2484,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
                 context.clone().withExecutionContext(executionContext));
     }
 
-    public VdcReturnValueBase runInternalActionWithTasksContext(VdcActionType actionType,
+    public VdcReturnValueBase runInternalActionWithTasksContext(ActionType actionType,
             VdcActionParametersBase parameters) {
         return runInternalActionWithTasksContext(actionType, parameters, null);
     }
 
-    protected VdcReturnValueBase runInternalActionWithTasksContext(VdcActionType actionType,
+    protected VdcReturnValueBase runInternalActionWithTasksContext(ActionType actionType,
             VdcActionParametersBase parameters, EngineLock lock) {
         return runInternalAction(
                 actionType,
@@ -2543,8 +2543,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase>
         return getParameters().getParentParameters();
     }
 
-    protected <P extends VdcActionParametersBase> P withRootCommandInfo(P params, VdcActionType actionType) {
-        VdcActionType parentCommand = isExecutedAsChildCommand() ?
+    protected <P extends VdcActionParametersBase> P withRootCommandInfo(P params, ActionType actionType) {
+        ActionType parentCommand = isExecutedAsChildCommand() ?
                 getParameters().getParentCommand() : actionType;
         params.setParentParameters(getParametersForTask(parentCommand, getParameters()));
         params.setParentCommand(parentCommand);

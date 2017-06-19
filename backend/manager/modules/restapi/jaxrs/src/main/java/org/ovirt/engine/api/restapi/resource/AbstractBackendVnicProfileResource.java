@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
@@ -51,7 +51,7 @@ public abstract class AbstractBackendVnicProfileResource
 
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVnicProfile, new VnicProfileParameters(getVnicProfile(id)));
+        return performAction(ActionType.RemoveVnicProfile, new VnicProfileParameters(getVnicProfile(id)));
     }
 
     protected org.ovirt.engine.core.common.businessentities.network.VnicProfile getVnicProfile(String id) {

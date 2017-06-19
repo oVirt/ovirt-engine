@@ -17,10 +17,10 @@ import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -190,7 +190,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private void refreshHostDeviceList() {
         try {
-            runInternalAction(VdcActionType.RefreshHostDevices, new VdsActionParameters(getVdsId()));
+            runInternalAction(ActionType.RefreshHostDevices, new VdsActionParameters(getVdsId()));
         } catch (EngineException e) {
             log.error("Could not refresh host devices for host '{}'", getVds().getName());
         }
@@ -219,7 +219,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private void setNonOperational(NonOperationalReason reason, Map<String, String> customLogValues) {
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(getVds().getId(), reason, customLogValues);
-        runInternalAction(VdcActionType.SetNonOperationalVds,
+        runInternalAction(ActionType.SetNonOperationalVds,
                 tempVar,
                 ExecutionHandler.createInternalJobContext(getContext()));
     }
@@ -235,7 +235,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             connectPoolSucceeded = true;
         } else {
             ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(getStoragePool(), getVds());
-            runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params);
+            runInternalAction(ActionType.ConnectHostToStoragePoolServers, params);
             EventResult connectResult = connectHostToPool();
             if (connectResult != null) {
                 returnValue = connectResult.isSuccess();

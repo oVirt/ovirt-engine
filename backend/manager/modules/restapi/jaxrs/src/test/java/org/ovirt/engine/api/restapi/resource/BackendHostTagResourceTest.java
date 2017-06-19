@@ -11,8 +11,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -31,7 +31,7 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
         setUpGetTagExpectations(true);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachVdsFromTag,
+                ActionType.DetachVdsFromTag,
                 AttachEntityToTagParameters.class,
                 new String[] { "TagId", "EntitiesId" },
                 new Object[] { TAG_ID, asList(HOST_ID) },
@@ -56,7 +56,7 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
         setUpGetTagExpectations(true);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachVdsFromTag,
+                ActionType.DetachVdsFromTag,
                 AttachEntityToTagParameters.class,
                 new String[] { "TagId", "EntitiesId" },
                 new Object[] { TAG_ID, asList(HOST_ID) },

@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.configure;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Permission;
@@ -164,7 +164,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
             model.startProgress();
 
-            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(ActionType.RemovePermission, list,
                     result -> {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -231,7 +231,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.AddPermission, list,
+        Frontend.getInstance().runMultipleAction(ActionType.AddPermission, list,
                 result -> {
 
                     AdElementListModel localModel = (AdElementListModel) result.getState();

@@ -17,8 +17,8 @@ import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -65,7 +65,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testStart() throws Exception {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
-        setUriInfo(setUpActionExpectations(VdcActionType.StartGlusterVolume,
+        setUriInfo(setUpActionExpectations(ActionType.StartGlusterVolume,
                 GlusterVolumeActionParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] }));
@@ -77,7 +77,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testStop() throws Exception {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
-        setUriInfo(setUpActionExpectations(VdcActionType.StopGlusterVolume,
+        setUriInfo(setUpActionExpectations(ActionType.StopGlusterVolume,
                 GlusterVolumeActionParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] }));
@@ -89,7 +89,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testRebalance() throws Exception {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
-        setUriInfo(setUpActionExpectations(VdcActionType.StartRebalanceGlusterVolume,
+        setUriInfo(setUpActionExpectations(ActionType.StartRebalanceGlusterVolume,
                 GlusterVolumeRebalanceParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] }));
@@ -101,7 +101,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testStopRebalance() throws Exception {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
-        setUriInfo(setUpActionExpectations(VdcActionType.StopRebalanceGlusterVolume,
+        setUriInfo(setUpActionExpectations(ActionType.StopRebalanceGlusterVolume,
                 GlusterVolumeRebalanceParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] }));
@@ -128,7 +128,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testSetOption() throws Exception {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
-        setUriInfo(setUpActionExpectations(VdcActionType.SetGlusterVolumeOption,
+        setUriInfo(setUpActionExpectations(ActionType.SetGlusterVolumeOption,
                 GlusterVolumeOptionParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] }));
@@ -159,7 +159,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testResetOption() throws Exception {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
-        setUriInfo(setUpActionExpectations(VdcActionType.ResetGlusterVolumeOptions,
+        setUriInfo(setUpActionExpectations(ActionType.ResetGlusterVolumeOptions,
                 ResetGlusterVolumeOptionsParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] }));
@@ -174,7 +174,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     public void testResetAllOptions() throws Exception {
         setupParentExpectations();
         resource.setParent(volumesResourceMock);
-        setUriInfo(setUpActionExpectations(VdcActionType.ResetGlusterVolumeOptions,
+        setUriInfo(setUpActionExpectations(ActionType.ResetGlusterVolumeOptions,
                 ResetGlusterVolumeOptionsParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] }));
@@ -188,7 +188,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DeleteGlusterVolume,
+                ActionType.DeleteGlusterVolume,
                 GlusterVolumeParameters.class,
                 new String[] { "VolumeId" },
                 new Object[] { GUIDS[0] },
@@ -200,7 +200,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
         verifyRemove(resource.remove());
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values) {

@@ -7,8 +7,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
 
@@ -20,7 +20,7 @@ public class AddExternalJobCommand<T extends AddExternalJobParameters> extends A
 
     @Override
     protected void executeCommand() {
-        createJob(VdcActionType.AddExternalJob, true);
+        createJob(ActionType.AddExternalJob, true);
     }
 
     @Override

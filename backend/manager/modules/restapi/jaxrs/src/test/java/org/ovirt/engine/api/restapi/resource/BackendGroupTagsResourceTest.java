@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -11,7 +11,7 @@ public class BackendGroupTagsResourceTest extends AbstractBackendAssignedTagsRes
         parentIdName = "GroupId";
         queryType = VdcQueryType.GetTagsByUserGroupId;
         queryParams = GetTagsByUserGroupIdParameters.class;
-        attachAction = VdcActionType.AttachUserGroupToTag;
+        attachAction = ActionType.AttachUserGroupToTag;
         attachParams = AttachEntityToTagParameters.class;
     }
 }

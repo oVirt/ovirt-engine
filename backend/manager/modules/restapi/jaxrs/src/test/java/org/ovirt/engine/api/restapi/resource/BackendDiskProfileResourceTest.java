@@ -7,8 +7,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.DiskProfile;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -66,7 +66,7 @@ public class BackendDiskProfileResourceTest
     public void testUpdate() throws Exception {
         setUpEntityQueryExpectations(2, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateDiskProfile,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -89,7 +89,7 @@ public class BackendDiskProfileResourceTest
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(1, 0, false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateDiskProfile,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -135,7 +135,7 @@ public class BackendDiskProfileResourceTest
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveDiskProfile,
+                ActionType.RemoveDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -179,7 +179,7 @@ public class BackendDiskProfileResourceTest
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveDiskProfile,
+                ActionType.RemoveDiskProfile,
                 DiskProfileParameters.class,
                 new String[] {},
                 new Object[] {},

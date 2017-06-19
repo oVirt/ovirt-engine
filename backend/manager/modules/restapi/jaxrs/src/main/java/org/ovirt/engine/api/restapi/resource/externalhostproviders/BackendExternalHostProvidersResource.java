@@ -27,8 +27,8 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviderR
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.util.QueryHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -87,7 +87,7 @@ public class BackendExternalHostProvidersResource
     public Response add(ExternalHostProvider provider) {
         validateParameters(provider, "name");
         return performCreate(
-            VdcActionType.AddProvider,
+            ActionType.AddProvider,
             new ProviderParameters(map(provider)),
             new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class)
         );

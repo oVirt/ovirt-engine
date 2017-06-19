@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
@@ -43,7 +43,7 @@ public class BackendAffinityGroupVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(false);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.EditAffinityGroup,
+        setUriInfo(setUpActionExpectations(ActionType.EditAffinityGroup,
                 AffinityGroupCRUDParameters.class,
                 new String[] {},
                 new Object[] {},

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 import java.util.Date;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,7 +12,7 @@ public class ImageTransfer implements BusinessEntity<Guid>, IVdcQueryable {
 
     private static final long serialVersionUID = 3761304077670003457L;
     private Guid commandId;
-    private VdcActionType commandType;
+    private ActionType commandType;
     private ImageTransferPhase phase;
     private Date lastUpdated;
     private String message;
@@ -40,11 +40,11 @@ public class ImageTransfer implements BusinessEntity<Guid>, IVdcQueryable {
         this.commandId = commandId;
     }
 
-    public VdcActionType getCommandType() {
+    public ActionType getCommandType() {
         return commandType;
     }
 
-    public void setCommandType(VdcActionType commandType) {
+    public void setCommandType(ActionType commandType) {
         this.commandType = commandType;
     }
 

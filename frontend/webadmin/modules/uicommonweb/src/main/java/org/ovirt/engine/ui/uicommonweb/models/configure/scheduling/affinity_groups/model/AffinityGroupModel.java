@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.EntityAffinityRule;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
@@ -25,7 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 public abstract class AffinityGroupModel extends Model {
     private final AffinityGroup affinityGroup;
     private final ListModel<?> sourceListModel;
-    private final VdcActionType saveActionType;
+    private final ActionType saveActionType;
 
     private EntityModel<String> name;
     private EntityModel<String> description;
@@ -36,7 +36,7 @@ public abstract class AffinityGroupModel extends Model {
     private final String clusterName;
 
     public AffinityGroupModel(AffinityGroup affinityGroup, ListModel<?> sourceListModel,
-            VdcActionType saveActionType,
+            ActionType saveActionType,
             Guid clusterId,
             String clusterName) {
         this.affinityGroup = affinityGroup;

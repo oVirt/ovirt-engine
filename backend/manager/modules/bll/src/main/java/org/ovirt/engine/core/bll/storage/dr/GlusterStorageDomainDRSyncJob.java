@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll.storage.dr;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GlusterStorageSyncCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,7 +49,7 @@ public class GlusterStorageDomainDRSyncJob {
                 log.error("No geo-replication session found for id '{}'", geoRepSessionId);
                 return;
             }
-            backend.runInternalAction(VdcActionType.GlusterStorageSync,
+            backend.runInternalAction(ActionType.GlusterStorageSync,
                     new GlusterStorageSyncCommandParameters(storageDomain.getId(), session.getId()),
                     ExecutionHandler.createInternalJobContext());
         } catch (Exception e) {

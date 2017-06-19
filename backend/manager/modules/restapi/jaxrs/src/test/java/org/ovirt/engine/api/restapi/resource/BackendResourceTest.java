@@ -18,7 +18,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -64,7 +64,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     public void testActionWithCorrelationId() throws Exception {
         setUpGetEntityExpectations(false);
         resource.getCurrent().getParameters().put("correlation_id", "Some-Correlation-id");
-        resource.setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        resource.setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword", "CorrelationId" },
                                            new Object[] { NAMES[2], "Some-Correlation-id" },
@@ -96,7 +96,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     public void testUpdateCantDo() throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations();
 
-        resource.setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
+        resource.setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
                 new String[] { "RootPassword" },
                 new Object[] { ROOT_PASSWORD },

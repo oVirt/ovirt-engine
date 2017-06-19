@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -189,7 +189,7 @@ public class BookmarkListModel extends SearchableListModel {
 
         getWindow().startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.RemoveBookmark, parameters, async);
+        Frontend.getInstance().runAction(ActionType.RemoveBookmark, parameters, async);
     }
 
     public void edit() {
@@ -255,7 +255,7 @@ public class BookmarkListModel extends SearchableListModel {
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddBookmark : VdcActionType.UpdateBookmark,
+        Frontend.getInstance().runAction(model.getIsNew() ? ActionType.AddBookmark : ActionType.UpdateBookmark,
                 new BookmarksOperationParameters(bookmark),
                 result -> {
 

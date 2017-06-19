@@ -9,7 +9,7 @@ import java.util.Set;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VfsConfigLabelParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
@@ -42,7 +42,7 @@ public class BackendVirtualFunctionAllowedLabelsResource
 
     @Override
     protected Response performCreate(String labelId) {
-        return performCreate(VdcActionType.AddVfsConfigLabel,
+        return performCreate(ActionType.AddVfsConfigLabel,
                 new VfsConfigLabelParameters(nicId, labelId),
                 new NetworkLabelIdResolver(nicId));
     }

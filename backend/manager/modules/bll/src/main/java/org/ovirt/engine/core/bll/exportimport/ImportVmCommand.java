@@ -44,11 +44,11 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -737,7 +737,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
             // copy the memory dump image
             VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                    VdcActionType.CopyImageGroup,
+                    ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerId, guids.get(0), guids.get(2), guids.get(3)));
             if (!vdcRetValue.getSucceeded()) {
@@ -747,7 +747,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
             // copy the memory configuration (of the VM) image
             vdcRetValue = runInternalActionWithTasksContext(
-                    VdcActionType.CopyImageGroup,
+                    ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
                             containerId, guids.get(0), guids.get(4), guids.get(5)));
             if (!vdcRetValue.getSucceeded()) {
@@ -801,7 +801,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
             VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                    VdcActionType.CopyImageGroup,
+                    ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(disk, containerID));
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed to copy disk!");
@@ -1125,7 +1125,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(VdcActionType.CopyImageGroup,
+            getBackend().endAction(ActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
@@ -1176,7 +1176,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private void removeMemoryVolumes(String memoryVolume, Guid vmId) {
         VdcReturnValueBase retVal = runInternalAction(
-                VdcActionType.RemoveMemoryVolumes,
+                ActionType.RemoveMemoryVolumes,
                 new RemoveMemoryVolumesParameters(memoryVolume, vmId), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {

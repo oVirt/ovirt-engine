@@ -12,9 +12,9 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
@@ -67,7 +67,7 @@ public class AbstractBackendStorageDomainDisksResource
                     (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk,
                             unregisteredDisk);
             RegisterDiskParameters registerDiskParams = new RegisterDiskParameters(unregisteredDisk, storageDomainId);
-            return performCreate(VdcActionType.RegisterDisk, registerDiskParams, ID_RESOLVER);
+            return performCreate(ActionType.RegisterDisk, registerDiskParams, ID_RESOLVER);
         }
         else {
             validateDiskForCreation(disk);
@@ -75,7 +75,7 @@ public class AbstractBackendStorageDomainDisksResource
             params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(
                     disk, null));
             params.setStorageDomainId(this.storageDomainId);
-            return performCreate(VdcActionType.AddDisk, params, ID_RESOLVER);
+            return performCreate(ActionType.AddDisk, params, ID_RESOLVER);
         }
     }
 

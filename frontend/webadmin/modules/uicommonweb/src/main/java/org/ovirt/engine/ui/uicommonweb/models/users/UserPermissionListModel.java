@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -113,7 +113,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
 
             model.startProgress();
 
-            Frontend.getInstance().runMultipleAction(VdcActionType.RemovePermission, list,
+            Frontend.getInstance().runMultipleAction(ActionType.RemovePermission, list,
                     result -> {
 
                         ConfirmationModel localModel = (ConfirmationModel) result.getState();

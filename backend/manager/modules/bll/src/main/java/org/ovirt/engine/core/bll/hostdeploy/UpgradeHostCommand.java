@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -55,7 +55,7 @@ public class UpgradeHostCommand<T extends UpgradeHostParameters> extends VdsComm
         VDSStatus statusBeforeUpgrade = getVds().getStatus();
         if (statusBeforeUpgrade != VDSStatus.Maintenance) {
             Future<VdcReturnValueBase> maintenanceCmd =
-                    CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.MaintenanceNumberOfVdss,
+                    CommandCoordinatorUtil.executeAsyncCommand(ActionType.MaintenanceNumberOfVdss,
                             createMaintenanceParams(),
                             cloneContext());
 

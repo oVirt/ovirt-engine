@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.AuditLogSeverity;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -231,17 +231,17 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
             return;
         }
         RemoveAuditLogByIdParameters params = new RemoveAuditLogByIdParameters(auditLog.getAuditLogId());
-        Frontend.getInstance().runAction(VdcActionType.RemoveAuditLogById, params,
+        Frontend.getInstance().runAction(ActionType.RemoveAuditLogById, params,
                 result -> EventListModel.this.refresh());
     }
 
     public void clearAllDismissedEvents() {
-        Frontend.getInstance().runAction(VdcActionType.ClearAllAuditLogEvents, new VdcActionParametersBase(),
+        Frontend.getInstance().runAction(ActionType.ClearAllAuditLogEvents, new VdcActionParametersBase(),
                 result -> EventListModel.this.refresh());
     }
 
     public void displayAllDismissedEvents() {
-        Frontend.getInstance().runAction(VdcActionType.DisplayAllAuditLogEvents, new VdcActionParametersBase(),
+        Frontend.getInstance().runAction(ActionType.DisplayAllAuditLogEvents, new VdcActionParametersBase(),
                 result -> EventListModel.this.refresh());
     }
 

@@ -5,7 +5,7 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworkResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VfsConfigNetworkParameters;
 
 public class BackendVirtualFunctionAllowedNetworkResource
@@ -37,7 +37,7 @@ public class BackendVirtualFunctionAllowedNetworkResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVfsConfigNetwork,
+        return performAction(ActionType.RemoveVfsConfigNetwork,
                 new VfsConfigNetworkParameters(parent.getNicId(), guid));
     }
 }

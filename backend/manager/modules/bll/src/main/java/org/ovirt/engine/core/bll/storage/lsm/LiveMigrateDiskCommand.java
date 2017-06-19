@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.storage.disk.MoveOrCopyDiskCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateImagePlaceholderCommandParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters.LiveDiskMigrateStage;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SyncImageGroupDataCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
@@ -109,7 +109,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     protected void executeCommand() {
-        runInternalAction(VdcActionType.CreateImagePlaceholder,
+        runInternalAction(ActionType.CreateImagePlaceholder,
                 buildCreateImagePlacerholderParams(), createStepsContext(StepEnum.CLONE_IMAGE_STRUCTURE));
         setSucceeded(true);
     }
@@ -288,7 +288,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         parameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
-        runInternalAction(VdcActionType.SyncImageGroupData, parameters, createStepsContext(StepEnum.SYNC_IMAGE_DATA));
+        runInternalAction(ActionType.SyncImageGroupData, parameters, createStepsContext(StepEnum.SYNC_IMAGE_DATA));
     }
 
     private void replicateDiskStart() {

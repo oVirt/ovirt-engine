@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
@@ -370,7 +370,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
             return;
         }
         getWindow().startProgress();
-        Frontend.getInstance().runAction(VdcActionType.SyncAllHostNetworks,
+        Frontend.getInstance().runAction(ActionType.SyncAllHostNetworks,
                 new VdsActionParameters(getEntity().getId()),
                 result -> {
                     getWindow().stopProgress();

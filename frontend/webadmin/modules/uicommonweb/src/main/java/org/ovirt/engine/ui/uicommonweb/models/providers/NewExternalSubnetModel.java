@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
@@ -72,7 +72,7 @@ public class NewExternalSubnetModel extends Model {
 
         ProviderNetwork providedBy = getNetwork().getEntity().getProvidedBy();
 
-        Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
+        Frontend.getInstance().runAction(ActionType.AddSubnetToProvider,
                 new AddExternalSubnetParameters(getSubnetModel().getSubnet(),
                         providedBy.getProviderId(), providedBy.getExternalId()),
                 result -> {

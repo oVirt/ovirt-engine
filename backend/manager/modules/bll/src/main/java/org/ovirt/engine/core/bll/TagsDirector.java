@@ -14,8 +14,8 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.compat.Guid;
@@ -209,7 +209,7 @@ public class TagsDirector implements BackendService, ITagsHandler {
     }
 
     protected void updateTagInBackend(Tags tag) {
-        backend.runInternalAction(VdcActionType.UpdateTag, new TagsOperationParameters(tag));
+        backend.runInternalAction(ActionType.UpdateTag, new TagsOperationParameters(tag));
     }
 
     /**

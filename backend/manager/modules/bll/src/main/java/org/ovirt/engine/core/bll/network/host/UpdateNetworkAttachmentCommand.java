@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll.network.host;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -38,7 +38,7 @@ public class UpdateNetworkAttachmentCommand<T extends NetworkAttachmentParameter
     protected void executeCommand() {
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(getParameters().getVdsId());
         params.getNetworkAttachments().add(getParameters().getNetworkAttachment());
-        VdcReturnValueBase returnValue = runInternalAction(VdcActionType.HostSetupNetworks, params);
+        VdcReturnValueBase returnValue = runInternalAction(ActionType.HostSetupNetworks, params);
         propagateFailure(returnValue);
         setSucceeded(returnValue.getSucceeded());
     }

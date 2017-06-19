@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -328,7 +328,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmPool, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveVmPool, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -465,7 +465,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
             if (model.getIcon().getEntity().isCustom()) {
                 param.setVmLargeIcon(model.getIcon().getEntity().getIcon());
             }
-            Frontend.getInstance().runMultipleAction(VdcActionType.AddVmPool,
+            Frontend.getInstance().runMultipleAction(ActionType.AddVmPool,
                     new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{param})),
                     result -> {
                         cancel();
@@ -474,7 +474,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                     this);
         }
         else {
-            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPool,
+            Frontend.getInstance().runMultipleAction(ActionType.UpdateVmPool,
                     new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{param})),
                     result -> {
                         cancel();

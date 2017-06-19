@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Qos;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.VnicProfiles;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -67,7 +67,7 @@ public abstract class AbstractBackendVnicProfilesResource
         validateParameters(vnicProfile);
         AddVnicProfileParameters addVnicProfileParameters =
                 new AddVnicProfileParameters(map(vnicProfile), !vnicProfile.isSetNetworkFilter());
-        return performCreate(VdcActionType.AddVnicProfile,
+        return performCreate(ActionType.AddVnicProfile,
                 addVnicProfileParameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetVnicProfileById, IdQueryParameters.class));
     }

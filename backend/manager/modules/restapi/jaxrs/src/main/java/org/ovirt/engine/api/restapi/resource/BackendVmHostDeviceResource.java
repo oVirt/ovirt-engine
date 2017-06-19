@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.model.HostDevices;
 import org.ovirt.engine.api.resource.VmHostDeviceResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.compat.Guid;
@@ -58,6 +58,6 @@ public class BackendVmHostDeviceResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVmHostDevices, new VmHostDevicesParameters(parent.getVmId(), deviceName));
+        return performAction(ActionType.RemoveVmHostDevices, new VmHostDevicesParameters(parent.getVmId(), deviceName));
     }
 }

@@ -29,13 +29,13 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.DownloadImageCommandParameters;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -100,7 +100,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     protected void executeCommand() {
         setupParameters();
         persistCommand(getParameters().getParentCommand(), true);
-        Backend.getInstance().runInternalAction(VdcActionType.AddDisk,
+        Backend.getInstance().runInternalAction(ActionType.AddDisk,
                 createAddDiskParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
         getParameters().setNextPhase(ImportRepoImageParameters.Phase.DOWNLOAD);
@@ -170,7 +170,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         if (getParameters().getNextPhase() == ImportRepoImageParameters.Phase.DOWNLOAD) {
             getParameters().setNextPhase(ImportRepoImageParameters.Phase.END);
             persistCommand(getParameters().getParentCommand(), true);
-            Backend.getInstance().runInternalAction(VdcActionType.DownloadImage,
+            Backend.getInstance().runInternalAction(ActionType.DownloadImage,
                     createDownloadImageParameters(),
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
             return true;
@@ -186,7 +186,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     }
 
     public void removeDisk() {
-        Backend.getInstance().runInternalAction(VdcActionType.RemoveDisk,
+        Backend.getInstance().runInternalAction(ActionType.RemoveDisk,
                 new RemoveDiskParameters(getParameters().getImageGroupID()));
     }
 
@@ -259,7 +259,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         parameters.setBalloonEnabled(true);
 
         VdcReturnValueBase addVmTemplateReturnValue =
-                Backend.getInstance().runInternalAction(VdcActionType.AddVmTemplate,
+                Backend.getInstance().runInternalAction(ActionType.AddVmTemplate,
                         parameters,
                         ExecutionHandler.createDefaultContextForTasks(getContext()));
 

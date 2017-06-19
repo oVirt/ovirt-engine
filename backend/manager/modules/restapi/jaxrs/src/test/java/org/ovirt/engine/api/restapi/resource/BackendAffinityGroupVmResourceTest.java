@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Vm;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
@@ -24,7 +24,7 @@ public class BackendAffinityGroupVmResourceTest
         setUpGetGroupExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.EditAffinityGroup,
+                ActionType.EditAffinityGroup,
                 AffinityGroupCRUDParameters.class,
                 new String[] {},
                 new Object[] {},

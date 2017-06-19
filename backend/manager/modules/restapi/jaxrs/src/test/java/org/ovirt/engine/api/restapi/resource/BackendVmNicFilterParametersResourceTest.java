@@ -28,7 +28,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.NetworkFilterParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -123,7 +123,7 @@ public class BackendVmNicFilterParametersResourceTest
     public void testAddParameter() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
-                VdcActionType.AddVmNicFilterParameter,
+                ActionType.AddVmNicFilterParameter,
                 VmNicFilterParameterParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },
@@ -158,7 +158,7 @@ public class BackendVmNicFilterParametersResourceTest
     private void doTestBadAddNic(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.AddVmNicFilterParameter,
+                ActionType.AddVmNicFilterParameter,
                     VmNicFilterParameterParameters.class,
                 new String[] { "VmId" },
                 new Object[] { VM_ID },

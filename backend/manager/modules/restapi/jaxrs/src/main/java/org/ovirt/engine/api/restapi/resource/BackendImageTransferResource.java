@@ -7,8 +7,8 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.ImageTransfer;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ImageTransferResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -43,24 +43,24 @@ public class BackendImageTransferResource extends
     @Override
     public Response extend(Action action) {
         // For just keeping the upload alive, all we need is to refresh the entity querying.
-        return performAction(VdcActionType.TransferImageStatus, prepareStatusParams(null));
+        return performAction(ActionType.TransferImageStatus, prepareStatusParams(null));
     }
 
     @Override
     public Response pause(Action action) {
-        return performAction(VdcActionType.TransferImageStatus,
+        return performAction(ActionType.TransferImageStatus,
                 prepareStatusParams(ImageTransferPhase.PAUSED_USER));
     }
 
     @Override
     public Response resume(Action action) {
-        return performAction(VdcActionType.TransferImageStatus,
+        return performAction(ActionType.TransferImageStatus,
                 prepareStatusParams(ImageTransferPhase.RESUMING));
     }
 
     @Override
     public Response doFinalize(Action action) {
-        return performAction(VdcActionType.TransferImageStatus,
+        return performAction(ActionType.TransferImageStatus,
                 prepareStatusParams(ImageTransferPhase.FINALIZING_SUCCESS));
     }
 

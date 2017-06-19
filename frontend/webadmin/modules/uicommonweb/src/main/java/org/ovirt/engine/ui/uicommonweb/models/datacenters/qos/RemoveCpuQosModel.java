@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -40,8 +40,8 @@ public class RemoveCpuQosModel extends RemoveQosModel<CpuQos> {
     }
 
     @Override
-    protected VdcActionType getRemoveActionType() {
-        return VdcActionType.RemoveCpuQos;
+    protected ActionType getRemoveActionType() {
+        return ActionType.RemoveCpuQos;
     }
 
 }

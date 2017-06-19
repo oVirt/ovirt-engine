@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
@@ -139,7 +139,7 @@ public class HostUpgradeCallback implements CommandCallback {
     }
 
     private void invokeHostUpgrade(CommandBase<?> command, UpgradeHostParameters parameters) {
-        CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.UpgradeHostInternal,
+        CommandCoordinatorUtil.executeAsyncCommand(ActionType.UpgradeHostInternal,
                 createUpgradeParameters(parameters),
                 command.cloneContextAndDetachFromParent());
     }
@@ -150,7 +150,7 @@ public class HostUpgradeCallback implements CommandCallback {
         upgradeParams.setCorrelationId(parameters.getCorrelationId());
         upgradeParams.setInitialStatus(parameters.getInitialStatus());
         upgradeParams.setoVirtIsoFile(parameters.getoVirtIsoFile());
-        upgradeParams.setParentCommand(VdcActionType.UpgradeHost);
+        upgradeParams.setParentCommand(ActionType.UpgradeHost);
         upgradeParams.setParentParameters(parameters);
         return upgradeParams;
     }
@@ -173,7 +173,7 @@ public class HostUpgradeCallback implements CommandCallback {
     private Guid getHostUpgradeInternalCmdId(List<Guid> childCmdIds) {
         if (hostUpgradeInternalCmdId == null) {
             hostUpgradeInternalCmdId =
-                    findChildCommandByActionType(VdcActionType.UpgradeHostInternal, childCmdIds);
+                    findChildCommandByActionType(ActionType.UpgradeHostInternal, childCmdIds);
         }
 
         return hostUpgradeInternalCmdId;
@@ -181,13 +181,13 @@ public class HostUpgradeCallback implements CommandCallback {
 
     private Guid getMaintenanceCmdId(List<Guid> childCmdIds) {
         if (maintenanceCmdId == null) {
-            maintenanceCmdId = findChildCommandByActionType(VdcActionType.MaintenanceNumberOfVdss, childCmdIds);
+            maintenanceCmdId = findChildCommandByActionType(ActionType.MaintenanceNumberOfVdss, childCmdIds);
         }
 
         return maintenanceCmdId;
     }
 
-    private Guid findChildCommandByActionType(VdcActionType commandType, List<Guid> childCmdIds) {
+    private Guid findChildCommandByActionType(ActionType commandType, List<Guid> childCmdIds) {
         for (Guid cmdId : childCmdIds) {
             CommandEntity commandEntity = CommandCoordinatorUtil.getCommandEntity(cmdId);
             if (commandEntity.getCommandType() == commandType) {

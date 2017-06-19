@@ -20,8 +20,8 @@ import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
@@ -155,7 +155,7 @@ public class BackendGroupsResource
         AddGroupParameters parameters = new AddGroupParameters();
         parameters.setGroupToAdd(new DbGroup(directoryGroup));
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbGroupById, IdQueryParameters.class);
-        return performCreate(VdcActionType.AddGroup, parameters, resolver, BaseResource.class);
+        return performCreate(ActionType.AddGroup, parameters, resolver, BaseResource.class);
     }
 
     /**

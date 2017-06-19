@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.utils.PersistedCommandContext;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -22,7 +22,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private Guid parentCommandId;
     private Guid rootCommandId;
     private PersistedCommandContext commandContext;
-    private VdcActionType commandType;
+    private ActionType commandType;
     private VdcActionParametersBase commandParameters;
     private VdcReturnValueBase returnValue;
     private Date createdAt;
@@ -111,11 +111,11 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.rootCommandId = rootCommandId;
     }
 
-    public VdcActionType getCommandType() {
+    public ActionType getCommandType() {
         return commandType;
     }
 
-    public void setCommandType(VdcActionType type) {
+    public void setCommandType(ActionType type) {
         this.commandType = type;
     }
 
@@ -157,7 +157,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    Guid parentCommandId,
                                                    Guid rootCommandId,
                                                    PersistedCommandContext commandContext,
-                                                   VdcActionType actionType,
+                                                   ActionType actionType,
                                                    VdcActionParametersBase params,
                                                    CommandStatus status,
                                                    boolean callbackEnabled,

@@ -15,10 +15,10 @@ import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -47,7 +47,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     public org.ovirt.engine.api.model.Cluster update(org.ovirt.engine.api.model.Cluster incoming) {
         return performUpdate(incoming,
                              new QueryIdResolver<>(VdcQueryType.GetClusterById, IdQueryParameters.class),
-                             VdcActionType.UpdateCluster,
+                             ActionType.UpdateCluster,
                              new UpdateParametersProvider());
     }
 
@@ -124,7 +124,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
             ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters(result.getReturnValue());
             param.setForceResetEmulatedMachine(true);
-            return doAction(VdcActionType.UpdateCluster, param, action);
+            return doAction(ActionType.UpdateCluster, param, action);
 
         } else {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
@@ -134,6 +134,6 @@ public class BackendClusterResource<P extends BackendClustersResource>
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveCluster, new ClusterParametersBase(asGuid(id)));
+        return performAction(ActionType.RemoveCluster, new ClusterParametersBase(asGuid(id)));
     }
 }

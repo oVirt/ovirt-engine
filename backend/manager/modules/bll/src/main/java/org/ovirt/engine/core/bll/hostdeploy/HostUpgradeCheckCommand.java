@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
@@ -34,7 +34,7 @@ public class HostUpgradeCheckCommand<T extends VdsActionParameters> extends VdsC
 
     @Override
     protected void executeCommand() {
-        CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.HostUpgradeCheckInternal,
+        CommandCoordinatorUtil.executeAsyncCommand(ActionType.HostUpgradeCheckInternal,
                 withRootCommandInfo(new VdsActionParameters(getVdsId())),
                 cloneContext());
 

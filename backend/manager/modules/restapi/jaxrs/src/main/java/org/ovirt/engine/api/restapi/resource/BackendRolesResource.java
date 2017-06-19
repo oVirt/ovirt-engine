@@ -13,8 +13,8 @@ import org.ovirt.engine.api.model.Roles;
 import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.api.resource.RolesResource;
 import org.ovirt.engine.api.restapi.types.Mapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -38,7 +38,7 @@ public class BackendRolesResource
     public Response add(Role role) {
         validateParameters(role, "name", "permits.id");
         validatePermitId(role);
-        return performCreate(VdcActionType.AddRoleWithActionGroups,
+        return performCreate(ActionType.AddRoleWithActionGroups,
                                new RoleWithActionGroupsParameters(map(role), mapPermits(role.getPermits().getPermits())),
                                new QueryIdResolver<Guid>(VdcQueryType.GetRoleById, IdQueryParameters.class));
     }

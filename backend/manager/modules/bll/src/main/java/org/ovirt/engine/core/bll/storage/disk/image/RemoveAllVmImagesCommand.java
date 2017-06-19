@@ -15,9 +15,9 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -70,7 +70,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
             if (imagesToBeRemoved.contains(image.getImageId())) {
                 VdcReturnValueBase vdcReturnValue =
                         runInternalActionWithTasksContext(
-                                VdcActionType.RemoveImage,
+                                ActionType.RemoveImage,
                                 buildRemoveImageParameters(image)
                         );
 

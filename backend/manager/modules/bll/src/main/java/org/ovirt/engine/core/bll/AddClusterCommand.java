@@ -13,9 +13,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -95,7 +95,7 @@ public class AddClusterCommand<T extends ManagementNetworkOnClusterOperationPara
         cpuProfileAddParameters.setParametersCurrentUser(getCurrentUser());
         cpuProfileAddParameters.setSessionId(getContext().getEngineContext().getSessionId());
 
-        VdcReturnValueBase addCpuProfileReturnValue = getBackend().runAction(VdcActionType.AddCpuProfile,
+        VdcReturnValueBase addCpuProfileReturnValue = getBackend().runAction(ActionType.AddCpuProfile,
                 cpuProfileAddParameters);
         cpuProfile.setId(addCpuProfileReturnValue.getActionReturnValue());
     }

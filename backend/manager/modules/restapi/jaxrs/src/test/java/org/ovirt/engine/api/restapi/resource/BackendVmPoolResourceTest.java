@@ -11,9 +11,9 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -66,7 +66,7 @@ public class BackendVmPoolResourceTest
     @Test
     public void testAllocateVm() throws Exception {
         setUpGetVmExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.AttachUserToVmFromPoolAndRun,
+        setUriInfo(setUpActionExpectations(ActionType.AttachUserToVmFromPoolAndRun,
                                            AttachUserToVmFromPoolAndRunParameters.class,
                                            new String[] { "VmPoolId" },
                                            new Object[] { GUIDS[0] },
@@ -78,7 +78,7 @@ public class BackendVmPoolResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations(1);
-        setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmPool,
+        setUriInfo(setUpActionExpectations(ActionType.RemoveVmPool,
                 VmPoolParametersBase.class,
                 new String[] { "VmPoolId" },
                 new Object[] { GUIDS[0] },
@@ -132,7 +132,7 @@ public class BackendVmPoolResourceTest
         }
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
                                               Class<? extends VdcActionParametersBase> clz,
                                               String[] names,
                                               Object[] values,

@@ -9,8 +9,8 @@ import org.ovirt.engine.core.bll.CommandMultiAsyncTasks;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
@@ -186,7 +186,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
     private void handleEndActionRuntimeException(CommandMultiAsyncTasks commandInfo, AsyncTask dbAsyncTask) {
         try {
-            VdcActionType actionType = getParameters().getDbAsyncTask().getActionType();
+            ActionType actionType = getParameters().getDbAsyncTask().getActionType();
             log.info("CommandAsyncTask::HandleEndActionResult: endAction for action type '{}' threw an"
                             + " unrecoverable RuntimeException the task will be cleared.",
                     actionType);
@@ -211,7 +211,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
             ExecutionContext context,
             boolean isTaskGroupSuccess) {
         try {
-            VdcActionType actionType = getParameters().getDbAsyncTask().getActionType();
+            ActionType actionType = getParameters().getDbAsyncTask().getActionType();
             log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type '{}'"
                             + " completed, handling the result.",
                     actionType);

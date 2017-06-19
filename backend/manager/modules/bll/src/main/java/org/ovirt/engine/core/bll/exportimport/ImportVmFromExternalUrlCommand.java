@@ -15,10 +15,10 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalUrlParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -154,7 +154,7 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
         protected abstract VM loadExternalVm();
 
-        protected abstract VdcActionType getImportActionType();
+        protected abstract ActionType getImportActionType();
 
         protected abstract ImportVmFromExternalProviderParameters createImportVmParameters(VM vm);
     }
@@ -179,8 +179,8 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
         }
 
         @Override
-        protected VdcActionType getImportActionType() {
-            return VdcActionType.ImportVmFromExternalProvider;
+        protected ActionType getImportActionType() {
+            return ActionType.ImportVmFromExternalProvider;
         }
 
         @Override
@@ -241,8 +241,8 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
          }
 
         @Override
-        protected VdcActionType getImportActionType() {
-            return VdcActionType.ImportVmFromOva;
+        protected ActionType getImportActionType() {
+            return ActionType.ImportVmFromOva;
         }
 
         @Override

@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.SubchainInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -104,7 +104,7 @@ public class MultipleStorageDomainsValidator {
      * Validates that all the domains have enough space for the request
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
-    public ValidationResult allDomainsHaveSpaceForMerge(List<SubchainInfo> snapshots, VdcActionType snapshotActionType) {
+    public ValidationResult allDomainsHaveSpaceForMerge(List<SubchainInfo> snapshots, ActionType snapshotActionType) {
         final Map<Guid, List<SubchainInfo>> storageToSnapshots = getDomainsToSnapshotsMap(snapshots);
 
         return validOrFirstFailure(entry -> {

@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -44,7 +44,7 @@ public class BackendVmNicsResource extends AbstractBackendNicsResource implement
     public Response add(Nic nic) {
         validateParameters(nic, "name");
         return performCreate(
-            VdcActionType.AddVmInterface,
+            ActionType.AddVmInterface,
             new AddVmInterfaceParameters(vmId, map(nic)),
             new NicResolver(nic.getName())
         );

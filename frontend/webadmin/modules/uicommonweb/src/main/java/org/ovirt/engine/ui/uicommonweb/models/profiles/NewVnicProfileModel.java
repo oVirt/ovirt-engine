@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.Collection;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.compat.Guid;
@@ -41,8 +41,8 @@ public class NewVnicProfileModel extends VnicProfileModel {
     }
 
     @Override
-    protected VdcActionType getVdcActionType() {
-        return VdcActionType.AddVnicProfile;
+    protected ActionType getActionType() {
+        return ActionType.AddVnicProfile;
     }
 
     @Override

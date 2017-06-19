@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -25,7 +25,7 @@ public class EditNetworkQoSModel extends NetworkQoSModel {
     public void executeSave() {
         QosParametersBase<NetworkQoS> parameters = new QosParametersBase<>();
         parameters.setQos(networkQoS);
-        Frontend.getInstance().runAction(VdcActionType.UpdateNetworkQoS, parameters, result -> {
+        Frontend.getInstance().runAction(ActionType.UpdateNetworkQoS, parameters, result -> {
             VdcReturnValueBase retVal = result.getReturnValue();
             boolean succeeded = false;
             if (retVal != null && retVal.getSucceeded()) {

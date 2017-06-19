@@ -4,7 +4,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.MessageResolver;
 import org.slf4j.Logger;
@@ -40,7 +40,7 @@ public class ExecutionMessageDirector {
     /**
      * Stores the job messages
      */
-    private Map<VdcActionType, String> jobMessages = new EnumMap<>(VdcActionType.class);
+    private Map<ActionType, String> jobMessages = new EnumMap<>(ActionType.class);
 
     /**
      * Stores the step messages
@@ -65,7 +65,7 @@ public class ExecutionMessageDirector {
         for (String key : bundle.keySet()) {
 
             if (key.startsWith(JOB_MESSAGE_PREFIX)) {
-                addMessage(key, bundle.getString(key), jobMessages, VdcActionType.class, jobMessagePrefixLength);
+                addMessage(key, bundle.getString(key), jobMessages, ActionType.class, jobMessagePrefixLength);
             } else if (key.startsWith(STEP_MESSAGE_PREFIX)) {
                 addMessage(key, bundle.getString(key), stepMessages, StepEnum.class, stepMessagePrefixLength);
             } else {
@@ -141,10 +141,10 @@ public class ExecutionMessageDirector {
      *
      * @param actionType
      *            The type by which the message is retrieved
-     * @return A message describing the action type, or the action type name by {@code VdcActionType.name()} if not
+     * @return A message describing the action type, or the action type name by {@code ActionType.name()} if not
      *         found.
      */
-    public String getJobMessage(VdcActionType actionType) {
+    public String getJobMessage(ActionType actionType) {
         return getMessage(jobMessages, actionType);
     }
 
@@ -157,7 +157,7 @@ public class ExecutionMessageDirector {
         return message;
     }
 
-    public static String resolveJobMessage(VdcActionType actionType, Map<String, String> values) {
+    public static String resolveJobMessage(ActionType actionType, Map<String, String> values) {
         String jobMessage = getInstance().getJobMessage(actionType);
         if (jobMessage != null) {
             return MessageResolver.resolveMessage(jobMessage, values);

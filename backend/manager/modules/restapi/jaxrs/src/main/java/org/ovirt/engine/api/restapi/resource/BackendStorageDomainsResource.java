@@ -21,10 +21,10 @@ import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.restapi.types.StorageDomainMapper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -73,7 +73,7 @@ public class BackendStorageDomainsResource
         return inject(new BackendStorageDomainResource(id, this));
     }
 
-    private Response addDomain(VdcActionType action,
+    private Response addDomain(ActionType action,
             StorageDomain model,
             StorageDomainStatic entity,
             Guid hostId,
@@ -85,8 +85,8 @@ public class BackendStorageDomainsResource
             connection.setId(addStorageServerConnection(connection, hostId));
         }
         entity.setStorage(connection.getId());
-        if (action == VdcActionType.AddNFSStorageDomain || action == VdcActionType.AddPosixFsStorageDomain ||
-                action == VdcActionType.AddGlusterFsStorageDomain) {
+        if (action == ActionType.AddNFSStorageDomain || action == ActionType.AddPosixFsStorageDomain ||
+                action == ActionType.AddGlusterFsStorageDomain) {
             org.ovirt.engine.core.common.businessentities.StorageDomain existing =
                     getExistingStorageDomain(hostId,
                             entity.getStorageType(),
@@ -95,12 +95,12 @@ public class BackendStorageDomainsResource
             if (existing != null) {
                 StorageDomainMapper.map(model, existing.getStorageStaticData());
                 entity = existing.getStorageStaticData();
-                action = VdcActionType.AddExistingFileStorageDomain;
+                action = ActionType.AddExistingFileStorageDomain;
             }
         }
 
         try {
-            if (action != VdcActionType.AddExistingFileStorageDomain) {
+            if (action != ActionType.AddExistingFileStorageDomain) {
                 validateParameters(model, 2, "name");
             }
             response = performCreate(action, getAddParams(entity, hostId), ID_RESOLVER);
@@ -117,7 +117,7 @@ public class BackendStorageDomainsResource
     private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
         boolean overrideLuns = model.getStorage().isSetOverrideLuns() ? model.getStorage().isOverrideLuns() : false;
 
-        return performCreate(VdcActionType.AddSANStorageDomain,
+        return performCreate(ActionType.AddSANStorageDomain,
                 getSanAddParams(entity,
                         hostId,
                         getLunIds(model.getStorage(), storageType, hostId),
@@ -149,7 +149,7 @@ public class BackendStorageDomainsResource
         StorageDomainManagementParameter parameters =
                 new StorageDomainManagementParameter(storageDomainToImport);
         parameters.setVdsId(hostId);
-        return performCreate(VdcActionType.AddExistingBlockStorageDomain, parameters, ID_RESOLVER);
+        return performCreate(ActionType.AddExistingBlockStorageDomain, parameters, ID_RESOLVER);
     }
 
     private StorageDomainStatic getMatchingStorageDomain(Guid storageId,
@@ -248,7 +248,7 @@ public class BackendStorageDomainsResource
                         unit.getUsername(),
                         unit.getPassword(),
                         unit.getPort());
-        performAction(VdcActionType.ConnectStorageToVds,
+        performAction(ActionType.ConnectStorageToVds,
                 new StorageServerConnectionParametersBase(cnx, hostId, false));
     }
 
@@ -288,22 +288,22 @@ public class BackendStorageDomainsResource
             if (!storageConnectionFromUser.isSetId()) {
                 validateParameters(storageDomain.getStorage(), "address");
             }
-            resp = addDomain(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId, cnx);
+            resp = addDomain(ActionType.AddNFSStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case LOCALFS:
-            resp = addDomain(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId, cnx);
+            resp = addDomain(ActionType.AddLocalStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case POSIXFS:
             if (!storageConnectionFromUser.isSetId()) {
                 validateParameters(storageDomain.getStorage(), "vfsType");
             }
-            resp = addDomain(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId, cnx);
+            resp = addDomain(ActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case GLUSTERFS:
             if (!storageConnectionFromUser.isSetId()) {
                 validateParameters(storageDomain.getStorage(), "vfsType");
             }
-            resp = addDomain(VdcActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
+            resp = addDomain(ActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
             break;
 
         default:
@@ -457,13 +457,13 @@ public class BackendStorageDomainsResource
     }
 
     private String addStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
-        return performAction(VdcActionType.AddStorageServerConnection,
+        return performAction(ActionType.AddStorageServerConnection,
                 new StorageServerConnectionParametersBase(cnx, hostId, false),
                 String.class);
     }
 
     private String removeStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
-        return performAction(VdcActionType.RemoveStorageServerConnection,
+        return performAction(ActionType.RemoveStorageServerConnection,
                 new StorageServerConnectionParametersBase(cnx, hostId, false),
                 String.class);
     }

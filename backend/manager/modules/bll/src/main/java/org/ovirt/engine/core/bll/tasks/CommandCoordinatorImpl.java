@@ -16,8 +16,8 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -54,7 +54,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
         cmdExecutor = Injector.get(CommandExecutor.class);
     }
 
-    public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
+    public <P extends VdcActionParametersBase> CommandBase<P> createCommand(ActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
     }
 
@@ -88,7 +88,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
      * would like the execute the command with no delay
      */
     @Override
-    public Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
+    public Future<VdcReturnValueBase> executeAsyncCommand(ActionType actionType,
                                                           VdcActionParametersBase parameters,
                                                           CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
@@ -109,7 +109,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     }
 
     @Override
-    public CommandEntity createCommandEntity(Guid cmdId, VdcActionType actionType, VdcActionParametersBase params) {
+    public CommandEntity createCommandEntity(Guid cmdId, ActionType actionType, VdcActionParametersBase params) {
         CommandEntity cmdEntity = new CommandEntity();
         cmdEntity.setId(cmdId);
         cmdEntity.setCommandType(actionType);
@@ -172,7 +172,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     }
 
     @Override
-    public List<Guid> getChildCommandIds(Guid cmdId, VdcActionType childActionType, CommandStatus status) {
+    public List<Guid> getChildCommandIds(Guid cmdId, ActionType childActionType, CommandStatus status) {
         List<Guid> childCmdIds = new ArrayList<>();
         for (Guid childCmdId : getChildCommandIds(cmdId)) {
             CommandEntity childCmdEntity = getCommandEntity(childCmdId);
@@ -239,7 +239,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return coCoAsyncTaskHelper.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
@@ -247,7 +247,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     public AsyncTask createAsyncTask(
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return coCoAsyncTaskHelper.createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
     }
 
@@ -255,7 +255,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     public Guid createTask(Guid taskId,
             CommandBase<?> command,
                            AsyncTaskCreationInfo asyncTaskCreationInfo,
-                           VdcActionType parentCommand,
+                           ActionType parentCommand,
                            String description,
                            Map<Guid, VdcObjectType> entitiesMap) {
         return coCoAsyncTaskHelper.createTask(taskId,
@@ -272,7 +272,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         return coCoAsyncTaskHelper.concreteCreateTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 

@@ -10,10 +10,10 @@ import org.ovirt.engine.api.resource.SnapshotCdromsResource;
 import org.ovirt.engine.api.resource.SnapshotDisksResource;
 import org.ovirt.engine.api.resource.SnapshotNicsResource;
 import org.ovirt.engine.api.resource.SnapshotResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -59,14 +59,14 @@ public class BackendSnapshotResource
             tryBackParams.setDisks(collection.mapDisks(action.getDisks()));
         }
         tryBackParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID); //TODO: if user supplied, override with user value
-        Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
+        Response response = doAction(ActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,
                 action,
                 PollingType.JOB);
         if (response.getStatus()==Response.Status.OK.getStatusCode()) {
             RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(parentId, SnapshotActionEnum.COMMIT);
             restoreParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID);
-            Response response2 = doAction(VdcActionType.RestoreAllSnapshots,
+            Response response2 = doAction(ActionType.RestoreAllSnapshots,
                     restoreParams,
                     action);
             if (response2.getStatus()!=Response.Status.OK.getStatusCode()) {
@@ -121,6 +121,6 @@ public class BackendSnapshotResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveSnapshot, new RemoveSnapshotParameters(guid, parentId));
+        return performAction(ActionType.RemoveSnapshot, new RemoveSnapshotParameters(guid, parentId));
     }
 }

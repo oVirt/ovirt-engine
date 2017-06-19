@@ -30,8 +30,8 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidato
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -417,7 +417,7 @@ public class RunVmValidator {
 
     private ValidationResult validateVmStatusUsingMatrix(VM vm) {
         if (!VdcActionUtils.canExecute(Collections.singletonList(vm), VM.class,
-                VdcActionType.RunVm)) {
+                ActionType.RunVm)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
         }
 

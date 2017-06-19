@@ -4,8 +4,8 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -61,7 +61,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
 
     private Guid addDisk(DiskImage disk) {
         VdcReturnValueBase returnValue = getBackend().runInternalAction(
-                VdcActionType.AddDisk,
+                ActionType.AddDisk,
                 buildAddDiskParameters(disk),
                 enclosingCommand.getContext().clone());
 

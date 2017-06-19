@@ -4,8 +4,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -44,7 +44,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
                 new Object[] { ISCSI_BOND_ID },
                 getIscsiBondWithNoNetworks());
 
-        setUpActionExpectations(VdcActionType.EditIscsiBond,
+        setUpActionExpectations(ActionType.EditIscsiBond,
                 EditIscsiBondParameters.class,
                 new String[] { "IscsiBond" },
                 new Object[] { getIscsiBondContainingNetwork() },

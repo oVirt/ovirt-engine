@@ -14,9 +14,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -114,7 +114,7 @@ public class BackendDataCenterClusterResourceTest
         setUpGetEntityExpectations(2);
         setUpManagementNetworkExpectation();
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateCluster,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateCluster,
                                            ClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
@@ -170,7 +170,7 @@ public class BackendDataCenterClusterResourceTest
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateCluster,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateCluster,
                                            ClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
@@ -211,7 +211,7 @@ public class BackendDataCenterClusterResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveCluster,
+                ActionType.RemoveCluster,
                 ClusterParametersBase.class,
                 new String[] { "ClusterId" },
                 new Object[] { GUIDS[0] },
@@ -271,7 +271,7 @@ public class BackendDataCenterClusterResourceTest
     protected void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveCluster,
+                ActionType.RemoveCluster,
                 ClusterParametersBase.class,
                 new String[] { "ClusterId" },
                 new Object[] { GUIDS[0] },

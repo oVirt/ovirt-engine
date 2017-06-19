@@ -6,9 +6,9 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -38,7 +38,7 @@ public class BackendStorageServerConnectionResource extends
         return performUpdate(connection,
                 new QueryIdResolver<>(VdcQueryType.GetStorageServerConnectionById,
                         StorageServerConnectionQueryParametersBase.class),
-                VdcActionType.UpdateStorageServerConnection,
+                ActionType.UpdateStorageServerConnection,
                 new UpdateParametersProvider());
     }
 
@@ -55,7 +55,7 @@ public class BackendStorageServerConnectionResource extends
         }
         StorageServerConnectionParametersBase parameters =
                 new StorageServerConnectionParametersBase(connection, hostId, false);
-        return performAction(VdcActionType.RemoveStorageServerConnection, parameters);
+        return performAction(ActionType.RemoveStorageServerConnection, parameters);
     }
 
     private Guid getHostId(String host) {

@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.Collection;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -55,8 +55,8 @@ public class EditVnicProfileModel extends VnicProfileModel {
     }
 
     @Override
-    protected VdcActionType getVdcActionType() {
-        return VdcActionType.UpdateVnicProfile;
+    protected ActionType getActionType() {
+        return ActionType.UpdateVnicProfile;
     }
 
     private void updateChangabilityIfVmsUsingTheProfile() {

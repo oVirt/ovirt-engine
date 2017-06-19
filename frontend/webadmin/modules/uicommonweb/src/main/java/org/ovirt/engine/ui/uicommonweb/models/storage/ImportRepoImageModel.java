@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -128,7 +128,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             actionParameters.add(importParameters);
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportRepoImage, actionParameters,
+        Frontend.getInstance().runMultipleAction(ActionType.ImportRepoImage, actionParameters,
                 result -> {
                     ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) result.getState();
                     model.stopProgress();

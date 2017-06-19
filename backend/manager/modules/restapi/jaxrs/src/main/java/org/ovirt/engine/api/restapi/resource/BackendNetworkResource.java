@@ -7,17 +7,17 @@ import org.ovirt.engine.api.resource.AssignedVnicProfilesResource;
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendNetworkResource extends AbstractBackendNetworkResource implements NetworkResource {
 
     public BackendNetworkResource(String id, BackendNetworksResource parent) {
-        super(id, parent, VdcActionType.RemoveNetwork);
+        super(id, parent, ActionType.RemoveNetwork);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
     public Network update(Network incoming) {
         return performUpdate(incoming,
                              getParent().getNetworkIdResolver(),
-                             VdcActionType.UpdateNetwork,
+                             ActionType.UpdateNetwork,
                              new UpdateParametersProvider());
     }
 

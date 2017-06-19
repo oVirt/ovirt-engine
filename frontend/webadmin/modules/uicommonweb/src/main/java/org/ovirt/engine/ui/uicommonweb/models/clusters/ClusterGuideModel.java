@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -345,7 +345,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
             }
         }
         model.startProgress();
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeVDSCluster, parameterList,
+        Frontend.getInstance().runMultipleAction(ActionType.ChangeVDSCluster, parameterList,
                 result -> {
 
                     List<MoveHostData> hosts = ((MoveHost) getWindow()).getSelectedHosts();
@@ -358,7 +358,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                             VDS selectedHost= selectedHostData.getEntity();
                             if (selectedHost.getStatus() == VDSStatus.PendingApproval && retVals.get(i) != null
                                     && retVals.get(i).getSucceeded()) {
-                                Frontend.getInstance().runAction(VdcActionType.ApproveVds,
+                                Frontend.getInstance().runAction(ActionType.ApproveVds,
                                         new ApproveVdsParameters(selectedHost.getId()));
                             } else if (selectedHostData.getActivateHost()) {
                                 activateVdsParameterList.add(new VdsActionParameters(selectedHostData.getEntity().getId()));
@@ -512,7 +512,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
             cluster.setStoragePoolId(dataCenter.getEntity().getId());
             dataCentersModel.startProgress();
 
-            Frontend.getInstance().runAction(VdcActionType.UpdateCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
+            Frontend.getInstance().runAction(ActionType.UpdateCluster, new ManagementNetworkOnClusterOperationParameters(cluster),
                     result -> {
 
                         if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
@@ -570,7 +570,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
         vdsActionParams.setFenceAgents(model.getFenceAgentListModel().getFenceAgents());
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.AddVds, vdsActionParams,
+        Frontend.getInstance().runAction(ActionType.AddVds, vdsActionParams,
                 result -> {
 
                     ClusterGuideModel localModel = (ClusterGuideModel) result.getState();

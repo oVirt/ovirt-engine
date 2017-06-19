@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -375,7 +375,7 @@ public abstract class VmInterfaceModel extends Model {
 
         startProgress();
 
-        Frontend.getInstance().runAction(getVdcActionType(),
+        Frontend.getInstance().runAction(getActionType(),
                 createVdcActionParameters(nic),
                 result -> {
                     VdcReturnValueBase returnValue = result.getReturnValue();
@@ -399,7 +399,7 @@ public abstract class VmInterfaceModel extends Model {
 
     protected abstract String getDefaultMacAddress();
 
-    protected abstract VdcActionType getVdcActionType();
+    protected abstract ActionType getActionType();
 
     protected void initProfiles() {
         profileBehavior.initProfiles(getVm().getClusterId(), dcId, new AsyncQuery<>(result -> {

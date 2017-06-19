@@ -6,8 +6,8 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.model.NetworkLabels;
 import org.ovirt.engine.api.resource.NetworkLabelResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 
 public class BackendNetworkLabelResource
     extends AbstractBackendSubResource<NetworkLabel, org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel>
@@ -44,6 +44,6 @@ public class BackendNetworkLabelResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.UnlabelNetwork, new UnlabelNetworkParameters(parent.getNetworkId()));
+        return performAction(ActionType.UnlabelNetwork, new UnlabelNetworkParameters(parent.getNetworkId()));
     }
 }

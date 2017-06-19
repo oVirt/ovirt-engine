@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -265,7 +265,7 @@ public class RegisterVmModel extends RegisterEntityModel<VM, RegisterVmData> {
         }
 
         startProgress();
-        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVmFromConfiguration, parameters, result -> {
+        Frontend.getInstance().runMultipleAction(ActionType.ImportVmFromConfiguration, parameters, result -> {
             stopProgress();
             cancel();
         }, this);

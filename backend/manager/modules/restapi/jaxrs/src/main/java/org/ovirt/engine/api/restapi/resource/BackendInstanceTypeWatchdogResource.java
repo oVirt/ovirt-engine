@@ -26,8 +26,8 @@ import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.InstanceTypeWatchdogResource;
 import org.ovirt.engine.api.restapi.types.WatchdogMapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -83,7 +83,7 @@ public class BackendInstanceTypeWatchdogResource
 
     @Override
     public Watchdog update(Watchdog watchdog) {
-        return performUpdate(watchdog, new WatchdogResolver(), VdcActionType.UpdateWatchdog, new UpdateParametersProvider());
+        return performUpdate(watchdog, new WatchdogResolver(), ActionType.UpdateWatchdog, new UpdateParametersProvider());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class BackendInstanceTypeWatchdogResource
         WatchdogParameters parameters = new WatchdogParameters();
         parameters.setId(instanceTypeId);
         parameters.setVm(false);
-        return performAction(VdcActionType.RemoveWatchdog, parameters);
+        return performAction(ActionType.RemoveWatchdog, parameters);
     }
 
     private class UpdateParametersProvider implements ParametersProvider<Watchdog, VmWatchdog> {

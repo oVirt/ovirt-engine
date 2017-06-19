@@ -4,8 +4,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -58,7 +58,7 @@ public class RegisterDiskModel extends DisksAllocationModel {
             RegisterDiskParameters registerDiskParams =
                     new RegisterDiskParameters(disk, disk.getStorageIds().get(0));
             registerDiskParams.setRefreshFromStorage(true);
-            Frontend.getInstance().runMultipleAction(VdcActionType.RegisterDisk, Arrays.asList(registerDiskParams));
+            Frontend.getInstance().runMultipleAction(ActionType.RegisterDisk, Arrays.asList(registerDiskParams));
         }
 
         stopProgress();

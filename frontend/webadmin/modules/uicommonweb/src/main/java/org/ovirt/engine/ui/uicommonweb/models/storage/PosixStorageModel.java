@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -105,8 +105,8 @@ public class PosixStorageModel extends FileStorageModel {
         return StorageType.POSIXFS;
     }
 
-    public VdcActionType getAddStorageDomainVdcAction() {
-        return VdcActionType.AddPosixFsStorageDomain;
+    public ActionType getAddStorageDomainVdcAction() {
+        return ActionType.AddPosixFsStorageDomain;
     }
 
     public void setVfsChangeability(boolean isVfsChangeable) {

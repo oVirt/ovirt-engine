@@ -35,11 +35,11 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -144,7 +144,7 @@ public class BackendVmDiskResourceTest
 
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVmDisk,
+                ActionType.UpdateVmDisk,
                 VmDiskOperationParameterBase.class,
                 new String[] { "VmId", "DiskInfo.WipeAfterDelete" },
                 new Object[] { VM_ID, Boolean.FALSE },
@@ -162,7 +162,7 @@ public class BackendVmDiskResourceTest
         setUpDiskVmElementExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVmDisk,
+                ActionType.UpdateVmDisk,
                 VmDiskOperationParameterBase.class,
                 new String[] { "VmId", "DiskVmElement.ReadOnly" },
                 new Object[] { VM_ID, Boolean.TRUE },
@@ -178,7 +178,7 @@ public class BackendVmDiskResourceTest
     public void testActivate() throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.HotPlugDiskToVm,
+                ActionType.HotPlugDiskToVm,
                 VmDiskOperationParameterBase.class,
                 new String[] { "DiskVmElement" },
                 new Object[] { new DiskVmElement(DISK_ID, VM_ID) },
@@ -194,7 +194,7 @@ public class BackendVmDiskResourceTest
     public void testDeactivate() throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.HotUnPlugDiskFromVm,
+                ActionType.HotUnPlugDiskFromVm,
                 VmDiskOperationParameterBase.class,
                 new String[] { "DiskVmElement" },
                 new Object[] { new DiskVmElement(DISK_ID, VM_ID) },
@@ -222,7 +222,7 @@ public class BackendVmDiskResourceTest
     public void testExport() throws Exception {
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.ExportRepoImage,
+                ActionType.ExportRepoImage,
                 ExportRepoImageParameters.class,
                 new String[] { "ImageGroupID", "DestinationDomainId" },
                 new Object[] { DISK_ID, GUIDS[3]},
@@ -267,7 +267,7 @@ public class BackendVmDiskResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1);
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.DetachDiskFromVm,
+            ActionType.DetachDiskFromVm,
             AttachDetachVmDiskParameters.class,
             new String[] { "VmId", "EntityInfo" },
             new Object[] { VM_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
@@ -294,7 +294,7 @@ public class BackendVmDiskResourceTest
         setUpEntityQueryExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.DetachDiskFromVm,
+                ActionType.DetachDiskFromVm,
                 AttachDetachVmDiskParameters.class,
                 new String[] { "VmId", "EntityInfo" },
                 new Object[] { VM_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID) },
@@ -417,7 +417,7 @@ public class BackendVmDiskResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.MoveDisks,
+                ActionType.MoveDisks,
                 MoveDisksParameters.class,
                 new String[] {},
                 new Object[] {}
@@ -468,7 +468,7 @@ public class BackendVmDiskResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.MoveDisks,
+                ActionType.MoveDisks,
                 MoveDisksParameters.class,
                 new String[] {},
                 new Object[] {}
@@ -529,7 +529,7 @@ public class BackendVmDiskResourceTest
         return action;
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values) {

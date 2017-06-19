@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -51,7 +51,7 @@ public class CoCoAsyncTaskHelper {
      * @param asyncTaskCreationInfo
      *            info to send to AsyncTaskManager when creating the task.
      * @param parentCommand
-     *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
+     *            ActionType of the command that its EndAction we want to invoke when tasks are finished.
      * @param entitiesMap
      *            Map of entities that are associated with the task
      * @return Guid of the created task.
@@ -59,7 +59,7 @@ public class CoCoAsyncTaskHelper {
     public Guid createTask(Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
+            ActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
         Step taskStep =
@@ -96,7 +96,7 @@ public class CoCoAsyncTaskHelper {
             Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         AsyncTaskParameters p =
                 new AsyncTaskParameters(asyncTaskCreationInfo,
                         getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand));
@@ -151,7 +151,7 @@ public class CoCoAsyncTaskHelper {
     private CommandEntity getCommandEntity(Guid cmdId) {
         CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
         if (cmdEntity == null) {
-            cmdEntity = coco.createCommandEntity(cmdId, VdcActionType.Unknown, new VdcActionParametersBase());
+            cmdEntity = coco.createCommandEntity(cmdId, ActionType.Unknown, new VdcActionParametersBase());
         }
         return cmdEntity;
     }
@@ -245,7 +245,7 @@ public class CoCoAsyncTaskHelper {
     public AsyncTask getAsyncTask(Guid taskId,
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         AsyncTask asyncTask = null;
         if (!taskId.equals(Guid.Empty)) {
             asyncTask = getAsyncTaskFromDb(taskId);
@@ -255,7 +255,7 @@ public class CoCoAsyncTaskHelper {
                     command.getParentParameters(parentCommand) : command.getParentParameters();
             Guid parentCommandId =
                     parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
-            if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
+            if (ActionType.Unknown.equals(command.getParameters().getCommandType())) {
                 command.getParameters().setCommandType(command.getActionType());
             }
             asyncTask.setActionType(parentCommand);
@@ -282,13 +282,13 @@ public class CoCoAsyncTaskHelper {
     public AsyncTask createAsyncTask(
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
+            ActionType parentCommand) {
         VdcActionParametersBase parentParameters = command.getParentParameters() == null ?
                 command.getParentParameters(parentCommand) : command.getParentParameters();
         Guid parentCommandId =
                 parentParameters == null ? Guid.Empty : parentParameters.getCommandId();
 
-        if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
+        if (ActionType.Unknown.equals(command.getParameters().getCommandType())) {
             command.getParameters().setCommandType(command.getActionType());
         }
         AsyncTask asyncTask = new AsyncTask(AsyncTaskResultEnum.success,
@@ -305,7 +305,7 @@ public class CoCoAsyncTaskHelper {
         return asyncTask;
     }
 
-    private CommandEntity getChildCommandEntity(CommandBase<?> command, VdcActionType parentCommand) {
+    private CommandEntity getChildCommandEntity(CommandBase<?> command, ActionType parentCommand) {
         CommandEntity cmdEntity = coco.getCommandEntity(command.getCommandId());
         if (cmdEntity == null) {
             command.persistCommand(parentCommand, command.getCallback() != null);
@@ -314,7 +314,7 @@ public class CoCoAsyncTaskHelper {
     }
 
     private CommandEntity getParentCommandEntity(Guid cmdId,
-                                                 VdcActionType actionType,
+                                                 ActionType actionType,
                                                  VdcActionParametersBase parameters) {
         CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
         if (cmdEntity == null) {
@@ -329,7 +329,7 @@ public class CoCoAsyncTaskHelper {
 
     public VdcReturnValueBase endAction(SPMTask task) {
         AsyncTask dbAsyncTask = task.getParameters().getDbAsyncTask();
-        VdcActionType actionType = getEndActionType(dbAsyncTask);
+        ActionType actionType = getEndActionType(dbAsyncTask);
         VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
         CommandBase<?> command = CommandHelper.buildCommand(actionType, parameters,
                 coco.retrieveCommandContext(dbAsyncTask.getRootCommandId()).getExecutionContext(),
@@ -337,9 +337,9 @@ public class CoCoAsyncTaskHelper {
         return new DecoratedCommand<>(command).endAction();
     }
 
-    private VdcActionType getEndActionType(AsyncTask dbAsyncTask) {
-        VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
-        if (!VdcActionType.Unknown.equals(commandType)) {
+    private ActionType getEndActionType(AsyncTask dbAsyncTask) {
+        ActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
+        if (!ActionType.Unknown.equals(commandType)) {
             return commandType;
         }
         return dbAsyncTask.getActionType();

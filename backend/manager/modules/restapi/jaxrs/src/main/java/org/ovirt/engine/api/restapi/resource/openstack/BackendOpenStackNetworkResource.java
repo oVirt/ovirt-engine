@@ -29,8 +29,8 @@ import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.resource.openstack.OpenstackNetworkResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackSubnetsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
@@ -89,7 +89,7 @@ public class BackendOpenStackNetworkResource
         network.setName(getNetwork().getName());
 
         AddNetworkStoragePoolParameters parameters = new AddNetworkStoragePoolParameters(dataCenterId, network);
-        return doAction(VdcActionType.AddNetwork, parameters, action);
+        return doAction(ActionType.AddNetwork, parameters, action);
     }
 
     private Network getNetwork() {

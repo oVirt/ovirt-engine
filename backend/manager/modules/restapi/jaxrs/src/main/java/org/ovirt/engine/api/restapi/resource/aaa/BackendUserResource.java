@@ -13,8 +13,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
 import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -73,6 +73,6 @@ public class BackendUserResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveUser, new IdParameters(guid));
+        return performAction(ActionType.RemoveUser, new IdParameters(guid));
     }
 }

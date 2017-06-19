@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.macpool;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -101,7 +101,7 @@ public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, Mac
     }
 
     private void editMacPool() {
-        SharedMacPoolModel model = new SharedMacPoolModel(this, VdcActionType.UpdateMacPool);
+        SharedMacPoolModel model = new SharedMacPoolModel(this, ActionType.UpdateMacPool);
         model.setTitle(ConstantsManager.getInstance().getConstants().editSharedMacPoolTitle());
         model.setHashName("edit_shared_mac_pool"); //$NON-NLS-1$
         model.setHelpTag(HelpTag.edit_shared_mac_pool);
@@ -139,7 +139,7 @@ public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, Mac
         for (MacPool macPool : getSelectedItems()) {
             params.add(new RemoveMacPoolByIdParameters(macPool.getId()));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveMacPool, params);
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveMacPool, params);
     }
 
     @Override

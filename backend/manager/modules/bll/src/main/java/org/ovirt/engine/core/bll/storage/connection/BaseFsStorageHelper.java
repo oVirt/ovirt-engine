@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -29,7 +29,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
         if (connection != null) {
             VdcReturnValueBase returnValue = Backend
                     .getInstance()
-                    .runInternalAction(VdcActionType.forValue(type),
+                    .runInternalAction(ActionType.forValue(type),
                             new StorageServerConnectionParametersBase(connection, vdsId, false));
             result = new Pair<>(returnValue.getSucceeded(), returnValue.getFault());
         } else {

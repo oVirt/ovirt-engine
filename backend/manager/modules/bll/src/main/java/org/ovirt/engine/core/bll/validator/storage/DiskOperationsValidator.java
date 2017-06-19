@@ -6,20 +6,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 
 public class DiskOperationsValidator {
 
-    static final Map<VdcActionType, List<DiskContentType>> allowedCommandsOnTypes = new HashMap<>();
+    static final Map<ActionType, List<DiskContentType>> allowedCommandsOnTypes = new HashMap<>();
     static {
-        allowedCommandsOnTypes.put(VdcActionType.RemoveDisk, Arrays.asList(DiskContentType.DATA, DiskContentType.OVF_STORE));
-        allowedCommandsOnTypes.put(VdcActionType.UpdateVmDisk, Arrays.asList(DiskContentType.DATA));
-        allowedCommandsOnTypes.put(VdcActionType.AttachDiskToVm, Arrays.asList(DiskContentType.DATA));
-        allowedCommandsOnTypes.put(VdcActionType.MoveOrCopyDisk, Arrays.asList(DiskContentType.DATA));
-        allowedCommandsOnTypes.put(VdcActionType.LiveMigrateDisk, Arrays.asList(DiskContentType.DATA));
+        allowedCommandsOnTypes.put(ActionType.RemoveDisk, Arrays.asList(DiskContentType.DATA, DiskContentType.OVF_STORE));
+        allowedCommandsOnTypes.put(ActionType.UpdateVmDisk, Arrays.asList(DiskContentType.DATA));
+        allowedCommandsOnTypes.put(ActionType.AttachDiskToVm, Arrays.asList(DiskContentType.DATA));
+        allowedCommandsOnTypes.put(ActionType.MoveOrCopyDisk, Arrays.asList(DiskContentType.DATA));
+        allowedCommandsOnTypes.put(ActionType.LiveMigrateDisk, Arrays.asList(DiskContentType.DATA));
     }
 
     private Disk disk;
@@ -28,7 +28,7 @@ public class DiskOperationsValidator {
         this.disk = disk;
     }
 
-    public ValidationResult isOperationAllowedOnDisk(VdcActionType actionType) {
+    public ValidationResult isOperationAllowedOnDisk(ActionType actionType) {
         List<DiskContentType> allowedTypes = allowedCommandsOnTypes.get(actionType);
         if (allowedTypes == null) {
             throw new IllegalArgumentException(

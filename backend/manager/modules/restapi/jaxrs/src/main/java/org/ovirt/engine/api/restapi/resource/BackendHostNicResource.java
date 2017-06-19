@@ -15,8 +15,8 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VirtualFunctionAllowedNetworksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.types.Mapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
@@ -56,7 +56,7 @@ public class BackendHostNicResource
             return notAllowed(localize(Messages.INVALID_OPERATION_ON_NON_SRIOV_NIC), guid.toString());
         }
         UpdateHostNicVfsConfigParameters params = prepareUpdateHostNicVfsConfigParameters(action, vfsConfig);
-        return doAction(VdcActionType.UpdateHostNicVfsConfig, params, action);
+        return doAction(ActionType.UpdateHostNicVfsConfig, params, action);
     }
 
     private UpdateHostNicVfsConfigParameters prepareUpdateHostNicVfsConfigParameters(Action action,

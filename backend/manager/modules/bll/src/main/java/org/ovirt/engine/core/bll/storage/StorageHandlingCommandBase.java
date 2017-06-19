@@ -29,9 +29,9 @@ import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -410,7 +410,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             RegisterDiskParameters registerDiskParams =
                     new RegisterDiskParameters(ovfStoreDiskImage, storageDomainId);
 
-            boolean registerDiskResult = runInternalAction(VdcActionType.RegisterDisk, registerDiskParams,
+            boolean registerDiskResult = runInternalAction(ActionType.RegisterDisk, registerDiskParams,
                     cloneContext()).getSucceeded();
 
             log.info("Register new floating OVF_STORE disk with disk id '{}' for storage domain '{}' has {}",
@@ -561,7 +561,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 DiskImage ovfDisk = ovfDiskAndSize.getFirst();
                 if (ovfDisk != null) {
                     try {
-                        VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RetrieveImageData,
+                        VdcReturnValueBase vdcReturnValue = runInternalAction(ActionType.RetrieveImageData,
                                 new RetrieveImageDataParameters(getParameters().getStoragePoolId(),
                                         storageDomainId,
                                         ovfDisk.getId(),

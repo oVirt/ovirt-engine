@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.api.resource.ExternalVmImportsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalUrlParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -37,7 +37,7 @@ public class BackendExternalVmImportsResource extends BackendResource implements
                 "storageDomain.id|name");
 
         ImportVmFromExternalUrlParameters parameters = buildImportParameters(externalVmImport);
-        VM createdVm = performAction(VdcActionType.ImportVmFromExternalUrl, parameters, VM.class);
+        VM createdVm = performAction(ActionType.ImportVmFromExternalUrl, parameters, VM.class);
 
         // Postprocess output entity to clear sensitive data and resolve links.
         externalVmImport.setPassword(null);

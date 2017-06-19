@@ -9,9 +9,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -85,7 +85,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                 SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                         NonOperationalReason.ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER);
 
-                runInternalAction(VdcActionType.SetNonOperationalVds,
+                runInternalAction(ActionType.SetNonOperationalVds,
                         tempVar,
                         ExecutionHandler.createInternalJobContext(getContext()));
             } else {
@@ -104,7 +104,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                             new ManagementNetworkOnClusterOperationParameters(grp);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.Suppress);
                     tempVar.setIsInternalCommand(true);
-                    runInternalAction(VdcActionType.UpdateCluster, tempVar);
+                    runInternalAction(ActionType.UpdateCluster, tempVar);
 
                     clusterCpuName = sc.getCpuName();
                 }
@@ -126,7 +126,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
                 SetNonOperationalVdsParameters tempVar2 = new SetNonOperationalVdsParameters(getVdsId(),
                         NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
-                runInternalAction(VdcActionType.SetNonOperationalVds,
+                runInternalAction(ActionType.SetNonOperationalVds,
                         tempVar2,
                         ExecutionHandler.createInternalJobContext(getContext()));
             } else {

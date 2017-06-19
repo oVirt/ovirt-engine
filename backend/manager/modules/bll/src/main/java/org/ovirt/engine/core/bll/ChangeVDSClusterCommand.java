@@ -15,10 +15,10 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -232,7 +232,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addVdsSpmIdParams.setSessionId(getParameters().getSessionId());
             addVdsSpmIdParams.setCompensationEnabled(true);
             VdcReturnValueBase addVdsSpmIdReturn =
-                    runInternalAction(VdcActionType.AddVdsSpmId,
+                    runInternalAction(ActionType.AddVdsSpmId,
                             addVdsSpmIdParams, cloneContext().withoutLock().withoutExecutionContext());
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
@@ -295,7 +295,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         ThreadPoolUtil.execute(() -> runInternalAction(
-                VdcActionType.PersistentHostSetupNetworks,
+                ActionType.PersistentHostSetupNetworks,
                 params,
                 cloneContextAndDetachFromParent()));
     }

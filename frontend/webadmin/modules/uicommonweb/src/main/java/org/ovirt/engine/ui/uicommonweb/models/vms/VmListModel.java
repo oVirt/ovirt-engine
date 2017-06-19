@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -552,13 +552,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         for (Guid a : tagsToAttach) {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.AttachVmsToTag, parameters);
+        Frontend.getInstance().runMultipleAction(ActionType.AttachVmsToTag, parameters);
 
         parameters = new ArrayList<>();
         for (Guid a : tagsToDetach) {
             parameters.add(new AttachEntityToTagParameters(a, vmIds));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.DetachVmFromTag, parameters);
+        Frontend.getInstance().runMultipleAction(ActionType.DetachVmFromTag, parameters);
 
         cancel();
     }
@@ -695,7 +695,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         for (Object selectedItem : getSelectedItems()) {
             VM vm = (VM) selectedItem;
-            if (VdcActionUtils.canExecute(Arrays.asList(vm), VM.class, VdcActionType.RemoveVm)) {
+            if (VdcActionUtils.canExecute(Arrays.asList(vm), VM.class, ActionType.RemoveVm)) {
                 EntityModel removeDisksCheckbox = new EntityModel(true);
                 removeDisksCheckbox.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
                 removeDisksCheckbox.setMessage(vm.getName());
@@ -978,7 +978,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
                 model.startProgress();
 
-                Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
+                Frontend.getInstance().runMultipleAction(ActionType.ExportVm, parameters,
                         result -> {
                             ExportVmModel localModel = (ExportVmModel) result.getState();
                             localModel.stopProgress();
@@ -998,7 +998,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
             model.startProgress();
 
-            Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
+            Frontend.getInstance().runMultipleAction(ActionType.ExportVm, parameters,
                     result -> {
                         ExportVmModel localModel = (ExportVmModel) result.getState();
                         localModel.stopProgress();
@@ -1047,7 +1047,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, list,
+        Frontend.getInstance().runMultipleAction(ActionType.ExportVm, list,
                 result -> {
 
                     ExportVmModel localModel = (ExportVmModel) result.getState();
@@ -1171,7 +1171,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         model.getDescription().getEntity());
         BuilderExecutor.build(model, addVmTemplateParameters, new UnitToAddVmTemplateParametersBuilder());
         model.startProgress();
-        Frontend.getInstance().runAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
+        Frontend.getInstance().runAction(ActionType.AddVmTemplate, addVmTemplateParameters,
                 result -> {
                     getWindow().stopProgress();
                     VdcReturnValueBase returnValueBase = result.getReturnValue();
@@ -1218,7 +1218,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new VmOperationParameterBase(a.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.CancelMigrateVm, list,
+        Frontend.getInstance().runMultipleAction(ActionType.CancelMigrateVm, list,
                 result -> {
                 }, null);
     }
@@ -1229,7 +1229,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             parameters.add(new VmOperationParameterBase(vm.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.CancelConvertVm, parameters);
+        Frontend.getInstance().runMultipleAction(ActionType.CancelConvertVm, parameters);
     }
 
     private void onMigrate() {
@@ -1248,7 +1248,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                 list.add(new MigrateVmParameters(true, vm.getId(), vm.getClusterId()));
             }
 
-            Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVm, list,
+            Frontend.getInstance().runMultipleAction(ActionType.MigrateVm, list,
                     result -> {
 
                         MigrateModel localModel = (MigrateModel) result.getState();
@@ -1270,7 +1270,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         .getSelectedItem().getId(), vm.getClusterId()));
             }
 
-            Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,
+            Frontend.getInstance().runMultipleAction(ActionType.MigrateVmToServer, list,
                     result -> {
 
                         MigrateModel localModel = (MigrateModel) result.getState();
@@ -1358,7 +1358,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         P createActionParameters(VM vm);
     }
 
-    private void onPowerAction(VdcActionType actionType, PowerActionParametersFactory<?> parametersFactory) {
+    private void onPowerAction(ActionType actionType, PowerActionParametersFactory<?> parametersFactory) {
         ConfirmationModel model = (ConfirmationModel) getWindow();
 
         if (model.getProgress() != null) {
@@ -1394,7 +1394,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void onShutdown() {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
-        onPowerAction(VdcActionType.ShutdownVm,
+        onPowerAction(ActionType.ShutdownVm,
                 vm -> new ShutdownVmParameters(vm.getId(), true, model.getReason().getEntity()));
     }
 
@@ -1407,7 +1407,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void onStop() {
         final ConfirmationModel model = (ConfirmationModel) getWindow();
-        onPowerAction(VdcActionType.StopVm,
+        onPowerAction(ActionType.StopVm,
                 vm -> new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL, model.getReason().getEntity()));
     }
 
@@ -1420,7 +1420,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void onReboot() {
-        onPowerAction(VdcActionType.RebootVm, vm -> new VmOperationParameterBase(vm.getId()));
+        onPowerAction(ActionType.RebootVm, vm -> new VmOperationParameterBase(vm.getId()));
     }
 
     private void pause() {
@@ -1430,7 +1430,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new VmOperationParameterBase(a.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.HibernateVm, list, result -> {}, null);
+        Frontend.getInstance().runMultipleAction(ActionType.HibernateVm, list, result -> {}, null);
     }
 
     private void run() {
@@ -1440,7 +1440,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new RunVmParams(a.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RunVm, list, result -> {}, null);
+        Frontend.getInstance().runMultipleAction(ActionType.RunVm, list, result -> {}, null);
     }
 
     private void onRemove() {
@@ -1457,7 +1457,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVm, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveVm, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
@@ -1525,7 +1525,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
+        Frontend.getInstance().runAction(ActionType.ChangeDisk, new ChangeDiskCommandParameters(vm.getId(), isoName),
                 result -> {
 
                     AttachCdModel attachCdModel = (AttachCdModel) result.getState();
@@ -1705,7 +1705,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
             model.startProgress();
 
-            Frontend.getInstance().runAction(VdcActionType.ChangeVMCluster, parameters,
+            Frontend.getInstance().runAction(ActionType.ChangeVMCluster, parameters,
                     result -> {
 
                         final VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
@@ -1713,7 +1713,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         if (returnValueBase != null && returnValueBase.getSucceeded()) {
                             VM vm = vmListModel.getcurrentVm();
                             VmManagementParametersBase updateVmParams = vmListModel.getUpdateVmParameters(applyCpuChangesLater);
-                            Frontend.getInstance().runAction(VdcActionType.UpdateVm,
+                            Frontend.getInstance().runAction(ActionType.UpdateVm,
                                     updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, vm.getId()), vmListModel);
                         }
                         else {
@@ -1726,7 +1726,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         else {
             model.startProgress();
             VmManagementParametersBase updateVmParams = getUpdateVmParameters(applyCpuChangesLater);
-            Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
+            Frontend.getInstance().runAction(ActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
         }
     }
 
@@ -1791,7 +1791,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             return;
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ChangeDisk,
+        Frontend.getInstance().runMultipleAction(ActionType.ChangeDisk,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[] { new ChangeDiskCommandParameters(vm.getId(),
                         Objects.equals(isoName, ConsoleModel.getEjectLabel()) ? "" : isoName) })), //$NON-NLS-1$
                 result -> {
@@ -1846,35 +1846,35 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
         getRemoveCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.RemoveVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.RunVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.RunVm));
         getCloneVmCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.CloneVm));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CloneVm));
         getPauseCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.HibernateVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.HibernateVm));
         getShutdownCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.ShutdownVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.ShutdownVm));
         getStopCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.StopVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.StopVm));
         getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(items));
         getMigrateCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.MigrateVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.MigrateVm));
         getCancelMigrateCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, VdcActionType.CancelMigrateVm));
+                && VdcActionUtils.canExecutePartially(items, VmWithStatusForExclusiveLock.class, ActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.AddVmTemplate));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.AddVmTemplate));
         getRunOnceCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.RunVmOnce));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.RunVmOnce));
         getExportCommand().setIsExecutionAllowed(vmsSelected
-                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.ExportVm));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ExportVm));
         getCreateSnapshotCommand().setIsExecutionAllowed(singleVmSelected
                 && !getSelectedItem().isStateless() && !getSelectedItem().isPreviewSnapshot()
-                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.CreateAllSnapshotsFromVm));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.CreateAllSnapshotsFromVm));
         getRetrieveIsoImagesCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.ChangeDisk));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ChangeDisk));
         getChangeCdCommand().setIsExecutionAllowed(singleVmSelected
-                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, VdcActionType.ChangeDisk));
+                && VdcActionUtils.canExecute(items, VmWithStatusForExclusiveLock.class, ActionType.ChangeDisk));
         getAssignTagsCommand().setIsExecutionAllowed(vmsSelected);
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected);

@@ -14,9 +14,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -83,7 +83,7 @@ public class BackendDataCenterResourceTest
         setUpVersionExpectations();
         setUpGetEntityExpectations(2);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateStoragePool,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateStoragePool,
                                            StoragePoolManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},
@@ -106,7 +106,7 @@ public class BackendDataCenterResourceTest
     private void doTestBadUpdate(boolean valid, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(1);
 
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateStoragePool,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateStoragePool,
                                            StoragePoolManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},
@@ -142,7 +142,7 @@ public class BackendDataCenterResourceTest
         setUpVersionExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveStoragePool,
+                ActionType.RemoveStoragePool,
                 StoragePoolParametersBase.class,
                 new String[] { "StoragePoolId" },
                 new Object[] { GUIDS[0] },
@@ -158,7 +158,7 @@ public class BackendDataCenterResourceTest
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStoragePool,
+            ActionType.RemoveStoragePool,
             StoragePoolParametersBase.class,
             new String[] { "StoragePoolId", "ForceDelete" },
             new Object[] { GUIDS[0], Boolean.TRUE },
@@ -176,7 +176,7 @@ public class BackendDataCenterResourceTest
         setUpGetEntityExpectations(1);
         setUpVersionExpectations();
         UriInfo uriInfo = setUpActionExpectations(
-            VdcActionType.RemoveStoragePool,
+            ActionType.RemoveStoragePool,
             StoragePoolParametersBase.class,
             new String[] { "StoragePoolId", "ForceDelete" },
             new Object[] { GUIDS[0], Boolean.FALSE },
@@ -217,7 +217,7 @@ public class BackendDataCenterResourceTest
         setUpVersionExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveStoragePool,
+                ActionType.RemoveStoragePool,
                 StoragePoolParametersBase.class,
                 new String[] { "StoragePoolId" },
                 new Object[] { GUIDS[0] },

@@ -17,9 +17,9 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -155,7 +155,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     protected boolean migrateVm(VM vm, ExecutionContext parentContext) {
         MigrateVmParameters parameters = new MigrateVmParameters(false, vm.getId());
         parameters.setReason(MessageBundler.getMessage(AuditLogType.MIGRATION_REASON_HOST_IN_MAINTENANCE));
-        return runInternalAction(VdcActionType.MigrateVm,
+        return runInternalAction(ActionType.MigrateVm,
                 parameters,
                 createMigrateVmContext(parentContext, vm))
                 .getSucceeded();

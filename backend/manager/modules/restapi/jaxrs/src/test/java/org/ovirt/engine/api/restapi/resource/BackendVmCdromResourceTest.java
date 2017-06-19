@@ -26,8 +26,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.File;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -123,7 +123,7 @@ public class BackendVmCdromResourceTest
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(getVm(A_ISO, NO_ISO, VMStatus.Up));
         setUpActionExpectations(
-            VdcActionType.ChangeDisk,
+            ActionType.ChangeDisk,
             ChangeDiskCommandParameters.class,
             new String[] { "CdImagePath" },
             new Object[] { NO_ISO },
@@ -140,7 +140,7 @@ public class BackendVmCdromResourceTest
         resource.setUriInfo(setUpChangeCdUriQueryExpectations());
         setUpEntityQueryExpectations(getVm());
         setUpActionExpectations(
-            VdcActionType.ChangeDisk,
+            ActionType.ChangeDisk,
             ChangeDiskCommandParameters.class,
             new String[] { "CdImagePath" },
             new Object[] {A_ISO},
@@ -159,7 +159,7 @@ public class BackendVmCdromResourceTest
         setUriInfo(uriInfo);
         setUpEntityQueryExpectations(getVm());
         setUpActionExpectations(
-            VdcActionType.ChangeDisk,
+            ActionType.ChangeDisk,
             ChangeDiskCommandParameters.class,
             new String[] { "CdImagePath" },
             new Object[] {A_ISO},
@@ -200,7 +200,7 @@ public class BackendVmCdromResourceTest
         setUpEntityQueryExpectations(getVm(B_ISO, A_ISO, VMStatus.Down));
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVm,
+                ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] { "VmStaticData.IsoPath" },
                 new Object[] { B_ISO },
@@ -238,7 +238,7 @@ public class BackendVmCdromResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVm,
+                ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] { "VmStaticData.IsoPath" },
                 new Object[] { null },
@@ -289,7 +289,7 @@ public class BackendVmCdromResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateVm,
+                ActionType.UpdateVm,
                 VmManagementParametersBase.class,
                 new String[] { "VmStaticData.IsoPath" },
                 new Object[] { null },

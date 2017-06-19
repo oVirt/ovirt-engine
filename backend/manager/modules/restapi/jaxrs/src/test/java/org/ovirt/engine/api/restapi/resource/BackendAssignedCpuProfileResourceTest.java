@@ -7,8 +7,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.CpuProfile;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -67,7 +67,7 @@ public class BackendAssignedCpuProfileResourceTest
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveCpuProfile,
+                ActionType.RemoveCpuProfile,
                 CpuProfileParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -111,7 +111,7 @@ public class BackendAssignedCpuProfileResourceTest
         setUpEntityQueryExpectations(2, 0, false);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveCpuProfile,
+                ActionType.RemoveCpuProfile,
                 CpuProfileParameters.class,
                 new String[] {},
                 new Object[] {},

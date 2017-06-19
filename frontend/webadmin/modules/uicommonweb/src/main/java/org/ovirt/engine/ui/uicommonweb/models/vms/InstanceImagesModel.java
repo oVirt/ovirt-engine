@@ -8,7 +8,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
@@ -121,7 +121,7 @@ public class InstanceImagesModel extends ListModel<InstanceImageLineModel> {
     }
 
     private boolean isDiskUpdateAllowed(VM vm) {
-        return VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk);
+        return VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateVmDisk);
     }
 
     private void disableLineModels() {

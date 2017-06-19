@@ -5,9 +5,9 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,7 +45,7 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
         for (Permission permission : permissionDao.getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters param = new PermissionsOperationsParameters(permission);
             param.setSessionId(getParameters().getSessionId());
-            runInternalActionWithTasksContext(VdcActionType.RemovePermission, param);
+            runInternalActionWithTasksContext(ActionType.RemovePermission, param);
         }
 
         // Remove the group itself:

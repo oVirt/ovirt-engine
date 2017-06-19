@@ -6,7 +6,7 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransfer;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.compat.Guid;
@@ -78,7 +78,7 @@ public class ImageTransferDaoImpl extends DefaultGenericDao<ImageTransfer, Guid>
         return (rs, rowNum) -> {
             ImageTransfer entity = new ImageTransfer();
             entity.setId(getGuidDefaultEmpty(rs, "command_id"));
-            entity.setCommandType(VdcActionType.forValue(rs.getInt("command_type")));
+            entity.setCommandType(ActionType.forValue(rs.getInt("command_type")));
             entity.setPhase(ImageTransferPhase.forValue(rs.getInt("phase")));
             entity.setLastUpdated(new Date(rs.getTimestamp("last_updated").getTime()));
             entity.setMessage(rs.getString("message"));

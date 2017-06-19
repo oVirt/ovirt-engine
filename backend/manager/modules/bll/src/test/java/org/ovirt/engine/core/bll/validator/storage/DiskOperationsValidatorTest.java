@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -20,7 +20,7 @@ public class DiskOperationsValidatorTest {
     @Test
     public void testAllowedOperations() {
         Disk disk = new DiskImage();
-        for (Map.Entry<VdcActionType, List<DiskContentType>> entry : DiskOperationsValidator.allowedCommandsOnTypes.entrySet()) {
+        for (Map.Entry<ActionType, List<DiskContentType>> entry : DiskOperationsValidator.allowedCommandsOnTypes.entrySet()) {
             disk.setContentType(entry.getValue().get(0));
             DiskOperationsValidator validator = new DiskOperationsValidator(disk);
             assertThat(validator.isOperationAllowedOnDisk(entry.getKey()), isValid());
@@ -30,7 +30,7 @@ public class DiskOperationsValidatorTest {
     @Test
     public void testDisallowedOperations() {
         Disk disk = new DiskImage();
-        for (Map.Entry<VdcActionType, List<DiskContentType>> entry : DiskOperationsValidator.allowedCommandsOnTypes.entrySet()) {
+        for (Map.Entry<ActionType, List<DiskContentType>> entry : DiskOperationsValidator.allowedCommandsOnTypes.entrySet()) {
             EnumSet<DiskContentType> allowedTypes = EnumSet.copyOf(entry.getValue());
             EnumSet<DiskContentType> disallowedTypes = EnumSet.complementOf(allowedTypes);
 

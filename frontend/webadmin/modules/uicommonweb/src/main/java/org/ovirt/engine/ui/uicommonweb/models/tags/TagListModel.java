@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
@@ -408,7 +408,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
+        Frontend.getInstance().runAction(ActionType.RemoveTag, new TagsActionParametersBase(getSelectedItem().getId()),
                 result -> {
 
                     TagListModel tagListModel = (TagListModel) result.getState();
@@ -484,7 +484,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddTag : VdcActionType.UpdateTag,
+        Frontend.getInstance().runAction(model.getIsNew() ? ActionType.AddTag : ActionType.UpdateTag,
                 new TagsOperationParameters(tag),
                 result -> {
 

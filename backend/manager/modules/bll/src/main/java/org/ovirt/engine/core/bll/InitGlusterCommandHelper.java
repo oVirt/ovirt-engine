@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.GlusterEventFactory;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.SyncGlusterStorageDevicesParameter;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -96,7 +96,7 @@ public class InitGlusterCommandHelper {
 
     private void refreshGlusterStorageDevices(VDS vds) {
         try {
-            backend.runInternalAction(VdcActionType.SyncStorageDevices,
+            backend.runInternalAction(ActionType.SyncStorageDevices,
                     new SyncGlusterStorageDevicesParameter(vds.getId(), true));
         } catch (EngineException e) {
             log.error("Could not refresh storage devices from gluster host '{}'", vds.getName());

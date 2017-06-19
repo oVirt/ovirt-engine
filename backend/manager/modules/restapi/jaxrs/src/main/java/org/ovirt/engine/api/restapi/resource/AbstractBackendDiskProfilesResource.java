@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskProfiles;
 import org.ovirt.engine.api.model.Qos;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -69,7 +69,7 @@ public abstract class AbstractBackendDiskProfilesResource
         org.ovirt.engine.core.common.businessentities.profiles.DiskProfile map = map(diskProfile);
         DiskProfileParameters parameters =
                 new DiskProfileParameters(map);
-        return performCreate(VdcActionType.AddDiskProfile,
+        return performCreate(ActionType.AddDiskProfile,
                 parameters,
                 new QueryIdResolver<Guid>(VdcQueryType.GetDiskProfileById, IdQueryParameters.class));
     }

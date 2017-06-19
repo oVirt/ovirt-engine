@@ -7,8 +7,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedTagResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -48,6 +48,6 @@ public class BackendUserTagResource extends AbstractBackendSubResource<Tag, Tags
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.DetachUserFromTag, new AttachEntityToTagParameters(guid, asList(userId)));
+        return performAction(ActionType.DetachUserFromTag, new AttachEntityToTagParameters(guid, asList(userId)));
     }
 }

@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -71,7 +71,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateManage
                 tempVar.setParentCommand(getActionType());
                 tempVar.setParentParameters(getParameters());
                 VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
-                                VdcActionType.RemoveTemplateSnapshot,
+                                ActionType.RemoveTemplateSnapshot,
                                 tempVar);
 
                 if (vdcReturnValue.getSucceeded()) {

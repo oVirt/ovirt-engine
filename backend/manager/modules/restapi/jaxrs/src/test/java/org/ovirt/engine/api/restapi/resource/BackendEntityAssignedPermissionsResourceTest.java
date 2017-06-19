@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -67,7 +67,7 @@ public class BackendEntityAssignedPermissionsResourceTest
     @Test
     public void testAddGroupPermission() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddPermission,
+        setUpCreationExpectations(ActionType.AddPermission,
                                   PermissionsOperationsParameters.class,
                                   new String[] { "Group.Id",
                                                  "Permission.AdElementId",

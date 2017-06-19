@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -150,7 +150,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDiskSnapshots, paramerterList,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveDiskSnapshots, paramerterList,
                 result -> {
                     StorageSnapshotListModel localModel = (StorageSnapshotListModel) result.getState();
                     localModel.stopProgress();

@@ -4,10 +4,10 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RestartVdsVmsOperation;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
@@ -102,7 +102,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     @Override
     protected void freeLock() {
-        if (getParameters().getParentCommand() != VdcActionType.RestartVds) {
+        if (getParameters().getParentCommand() != ActionType.RestartVds) {
             super.freeLock();
         }
     }

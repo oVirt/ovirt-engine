@@ -6,8 +6,8 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.MutabilityAssertor;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -47,7 +47,7 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
                               Q entity,
                               R model,
                               EntityIdResolver<T> entityResolver,
-                              VdcActionType update,
+                              ActionType update,
                               ParametersProvider<R, Q> updateProvider) {
 
         entity = doUpdate(incoming, entity, model, entityResolver, update, updateProvider);
@@ -60,7 +60,7 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
             Q entity,
             R model,
             EntityIdResolver<T> entityResolver,
-            VdcActionType update,
+            ActionType update,
             ParametersProvider<R, Q> updateProvider) {
         validateUpdate(incoming, model);
 
@@ -72,7 +72,7 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
 
     protected <T> R performUpdate(R incoming,
             EntityIdResolver<T> entityResolver,
-            VdcActionType update,
+            ActionType update,
             ParametersProvider<R, Q> updateProvider) {
         Q entity = getEntity(entityResolver, true);
 
@@ -87,7 +87,7 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
     protected <T> Q doUpdate(R incoming,
             Q entity,
             EntityIdResolver<T> entityResolver,
-            VdcActionType update,
+            ActionType update,
             ParametersProvider<R, Q> updateProvider) {
         performAction(update, updateProvider.getParameters(incoming, entity));
 

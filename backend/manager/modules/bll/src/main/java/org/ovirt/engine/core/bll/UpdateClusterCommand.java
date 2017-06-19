@@ -29,11 +29,11 @@ import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HasRngDevice;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -241,7 +241,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             for (VDS vds : allForCluster) {
                 VdsActionParameters parameters = new VdsActionParameters();
                 parameters.setVdsId(vds.getId());
-                VdcReturnValueBase addVdsSpmIdReturn = runInternalAction(VdcActionType.AddVdsSpmId, parameters, cloneContextAndDetachFromParent());
+                VdcReturnValueBase addVdsSpmIdReturn = runInternalAction(ActionType.AddVdsSpmId, parameters, cloneContextAndDetachFromParent());
                 if (!addVdsSpmIdReturn.getSucceeded()) {
                     setSucceeded(false);
                     getReturnValue().setFault(addVdsSpmIdReturn.getFault());
@@ -300,7 +300,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             updateRngDeviceIfNecessary(vm.getId(), vm.getCustomCompatibilityVersion(), updateParams);
 
             VdcReturnValueBase result = runInternalAction(
-                    VdcActionType.UpdateVm,
+                    ActionType.UpdateVm,
                     updateParams,
                     cloneContextAndDetachFromParent());
 
@@ -361,7 +361,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
             }
 
             final VdcReturnValueBase result = runInternalAction(
-                    VdcActionType.UpdateVmTemplate,
+                    ActionType.UpdateVmTemplate,
                     parameters,
                     cloneContextAndDetachFromParent());
 

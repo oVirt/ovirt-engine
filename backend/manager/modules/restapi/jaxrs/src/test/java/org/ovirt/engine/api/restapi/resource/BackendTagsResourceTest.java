@@ -17,8 +17,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.restapi.resource.BaseBackendResource.WebFaultException;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -68,7 +68,7 @@ public class BackendTagsResourceTest
     @Test
     public void testAddTag() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddTag,
+        setUpCreationExpectations(ActionType.AddTag,
                                   TagsOperationParameters.class,
                                   new String[] { "Tag.TagName", "Tag.ParentId" },
                                   new Object[] { NAMES[0], PARENT_GUID },
@@ -97,7 +97,7 @@ public class BackendTagsResourceTest
                                      new Object[] { NAMES[PARENT_IDX] },
                                      getEntity(PARENT_IDX));
 
-        setUpCreationExpectations(VdcActionType.AddTag,
+        setUpCreationExpectations(ActionType.AddTag,
                                   TagsOperationParameters.class,
                                   new String[] { "Tag.TagName", "Tag.ParentId" },
                                   new Object[] { NAMES[0], PARENT_GUID },
@@ -127,7 +127,7 @@ public class BackendTagsResourceTest
         Tags entity = getEntity(0);
         entity.setParentId(Guid.Empty);
 
-        setUpCreationExpectations(VdcActionType.AddTag,
+        setUpCreationExpectations(ActionType.AddTag,
                                   TagsOperationParameters.class,
                                   new String[] { "Tag.TagName", "Tag.ParentId" },
                                   new Object[] { NAMES[0], Guid.Empty },
@@ -170,7 +170,7 @@ public class BackendTagsResourceTest
     }
 
     private void doTestBadAddTag(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddTag,
+        setUriInfo(setUpActionExpectations(ActionType.AddTag,
                                            TagsOperationParameters.class,
                                            new String[] { "Tag.TagName", "Tag.ParentId" },
                                            new Object[] { NAMES[0], PARENT_GUID },

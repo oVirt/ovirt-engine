@@ -11,9 +11,9 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -69,7 +69,7 @@ public class SyncStorageDomainsLunsCommand<T extends SyncLunsParameters> extends
 
     protected boolean runSyncLunsInfoForBlockStorageDomain(Guid storageDomainId,
             List<LUNs> storageDomainLuns) {
-        return runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain,
+        return runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain,
                 new SyncLunsInfoForBlockStorageDomainParameters(storageDomainId, storageDomainLuns)).getSucceeded();
     }
 

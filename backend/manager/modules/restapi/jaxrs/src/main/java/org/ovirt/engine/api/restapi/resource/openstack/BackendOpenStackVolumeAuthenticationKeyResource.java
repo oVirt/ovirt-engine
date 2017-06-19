@@ -22,9 +22,9 @@ import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.model.OpenstackVolumeAuthenticationKey;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeAuthenticationKeyResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -49,7 +49,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResource
         return performUpdate(
                 resource,
                 new QueryIdResolver<>(VdcQueryType.GetLibvirtSecretById, IdQueryParameters.class),
-                VdcActionType.UpdateLibvirtSecret,
+                ActionType.UpdateLibvirtSecret,
                 new UpdateParametersProvider());
     }
 
@@ -67,7 +67,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResource
     public Response remove() {
         LibvirtSecret libvirtSecret = map(get(), null);
         LibvirtSecretParameters parameters = new LibvirtSecretParameters(libvirtSecret);
-        return performAction(VdcActionType.RemoveLibvirtSecret, parameters);
+        return performAction(ActionType.RemoveLibvirtSecret, parameters);
     }
 
     @Override

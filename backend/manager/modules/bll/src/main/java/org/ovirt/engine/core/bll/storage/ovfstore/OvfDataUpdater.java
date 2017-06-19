@@ -10,9 +10,9 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -49,13 +49,13 @@ public class OvfDataUpdater implements BackendService {
     }
 
     protected void performOvfUpdateForDomain(Guid storagePoolId, Guid domainId) {
-        backend.runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain,
+        backend.runInternalAction(ActionType.ProcessOvfUpdateForStorageDomain,
                 new ProcessOvfUpdateForStorageDomainCommandParameters(storagePoolId, domainId));
     }
 
     protected VdcReturnValueBase performOvfUpdateForStoragePool(Guid storagePoolId) {
         StoragePoolParametersBase parameters = new StoragePoolParametersBase(storagePoolId);
-        return backend.runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, parameters);
+        return backend.runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
 
     @OnTimerMethodAnnotation("ovfUpdateTimer")

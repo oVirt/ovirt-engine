@@ -20,9 +20,9 @@ import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -221,7 +221,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
 
             VdcReturnValueBase returnValue = getBackend().endAction(
-                    p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(),
+                    p.getCommandType() == ActionType.Unknown ? getChildActionType() : p.getCommandType(),
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
             returnValues.add(returnValue);
@@ -267,8 +267,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         endVmCommand();
     }
 
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.Unknown;
+    protected ActionType getChildActionType() {
+        return ActionType.Unknown;
     }
 
     protected boolean removeMemoryDisks(String memory) {
@@ -276,14 +276,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
         RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
         removeMemoryDumpDiskParameters.setShouldBeLogged(false);
-        VdcReturnValueBase retVal = runInternalAction(VdcActionType.RemoveDisk, removeMemoryDumpDiskParameters);
+        VdcReturnValueBase retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
         if (!retVal.getSucceeded()) {
             return false;
         }
 
         RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(guids.get(4));
         removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
-        retVal = runInternalAction(VdcActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
+        retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
         if (!retVal.getSucceeded()) {
             return false;
         }
@@ -475,7 +475,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
 
         return runInternalActionWithTasksContext(
-                VdcActionType.RemoveVmLease,
+                ActionType.RemoveVmLease,
                 new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId)
         ).getSucceeded();
     }
@@ -496,7 +496,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
 
         return runInternalActionWithTasksContext(
-                VdcActionType.AddVmLease,
+                ActionType.AddVmLease,
                 new VmLeaseParameters(getStoragePoolId(), leaseStorageDomainId, vmId)
         ).getSucceeded();
     }

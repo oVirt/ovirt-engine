@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -158,7 +158,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveIscsiBond, params,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveIscsiBond, params,
                 result -> {
                     DataCenterIscsiBondListModel localModel = (DataCenterIscsiBondListModel) result.getState();
                     localModel.stopProgress();

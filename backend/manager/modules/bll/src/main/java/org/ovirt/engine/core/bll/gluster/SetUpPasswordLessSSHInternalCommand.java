@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.SetUpPasswordLessSSHParameters;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
@@ -56,7 +56,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
                 String currentHostNameToLog = getCustomValue(GlusterConstants.VDS_NAME);
                 getCustomValues().remove(currentHostNameToLog);
                 addCustomValue(GlusterConstants.VDS_NAME, vdsDao.get(currentRemoteHostId).getName());
-                return getBackend().runInternalAction(VdcActionType.UpdateGlusterHostPubKeyToSlaveInternal,
+                return getBackend().runInternalAction(ActionType.UpdateGlusterHostPubKeyToSlaveInternal,
                         new UpdateGlusterHostPubKeyToSlaveParameters(currentRemoteHostId,
                                 pubKeys, userName));
             });

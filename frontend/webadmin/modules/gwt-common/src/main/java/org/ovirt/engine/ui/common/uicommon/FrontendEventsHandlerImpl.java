@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
@@ -32,8 +32,8 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public Boolean isRaiseErrorModalPanel(VdcActionType actionType, EngineFault fault) {
-        return !(actionType == VdcActionType.VmLogon && fault.getError() == EngineError.nonresp);
+    public Boolean isRaiseErrorModalPanel(ActionType actionType, EngineFault fault) {
+        return !(actionType == ActionType.VmLogon && fault.getError() == EngineError.nonresp);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runActionExecutionFailed(VdcActionType action, EngineFault fault) {
+    public void runActionExecutionFailed(ActionType action, EngineFault fault) {
         if (isRaiseErrorModalPanel(action, fault)) {
             errorPopupManager.show(messages.uiCommonRunActionExecutionFailed(
                     EnumTranslator.getInstance().translate(action), fault.getMessage()));
@@ -50,8 +50,8 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues) {
-        List<VdcActionType> actions = new ArrayList<>();
+    public void runMultipleActionFailed(ActionType action, List<VdcReturnValueBase> returnValues) {
+        List<ActionType> actions = new ArrayList<>();
         for (int i = 0; i < returnValues.size(); i++) {
             actions.add(action);
         }
@@ -60,12 +60,12 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runMultipleActionsFailed(Map<VdcActionType, List<VdcReturnValueBase>> failedActionsMap,
+    public void runMultipleActionsFailed(Map<ActionType, List<VdcReturnValueBase>> failedActionsMap,
             MessageFormatter messageFormatter) {
-        List<VdcActionType> actions = new ArrayList<>();
+        List<ActionType> actions = new ArrayList<>();
         List<VdcReturnValueBase> returnValues = new ArrayList<>();
 
-        for (Entry<VdcActionType, List<VdcReturnValueBase>> entry : failedActionsMap.entrySet()) {
+        for (Entry<ActionType, List<VdcReturnValueBase>> entry : failedActionsMap.entrySet()) {
             for (int i = 0; i < entry.getValue().size(); ++i) {
                 actions.add(entry.getKey());
             }
@@ -76,11 +76,11 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runMultipleActionsFailed(List<VdcActionType> actions, List<VdcReturnValueBase> returnValues) {
+    public void runMultipleActionsFailed(List<ActionType> actions, List<VdcReturnValueBase> returnValues) {
         runMultipleActionsFailed(actions, returnValues, innerMessage -> messages.uiCommonRunActionFailed(innerMessage));
     }
 
-    public void runMultipleActionsFailed(List<VdcActionType> actions,
+    public void runMultipleActionsFailed(List<ActionType> actions,
             List<VdcReturnValueBase> returnValues,
             MessageFormatter messageFormatter) {
 

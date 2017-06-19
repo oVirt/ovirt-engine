@@ -13,9 +13,9 @@ import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -74,7 +74,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
                 new Object[] { GUIDS[0] },
                 getEntity(0));
         Disk model = getModel();
-        setUpCreationExpectations(VdcActionType.AddDisk,
+        setUpCreationExpectations(ActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {"StorageDomainId"},
                 new Object[] {GUIDS[3]},
@@ -115,7 +115,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         org.ovirt.engine.core.common.businessentities.storage.Disk imageToRegister = new DiskMapper().map(model, getEntity(0));
 
         // imageToRegister.setDiskAlias("alias");
-        setUpCreationExpectations(VdcActionType.RegisterDisk,
+        setUpCreationExpectations(ActionType.RegisterDisk,
                 RegisterDiskParameters.class,
                 new String[] { "DiskImage" },
                 new Object[] { imageToRegister },
@@ -147,7 +147,7 @@ public class BackendStorageDomainDisksResourceTest extends AbstractBackendCollec
         Disk model = getModel();
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
-        setUpCreationExpectations(VdcActionType.AddDisk,
+        setUpCreationExpectations(ActionType.AddDisk,
                 AddDiskParameters.class,
                 new String[] {},
                 new Object[] {},

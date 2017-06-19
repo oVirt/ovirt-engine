@@ -9,8 +9,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Job;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -52,7 +52,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
         org.ovirt.engine.core.common.job.Job job = new org.ovirt.engine.core.common.job.Job();
         job.setId(GUIDS[index]);
         job.setDescription(DESCRIPTIONS[index]);
-        job.setActionType(VdcActionType.AddExternalJob);
+        job.setActionType(ActionType.AddExternalJob);
         job.setStartTime(new Date());
         job.setExternal(true);
         job.setAutoCleared(true);
@@ -70,7 +70,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
     @Test
     public void testAddJob() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddExternalJob,
+        setUpCreationExpectations(ActionType.AddExternalJob,
                                   AddExternalJobParameters.class,
                                   new String[] { "Description"},
                                   new Object[] { DESCRIPTIONS[0] },

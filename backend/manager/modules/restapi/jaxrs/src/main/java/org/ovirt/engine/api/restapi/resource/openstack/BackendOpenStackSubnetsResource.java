@@ -28,8 +28,8 @@ import org.ovirt.engine.api.model.OpenStackSubnets;
 import org.ovirt.engine.api.resource.openstack.OpenstackSubnetResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackSubnetsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -85,7 +85,7 @@ public class BackendOpenStackSubnetsResource
         parameters.setSubnet(map(subnet));
         parameters.setProviderId(asGuid(providerId));
         parameters.setNetworkId(networkId);
-        return performCreate(VdcActionType.AddSubnetToProvider, parameters, new SubnetNameResolver(subnet.getName()));
+        return performCreate(ActionType.AddSubnetToProvider, parameters, new SubnetNameResolver(subnet.getName()));
     }
 
     protected List<ExternalSubnet> getSubnets() {

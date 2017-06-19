@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
@@ -54,7 +54,7 @@ public class ProviderModel extends Model {
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
 
     protected final SearchableListModel sourceListModel;
-    private final VdcActionType action;
+    private final ActionType action;
     protected final Provider provider;
 
     private EntityModel<String> name = new EntityModel<>();
@@ -218,7 +218,7 @@ public class ProviderModel extends Model {
         }
     }
 
-    public ProviderModel(SearchableListModel sourceListModel, VdcActionType action, final Provider provider) {
+    public ProviderModel(SearchableListModel sourceListModel, ActionType action, final Provider provider) {
         this.sourceListModel = sourceListModel;
         this.action = action;
         this.provider = provider;
@@ -541,7 +541,7 @@ public class ProviderModel extends Model {
     }
 
     private void testProviderConnectivity() {
-        Frontend.getInstance().runAction(VdcActionType.TestProviderConnectivity,
+        Frontend.getInstance().runAction(ActionType.TestProviderConnectivity,
                 new ProviderParameters(provider),
                 result -> {
                     VdcReturnValueBase res = result.getReturnValue();
@@ -583,7 +583,7 @@ public class ProviderModel extends Model {
     }
 
     private void importCertificate() {
-        Frontend.getInstance().runAction(VdcActionType.ImportProviderCertificate,
+        Frontend.getInstance().runAction(ActionType.ImportProviderCertificate,
                 importCertificateParams(),
                 result -> testProviderConnectivity(), null, false);
         sourceListModel.setConfirmWindow(null);

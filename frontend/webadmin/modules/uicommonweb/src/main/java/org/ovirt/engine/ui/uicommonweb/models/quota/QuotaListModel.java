@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
@@ -313,9 +313,9 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
             quota.setId(Guid.Empty);
         }
 
-        VdcActionType actionType = VdcActionType.AddQuota;
+        ActionType actionType = ActionType.AddQuota;
         if (!quota.getId().equals(Guid.Empty)) {
-            actionType = VdcActionType.UpdateQuota;
+            actionType = ActionType.UpdateQuota;
         }
         Frontend.getInstance().runAction(actionType,
                 parameters,
@@ -553,7 +553,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveQuota, prms,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveQuota, prms,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();

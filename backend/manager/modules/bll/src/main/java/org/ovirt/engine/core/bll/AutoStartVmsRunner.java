@@ -16,8 +16,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -234,7 +234,7 @@ public abstract class AutoStartVmsRunner implements BackendService {
 
     private boolean runVm(Guid vmId, EngineLock lock) {
         return backend.runInternalAction(
-                VdcActionType.RunVm,
+                ActionType.RunVm,
                 new RunVmParams(vmId),
                 ExecutionHandler.createInternalJobContext(lock)).getSucceeded();
     }

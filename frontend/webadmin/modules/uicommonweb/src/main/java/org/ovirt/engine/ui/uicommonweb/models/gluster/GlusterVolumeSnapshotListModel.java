@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.TimeZoneType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -250,7 +250,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     }
 
     private void onRestoreSnapshot() {
-        runAction(VdcActionType.RestoreGlusterVolumeSnapshot,
+        runAction(ActionType.RestoreGlusterVolumeSnapshot,
                 new GlusterVolumeSnapshotActionParameters(getEntity().getId(),
                         getSelectedItem().getSnapshotName(),
                         true));
@@ -299,7 +299,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DeleteGlusterVolumeSnapshot,
+        Frontend.getInstance().runMultipleAction(ActionType.DeleteGlusterVolumeSnapshot,
                 paramsList,
                 result -> {
                     model.stopProgress();
@@ -322,7 +322,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     }
 
     private void onDeleteAllSnapshots() {
-        runAction(VdcActionType.DeleteAllGlusterVolumeSnapshots, new GlusterVolumeParameters(getEntity().getId()));
+        runAction(ActionType.DeleteAllGlusterVolumeSnapshots, new GlusterVolumeParameters(getEntity().getId()));
     }
 
     private void activateSnapshot() {
@@ -344,7 +344,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     }
 
     private void onActivateSnapshot() {
-        runAction(VdcActionType.ActivateGlusterVolumeSnapshot,
+        runAction(ActionType.ActivateGlusterVolumeSnapshot,
                 new GlusterVolumeSnapshotActionParameters(getEntity().getId(),
                         getSelectedItem().getSnapshotName(),
                         true));
@@ -369,13 +369,13 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
     }
 
     private void onDeactivateSnapshot() {
-        runAction(VdcActionType.DeactivateGlusterVolumeSnapshot,
+        runAction(ActionType.DeactivateGlusterVolumeSnapshot,
                 new GlusterVolumeSnapshotActionParameters(getEntity().getId(),
                         getSelectedItem().getSnapshotName(),
                         true));
     }
 
-    private void runAction(VdcActionType action, VdcActionParametersBase param) {
+    private void runAction(ActionType action, VdcActionParametersBase param) {
         if (getConfirmWindow() == null) {
             return;
         }
@@ -504,11 +504,11 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                 new ScheduleGlusterVolumeSnapshotParameters(schedule, snapshotModel.getDisableCliSchedule().getEntity());
         snapshotModel.startProgress();
 
-        VdcActionType actionType = null;
+        ActionType actionType = null;
         if (reschedule) {
-            actionType = VdcActionType.RescheduleGlusterVolumeSnapshot;
+            actionType = ActionType.RescheduleGlusterVolumeSnapshot;
         } else {
-            actionType = VdcActionType.ScheduleGlusterVolumeSnapshot;
+            actionType = ActionType.ScheduleGlusterVolumeSnapshot;
         }
 
         Frontend.getInstance().runAction(actionType,
@@ -535,7 +535,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                 new CreateGlusterVolumeSnapshotParameters(snapshot, false);
 
         snapshotModel.startProgress();
-        Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolumeSnapshot,
+        Frontend.getInstance().runAction(ActionType.CreateGlusterVolumeSnapshot,
                 parameter,
                 result -> {
                     GlusterVolumeSnapshotListModel localModel =

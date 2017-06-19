@@ -6,9 +6,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
@@ -161,7 +161,7 @@ public class TemplateStorageListModel extends SearchableListModel<VmTemplate, St
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveDisk, parameters,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveDisk, parameters,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();

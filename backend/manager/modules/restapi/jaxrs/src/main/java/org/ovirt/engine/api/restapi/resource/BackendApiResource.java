@@ -101,8 +101,8 @@ import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.branding.BrandingManager;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -438,7 +438,7 @@ public class BackendApiResource
 
     @Override
     public Response reloadConfigurations(Action action) {
-        return doAction(VdcActionType.ReloadConfigurations,
+        return doAction(ActionType.ReloadConfigurations,
                         new VdcActionParametersBase(),
                         action);
     }

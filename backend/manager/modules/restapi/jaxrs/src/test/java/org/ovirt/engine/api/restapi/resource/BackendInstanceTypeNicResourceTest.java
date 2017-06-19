@@ -26,8 +26,8 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Nic;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -48,7 +48,7 @@ public class BackendInstanceTypeNicResourceTest
         setUpGetNicsExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVmTemplateInterface,
+                ActionType.RemoveVmTemplateInterface,
                 RemoveVmTemplateInterfaceParameters.class,
                 new String[] { "VmTemplateId", "InterfaceId" },
                 new Object[] { INSTANCE_TYPE_ID, NIC_ID },
@@ -73,7 +73,7 @@ public class BackendInstanceTypeNicResourceTest
         setUpGetNicsExpectations();
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveVmTemplateInterface,
+                ActionType.RemoveVmTemplateInterface,
                 RemoveVmTemplateInterfaceParameters.class,
                 new String[] { "VmTemplateId", "InterfaceId" },
                 new Object[] { INSTANCE_TYPE_ID, NIC_ID },

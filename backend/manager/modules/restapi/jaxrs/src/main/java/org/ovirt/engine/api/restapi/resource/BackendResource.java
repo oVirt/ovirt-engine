@@ -17,9 +17,9 @@ import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.HasCorrelationId;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunAsyncActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -167,15 +167,15 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    public Response performAction(VdcActionType task, VdcActionParametersBase params, Action action) {
+    public Response performAction(ActionType task, VdcActionParametersBase params, Action action) {
         return performAction(task, params, action, false);
     }
 
-    public Response performAction(VdcActionType task, VdcActionParametersBase params) {
+    public Response performAction(ActionType task, VdcActionParametersBase params) {
         return performAction(task, params, null, false);
     }
 
-    protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action, boolean getEntityWhenDone) {
+    protected Response performAction(ActionType task, VdcActionParametersBase params, Action action, boolean getEntityWhenDone) {
         try {
             if (isAsync() || expectNonBlocking()) {
                 return performNonBlockingAction(task, params, action);
@@ -221,7 +221,7 @@ public class BackendResource extends BaseBackendResource {
         Set<String> expectations = ExpectationHelper.getExpectations(httpHeaders);
         return expectations.contains(NON_BLOCKING_EXPECTATION);
     }
-    protected Response performNonBlockingAction(VdcActionType task, VdcActionParametersBase params, Action action) {
+    protected Response performNonBlockingAction(ActionType task, VdcActionParametersBase params, Action action) {
         try {
             doNonBlockingAction(task, params);
             if (action!=null) {
@@ -235,7 +235,7 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected <T> T performAction(VdcActionType task, VdcActionParametersBase params, Class<T> resultType) {
+    protected <T> T performAction(ActionType task, VdcActionParametersBase params, Class<T> resultType) {
         try {
             return resultType.cast(doAction(task, params).getActionReturnValue());
         } catch (Exception e) {
@@ -243,7 +243,7 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected VdcReturnValueBase doAction(VdcActionType task,
+    protected VdcReturnValueBase doAction(ActionType task,
                                           VdcActionParametersBase params) throws BackendFailureException {
         BackendLocal backend = getBackend();
         setJobOrStepId(params);
@@ -258,11 +258,11 @@ public class BackendResource extends BaseBackendResource {
         return result;
     }
 
-    protected void doNonBlockingAction(final VdcActionType task, final VdcActionParametersBase params) {
+    protected void doNonBlockingAction(final ActionType task, final VdcActionParametersBase params) {
         BackendLocal backend = getBackend();
         setCorrelationId(params);
         setJobOrStepId(params);
-        backend.runAction(VdcActionType.RunAsyncAction, sessionize(new RunAsyncActionParameters(task, sessionize(params))));
+        backend.runAction(ActionType.RunAsyncAction, sessionize(new RunAsyncActionParameters(task, sessionize(params))));
     }
 
     private void setJobOrStepId(VdcActionParametersBase params) {

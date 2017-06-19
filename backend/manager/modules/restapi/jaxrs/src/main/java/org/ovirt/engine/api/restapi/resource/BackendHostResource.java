@@ -38,6 +38,7 @@ import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKa
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.CreateOrUpdateBond;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -48,7 +49,6 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
@@ -109,7 +109,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
             if (!clusterId.equals(entity.getClusterId())) {
-                performAction(VdcActionType.ChangeVDSCluster,
+                performAction(ActionType.ChangeVDSCluster,
                         new ChangeVDSClusterParameters(clusterId, guid));
 
                 // After changing the cluster with the specialized command we need to reload the entity, so that it
@@ -123,7 +123,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
                 entity,
                 map(entity),
                 hostResolver,
-                VdcActionType.UpdateVds,
+                ActionType.UpdateVds,
                 new UpdateParametersProvider());
         return host;
     }
@@ -141,10 +141,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             params.setReinstallOrUpgrade(true);
             if (action.isSetImage()) {
                 params.setoVirtIsoFile(action.getImage());
-                return doAction(VdcActionType.UpgradeOvirtNode, params, action);
+                return doAction(ActionType.UpgradeOvirtNode, params, action);
             }
         }
-        return doAction(VdcActionType.UpdateVds,
+        return doAction(ActionType.UpdateVds,
                         params,
                         action);
     }
@@ -156,19 +156,19 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             params.setoVirtIsoFile(action.getImage());
         }
 
-        return doAction(VdcActionType.UpgradeHost, params, action);
+        return doAction(ActionType.UpgradeHost, params, action);
     }
 
     @Override
     public Response upgradeCheck(Action action) {
         VdsActionParameters params = new VdsActionParameters(guid);
 
-        return doAction(VdcActionType.HostUpgradeCheck, params, action);
+        return doAction(ActionType.HostUpgradeCheck, params, action);
     }
 
     @Override
     public Response activate(Action action) {
-        return doAction(VdcActionType.ActivateVds,
+        return doAction(ActionType.ActivateVds,
                         new VdsActionParameters(guid),
                         action);
     }
@@ -199,7 +199,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             }
         }
 
-        return doAction(VdcActionType.ApproveVds,
+        return doAction(ActionType.ApproveVds,
                         params,
                         action);
     }
@@ -210,7 +210,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         getVdsByVdsId();
 
         HostSetupNetworksParameters parameters = toParameters(action);
-        return performAction(VdcActionType.HostSetupNetworks, parameters, action);
+        return performAction(ActionType.HostSetupNetworks, parameters, action);
     }
 
     private HostSetupNetworksParameters toParameters(Action action) {
@@ -384,7 +384,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Response deactivate(Action action) {
         boolean stopGlusterService = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, STOP_GLUSTER_SERVICE, true, false);
-        return doAction(VdcActionType.MaintenanceNumberOfVdss,
+        return doAction(ActionType.MaintenanceNumberOfVdss,
                 new MaintenanceNumberOfVdssParameters(asList(guid), false, action.isSetReason() ? action.getReason()
                         : null, stopGlusterService),
                 action);
@@ -392,13 +392,13 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response forceSelectSpm(Action action) {
-        return doAction(VdcActionType.ForceSelectSPM,
+        return doAction(ActionType.ForceSelectSPM,
                 new ForceSelectSPMParameters(guid), action);
     }
 
     @Override
     public Response enrollCertificate(Action action) {
-        return doAction(VdcActionType.HostEnrollCertificate, new VdsActionParameters(guid), action);
+        return doAction(ActionType.HostEnrollCertificate, new VdsActionParameters(guid), action);
     }
 
     @Override
@@ -422,7 +422,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         }
 
         StorageServerConnectionParametersBase connectionParms = new StorageServerConnectionParametersBase(cnx, guid, false);
-        return doAction(VdcActionType.ConnectStorageToVds, connectionParms, action);
+        return doAction(ActionType.ConnectStorageToVds, connectionParms, action);
     }
 
     @Override
@@ -529,7 +529,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response commitNetConfig(Action action) {
-        return doAction(VdcActionType.CommitNetworkChanges,
+        return doAction(ActionType.CommitNetworkChanges,
                         new VdsActionParameters(guid),
                         action);
     }
@@ -544,11 +544,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         case MANUAL:
             return fenceManually(action);
         case RESTART:
-            return fence(action, VdcActionType.RestartVds);
+            return fence(action, ActionType.RestartVds);
         case START:
-            return fence(action, VdcActionType.StartVds);
+            return fence(action, ActionType.StartVds);
         case STOP:
-            return fence(action, VdcActionType.StopVds);
+            return fence(action, ActionType.StopVds);
         case STATUS:
             return getFenceStatus(action);
         default:
@@ -593,7 +593,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return Response.ok().entity(action).build();
     }
 
-    private Response fence(Action action, VdcActionType vdcAction) {
+    private Response fence(Action action, ActionType vdcAction) {
         return doAction(vdcAction, new FenceVdsActionParameters(guid), action);
     }
 
@@ -601,12 +601,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         FenceVdsManualyParameters params = new FenceVdsManualyParameters(true);
         params.setVdsId(guid);
         params.setStoragePoolId(getEntity().getStoragePoolId());
-        return doAction(VdcActionType.FenceVdsManualy, params, action);
+        return doAction(ActionType.FenceVdsManualy, params, action);
     }
 
     @Override
     public Response refresh(Action action) {
-        return doAction(VdcActionType.RefreshHost, new VdsActionParameters(guid), action);
+        return doAction(ActionType.RefreshHost, new VdsActionParameters(guid), action);
     }
 
     @Override
@@ -703,7 +703,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Response remove() {
         get();
         boolean force = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE, true, false);
-        return performAction(VdcActionType.RemoveVds, new RemoveVdsParameters(guid, force));
+        return performAction(ActionType.RemoveVds, new RemoveVdsParameters(guid, force));
     }
 
     public BackendHostsResource getParent() {

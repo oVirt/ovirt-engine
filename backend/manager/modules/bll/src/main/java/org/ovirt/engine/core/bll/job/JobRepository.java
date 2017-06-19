@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.job;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -80,7 +80,7 @@ public interface JobRepository {
      *            The action type which is associated with the job.
      * @return a list of {@link Job} if found a match or an empty list.
      */
-    List<Job> getJobsByEntityAndAction(Guid entityId, VdcActionType actionType);
+    List<Job> getJobsByEntityAndAction(Guid entityId, ActionType actionType);
 
     /**
      * Retrieves the {@link Job} entity with the given id, populated with its Steps.

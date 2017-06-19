@@ -10,9 +10,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -54,7 +54,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
         for (Permission permission : permissionDao.getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters(permission);
             tempVar.setShouldBeLogged(false);
-            runInternalActionWithTasksContext(VdcActionType.RemovePermission, tempVar);
+            runInternalActionWithTasksContext(ActionType.RemovePermission, tempVar);
         }
 
         // Delete the user itself:

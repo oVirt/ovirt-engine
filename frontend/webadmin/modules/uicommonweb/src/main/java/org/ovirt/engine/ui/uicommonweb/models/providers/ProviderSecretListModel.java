@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -128,7 +128,7 @@ public class ProviderSecretListModel extends SearchableListModel<Provider, Libvi
             LibvirtSecretParameters param = new LibvirtSecretParameters(libvirtSecret);
             parameters.add(param);
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveLibvirtSecret, parameters,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveLibvirtSecret, parameters,
                 result -> cancel());
     }
 

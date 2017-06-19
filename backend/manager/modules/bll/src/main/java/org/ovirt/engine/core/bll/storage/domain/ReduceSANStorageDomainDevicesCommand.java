@@ -22,13 +22,13 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.BlockStorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveDeviceFromSANStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -155,7 +155,7 @@ public class ReduceSANStorageDomainDevicesCommand<T extends ReduceSANStorageDoma
         }
 
         if (getParameters().getRemoveIndex() < getParameters().getDevicesToReduce().size()) {
-            runInternalActionWithTasksContext(VdcActionType.RemoveDeviceFromSANStorageDomain,
+            runInternalActionWithTasksContext(ActionType.RemoveDeviceFromSANStorageDomain,
                     createRemoveParameters(getParameters().getDevicesToReduce().get(getParameters().getRemoveIndex())));
             getParameters().setRemoveIndex(getParameters().getRemoveIndex() + 1);
             persistCommandIfNeeded();

@@ -45,8 +45,8 @@ import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -340,7 +340,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -349,7 +349,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         return setUpActionExpectations(task, clz, names, values, valid, success, null, true, CANT_DO);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -359,7 +359,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         return setUpActionExpectations(task, clz, names, values, valid, success, null, true, errorMessage);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -369,7 +369,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         return setUpActionExpectations(task, clz, names, values, valid, success, null, reply, CANT_DO);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -380,7 +380,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         return setUpActionExpectations(task, clz, names, values, valid, success, taskReturn, null, replay, CANT_DO);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -401,7 +401,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 errorMessage);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -426,7 +426,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 CANT_DO);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -452,7 +452,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 errorMessage);
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,
@@ -482,7 +482,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values,

@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -2715,7 +2715,7 @@ public class AsyncDataProvider {
     }
 
     public boolean isRebootCommandExecutionAllowed(List<VM> vms) {
-        if (vms.isEmpty() || !VdcActionUtils.canExecutePartially(vms, VmWithStatusForExclusiveLock.class, VdcActionType.RebootVm)) {
+        if (vms.isEmpty() || !VdcActionUtils.canExecutePartially(vms, VmWithStatusForExclusiveLock.class, ActionType.RebootVm)) {
             return false;
         }
 

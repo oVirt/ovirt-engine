@@ -14,9 +14,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterAuditLogUtil;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.SetUpMountBrokerParameters;
@@ -182,7 +182,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                     if (!currentSession.getUserName().equalsIgnoreCase("root")) {
                         succeeded =
                                 evaluateReturnValue(errorType,
-                                        getBackend().runInternalAction(VdcActionType.SetupGlusterGeoRepMountBrokerInternal,
+                                        getBackend().runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
                                                 new SetUpMountBrokerParameters(volume.getClusterId(),
                                                         serverIdsToPrep,
                                                         volume.getName(),
@@ -201,7 +201,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                 if (succeeded) {
                     succeeded =
                             evaluateReturnValue(errorType,
-                                    runInternalAction(VdcActionType.SetUpPasswordLessSSHInternal,
+                                    runInternalAction(ActionType.SetUpPasswordLessSSHInternal,
                                             new SetUpPasswordLessSSHParameters(masterVolume.getClusterId(),
                                                     serverIdsToPrep,
                                                     currentSession.getUserName())));
@@ -223,7 +223,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                         || currentSession.getStatus() == GeoRepSessionStatus.INITIALIZING) {
                     succeeded =
                             evaluateReturnValue(errorType,
-                                    runInternalAction(VdcActionType.StartGlusterVolumeGeoRep,
+                                    runInternalAction(ActionType.StartGlusterVolumeGeoRep,
                                             new GlusterVolumeGeoRepSessionParameters(currentSession.getMasterVolumeId(),
                                                     currentSession.getId(),
                                                     true)));

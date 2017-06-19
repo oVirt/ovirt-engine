@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -97,7 +97,7 @@ public class InstanceImageLineModel extends EntityModel {
     }
 
     private void toggleActive() {
-        if (vm != null && !VmActionByVmOriginTypeValidator.isCommandAllowed(vm, VdcActionType.UpdateVmDisk)) {
+        if (vm != null && !VmActionByVmOriginTypeValidator.isCommandAllowed(vm, ActionType.UpdateVmDisk)) {
             active = false;
         }
     }

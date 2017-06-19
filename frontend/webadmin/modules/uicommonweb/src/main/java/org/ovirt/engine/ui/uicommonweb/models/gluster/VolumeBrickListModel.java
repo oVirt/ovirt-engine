@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
@@ -486,7 +486,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                         volumeBrickModel.getStripeCountValue(),
                 volumeBrickModel.getForce().getEntity());
 
-        Frontend.getInstance().runAction(VdcActionType.AddBricksToGlusterVolume, parameter, result -> {
+        Frontend.getInstance().runAction(ActionType.AddBricksToGlusterVolume, parameter, result -> {
             VolumeBrickListModel localModel = (VolumeBrickListModel) result.getState();
             localModel.postOnAddBricks(result.getReturnValue());
 
@@ -793,8 +793,8 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
 
         boolean isMigrate = model.getMigrateData().getEntity();
 
-        Frontend.getInstance().runAction(isMigrate ? VdcActionType.StartRemoveGlusterVolumeBricks
-                : VdcActionType.GlusterVolumeRemoveBricks, parameter, result -> {
+        Frontend.getInstance().runAction(isMigrate ? ActionType.StartRemoveGlusterVolumeBricks
+                : ActionType.GlusterVolumeRemoveBricks, parameter, result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
@@ -856,7 +856,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks, parameter, result -> {
+        Frontend.getInstance().runAction(ActionType.StopRemoveGlusterVolumeBricks, parameter, result -> {
             ConfirmationModel localModel = (ConfirmationModel) result.getState();
             localModel.stopProgress();
             setConfirmWindow(null);
@@ -917,7 +917,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.CommitRemoveGlusterVolumeBricks,
+        Frontend.getInstance().runAction(ActionType.CommitRemoveGlusterVolumeBricks,
                 parameter,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -1073,7 +1073,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), list);
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.StopRemoveGlusterVolumeBricks,
+        Frontend.getInstance().runAction(ActionType.StopRemoveGlusterVolumeBricks,
                 parameter,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -1156,7 +1156,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                         existingBrick,
                         newBrick);
 
-        Frontend.getInstance().runAction(VdcActionType.ReplaceGlusterVolumeBrick, parameter, result -> {
+        Frontend.getInstance().runAction(ActionType.ReplaceGlusterVolumeBrick, parameter, result -> {
 
             ReplaceBrickModel localModel = (ReplaceBrickModel) result.getState();
             localModel.stopProgress();

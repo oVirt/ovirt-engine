@@ -24,8 +24,8 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -83,7 +83,7 @@ public class BackendOpenStackImageProviderResourceTest
         setUpGetEntityExpectations(2);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateProvider,
+                ActionType.UpdateProvider,
                 ProviderParameters.class,
                 new String[] { "Provider.Id" },
                 new Object[] { GUIDS[0] },
@@ -108,7 +108,7 @@ public class BackendOpenStackImageProviderResourceTest
     public void testRemove() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
-        setUpActionExpectations(VdcActionType.RemoveProvider,
+        setUpActionExpectations(ActionType.RemoveProvider,
                 ProviderParameters.class,
                 new String[] { "Provider.Id" },
                 new Object[] { GUIDS[0] },
@@ -121,7 +121,7 @@ public class BackendOpenStackImageProviderResourceTest
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.UpdateProvider,
+                ActionType.UpdateProvider,
                 ProviderParameters.class,
                 new String[] { "Provider.Id" },
                 new Object[] { GUIDS[0] },

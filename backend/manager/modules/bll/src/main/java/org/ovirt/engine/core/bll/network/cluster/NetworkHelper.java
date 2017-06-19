@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.HostSetupNetworksParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -133,7 +133,7 @@ public class NetworkHelper {
 
         if (!parameters.isEmpty()) {
             HostSetupNetworksParametersBuilder.updateParametersSequencing(parameters);
-            Backend.getInstance().runInternalMultipleActions(VdcActionType.PersistentHostSetupNetworks, parameters, context);
+            Backend.getInstance().runInternalMultipleActions(ActionType.PersistentHostSetupNetworks, parameters, context);
         }
     }
 

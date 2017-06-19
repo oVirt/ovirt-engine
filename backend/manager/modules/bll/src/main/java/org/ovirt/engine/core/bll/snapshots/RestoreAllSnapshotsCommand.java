@@ -39,6 +39,7 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -47,7 +48,6 @@ import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -149,7 +149,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 }
                 ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
                         getVmId(), getSnapshot(), removedSnapshot.getId());
-                VdcReturnValueBase returnValue = runAsyncTask(VdcActionType.RestoreFromSnapshot, params);
+                VdcReturnValueBase returnValue = runAsyncTask(ActionType.RestoreFromSnapshot, params);
                 // Save the first fault
                 if (succeeded && !returnValue.getSucceeded()) {
                     succeeded = false;
@@ -191,7 +191,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                                             List<CinderDisk> cinderVolumesToRemove,
                                             Guid removedSnapshotId) {
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.RestoreAllCinderSnapshots,
+                ActionType.RestoreAllCinderSnapshots,
                         buildCinderChildCommandParameters(cinderDisksToRestore,
                                 cinderDisksToRemove,
                                 cinderVolumesToRemove,
@@ -306,7 +306,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     cinderDisksToRemove.add((CinderDisk) image);
                     continue;
                 }
-                returnValue = runAsyncTask(VdcActionType.RemoveImage,
+                returnValue = runAsyncTask(ActionType.RemoveImage,
                         new RemoveImageParameters(image.getImageId()));
                 if (!returnValue.getSucceeded() && noImagesRemovedYet) {
                     setSucceeded(false);
@@ -358,7 +358,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 cinderVolumesToRemove.add((CinderDisk) diskImagesFromPreviewSnap.get(0));
                 continue;
             }
-            VdcReturnValueBase retValue = runAsyncTask(VdcActionType.RemoveImage,
+            VdcReturnValueBase retValue = runAsyncTask(ActionType.RemoveImage,
                     new RemoveImageParameters(diskImage.getImageId()));
 
             if (retValue.getSucceeded()) {
@@ -384,7 +384,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      *            The command parameters.
      * @return The return value from the task.
      */
-    private VdcReturnValueBase runAsyncTask(VdcActionType taskType, ImagesContainterParametersBase params) {
+    private VdcReturnValueBase runAsyncTask(ActionType taskType, ImagesContainterParametersBase params) {
         VdcReturnValueBase returnValue;
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setParentCommand(getActionType());
@@ -581,8 +581,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     @Override
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.RestoreFromSnapshot;
+    protected ActionType getChildActionType() {
+        return ActionType.RestoreFromSnapshot;
     }
 
     private List<DiskImage> getImagesList() {

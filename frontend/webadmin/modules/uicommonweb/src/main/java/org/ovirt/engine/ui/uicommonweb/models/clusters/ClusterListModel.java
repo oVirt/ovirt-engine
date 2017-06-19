@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
@@ -505,7 +505,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.UpdateCluster, prms,
+        Frontend.getInstance().runMultipleAction(ActionType.UpdateCluster, prms,
                 result -> {
 
                     model.stopProgress();
@@ -528,7 +528,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveCluster, prms,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveCluster, prms,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -752,7 +752,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
         final ManagementNetworkOnClusterOperationParameters clusterOperationParameters =
                 new ManagementNetworkOnClusterOperationParameters(cluster, managementNetwork.getId());
-        final VdcActionType actionType = model.getIsNew() ? VdcActionType.AddCluster : VdcActionType.UpdateCluster;
+        final ActionType actionType = model.getIsNew() ? ActionType.AddCluster : ActionType.UpdateCluster;
         Frontend.getInstance().runAction(
                 actionType,
                 clusterOperationParameters,
@@ -912,7 +912,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         // Todo: calling the runMultipleAction() with isRunOnlyIfAllValidationPass=false
         // becuase this flag is now supported.
         // should check what is the required behaviour and return to true if required.
-        Frontend.getInstance().runMultipleAction(VdcActionType.AddVds,
+        Frontend.getInstance().runMultipleAction(ActionType.AddVds,
                 parametersList,
                 false,
                 result -> {

@@ -13,8 +13,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Link;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -58,7 +58,7 @@ public class BackendDataCentersResourceTest
     public void testAddDataCenter() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpVersionExpectations(0);
-        setUpCreationExpectations(VdcActionType.AddEmptyStoragePool,
+        setUpCreationExpectations(ActionType.AddEmptyStoragePool,
                                   StoragePoolManagementParameter.class,
                                   new String[] {},
                                   new Object[] {},
@@ -91,7 +91,7 @@ public class BackendDataCentersResourceTest
 
     private void doTestBadAddDataCenter(boolean valid, boolean success, String detail)
             throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddEmptyStoragePool,
+        setUriInfo(setUpActionExpectations(ActionType.AddEmptyStoragePool,
                                            StoragePoolManagementParameter.class,
                                            new String[] {},
                                            new Object[] {},

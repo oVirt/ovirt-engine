@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.ImageTransfers;
 import org.ovirt.engine.api.resource.ImageTransferResource;
 import org.ovirt.engine.api.resource.ImageTransfersResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -35,7 +35,7 @@ public class BackendImageTransfersResource
             params.setTransferType(TransferType.Download);
         }
         params.setImageId(GuidUtils.asGuid(imageTransfer.getImage().getId()));
-        return performCreate(VdcActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(VdcQueryType.GetImageTransferById,
+        return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(VdcQueryType.GetImageTransferById,
                 IdQueryParameters.class));
     }
 

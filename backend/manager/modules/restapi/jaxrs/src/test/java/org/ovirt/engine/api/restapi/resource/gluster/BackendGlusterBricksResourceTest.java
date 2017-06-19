@@ -30,7 +30,7 @@ import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
 import org.ovirt.engine.api.restapi.resource.BackendResource;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -194,7 +194,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     private void setUpBrickCreationExpectation(boolean force) {
-        setUpCreationExpectations(VdcActionType.AddBricksToGlusterVolume,
+        setUpCreationExpectations(ActionType.AddBricksToGlusterVolume,
                 GlusterVolumeBricksActionParameters.class,
                 new String[] { "VolumeId", "Bricks", "Force" },
                 new Object[] { volumeId, getBricks(), force },
@@ -216,7 +216,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 new Object[] { volumeId },
                 helper.getVolumeEntity(0));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.GlusterVolumeRemoveBricks,
+        setUriInfo(setUpActionExpectations(ActionType.GlusterVolumeRemoveBricks,
                 GlusterVolumeRemoveBricksParameters.class,
                 new String[] { "VolumeId", "Bricks" },
                 new Object[] { volumeId, getBrickEntitiesToRemove() },
@@ -235,7 +235,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 new Object[] { volumeId },
                 helper.getVolumeEntity(1));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.CommitRemoveGlusterVolumeBricks,
+        setUriInfo(setUpActionExpectations(ActionType.CommitRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -257,7 +257,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         GlusterBricks bricks = mock(GlusterBricks.class);
         when(bricks.getGlusterBricks()).thenReturn(Collections.singletonList(brick));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.StartRemoveGlusterVolumeBricks,
+        setUriInfo(setUpActionExpectations(ActionType.StartRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -280,7 +280,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         GlusterBricks bricks = mock(GlusterBricks.class);
         when(bricks.getGlusterBricks()).thenReturn(Collections.singletonList(brick));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.StopRemoveGlusterVolumeBricks,
+        setUriInfo(setUpActionExpectations(ActionType.StopRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -303,7 +303,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
         GlusterBricks bricks = mock(GlusterBricks.class);
         when(bricks.getGlusterBricks()).thenReturn(Collections.singletonList(brick));
 
-        setUriInfo(setUpActionExpectations(VdcActionType.StopRemoveGlusterVolumeBricks,
+        setUriInfo(setUpActionExpectations(ActionType.StopRemoveGlusterVolumeBricks,
                 GlusterVolumeRemoveBricksParameters.class,
                 new String[] {},
                 new Object[] {},

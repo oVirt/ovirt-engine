@@ -15,8 +15,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -36,7 +36,7 @@ public class BackendNetworksResourceTest
     @Test
     public void testAddNetwork() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddNetwork,
+        setUpCreationExpectations(ActionType.AddNetwork,
                                   AddNetworkStoragePoolParameters.class,
                                   new String[] { "StoragePoolId" },
                                   new Object[] { DATA_CENTER_ID },
@@ -68,7 +68,7 @@ public class BackendNetworksResourceTest
                 new Object[] { NAMES[1] },
                 setUpStoragePool(DATA_CENTER_ID));
 
-        setUpCreationExpectations(VdcActionType.AddNetwork,
+        setUpCreationExpectations(ActionType.AddNetwork,
                                   AddNetworkStoragePoolParameters.class,
                                   new String[] { "StoragePoolId" },
                                   new Object[] { DATA_CENTER_ID },
@@ -101,7 +101,7 @@ public class BackendNetworksResourceTest
     }
 
     private void doTestBadAddNetwork(boolean valid, boolean success, String detail) throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddNetwork,
+        setUriInfo(setUpActionExpectations(ActionType.AddNetwork,
                                            AddNetworkStoragePoolParameters.class,
                                            new String[] { "StoragePoolId" },
                                            new Object[] { DATA_CENTER_ID },

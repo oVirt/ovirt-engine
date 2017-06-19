@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -86,7 +86,7 @@ public class EditNetworkModel extends NetworkModel {
 
     @Override
     public void executeSave() {
-        Frontend.getInstance().runAction(VdcActionType.UpdateNetwork,
+        Frontend.getInstance().runAction(ActionType.UpdateNetwork,
                 new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork()),
                 result -> {
                     VdcReturnValueBase retVal = result.getReturnValue();

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -133,7 +133,7 @@ public class ClusterHostListModel extends HostListModel<Cluster> {
             list.add(new VdsActionParameters(vds.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.UpdateMomPolicy, list,
+        Frontend.getInstance().runMultipleAction(ActionType.UpdateMomPolicy, list,
                 result -> {
 
                 }, null);

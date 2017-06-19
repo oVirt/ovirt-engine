@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -80,8 +80,8 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     }
 
     @Override
-    protected VdcActionType getVdcActionType() {
-        return VdcActionType.UpdateVmInterface;
+    protected ActionType getActionType() {
+        return ActionType.UpdateVmInterface;
     }
 
     @Override

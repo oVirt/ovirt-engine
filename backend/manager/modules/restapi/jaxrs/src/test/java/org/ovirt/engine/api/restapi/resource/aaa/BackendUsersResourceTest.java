@@ -19,8 +19,8 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -122,7 +122,7 @@ public class BackendUsersResourceTest
             getDirectoryUser(0)
         );
         setUpCreationExpectations(
-            VdcActionType.AddUser,
+            ActionType.AddUser,
             AddUserParameters.class,
             new String[] { "UserToAdd" },
             new Object[] { new DbUser(getDirectoryUser(0)) },

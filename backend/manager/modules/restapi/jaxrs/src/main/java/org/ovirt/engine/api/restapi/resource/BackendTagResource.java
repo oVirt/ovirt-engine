@@ -5,11 +5,11 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.resource.TagResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveTagParameters;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -49,18 +49,18 @@ public class BackendTagResource
 
         return performUpdate(incoming,
                              new QueryIdResolver<>(VdcQueryType.GetTagByTagId, IdQueryParameters.class),
-                             VdcActionType.UpdateTag,
+                             ActionType.UpdateTag,
                              new UpdateParametersProvider());
     }
 
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveTag, new TagsActionParametersBase(guid));
+        return performAction(ActionType.RemoveTag, new TagsActionParametersBase(guid));
     }
 
     protected void moveTag(Guid newParentId) {
-        performAction(VdcActionType.MoveTag, new MoveTagParameters(guid, newParentId), Void.class);
+        performAction(ActionType.MoveTag, new MoveTagParameters(guid, newParentId), Void.class);
     }
 
     protected boolean isSetParent(Tag tag) {

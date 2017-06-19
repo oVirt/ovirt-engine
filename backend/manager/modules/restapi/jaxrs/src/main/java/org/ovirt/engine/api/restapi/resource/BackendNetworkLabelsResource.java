@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.api.model.NetworkLabels;
 import org.ovirt.engine.api.resource.NetworkLabelResource;
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -51,7 +51,7 @@ public class BackendNetworkLabelsResource
     @Override
     public Response add(NetworkLabel label) {
         validateParameters(label, "id");
-        return performCreate(VdcActionType.LabelNetwork,
+        return performCreate(ActionType.LabelNetwork,
                 new LabelNetworkParameters(networkId, label.getId()),
                 new NetworkLabelIdResolver(networkId));
     }

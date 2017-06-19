@@ -14,7 +14,7 @@ import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.util.QueryHelper;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -86,7 +86,7 @@ public class BackendGlusterVolumesResource
         volumeEntity.setClusterId(asGuid(parent.get().getId()));
         mapBricks(volume, volumeEntity);
 
-        return performCreate(VdcActionType.CreateGlusterVolume,
+        return performCreate(ActionType.CreateGlusterVolume,
                 new CreateGlusterVolumeParameters(volumeEntity, isForce()),
                 new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
                 true);

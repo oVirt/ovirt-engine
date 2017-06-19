@@ -14,8 +14,8 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
@@ -143,7 +143,7 @@ public class BackendGroupsResourceTest
         );
         DbGroup dbGroup = new DbGroup(getDirectoryGroup(0));
         setUpCreationExpectations(
-            VdcActionType.AddGroup,
+            ActionType.AddGroup,
             AddGroupParameters.class,
             new String[] { "GroupToAdd" },
             new Object[] { dbGroup },
@@ -195,7 +195,7 @@ public class BackendGroupsResourceTest
             getDirectoryGroup(0)
         );
         setUpCreationExpectations(
-            VdcActionType.AddGroup,
+            ActionType.AddGroup,
             AddGroupParameters.class,
                 new String[] { "GroupToAdd" },
                 new Object[] { new DbGroup(getDirectoryGroup(0)) },
@@ -262,7 +262,7 @@ public class BackendGroupsResourceTest
             getDirectoryGroup(0)
         );
         setUpCreationExpectations(
-            VdcActionType.AddGroup,
+            ActionType.AddGroup,
             AddGroupParameters.class,
             new String[] { "GroupToAdd" },
             new Object[] { new DbGroup(getDirectoryGroup(0)) },

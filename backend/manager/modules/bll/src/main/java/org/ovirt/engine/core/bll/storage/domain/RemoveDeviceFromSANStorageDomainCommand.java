@@ -16,12 +16,12 @@ import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveStorageDomainDeviceCommandParameters;
 import org.ovirt.engine.core.common.action.ReduceStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveDeviceFromSANStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveDeviceFromSANStorageDomainCommandParameters.OperationStage;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.StepEnum;
 
 @NonTransactiveCommandAttribute
@@ -52,7 +52,7 @@ public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromS
         p.setStoragePoolId(getStoragePoolId());
         p.setVdsRunningOn(getParameters().getVdsId());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        runInternalAction(VdcActionType.MoveStorageDomainDevice, p, null);
+        runInternalAction(ActionType.MoveStorageDomainDevice, p, null);
     }
 
     private void reduceDomain() {
@@ -63,7 +63,7 @@ public class RemoveDeviceFromSANStorageDomainCommand<T extends RemoveDeviceFromS
         p.setStoragePoolId(getStoragePoolId());
         p.setVdsRunningOn(getParameters().getVdsId());
         p.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-        runInternalAction(VdcActionType.ReduceStorageDomain, p, null);
+        runInternalAction(ActionType.ReduceStorageDomain, p, null);
     }
 
     @Override

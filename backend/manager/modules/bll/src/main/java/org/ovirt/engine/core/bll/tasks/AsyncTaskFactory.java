@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -46,7 +46,7 @@ public final class AsyncTaskFactory {
     private static CommandEntity getCommandEntity(CommandCoordinator coco, Guid cmdId) {
         CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
         if (cmdEntity == null) {
-            cmdEntity = coco.createCommandEntity(cmdId, VdcActionType.Unknown, new VdcActionParametersBase());
+            cmdEntity = coco.createCommandEntity(cmdId, ActionType.Unknown, new VdcActionParametersBase());
         }
         return cmdEntity;
     }
@@ -72,7 +72,7 @@ public final class AsyncTaskFactory {
         try {
             SPMAsyncTask result = null;
             if (taskType == AsyncTaskType.unknown ||
-                    asyncTaskParams.getDbAsyncTask().getActionType() == VdcActionType.Unknown) {
+                    asyncTaskParams.getDbAsyncTask().getActionType() == ActionType.Unknown) {
                 result = new SPMAsyncTask(coco, asyncTaskParams);
             } else {
                 result = new CommandAsyncTask(coco, asyncTaskParams, duringInit);

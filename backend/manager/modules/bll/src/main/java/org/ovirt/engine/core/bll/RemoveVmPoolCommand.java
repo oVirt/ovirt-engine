@@ -15,12 +15,12 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -155,7 +155,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         for (VM vm : getCachedVmsInPool()) {
             if (!vm.isDown()) {
                 CommandCoordinatorUtil.executeAsyncCommand(
-                        VdcActionType.StopVm,
+                        ActionType.StopVm,
                         withRootCommandInfo(new StopVmParameters(vm.getId(), StopVmTypeEnum.NORMAL)),
                         cloneContextAndDetachFromParent());
                 allVmsDown = false;
@@ -182,14 +182,14 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
                 new RemoveVmFromPoolParameters(vm.getId(), false, false);
         removeVmFromPoolParameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
         VdcReturnValueBase result = runInternalActionWithTasksContext(
-                VdcActionType.RemoveVmFromPool,
+                ActionType.RemoveVmFromPool,
                 removeVmFromPoolParameters);
         if (!result.getSucceeded()) {
             return false;
         }
 
         result = runInternalAction(
-                VdcActionType.RemoveVm,
+                ActionType.RemoveVm,
                 new RemoveVmParameters(vm.getId(), false),
                 createRemoveVmStepContext(vm));
         if (!result.getSucceeded()) {

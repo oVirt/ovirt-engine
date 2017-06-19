@@ -8,8 +8,8 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Step;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EndExternalStepParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -42,7 +42,7 @@ public class BackendStepResourceTest
 
     @Test
     public void testEnd() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.EndExternalStep,
+        setUriInfo(setUpActionExpectations(ActionType.EndExternalStep,
                 EndExternalStepParameters.class,
               new String[] { "Id", "Status"},
               new Object[] { GUIDS[0], true}, true, true));

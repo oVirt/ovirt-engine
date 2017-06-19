@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.aaa.SshPublicKeyResource;
 import org.ovirt.engine.api.resource.aaa.SshPublicKeysResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -55,7 +55,7 @@ public class BackendSSHPublicKeysResource
         profile.setUserId(userId);
         params.setUserProfile(profile);
 
-        return performAction(VdcActionType.AddUserProfile, params);
+        return performAction(ActionType.AddUserProfile, params);
     }
 
     @Override

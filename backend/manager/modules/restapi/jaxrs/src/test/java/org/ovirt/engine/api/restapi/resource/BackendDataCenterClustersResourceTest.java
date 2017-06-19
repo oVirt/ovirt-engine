@@ -13,8 +13,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cpu;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -46,7 +46,7 @@ public class BackendDataCenterClustersResourceTest extends
                                    new Object[] { GUIDS[0] },
                                    null);
 
-        setUpCreationExpectations(VdcActionType.AddCluster,
+        setUpCreationExpectations(ActionType.AddCluster,
                                   ManagementNetworkOnClusterOperationParameters.class,
                                   new String[] { "Cluster.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 2) },
@@ -83,7 +83,7 @@ public class BackendDataCenterClustersResourceTest extends
                 new Object[] { GUIDS[0] },
                 null);
 
-        setUpCreationExpectations(VdcActionType.AddCluster,
+        setUpCreationExpectations(ActionType.AddCluster,
                                   ManagementNetworkOnClusterOperationParameters.class,
                                   new String[] { "Cluster.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 3) },

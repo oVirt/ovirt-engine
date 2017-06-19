@@ -28,8 +28,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -154,7 +154,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);
             VdcReturnValueBase addVdsSpmIdReturn =
-                    runInternalAction(VdcActionType.AddVdsSpmId,
+                    runInternalAction(ActionType.AddVdsSpmId,
                             tempVar,
                             cloneContext().withoutLock().withoutExecutionContext());
             if (!addVdsSpmIdReturn.getSucceeded()) {
@@ -205,7 +205,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installCtx.setMonitored(true);
             installCtx.setShouldEndJob(true);
             ThreadPoolUtil.execute(() -> runInternalAction(
-                    VdcActionType.InstallVdsInternal,
+                    ActionType.InstallVdsInternal,
                     installVdsParameters,
                     cloneContextAndDetachFromParent()
                     .withExecutionContext(installCtx)));
@@ -240,7 +240,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 vds.getVdsType().name(),
                 vdsName);
         VdcReturnValueBase result =
-                TransactionSupport.executeInNewTransaction(() -> runInternalAction(VdcActionType.RemoveVds,
+                TransactionSupport.executeInNewTransaction(() -> runInternalAction(ActionType.RemoveVds,
                         new RemoveVdsParameters(oVirtId)));
 
         if (!result.getSucceeded()) {

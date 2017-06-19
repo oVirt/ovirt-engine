@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -60,7 +60,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
 
     @Test
     public void testResolveCopy() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.UpdateGlusterHook,
+        setUriInfo(setUpActionExpectations(ActionType.UpdateGlusterHook,
                 GlusterHookManageParameters.class,
                 new String[] { "HookId" },
                 new Object[] { hookId}));
@@ -72,7 +72,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
 
     @Test
     public void testResolveAdd() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.AddGlusterHook,
+        setUriInfo(setUpActionExpectations(ActionType.AddGlusterHook,
                 GlusterHookManageParameters.class,
                 new String[] { "HookId" },
                 new Object[] { hookId}));
@@ -84,7 +84,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
 
     @Test
     public void testEnable() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.EnableGlusterHook,
+        setUriInfo(setUpActionExpectations(ActionType.EnableGlusterHook,
                 GlusterHookParameters.class,
                 new String[] { "HookId" },
                 new Object[] { hookId}));
@@ -95,7 +95,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
 
     @Test
     public void testDisable() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.DisableGlusterHook,
+        setUriInfo(setUpActionExpectations(ActionType.DisableGlusterHook,
                 GlusterHookParameters.class,
                 new String[] { "HookId" },
                 new Object[] { hookId}));
@@ -109,7 +109,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
         setUpGetEntityExpectations(1);
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveGlusterHook,
+                ActionType.RemoveGlusterHook,
                 GlusterHookManageParameters.class,
                 new String[] { "HookId" },
                 new Object[] { GUIDS[0] },
@@ -120,7 +120,7 @@ public class BackendGlusterHookResourceTest extends AbstractBackendSubResourceTe
         verifyRemove(resource.remove());
     }
 
-    protected UriInfo setUpActionExpectations(VdcActionType task,
+    protected UriInfo setUpActionExpectations(ActionType task,
             Class<? extends VdcActionParametersBase> clz,
             String[] names,
             Object[] values) {

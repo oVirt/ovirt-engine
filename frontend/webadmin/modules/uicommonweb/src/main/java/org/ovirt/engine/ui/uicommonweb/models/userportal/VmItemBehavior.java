@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -85,41 +85,41 @@ public class VmItemBehavior extends ItemBehavior {
             return;
         }
 
-        Frontend.getInstance().runAction(VdcActionType.ChangeDisk,
+        Frontend.getInstance().runAction(ActionType.ChangeDisk,
                 new ChangeDiskCommandParameters(entity.getId(), Objects.equals(imageName, ConsoleModel.getEjectLabel()) ? "" : imageName)); //$NON-NLS-1$
     }
 
     private void returnVm() {
         VM entity = (VM) getItem().getEntity();
 
-        Frontend.getInstance().runAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), false),
+        Frontend.getInstance().runAction(ActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), false),
                 null, null);
     }
 
     private void shutdown() {
         VM entity = (VM) getItem().getEntity();
-        Frontend.getInstance().runAction(VdcActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
+        Frontend.getInstance().runAction(ActionType.ShutdownVm, new ShutdownVmParameters(entity.getId(), true));
     }
 
     private void reboot() {
         VM entity = (VM) getItem().getEntity();
-        Frontend.getInstance().runAction(VdcActionType.RebootVm, new VmOperationParameterBase(entity.getId()));
+        Frontend.getInstance().runAction(ActionType.RebootVm, new VmOperationParameterBase(entity.getId()));
     }
 
     private void stop() {
         VM entity = (VM) getItem().getEntity();
-        Frontend.getInstance().runAction(VdcActionType.StopVm, new StopVmParameters(entity.getId(), StopVmTypeEnum.NORMAL));
+        Frontend.getInstance().runAction(ActionType.StopVm, new StopVmParameters(entity.getId(), StopVmTypeEnum.NORMAL));
     }
 
     private void pause() {
         VM entity = (VM) getItem().getEntity();
-        Frontend.getInstance().runAction(VdcActionType.HibernateVm, new VmOperationParameterBase(entity.getId()));
+        Frontend.getInstance().runAction(ActionType.HibernateVm, new VmOperationParameterBase(entity.getId()));
     }
 
     private void run() {
         VM entity = (VM) getItem().getEntity();
 
-        Frontend.getInstance().runAction(VdcActionType.RunVm, new RunVmParams(entity.getId()));
+        Frontend.getInstance().runAction(ActionType.RunVm, new RunVmParams(entity.getId()));
     }
 
     private void updateProperties() {
@@ -146,17 +146,17 @@ public class VmItemBehavior extends ItemBehavior {
 
         getItem().getRunCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
-                VdcActionType.RunVm));
+                ActionType.RunVm));
         getItem().getPauseCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                                                                                     VM.class,
-                                                                                    VdcActionType.HibernateVm)
+                                                                                    ActionType.HibernateVm)
                                                                   && AsyncDataProvider.getInstance().canVmsBePaused(entities));
         getItem().getShutdownCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
-                VdcActionType.ShutdownVm));
+                ActionType.ShutdownVm));
         getItem().getStopCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
-                VdcActionType.StopVm));
+                ActionType.StopVm));
         getItem().getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(entities));
 
         // Check whether a VM is from the manual pool.

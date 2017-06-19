@@ -9,8 +9,8 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -55,7 +55,7 @@ public class BackendStorageServerConnectionExtensionsResourceTest extends Abstra
                 StorageConnectionExtensionResourceTestHelper.getEntity(extensionID, hostID, pass, user, iqn);
 
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddStorageServerConnectionExtension,
+        setUpCreationExpectations(ActionType.AddStorageServerConnectionExtension,
                 StorageServerConnectionExtensionParameters.class,
                 new String[] { "StorageServerConnectionExtension" },
                 new Object[] { entity },

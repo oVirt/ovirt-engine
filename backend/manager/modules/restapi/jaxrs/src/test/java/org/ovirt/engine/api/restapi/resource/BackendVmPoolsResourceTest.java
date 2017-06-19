@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VmPool;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -124,7 +124,7 @@ public class BackendVmPoolsResourceTest extends
         setUpGetRngDeviceExpectations(0);
         addCommonAddExpectations();
 
-        setUpCreationExpectations(VdcActionType.AddVmPool,
+        setUpCreationExpectations(ActionType.AddVmPool,
              VmPoolParametersBase.class,
              new String[] { "StorageDomainId" },
              new Object[] { GUIDS[0] },
@@ -176,7 +176,7 @@ public class BackendVmPoolsResourceTest extends
 
         addCommonAddExpectations();
 
-        setUpCreationExpectations(VdcActionType.AddVmPool,
+        setUpCreationExpectations(ActionType.AddVmPool,
                 VmPoolParametersBase.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },

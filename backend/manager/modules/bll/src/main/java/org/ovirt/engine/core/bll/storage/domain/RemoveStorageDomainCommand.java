@@ -11,11 +11,11 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -198,7 +198,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         params.setDestroyingPool(getParameters().getDestroyingPool());
 
         return getBackend()
-                .runInternalAction(VdcActionType.DetachStorageDomainFromPool,
+                .runInternalAction(ActionType.DetachStorageDomainFromPool,
                         params, cloneContext().withoutCompensationContext().withoutExecutionContext()).getSucceeded();
     }
 

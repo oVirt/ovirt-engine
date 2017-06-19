@@ -18,10 +18,10 @@ import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -90,7 +90,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
                     VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                            VdcActionType.CopyImageGroup,
+                            ActionType.CopyImageGroup,
                             buildModeOrCopyImageGroupParameters(containerID, disk));
 
                     getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
@@ -148,7 +148,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
 
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            getBackend().endAction(VdcActionType.CopyImageGroup,
+            getBackend().endAction(ActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }

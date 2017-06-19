@@ -11,10 +11,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.RemoveImageCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -57,7 +57,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
      */
     protected Future<VdcReturnValueBase> getFutureRemoveCinderDiskVolume(Guid storageId,
             int removedChildCommandParametersIndex) {
-        return CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveCinderDiskVolume,
+        return CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveCinderDiskVolume,
                 getParameters().getChildCommandsParameters().get(removedChildCommandParametersIndex),
                 cloneContextAndDetachFromParent());
     }

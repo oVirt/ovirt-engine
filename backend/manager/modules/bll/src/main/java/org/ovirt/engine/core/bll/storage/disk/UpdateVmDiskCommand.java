@@ -36,13 +36,13 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -390,7 +390,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             }
 
             for (VM vm : getVmsDiskPluggedTo()) {
-                if (!VdcActionUtils.canExecute(Collections.singletonList(vm), VM.class, VdcActionType.ExtendImageSize)) {
+                if (!VdcActionUtils.canExecute(Collections.singletonList(vm), VM.class, ActionType.ExtendImageSize)) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
                 }
             }
@@ -598,7 +598,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         lockImageInDb();
 
         VdcReturnValueBase ret = runInternalActionWithTasksContext(
-                VdcActionType.ExtendImageSize,
+                ActionType.ExtendImageSize,
                 createExtendImageSizeParameters());
 
         if (!ret.getSucceeded()) {
@@ -610,7 +610,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     protected void amendDiskImage() {
-        VdcReturnValueBase ret = runInternalActionWithTasksContext(VdcActionType.AmendImageGroupVolumes,
+        VdcReturnValueBase ret = runInternalActionWithTasksContext(ActionType.AmendImageGroupVolumes,
                 amendImageGroupVolumesCommandParameters());
 
         if (!ret.getSucceeded()) {
@@ -624,7 +624,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         lockImageInDb();
         CinderDisk newCinderDisk = (CinderDisk) getNewDisk();
         Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.ExtendCinderDisk,
+                ActionType.ExtendCinderDisk,
                 buildExtendCinderDiskParameters(newCinderDisk),
                 cloneContextAndDetachFromParent());
         addCustomValue("NewSize", String.valueOf(getNewDiskSizeInGB()));
@@ -653,7 +653,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             return;
         }
 
-        VdcReturnValueBase ret = getBackend().endAction(VdcActionType.ExtendImageSize,
+        VdcReturnValueBase ret = getBackend().endAction(ActionType.ExtendImageSize,
                 createExtendImageSizeParameters(),
                 getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
@@ -678,7 +678,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private void endInternalCommandWithFailure() {
         ExtendImageSizeParameters params = createExtendImageSizeParameters();
         params.setTaskGroupSuccess(false);
-        getBackend().endAction(VdcActionType.ExtendImageSize,
+        getBackend().endAction(ActionType.ExtendImageSize,
                 params,
                 getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
     }
@@ -963,7 +963,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         params.setStoragePoolId(diskImage.getStoragePoolId());
         params.setStorageDomainId(diskImage.getStorageIds().get(0));
         params.setImageGroupID(diskImage.getId());
-        params.setParentCommand(VdcActionType.UpdateVmDisk);
+        params.setParentCommand(ActionType.UpdateVmDisk);
         params.setParentParameters(getParameters());
         return params;
     }

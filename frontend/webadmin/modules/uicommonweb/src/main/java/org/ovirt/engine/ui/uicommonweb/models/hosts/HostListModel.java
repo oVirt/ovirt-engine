@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
@@ -590,13 +590,13 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         for (Guid tag_id : tagsToAttach) {
             prmsToAttach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.AttachVdsToTag, prmsToAttach);
+        Frontend.getInstance().runMultipleAction(ActionType.AttachVdsToTag, prmsToAttach);
 
         ArrayList<VdcActionParametersBase> prmsToDetach = new ArrayList<>();
         for (Guid tag_id : tagsToDetach) {
             prmsToDetach.add(new AttachEntityToTagParameters(tag_id, hostIds));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.DetachVdsFromTag, prmsToDetach);
+        Frontend.getInstance().runMultipleAction(ActionType.DetachVdsFromTag, prmsToDetach);
 
         cancel();
     }
@@ -642,7 +642,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.FenceVdsManualy, list,
+        Frontend.getInstance().runMultipleAction(ActionType.FenceVdsManualy, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -945,7 +945,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             parameters.setHostedEngineDeployConfiguration(
                     new HostedEngineDeployConfiguration(model.getHostedEngineHostModel().getSelectedItem()));
 
-            Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,
+            Frontend.getInstance().runAction(ActionType.AddVds, parameters,
                     result -> {
 
                         Object[] array = (Object[]) result.getState();
@@ -968,7 +968,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             }
 
             if (!oldClusterId.equals(newClusterId)) {
-                Frontend.getInstance().runAction(VdcActionType.ChangeVDSCluster,
+                Frontend.getInstance().runAction(ActionType.ChangeVDSCluster,
                         new ChangeVDSClusterParameters(newClusterId, host.getId()),
                         result -> {
 
@@ -994,7 +994,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     public void postOnSaveInternalChangeCluster(UpdateVdsActionParameters parameters, boolean approveInitiated) {
-        Frontend.getInstance().runAction(VdcActionType.UpdateVds, parameters,
+        Frontend.getInstance().runAction(ActionType.UpdateVds, parameters,
                 result -> {
                     Object[] array = (Object[]) result.getState();
                     HostListModel<Void> localModel = (HostListModel<Void>) array[0];
@@ -1026,7 +1026,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
         params.setAuthMethod(model.getAuthenticationMethod());
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ApproveVds,
+        Frontend.getInstance().runMultipleAction(ActionType.ApproveVds,
                 new ArrayList<>(Arrays.asList(new VdcActionParametersBase[]{params})),
                 result -> {
 
@@ -1098,7 +1098,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVds, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveVds, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -1134,7 +1134,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             list.add(new VdsActionParameters(vds.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.ActivateVds, list,
+        Frontend.getInstance().runMultipleAction(ActionType.ActivateVds, list,
                 result -> {
 
                 }, null);
@@ -1225,7 +1225,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         model.startProgress();
 
-        Frontend.getInstance().runAction(VdcActionType.MaintenanceNumberOfVdss,
+        Frontend.getInstance().runAction(ActionType.MaintenanceNumberOfVdss,
                 params,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -1328,7 +1328,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(returnValue -> Frontend.getInstance().runAction(
-                VdcActionType.InstallVds,
+                ActionType.InstallVds,
                 param,
                 result -> {
                     VdcReturnValueBase returnValue1 = result.getReturnValue();
@@ -1421,7 +1421,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(
-            VdcActionType.VdsPowerDown, list,
+            ActionType.VdsPowerDown, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
@@ -1447,7 +1447,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(
-            VdcActionType.SshHostReboot, list,
+            ActionType.SshHostReboot, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
@@ -1472,7 +1472,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RestartVds, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RestartVds, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -1489,7 +1489,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             list.add(new FenceVdsActionParameters(vds.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.StartVds, list,
+        Frontend.getInstance().runMultipleAction(ActionType.StartVds, list,
                 result -> {
 
                 }, null);
@@ -1531,7 +1531,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.StopVds, list,
+        Frontend.getInstance().runMultipleAction(ActionType.StopVds, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -1625,7 +1625,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             list.add(new VdsActionParameters(vds.getId()));
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.RefreshHost, list,
+        Frontend.getInstance().runMultipleAction(ActionType.RefreshHost, list,
                 result -> {
 
                 }, null);
@@ -1633,7 +1633,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private void enrollCertificate() {
         final VDS host = getSelectedItem();
-        Frontend.getInstance().runAction(VdcActionType.HostEnrollCertificate, new VdsActionParameters(host.getId()));
+        Frontend.getInstance().runAction(ActionType.HostEnrollCertificate, new VdsActionParameters(host.getId()));
     }
 
     private void updateHaMaintenanceAvailability() {
@@ -1655,7 +1655,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         SetHaMaintenanceParameters params = new SetHaMaintenanceParameters(vds.getId(), HaMaintenanceMode.GLOBAL, enabled);
-        Frontend.getInstance().runAction(VdcActionType.SetHaMaintenance, params);
+        Frontend.getInstance().runAction(ActionType.SetHaMaintenance, params);
     }
 
     @Override
@@ -1770,21 +1770,21 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         boolean isAllPMEnabled = items.stream().allMatch(VDS::isPmEnabled);
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.UpdateVds));
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.UpdateVds));
 
         getEditWithPMemphasisCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.UpdateVds));
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.UpdateVds));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.RemoveVds));
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.RemoveVds));
 
         getActivateCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.ActivateVds));
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.ActivateVds));
 
         // or special case where its installation failed but its oVirt node
         boolean approveAvailability =
                 items.size() == 1
-                        && (VdcActionUtils.canExecute(items, VDS.class, VdcActionType.ApproveVds) || (items.get(0)
+                        && (VdcActionUtils.canExecute(items, VDS.class, ActionType.ApproveVds) || (items.get(0)
                                 .getStatus() == VDSStatus.InstallFailed && items.get(0).isOvirtVintageNode()));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
 
@@ -1815,22 +1815,22 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getEnrollCertificateCommand().setIsExecutionAllowed(installAvailability);
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.MaintenanceVds));
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.MaintenanceVds));
 
         getSshRestartCommand().setIsExecutionAllowed(items.size() > 0
-            && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.SshHostReboot));
+            && VdcActionUtils.canExecute(items, VDS.class, ActionType.SshHostReboot));
 
         getSshStopCommand().setIsExecutionAllowed(items.size() > 0
-            && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.VdsPowerDown));
+            && VdcActionUtils.canExecute(items, VDS.class, ActionType.VdsPowerDown));
 
         getRestartCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.RestartVds) && isAllPMEnabled);
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.RestartVds) && isAllPMEnabled);
 
         getStartCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.StartVds) && isAllPMEnabled);
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.StartVds) && isAllPMEnabled);
 
         getStopCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.StopVds) && isAllPMEnabled);
+                && VdcActionUtils.canExecute(items, VDS.class, ActionType.StopVds) && isAllPMEnabled);
 
         setIsPowerManagementEnabled(getRestartCommand().getIsExecutionAllowed()
                 || getStartCommand().getIsExecutionAllowed() || getStopCommand().getIsExecutionAllowed());
@@ -1845,7 +1845,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && VdcActionUtils.canExecute(items,
                 VDS.class,
-                VdcActionType.RefreshHostCapabilities));
+                ActionType.RefreshHostCapabilities));
 
         boolean numaVisible = false;
         if (getSelectedItem() != null) {
@@ -1857,12 +1857,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private boolean canCheckForHostUpgrade(VDS host) {
-        return VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.HostUpgradeCheck);
+        return VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.HostUpgradeCheck);
     }
 
     private boolean canUpgradeHost(VDS host) {
         return host.isUpdateAvailable()
-                && VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, VdcActionType.UpgradeHost);
+                && VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.UpgradeHost);
     }
 
     private boolean singleHostSelected(List<VDS> items) {
@@ -2080,7 +2080,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         NumaSupportModel model = (NumaSupportModel) getWindow();
         ArrayList<VdcActionParametersBase> updateParamsList = model.getUpdateParameters();
         if (!updateParamsList.isEmpty()) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmNumaNodes, updateParamsList);
+            Frontend.getInstance().runMultipleAction(ActionType.UpdateVmNumaNodes, updateParamsList);
         }
         setWindow(null);
     }
@@ -2097,7 +2097,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private void selectAsSPM() {
         ForceSelectSPMParameters params = new ForceSelectSPMParameters(getSelectedItem().getId());
-        Frontend.getInstance().runAction(VdcActionType.ForceSelectSPM, params);
+        Frontend.getInstance().runAction(ActionType.ForceSelectSPM, params);
 
     }
 

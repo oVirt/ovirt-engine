@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
@@ -71,7 +71,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
         for (GlusterGeoRepSession session : geoRepSessions) {
             if (!(session.getStatus() == GeoRepSessionStatus.STOPPED || session.getStatus() == GeoRepSessionStatus.CREATED)) {
                 try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
-                    VdcReturnValueBase retVal = runInternalAction(VdcActionType.StopGeoRepSession,
+                    VdcReturnValueBase retVal = runInternalAction(ActionType.StopGeoRepSession,
                             new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(), session.getId()));
 
                     if (!retVal.getSucceeded()) {
@@ -92,7 +92,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
     private boolean stopVolume(GlusterVolumeEntity volume) {
         if (volume != null && volume.getStatus() == GlusterStatus.UP) {
             VdcReturnValueBase retVal =
-                    runInternalAction(VdcActionType.StopGlusterVolume,
+                    runInternalAction(ActionType.StopGlusterVolume,
                             new GlusterVolumeActionParameters(volume.getId(), true));
             if (!retVal.getSucceeded()) {
                 handleVdsError(AuditLogType.GLUSTER_VOLUME_STOP_FAILED, retVal.getExecuteFailedMessages()
@@ -192,7 +192,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
 
     private boolean startVolume(Guid volumeId) {
         VdcReturnValueBase retVal =
-                runInternalAction(VdcActionType.StartGlusterVolume, new GlusterVolumeActionParameters(volumeId,
+                runInternalAction(ActionType.StartGlusterVolume, new GlusterVolumeActionParameters(volumeId,
                         true));
 
         if (!retVal.getSucceeded()) {
@@ -231,7 +231,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
             }
 
             try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
-                VdcReturnValueBase retVal = runInternalAction(VdcActionType.ResumeGeoRepSession,
+                VdcReturnValueBase retVal = runInternalAction(ActionType.ResumeGeoRepSession,
                         new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(), session.getId()));
 
                 if (!retVal.getSucceeded()) {
@@ -249,7 +249,7 @@ public class RestoreGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCo
     private boolean startGeoRepSessions(List<GlusterGeoRepSession> geoRepSessions) {
         for (GlusterGeoRepSession session : geoRepSessions) {
             try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
-                VdcReturnValueBase retVal = runInternalAction(VdcActionType.StartGlusterVolumeGeoRep,
+                VdcReturnValueBase retVal = runInternalAction(ActionType.StartGlusterVolumeGeoRep,
                         new GlusterVolumeGeoRepSessionParameters(getGlusterVolumeId(), session.getId()));
 
                 if (!retVal.getSucceeded()) {

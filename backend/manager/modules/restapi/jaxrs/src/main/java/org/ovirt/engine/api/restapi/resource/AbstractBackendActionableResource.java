@@ -17,8 +17,8 @@ import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.utils.LinkCreator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -39,7 +39,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         super(id, modelType, entityType);
     }
 
-    protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType, EntityResolver entityResolver) {
+    protected Response doAction(final ActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType, EntityResolver entityResolver) {
         awaitGrace(action);
         try {
             VdcReturnValueBase actionResult = doAction(task, params);
@@ -74,7 +74,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         }
     }
 
-    protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType) {
+    protected Response doAction(final ActionType task, final VdcActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType) {
         awaitGrace(action);
         try {
             VdcReturnValueBase actionResult = doAction(task, params);
@@ -105,7 +105,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
      * @param action   action representation
      * @param entityResolver   backend response resolver
      */
-    protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action, EntityResolver entityResolver) {
+    protected Response doAction(final ActionType task, final VdcActionParametersBase params, final Action action, EntityResolver entityResolver) {
         return doAction(task, params, action, PollingType.VDSM_TASKS, entityResolver);
     }
 
@@ -117,7 +117,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
      * @param params   the task parameters
      * @param action   action representation
      */
-    protected Response doAction(final VdcActionType task, final VdcActionParametersBase params, final Action action) {
+    protected Response doAction(final ActionType task, final VdcActionParametersBase params, final Action action) {
         return doAction(task, params, action, PollingType.VDSM_TASKS);
     }
 

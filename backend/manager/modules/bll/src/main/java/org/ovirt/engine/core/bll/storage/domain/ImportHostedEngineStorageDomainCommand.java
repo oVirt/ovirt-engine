@@ -14,11 +14,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -114,17 +114,17 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         addSdParams.setVdsId(getParameters().getVdsId());
         addSdParams.setStoragePoolId(getVds().getStoragePoolId());
 
-        VdcActionType actionType = null;
+        ActionType actionType = null;
         switch (heStorageDomain.getStorageType()) {
         case NFS:
         case GLUSTERFS:
-            actionType = VdcActionType.AddExistingFileStorageDomain;
+            actionType = ActionType.AddExistingFileStorageDomain;
             addStorageServerConnection();
             break;
         case ISCSI:
             discoverBlockConnectionDetails();
         case FCP:
-            actionType = VdcActionType.AddExistingBlockStorageDomain;
+            actionType = ActionType.AddExistingBlockStorageDomain;
             removeHostedEngineLunDisk();
             break;
         }
@@ -142,7 +142,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
                             addSdParams.getStorageDomainId(),
                             addSdParams.getStoragePoolId());
             setSucceeded(getBackend().runInternalAction(
-                    VdcActionType.AttachStorageDomainToPool,
+                    ActionType.AttachStorageDomainToPool,
                     attachSdParams,
                     getContext()).getSucceeded());
         }
@@ -206,7 +206,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         if (disks != null && !disks.isEmpty()) {
             BaseDisk heDirectLun = disks.get(0);
             VdcReturnValueBase removeDisk = getBackend().runInternalAction(
-                    VdcActionType.RemoveDisk,
+                    ActionType.RemoveDisk,
                     new RemoveDiskParameters(heDirectLun.getId()));
             if (!removeDisk.getSucceeded()) {
                 setSucceeded(false);

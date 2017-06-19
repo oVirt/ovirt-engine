@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
@@ -440,7 +440,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DeleteGlusterVolume, list,
+        Frontend.getInstance().runMultipleAction(ActionType.DeleteGlusterVolume, list,
                 result -> {
 
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
@@ -733,7 +733,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
             parameters.add(parameter);
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.StartGlusterVolumeProfile, parameters);
+        Frontend.getInstance().runMultipleAction(ActionType.StartGlusterVolumeProfile, parameters);
     }
 
     private void stopVolumeProfiling() {
@@ -746,7 +746,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             GlusterVolumeParameters parameter = new GlusterVolumeParameters(currentSelectedVolume.getId());
             parameters.add(parameter);
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.StopGlusterVolumeProfile, parameters);
+        Frontend.getInstance().runMultipleAction(ActionType.StopGlusterVolumeProfile, parameters);
     }
 
     private void closeConfirmationWindow() {
@@ -767,7 +767,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
-        Frontend.getInstance().runMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list, null, true, true);
+        Frontend.getInstance().runMultipleAction(ActionType.StartRebalanceGlusterVolume, list, null, true, true);
     }
 
     private void stopRebalance() {
@@ -806,7 +806,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         final GlusterVolumeEntity volumeEntity = getSelectedItem();
         GlusterVolumeRebalanceParameters param = new GlusterVolumeRebalanceParameters(volumeEntity.getId(), false, false);
 
-        Frontend.getInstance().runAction(VdcActionType.StopRebalanceGlusterVolume, param, result -> {
+        Frontend.getInstance().runAction(ActionType.StopRebalanceGlusterVolume, param, result -> {
             ConfirmationModel localModel = (ConfirmationModel) getConfirmWindow();
             localModel.stopProgress();
             setConfirmWindow(null);
@@ -974,7 +974,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                                             list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
                                         }
                                     }
-                                    Frontend.getInstance().runMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
+                                    Frontend.getInstance().runMultipleAction(ActionType.SetGlusterVolumeOption, list);
                                 }))))));
     }
 
@@ -1036,7 +1036,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.StopGlusterVolume, list,
+        Frontend.getInstance().runMultipleAction(ActionType.StopGlusterVolume, list,
                 result -> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
@@ -1087,7 +1087,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     }
 
     private void onStartVolume(ArrayList<VdcActionParametersBase> parameters) {
-        Frontend.getInstance().runMultipleAction(VdcActionType.StartGlusterVolume, parameters, null, true, true);
+        Frontend.getInstance().runMultipleAction(ActionType.StartGlusterVolume, parameters, null, true, true);
     }
 
     private void prepareForStartVolume(boolean noForceStart) {
@@ -1169,7 +1169,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         CreateGlusterVolumeParameters parameter =
                 new CreateGlusterVolumeParameters(volume, volumeModel.isForceAddBricks());
 
-        Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolume, parameter, result -> {
+        Frontend.getInstance().runAction(ActionType.CreateGlusterVolume, parameter, result -> {
             VolumeListModel localModel = (VolumeListModel) result.getState();
             localModel.postOnCreateVolume(result.getReturnValue(), volume);
         }, this);
@@ -1294,7 +1294,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     clusterCfg.getEntity().getParamValue()));
         }
 
-        Frontend.getInstance().runAction(VdcActionType.UpdateGlusterVolumeSnapshotConfig,
+        Frontend.getInstance().runAction(ActionType.UpdateGlusterVolumeSnapshotConfig,
                 new UpdateGlusterVolumeSnapshotConfigParameters(clusterId, null, vdsParams),
                 result -> {
                     if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
@@ -1392,7 +1392,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                     volumeCfg.getEntity().getOptionValue()));
         }
 
-        Frontend.getInstance().runAction(VdcActionType.UpdateGlusterVolumeSnapshotConfig,
+        Frontend.getInstance().runAction(ActionType.UpdateGlusterVolumeSnapshotConfig,
                 new UpdateGlusterVolumeSnapshotConfigParameters(volumeEntity.getClusterId(),
                         volumeEntity.getId(),
                         vdsParams),

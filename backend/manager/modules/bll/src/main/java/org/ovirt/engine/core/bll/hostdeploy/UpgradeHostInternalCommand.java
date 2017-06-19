@@ -16,7 +16,7 @@ import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.UpgradeHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
@@ -76,7 +76,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
                 if (vdsType == VDSType.oVirtNode) {
                     VdsActionParameters params = new VdsActionParameters(getVds().getId());
                     params.setPrevVdsStatus(getParameters().getInitialStatus());
-                    VdcReturnValueBase returnValue = runInternalAction(VdcActionType.SshHostReboot,
+                    VdcReturnValueBase returnValue = runInternalAction(ActionType.SshHostReboot,
                             params,
                             ExecutionHandler.createInternalJobContext());
                     if (!returnValue.getSucceeded()) {
@@ -107,7 +107,7 @@ public class UpgradeHostInternalCommand<T extends UpgradeHostParameters> extends
             parameters.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             parameters.setActivateHost(getParameters().getInitialStatus() == VDSStatus.Up);
 
-            VdcReturnValueBase result = runInternalAction(VdcActionType.UpgradeOvirtNodeInternal, parameters);
+            VdcReturnValueBase result = runInternalAction(ActionType.UpgradeOvirtNodeInternal, parameters);
             if (!result.getSucceeded()) {
                 setVdsStatus(VDSStatus.InstallFailed);
                 propagateFailure(result);

@@ -14,10 +14,10 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Snapshot;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -115,7 +115,7 @@ public class BackendSnapshotResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
         setUpActionExpectations(
-            VdcActionType.RemoveSnapshot,
+            ActionType.RemoveSnapshot,
             RemoveSnapshotParameters.class,
             new String[] { "SnapshotId", "VmId" },
             new Object[] { SNAPSHOT_ID, VM_ID },
@@ -139,7 +139,7 @@ public class BackendSnapshotResourceTest
         setUpGetEntityExpectations(asList(getEntity(1)));
         setUriInfo(
             setUpActionExpectations(
-                VdcActionType.RemoveSnapshot,
+                ActionType.RemoveSnapshot,
                 RemoveSnapshotParameters.class,
                 new String[] { "SnapshotId", "VmId"},
                 new Object[] { SNAPSHOT_ID, VM_ID },
@@ -158,7 +158,7 @@ public class BackendSnapshotResourceTest
 
     protected UriInfo setUpTryBackExpectations() {
         return setUpActionExpectations(
-                VdcActionType.TryBackToAllSnapshotsOfVm,
+                ActionType.TryBackToAllSnapshotsOfVm,
                 TryBackToAllSnapshotsOfVmParameters.class,
                 new String[] { "VmId", "DstSnapshotId" },
                 new Object[] { VM_ID, SNAPSHOT_ID },
@@ -170,7 +170,7 @@ public class BackendSnapshotResourceTest
 
     protected UriInfo setUpRestoreExpectations() {
         return setUpActionExpectations(
-                VdcActionType.RestoreAllSnapshots,
+                ActionType.RestoreAllSnapshots,
                 RestoreAllSnapshotsParameters.class,
                 new String[] { "VmId", "SnapshotAction" },
                 new Object[] { VM_ID, SnapshotActionEnum.COMMIT },

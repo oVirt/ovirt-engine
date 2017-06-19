@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.StepResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EndExternalStepParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -49,7 +49,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
             guid,
             action.isSetSucceeded() ? action.isSucceeded(): true
         );
-        return doAction(VdcActionType.EndExternalStep, parameters, action);
+        return doAction(ActionType.EndExternalStep, parameters, action);
     }
 
     @Override

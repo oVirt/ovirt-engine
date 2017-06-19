@@ -3,13 +3,13 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class ParallelMultipleActionsRunner extends PrevalidatingMultipleActionsRunner {
 
-    public ParallelMultipleActionsRunner(VdcActionType actionType,
+    public ParallelMultipleActionsRunner(ActionType actionType,
             List<VdcActionParametersBase> parameters,
             CommandContext commandContext, boolean isInternal) {
         super(actionType, parameters, commandContext, isInternal);

@@ -13,10 +13,10 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -48,7 +48,7 @@ public class BackendVmPoolResource
     public VmPool update(VmPool incoming) {
         return performUpdate(incoming,
                              new QueryIdResolver<>(VdcQueryType.GetVmPoolById, IdQueryParameters.class),
-                             VdcActionType.UpdateVmPool,
+                             ActionType.UpdateVmPool,
                              new UpdateParametersProvider());
     }
 
@@ -164,7 +164,7 @@ public class BackendVmPoolResource
 
     @Override
     public Response allocateVm(Action action) {
-        return doAction(VdcActionType.AttachUserToVmFromPoolAndRun,
+        return doAction(ActionType.AttachUserToVmFromPoolAndRun,
                         new AttachUserToVmFromPoolAndRunParameters(guid,  getCurrent().getUser().getId()),
                         action,
                         new VmQueryIdResolver(VdcQueryType.GetVmByVmId,
@@ -209,6 +209,6 @@ public class BackendVmPoolResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVmPool, new VmPoolParametersBase(asGuid(id)));
+        return performAction(ActionType.RemoveVmPool, new VmPoolParametersBase(asGuid(id)));
     }
 }

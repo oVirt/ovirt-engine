@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.action.ProfileParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
@@ -26,8 +26,8 @@ public abstract class CpuProfileBaseModel extends ProfileBaseModel<CpuProfile, C
     public CpuProfileBaseModel(IModel sourceModel,
             Guid dcId,
             Guid defaultQosId,
-            VdcActionType vdcActionType) {
-        super(sourceModel, dcId, defaultQosId, vdcActionType);
+            ActionType actionType) {
+        super(sourceModel, dcId, defaultQosId, actionType);
     }
 
     @Override

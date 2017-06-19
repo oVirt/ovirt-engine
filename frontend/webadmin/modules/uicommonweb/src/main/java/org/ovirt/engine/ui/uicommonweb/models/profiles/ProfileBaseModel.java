@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProfileParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
@@ -33,7 +33,7 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
     private ListModel<Q> qos;
     private P profile;
     private final Guid defaultQosId;
-    private final VdcActionType vdcActionType;
+    private final ActionType actionType;
 
     public EntityModel<String> getName() {
         return name;
@@ -86,10 +86,10 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
     public ProfileBaseModel(IModel sourceModel,
             Guid dcId,
             Guid defaultQosId,
-            VdcActionType vdcActionType) {
+            ActionType actionType) {
         this.sourceModel = sourceModel;
         this.defaultQosId = defaultQosId;
-        this.vdcActionType = vdcActionType;
+        this.actionType = actionType;
 
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
@@ -121,7 +121,7 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
 
         startProgress();
 
-        Frontend.getInstance().runAction(vdcActionType,
+        Frontend.getInstance().runAction(actionType,
                 getParameters(),
                 result -> {
                     stopProgress();

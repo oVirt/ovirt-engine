@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -79,7 +79,7 @@ public class CloneVmModel extends Model {
 
         params.setMakeCreatorExplicitOwner(makeCreatorExplicitOwner);
 
-        Frontend.getInstance().runAction(VdcActionType.CloneVm, params,
+        Frontend.getInstance().runAction(ActionType.CloneVm, params,
                 result -> {
                     stopProgress();
                     targetModel.setWindow(null);

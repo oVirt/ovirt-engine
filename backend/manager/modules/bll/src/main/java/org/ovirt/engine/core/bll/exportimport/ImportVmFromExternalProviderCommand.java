@@ -27,12 +27,12 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -305,7 +305,7 @@ implements QuotaStorageDependent {
         diskParameters.setDiskVmElement(dve);
 
         VdcReturnValueBase vdcReturnValueBase =
-                runInternalActionWithTasksContext(VdcActionType.AddDisk, diskParameters);
+                runInternalActionWithTasksContext(ActionType.AddDisk, diskParameters);
 
         if (!vdcReturnValueBase.getSucceeded()) {
             throw new EngineException(vdcReturnValueBase.getFault().getError(),
@@ -378,7 +378,7 @@ implements QuotaStorageDependent {
 
     protected void convert() {
         CommandCoordinatorUtil.executeAsyncCommand(
-                VdcActionType.ConvertVm,
+                ActionType.ConvertVm,
                 buildConvertVmParameters(),
                 cloneContextAndDetachFromParent());
     }
@@ -421,7 +421,7 @@ implements QuotaStorageDependent {
 
     private void removeVm() {
         runInternalActionWithTasksContext(
-                VdcActionType.RemoveVm,
+                ActionType.RemoveVm,
                 new RemoveVmParameters(getVmId(), true));
     }
 

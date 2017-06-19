@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
@@ -71,7 +71,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             "port",
             "cluster_id",
             "protocol");
-    private VdcActionType actionType;
+    private ActionType actionType;
     @Inject
     private VdsDao vdsDao;
     @Inject
@@ -84,19 +84,19 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     private FenceAgentDao fenceAgentDao;
 
     public UpdateVdsCommand(T parameters, CommandContext cmdContext) {
-        this(parameters, cmdContext, VdcActionType.InstallVdsInternal);
+        this(parameters, cmdContext, ActionType.InstallVdsInternal);
     }
 
-    public UpdateVdsCommand(T parameters, CommandContext commandContext, VdcActionType actionType) {
+    public UpdateVdsCommand(T parameters, CommandContext commandContext, ActionType actionType) {
         super(parameters, commandContext);
         this.actionType = actionType;
     }
 
     public UpdateVdsCommand(Guid commandId) {
-        this(commandId, VdcActionType.InstallVdsInternal);
+        this(commandId, ActionType.InstallVdsInternal);
     }
 
-    protected UpdateVdsCommand(Guid commandId, VdcActionType actionType) {
+    protected UpdateVdsCommand(Guid commandId, ActionType actionType) {
         super(commandId);
         this.actionType = actionType;
     }

@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Permits;
 import org.ovirt.engine.api.model.Role;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -35,7 +35,7 @@ public class BackendRolesResourceTest
     @Test
     public void testAddRole() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpCreationExpectations(VdcActionType.AddRoleWithActionGroups,
+        setUpCreationExpectations(ActionType.AddRoleWithActionGroups,
                                   RoleWithActionGroupsParameters.class,
                                   new String[] { "Role.Id", "Role.Name" },
                                   new Object[] { GUIDS[0], NAMES[0] },

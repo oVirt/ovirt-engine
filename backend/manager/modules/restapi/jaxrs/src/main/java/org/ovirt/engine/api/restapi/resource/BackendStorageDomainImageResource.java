@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ImageResource;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -71,7 +71,7 @@ public class BackendStorageDomainImageResource
                 VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class
         );
-        return doAction(VdcActionType.ImportRepoImage, importParameters, action, resolver);
+        return doAction(ActionType.ImportRepoImage, importParameters, action, resolver);
     }
 
     @Override

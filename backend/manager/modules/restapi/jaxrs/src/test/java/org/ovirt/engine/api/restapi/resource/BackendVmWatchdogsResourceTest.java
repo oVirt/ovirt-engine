@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Watchdog;
 import org.ovirt.engine.api.model.WatchdogAction;
 import org.ovirt.engine.api.model.WatchdogModel;
-import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
@@ -53,7 +53,7 @@ public class BackendVmWatchdogsResourceTest
     public void testAdd() {
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(
-            VdcActionType.AddWatchdog,
+            ActionType.AddWatchdog,
             WatchdogParameters.class,
             new String[] {},
             new Object[] {},

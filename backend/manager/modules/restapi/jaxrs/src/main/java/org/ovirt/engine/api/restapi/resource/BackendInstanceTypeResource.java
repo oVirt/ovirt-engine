@@ -32,9 +32,9 @@ import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -62,7 +62,7 @@ public class BackendInstanceTypeResource
     public InstanceType update(InstanceType incoming) {
         InstanceType instanceType = performUpdate(incoming,
                 new QueryIdResolver<>(VdcQueryType.GetInstanceType, GetVmTemplateParameters.class),
-                VdcActionType.UpdateVmTemplate,
+                ActionType.UpdateVmTemplate,
                 new UpdateParametersProvider());
 
         if (instanceType != null) {
@@ -75,7 +75,7 @@ public class BackendInstanceTypeResource
     @Override
     public Response remove() {
         get();
-        return performAction(VdcActionType.RemoveVmTemplate, new VmTemplateManagementParameters(guid));
+        return performAction(ActionType.RemoveVmTemplate, new VmTemplateManagementParameters(guid));
     }
 
     @Override

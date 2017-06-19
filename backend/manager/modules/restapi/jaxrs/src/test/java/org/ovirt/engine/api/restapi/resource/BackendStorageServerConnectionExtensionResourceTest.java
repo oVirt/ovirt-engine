@@ -2,9 +2,9 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.StorageConnectionExtension;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -57,7 +57,7 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
         setUpGetEntityExpectations();
         setUriInfo(
                 setUpActionExpectations(
-                        VdcActionType.RemoveStorageServerConnectionExtension,
+                        ActionType.RemoveStorageServerConnectionExtension,
                         IdParameters.class,
                         new String[] { "Id" },
                         new Object[] { extensionID },
@@ -75,7 +75,7 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
 
         setUriInfo(
                 setUpActionExpectations(
-                        VdcActionType.UpdateStorageServerConnectionExtension,
+                        ActionType.UpdateStorageServerConnectionExtension,
                         StorageServerConnectionExtensionParameters.class,
                         new String[] { "StorageServerConnectionExtension" },
                         new Object[] { getDefaultEntity() },

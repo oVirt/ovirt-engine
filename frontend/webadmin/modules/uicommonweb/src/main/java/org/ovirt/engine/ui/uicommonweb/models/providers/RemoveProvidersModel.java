@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -55,7 +55,7 @@ public class RemoveProvidersModel extends ConfirmationModel {
             parameterList.add(new ProviderParameters(provider));
         }
 
-        Frontend.getInstance().runMultipleActions(VdcActionType.RemoveProvider, parameterList,
+        Frontend.getInstance().runMultipleActions(ActionType.RemoveProvider, parameterList,
                 result -> sourceListModel.getSearchCommand().execute());
         cancel();
     }

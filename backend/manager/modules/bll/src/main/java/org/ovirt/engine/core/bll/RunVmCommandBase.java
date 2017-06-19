@@ -24,8 +24,8 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -174,7 +174,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected void processVmOnDown() {
         ThreadPoolUtil.execute(() -> runInternalActionWithTasksContext(
-                VdcActionType.ProcessDownVm,
+                ActionType.ProcessDownVm,
                 new ProcessDownVmParameters(getVm().getId())
         ));
     }

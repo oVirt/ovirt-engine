@@ -24,10 +24,10 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidat
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -92,7 +92,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
             Guid srcStorageDomainId,
             Guid destStorageDomainId,
             Guid diskProfileId,
-            VdcActionType parentCommandType) {
+            ActionType parentCommandType) {
         DiskImage newDiskImage = ImagesHandler.cloneDiskImage(destStorageDomainId,
                 Guid.newGuid(),
                 Guid.newGuid(),
@@ -135,7 +135,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     protected MoveOrCopyImageGroupParameters createCopyParameters(DiskImage diskImage,
             Guid srcStorageDomainId,
             Guid srcImageGroupId,
-            Guid srcImageId, VdcActionType parentCommandType) {
+            Guid srcImageId, ActionType parentCommandType) {
         MoveOrCopyImageGroupParameters params =
                 new MoveOrCopyImageGroupParameters(getVmId(),
                         srcImageGroupId,
@@ -459,8 +459,8 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     protected abstract Guid getSourceVmId();
 
     @Override
-    protected VdcActionType getChildActionType() {
-        return VdcActionType.CopyImageGroup;
+    protected ActionType getChildActionType() {
+        return ActionType.CopyImageGroup;
     }
 
     protected abstract VM getSourceVmFromDb();

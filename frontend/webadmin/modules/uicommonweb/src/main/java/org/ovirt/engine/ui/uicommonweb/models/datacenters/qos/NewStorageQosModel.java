@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -15,8 +15,8 @@ public class NewStorageQosModel extends QosModel<StorageQos, StorageQosParameter
     }
 
     @Override
-    protected VdcActionType getVdcAction() {
-        return VdcActionType.AddStorageQos;
+    protected ActionType getVdcAction() {
+        return ActionType.AddStorageQos;
     }
 
     @Override

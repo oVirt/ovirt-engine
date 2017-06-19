@@ -34,13 +34,13 @@ import org.ovirt.engine.api.resource.StorageDomainVmsResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.ReduceSANStorageDomainDevicesCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -101,7 +101,7 @@ public class BackendStorageDomainResource
                 entity,
                 model,
                 storageDomainResolver,
-                VdcActionType.UpdateStorageDomain,
+                ActionType.UpdateStorageDomain,
                 new UpdateParametersProvider()),
                 new String[] { "templates", "vms" });
     }
@@ -109,7 +109,7 @@ public class BackendStorageDomainResource
     @Override
     public Response updateOvfStore(Action action) {
         StorageDomainParametersBase params = new StorageDomainParametersBase(guid);
-        return performAction(VdcActionType.UpdateOvfStoreForStorageDomain, params);
+        return performAction(ActionType.UpdateOvfStoreForStorageDomain, params);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class BackendStorageDomainResource
         List<String> lunIds = reducedLuns.stream().map(LogicalUnit::getId).collect(toList());
         ReduceSANStorageDomainDevicesCommandParameters parameters =
                 new ReduceSANStorageDomainDevicesCommandParameters(guid, lunIds);
-        return performAction(VdcActionType.ReduceSANStorageDomainDevices, parameters);
+        return performAction(ActionType.ReduceSANStorageDomainDevices, parameters);
     }
 
 
@@ -137,12 +137,12 @@ public class BackendStorageDomainResource
         if (destroy) {
             StorageDomainParametersBase parameters = new StorageDomainParametersBase(guid);
             parameters.setVdsId(hostId);
-            return performAction(VdcActionType.ForceRemoveStorageDomain, parameters);
+            return performAction(ActionType.ForceRemoveStorageDomain, parameters);
         } else {
             RemoveStorageDomainParameters parameters = new RemoveStorageDomainParameters(guid);
             parameters.setVdsId(hostId);
             parameters.setDoFormat(format);
-            return performAction(VdcActionType.RemoveStorageDomain, parameters);
+            return performAction(ActionType.RemoveStorageDomain, parameters);
         }
     }
 
@@ -204,7 +204,7 @@ public class BackendStorageDomainResource
             incomingLuns = Collections.emptyList();
         }
         ExtendSANStorageDomainParameters params = createParameters(guid, incomingLuns, false);
-        return performAction(VdcActionType.RefreshLunsSize, params);
+        return performAction(ActionType.RefreshLunsSize, params);
     }
 
     @Override
@@ -272,7 +272,7 @@ public class BackendStorageDomainResource
     private void addLunsToStorageDomain(List<LogicalUnit> newLuns, boolean overrideLuns) {
 
         ExtendSANStorageDomainParameters params = createParameters(guid, newLuns, overrideLuns);
-        performAction(VdcActionType.ExtendSANStorageDomain, params);
+        performAction(ActionType.ExtendSANStorageDomain, params);
     }
 
     @Override

@@ -61,6 +61,7 @@ import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
@@ -77,7 +78,6 @@ import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -150,7 +150,7 @@ public class BackendVmResource
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
             if(!clusterId.toString().equals(get().getCluster().getId())){
-                performAction(VdcActionType.ChangeVMCluster,
+                performAction(ActionType.ChangeVMCluster,
                               new ChangeVMClusterParameters(clusterId, guid, null)); // TODO: change 'null' to 'incoming.getVmCompa...' when REST support is added
             }
         }
@@ -169,7 +169,7 @@ public class BackendVmResource
         Vm vm = performUpdate(
             incoming,
             new QueryIdResolver<>(queryType, IdQueryParameters.class),
-            VdcActionType.UpdateVm,
+            ActionType.UpdateVm,
             new UpdateParametersProvider()
         );
 
@@ -191,7 +191,7 @@ public class BackendVmResource
         if (detachOnly) {
             params.setRemoveDisks(false);
         }
-        return performAction(VdcActionType.RemoveVm, params);
+        return performAction(ActionType.RemoveVm, params);
     }
 
     private void validateParameters(Vm incoming) {
@@ -286,11 +286,11 @@ public class BackendVmResource
         boolean forceMigration = action.isSetForce() ? action.isForce() : false;
 
         if (!action.isSetHost()) {
-            return doAction(VdcActionType.MigrateVm,
+            return doAction(ActionType.MigrateVm,
                     new MigrateVmParameters(forceMigration, guid, getTargetClusterId(action)),
                     action);
         } else {
-            return doAction(VdcActionType.MigrateVmToServer,
+            return doAction(ActionType.MigrateVmToServer,
                         new MigrateVmToServerParameters(forceMigration, guid, getHostId(action), getTargetClusterId(action)),
                         action);
         }
@@ -309,14 +309,14 @@ public class BackendVmResource
     public Response shutdown(Action action) {
         // REVISIT add waitBeforeShutdown Action paramater
         // to api schema before next sub-milestone
-        return doAction(VdcActionType.ShutdownVm,
+        return doAction(ActionType.ShutdownVm,
                         new ShutdownVmParameters(guid, true),
                         action);
     }
 
     @Override
     public Response reboot(Action action) {
-        return doAction(VdcActionType.RebootVm,
+        return doAction(ActionType.RebootVm,
                         new VmOperationParameterBase(guid),
                         action);
     }
@@ -324,7 +324,7 @@ public class BackendVmResource
     @Override
     public Response undoSnapshot(Action action) {
         RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(guid, SnapshotActionEnum.UNDO);
-        Response response = doAction(VdcActionType.RestoreAllSnapshots,
+        Response response = doAction(ActionType.RestoreAllSnapshots,
                 restoreParams,
                 action);
         return response;
@@ -340,7 +340,7 @@ public class BackendVmResource
                 new IdQueryParameters(guid), "VM: id=" + guid);
                 CloneVmParameters cloneVmParameters = new CloneVmParameters(vm, action.getVm().getName());
         cloneVmParameters.setMakeCreatorExplicitOwner(isFiltered());
-        Response response = doAction(VdcActionType.CloneVm,
+        Response response = doAction(ActionType.CloneVm,
                 cloneVmParameters,
                 action);
 
@@ -357,7 +357,7 @@ public class BackendVmResource
 
         final VmOperationParameterBase params = new VmOperationParameterBase(guid);
         final Response response = doAction(
-                VdcActionType.ReorderVmNics,
+                ActionType.ReorderVmNics,
                 params,
                 action);
 
@@ -367,7 +367,7 @@ public class BackendVmResource
     @Override
     public Response commitSnapshot(Action action) {
         RestoreAllSnapshotsParameters restoreParams = new RestoreAllSnapshotsParameters(guid, SnapshotActionEnum.COMMIT);
-        Response response = doAction(VdcActionType.RestoreAllSnapshots,
+        Response response = doAction(ActionType.RestoreAllSnapshots,
                 restoreParams,
                 action);
         return response;
@@ -384,7 +384,7 @@ public class BackendVmResource
         if (action.isSetDisks()) {
             tryBackParams.setDisks(getParent().mapDisks(action.getDisks()));
         }
-        Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
+        Response response = doAction(ActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,
                 action);
         return response;
@@ -393,13 +393,13 @@ public class BackendVmResource
     @Override
     public Response start(Action action) {
         RunVmParams params;
-        VdcActionType actionType;
+        ActionType actionType;
         if (action.isSetVm()) {
             Vm vm = action.getVm();
-            actionType = VdcActionType.RunVmOnce;
+            actionType = ActionType.RunVmOnce;
             params = createRunVmOnceParams(vm);
         } else {
-            actionType = VdcActionType.RunVm;
+            actionType = ActionType.RunVm;
             params = new RunVmParams(guid);
         }
         if (action.isSetPause() && action.isPause()) {
@@ -448,21 +448,21 @@ public class BackendVmResource
 
     @Override
     public Response stop(Action action) {
-        return doAction(VdcActionType.StopVm,
+        return doAction(ActionType.StopVm,
                         new StopVmParameters(guid, StopVmTypeEnum.NORMAL),
                         action);
     }
 
     @Override
     public Response suspend(Action action) {
-        return doAction(VdcActionType.HibernateVm,
+        return doAction(ActionType.HibernateVm,
                         new VmOperationParameterBase(guid),
                         action);
     }
 
     @Override
     public Response detach(Action action) {
-        return doAction(VdcActionType.RemoveVmFromPool,
+        return doAction(ActionType.RemoveVmFromPool,
                         new RemoveVmFromPoolParameters(guid, true, true),
                         action);
     }
@@ -481,7 +481,7 @@ public class BackendVmResource
             params.setCopyCollapse(true);
         }
 
-        return doAction(VdcActionType.ExportVm, params, action);
+        return doAction(ActionType.ExportVm, params, action);
     }
 
     @Override
@@ -500,7 +500,7 @@ public class BackendVmResource
 
     @Override
     public Response logon(Action action) {
-        final Response response = doAction(VdcActionType.VmLogon,
+        final Response response = doAction(ActionType.VmLogon,
                 new VmOperationParameterBase(guid),
                 action);
         return response;
@@ -508,7 +508,7 @@ public class BackendVmResource
 
     @Override
     public Response freezeFilesystems(Action action) {
-        final Response response = doAction(VdcActionType.FreezeVm,
+        final Response response = doAction(ActionType.FreezeVm,
                 new VmOperationParameterBase(guid),
                 action);
         return response;
@@ -516,7 +516,7 @@ public class BackendVmResource
 
     @Override
     public Response thawFilesystems(Action action) {
-        final Response response = doAction(VdcActionType.ThawVm,
+        final Response response = doAction(ActionType.ThawVm,
                 new VmOperationParameterBase(guid),
                 action);
         return response;
@@ -624,7 +624,7 @@ public class BackendVmResource
 
     @Override
     public Response cancelMigration(Action action) {
-        return doAction(VdcActionType.CancelMigrateVm,
+        return doAction(ActionType.CancelMigrateVm,
                 new VmOperationParameterBase(guid), action);
     }
 
@@ -676,7 +676,7 @@ public class BackendVmResource
                     .build());
         }
 
-        return doAction(VdcActionType.SetHaMaintenance,
+        return doAction(ActionType.SetHaMaintenance,
                         new SetHaMaintenanceParameters(entity.getRunOnVds(),
                                 HaMaintenanceMode.GLOBAL, action.isMaintenanceEnabled()),
                         action);
