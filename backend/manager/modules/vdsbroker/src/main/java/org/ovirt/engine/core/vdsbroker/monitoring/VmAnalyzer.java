@@ -242,7 +242,7 @@ public class VmAnalyzer {
         default:
         }
 
-        if (isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunning()) {
+        if (isVmMigratingToThisVds() && vdsmVm.getVmDynamic().getStatus().isRunningOrPaused()) {
             succeededToRun = true;
         }
 
@@ -673,7 +673,7 @@ public class VmAnalyzer {
     }
 
     private boolean isMigrationSucceeded() {
-        return dbVm.getStatus() == VMStatus.MigratingTo && vdsmVm.getVmDynamic().getStatus().isRunning();
+        return dbVm.getStatus() == VMStatus.MigratingTo && vdsmVm.getVmDynamic().getStatus().isRunningOrPaused();
     }
 
     private void updateVmDynamicData() {
