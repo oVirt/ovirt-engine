@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -1770,21 +1770,21 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         boolean isAllPMEnabled = items.stream().allMatch(VDS::isPmEnabled);
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.UpdateVds));
+                && ActionUtils.canExecute(items, VDS.class, ActionType.UpdateVds));
 
         getEditWithPMemphasisCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.UpdateVds));
+                && ActionUtils.canExecute(items, VDS.class, ActionType.UpdateVds));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.RemoveVds));
+                && ActionUtils.canExecute(items, VDS.class, ActionType.RemoveVds));
 
         getActivateCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.ActivateVds));
+                && ActionUtils.canExecute(items, VDS.class, ActionType.ActivateVds));
 
         // or special case where its installation failed but its oVirt node
         boolean approveAvailability =
                 items.size() == 1
-                        && (VdcActionUtils.canExecute(items, VDS.class, ActionType.ApproveVds) || (items.get(0)
+                        && (ActionUtils.canExecute(items, VDS.class, ActionType.ApproveVds) || (items.get(0)
                                 .getStatus() == VDSStatus.InstallFailed && items.get(0).isOvirtVintageNode()));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
 
@@ -1815,22 +1815,22 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getEnrollCertificateCommand().setIsExecutionAllowed(installAvailability);
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.MaintenanceVds));
+                && ActionUtils.canExecute(items, VDS.class, ActionType.MaintenanceVds));
 
         getSshRestartCommand().setIsExecutionAllowed(items.size() > 0
-            && VdcActionUtils.canExecute(items, VDS.class, ActionType.SshHostReboot));
+            && ActionUtils.canExecute(items, VDS.class, ActionType.SshHostReboot));
 
         getSshStopCommand().setIsExecutionAllowed(items.size() > 0
-            && VdcActionUtils.canExecute(items, VDS.class, ActionType.VdsPowerDown));
+            && ActionUtils.canExecute(items, VDS.class, ActionType.VdsPowerDown));
 
         getRestartCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.RestartVds) && isAllPMEnabled);
+                && ActionUtils.canExecute(items, VDS.class, ActionType.RestartVds) && isAllPMEnabled);
 
         getStartCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.StartVds) && isAllPMEnabled);
+                && ActionUtils.canExecute(items, VDS.class, ActionType.StartVds) && isAllPMEnabled);
 
         getStopCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VDS.class, ActionType.StopVds) && isAllPMEnabled);
+                && ActionUtils.canExecute(items, VDS.class, ActionType.StopVds) && isAllPMEnabled);
 
         setIsPowerManagementEnabled(getRestartCommand().getIsExecutionAllowed()
                 || getStartCommand().getIsExecutionAllowed() || getStopCommand().getIsExecutionAllowed());
@@ -1843,7 +1843,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         updateConfigureLocalStorageCommandAvailability();
 
-        getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && VdcActionUtils.canExecute(items,
+        getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && ActionUtils.canExecute(items,
                 VDS.class,
                 ActionType.RefreshHostCapabilities));
 
@@ -1857,12 +1857,12 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private boolean canCheckForHostUpgrade(VDS host) {
-        return VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.HostUpgradeCheck);
+        return ActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.HostUpgradeCheck);
     }
 
     private boolean canUpgradeHost(VDS host) {
         return host.isUpdateAvailable()
-                && VdcActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.UpgradeHost);
+                && ActionUtils.canExecute(Arrays.asList(host), VDS.class, ActionType.UpgradeHost);
     }
 
     private boolean singleHostSelected(List<VDS> items) {

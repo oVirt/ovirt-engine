@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
@@ -495,7 +495,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
                         : new ArrayList();
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, DbUser.class, ActionType.RemoveUser));
+                && ActionUtils.canExecute(items, DbUser.class, ActionType.RemoveUser));
 
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
     }

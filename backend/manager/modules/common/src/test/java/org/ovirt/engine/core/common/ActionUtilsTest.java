@@ -18,10 +18,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 
 /**
- * A test case for the {@link VdcActionUtils} class.
+ * A test case for the {@link ActionUtils} class.
  */
 @RunWith(Parameterized.class)
-public class VdcActionUtilsTest {
+public class ActionUtilsTest {
 
     @Parameterized.Parameters
     public static Object[][] data() {
@@ -69,7 +69,7 @@ public class VdcActionUtilsTest {
     @Test
     public void canExecute() {
         assertEquals(result,
-                VdcActionUtils.canExecute(Collections.<BusinessEntityWithStatus<?, ?>> singletonList(toTest),
+                ActionUtils.canExecute(Collections.<BusinessEntityWithStatus<?, ?>> singletonList(toTest),
                         toTest.getClass(),
                         action));
     }

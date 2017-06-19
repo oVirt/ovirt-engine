@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -608,16 +608,16 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         List<StorageDomain> items = getSelectedItems() != null ? getSelectedItems() : new ArrayList<StorageDomain>();
 
         getActivateCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.canExecute(items, StorageDomain.class, ActionType.ActivateStorageDomain));
+                && ActionUtils.canExecute(items, StorageDomain.class, ActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.canExecute(items, StorageDomain.class, ActionType.DeactivateStorageDomainWithOvfUpdate));
+                && ActionUtils.canExecute(items, StorageDomain.class, ActionType.DeactivateStorageDomainWithOvfUpdate));
 
         getAttachCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || getEntity().getStorageDomainType() == StorageDomainType.ISO));
 
         getDetachCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, StorageDomain.class, ActionType.DetachStorageDomainFromPool));
+                && ActionUtils.canExecute(items, StorageDomain.class, ActionType.DetachStorageDomainFromPool));
     }
 
     @Override

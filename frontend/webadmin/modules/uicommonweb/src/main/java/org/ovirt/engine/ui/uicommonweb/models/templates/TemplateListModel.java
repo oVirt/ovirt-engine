@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
@@ -766,7 +766,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                 && item.getStatus() != VmTemplateStatus.Locked);
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VmTemplate.class, ActionType.RemoveVmTemplate));
+                && ActionUtils.canExecute(items, VmTemplate.class, ActionType.RemoveVmTemplate));
         if (getRemoveCommand().getIsExecutionAllowed() && blankSelected) {
             getRemoveCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
@@ -775,7 +775,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
 
         getExportCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VmTemplate.class, ActionType.ExportVmTemplate));
+                && ActionUtils.canExecute(items, VmTemplate.class, ActionType.ExportVmTemplate));
 
         if (getExportCommand().getIsExecutionAllowed() && blankSelected) {
             getExportCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()

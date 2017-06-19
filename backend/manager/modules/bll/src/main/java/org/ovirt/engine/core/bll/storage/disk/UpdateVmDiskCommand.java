@@ -32,9 +32,9 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
@@ -390,7 +390,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             }
 
             for (VM vm : getVmsDiskPluggedTo()) {
-                if (!VdcActionUtils.canExecute(Collections.singletonList(vm), VM.class, ActionType.ExtendImageSize)) {
+                if (!ActionUtils.canExecute(Collections.singletonList(vm), VM.class, ActionType.ExtendImageSize)) {
                     return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
                 }
             }

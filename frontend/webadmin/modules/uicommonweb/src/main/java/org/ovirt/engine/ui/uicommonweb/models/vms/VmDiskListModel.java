@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
@@ -155,7 +155,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
-                VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, ActionType.ExtendImageSize) : false;
+                ActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, ActionType.ExtendImageSize) : false;
     }
 
     public VmDiskListModel() {

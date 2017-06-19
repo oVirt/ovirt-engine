@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -953,7 +953,7 @@ public class HostGeneralModel extends EntityModel<VDS> {
     }
 
     private boolean canExecuteCommand(ActionType actionType) {
-        return VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VDS[]{getEntity()})),
+        return ActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VDS[]{getEntity()})),
                 VDS.class,
                 actionType);
     }

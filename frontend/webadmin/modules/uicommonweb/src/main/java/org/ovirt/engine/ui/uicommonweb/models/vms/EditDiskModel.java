@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.Arrays;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -51,7 +51,7 @@ public class EditDiskModel extends AbstractDiskModel {
                 getVolumeType().setSelectedItem(diskImage.getVolumeType());
 
                 boolean isExtendImageSizeEnabled = getVm() != null && !diskImage.isDiskSnapshot() &&
-                        VdcActionUtils.canExecute(Arrays.asList(getVm()), VM.class, ActionType.ExtendImageSize);
+                        ActionUtils.canExecute(Arrays.asList(getVm()), VM.class, ActionType.ExtendImageSize);
                 getSizeExtend().setIsChangeable(isExtendImageSizeEnabled);
                 break;
             case LUN:

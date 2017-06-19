@@ -17,9 +17,9 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.aaa.ProfileEntry;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
-import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -2715,7 +2715,7 @@ public class AsyncDataProvider {
     }
 
     public boolean isRebootCommandExecutionAllowed(List<VM> vms) {
-        if (vms.isEmpty() || !VdcActionUtils.canExecutePartially(vms, VmWithStatusForExclusiveLock.class, ActionType.RebootVm)) {
+        if (vms.isEmpty() || !ActionUtils.canExecutePartially(vms, VmWithStatusForExclusiveLock.class, ActionType.RebootVm)) {
             return false;
         }
 

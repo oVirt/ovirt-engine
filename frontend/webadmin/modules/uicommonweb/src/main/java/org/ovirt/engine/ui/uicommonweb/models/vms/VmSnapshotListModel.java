@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
@@ -809,7 +809,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isVmConfigurationBroken = snapshot != null && snapshot.isVmConfigurationBroken();
 
                 getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
-                && VdcActionUtils.canExecute(vmList, VM.class, ActionType.CreateAllSnapshotsFromVm));
+                && ActionUtils.canExecute(vmList, VM.class, ActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCustomPreviewCommand().setIsExecutionAllowed(getPreviewCommand().getIsExecutionAllowed());

@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -172,12 +172,12 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
         }
 
         getNewCommand().setIsExecutionAllowed(vm != null
-                && VdcActionUtils.canExecute(items, VM.class, ActionType.AddVmInterface));
+                && ActionUtils.canExecute(items, VM.class, ActionType.AddVmInterface));
         getEditCommand().setIsExecutionAllowed(vm != null
-                && VdcActionUtils.canExecute(items, VM.class, ActionType.UpdateVmInterface)
+                && ActionUtils.canExecute(items, VM.class, ActionType.UpdateVmInterface)
                 && (getSelectedItems() != null && getSelectedItems().size() == 1));
         getRemoveCommand().setIsExecutionAllowed(vm != null
-                && VdcActionUtils.canExecute(items, VM.class, ActionType.RemoveVmInterface) && canRemoveNics()
+                && ActionUtils.canExecute(items, VM.class, ActionType.RemoveVmInterface) && canRemoveNics()
                 && (getSelectedItems() != null && getSelectedItems().size() > 0));
     }
 

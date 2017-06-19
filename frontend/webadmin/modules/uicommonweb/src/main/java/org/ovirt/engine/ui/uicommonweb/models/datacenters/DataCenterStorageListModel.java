@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -623,15 +623,15 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
         getAttachBackupCommand().setIsExecutionAllowed(items.size() > 0 && isMasterPresent && !isBackupPresent);
 
         getDetachCommand().setIsExecutionAllowed(selectedItems.size() > 0
-                && VdcActionUtils.canExecute(selectedItems,
+                && ActionUtils.canExecute(selectedItems,
                 StorageDomain.class,
                 ActionType.DetachStorageDomainFromPool));
 
         getActivateCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && VdcActionUtils.canExecute(selectedItems, StorageDomain.class, ActionType.ActivateStorageDomain));
+                && ActionUtils.canExecute(selectedItems, StorageDomain.class, ActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && VdcActionUtils.canExecute(selectedItems,
+                && ActionUtils.canExecute(selectedItems,
                 StorageDomain.class,
                 ActionType.DeactivateStorageDomainWithOvfUpdate));
     }

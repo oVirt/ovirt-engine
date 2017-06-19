@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -633,32 +633,32 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
 
         getRemoveCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && ActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 ActionType.RemoveVm));
 
         getRunOnceCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && ActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 ActionType.RunVmOnce));
 
         getCloneVmCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && ActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 ActionType.CloneVm));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
+                && ActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
                 (VM) selectedItem.getEntity()})),
                 VM.class,
                 ActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
+                && ActionUtils.canExecute(new ArrayList<>(Arrays.asList(new VM[]{
                 (VM) selectedItem.getEntity()})),
                 VM.class,
                 ActionType.AddVmTemplate));

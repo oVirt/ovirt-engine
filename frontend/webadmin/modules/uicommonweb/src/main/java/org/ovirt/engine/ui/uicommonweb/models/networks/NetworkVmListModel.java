@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -103,7 +103,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
             vms.add(item.getSecond());
         }
 
-        getRemoveCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(vms,
+        getRemoveCommand().setIsExecutionAllowed(ActionUtils.canExecute(vms,
                 VM.class,
                 ActionType.RemoveVmInterface) && getSelectedItems() != null && !getSelectedItems().isEmpty()
                 && canRemoveVnics());

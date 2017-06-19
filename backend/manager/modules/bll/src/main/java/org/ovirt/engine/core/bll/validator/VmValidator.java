@@ -16,8 +16,8 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -99,7 +99,7 @@ public class VmValidator {
     }
 
     public ValidationResult validateVmStatusUsingMatrix(ActionType actionType) {
-        if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
+        if (!ActionUtils.canExecute(Arrays.asList(vm), VM.class,
                 actionType)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
                     LocalizedVmStatus.from(vm.getStatus()));

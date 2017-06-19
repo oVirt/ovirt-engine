@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -144,17 +144,17 @@ public class VmItemBehavior extends ItemBehavior {
         ArrayList<VM> entities = new ArrayList<>();
         entities.add(entity);
 
-        getItem().getRunCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
+        getItem().getRunCommand().setIsExecutionAllowed(ActionUtils.canExecute(entities,
                 VM.class,
                 ActionType.RunVm));
-        getItem().getPauseCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
+        getItem().getPauseCommand().setIsExecutionAllowed(ActionUtils.canExecute(entities,
                                                                                     VM.class,
                                                                                     ActionType.HibernateVm)
                                                                   && AsyncDataProvider.getInstance().canVmsBePaused(entities));
-        getItem().getShutdownCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
+        getItem().getShutdownCommand().setIsExecutionAllowed(ActionUtils.canExecute(entities,
                 VM.class,
                 ActionType.ShutdownVm));
-        getItem().getStopCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
+        getItem().getStopCommand().setIsExecutionAllowed(ActionUtils.canExecute(entities,
                 VM.class,
                 ActionType.StopVm));
         getItem().getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(entities));

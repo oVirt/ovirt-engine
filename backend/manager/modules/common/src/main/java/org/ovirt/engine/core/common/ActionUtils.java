@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWithStatusForExclusiveLock;
 
-public final class VdcActionUtils {
+public final class ActionUtils {
 
     private static final Map<Class<?>, Map<Enum<?>, Set<ActionType>>> _matrix =
             new HashMap<>();
