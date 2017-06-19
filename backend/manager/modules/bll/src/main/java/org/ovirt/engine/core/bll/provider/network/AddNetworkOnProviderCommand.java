@@ -85,13 +85,5 @@ public class AddNetworkOnProviderCommand<T extends AddNetworkStoragePoolParamete
             return network.getMtu() == 0 ? ValidationResult.VALID
                     : new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_HAVE_MTU);
         }
-
-        /**
-         * VLAN ID is not relevant in this case, so don't check it.
-         */
-        @Override
-        public ValidationResult vlanIdNotUsed() {
-            return ValidationResult.VALID;
-        }
     }
 }

@@ -81,23 +81,6 @@ public class NetworkValidator {
     }
 
     /**
-     * @return An error iff a different network in the data center is already using the specified VLAN ID.
-     */
-    public ValidationResult vlanIdNotUsed() {
-        if (NetworkUtils.isVlan(network)) {
-            for (Network otherNetwork : getNetworks()) {
-                if (NetworkUtils.isVlan(otherNetwork)
-                        && otherNetwork.getVlanId().equals(network.getVlanId())
-                        && !otherNetwork.getId().equals(network.getId())) {
-                    return new ValidationResult(EngineMessage.NETWORK_VLAN_IN_USE,
-                            String.format("$vlanId %d", network.getVlanId()));
-                }
-            }
-        }
-        return ValidationResult.VALID;
-    }
-
-    /**
      * @return An error iff network is named as if it were a bond.
      */
     public ValidationResult networkPrefixValid() {
