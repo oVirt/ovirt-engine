@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.di;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import javax.enterprise.inject.Default;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.BeanManager;
@@ -15,6 +18,8 @@ import javax.enterprise.util.AnnotationLiteral;
  */
 public class Injector {
 
+    private static Map<Class, InjectionTarget> injectionTargets = new ConcurrentHashMap<>();
+
     /**
      * This method will take an instance and will fulfill all its dependencies, which are members
      * annotated with <code>@Inject</code>.
@@ -25,8 +30,13 @@ public class Injector {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <T> T injectMembers(T instance) {
-        AnnotatedType type = CDI.current().getBeanManager().createAnnotatedType(instance.getClass());
-        InjectionTarget injectionTarget = CDI.current().getBeanManager().createInjectionTarget(type);
+        InjectionTarget injectionTarget = injectionTargets.computeIfAbsent(
+                instance.getClass(),
+                clazz -> {
+                    AnnotatedType type = CDI.current().getBeanManager().createAnnotatedType(instance.getClass());
+                    return CDI.current().getBeanManager().createInjectionTarget(type);
+                });
+
         injectionTarget.inject(instance, CDI.current().getBeanManager().createCreationalContext(null));
         injectionTarget.postConstruct(instance);
         return instance;
