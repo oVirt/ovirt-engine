@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -90,7 +91,16 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
     public void testValidateSuccess() {
         storageDomain.setStorageType(StorageType.NFS);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
+        setVdsStatus(VDSStatus.Up);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
+    public void testValidateHostNotUpFailure() {
+        storageDomain.setStorageType(StorageType.NFS);
+        storageDomain.setStorageDomainType(StorageDomainType.Data);
+        setVdsStatus(VDSStatus.Maintenance);
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_HOST_NOT_UP);
     }
 
     @Test
@@ -98,6 +108,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
         storageDomain.setStorageType(StorageType.NFS);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         doReturn(Boolean.TRUE).when(command).isStorageDomainAttached(storageDomain);
+        setVdsStatus(VDSStatus.Up);
         ValidateTestUtils.runAndAssertValidateFailure(
                 "validate shouldn't be possible for an attached storage domain",
                 command, EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
@@ -109,6 +120,7 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
         storageDomain.setStorageDomainType(StorageDomainType.Data);
         doReturn(Boolean.TRUE).when(command).isStorageDomainAttached(storageDomain);
         command.getParameters().setDoFormat(false);
+        setVdsStatus(VDSStatus.Up);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -162,5 +174,11 @@ public class RemoveStorageDomainCommandTest extends BaseCommandTest {
         ret.setSucceeded(!shouldFail);
         doReturn(ret).when(command).runVdsCommand
                 (eq(VDSCommandType.FormatStorageDomain), any(FormatStorageDomainVDSCommandParameters.class));
+    }
+
+    private void setVdsStatus(VDSStatus status) {
+        VDS vds = vdsDaoMock.get(command.getVdsId());
+        vds.setStatus(status);
+        command.setVds(vds);
     }
 }

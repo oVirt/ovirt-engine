@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -116,15 +117,28 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
-
         VDS vds = getVds();
+        boolean localFs = isLocalFs(dom);
+
+        if (vds == null) {
+            if (localFs) {
+                if (!initializeVds()) {
+                    return false;
+                }
+            } else {
+                return failValidation(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
+            }
+        } else if (vds.getStatus() != VDSStatus.Up) {
+                return failValidation(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_HOST_NOT_UP,
+                        String.format("$%1$s %2$s", "hostName", vds.getName()));
+        }
+
         StorageDomainToPoolRelationValidator domainPoolValidator = createDomainToPoolValidator(dom);
 
         if (!checkStorageDomain()) {
             return false;
         }
 
-        boolean localFs = isLocalFs(dom);
         if (!localFs && !validate(domainPoolValidator.isStorageDomainNotInAnyPool())) {
             return false;
         }
@@ -135,16 +149,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         if (getParameters().getDoFormat() && !localFs && isStorageDomainAttached(dom)) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
-        }
-
-        if (vds == null) {
-            if (localFs) {
-                if (!initializeVds()) {
-                    return false;
-                }
-            } else {
-                return failValidation(EngineMessage.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
-            }
         }
 
         if (dom.getStorageType().isOpenStackDomain()) {
