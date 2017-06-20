@@ -55,6 +55,7 @@
             <g:Label addStyleNames="{style.sectionTitle}" text="{messages.nextRunConfigurationCanBeAppliedImmediately}"/>
             <g:HTML ui:field="applyNowCpuMessage"/>
             <g:HTML ui:field="applyNowMemoryMessage"/>
+            <g:HTML ui:field="applyNowVmLeaseMessage"/>
             <ge:EntityModelCheckBoxEditor ui:field="applyLaterEditor" addStyleNames="{style.contentWidgets}" label="{constants.applyLater}" />
         </g:FlowPanel>
         <g:FlowPanel ui:field="changedFieldsPanel" addStyleNames="{style.sectionPanel}">

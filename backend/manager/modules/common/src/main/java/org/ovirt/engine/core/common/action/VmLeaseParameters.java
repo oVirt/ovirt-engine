@@ -9,6 +9,8 @@ public class VmLeaseParameters  extends VdcActionParametersBase implements Seria
     private Guid storagePoolId;
     private Guid storageDomainId;
     private Guid vmId;
+    private Guid vdsId;
+    private boolean hotPlugLease;
 
     public VmLeaseParameters() {}
 
@@ -40,5 +42,21 @@ public class VmLeaseParameters  extends VdcActionParametersBase implements Seria
 
     public void setVmId(Guid vmId) {
         this.vmId = vmId;
+    }
+
+    public Guid getVdsId() {
+        return vdsId;
+    }
+
+    public void setVdsId(Guid vdsId) {
+        this.vdsId = vdsId;
+    }
+
+    public boolean isHotPlugLease() {
+        return hotPlugLease;
+    }
+
+    public void setHotPlugLease(boolean hotPlugLease) {
+        this.hotPlugLease = hotPlugLease;
     }
 }
