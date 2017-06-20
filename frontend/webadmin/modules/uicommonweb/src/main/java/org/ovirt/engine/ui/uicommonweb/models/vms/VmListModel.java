@@ -1632,12 +1632,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                     final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
                     final boolean memoryHotPluggable =
                             VmCommonUtils.isMemoryToBeHotplugged(selectedItem, getcurrentVm());
+                    final boolean vmLeaseUpdated = !Objects.equals(selectedItem.getLeaseStorageDomainId(), getcurrentVm().getLeaseStorageDomainId());
                     if (isHeadlessModeChanged) {
                         changedFields.add(constants.headlessMode());
                     }
 
                     // provide warnings if isVmUnpinned()
-                    if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable) {
+                    if (!changedFields.isEmpty() || isVmUnpinned() || memoryHotPluggable || cpuHotPluggable || vmLeaseUpdated) {
                         VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
                         if (isVmUnpinned()) {
                             confirmModel.setVmUnpinned();
@@ -1648,6 +1649,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         confirmModel.setChangedFields(changedFields);
                         confirmModel.setCpuPluggable(cpuHotPluggable);
                         confirmModel.setMemoryPluggable(memoryHotPluggable);
+                        confirmModel.setVmLeaseUpdated(vmLeaseUpdated);
 
                         confirmModel.getCommands().add(new UICommand("updateExistingVm", VmListModel.this) //$NON-NLS-1$
                         .setTitle(ConstantsManager.getInstance().getConstants().ok())

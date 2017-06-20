@@ -350,7 +350,10 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private Version customCompatibilityVersion;
 
     @CopyOnNewVersion
-    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmField(
+            onHostedEngine = false,
+            hotsetAllowed = true,
+            onStatuses = VMStatus.Down)
     @EditableVmTemplateField
     private Guid leaseStorageDomainId;
 

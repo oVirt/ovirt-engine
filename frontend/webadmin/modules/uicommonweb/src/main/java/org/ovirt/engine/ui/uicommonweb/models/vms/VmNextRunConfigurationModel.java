@@ -10,6 +10,7 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
     private EntityModel<Boolean> applyLater;
     private boolean cpuPluggable;
     private boolean memoryPluggable;
+    private boolean vmLeaseUpdated;
     private List<String> changedFields;
     private boolean vmUnpinned;
 
@@ -59,4 +60,13 @@ public class VmNextRunConfigurationModel extends ConfirmationModel {
     public void setMemoryPluggable(boolean memoryPluggable) {
         this.memoryPluggable = memoryPluggable;
     }
+
+    public boolean isVmLeaseUpdated() {
+        return vmLeaseUpdated;
+    }
+
+    public void setVmLeaseUpdated(boolean vmLeaseUpdated) {
+        this.vmLeaseUpdated = vmLeaseUpdated;
+    }
+
 }

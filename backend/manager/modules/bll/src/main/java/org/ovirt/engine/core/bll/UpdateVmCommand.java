@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
@@ -85,6 +86,8 @@ import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
+import org.ovirt.engine.core.common.vdscommands.LeaseVDSParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -295,8 +298,30 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return true;
         }
 
-        if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId())) {
-            return false;
+        if (getVm().isNotRunning()) {
+            if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId())) {
+                return false;
+            }
+        }
+        else {
+            if (oldVm.getLeaseStorageDomainId() == null) {
+                VmLeaseParameters params = new VmLeaseParameters(getStoragePoolId(),
+                        newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId());
+                params.setVdsId(getVm().getRunOnVds());
+                params.setHotPlugLease(true);
+                return runInternalAction(ActionType.AddVmLease, params).getSucceeded();
+            }
+            boolean hotUnplugSucceeded = false;
+            try {
+                hotUnplugSucceeded = runVdsCommand(VDSCommandType.HotUnplugLease,
+                        new LeaseVDSParameters(getVm().getRunOnVds(), oldVm.getId(), oldVm.getLeaseStorageDomainId())).getSucceeded();
+            } catch (EngineException e) {
+                log.error("Failure in hot unplugging a lease to VM {}, message: {}",
+                        oldVm.getId(), e.getMessage());
+            }
+            if (!hotUnplugSucceeded) {
+                auditLog(this, AuditLogType.HOT_UNPLUG_LEASE_FAILED);
+            }
         }
 
         // best effort to remove the lease from the previous storage domain
@@ -1006,8 +1031,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (shouldAddLease(getParameters().getVmStaticData()) && !canAddLease()) {
-            return false;
+        if (shouldAddLease(getParameters().getVmStaticData())) {
+            if (!canAddLease()) {
+                return false;
+            }
+            if (!getVm().isDown() && getParameters().getVmStaticData().getLeaseStorageDomainId() != null
+                    && getVm().getLeaseStorageDomainId() != null) {
+                return failValidation(EngineMessage.ACTION_TYPE_FAILED_HOT_SWAPPING_VM_LEASES_NOT_SUPPORTED);
+            }
         }
 
         return true;
