@@ -371,7 +371,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         }
 
         // Update header cell visibility
-        TableCellElement headerCell = getHeaderCell(getElement().<TableElement> cast(), getColumnIndex(column));
+        TableCellElement headerCell = getHeaderCell(getElement().cast(), getColumnIndex(column));
         if (headerCell != null) {
             headerCell.getStyle().setVisibility(columnVisible ? Visibility.VISIBLE : Visibility.HIDDEN);
         }
