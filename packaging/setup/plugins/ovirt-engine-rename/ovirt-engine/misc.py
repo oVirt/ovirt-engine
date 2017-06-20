@@ -27,6 +27,7 @@ from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 from ovirt_setup_lib import hostname as osetuphostname
 
@@ -61,6 +62,9 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.CoreEnv.ACTION
         ] = osetupcons.Const.ACTION_RENAME
+        self.environment[
+            oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED
+        ] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,

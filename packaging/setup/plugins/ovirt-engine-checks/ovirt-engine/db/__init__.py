@@ -21,13 +21,11 @@
 
 from otopi import util
 
-from . import engine
 from . import versions
 
 
 @util.export
 def createPlugins(context):
-    engine.Plugin(context=context)
     versions.Plugin(context=context)
 
 

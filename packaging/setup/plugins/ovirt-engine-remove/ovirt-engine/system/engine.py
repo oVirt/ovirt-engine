@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2015 Red Hat, Inc.
+# Copyright (C) 2013-2017 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 def _(m):
@@ -74,6 +75,11 @@ class Plugin(plugin.PluginBase):
             self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE] = True
             self.environment[
                 oenginecons.RemoveEnv.REMOVE_ENGINE_DATABASE
+            ] = True
+
+        if self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]:
+            self.environment[
+                oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED
             ] = True
 
     @plugin.event(

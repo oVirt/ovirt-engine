@@ -27,6 +27,7 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 def _(m):
@@ -62,6 +63,9 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.CoreEnv.ACTION
         ] = osetupcons.Const.ACTION_HEALTHCHECK
+        self.environment[
+            oengcommcons.ConfigEnv.ENGINE_SERVICE_STOP_NEEDED
+        ] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
