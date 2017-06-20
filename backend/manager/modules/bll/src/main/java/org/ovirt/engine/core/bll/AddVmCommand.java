@@ -1193,7 +1193,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             vmInit.setPasswordAlreadyStored(false);
             vmInit.setRootPassword(templateVmInit.getRootPassword());
         }
-        vmHandler.addVmInitToDB(getParameters().getVmStaticData());
+        vmHandler.addVmInitToDB(vmInit);
     }
 
     private void addVmStatic() {

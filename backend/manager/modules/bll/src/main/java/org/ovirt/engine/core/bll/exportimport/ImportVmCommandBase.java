@@ -424,7 +424,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         try {
             addVmToDb();
             processImages();
-            vmHandler.addVmInitToDB(getVm().getStaticData());
+            vmHandler.addVmInitToDB(getVm().getStaticData().getVmInit());
             discardHelper.logIfDisksWithIllegalPassDiscardExist(getVmId());
         } catch (RuntimeException e) {
             macPool.freeMacs(macsAdded);

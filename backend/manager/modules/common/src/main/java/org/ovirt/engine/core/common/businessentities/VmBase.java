@@ -1331,6 +1331,9 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     }
 
     public VmInit getVmInit() {
+        if (vmInit != null) {
+            vmInit.setId(id);
+        }
         return vmInit;
     }
 

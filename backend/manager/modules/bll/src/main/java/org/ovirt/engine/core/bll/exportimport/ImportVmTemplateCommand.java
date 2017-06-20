@@ -383,7 +383,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             updateOriginalTemplateNameOnDerivedVms();
             addVmInterfaces();
             getCompensationContext().stateChanged();
-            vmHandler.addVmInitToDB(getVmTemplate());
+            vmHandler.addVmInitToDB(getVmTemplate().getVmInit());
             return null;
         });
 

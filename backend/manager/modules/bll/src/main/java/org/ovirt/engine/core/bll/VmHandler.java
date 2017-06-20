@@ -433,29 +433,28 @@ public class VmHandler implements BackendService {
         }
     }
 
-    public void addVmInitToDB(VmBase vm) {
-        if (vm.getVmInit() != null) {
-            vm.getVmInit().setId(vm.getId());
-            VmInit oldVmInit = vmInitDao.get(vm.getId());
+    public void addVmInitToDB(VmInit vmInit) {
+        if (vmInit != null) {
+            VmInit oldVmInit = vmInitDao.get(vmInit.getId());
             if (oldVmInit == null) {
-                vmInitDao.save(vm.getVmInit());
+                vmInitDao.save(vmInit);
             } else {
-                if (vm.getVmInit().isPasswordAlreadyStored()) {
+                if (vmInit.isPasswordAlreadyStored()) {
                     // since we are not always returning the password in
                     // updateVmInitFromDB()
                     // method (we don't want to display it in the UI/API) we
                     // don't want to override
                     // the password if the flag is on
-                    vm.getVmInit().setRootPassword(oldVmInit.getRootPassword());
+                    vmInit.setRootPassword(oldVmInit.getRootPassword());
                 }
-                vmInitDao.update(vm.getVmInit());
+                vmInitDao.update(vmInit);
             }
         }
     }
 
     public void updateVmInitToDB(VmBase vm) {
         if (vm.getVmInit() != null) {
-            addVmInitToDB(vm);
+            addVmInitToDB(vm.getVmInit());
         } else {
             removeVmInitFromDB(vm);
         }

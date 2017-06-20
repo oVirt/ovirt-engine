@@ -924,7 +924,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Load Vm Init from DB and set it to the template
         vmHandler.updateVmInitFromDB(getParameters().getMasterVm(), false);
         getVmTemplate().setVmInit(getParameters().getMasterVm().getVmInit());
-        vmHandler.addVmInitToDB(getVmTemplate());
+        vmHandler.addVmInitToDB(getVmTemplate().getVmInit());
     }
 
     private void updateVmIcons() {
