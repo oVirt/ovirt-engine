@@ -11,6 +11,13 @@ public interface DiskLunMapDao extends GenericDao<DiskLunMap, DiskLunMapId> {
     DiskLunMap getDiskIdByLunId(String lunId);
 
     /**
+     * Returns the {@link DiskLunMap} associated with the given {@code diskId}.
+     * @param diskId the DiskLunMap's disk ID.
+     * @return the {@link DiskLunMap} associated with the given {@code diskId}.
+     */
+    DiskLunMap getDiskLunMapByDiskId(Guid diskId);
+
+    /**
      * Returns a list of {@link DiskLunMap} objects, one per each direct lun that is
      * attached to at least one vm in the storage pool noted by {@code storagePoolId}.
      * @param storagePoolId the storage pool id.

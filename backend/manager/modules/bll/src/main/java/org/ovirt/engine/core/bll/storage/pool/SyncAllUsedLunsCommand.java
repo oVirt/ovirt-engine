@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.SyncAttachedDirectLunsParameters;
+import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
@@ -22,7 +22,7 @@ public class SyncAllUsedLunsCommand<T extends SyncLunsParameters> extends Abstra
     protected void executeCommand() {
         List<LUNs> deviceList = getDeviceList();
         syncStorageDomainsLuns(deviceList);
-        syncAttachedDirectLuns(deviceList);
+        syncDirectLunsAttachedToVmsInPool(deviceList);
 
         setSucceeded(true);
     }
@@ -32,10 +32,9 @@ public class SyncAllUsedLunsCommand<T extends SyncLunsParameters> extends Abstra
         runInternalAction(ActionType.SyncStorageDomainsLuns, parameters);
     }
 
-    private void syncAttachedDirectLuns(List<LUNs> deviceList) {
-        SyncAttachedDirectLunsParameters parameters = new SyncAttachedDirectLunsParameters(
-                getParameters().getStoragePoolId());
+    private void syncDirectLunsAttachedToVmsInPool(List<LUNs> deviceList) {
+        SyncDirectLunsParameters parameters = new SyncDirectLunsParameters(getParameters().getStoragePoolId());
         parameters.setDeviceList(deviceList);
-        runInternalAction(ActionType.SyncAttachedDirectLuns, parameters);
+        runInternalAction(ActionType.SyncDirectLuns, parameters);
     }
 }

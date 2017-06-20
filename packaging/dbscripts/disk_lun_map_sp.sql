@@ -69,6 +69,17 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetDiskLunMapByDiskId (v_disk_id UUID)
+RETURNS SETOF disk_lun_map STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
+
+    SELECT *
+    FROM disk_lun_map
+    WHERE disk_id = v_disk_id;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetDiskLunMapsForVmsInPool (v_storage_pool_id UUID)
 RETURNS SETOF disk_lun_map STABLE AS $PROCEDURE$
 BEGIN

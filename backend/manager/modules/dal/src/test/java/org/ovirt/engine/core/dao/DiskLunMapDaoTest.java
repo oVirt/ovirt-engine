@@ -66,6 +66,12 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
     }
 
     @Test
+    public void testGetDiskLunMapByDiskId() {
+        assertEquals(dao.getDiskLunMapByDiskId(EXISTING_DISK_LUN_MAP_ID.getDiskId()),
+                new DiskLunMap(EXISTING_DISK_LUN_MAP_ID.getDiskId(), EXISTING_DISK_LUN_MAP_ID.getLunId()));
+    }
+
+    @Test
     public void getDiskLunMapForVmsInPool() {
         List<DiskLunMap> diskLunMapsForVmsInPool = dao.getDiskLunMapsForVmsInPool(FixturesTool.DATA_CENTER);
         assertTrue(isEqualCollection(

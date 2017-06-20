@@ -56,6 +56,14 @@ public class DiskLunMapDaoImpl extends DefaultGenericDao<DiskLunMap, DiskLunMapI
     }
 
     @Override
+    public DiskLunMap getDiskLunMapByDiskId(Guid diskId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_id", diskId);
+
+        return getCallsHandler().executeRead("GetDiskLunMapByDiskId", createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
     public List<DiskLunMap> getDiskLunMapsForVmsInPool(Guid storagePoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_id", storagePoolId);
