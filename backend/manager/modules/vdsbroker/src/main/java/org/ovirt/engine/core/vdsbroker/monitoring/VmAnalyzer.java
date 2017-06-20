@@ -903,6 +903,9 @@ public class VmAnalyzer {
                 continue;
             }
 
+            // VDSM is going to stop reporting the speed, so we override it with the value from the database
+            // TODO: the speed should not be part of the statistics at all, needs to move it elsewhere
+            ifStats.setSpeed(vmIface.getSpeed());
             // RX rate and TX rate are reported by VDSM in % (minimum value
             // 0, maximum value 100)
             // Rx drop and TX drop are reported in packet numbers

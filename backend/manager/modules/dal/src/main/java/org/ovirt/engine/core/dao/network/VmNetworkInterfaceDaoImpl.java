@@ -126,6 +126,7 @@ public class VmNetworkInterfaceDaoImpl extends DefaultReadDao<VmNetworkInterface
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setVmId(getGuid(rs, "vm_guid"));
             entity.setMacAddress(rs.getString("mac_addr"));
+            entity.setSpeed(rs.getInt("speed"));
             entity.setStatistics(VmNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
             return entity;
         }
