@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.PopupView;
 import com.gwtplatform.mvp.client.PresenterWidget;
 
@@ -36,6 +37,11 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
          * Used to handle native key press events that occur within pop-ups.
          */
         void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler);
+
+        /**
+         * @return The handler used to re-position the dialog on Window resize.
+         */
+        HandlerRegistration getRepositionOnWindowResizeHandler();
 
     }
 
@@ -70,6 +76,8 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
                 getView().hide();
             }
         }));
+
+        registerHandler(getView().getRepositionOnWindowResizeHandler());
     }
 
     @Override

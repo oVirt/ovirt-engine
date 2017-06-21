@@ -4,6 +4,8 @@ import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.gwtplatform.mvp.client.PopupViewImpl;
@@ -31,9 +33,10 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
     }
 
     /**
-     * Return false to work around GWT-P memory leak. The resize handler implementation is broken,
-     * so turn it off
+     * TODO-GWT return false to work around GWTP memory leak
+     * The resize handler implementation is broken, so turn it off.
      * See: https://github.com/ArcBees/GWTP/issues/823
+     * Once fixed, remove {@link #getRepositionOnWindowResizeHandler} workaround.
      */
     @Override
     protected boolean repositionOnWindowResize() {
@@ -60,6 +63,15 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
     @Override
     public T asWidget() {
         return (T) super.asWidget();
+    }
+
+    @Override
+    public HandlerRegistration getRepositionOnWindowResizeHandler() {
+        return Window.addResizeHandler(event -> {
+            if (asPopupPanel().isShowing()) {
+                showAndReposition();
+            }
+        });
     }
 
 }
