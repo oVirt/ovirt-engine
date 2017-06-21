@@ -482,6 +482,8 @@ The user portal interface to %{ovirt_product_name_short}
 Summary:	Web Admin Portal of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
+License:	ASL 2.0 and GPLv2+ with exceptions
+
 
 %description webadmin-portal
 The web administration interface to %{ovirt_product_name_short}
@@ -1077,6 +1079,7 @@ fi
 
 %files webadmin-portal
 %license LICENSE
+%license frontend/webadmin/modules/gwt-extension/src/main/java/org/ovirt/engine/ui/uioverrides/java/util/LICENSE
 %{engine_ear}/webadmin.war
 %{engine_data}/gwt-symbols/webadmin/
 
