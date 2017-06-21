@@ -196,7 +196,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
 
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!defaultProfile.getName().getEntity().equals(getName().getEntity())) {
+                String defaultProfileName = defaultProfile.getName().getEntity();
+                if ((defaultProfileName != null) && (!defaultProfileName.equals(getName().getEntity()))) {
                     getName().getEntityChangedEvent().removeListener(networkNameListener);
                     defaultProfile.getName().getEntityChangedEvent().removeListener(this);
                 }
