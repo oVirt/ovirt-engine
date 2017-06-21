@@ -397,7 +397,7 @@ public class BackendVmResource
         if (action.isSetVm()) {
             Vm vm = action.getVm();
             actionType = ActionType.RunVmOnce;
-            params = createRunVmOnceParams(vm);
+            params = createRunVmOnceParams(vm, action.isSetVolatile() && action.isVolatile());
         } else {
             actionType = ActionType.RunVm;
             params = new RunVmParams(guid);
@@ -425,7 +425,7 @@ public class BackendVmResource
         return doAction(actionType, params, action);
     }
 
-    private RunVmOnceParams createRunVmOnceParams(Vm vm) {
+    private RunVmOnceParams createRunVmOnceParams(Vm vm, boolean volatileRun) {
         VM entity = getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true);
         RunVmOnceParams params = map(vm, map(map(entity, new Vm()),
                 new RunVmOnceParams(guid)));
@@ -442,6 +442,7 @@ public class BackendVmResource
             }
             params.setVmInit(InitializationMapper.map(vm.getInitialization(), entity.getVmInit()));
         }
+        params.setVolatileRun(volatileRun);
 
         return params;
     }
