@@ -491,6 +491,18 @@ public abstract class RunOnceModel extends Model {
         this.isAutoAssign = value;
     }
 
+    // Botton section
+
+    private EntityModel<Boolean> volatileRun;
+
+    public EntityModel<Boolean> getVolatileRun() {
+        return volatileRun;
+    }
+
+    public void setVolatileRun(EntityModel<Boolean> volatileRun) {
+        this.volatileRun = volatileRun;
+    }
+
     // The "sysprep" option was moved from a standalone check box to a
     // pseudo floppy disk image. In order not to change the back-end
     // interface, the Reinitialize variable was changed to a read-only
@@ -634,8 +646,14 @@ public abstract class RunOnceModel extends Model {
         setIsLinuxOS(false);
         setIsWindowsOS(false);
 
-        runOnceCommand = UICommand.createDefaultOkUiCommand(RunOnceModel.RUN_ONCE_COMMAND, this);
+        setVolatileRun(new EntityModel<>(false));
+        getVolatileRun().setIsChangeable(AsyncDataProvider.getInstance().isDestroyRebootSupported(vm.getCompatibilityVersion()));
+        if (!getVolatileRun().getIsChangable()) {
+            getVolatileRun().setChangeProhibitionReason(
+                    ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(vm.getCompatibilityVersion().toString()));
+        }
 
+        runOnceCommand = UICommand.createDefaultOkUiCommand(RUN_ONCE_COMMAND, this);
         cancelCommand = UICommand.createCancelUiCommand(Model.CANCEL_COMMAND, this);
 
         getCommands().addAll(Arrays.asList(runOnceCommand, cancelCommand));
@@ -801,6 +819,8 @@ public abstract class RunOnceModel extends Model {
         params.setSpiceFileTransferEnabled(getSpiceFileTransferEnabled().getEntity());
 
         params.setSpiceCopyPasteEnabled(getSpiceCopyPasteEnabled().getEntity());
+
+        params.setVolatileRun(getVolatileRun().getEntity());
 
         return params;
     }

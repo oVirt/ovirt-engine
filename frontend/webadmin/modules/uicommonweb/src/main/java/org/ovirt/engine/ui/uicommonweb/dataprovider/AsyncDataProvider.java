@@ -2135,6 +2135,10 @@ public class AsyncDataProvider {
                 QuotaEnforcementTypeEnum.HARD_ENFORCEMENT }));
     }
 
+    public boolean isDestroyRebootSupported(Version compatibilityVersion) {
+        return (Boolean) getConfigValuePreConverted(ConfigurationValues.DestroyOnRebootSupported, compatibilityVersion.getValue());
+    }
+
     private static class TemplateConverter implements Converter<List<VmTemplate>, List<VmTemplate>> {
 
         @Override

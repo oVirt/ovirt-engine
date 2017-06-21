@@ -13,16 +13,19 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -36,6 +39,7 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiFactory;
@@ -47,7 +51,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceModel> {
 
@@ -55,13 +58,20 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
     private static final String CONTENT = "content";  //$NON-NLS-1$
 
-    interface ViewUiBinder extends UiBinder<ScrollPanel, VmRunOncePopupWidget> {
+    interface ViewUiBinder extends UiBinder<FlowPanel, VmRunOncePopupWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     interface ViewIdHandler extends ElementIdHandler<VmRunOncePopupWidget> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    interface Style extends CssResource {
+        String widgetStyle();
+    }
+
+    @UiField
+    Style style;
 
     @UiField
     @WithElementId
@@ -303,6 +313,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Ignore
     ButtonBase linuxBootOptionsRefreshButton;
 
+    @Path("volatileRun.entity")
+    @WithElementId("volatileRun")
+    public EntityModelCheckBoxOnlyEditor volatileRunEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    public EntityModelWidgetWithInfo volatileRunEditorWithInfo;
+
     private RunOnceModel runOnceModel;
 
     private BootSequenceModel bootSequenceModel;
@@ -364,6 +382,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         cloudInitEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        volatileRunEditor = new EntityModelCheckBoxOnlyEditor();
+        volatileRunEditorWithInfo = new EntityModelWidgetWithInfo(new EnableableFormLabel(constants.volatileRunOnce()), volatileRunEditor);
+        volatileRunEditorWithInfo.setExplanation(templates.italicText(constants.volatileRunInfo()));
     }
 
     void initListBoxEditors() {
@@ -444,6 +466,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     void addStyles() {
+        addStyleName(style.widgetStyle());
         linuxBootOptionsPanel.setVisible(false);
         initialRunPanel.setVisible(false);
         systemPanel.setVisible(true);

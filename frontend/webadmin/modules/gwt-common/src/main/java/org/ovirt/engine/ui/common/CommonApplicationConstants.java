@@ -1709,4 +1709,7 @@ public interface CommonApplicationConstants extends Constants {
 
     String kvmUriInfo();
 
+    String volatileRunOnce();
+
+    String volatileRunInfo();
 }
