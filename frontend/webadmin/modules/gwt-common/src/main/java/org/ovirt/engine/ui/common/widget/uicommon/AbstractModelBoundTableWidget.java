@@ -112,13 +112,12 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     }
 
     private Resources getTableResources() {
-        return useMainTableResources ? GWT.<Resources> create(MainTableResources.class)
-                : GWT.<Resources> create(SubTableResources.class);
+        return useMainTableResources ? GWT.create(MainTableResources.class) : GWT.create(SubTableResources.class);
     }
 
     private Resources getTableHeaderlessResources() {
-        return useMainTableResources ? GWT.<Resources> create(MainTableHeaderlessResources.class)
-                : GWT.<Resources> create(SubTableHeaderlessResources.class);
+        return useMainTableResources ? GWT.create(MainTableHeaderlessResources.class)
+                : GWT.create(SubTableHeaderlessResources.class);
     }
 
     public M getModel() {
