@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
@@ -17,9 +16,6 @@ import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvideCollectionChangedEvent;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
-
-import com.google.gwt.view.client.SelectionModel;
-import com.google.gwt.view.client.SingleSelectionModel;
 
 public class ListModel<T> extends Model {
 
@@ -148,13 +144,7 @@ public class ListModel<T> extends Model {
         setSelectedItemChangedEvent(new Event<>(selectedItemChangedEventDefinition));
         setSelectedItemsChangedEvent(new Event<>(selectedItemsChangedEventDefinition));
         setItemsChangedEvent(new Event<>(itemsChangedEventDefinition));
-        if (isSingleSelectionOnly()) {
-            singleSelectionModel = new SingleSelectionModel<>(new QueryableEntityKeyProvider<>());
-            multiSelectionModel = null;
-        } else {
-            multiSelectionModel = new OrderedMultiSelectionModel<>(new QueryableEntityKeyProvider<>());
-            singleSelectionModel = null;
-        }
+        this.selectionModel = new OvirtSelectionModel<>(isSingleSelectionOnly());
     }
 
     protected void onSelectedItemChanging(T newValue, T oldValue) {
@@ -341,32 +331,15 @@ public class ListModel<T> extends Model {
         super.cleanup();
     }
 
-    private final SingleSelectionModel<T> singleSelectionModel;
-    private final OrderedMultiSelectionModel<T> multiSelectionModel;
-
-    public boolean isSingleSelectionOnly() {
+    protected boolean isSingleSelectionOnly() {
         // Most standard list models will have a single selection.
         return true;
     }
 
-    public SelectionModel<T> getSelectionModel() {
-        if (isSingleSelectionOnly()) {
-            return singleSelectionModel;
-        } else {
-            return multiSelectionModel;
-        }
+    private final OvirtSelectionModel<T> selectionModel;
+
+    public OvirtSelectionModel<T> getSelectionModel() {
+        return selectionModel;
     }
 
-    public List<T> getSelectedObjects() {
-        if (isSingleSelectionOnly()) {
-            T selectedItem = singleSelectionModel.getSelectedObject();
-            if (selectedItem == null) {
-                return Collections.EMPTY_LIST;
-            } else {
-                return Collections.singletonList(selectedItem);
-            }
-        } else {
-            return multiSelectionModel.getSelectedList();
-        }
-    }
 }

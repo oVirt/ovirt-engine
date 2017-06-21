@@ -34,7 +34,7 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
 
     @Override
     public List<T> getSelectedItems() {
-        return getDataProvider().getModel().getSelectedObjects();
+        return getDataProvider().getModel().getSelectionModel().getSelectedObjects();
     }
 
     @Override

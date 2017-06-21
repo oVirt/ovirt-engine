@@ -74,7 +74,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
     public T flush() {
         getQos().setName(getName().getEntity());
         getQos().setDescription(getDescription().getEntity());
-        List<StoragePool> selectedDataCenters = getDataCenters().getSelectedObjects();
+        List<StoragePool> selectedDataCenters = getDataCenters().getSelectionModel().getSelectedObjects();
         if (!selectedDataCenters.isEmpty()) {
             getQos().setStoragePoolId(selectedDataCenters.get(0).getId());
         }

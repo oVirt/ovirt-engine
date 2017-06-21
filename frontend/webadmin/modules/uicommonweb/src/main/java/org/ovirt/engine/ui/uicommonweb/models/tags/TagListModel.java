@@ -55,7 +55,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     }
 
     @Override
-    public boolean isSingleSelectionOnly() {
+    protected boolean isSingleSelectionOnly() {
         return true;
     }
 

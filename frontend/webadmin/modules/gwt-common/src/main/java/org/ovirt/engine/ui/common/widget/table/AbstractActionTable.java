@@ -55,7 +55,6 @@ import com.google.gwt.view.client.SelectionModel;
  * <p>
  * Subclasses are free to style the UI, given that they declare:
  * <ul>
- * <li>{@link #actionPanel} widget into which action button widgets will be rendered
  * <li>{@link #prevPageButton} widget representing the "previous page" button
  * <li>{@link #nextPageButton} widget representing the "next page" button
  * <li>{@link #tableContainer} widget for displaying the actual table
@@ -126,7 +125,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, ClientStorage clientStorage) {
         super(dataProvider);
-        this.selectionModel = (OrderedMultiSelectionModel<T>) dataProvider.getModel().getSelectionModel();
+        this.selectionModel = dataProvider.getModel().getSelectionModel().asMultiSelectionModel();
         this.table = new ActionCellTable<T>(dataProvider, resources) {
 
             @Override

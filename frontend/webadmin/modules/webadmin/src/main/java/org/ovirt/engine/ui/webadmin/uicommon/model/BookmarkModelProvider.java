@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.Bookma
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -41,15 +40,12 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         // Clear tag selection when a tag is saved/edited/deleted
         model.getItemSavedEvent().addListener((ev, sender, args) -> clearSelection());
         getModel().getSelectionModel().addSelectionChangeHandler(event -> {
-            Bookmark bookmark = getModel().getSelectedObjects().isEmpty() ? null
-                    : (Bookmark) getModel().getSelectedObjects().get(0);
-            BookmarkModelProvider.this.getModel().setSelectedItem(bookmark);
+            BookmarkModelProvider.this.getModel().setSelectedItem(getModel().getSelectionModel().getFirstSelectedObject());
         });
-
     }
 
     void clearSelection() {
-        ((SingleSelectionModel<Bookmark>) getModel().getSelectionModel()).clear();
+        getModel().getSelectionModel().clear();
     }
 
     @Override

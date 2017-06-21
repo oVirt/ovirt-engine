@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -19,7 +18,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.gwtplatform.dispatch.annotation.GenEvent;
@@ -72,9 +70,7 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
 
         });
         getModel().getSelectionModel().addSelectionChangeHandler(event -> {
-            TagModelProvider.this.setSelectedItems(
-                    Collections.singletonList(
-                            ((SingleSelectionModel<TagModel>) getModel().getSelectionModel()).getSelectedObject()));
+            TagModelProvider.this.setSelectedItems(getModel().getSelectionModel().getSelectedObjects());
         });
     }
 

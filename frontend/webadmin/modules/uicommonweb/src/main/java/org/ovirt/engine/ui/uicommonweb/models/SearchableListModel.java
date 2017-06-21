@@ -930,7 +930,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return getEditCommand();
     }
 
-    public boolean isSingleSelectionOnly() {
+    @Override
+    protected boolean isSingleSelectionOnly() {
         // Main list models (ones with details) will have multi-selection models.
         return false;
     }

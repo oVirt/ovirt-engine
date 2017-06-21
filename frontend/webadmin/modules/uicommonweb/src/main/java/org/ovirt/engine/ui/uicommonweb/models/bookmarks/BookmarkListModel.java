@@ -128,7 +128,7 @@ public class BookmarkListModel extends SearchableListModel {
     }
 
     @Override
-    public boolean isSingleSelectionOnly() {
+    protected boolean isSingleSelectionOnly() {
         return true;
     }
 

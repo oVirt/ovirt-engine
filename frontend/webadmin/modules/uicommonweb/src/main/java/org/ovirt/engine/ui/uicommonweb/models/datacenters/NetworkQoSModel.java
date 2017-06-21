@@ -75,7 +75,7 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
     public NetworkQoS flush() {
         super.flush();
         networkQoS.setName(getName().getEntity());
-        List<StoragePool> selectedDataCenters = getDataCenters().getSelectedObjects();
+        List<StoragePool> selectedDataCenters = getDataCenters().getSelectionModel().getSelectedObjects();
         if (!selectedDataCenters.isEmpty()) {
             networkQoS.setStoragePoolId(selectedDataCenters.get(0).getId());
         }
