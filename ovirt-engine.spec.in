@@ -332,6 +332,7 @@ Conflicts:	python-daemon = 2.1.0
 %package backend
 Summary:	Engine core of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
+License:	ASL 2.0 and LGPLv3 and GPLv3
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-extensions-api-impl >= %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
@@ -930,6 +931,8 @@ fi
 
 %files backend -f .mfiles-backend
 %license LICENSE
+%license backend/manager/modules/services/src/main/webapp/gpl-3.0.txt
+%license backend/manager/modules/services/src/main/webapp/lgpl-3.0.txt
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
