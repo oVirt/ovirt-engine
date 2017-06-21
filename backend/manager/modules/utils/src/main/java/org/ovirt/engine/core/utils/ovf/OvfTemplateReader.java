@@ -37,8 +37,7 @@ public class OvfTemplateReader extends OvfReader {
             int osId = osRepository.getOsIdByUniqueName(node.innerText);
             _vmTemplate.setOsId(osId);
             _vmTemplate.setClusterArch(osRepository.getArchitectureFromOS(osId));
-        }
-        else {
+        } else {
             _vmTemplate.setClusterArch(ArchitectureType.undefined);
         }
     }
@@ -49,7 +48,8 @@ public class OvfTemplateReader extends OvfReader {
 
         DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
         image.setId(OvfParser.getImageGroupIdFromImageFile(selectSingleNode(node,
-                "rasd:HostResource", _xmlNS).innerText));
+                "rasd:HostResource",
+                _xmlNS).innerText));
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText)) {
             image.setParentId(new Guid(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText));
         }
@@ -58,7 +58,8 @@ public class OvfTemplateReader extends OvfReader {
         }
         image.setAppList(selectSingleNode(node, "rasd:ApplicationList", _xmlNS).innerText);
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StorageId", _xmlNS).innerText)) {
-            image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(selectSingleNode(node, "rasd:StorageId",
+            image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(selectSingleNode(node,
+                    "rasd:StorageId",
                     _xmlNS).innerText))));
         }
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
@@ -80,55 +81,36 @@ public class OvfTemplateReader extends OvfReader {
     @Override
     protected void readGeneralData(XmlNode content) {
         // General Vm
-        XmlNode node = selectSingleNode(content, OvfProperties.NAME);
-        if (node != null) {
-            _vmTemplate.setName(node.innerText);
-            name = _vmTemplate.getName();
-        }
-        node = selectSingleNode(content, OvfProperties.TEMPLATE_ID);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                _vmTemplate.setId(new Guid(node.innerText));
-            }
-        }
-
-        node = selectSingleNode(content, OvfProperties.IS_DISABLED);
-        if (node != null) {
-            _vmTemplate.setDisabled(Boolean.parseBoolean(node.innerText));
-        }
-
-        node = selectSingleNode(content, OvfProperties.TRUSTED_SERVICE);
-        if (node != null) {
-            _vmTemplate.setTrustedService(Boolean.parseBoolean(node.innerText));
-        }
-
-        node = selectSingleNode(content, OvfProperties.TEMPLATE_TYPE);
-        if (node != null) {
-            _vmTemplate.setTemplateType(VmEntityType.valueOf(node.innerText));
-        }
-
-        node = selectSingleNode(content, OvfProperties.BASE_TEMPLATE_ID);
-        if (node != null) {
-            _vmTemplate.setBaseTemplateId(Guid.createGuidFromString(node.innerText));
-        } else {
-            // in case base template is missing, we assume it is a base template
-            _vmTemplate.setBaseTemplateId(_vmTemplate.getId());
-        }
-
-        node = selectSingleNode(content, OvfProperties.TEMPLATE_VERSION_NUMBER);
-        if (node != null) {
-            _vmTemplate.setTemplateVersionNumber(Integer.parseInt(node.innerText));
-        }
-
-        node = selectSingleNode(content, OvfProperties.TEMPLATE_VERSION_NAME);
-        if (node != null) {
-            _vmTemplate.setTemplateVersionName(node.innerText);
-        }
-
-        node = selectSingleNode(content, "AutoStartup");
-        if (node != null) {
-            _vmTemplate.setAutoStartup(Boolean.parseBoolean(node.innerText));
-        }
+        consumeReadProperty(content, OvfProperties.NAME, val -> {
+            _vmTemplate.setName(val);
+            name = val;
+        });
+        consumeReadProperty(content, OvfProperties.TEMPLATE_ID, val -> _vmTemplate.setId(new Guid(val)));
+        consumeReadProperty(content,
+                OvfProperties.IS_DISABLED,
+                val -> _vmTemplate.setDisabled(Boolean.parseBoolean(val)));
+        consumeReadProperty(content,
+                OvfProperties.TRUSTED_SERVICE,
+                val -> _vmTemplate.setTrustedService(Boolean.parseBoolean(val)));
+        consumeReadProperty(content,
+                OvfProperties.TEMPLATE_TYPE,
+                val -> _vmTemplate.setTemplateType(VmEntityType.valueOf(val)));
+        consumeReadProperty(content,
+                OvfProperties.BASE_TEMPLATE_ID,
+                val -> _vmTemplate.setBaseTemplateId(Guid.createGuidFromString(val)),
+                () -> {
+                    // in case base template is missing, we assume it is a base template
+                    _vmTemplate.setBaseTemplateId(_vmTemplate.getId());
+                });
+        consumeReadProperty(content,
+                OvfProperties.TEMPLATE_VERSION_NUMBER,
+                val -> _vmTemplate.setTemplateVersionNumber(Integer.parseInt(val)));
+        consumeReadProperty(content,
+                OvfProperties.TEMPLATE_VERSION_NAME,
+                val -> _vmTemplate.setTemplateVersionName(val));
+        consumeReadProperty(content,
+                OvfProperties.AUTO_STARTUP,
+                val -> _vmTemplate.setAutoStartup(Boolean.parseBoolean(val)));
     }
 
     @Override

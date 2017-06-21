@@ -43,8 +43,7 @@ public class OvfVmReader extends OvfReader {
             int osId = osRepository.getOsIdByUniqueName(node.innerText);
             _vm.getStaticData().setOsId(osId);
             _vm.setClusterArch(osRepository.getArchitectureFromOS(osId));
-        }
-        else {
+        } else {
             _vm.setClusterArch(ArchitectureType.undefined);
         }
     }
@@ -55,7 +54,8 @@ public class OvfVmReader extends OvfReader {
 
         DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
         image.setId(OvfParser.getImageGroupIdFromImageFile(selectSingleNode(node,
-                "rasd:HostResource", _xmlNS).innerText));
+                "rasd:HostResource",
+                _xmlNS).innerText));
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText)) {
             image.setParentId(new Guid(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText));
         }
@@ -95,54 +95,27 @@ public class OvfVmReader extends OvfReader {
     protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
         super.updateSingleNic(node, iface);
         iface.setMacAddress((selectSingleNode(node, "rasd:MACAddress", _xmlNS) != null) ? selectSingleNode(node,
-                "rasd:MACAddress", _xmlNS).innerText : "");
+                "rasd:MACAddress",
+                _xmlNS).innerText : "");
     }
 
     @Override
     protected void readGeneralData(XmlNode content) {
         // General Vm
-        XmlNode node = selectSingleNode(content, OvfProperties.NAME);
-        if (node != null) {
-            _vm.getStaticData().setName(node.innerText);
-            name = _vm.getStaticData().getName();
-        }
-        node = selectSingleNode(content, OvfProperties.TEMPLATE_ID);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                _vm.getStaticData().setVmtGuid(new Guid(node.innerText));
-            }
-        }
-        node = selectSingleNode(content, OvfProperties.TEMPLATE_NAME);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                _vm.setVmtName(node.innerText);
-            }
-        }
-        node = selectSingleNode(content, OvfProperties.INSTANCE_TYPE_ID);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                _vm.setInstanceTypeId(new Guid(node.innerText));
-            }
-        }
-        node = selectSingleNode(content, OvfProperties.IMAGE_TYPE_ID);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                _vm.setImageTypeId(new Guid(node.innerText));
-            }
-        }
-        node = selectSingleNode(content, OvfProperties.IS_INITIALIZED);
-        if (node != null) {
-            _vm.getStaticData().setInitialized(Boolean.parseBoolean(node.innerText));
-        }
-        node = selectSingleNode(content, OvfProperties.QUOTA_ID);
-        if (node != null) {
-            Guid quotaId = new Guid(node.innerText);
-            if (!Guid.Empty.equals(quotaId)) {
-                _vm.getStaticData().setQuotaId(quotaId);
-            }
-        }
-        OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
+        consumeReadProperty(content, OvfProperties.NAME, val -> {
+            _vm.getStaticData().setName(val);
+            name = val;
+        });
+        consumeReadProperty(content, OvfProperties.TEMPLATE_ID, val -> _vm.getStaticData().setVmtGuid(new Guid(val)));
+        consumeReadProperty(content, OvfProperties.TEMPLATE_NAME, val -> _vm.setVmtName(val));
+        consumeReadProperty(content, OvfProperties.INSTANCE_TYPE_ID, val -> _vm.setInstanceTypeId(new Guid(val)));
+        consumeReadProperty(content, OvfProperties.IMAGE_TYPE_ID, val -> _vm.setImageTypeId(new Guid(val)));
+        consumeReadProperty(content,
+                OvfProperties.IS_INITIALIZED,
+                val -> _vm.getStaticData().setInitialized(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, OvfProperties.QUOTA_ID, val -> _vm.getStaticData().setQuotaId(new Guid(val)));
 
+        OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a list of all the aliases of the fields that should be logged in
         // ovd For each one of these fields, the proper value will be read from
         // the ovf and field in vm static
@@ -158,52 +131,40 @@ public class OvfVmReader extends OvfReader {
         // {@link VM#predefinedProperties} and {@link VM#userDefinedProperties}
         // are being set in the above alias handling, we need to update custom properties
         // to keep them consistent
-        _vm.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(_vm.getPredefinedProperties(), _vm.getUserDefinedProperties()));
+        _vm.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(_vm.getPredefinedProperties(),
+                _vm.getUserDefinedProperties()));
 
-        node = selectSingleNode(content, OvfProperties.APPLICATIONS_LIST);
-        if (node != null) {
-            if (StringUtils.isNotEmpty(node.innerText)) {
-                _vm.setAppList(node.innerText);
-            }
-        }
-        // if no app list in VM, get it from one of the leafs
-        else if(_images != null && _images.size() > 0) {
-            int root = getFirstImage(_images, _images.get(0));
-            if (root != -1) {
-                for(int i=0; i<_images.size(); i++) {
-                    int x = getNextImage(_images, _images.get(i));
-                    if (x == -1) {
-                        _vm.setAppList(_images.get(i).getAppList());
+        consumeReadProperty(content, OvfProperties.APPLICATIONS_LIST, val -> _vm.setAppList(val), () -> {
+            // if no app list in VM, get it from one of the leafs
+            if (_images != null && _images.size() > 0) {
+                int root = getFirstImage(_images, _images.get(0));
+                if (root != -1) {
+                    for (int i = 0; i < _images.size(); i++) {
+                        int x = getNextImage(_images, _images.get(i));
+                        if (x == -1) {
+                            _vm.setAppList(_images.get(i).getAppList());
+                        }
                     }
+                } else {
+                    _vm.setAppList(_images.get(0).getAppList());
                 }
-            } else {
-                _vm.setAppList(_images.get(0).getAppList());
             }
-        }
-       node = selectSingleNode(content, OvfProperties.TRUSTED_SERVICE);
-       if (node != null) {
-           _vm.setTrustedService(Boolean.parseBoolean(node.innerText));
-       }
-
-        node = selectSingleNode(content, OvfProperties.ORIGINAL_TEMPLATE_ID);
-        if (node != null) {
-            _vm.getStaticData().setOriginalTemplateGuid(new Guid(node.innerText));
-        }
-
-        node = selectSingleNode(content, OvfProperties.ORIGINAL_TEMPLATE_NAME);
-        if (node != null) {
-            _vm.getStaticData().setOriginalTemplateName(node.innerText);
-        }
-
-        node = selectSingleNode(content, OvfProperties.USE_LATEST_VERSION);
-        if (node != null) {
-            _vm.setUseLatestVersion(Boolean.parseBoolean(node.innerText));
-        }
-
-        node = selectSingleNode(content, OvfProperties.USE_HOST_CPU);
-        if (node != null) {
-            _vm.setUseHostCpuFlags(Boolean.parseBoolean(node.innerText));
-        }
+        });
+        consumeReadProperty(content,
+                OvfProperties.TRUSTED_SERVICE,
+                val -> _vm.setTrustedService(Boolean.parseBoolean(val)));
+        consumeReadProperty(content,
+                OvfProperties.ORIGINAL_TEMPLATE_ID,
+                val -> _vm.getStaticData().setOriginalTemplateGuid(new Guid(val)));
+        consumeReadProperty(content,
+                OvfProperties.ORIGINAL_TEMPLATE_NAME,
+                val -> _vm.getStaticData().setOriginalTemplateName(val));
+        consumeReadProperty(content,
+                OvfProperties.USE_LATEST_VERSION,
+                val -> _vm.setUseLatestVersion(Boolean.parseBoolean(val)));
+        consumeReadProperty(content,
+                OvfProperties.USE_HOST_CPU,
+                val -> _vm.setUseHostCpuFlags(Boolean.parseBoolean(val)));
     }
 
     @Override
@@ -260,7 +221,8 @@ public class OvfVmReader extends OvfReader {
                 snapshot.setMemoryVolume(memory.innerText);
             }
 
-            final Date creationDate = OvfParser.utcDateStringToLocaDate(selectSingleNode(node, "CreationDate", _xmlNS).innerText);
+            final Date creationDate =
+                    OvfParser.utcDateStringToLocaDate(selectSingleNode(node, "CreationDate", _xmlNS).innerText);
             if (creationDate != null) {
                 snapshot.setCreationDate(creationDate);
             }
