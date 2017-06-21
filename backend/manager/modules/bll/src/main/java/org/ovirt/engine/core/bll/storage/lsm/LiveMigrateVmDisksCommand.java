@@ -489,7 +489,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     public void endWithFailure() {
-        setSucceeded(true);
         if (getParameters().getStage() == LiveMigrateStage.CREATE_SNAPSHOT) {
             ImagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(
                     getMovedDiskIds(),
@@ -497,5 +496,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                     ImageStatus.OK,
                     getCompensationContext());
         }
+        setSucceeded(true);
     }
 }
