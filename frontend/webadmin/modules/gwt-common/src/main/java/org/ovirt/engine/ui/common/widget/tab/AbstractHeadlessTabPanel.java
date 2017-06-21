@@ -28,6 +28,7 @@ public abstract class AbstractHeadlessTabPanel extends AbstractTabPanel {
         if (tabData instanceof GroupedTabData) {
             menuLayout.addMenuItem((GroupedTabData) tabData);
             newTab.setTargetHistoryToken(historyToken);
+            newTab.setId(TabDefinition.TAB_ID_PREFIX + historyToken);
             newTab.setText(tabData.getLabel());
             addTabDefinition(newTab, menuLayout.getMenuIndex((GroupedTabData) tabData));
         } else {

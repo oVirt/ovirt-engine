@@ -48,7 +48,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         void addTabGroup(String title, int index, HasCssName icon);
 
-        void addTab(String title, int index, String href, String groupTitle, int groupIndex, HasCssName icon);
+        void addTab(String title, int index, String id, String href, String groupTitle, int groupIndex, HasCssName icon);
 
         void removeTab(String title, String href);
 
@@ -183,7 +183,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
     @Override
     public void addTabWidget(TabDefinition tab, int index) {
-        getView().addTab(tab.getText(), index, getHref(tab), tab.getGroupTitle(), tab.getGroupPriority(), tab.getIcon());
+        getView().addTab(tab.getText(), index, tab.getId(), getHref(tab), tab.getGroupTitle(), tab.getGroupPriority(), tab.getIcon());
     }
 
     @Override

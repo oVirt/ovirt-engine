@@ -22,6 +22,7 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     private HasCssName icon;
 
     private String href;
+    private String id;
 
     public AbstractTab(TabData tabData, AbstractTabPanel tabPanel) {
         this.priority = tabData.getPriority();
@@ -76,4 +77,13 @@ public abstract class AbstractTab extends Composite implements TabDefinition {
     public String getTargetHistoryToken() {
         return href;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 }

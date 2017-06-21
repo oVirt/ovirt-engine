@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.common.view.AbstractHeaderView;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 import org.ovirt.engine.ui.common.widget.PatternflyStyles;
 import org.ovirt.engine.ui.common.widget.action.ActionAnchorListItem;
+import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
@@ -39,9 +40,9 @@ import com.google.inject.Inject;
 
 public class HeaderView extends AbstractHeaderView implements HeaderPresenterWidget.ViewDef {
 
-    private static final String GROUP_NAME = "group_name"; // $NON-NLS-1$
-    private static final String SECONDARY_POST_FIX = "-secondary"; // $NON-NLS-1$
-    private static final String ID = "id"; // $NON-NLS-1$
+    private static final String GROUP_NAME = "group_name"; //$NON-NLS-1$
+    private static final String SECONDARY_POST_FIX = "-secondary"; //$NON-NLS-1$
+    private static final String ID = "id"; //$NON-NLS-1$
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -133,12 +134,13 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     public void addTabGroup(String title, int index, HasCssName icon) {
         ListGroupItem group = new ListGroupItem();
         group.addStyleName(PatternflyStyles.SECONDARY_NAV_ITEM);
-        group.getElement().setAttribute(Attributes.DATA_TARGET, "#" // $NON-NLS-1$
-                + title.toLowerCase() + SECONDARY_POST_FIX);
+        String id = title.toLowerCase().replaceAll(" ", "-"); //$NON-NLS-1$ //$NON-NLS-2$
+        group.getElement().setAttribute(Attributes.DATA_TARGET, "#" //$NON-NLS-1$
+                + id + SECONDARY_POST_FIX);
         group.getElement().setAttribute(GROUP_NAME, title);
 
         // Title
-        group.add(createTextAnchor(title, icon));
+        group.add(createTextAnchor(TabDefinition.TAB_ID_PREFIX + id, title, icon));
 
         // Secondary menu
         group.add(createSecondaryMenu(title));
@@ -173,11 +175,11 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         return secondaryContainer;
     }
 
-    private Anchor createTextAnchor(String title) {
-        return createTextAnchor(title, null);
+    private Anchor createTextAnchor(String id, String title) {
+        return createTextAnchor(id, title, null);
     }
 
-    private Anchor createTextAnchor(String title, HasCssName icon) {
+    private Anchor createTextAnchor(String id, String title, HasCssName icon) {
         Anchor titleAnchor = new Anchor();
         if (icon != null) {
             Span iconSpan = new Span();
@@ -193,16 +195,17 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         titleSpan.addStyleName(PatternflyStyles.LIST_GROUP_ITEM_VALUE);
         titleSpan.setText(title);
         titleAnchor.add(titleSpan);
+        titleAnchor.setId(id);
         return titleAnchor;
     }
 
     @Override
-    public void addTab(String title, int index, String href, String groupTitle, int groupIndex, HasCssName icon) {
+    public void addTab(String title, int index, String id, String href, String groupTitle, int groupIndex, HasCssName icon) {
         if (groupTitle == null) {
             ListGroupItem item = new ListGroupItem();
             item.getElement().setAttribute(GROUP_NAME, title);
             // Not part of a group, so it needs an href and title.
-            Anchor titleAnchor = createTextAnchor(title, icon);
+            Anchor titleAnchor = createTextAnchor(id, title, icon);
             titleAnchor.setHref(href);
             item.add(titleAnchor);
 
@@ -217,7 +220,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
                         FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
                         ListGroup listGroup = (ListGroup) groupContainer.getWidget(1);
                         ListGroupItem item = new ListGroupItem();
-                        Anchor itemAnchor = createTextAnchor(title);
+                        Anchor itemAnchor = createTextAnchor(id, title);
                         itemAnchor.setHref(href);
                         item.add(itemAnchor);
                         listGroup.insert(item, Math.min(index, listGroup.getWidgetCount() - 1 >= 0
