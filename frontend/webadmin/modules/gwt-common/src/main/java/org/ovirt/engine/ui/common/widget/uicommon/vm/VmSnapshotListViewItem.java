@@ -61,7 +61,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         super(name, snapshot);
         Container generalInfoContainer = createGeneralItemContainerPanel(snapshot, listModel);
         generalExpand.setDetails(generalInfoContainer);
-        add(generalInfoContainer);
+        listGroupItem.add(generalInfoContainer);
         updateValues(snapshotModel);
     }
 
@@ -93,7 +93,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
                 content = new Row();
                 container.add(content);
             }
-            Column column = new Column(ColumnSize.MD_3);
+            Column column = new Column(calculateColSize(i));
             content.add(column);
             DListElement dl = Document.get().createDLElement();
             dl.addClassName(DL_HORIZONTAL);
@@ -256,43 +256,27 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     }
 
     @Override
-    protected IsWidget createIconPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_LEFT);
+    protected IsWidget createIcon() {
         Span iconSpan = new Span();
         iconSpan.addStyleName(Styles.FONT_AWESOME_BASE);
         iconSpan.addStyleName(IconType.CAMERA.getCssName());
         iconSpan.addStyleName(PatternflyConstants.PF_LIST_VIEW_ICON_SM);
-        panel.add(iconSpan);
-        return panel;
+        iconPanel.add(iconSpan);
+        return iconPanel;
     }
 
     @Override
     protected IsWidget createBodyPanel(String header, Snapshot entity) {
-        FlowPanel bodyPanel = new FlowPanel();
-        bodyPanel.addStyleName(PatternflyConstants.PF_LIST_VIEW_BODY);
-        FlowPanel descriptionPanel = new FlowPanel();
-        descriptionPanel.addStyleName(PatternflyConstants.PF_LIST_VIEW_DESCRIPTION);
-        FlowPanel headerPanel = new FlowPanel();
-        headerPanel.getElement().setInnerHTML(header);
-        headerPanel.addStyleName(Styles.LIST_GROUP_ITEM_HEADING);
-        descriptionPanel.add(headerPanel);
-        FlowPanel statusPanel = new FlowPanel();
-        statusPanel.addStyleName(Styles.LIST_GROUP_ITEM_TEXT);
-        descriptionPanel.add(statusPanel);
-        bodyPanel.add(descriptionPanel);
-        bodyPanel.add(createAdditionalInfoPanel());
+        descriptionHeaderPanel.getElement().setInnerHTML(header);
+        createAdditionalInfoPanel();
         return bodyPanel;
     }
 
-    private IsWidget createAdditionalInfoPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO);
-        panel.add(createGeneralAdditionalInfo());
-        panel.add(createDisksAdditionalInfo());
-        panel.add(createNicsAdditionalInfo());
-        panel.add(createAppsAdditionalInfo());
-        return panel;
+    private void createAdditionalInfoPanel() {
+        additionalInfoPanel.add(createGeneralAdditionalInfo());
+        additionalInfoPanel.add(createDisksAdditionalInfo());
+        additionalInfoPanel.add(createNicsAdditionalInfo());
+        additionalInfoPanel.add(createAppsAdditionalInfo());
     }
 
     private IsWidget createGeneralAdditionalInfo() {
@@ -325,7 +309,8 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     private IsWidget createAppsAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        installedAppsExpand = new ExpandableListViewItem(constants.applicationsLabel(), IconType.NEWSPAPER_O.getCssName());
+        installedAppsExpand = new ExpandableListViewItem(constants.applicationsLabel(),
+                IconType.NEWSPAPER_O.getCssName());
         getClickHandlerRegistrations().add(installedAppsExpand.addClickHandler(this));
         panel.add(installedAppsExpand);
         return panel;
@@ -347,6 +332,11 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         } else {
             addStyleName(PatternflyConstants.PF_LIST_VIEW_EXPAND_ACTIVE);
         }
+    }
+
+    @Override
+    protected void toggleExpanded(boolean expand) {
+        // No-op for now as we don't have an expand all option.
     }
 
     public boolean getGeneralState() {
@@ -388,29 +378,29 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     public void updateValues(SnapshotModel snapshotModel) {
         Container currentDetails = disksExpand.getDetails();
         if (currentDetails != null) {
-            remove(currentDetails);
+            listGroupItem.remove(currentDetails);
         }
         Container disksInfoContainer = createDisksItemContainerPanel(snapshotModel.getDisks());
         disksExpand.setDetails(disksInfoContainer);
         disksExpand.toggleExpanded(disksExpand.isActive());
-        add(disksInfoContainer);
+        listGroupItem.add(disksInfoContainer);
 
         currentDetails = nicsExpand.getDetails();
         if (currentDetails != null) {
-            remove(currentDetails);
+            listGroupItem.remove(currentDetails);
         }
         Container nicsInfoContainer = createNicsItemContainerPanel(snapshotModel.getNics());
         nicsExpand.setDetails(nicsInfoContainer);
         nicsExpand.toggleExpanded(nicsExpand.isActive());
-        add(nicsInfoContainer);
+        listGroupItem.add(nicsInfoContainer);
 
         currentDetails = installedAppsExpand.getDetails();
         if (currentDetails != null) {
-            remove(currentDetails);
+            listGroupItem.remove(currentDetails);
         }
         Container installedAppsInfoContainer = createInstalledAppsItemContainerPanel(snapshotModel.getApps());
         installedAppsExpand.setDetails(installedAppsInfoContainer);
         installedAppsExpand.toggleExpanded(installedAppsExpand.isActive());
-        add(installedAppsInfoContainer);
+        listGroupItem.add(installedAppsInfoContainer);
     }
 }

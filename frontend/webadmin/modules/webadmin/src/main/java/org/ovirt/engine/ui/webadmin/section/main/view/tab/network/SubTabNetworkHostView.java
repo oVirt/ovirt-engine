@@ -220,9 +220,9 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         getTable().ensureColumnVisible(nameColumn, constants.nameHost(), true, "200px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(clusterColumn, constants.clusterHost(), true, "200px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(dcColumn, constants.dcHost(), true, "200px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(hostOutOfSync, constants.hostOutOfSync(), attached, "75px"); //$NON-NLS-1$
-        getTable().ensureColumnVisible(nicColumn, constants.nicNetworkHost(), attached, "100px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(nicStatusColumn, constants.statusNetworkHost(), attached, "175px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(hostOutOfSync, constants.hostOutOfSync(), attached, "95px"); //$NON-NLS-1$
+        getTable().ensureColumnVisible(nicColumn, constants.nicNetworkHost(), attached, "140px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(speedColumn,
                 templates.sub(constants.speedNetworkHost(), constants.mbps()).asString(),
                 attached,

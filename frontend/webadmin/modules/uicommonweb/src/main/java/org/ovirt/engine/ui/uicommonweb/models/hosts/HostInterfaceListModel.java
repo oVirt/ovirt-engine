@@ -408,4 +408,10 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
     protected String getListName() {
         return "HostInterfaceListModel"; //$NON-NLS-1$
     }
+
+    @Override
+    protected boolean isSingleSelectionOnly() {
+        // Single selection model
+        return true;
+    }
 }

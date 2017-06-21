@@ -142,8 +142,8 @@ public class RoleView extends Composite {
         roleTable.addColumn(descColumn, constants.descriptionRole(), "500px"); //$NON-NLS-1$
 
         roleTable.getSelectionModel().addSelectionChangeHandler(event -> {
-            roleModelProvider.setSelectedItems(roleTable.getSelectionModel().getSelectedList());
-            if (roleTable.getSelectionModel().getSelectedList().size() > 0) {
+            roleModelProvider.setSelectedItems(roleTable.getSelectionModel().getSelectedObjects());
+            if (roleTable.getSelectionModel().getSelectedObjects().size() > 0) {
                 setSubTabVisibility(true);
             } else {
                 setSubTabVisibility(false);
@@ -179,7 +179,7 @@ public class RoleView extends Composite {
         permissionTable.addColumn(permissionColumn, constants.objectPermission());
 
         permissionTable.getSelectionModel().addSelectionChangeHandler(event ->
-                permissionModelProvider.setSelectedItems(permissionTable.getSelectionModel().getSelectedList()));
+                permissionModelProvider.setSelectedItems(permissionTable.getSelectionModel().getSelectedObjects()));
 
         permissionTablePanel.add(permissionActionPanel);
         permissionTablePanel.add(permissionTable);

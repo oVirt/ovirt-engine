@@ -173,7 +173,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
      * Returns items currently selected in the table.
      */
     protected List<T> getSelectedItems() {
-        return getTable().getSelectionModel().getSelectedList();
+        return getTable().getSelectionModel().asMultiSelectionModel().getSelectedList();
     }
 
     /**

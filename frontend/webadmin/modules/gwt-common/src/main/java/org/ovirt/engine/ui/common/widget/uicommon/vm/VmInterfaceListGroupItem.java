@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
@@ -21,17 +22,19 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
 
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.IsWidget;
 
 public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkInterface> {
 
+    private static final String COMMA_DELIMITOR = ", "; // $NON-NLS-1$
     private static final String DANGER = "text-danger"; // $NON-NLS-1$
-    private static final String FA_2X = "fa-2x"; // $NON-NLS-1$
     private static final String ROTATE_270 = "fa-rotate-270"; //$NON-NLS-1$
     private static final String DL_HORIZONTAL = "dl-horizontal"; // $NON-NLS-1$
 
@@ -41,18 +44,23 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private ExpandableListViewItem generalExpand;
     private ExpandableListViewItem statisticsExpand;
     private ExpandableListViewItem guestAgentExpand;
+    private final List<VmGuestAgentInterface> allGuestAgentData;
 
     public VmInterfaceListGroupItem(VmNetworkInterface networkInterface, List<VmGuestAgentInterface> allGuestAgentData) {
         super(networkInterface.getName(), networkInterface);
+        this.allGuestAgentData = allGuestAgentData;
+        listGroupItem.addStyleName(PatternflyConstants.PF_LIST_VIEW_TOP_ALIGN);
+        listGroupItem.addStyleName(PatternflyConstants.PF_LIST_VIEW_STACKED);
         Container generalInfoContainer = createGeneralItemContainerPanel(networkInterface);
         generalExpand.setDetails(generalInfoContainer);
-        add(generalInfoContainer);
+        listGroupItem.add(generalInfoContainer);
         Container statisticsContainer = createStatisticsItemContainerPanel(networkInterface);
         statisticsExpand.setDetails(statisticsContainer);
-        add(statisticsContainer);
+        listGroupItem.add(statisticsContainer);
         Container guestAgentContainer = createGuestAgentContainerPanel(networkInterface, allGuestAgentData);
         guestAgentExpand.setDetails(guestAgentContainer);
-        add(guestAgentContainer);
+        listGroupItem.add(guestAgentContainer);
+        displayImportantNicInfo(networkInterface);
     }
 
     private Container createGeneralItemContainerPanel(VmNetworkInterface networkInterface) {
@@ -141,10 +149,10 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
                         guestAgentInterface.getInterfaceName(), dl);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv4VmGuestAgent()),
                         guestAgentInterface.getIpv4Addresses() != null ?
-                        String.join(", ", guestAgentInterface.getIpv4Addresses()) : constants.notAvailableLabel(), dl); // $NON-NLS-1$
+                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv4Addresses()) : constants.notAvailableLabel(), dl); // $NON-NLS-1$
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv6VmGuestAgent()),
                         guestAgentInterface.getIpv6Addresses() != null ?
-                        String.join(", ", guestAgentInterface.getIpv6Addresses()) : constants.notAvailableLabel(), dl); // $NON-NLS-1$
+                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv6Addresses()) : constants.notAvailableLabel(), dl); // $NON-NLS-1$
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macVmGuestAgent()),
                         guestAgentInterface.getMacAddress(), dl);
                 column.getElement().appendChild(dl);
@@ -158,19 +166,16 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         return createItemContainerPanel(content);
     }
 
-    private IsWidget createAdditionalInfoPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO);
-        panel.add(createGeneralAdditionalInfo());
-        panel.add(createStatisticsAdditionalInfo());
-        panel.add(createGuestAgentAdditionalInfo());
-        return panel;
+    private void createAdditionalInfoPanel() {
+        additionalInfoPanel.add(createGeneralAdditionalInfo());
+        additionalInfoPanel.add(createStatisticsAdditionalInfo());
+        additionalInfoPanel.add(createGuestAgentAdditionalInfo());
     }
 
     private IsWidget createGeneralAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        generalExpand = new ExpandableListViewItem(constants.generalLabel(), IconType.EYE.getCssName());
+        generalExpand = new ExpandableListViewItem(constants.generalLabel());
         getClickHandlerRegistrations().add(generalExpand.addClickHandler(this));
         panel.add(generalExpand);
         return panel;
@@ -179,7 +184,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private IsWidget createStatisticsAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        statisticsExpand = new ExpandableListViewItem(constants.statistics(), IconType.BAR_CHART.getCssName());
+        statisticsExpand = new ExpandableListViewItem(constants.statistics());
         getClickHandlerRegistrations().add(statisticsExpand.addClickHandler(this));
         panel.add(statisticsExpand);
         return panel;
@@ -188,55 +193,80 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     private IsWidget createGuestAgentAdditionalInfo() {
         FlowPanel panel = new FlowPanel();
         panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_ADDITIONAL_INFO_ITEM);
-        guestAgentExpand = new ExpandableListViewItem(constants.guestAgentData(), IconType.HEART.getCssName());
+        guestAgentExpand = new ExpandableListViewItem(constants.guestAgentData());
         getClickHandlerRegistrations().add(guestAgentExpand.addClickHandler(this));
         panel.add(guestAgentExpand);
         return panel;
     }
 
+    private boolean isInterfaceUp(VmNetworkInterface networkInterface) {
+        return networkInterface != null ? networkInterface.isLinked() : false;
+    }
+
+    private boolean isCardPlugged(VmNetworkInterface networkInterface) {
+        return networkInterface != null ? networkInterface.isPlugged() : false;
+    }
+
     @Override
     protected IsWidget createBodyPanel(String header, VmNetworkInterface networkInterface) {
-        FlowPanel bodyPanel = new FlowPanel();
-        bodyPanel.addStyleName(PatternflyConstants.PF_LIST_VIEW_BODY);
-        FlowPanel descriptionPanel = new FlowPanel();
-        descriptionPanel.addStyleName(PatternflyConstants.PF_LIST_VIEW_DESCRIPTION);
-        FlowPanel headerPanel = new FlowPanel();
-        headerPanel.getElement().setInnerHTML(header);
-        headerPanel.addStyleName(Styles.LIST_GROUP_ITEM_HEADING);
-        descriptionPanel.add(headerPanel);
-        FlowPanel statusPanel = new FlowPanel();
-        statusPanel.addStyleName(Styles.LIST_GROUP_ITEM_TEXT);
-        statusPanel.add(createLinkStatusPanel(networkInterface != null ? networkInterface.isLinked() : false));
-        statusPanel.add(createCardPluggedStatusPanel(networkInterface != null ? networkInterface.isPlugged() : false));
-        descriptionPanel.add(statusPanel);
-        bodyPanel.add(descriptionPanel);
-        bodyPanel.add(createAdditionalInfoPanel());
+        checkBoxPanel.add(createLinkStatusPanel(isInterfaceUp(networkInterface)));
+        checkBoxPanel.add(createCardPluggedStatusPanel(isCardPlugged(networkInterface)));
+        descriptionHeaderPanel.getElement().setInnerText(header);
+        createAdditionalInfoPanel();
         return bodyPanel;
     }
 
-    private IsWidget createLinkStatusPanel(boolean isLinked) {
-        Span linkStatusPanel = new Span();
-        Span icon = new Span();
-        icon.addStyleName(Styles.ICON_STACK);
-        icon.addStyleName(FA_2X);
-        Italic plugItalic = new Italic();
-        plugItalic.addStyleName(Styles.FONT_AWESOME_BASE);
-        plugItalic.addStyleName(Styles.ICON_STACK_TOP);
-        icon.add(plugItalic);
-        if (isLinked) {
-            plugItalic.addStyleName(IconType.ARROW_CIRCLE_O_UP.getCssName());
-        } else {
-            plugItalic.addStyleName(IconType.ARROW_CIRCLE_O_DOWN.getCssName());
+    protected void displayImportantNicInfo(VmNetworkInterface networkInterface) {
+        addNetworkMainInfo(networkInterface, statusPanel);
+    }
+
+    protected void addNetworkMainInfo(VmNetworkInterface networkInterface, HasWidgets targetPanel) {
+        DListElement dl = Document.get().createDLElement();
+        FlowPanel infoPanel = new FlowPanel();
+        StringJoiner ipv4AddressJoiner = new StringJoiner(COMMA_DELIMITOR);
+        StringJoiner ipv6AddressJoiner = new StringJoiner(COMMA_DELIMITOR);
+        for (VmGuestAgentInterface guestAgentInterface: allGuestAgentData) {
+            if (guestAgentInterface.getIpv4Addresses() != null) {
+                ipv4AddressJoiner.add(
+                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv4Addresses()));
+            }
+            if (guestAgentInterface.getIpv6Addresses() != null) {
+                ipv6AddressJoiner.add(
+                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv6Addresses()));
+            }
         }
-        linkStatusPanel.add(icon);
-        return linkStatusPanel;
+        String ipv4Address = ipv4AddressJoiner.toString();
+        if (ipv4Address.isEmpty()) {
+            ipv4Address = constants.notAvailableLabel();
+        }
+        String ipv6Address = ipv6AddressJoiner.toString();
+        if (ipv6Address.isEmpty()) {
+            ipv6Address = constants.notAvailableLabel();
+        }
+        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.networkNameInterface()),
+            networkInterface.getNetworkName() != null ? networkInterface.getNetworkName()
+                    : constants.unAvailablePropertyLabel(), dl);
+        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv4VmGuestAgent()), ipv4Address, dl);
+        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv6VmGuestAgent()), ipv6Address, dl);
+        addStackedDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macVmGuestAgent()),
+                networkInterface.getMacAddress(), dl);
+        infoPanel.getElement().appendChild(dl);
+        targetPanel.add(infoPanel);
+    }
+
+    private IsWidget createLinkStatusPanel(boolean isLinked) {
+        IconStatusPanel iconStatusPanel = new IconStatusPanel(isLinked ? IconType.ARROW_CIRCLE_O_UP :
+            IconType.ARROW_CIRCLE_O_DOWN);
+        iconStatusPanel.addStyleName(DOUBLE_SIZE);
+        iconStatusPanel.getElement().getStyle().setColor(isLinked ? GREEN : RED);
+        return iconStatusPanel;
+
     }
 
     private IsWidget createCardPluggedStatusPanel(boolean isPlugged) {
         Span linkStatusPanel = new Span();
         Span icon = new Span();
         icon.addStyleName(Styles.ICON_STACK);
-        icon.addStyleName(FA_2X);
         Italic plugItalic = new Italic();
         plugItalic.addStyleName(Styles.FONT_AWESOME_BASE);
         plugItalic.addStyleName(Styles.ICON_STACK_TOP);
@@ -246,25 +276,20 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         if (!isPlugged) {
             Italic unplugged = new Italic();
             unplugged.addStyleName(Styles.FONT_AWESOME_BASE);
-            unplugged.addStyleName(Styles.ICON_STACK_BASE);
+            unplugged.addStyleName(Styles.ICON_STACK_TOP);
             unplugged.addStyleName(DANGER);
             unplugged.addStyleName(IconType.BAN.getCssName());
             icon.add(unplugged);
         }
         linkStatusPanel.add(icon);
+        linkStatusPanel.addStyleName(DOUBLE_SIZE);
         return linkStatusPanel;
     }
 
     @Override
-    protected IsWidget createIconPanel() {
-        FlowPanel panel = new FlowPanel();
-        panel.addStyleName(PatternflyConstants.PF_LIST_VIEW_LEFT);
-        Span iconSpan = new Span();
-        iconSpan.addStyleName(PatternflyConstants.PFICON);
-        iconSpan.addStyleName(PatternflyConstants.PFICON_NETWORK);
-        iconSpan.addStyleName(PatternflyConstants.PF_LIST_VIEW_ICON_SM);
-        panel.add(iconSpan);
-        return panel;
+    protected IsWidget createIcon() {
+        iconPanel.add(new NetworkIcon());
+        return iconPanel;
     }
 
     @Override
@@ -274,6 +299,11 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         } else {
             addStyleName(PatternflyConstants.PF_LIST_VIEW_EXPAND_ACTIVE);
         }
+    }
+
+    @Override
+    protected void toggleExpanded(boolean value) {
+        // No-op for now as we don't have an expand all option.
     }
 
     @Override

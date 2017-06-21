@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -83,7 +82,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     protected void onBind() {
         super.onBind();
 
-        OrderedMultiSelectionModel<?> tableSelectionModel = getTable() != null ? getTable().getSelectionModel() : null;
+        OvirtSelectionModel<?> tableSelectionModel = getTable() != null ? getTable().getSelectionModel() : null;
         if (tableSelectionModel != null) {
             registerHandler(tableSelectionModel.addSelectionChangeHandler(event -> {
                 // Update detail model selection
@@ -187,7 +186,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
      * Returns items currently selected in the table or {@code null} if the sub tab view has no table widget associated.
      */
     protected List<?> getSelectedItems() {
-        return getTable() != null ? getTable().getSelectionModel().getSelectedList() : null;
+        return getTable() != null ? getTable().getSelectionModel().asMultiSelectionModel().getSelectedList() : null;
     }
 
     /**

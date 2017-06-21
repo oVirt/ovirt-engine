@@ -3334,5 +3334,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String storageDomainsMenuLabel();
 
     String tasksOverlayNoTasksFound();
+
+    String networkInSync();
+
+    String logicalNetwork();
+
+    String slave();
 }
 

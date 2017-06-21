@@ -69,6 +69,7 @@ public class PatternflyConstants {
     public static final String PF_LIST_VIEW_DESCRIPTION = "list-view-pf-description"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_LEFT = "list-view-pf-left"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_ICON_SM = "list-view-pf-icon-sm"; // $NON-NLS-1$
+    public static final String PF_LIST_VIEW_ICON_MD = "list-view-pf-icon-md"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_ADDITIONAL_INFO = "list-view-pf-additional-info"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_ADDITIONAL_INFO_ITEM = "list-view-pf-additional-info-item"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_EXPAND = "list-view-pf-expand"; // $NON-NLS-1$
@@ -76,6 +77,9 @@ public class PatternflyConstants {
     public static final String PF_LIST_VIEW_EXPAND_ACTIVE = "list-view-pf-expand-active"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW = "list-view-pf"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_VIEW = "list-view-pf-view"; // $NON-NLS-1$
+    public static final String PF_LIST_VIEW_TOP_ALIGN = "list-view-pf-top-align"; // $NON-NLS-1$
+    public static final String PF_LIST_VIEW_STACKED = "list-view-pf-stacked"; // $NON-NLS-1$
+    public static final String LIST_VIEW_ICON_PANEL = "list-view-icon-panel"; // $NON-NLS-1$
 
     public static final String PF_PROGRESS_DESCRIPTION = "progress-description"; // $NON-NLS-1$
     public static final String PF_PROGRESS_LABEL_TOP_RIGHT = "progress-label-top-right"; // $NON-NLS-1$

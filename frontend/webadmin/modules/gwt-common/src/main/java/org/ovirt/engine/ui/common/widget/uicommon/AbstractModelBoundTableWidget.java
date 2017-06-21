@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.core.client.GWT;
@@ -55,7 +55,7 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
         }
         wrappedWidget.add(table);
         initWidget(getWrappedWidget());
-        OrderedMultiSelectionModel<T> tableSelectionModel = getTable() != null ? getTable().getSelectionModel() : null;
+        OvirtSelectionModel<T> tableSelectionModel = getTable() != null ? getTable().getSelectionModel() : null;
         if (tableSelectionModel != null) {
             registration = tableSelectionModel.addSelectionChangeHandler(event -> {
                 // Update detail model selection
@@ -77,7 +77,7 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     }
 
     private List<T> getSelectedItems() {
-        return getTable() != null ? getTable().getSelectionModel().getSelectedList() : null;
+        return getTable() != null ? getTable().getSelectionModel().asMultiSelectionModel().getSelectedList() : null;
     }
 
     SimpleActionTable<T> createActionTable(EventBus eventBus, ClientStorage clientStorage) {

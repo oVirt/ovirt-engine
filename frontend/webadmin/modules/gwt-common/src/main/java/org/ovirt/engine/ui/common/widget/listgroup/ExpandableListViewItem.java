@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.listgroup;
 
+import java.util.List;
+
 import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.gwtbootstrap3.client.ui.html.Span;
@@ -10,6 +12,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 
 public class ExpandableListViewItem extends FlowPanel implements HasClickHandlers {
     public static final String HIDDEN = "hidden"; // $NON-NLS-1$
@@ -20,14 +23,29 @@ public class ExpandableListViewItem extends FlowPanel implements HasClickHandler
 
     Container details;
 
-    public ExpandableListViewItem(String label, String iconCss) {
+    public ExpandableListViewItem(String label, List<IsWidget> icons) {
+        this(label);
+        if (icons != null) {
+            for (IsWidget iconCss : icons) {
+                add(iconCss);
+            }
+        }
+    }
+
+    public ExpandableListViewItem(String label) {
         addStyleName(PatternflyConstants.PF_LIST_VIEW_EXPAND);
         caretIcon = new Span();
         caretIcon.addStyleName(Styles.FONT_AWESOME_BASE);
         caretIcon.addStyleName(FA_ANGLE_RIGHT);
         add(caretIcon);
-        setIcon(iconCss);
         addLabel(label);
+    }
+
+    public ExpandableListViewItem(String label, String iconCssString) {
+        this(label);
+        if (iconCssString != null) {
+            addIcon(iconCssString);
+        }
     }
 
     private String getBaseStyle(String iconCss) {
@@ -53,11 +71,14 @@ public class ExpandableListViewItem extends FlowPanel implements HasClickHandler
         add(labelSpan);
     }
 
-    private void setIcon(String iconCss) {
-        Span iconPanel = new Span();
-        iconPanel.addStyleName(getBaseStyle(iconCss));
-        iconPanel.addStyleName(iconCss);
-        add(iconPanel);
+    private void addIcon(String iconCss) {
+        if (iconCss != null && !iconCss.isEmpty()) {
+            Span iconPanel = new Span();
+            iconPanel.addStyleName(getBaseStyle(iconCss));
+            iconPanel.addStyleName(iconCss);
+            iconPanel.addStyleName(PatternflyConstants.LIST_VIEW_ICON_PANEL);
+            add(iconPanel);
+        }
     }
 
     public boolean isActive() {

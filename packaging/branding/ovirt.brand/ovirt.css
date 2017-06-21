@@ -515,6 +515,7 @@ TODO: use SASS, break into gwt-standard.scss
 }
 .gwt-MenuBarPopup {
   margin: 0px 0px 0px 3px;
+  z-index: 1070;
 }
 .gwt-MenuBarPopup .menuPopupTopCenter {
   background: url(../../gwt/standard/images/hborder.png) 0px -12px repeat-x;
@@ -1363,4 +1364,57 @@ td.datePickerYear {
   margin-bottom: 10px;
   padding-top: 10px;
   padding-bottom: 0;
+}
+
+.expansion-container {
+  width: 100%;
+  margin-left: 61px;
+}
+
+.rate-divider {
+  width: 15px;
+  background: linear-gradient(to top left,
+           rgba(0,0,0,0) 0%,
+           rgba(0,0,0,0) calc(50% - 0.8px),
+           rgba(0,0,0,0.5) 50%,
+           rgba(0,0,0,0) calc(50% + 0.8px),
+           rgba(0,0,0,0) 100%);
+  float:left;
+  height:25px;
+  margin-top: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.nic-speed-drop {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.list-view-pf-expand {
+  float: left;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.expansion-container > div > div > span {
+  padding-right: 5px;
+}
+
+.list-view-pf-additional-info-item > div > dl > dt {
+  font-size: 15px;
+}
+
+.expansion-container > div > .list-view-pf-expand.active {
+  color: inherit;
+  border-bottom: #0088ce 3px solid;
+}
+
+.list-view-icon-panel {
+  padding-left: 5px;
+}
+
+.stacked-detail-item {
+  float: left;
+  padding-right: 5px;
 }

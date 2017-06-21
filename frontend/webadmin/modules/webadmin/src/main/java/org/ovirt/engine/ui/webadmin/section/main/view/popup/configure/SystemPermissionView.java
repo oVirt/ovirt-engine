@@ -95,7 +95,8 @@ public class SystemPermissionView extends Composite {
         roleColumn.makeSortable((r1, r2) -> r1.getRoleName().compareTo(r2.getRoleName()));
         table.addColumn(roleColumn, constants.rolePermission(), "110px"); //$NON-NLS-1$
 
-        table.getSelectionModel().addSelectionChangeHandler(event -> modelProvider.setSelectedItems(table.getSelectionModel().getSelectedList()));
+        table.getSelectionModel().addSelectionChangeHandler(event -> modelProvider.setSelectedItems(
+                table.getSelectionModel().getSelectedObjects()));
 
         tablePanel.add(actionPanel);
         tablePanel.add(table);

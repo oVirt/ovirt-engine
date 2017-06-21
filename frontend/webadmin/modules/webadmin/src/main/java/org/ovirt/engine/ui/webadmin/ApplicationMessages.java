@@ -103,5 +103,9 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String bondActiveSlave(String activeSlave);
 
     String geoRepRemoteSessionName(String slaveHostName, String slaveVolumeName);
+
+    String logicalNetworks(int count);
+
+    String slaves(int count);
 }
 

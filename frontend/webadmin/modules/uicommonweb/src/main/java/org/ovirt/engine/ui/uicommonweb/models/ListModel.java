@@ -332,6 +332,11 @@ public class ListModel<T> extends Model {
         super.cleanup();
     }
 
+    public List<T> getItemsAsList() {
+        Collection<T> items = getItems();
+        return items instanceof List ? (List<T>) items : null;
+    }
+
     protected boolean isSingleSelectionOnly() {
         // Most standard list models will have a single selection.
         return true;

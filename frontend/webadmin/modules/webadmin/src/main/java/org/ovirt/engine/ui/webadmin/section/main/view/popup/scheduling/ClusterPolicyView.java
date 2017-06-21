@@ -110,8 +110,8 @@ public class ClusterPolicyView extends Composite {
         clusterPolicyTable.addColumn(descColumn, constants.clusterPolicyDescriptionLabel(), "300px"); //$NON-NLS-1$
 
         clusterPolicyTable.getSelectionModel().addSelectionChangeHandler(event -> {
-            clusterPolicyModelProvider.setSelectedItems(clusterPolicyTable.getSelectionModel().getSelectedList());
-            if (clusterPolicyTable.getSelectionModel().getSelectedList().size() > 0) {
+            clusterPolicyModelProvider.setSelectedItems(clusterPolicyTable.getSelectionModel().getSelectedObjects());
+            if (clusterPolicyTable.getSelectionModel().getSelectedObjects().size() > 0) {
                 setSubTabVisibility(true);
             } else {
                 setSubTabVisibility(false);

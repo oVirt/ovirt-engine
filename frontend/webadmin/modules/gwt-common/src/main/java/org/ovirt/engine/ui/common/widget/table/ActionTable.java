@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table;
 
-import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
 
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 
@@ -15,7 +15,7 @@ public interface ActionTable<T> {
     /**
      * Returns the selection model used by this table.
      */
-    OrderedMultiSelectionModel<T> getSelectionModel();
+    OvirtSelectionModel<T> getSelectionModel();
 
     /**
      * Resets table scroll position to zero (left-most) position.

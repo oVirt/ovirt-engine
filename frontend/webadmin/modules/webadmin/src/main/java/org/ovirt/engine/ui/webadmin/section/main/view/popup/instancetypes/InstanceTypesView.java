@@ -90,8 +90,8 @@ public class InstanceTypesView extends Composite {
         typeTable.addColumn(nameColumn, constants.instanceTypeName(), "100px"); //$NON-NLS-1$
 
         typeTable.getSelectionModel().addSelectionChangeHandler(event -> {
-            instanceTypeModelProvider.setSelectedItems(typeTable.getSelectionModel().getSelectedList());
-            if (typeTable.getSelectionModel().getSelectedList().size() > 0) {
+            instanceTypeModelProvider.setSelectedItems(typeTable.getSelectionModel().getSelectedObjects());
+            if (typeTable.getSelectionModel().getSelectedObjects().size() > 0) {
                 setSubTabVisibility(true);
                 detailsWidget.update();
             } else {

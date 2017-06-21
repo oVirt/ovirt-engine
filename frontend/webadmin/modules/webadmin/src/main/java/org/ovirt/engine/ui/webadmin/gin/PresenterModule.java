@@ -52,12 +52,14 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.ExpandAllButtonPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.QuotaBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.VnicProfileBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.ActionPanelView;
+import org.ovirt.engine.ui.common.view.ExpandAllButtonView;
 import org.ovirt.engine.ui.common.view.NetworkBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.OvirtBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.QuotaBreadCrumbsView;
@@ -1958,6 +1960,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmErrataListWithDetailsPopupPresenterWidget.class,
                 VmErrataListWithDetailsPopupPresenterWidget.ViewDef.class,
                 VmErrataListWithDetailsPopupView.class);
+
+        bindPresenterWidget(ExpandAllButtonPresenterWidget.class, ExpandAllButtonPresenterWidget.ViewDef.class,
+                ExpandAllButtonView.class);
 
         // Overlays
         // Tasks

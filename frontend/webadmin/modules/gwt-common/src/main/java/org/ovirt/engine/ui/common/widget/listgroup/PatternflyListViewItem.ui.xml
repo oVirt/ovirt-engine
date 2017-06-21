@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+    <ui:style>
+    </ui:style>
+
+    <g:FlowPanel>
+        <b:ListGroupItem ui:field="listGroupItem">
+            <g:FlowPanel ui:field="checkBoxPanel" addStyleNames="list-view-pf-checkbox" />
+            <g:FlowPanel ui:field="mainInfoPanel" addStyleNames="list-view-pf-main-info">
+                <g:FlowPanel ui:field="iconPanel" addStyleNames="list-view-pf-left" />
+                <g:FlowPanel ui:field="bodyPanel" addStyleNames="list-view-pf-body">
+                    <g:FlowPanel ui:field="descriptionPanel" addStyleNames="list-view-pf-description">
+                        <g:FlowPanel ui:field="descriptionHeaderPanel" addStyleNames="list-group-item-heading" />
+                        <g:FlowPanel ui:field="statusPanel" addStyleNames="list-group-item-text" />
+                    </g:FlowPanel>
+                    <g:FlowPanel ui:field="additionalInfoPanel" addStyleNames="list-view-pf-additional-info" />
+                </g:FlowPanel>
+            </g:FlowPanel>
+        </b:ListGroupItem>
+    </g:FlowPanel>
+</ui:UiBinder>

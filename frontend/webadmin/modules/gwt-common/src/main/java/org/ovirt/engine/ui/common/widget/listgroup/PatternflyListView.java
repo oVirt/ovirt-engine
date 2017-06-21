@@ -10,7 +10,7 @@ import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -21,12 +21,12 @@ import com.google.gwt.user.client.ui.IsWidget;
 public class PatternflyListView<E, T, M extends SearchableListModel<E, T>> extends ListGroup implements ClickHandler {
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    private List<PatternflyListViewItem<T>> currentState;
+    private List<PatternflyListViewItem<T>> currentState = new ArrayList<>();
     private List<HandlerRegistration> handlerRegistrations = new ArrayList<>();
 
     private M model;
     private PatternflyListViewItemCreator<T> creator;
-    private OrderedMultiSelectionModel<T> selectionModel;
+    private OvirtSelectionModel<T> selectionModel;
     private int selectedIndex = -1;
 
     public PatternflyListView() {
@@ -42,7 +42,7 @@ public class PatternflyListView<E, T, M extends SearchableListModel<E, T>> exten
         getModel().getItemsChangedEvent().addListener((ev, sender, args) -> updateInfoPanel());
     }
 
-    public void setSelectionModel(OrderedMultiSelectionModel<T> selectionModel) {
+    public void setSelectionModel(OvirtSelectionModel<T> selectionModel) {
         this.selectionModel = selectionModel;
     }
 
@@ -67,72 +67,66 @@ public class PatternflyListView<E, T, M extends SearchableListModel<E, T>> exten
 
     private void restoreState(PatternflyListViewItem<T> oldState, PatternflyListViewItem<T> newItem) {
         newItem.restoreStateFromViewItem(oldState);
-        String[] styles = oldState.getStyleName().split(" "); // $NON-NLS-1$
+        String[] styles = oldState.asListGroupItem().getStyleName().split(" "); // $NON-NLS-1$
         if (Arrays.asList(styles).contains(Styles.ACTIVE)) {
-            newItem.addStyleName(Styles.ACTIVE);
+            newItem.asListGroupItem().addStyleName(Styles.ACTIVE);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void storeCurrentDisplayState() {
-        if (this.currentState == null) {
-            currentState = new ArrayList<>();
-        }
-        if (getWidgetCount() > 0) {
-            for (int i = 0; i < getWidgetCount(); i++) {
-                IsWidget widget = getWidget(i);
-                if (widget instanceof PatternflyListViewItem) {
-                    if (i < currentState.size()) {
-                        currentState.set(i, (PatternflyListViewItem<T>)widget);
-                    } else {
-                        currentState.add((PatternflyListViewItem<T>)widget);
-                    }
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public void onClick(ClickEvent event) {
-        if (event.getSource() instanceof PatternflyListViewItem) {
-            PatternflyListViewItem<T> item = (PatternflyListViewItem<T>)event.getSource();
-            for (int i = 0; i < getWidgetCount(); i++) {
-                IsWidget widget = getWidget(i);
-                widget.asWidget().removeStyleName(Styles.ACTIVE);
+        if (event.getSource() instanceof ListGroupItem) {
+            PatternflyListViewItem<T> clickedItem = null;
+            for (PatternflyListViewItem<T> item : currentState) {
+                if (item.asListGroupItem() == event.getSource()) {
+                    clickedItem = item;
+                    break;
+                }
             }
-            if (!event.isControlKeyDown()) {
-                item.addStyleName(Styles.ACTIVE);
-                selectionModel.setSelected(item.getEntity(), true);
-                selectedIndex = selectionModel.getLastSelectedRow();
-                getModel().setSelectedItem(item.getEntity());
-            } else {
-                selectionModel.setSelected(item.getEntity(), false);
-                selectedIndex = -1;
-                getModel().setSelectedItem(null);
+            if (clickedItem != null) {
+                for (int i = 0; i < getWidgetCount(); i++) {
+                    IsWidget widget = getWidget(i);
+                    widget.asWidget().removeStyleName(Styles.ACTIVE);
+                }
+                if (!event.isControlKeyDown()) {
+                    clickedItem.asListGroupItem().addStyleName(Styles.ACTIVE);
+                    selectionModel.setSelected(clickedItem.getEntity(), true);
+                    List<T> items = getModel().getItemsAsList();
+                    if (items != null) {
+                        selectedIndex = items.indexOf(clickedItem.getEntity());
+                    }
+                    getModel().setSelectedItem(clickedItem.getEntity());
+                } else {
+                    selectionModel.setSelected(clickedItem.getEntity(), false);
+                    selectedIndex = -1;
+                    getModel().setSelectedItem(null);
+                }
             }
         }
     }
 
     private void updateInfoPanel() {
         if (getModel().getItems() instanceof List) {
-            storeCurrentDisplayState();
             clearClickHandlers();
             selectionModel.clear();
             clear();
             int i = 0;
+            List<PatternflyListViewItem<T>> newCurrentState = new ArrayList<>();
             for(T item: getModel().getItems()) {
                 PatternflyListViewItem<T> newItem = creator.createListViewItem(item);
                 handlerRegistrations.add(newItem.addClickHandler(this));
                 if (i < currentState.size()) {
                     restoreState(currentState.get(i), newItem);
                     if (i == selectedIndex) {
-                        newItem.addStyleName(Styles.ACTIVE);
+                        newItem.asListGroupItem().addStyleName(Styles.ACTIVE);
                     }
                 }
-                add(newItem);
+                newCurrentState.add(newItem);
+                add(newItem.asListGroupItem());
                 i++;
             }
+            currentState.clear();
+            currentState = newCurrentState;
             if (getWidgetCount() == 0) {
                 // No items found.
                 ListGroupItem noItems = new ListGroupItem();
@@ -146,10 +140,22 @@ public class PatternflyListView<E, T, M extends SearchableListModel<E, T>> exten
 
     private void restoreSelection(int index) {
         if (getModel().getItems() instanceof List && index >= 0 && index < getModel().getItems().size()) {
-            selectionModel.setSelected(((List<T>)getModel().getItems()).get(index), true);
+            selectionModel.setSelected(getModel().getItemsAsList().get(index), true);
         } else {
             getModel().setSelectedItem(null);
             getModel().setSelectedItems(null);
+        }
+    }
+
+    public void expandAll() {
+        for (PatternflyListViewItem<T> listViewItem: currentState) {
+            listViewItem.toggleExpanded(true);
+        }
+    }
+
+    public void collapseAll() {
+        for (PatternflyListViewItem<T> listViewItem: currentState) {
+            listViewItem.toggleExpanded(false);
         }
     }
 }

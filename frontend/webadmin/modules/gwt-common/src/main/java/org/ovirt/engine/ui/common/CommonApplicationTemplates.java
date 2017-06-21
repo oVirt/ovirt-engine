@@ -143,4 +143,10 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<p>{0}</p>")
     SafeHtml paragraph(String text);
+
+    @Template("{0} Mbps")
+    SafeHtml nicSpeed(int speed);
+
+    @Template("{0} Pkts")
+    SafeHtml dropRate(double speed);
 }

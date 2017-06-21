@@ -71,3 +71,8 @@
     position: relative;
     top: 140px;
 }
+
+.obrand_list_view_icon {
+    font-size: 19px;
+    padding-left: 5px;
+}
