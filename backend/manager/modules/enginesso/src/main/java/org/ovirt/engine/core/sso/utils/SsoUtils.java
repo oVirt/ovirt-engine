@@ -1,15 +1,12 @@
 package org.ovirt.engine.core.sso.utils;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.CertificateFactory;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -451,10 +448,8 @@ public class SsoUtils {
             SsoSession ssoSession,
             String password) {
         try {
-            if (ssoSession.getScopeAsList().contains("ovirt-ext=token:password-access") &&
-                    password != null &&
-                    StringUtils.isNotEmpty(ssoSession.getClientId())) {
-                ssoSession.setPassword(encrypt(request.getServletContext(), ssoSession.getClientId(), password));
+            if (ssoSession.getScopeAsList().contains("ovirt-ext=token:password-access") && password != null) {
+                ssoSession.setPassword(encrypt(request.getServletContext(), password));
             }
         } catch (Exception ex) {
             log.error("Unable to encrypt password: {}", ex.getMessage());
@@ -641,16 +636,13 @@ public class SsoUtils {
         return StringUtils.isEmpty(scope) ? Collections.emptyList() : Arrays.asList(scope.trim().split("\\s *"));
     }
 
-    public static String encrypt(ServletContext ctx, String clientId, String rawText) throws Exception {
-        ClientInfo clientInfo = getSsoContext(ctx).getClienInfo(clientId);
-        try (InputStream in = new FileInputStream(clientInfo.getCertificateLocation())) {
-            return EnvelopeEncryptDecrypt.encrypt(
-                    "AES/OFB/PKCS5Padding",
-                    256,
-                    CertificateFactory.getInstance("X.509").generateCertificate(in),
-                    100,
-                    rawText.getBytes(StandardCharsets.UTF_8));
-        }
+    public static String encrypt(ServletContext ctx, String rawText) throws Exception {
+        return EnvelopeEncryptDecrypt.encrypt(
+                "AES/OFB/PKCS5Padding",
+                256,
+                getSsoContext(ctx).getEngineCertificate(),
+                100,
+                rawText.getBytes(StandardCharsets.UTF_8));
     }
 
     public static void notifyClientsOfLogoutEvent(

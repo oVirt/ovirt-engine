@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.sso.utils;
 
+import java.io.File;
+
 import org.ovirt.engine.core.uutils.config.ShellLikeConfd;
 
 public class SsoLocalConfig extends ShellLikeConfd {
@@ -35,5 +37,9 @@ public class SsoLocalConfig extends ShellLikeConfd {
 
     public String getExtensionsPath() {
         return getProperty("ENGINE_EXTENSION_PATH");
+    }
+
+    public File getPKIEngineCert() {
+        return getFile("ENGINE_PKI_ENGINE_CERT");
     }
 }
