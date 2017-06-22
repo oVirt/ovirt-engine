@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.sso.utils;
 
 import java.io.Serializable;
+import java.security.cert.Certificate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ public class SsoContext implements Serializable{
     private Map<String, AuthenticationProfile> profiles = null;
     private Map<String, List<String>> scopeDependenciesMap = new HashMap<>();
     private String engineUrl;
+    private Certificate engineCertificate;
     private static final Logger log = LoggerFactory.getLogger(SsoContext.class);
 
     public void init(SsoLocalConfig ssoLocalConfig) {
@@ -209,5 +211,13 @@ public class SsoContext implements Serializable{
 
     public void setLocalizationUtils(LocalizationUtils localizationUtils) {
         this.localizationUtils = localizationUtils;
+    }
+
+    public void setEngineCertificate(Certificate engineCertificate) {
+        this.engineCertificate = engineCertificate;
+    }
+
+    public Certificate getEngineCertificate() {
+        return engineCertificate;
     }
 }

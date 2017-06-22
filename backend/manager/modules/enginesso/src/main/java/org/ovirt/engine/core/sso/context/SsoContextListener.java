@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.sso.context;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.security.cert.CertificateFactory;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -33,6 +37,13 @@ public class SsoContextListener implements ServletContextListener {
                 AuthenticationUtils.getAvailableProfilesSupportingPasswdChange(ssoContext.getSsoExtensionsManager()));
         ssoContext.setNegotiateAuthUtils(new NegotiateAuthUtils(ssoContext.getProfiles()));
         ssoContext.setLocalizationUtils(new LocalizationUtils(SsoConstants.APP_MESSAGE_FILENAME));
+
+        try (InputStream in = new FileInputStream(localConfig.getPKIEngineCert().getAbsoluteFile())) {
+            ssoContext.setEngineCertificate(CertificateFactory.getInstance("X.509").generateCertificate(in));
+        } catch (Exception ex) {
+            throw new RuntimeException("Unable to load engine certificate.");
+        }
+
         ctx.setAttribute(SsoConstants.OVIRT_SSO_CONTEXT, ssoContext);
     }
 
