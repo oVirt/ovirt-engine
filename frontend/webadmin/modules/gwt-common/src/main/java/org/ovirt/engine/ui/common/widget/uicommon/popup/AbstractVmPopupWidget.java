@@ -1199,7 +1199,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private void initListBoxEditors() {
         // General tab
         dataCenterWithClusterEditor = new GroupedListModelListBoxEditor<>(
-                new GroupedListModelListBox<DataCenterWithCluster>(new NameRenderer<DataCenterWithCluster>()) {
+                new GroupedListModelListBox<DataCenterWithCluster>(new NameRenderer<>()) {
 
             @Override
             public String getModelLabel(DataCenterWithCluster model) {
