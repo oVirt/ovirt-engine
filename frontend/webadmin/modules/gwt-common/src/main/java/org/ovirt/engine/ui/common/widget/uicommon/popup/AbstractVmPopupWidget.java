@@ -1212,35 +1212,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
 
             public Comparator<DataCenterWithCluster> getComparator() {
-                return new DataCenterWithClusterComparator();
+                return Comparator
+                        .comparing((DataCenterWithCluster d) -> d.getDataCenter().getName(),
+                                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
+                        .thenComparing(d -> d.getCluster().getName(),
+                                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER));
             }
-            /**
-             * Comparator that sorts on data center name first, and then cluster name. Ignoring case.
-             */
-            final class DataCenterWithClusterComparator implements Comparator<DataCenterWithCluster> {
-
-                 @Override
-                 public int compare(DataCenterWithCluster clusterWithDc1, DataCenterWithCluster clusterWithDc2) {
-                     if (clusterWithDc1.getDataCenter().getName() != null
-                             && clusterWithDc2.getDataCenter().getName() == null) {
-                         return -1;
-                     } else if (clusterWithDc2.getDataCenter().getName() != null
-                             && clusterWithDc1.getDataCenter().getName() == null) {
-                         return 1;
-                     } else if (clusterWithDc1.getDataCenter().getName() == null
-                             && clusterWithDc2.getDataCenter().getName() == null) {
-                         return 0;
-                     }
-                     if (clusterWithDc1.getDataCenter().getName().equals(clusterWithDc2.getDataCenter().getName())) {
-                         return clusterWithDc1.getCluster().getName().compareToIgnoreCase(
-                                 clusterWithDc2.getCluster().getName());
-                     } else {
-                         return clusterWithDc1.getDataCenter().getName().compareToIgnoreCase(
-                                 clusterWithDc2.getDataCenter().getName());
-                     }
-                 }
-             }
-
         });
 
         quotaEditor = new ListModelTypeAheadListBoxEditor<>(
