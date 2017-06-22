@@ -54,6 +54,13 @@ HOST_STATE_INSTALL_FAILED = 'install_failed'
 # 10
 HOST_STATE_NON_OPERATIONAL = 'non_operational'
 
+HOST_INSTALL_FAILED_STATES = [
+    HOST_STATE_INSTALL_FAILED,
+    HOST_STATE_NON_RESPONSIVE,
+    HOST_STATE_NON_OPERATIONAL,
+    HOST_STATE_ERROR,
+]
+
 # Default connection params.
 defaultEngineFqdn = 'engine'
 defaultPort = 443
@@ -155,18 +162,7 @@ def activateHost(
     """
     if api.hosts.list(name=name):
         host = api.hosts.list(name=name)[0]
-        state = ''
-        while not state:
-            try:
-                state = api.hosts.get(name).status.state
-            except Exception as error:
-                state = ''
-                logging.debug(
-                    'Got an exception while was '
-                    'trying to get host\'s state : %s' % (
-                        repr(error)
-                    )
-                )
+        state = getHostState(api, name)
     else:
         if skipInvalidHostNames:
             return
@@ -186,18 +182,7 @@ def activateHost(
             secs += SLEEP_TIME
             if secs > activationTimeout:
                 raise TimeoutError('Timed out activating host.')
-            state = ''
-            while not state:
-                try:
-                    state = api.hosts.get(name).status.state
-                except Exception as error:
-                    state = ''
-                    logging.debug(
-                        'Got an exception while was '
-                        'trying to get host\'s state : %s' % (
-                            repr(error)
-                        )
-                    )
+            state = getHostState(api, name)
             if state == HOST_STATE_UP:
                 print('\n\tHost activated.')
                 break
@@ -214,18 +199,7 @@ def deactivateHost(
     """
     if api.hosts.list(name=name):
         host = api.hosts.list(name=name)[0]
-        state = ''
-        while not state:
-            try:
-                state = api.hosts.get(name).status.state
-            except Exception as error:
-                state = ''
-                logging.debug(
-                    'Got an exception while was '
-                    'trying to get host\'s state : %s' % (
-                        repr(error)
-                    )
-                )
+        state = getHostState(api, name)
     else:
         if skipInvalidHostNames:
             return
@@ -247,18 +221,7 @@ def deactivateHost(
                 raise TimeoutError(
                     'Timed out while moving host to maintenance.'
                 )
-            state = ''
-            while not state:
-                try:
-                    state = api.hosts.get(name).status.state
-                except Exception as error:
-                    state = ''
-                    logging.debug(
-                        'Got an exception while was '
-                        'trying to get host\'s state : %s' % (
-                            repr(error)
-                        )
-                    )
+            state = getHostState(api, name)
             if state == HOST_STATE_MAINTENANCE:
                 print('\n\tHost moved to maintenance.')
                 break
@@ -279,18 +242,7 @@ def reinstallHost(
     """
     if api.hosts.list(name=name):
         host = api.hosts.list(name=name)[0]
-        state = ''
-        while not state:
-            try:
-                state = api.hosts.get(name).status.state
-            except Exception as error:
-                state = ''
-                logging.debug(
-                    'Got an exception while was '
-                    'trying to get host\'s state : %s' % (
-                        repr(error)
-                    )
-                )
+        state = getHostState(api, name)
     else:
         if skipInvalidHostNames:
             return
@@ -310,25 +262,11 @@ def reinstallHost(
         )
         secs = 0
         while True:
-            state = ''
-            while not state:
-                try:
-                    state = api.hosts.get(name).status.state
-                except Exception as error:
-                    state = ''
-                    logging.debug(
-                        'Got an exception while was '
-                        'trying to get host\'s state : %s' % (
-                            repr(error)
-                        )
-                    )
+            state = getHostState(api, name)
             if state == HOST_STATE_INSTALLING:
                 print('\tInstalling', end='')
                 break
-            elif (state == HOST_STATE_INSTALL_FAILED or
-                  state == HOST_STATE_NON_RESPONSIVE or
-                  state == HOST_STATE_NON_OPERATIONAL or
-                  state == HOST_STATE_ERROR):
+            elif state in HOST_INSTALL_FAILED_STATES:
                 raise RuntimeError(
                     'Unable to complete the reinstall operational, '
                     'host is in mode: {0}'.format(state)
@@ -343,25 +281,11 @@ def reinstallHost(
 
         while True:
             print('.', end='')
-            state = ''
-            while not state:
-                try:
-                    state = api.hosts.get(name).status.state
-                except Exception as error:
-                    state = ''
-                    logging.debug(
-                        'Got an exception while was '
-                        'trying to get host\'s state : %s' % (
-                            repr(error)
-                        )
-                    )
+            state = getHostState(api, name)
             if state == HOST_STATE_MAINTENANCE:
                 print("\n\tInstalled.")
                 break
-            elif (state == HOST_STATE_INSTALL_FAILED or
-                  state == HOST_STATE_NON_RESPONSIVE or
-                  state == HOST_STATE_NON_OPERATIONAL or
-                  state == HOST_STATE_ERROR):
+            elif state in HOST_INSTALL_FAILED_STATES:
                 raise RuntimeError(
                     'Unable to complete the reinstall operational, '
                     'host is in mode: {0}'.format(state)
@@ -397,18 +321,7 @@ def verifyHost(api, name, skipInvalidHostNames=False):
     exception will also be raised.
     """
     if api.hosts.list(name=name):
-        state = ''
-        while not state:
-            try:
-                state = api.hosts.get(name).status.state
-            except Exception as error:
-                state = ''
-                logging.debug(
-                    'Got an exception while was '
-                    'trying to get host\'s state : %s' % (
-                        repr(error)
-                    )
-                )
+        state = getHostState(api, name)
     else:
         if skipInvalidHostNames:
             return
@@ -430,18 +343,7 @@ def verifyHost(api, name, skipInvalidHostNames=False):
         secs += SLEEP_TIME
         if secs >= HOST_UP_VERIFY_TIME:
             break
-        state = ''
-        while not state:
-            try:
-                state = api.hosts.get(name).status.state
-            except Exception as error:
-                state = ''
-                logging.debug(
-                    'Got an exception while was '
-                    'trying to get host\'s state : %s' % (
-                        repr(error)
-                    )
-                )
+        state = getHostState(api, name)
         if state != HOST_STATE_UP:
             raise InvalidState(
                 'Host changed it\'s state to: %s '
@@ -452,19 +354,7 @@ def verifyHost(api, name, skipInvalidHostNames=False):
                 )
             )
 
-    state = ''
-    while not state:
-        try:
-            state = api.hosts.get(name).status.state
-        except Exception as error:
-            state = ''
-            logging.debug(
-                'Got an exception while was '
-                'trying to get host\'s state : %s' % (
-                    repr(error)
-                )
-            )
-
+    state = getHostState(api, name)
     if state != HOST_STATE_UP:
         raise InvalidState(
             'Host changed it\'s state to: %s '
@@ -498,10 +388,12 @@ def processHost(api, name, skipInvalidHostNames):
 
     print('Type: %s' % host.get_type())
     try:
-        deactivateHost(api, name)
-        reinstallHost(api, name)
-        activateHost(api, name)
-        verifyHost(api, name)
+        state = getHostState(api, name)
+        if state == HOST_STATE_UP:
+            deactivateHost(api, name)
+            reinstallHost(api, name)
+            activateHost(api, name)
+            verifyHost(api, name)
     except TimeoutError as error:
         print('Error: ' + repr(error))
         sys.exit(1)
@@ -534,6 +426,37 @@ def hostsByClusterName(api, name):
         )
     )
     return hosts
+
+
+def getHostState(api, name, skipInvalidHostNames=False):
+    if api.hosts.list(name=name):
+        state = ''
+        while not state:
+            try:
+                state = api.hosts.get(name).status.state
+            except Exception as error:
+                state = ''
+                logging.debug(
+                    'Got an exception while was '
+                    'trying to get host\'s state : %s' % (
+                        repr(error)
+                    )
+                )
+        return state
+    else:
+        if skipInvalidHostNames:
+            return
+        else:
+            raise InvalidHostName(
+                'Invalid host name %s.' % name
+            )
+
+
+def verifyHostName(api, name):
+    if api.hosts.list(name=name):
+        return True
+    else:
+        return False
 
 
 def disconnect():
