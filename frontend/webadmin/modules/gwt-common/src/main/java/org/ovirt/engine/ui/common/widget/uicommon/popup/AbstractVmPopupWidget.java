@@ -2041,7 +2041,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected List<Widget> allTabs() {
-        return Arrays.<Widget> asList(
+        return Arrays.asList(
                 initialRunTab.getTabListItem(),
                 consoleTab.getTabListItem(),
                 hostTab.getTabListItem(),
@@ -2059,7 +2059,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected List<Widget> advancedFieldsFromGeneralTab() {
-        return Arrays.<Widget> asList(
+        return Arrays.asList(
                 memSizeEditor,
                 maxMemorySizeEditor,
                 totalvCPUsEditor,
@@ -2070,7 +2070,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected List<Widget> detachableWidgets() {
-        return Arrays.<Widget> asList(
+        return Arrays.asList(
                 totalvCPUsEditorWithInfoIcon,
                 numOfSocketsEditorWithDetachable,
                 corePerSocketEditorWithDetachable,
