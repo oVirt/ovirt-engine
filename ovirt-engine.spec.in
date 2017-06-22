@@ -239,6 +239,7 @@ Requires:	xmlrpc-client
 Requires:	ovirt-imageio-proxy
 Requires:	ovirt-web-ui
 Requires:	ovirt-js-dependencies
+Requires:	ovirt-ansible-roles >= 1.1.0
 
 # Metrics stuff
 Requires:	collectd
@@ -628,7 +629,7 @@ rm -f "%{buildroot}%{python3_sitelib}"/ovirt_engine/{service,ticket}.py
 # /var creation
 #
 install -dm 755 "%{buildroot}/%{engine_state}"/{content,setup/answers}
-install -dm 755 "%{buildroot}/%{engine_log}"/{host-deploy,setup,notifier,dump}
+install -dm 755 "%{buildroot}/%{engine_log}"/{host-deploy,setup,notifier,dump,ansible}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 
@@ -915,6 +916,7 @@ fi
 %license backend/manager/modules/services/src/main/webapp/gpl-3.0.txt
 %license backend/manager/modules/services/src/main/webapp/lgpl-3.0.txt
 %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/host-deploy
+%attr(-, %{engine_user}, %{engine_group}) %{engine_log}/ansible
 %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/content
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}

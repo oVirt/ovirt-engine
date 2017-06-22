@@ -542,6 +542,7 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/setup"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/notifier"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/dump"
+	install -d "$(DESTDIR)$(PKG_LOG_DIR)/ansible"
 
 	if [ -e "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments" ]; then \
 		touch "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments/engine.ear.deployed"; \

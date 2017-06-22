@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.hostdeploy;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -21,11 +22,21 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleCommandBuilder;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
+import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -48,6 +59,11 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private ProviderDao providerDao;
     @Inject
     private VdsStaticDao vdsStaticDao;
+    @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
+    private AnsibleExecutor ansibleExecutor;
 
     public InstallVdsInternalCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -126,11 +142,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 }
             }
 
+            FirewallType hostFirewallType = clusterDao.get(getClusterId()).getFirewallType();
             if (parameters.getOverrideFirewall()) {
                 switch (getVds().getVdsType()) {
                     case VDS:
                     case oVirtNode:
-                        deploy.addUnit(new VdsDeployIptablesUnit());
+                        deploy.addUnit(new VdsDeployIptablesUnit(hostFirewallType.equals(FirewallType.IPTABLES)));
                     break;
                     case oVirtVintageNode:
                         log.warn(
@@ -184,6 +201,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 break;
                 case Complete:
                     markCurrentCmdlineAsStored();
+
+                    // TODO: When more logic goes to ovirt-host-deploy role,
+                    // this code should be moved to appropriate place, currently
+                    // we run this playbook only after successful run of otopi host-deploy
+                    runAnsibleHostDeployPlaybook(hostFirewallType);
+
                     configureManagementNetwork();
                     if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
                         setVdsStatus(VDSStatus.Maintenance);
@@ -204,6 +227,49 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         } catch (Exception e) {
             handleError(e, VDSStatus.InstallFailed);
         }
+    }
+
+    private void runAnsibleHostDeployPlaybook(FirewallType firewallType) throws IOException, InterruptedException {
+        AnsibleCommandBuilder command = new AnsibleCommandBuilder()
+            .hostnames(getVds().getHostName())
+            .variables(
+                new Pair<>("host_deploy_cluster_version", getVds().getClusterCompatibilityVersion()),
+                new Pair<>("host_deploy_gluster_enabled", getVds().getClusterSupportsGlusterService()),
+                new Pair<>("host_deploy_virt_enabled", getVds().getClusterSupportsVirtService()),
+                new Pair<>("host_deploy_vdsm_port", getVds().getPort()),
+                new Pair<>("host_deploy_override_firewall", getParameters().getOverrideFirewall()),
+                new Pair<>("host_deploy_firewall_type", firewallType.name()),
+                new Pair<>("ansible_port", getVds().getSshPort()),
+                new Pair<>(
+                    "host_deploy_firewalld_supported",
+                    getVds().getSupportedClusterVersionsSet().contains(Version.v4_2)
+                        && getVds().getVdsType().getValue() != VDSType.oVirtVintageNode.getValue()
+                ),
+                new Pair<>("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH)
+            )
+            // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
+            .logFileDirectory(VdsDeployBase.HOST_DEPLOY_LOG_DIRECTORY)
+            .logFilePrefix("ovirt-host-deploy-ansible")
+            .logFileName(getVds().getHostName())
+            .logFileSuffix(getCorrelationId())
+            .playbook(AnsibleConstants.HOST_DEPLOY_PLAYBOOK);
+
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setVdsName(getVds().getName());
+        logable.setVdsId(getVds().getId());
+        auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_STARTED);
+
+        if (ansibleExecutor.runCommand(command) != AnsibleReturnCode.OK) {
+            throw new VdsInstallException(
+                VDSStatus.InstallFailed,
+                String.format(
+                    "Failed to execute Ansible host-deploy role. Please check logs for more details: %1$s",
+                    command.logFile()
+                )
+            );
+        }
+
+        auditLogDirector.log(logable, AuditLogType.VDS_ANSIBLE_INSTALL_FINISHED);
     }
 
     private void markCurrentCmdlineAsStored() {

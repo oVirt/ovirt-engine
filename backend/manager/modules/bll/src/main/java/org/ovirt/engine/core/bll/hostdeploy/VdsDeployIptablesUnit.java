@@ -12,6 +12,13 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.otopi.constants.NetEnv;
 import org.ovirt.otopi.dialog.Event;
 
+/**
+ * This class serve as a unit for set up iptables on host using otopi host-deploy process.
+ * Using @param deployIpTables user can configure if he really need to setup iptables
+ * by otopi host-deploy proccess or if he setup it in any different way(ie. firewalld using Ansible).
+ *
+ * Setting @param deployIpTables to false means skip the configuration of iptables.
+ */
 public class VdsDeployIptablesUnit implements VdsDeployUnit {
 
     private static final String IPTABLES_CUSTOM_RULES_PLACE_HOLDER = "@CUSTOM_RULES@";
@@ -23,7 +30,7 @@ public class VdsDeployIptablesUnit implements VdsDeployUnit {
         public Boolean call() throws Exception {
             _deploy.getParser().cliEnvironmentSet(
                 NetEnv.IPTABLES_ENABLE,
-                true
+                deployIpTables
             );
             return true;
         }},
@@ -38,6 +45,12 @@ public class VdsDeployIptablesUnit implements VdsDeployUnit {
     );
 
     private VdsDeployBase _deploy;
+
+    private boolean deployIpTables;
+
+    public VdsDeployIptablesUnit(boolean deployIpTables) {
+        this.deployIpTables = deployIpTables;
+    }
 
     private String getIpTables() {
         Cluster cluster = DbFacade.getInstance().getClusterDao().get(

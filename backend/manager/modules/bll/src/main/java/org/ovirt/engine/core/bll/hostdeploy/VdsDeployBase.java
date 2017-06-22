@@ -48,6 +48,8 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
 
     public enum DeployStatus {Complete, Incomplete, Failed, Reboot}
 
+    public static final String HOST_DEPLOY_LOG_DIRECTORY = "host-deploy";
+
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000; // milliseconds
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
     private static final String BOOTSTRAP_ENTRY_PLACE_HOLDER = "@ENTRY@";
@@ -153,7 +155,7 @@ public class VdsDeployBase implements SSHDialog.Sink, Closeable {
                 EngineLocalConfig.getInstance().getLogDir(),
                 String.format(
                     "%1$s%2$s%3$s-%4$s-%5$s-%6$s.log",
-                    "host-deploy",
+                    HOST_DEPLOY_LOG_DIRECTORY,
                     File.separator,
                     _logPrefix,
                     new SimpleDateFormat("yyyyMMddHHmmss").format(

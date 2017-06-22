@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
@@ -201,5 +202,15 @@ public class FeatureSupported {
      */
     public static boolean isDestroyOnRebootSupported(Version version) {
         return supportedInConfig(ConfigValues.DestroyOnRebootSupported, version);
+    }
+
+    /**
+     * Firewalld is supported for host if it supports cluster version 4.2.
+     *
+     * @param vds the host we are insterested in
+     * @return true if host support firewalld
+     */
+    public static boolean isFirewalldSupported(VDS vds) {
+        return vds.getSupportedClusterVersionsSet().contains(Version.v4_2);
     }
 }

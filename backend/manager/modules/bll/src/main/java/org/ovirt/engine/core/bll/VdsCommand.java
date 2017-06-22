@@ -48,7 +48,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     protected String _failureMessage = null;
 
     @Inject
-    private AuditLogDirector auditLogDirector;
+    protected AuditLogDirector auditLogDirector;
 
     @Inject
     private PmHealthCheckManager pmHealthCheckManager;

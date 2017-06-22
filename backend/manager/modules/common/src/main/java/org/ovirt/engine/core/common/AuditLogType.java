@@ -67,6 +67,11 @@ public enum AuditLogType {
     VDS_PACKAGES_IN_PROGRESS(550),
     VDS_PACKAGES_IN_PROGRESS_WARNING(551, AuditLogSeverity.WARNING),
     VDS_PACKAGES_IN_PROGRESS_ERROR(552, AuditLogSeverity.ERROR),
+
+    // Ansible host execution
+    VDS_ANSIBLE_INSTALL_STARTED(560),
+    VDS_ANSIBLE_INSTALL_FINISHED(561),
+
     VDS_RECOVER_FAILED_VMS_UNKNOWN(513, AuditLogSeverity.ERROR),
     VDS_INITIALIZING(514, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.SECOND.getValue() * 30),
