@@ -30,7 +30,7 @@ import com.google.inject.Inject;
  *
  * @param <M> ListModel the search suggest oracle will work on
  */
-public class SearchPanelView<M extends SearchableListModel> extends AbstractView implements SearchPanelPresenterWidget.ViewDef {
+public class SearchPanelView<M extends SearchableListModel> extends AbstractView implements SearchPanelPresenterWidget.ViewDef<M> {
 
     interface ViewUiBinder extends UiBinder<Widget, SearchPanelView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

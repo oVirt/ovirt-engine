@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -595,6 +596,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.Virtual
 
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
+import com.gwtplatform.mvp.client.PresenterWidget;
+import com.gwtplatform.mvp.client.View;
 
 /**
  * GIN module containing WebAdmin GWTP presenter bindings.
@@ -759,8 +762,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(RecoveryStoragePopupPresenterWidget.class,
                 RecoveryStoragePopupPresenterWidget.ViewDef.class,
                 RecoveryStorageConfirmationPopupView.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<StoragePool, DataCenterListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DataCenterListModel>>(){}).to(new TypeLiteral<SearchPanelView<DataCenterListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<StoragePool, DataCenterListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DataCenterListModel>>(){},
+                new TypeLiteral<SearchPanelView<DataCenterListModel>>(){});
 
         // Storage
         bindPresenter(StorageSubTabPanelPresenter.class,
@@ -839,8 +844,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageDiskProfilePresenter.ViewDef.class,
                 SubTabStorageDiskProfileView.class,
                 SubTabStorageDiskProfilePresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<StorageDomain, StorageListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<StorageListModel>>(){}).to(new TypeLiteral<SearchPanelView<StorageListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<StorageDomain, StorageListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<StorageListModel>>(){},
+                new TypeLiteral<SearchPanelView<StorageListModel>>(){});
 
         // Cluster
         bindPresenter(ClusterSubTabPanelPresenter.class,
@@ -896,10 +903,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabClusterAffinityLabelPresenter.ViewDef.class,
                 SubTabClusterAffinityLabelView.class,
                 SubTabClusterAffinityLabelPresenter.ProxyDef.class);
-
-        // TODO: make helper function that allows for TypeLiterals.
-        bind(new TypeLiteral<SearchPanelPresenterWidget<Cluster, ClusterListModel<Void>>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ClusterListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<ClusterListModel<Void>>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<Cluster, ClusterListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ClusterListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelView<ClusterListModel<Void>>>(){});
 
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,
@@ -950,8 +957,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostGlusterStorageDevicesPresenter.ViewDef.class,
                 SubTabHostGlusterStorageDevicesView.class,
                 SubTabHostGlusterStorageDevicesPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<VDS, HostListModel<Void>>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<HostListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<HostListModel<Void>>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<VDS, HostListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<HostListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelView<HostListModel<Void>>>(){});
         bindPresenter(SubTabHostAffinityLabelPresenter.class,
                 SubTabHostAffinityLabelPresenter.ViewDef.class,
                 SubTabHostAffinityLabelView.class,
@@ -1014,8 +1023,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineErrataPresenter.ViewDef.class,
                 SubTabVirtualMachineErrataView.class,
                 SubTabVirtualMachineErrataPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<VM, VmListModel<Void>>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VmListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<VmListModel<Void>>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<VM, VmListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VmListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelView<VmListModel<Void>>>(){});
         bindPresenter(SubTabVirtualMachineAffinityLabelPresenter.class,
                 SubTabVirtualMachineAffinityLabelPresenter.ViewDef.class,
                 SubTabVirtualMachineAffinityLabelView.class,
@@ -1044,8 +1055,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(PoolEditPopupPresenterWidget.class,
                 PoolEditPopupPresenterWidget.ViewDef.class,
                 PoolEditPopupView.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<VmPool, PoolListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<PoolListModel>>(){}).to(new TypeLiteral<SearchPanelView<PoolListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<VmPool, PoolListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<PoolListModel>>(){},
+                new TypeLiteral<SearchPanelView<PoolListModel>>(){});
 
         // Template
         bindPresenter(TemplateSubTabPanelPresenter.class,
@@ -1080,8 +1093,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabTemplateEventPresenter.ViewDef.class,
                 SubTabTemplateEventView.class,
                 SubTabTemplateEventPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<VmTemplate, TemplateListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<TemplateListModel>>(){}).to(new TypeLiteral<SearchPanelView<TemplateListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<VmTemplate, TemplateListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<TemplateListModel>>(){},
+                new TypeLiteral<SearchPanelView<TemplateListModel>>(){});
 
         // User
         bindPresenter(UserSubTabPanelPresenter.class,
@@ -1112,8 +1127,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabUserQuotaPresenter.ViewDef.class,
                 SubTabUserQuotaView.class,
                 SubTabUserQuotaPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<DbUser, UserListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<UserListModel>>(){}).to(new TypeLiteral<SearchPanelView<UserListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<DbUser, UserListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<UserListModel>>(){},
+                new TypeLiteral<SearchPanelView<UserListModel>>(){});
 
         // Quota
         bindPresenter(QuotaSubTabPanelPresenter.class,
@@ -1148,8 +1165,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabQuotaEventPresenter.ViewDef.class,
                 SubTabQuotaEventView.class,
                 SubTabQuotaEventPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<Quota, QuotaListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<QuotaListModel>>(){}).to(new TypeLiteral<SearchPanelView<QuotaListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<Quota, QuotaListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<QuotaListModel>>(){},
+                new TypeLiteral<SearchPanelView<QuotaListModel>>(){});
 
         // Disk
         bindPresenter(DiskSubTabPanelPresenter.class,
@@ -1176,8 +1195,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDiskPermissionPresenter.ViewDef.class,
                 SubTabDiskPermissionView.class,
                 SubTabDiskPermissionPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<Disk, DiskListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DiskListModel>>(){}).to(new TypeLiteral<SearchPanelView<DiskListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<Disk, DiskListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DiskListModel>>(){},
+                new TypeLiteral<SearchPanelView<DiskListModel>>(){});
 
         // Network
         bindPresenter(NetworkSubTabPanelPresenter.class,
@@ -1216,8 +1237,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabNetworkPermissionPresenter.ViewDef.class,
                 SubTabNetworkPermissionView.class,
                 SubTabNetworkPermissionPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<NetworkView, NetworkListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<NetworkListModel>>(){}).to(new TypeLiteral<SearchPanelView<NetworkListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<NetworkView, NetworkListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<NetworkListModel>>(){},
+                new TypeLiteral<SearchPanelView<NetworkListModel>>(){});
 
         // Provider
         bindPresenter(ProviderSubTabPanelPresenter.class,
@@ -1236,8 +1259,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabProviderSecretPresenter.ViewDef.class,
                 SubTabProviderSecretView.class,
                 SubTabProviderSecretPresenter.ProxyDef.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ProviderListModel>>(){}).to(new TypeLiteral<SearchPanelView<ProviderListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<Provider, ProviderListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ProviderListModel>>(){},
+                new TypeLiteral<SearchPanelView<ProviderListModel>>(){});
 
         // Errata
         bindPresenter(ErrataSubTabPanelPresenter.class,
@@ -1268,12 +1293,16 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVnicProfileTemplatePresenter.ProxyDef.class);
 
         // User Sessions
-        bind(new TypeLiteral<SearchPanelPresenterWidget<UserSession, SessionListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<SessionListModel>>(){}).to(new TypeLiteral<SearchPanelView<SessionListModel>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<UserSession, SessionListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<SessionListModel>>(){},
+                new TypeLiteral<SearchPanelView<SessionListModel>>(){});
 
-        //Volume
-        bind(new TypeLiteral<SearchPanelPresenterWidget<GlusterVolumeEntity, VolumeListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VolumeListModel>>(){}).to(new TypeLiteral<SearchPanelView<VolumeListModel>>(){}).in(Singleton.class);
+        // Volume
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<GlusterVolumeEntity, VolumeListModel>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VolumeListModel>>(){},
+                new TypeLiteral<SearchPanelView<VolumeListModel>>(){});
 
         // Main section: popups
 
@@ -1740,8 +1769,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(EventPopupPresenterWidget.class,
                 EventPopupPresenterWidget.ViewDef.class,
                 EventPopupView.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget<AuditLog, EventListModel<Void>>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<SearchPanelPresenterWidget.ViewDef<EventListModel<Void>>>(){}).to(new TypeLiteral<SearchPanelView<EventListModel<Void>>>(){}).in(Singleton.class);
+        bindSingletonPresenterWidget(
+                new TypeLiteral<SearchPanelPresenterWidget<AuditLog, EventListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelPresenterWidget.ViewDef<EventListModel<Void>>>(){},
+                new TypeLiteral<SearchPanelView<EventListModel<Void>>>(){});
 
         // Provider
         bindPresenterWidget(ProviderPopupPresenterWidget.class,
@@ -1802,4 +1833,11 @@ public class PresenterModule extends BasePresenterModule {
                 TagsView.class,
                 TagsPresenter.ProxyDef.class);
     }
+
+    <P extends PresenterWidget<?>, V extends View> void bindSingletonPresenterWidget(
+            TypeLiteral<P> presenterImpl, TypeLiteral<V> view, TypeLiteral<? extends V> viewImpl) {
+        bind(presenterImpl).in(Singleton.class);
+        bind(view).to(viewImpl).in(Singleton.class);
+    }
+
 }
