@@ -449,10 +449,10 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content, OvfProperties.DOMAIN, val -> vmBase.getVmInit().setDomain(val));
         consumeReadProperty(content,
                 OvfProperties.CREATION_DATE,
-                val -> vmBase.setCreationDate(OvfParser.utcDateStringToLocaDate(val)));
+                val -> vmBase.setCreationDate(OvfParser.utcDateStringToLocalDate(val)));
         consumeReadProperty(content,
                 OvfProperties.EXPORT_DATE,
-                val -> vmBase.setExportDate(OvfParser.utcDateStringToLocaDate(val)));
+                val -> vmBase.setExportDate(OvfParser.utcDateStringToLocalDate(val)));
         consumeReadProperty(content,
                 OvfProperties.DEFAULT_BOOT_SEQUENCE,
                 val -> vmBase.setDefaultBootSequence(BootSequence.forValue(Integer.parseInt(val))));

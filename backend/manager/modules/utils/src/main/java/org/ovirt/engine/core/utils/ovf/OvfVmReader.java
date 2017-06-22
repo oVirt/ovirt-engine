@@ -72,17 +72,17 @@ public class OvfVmReader extends OvfReader {
         if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
             image.setStoragePoolId(new Guid(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText));
         }
-        final Date creationDate = OvfParser.utcDateStringToLocaDate(
+        final Date creationDate = OvfParser.utcDateStringToLocalDate(
                 selectSingleNode(node, "rasd:CreationDate", _xmlNS).innerText);
         if (creationDate != null) {
             image.setCreationDate(creationDate);
         }
-        final Date lastModified = OvfParser.utcDateStringToLocaDate(
+        final Date lastModified = OvfParser.utcDateStringToLocalDate(
                 selectSingleNode(node, "rasd:LastModified", _xmlNS).innerText);
         if (lastModified != null) {
             image.setLastModified(lastModified);
         }
-        final Date last_modified_date = OvfParser.utcDateStringToLocaDate(
+        final Date last_modified_date = OvfParser.utcDateStringToLocalDate(
                 selectSingleNode(node, "rasd:last_modified_date", _xmlNS).innerText);
         if (last_modified_date != null) {
             image.setLastModifiedDate(last_modified_date);
@@ -222,7 +222,7 @@ public class OvfVmReader extends OvfReader {
             }
 
             final Date creationDate =
-                    OvfParser.utcDateStringToLocaDate(selectSingleNode(node, "CreationDate", _xmlNS).innerText);
+                    OvfParser.utcDateStringToLocalDate(selectSingleNode(node, "CreationDate", _xmlNS).innerText);
             if (creationDate != null) {
                 snapshot.setCreationDate(creationDate);
             }

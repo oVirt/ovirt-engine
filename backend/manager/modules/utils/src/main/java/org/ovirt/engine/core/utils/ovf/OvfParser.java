@@ -88,7 +88,7 @@ public class OvfParser {
      *
      * @return the date or null if parse failed
      */
-    public static Date utcDateStringToLocaDate(String str) {
+    public static Date utcDateStringToLocalDate(String str) {
         if (StringUtils.isBlank(str)) {
             return null;
         }
