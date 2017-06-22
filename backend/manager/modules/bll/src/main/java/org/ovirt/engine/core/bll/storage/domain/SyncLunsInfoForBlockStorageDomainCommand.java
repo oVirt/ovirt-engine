@@ -60,13 +60,15 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends SyncLunsInfoForB
     public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());
+        setStorageDomainId(parameters.getStorageDomainId());
     }
 
     @Override
     protected boolean validate() {
         HostValidator hostValidator = getHostValidator();
         return validate(hostValidator.hostExists()) &&
-                validate(hostValidator.isUp());
+                validate(hostValidator.isUp()) &&
+                checkStorageDomain();
     }
 
     protected HostValidator getHostValidator() {

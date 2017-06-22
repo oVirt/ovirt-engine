@@ -54,6 +54,7 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
     public void validationSucceeds() {
         when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
         when(hostValidator.isUp()).thenReturn(ValidationResult.VALID);
+        doReturn(true).when(command).checkStorageDomain();
         runAndAssertValidateSuccess(command);
     }
 
@@ -69,6 +70,14 @@ public class SyncLunsInfoForBlockStorageDomainCommandTest extends BaseCommandTes
         when(hostValidator.isUp())
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL));
         runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+    }
+
+    @Test
+    public void validateInvalidStorageDomain() {
+        when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
+        when(hostValidator.isUp()).thenReturn(ValidationResult.VALID);
+        doReturn(null).when(command).getStorageDomain();
+        runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
     @Test
