@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ShortEntityModelTextBoxE
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 
 import com.google.gwt.core.client.GWT;
@@ -119,6 +120,14 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
             if (args.propertyName.equals("Title")) { //$NON-NLS-1$
                 mountOptionsEditor.setTitle(object.getMountOptions().getTitle());
             }
+        });
+
+        retransmissionsEditor.getValidityChangedEvent().addListener((ev, sender, args) -> {
+            object.getRetransmissions().setIsValid(((ValueEventArgs<Boolean>) args).getValue());
+        });
+
+        timeoutEditor.getValidityChangedEvent().addListener((ev, sender, args) -> {
+            object.getRetransmissions().setIsValid(((ValueEventArgs<Boolean>) args).getValue());
         });
 
         setElementVisibility(pathEditor, object.getPath().getIsAvailable());

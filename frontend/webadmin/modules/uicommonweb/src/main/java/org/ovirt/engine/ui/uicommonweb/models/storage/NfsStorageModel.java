@@ -33,7 +33,7 @@ public class NfsStorageModel extends FileStorageModel {
     //timeo nfs option max value
     private static final short TIMEOUT_MAX = 6000;
 
-    public static final EventDefinition pathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class); //$NON-NLS-1$;
+    public static final EventDefinition pathChangedEventDefinition = new EventDefinition("PathChanged", NfsStorageModel.class); //$NON-NLS-1$
     private Event<EventArgs> pathChangedEvent;
 
     public Event<EventArgs> getPathChangedEvent() {
@@ -177,13 +177,17 @@ public class NfsStorageModel extends FileStorageModel {
             new NoSpacesValidation()
         });
 
-        getRetransmissions().validateEntity(new IValidation[] {
-            new IntegerValidation(0, RETRANS_MAX)
-        });
+        if (getRetransmissions().getIsValid()) {
+            getRetransmissions().validateEntity(new IValidation[] {
+                    new IntegerValidation(0, RETRANS_MAX)
+            });
+        }
 
-        getTimeout().validateEntity(new IValidation[] {
-            new IntegerValidation(1, TIMEOUT_MAX)
-        });
+        if (getTimeout().getIsValid()) {
+            getTimeout().validateEntity(new IValidation[] {
+                    new IntegerValidation(1, TIMEOUT_MAX)
+            });
+        }
 
         getMountOptions().validateEntity(new IValidation[] {
             new NonUtfValidation()
