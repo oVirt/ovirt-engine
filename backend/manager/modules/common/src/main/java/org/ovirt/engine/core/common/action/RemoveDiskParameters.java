@@ -7,6 +7,7 @@ public class RemoveDiskParameters extends ActionParametersBase {
     private Guid diskId;
     private Guid storageDomainId;
     private boolean forceDelete;
+    private boolean suppressContentTypeCheck;
 
     public RemoveDiskParameters() {
     }
@@ -44,4 +45,11 @@ public class RemoveDiskParameters extends ActionParametersBase {
         return forceDelete;
     }
 
+    public boolean isSuppressContentTypeCheck() {
+        return suppressContentTypeCheck;
+    }
+
+    public void setSuppressContentTypeCheck(boolean suppressContentTypeCheck) {
+        this.suppressContentTypeCheck = suppressContentTypeCheck;
+    }
 }

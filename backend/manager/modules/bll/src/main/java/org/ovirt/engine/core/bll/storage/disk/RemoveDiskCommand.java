@@ -172,7 +172,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         boolean retValue = true;
         DiskImage diskImage = getDiskImage();
 
-        if (!validate(new DiskOperationsValidator(diskImage).isOperationAllowedOnDisk(getActionType()))) {
+        if (!getParameters().isSuppressContentTypeCheck() &&
+                !validate(new DiskOperationsValidator(diskImage).isOperationAllowedOnDisk(getActionType()))) {
             return false;
         }
 
