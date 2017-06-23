@@ -876,8 +876,13 @@ class OvnEnv(object):
 @util.export
 class OvnFileLocations(object):
 
-    OVIRT_PROVIDER_CONFIG_FILE = (
-        '/etc/ovirt-provider-ovn/ovirt-provider-ovn.conf'
+    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_FILE = (
+        '/etc/ovirt-provider-ovn/conf.d/10-setup-ovirt-provider-ovn.conf'
+    )
+
+    OVIRT_PROVIDER_ENGINE_SETUP_CONFIG_EXAMPLE = os.path.join(
+        FileLocations.OVIRT_ENGINE_SYSCONFDIR,
+        'ovirt-provider-ovn-conf.example'
     )
 
     OVIRT_PROVIDER_OVN_NDB = 'ovn-ndb'
