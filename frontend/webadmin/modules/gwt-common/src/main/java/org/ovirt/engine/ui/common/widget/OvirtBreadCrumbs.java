@@ -24,6 +24,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.inject.Inject;
@@ -105,12 +107,12 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
         buildCrumbs();
     }
 
-    private String getName(T item) {
+    protected SafeHtml getName(T item) {
         String result = "";
         if (item instanceof Nameable) {
             result = ((Nameable)item).getName();
         }
-        return result;
+        return SafeHtmlUtils.fromString(result);
     }
 
     public void clearActiveSubTab() {
@@ -148,7 +150,7 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
 
     }
 
-    private AnchorListItem createSelectionDropDown(String currentName) {
+    private AnchorListItem createSelectionDropDown(SafeHtml currentName) {
         AnchorListItem dropDown = new AnchorListItem();
         Icon exchange = new Icon(IconType.EXCHANGE);
         exchange.setBorder(true);
@@ -157,7 +159,7 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
         exchange.getElement().getStyle().setProperty("borderRadius", 0.2 + Unit.EM.getType()); // $NON-NLS-1$
         exchange.getElement().getStyle().setMarginLeft(6, Unit.PX);
         exchange.getElement().getStyle().setCursor(Cursor.POINTER);
-        Anchor anchor = new Anchor(currentName, HasHref.EMPTY_HREF);
+        Anchor anchor = new Anchor(currentName.asString(), HasHref.EMPTY_HREF);
         anchor.addClickHandler(e -> {
             if (popover.isVisible()) {
                 popover.hide();
@@ -171,13 +173,22 @@ public class OvirtBreadCrumbs<T, M extends SearchableListModel> extends Breadcru
         return dropDown;
     }
 
+    protected ListModelSearchBox createSearchBox() {
+        return new ListModelSearchBox(listModelProvider) {
+            @Override
+            protected SafeHtml getName(Object item) {
+                return OvirtBreadCrumbs.this.getName((T) item);
+            }
+        };
+    }
+
     private void createPopover(Anchor anchor) {
         popover = new OvirtPopover(anchor);
         popover.setTrigger(Trigger.MANUAL);
         popover.setPlacement(Placement.BOTTOM);
         popover.setContainer(anchor);
         if (searchBox == null) {
-            searchBox = new ListModelSearchBox<>(listModelProvider);
+            searchBox = createSearchBox();
             searchBox.setSelectionModel(selectionModel);
             searchBox.addModelSelectedCallback(this);
         }

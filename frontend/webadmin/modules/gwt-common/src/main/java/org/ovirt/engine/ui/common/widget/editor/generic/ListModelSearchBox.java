@@ -21,6 +21,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
@@ -148,13 +150,10 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     private void selectItem(String name) {
         M listModel = listModelProvider.getModel();
         for (T model: listModel.getItems()) {
-            if(model instanceof Nameable) {
-                Nameable nameableModel = (Nameable) model;
-                if(nameableModel.getName().equals(name)) {
-                    selectionModel.setSelected(model, true);
-                    for (ListModelSelectedCallback<T> callback: this.callbacks) {
-                        callback.modelSelected(model);
-                    }
+            if(getName(model).asString().equals(name)) {
+                selectionModel.setSelected(model, true);
+                for (ListModelSelectedCallback<T> callback: this.callbacks) {
+                    callback.modelSelected(model);
                 }
             }
         }
@@ -239,6 +238,14 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         menuHandlers.clear();
     }
 
+    protected SafeHtml getName(T item) {
+        String result = "";
+        if (item instanceof Nameable) {
+            result = ((Nameable)item).getName();
+        }
+        return SafeHtmlUtils.fromString(result);
+    }
+
     @Override
     public void setRowData(int start, List<? extends T> values) {
         final int oldCount = menu.getWidgetCount();
@@ -246,7 +253,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         emptyMenuHandlers();
         for (T model: values) {
             if(model instanceof Nameable) {
-                final String text = ((Nameable)model).getName();
+                final String text = getName(model).asString();
                 final AnchorListItem item = new SearchBoxAnchorListItem();
                 item.setText(text);
                 Scheduler.get().scheduleDeferred(new ScheduledCommand() {

@@ -80,13 +80,17 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
 
     @Override
     protected boolean getIsNodeEnabled(Disk disk) {
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-            if (listModel.getEntity() instanceof Quota) {
+        if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            if (listModel != null && listModel.getEntity() instanceof Quota) {
                 return ((BusinessEntity) listModel.getEntity()).getId().equals(((DiskImage) disk).getQuotaId());
             } else {
-                return ((DiskImage) disk).getStorageIds()
-                        .get(0)
-                        .equals(((BusinessEntity) listModel.getEntity()).getId());
+                DiskImage diskImage = (DiskImage) disk;
+                if (diskImage.getStorageIds() != null && !diskImage.getStorageIds().isEmpty() &&
+                        listModel != null && listModel.getEntity() != null) {
+                    return diskImage.getStorageIds().get(0).equals(((BusinessEntity) listModel.getEntity()).getId());
+                } else {
+                    return true;
+                }
             }
         } else {
             return true;
