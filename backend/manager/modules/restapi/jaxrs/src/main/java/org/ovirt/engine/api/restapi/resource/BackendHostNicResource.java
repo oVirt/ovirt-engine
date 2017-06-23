@@ -161,7 +161,6 @@ public class BackendHostNicResource
 
     @Override
     public LinkLayerDiscoveryProtocolResource getLinkLayerDiscoveryProtocolElementsResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendLinkLayerDiscoveryProtocolResource(guid));
     }
 }
