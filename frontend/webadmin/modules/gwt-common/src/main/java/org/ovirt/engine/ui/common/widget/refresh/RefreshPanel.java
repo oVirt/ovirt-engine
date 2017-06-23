@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.constants.Pull;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.gwtbootstrap3.client.ui.constants.Toggle;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
@@ -59,7 +60,6 @@ public class RefreshPanel extends ButtonGroup implements HasClickHandlers, HasEl
 
         tooltip = new WidgetTooltip(this);
         setTooltipText(refreshManager.getRefreshStatus());
-        setDropUp(true);
     }
 
     public void hideRefreshMenuButton() {
@@ -90,6 +90,7 @@ public class RefreshPanel extends ButtonGroup implements HasClickHandlers, HasEl
 
     private void createDropdownMenu() {
         dropdownMenu = new DropDownMenu();
+        dropdownMenu.setPull(Pull.LEFT);
         Set<Integer> refreshRates = AbstractRefreshManager.getRefreshRates();
         for (Integer refreshRate : refreshRates) {
             AnchorListItem refreshRateItem = new AnchorListItem();
