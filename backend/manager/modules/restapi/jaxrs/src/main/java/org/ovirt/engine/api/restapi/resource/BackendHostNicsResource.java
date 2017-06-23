@@ -40,6 +40,7 @@ public class BackendHostNicsResource
         implements HostNicsResource {
 
     static final String VIRTUAL_FUNCTION_ALLOWED_LABELS = "virtualfunctionallowedlabels";
+    static final String LINK_LAYER_DISCOVERY_PROTOCOL_ELEMENTS = "linklayerdiscoveryprotocolelements";
     static final String[] PF_SUB_COLLECTIONS = { VIRTUAL_FUNCTION_ALLOWED_LABELS, "virtualfunctionallowednetworks" };
     private static final String UPDATE_VFS_CONFIG_ACTION = "updatevirtualfunctionsconfiguration";
 
@@ -128,7 +129,27 @@ public class BackendHostNicsResource
                     linkIterator.remove();
                 }
             }
+
+            if (isBond(resultHostNic)) {
+                removeLldpLink(resultHostNic);
+            }
+
             return resultHostNic;
+        }
+    }
+
+    private boolean isBond(HostNic hostNic) {
+        return hostNic.getBonding() != null;
+    }
+
+    private void removeLldpLink(HostNic hostNic) {
+        final Iterator<Link> linkIterator = hostNic.getLinks().iterator();
+        while (linkIterator.hasNext()) {
+            final Link link = linkIterator.next();
+            if (link.getRel().equals(LINK_LAYER_DISCOVERY_PROTOCOL_ELEMENTS)) {
+                linkIterator.remove();
+                return;
+            }
         }
     }
 
