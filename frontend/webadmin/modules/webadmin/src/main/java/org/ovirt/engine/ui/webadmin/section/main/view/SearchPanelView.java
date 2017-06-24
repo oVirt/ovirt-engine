@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.InputGroupAddon;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
@@ -8,23 +10,26 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestOracle;
-import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestionDisplay;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
+/**
+ * Provide search within a list view. The search panel has 3 visible parts:
+ * <ul>
+ *     <li>Static search prefix (set by the navigation but still a part of the search)</li>
+ *     <li>User entered search string
+ *     <li>Action buttons (clear, bookmark, search)
+ * </ul>
+ *
+ * @param <M> ListModel the search suggest oracle will work on
+ */
 public class SearchPanelView<M extends SearchableListModel> extends AbstractView implements SearchPanelPresenterWidget.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, SearchPanelView> {
@@ -36,48 +41,44 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
     }
 
     protected interface Style extends CssResource {
-
-        String searchBoxPanel();
-
-        String searchBoxPanel_HasSelectedTags();
-
-        String searchBoxClear();
-
-        String searchBoxClear_HasSelectedTags();
-
+        String hasSelectedTags();
     }
 
+    /**
+     * Static search string prefix that is correlated to UI navigation
+     */
     @UiField
-    Label searchStringPrefixLabel;
+    InputGroupAddon searchStringPrefixLabel;
 
-    @UiField
-    VerticalPanel searchBoxPanel;
-
-    @UiField
-    FocusPanel searchBoxClear;
-
-    @UiField
-    @WithElementId("bookmarkButton")
-    FocusPanel searchBoxBookmark;
-
-    @UiField
-    @WithElementId("searchButton")
-    FocusPanel searchBoxSearch;
-
+    /**
+     * User entered search string with popup suggestions
+     */
     @UiField(provided = true)
     @WithElementId
     final SearchSuggestBox searchStringInput;
 
+    /**
+     * Clear the user entered search string
+     */
     @UiField
-    HorizontalPanel searchPanelContainer;
+    Button searchBoxClear;
 
+    /**
+     * Create a new bookmark for the search string
+     */
     @UiField
-    HorizontalPanel searchBoxPanelContainer;
+    @WithElementId("bookmarkButton")
+    Button searchBoxBookmark;
+
+    /**
+     * Execute the search with the intent to use {@link #getSearchString()} for the search
+     */
+    @UiField
+    @WithElementId("searchButton")
+    Button searchBoxSearch;
 
     @UiField
     Style style;
-
-    private static final int SEARCH_PANEL_WIDTH = 1000;
 
     private final SearchSuggestOracle oracle;
 
@@ -92,18 +93,7 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
         searchStringInput.setAutoSelectEnabled(false);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        addStyles();
-
-        searchStringInput.setSearchBoxPanel(searchBoxPanel);
-
-        searchPanelContainer.setCellWidth(searchBoxPanel, "1000px"); //$NON-NLS-1$
-
         ViewIdHandler.idHandler.generateAndSetIds(this);
-    }
-
-    void addStyles() {
-        Element postfixElement = searchBoxPanelContainer.getElement().getElementsByTagName("td").getItem(2); //$NON-NLS-1$
-        postfixElement.getStyle().setWidth(100, Unit.PCT);
     }
 
     @Override
@@ -113,8 +103,8 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
 
     @Override
     public void setSearchString(String searchString) {
-        if (StringUtils.isNotEmpty(searchString) && searchString.trim().toUpperCase()
-                .startsWith(searchStringPrefixLabel.getText().toUpperCase())) {
+        if (StringUtils.isNotEmpty(searchString)
+                && searchString.trim().toUpperCase().startsWith(searchStringPrefixLabel.getText().toUpperCase())) {
             searchStringInput.setText(searchString.trim().substring(searchStringPrefixLabel.getText().length()));
         } else {
             searchStringInput.setText(searchString);
@@ -125,21 +115,19 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
     public void setSearchStringPrefix(String searchStringPrefix) {
         searchStringPrefixLabel.setText(searchStringPrefix);
         oracle.setSearchPrefix(searchStringPrefix);
-
-        // Set search input width
-        int searchStringInputWidth = SEARCH_PANEL_WIDTH - searchStringPrefixLabel.getElement().getOffsetWidth();
-        searchStringInput.getElement().getStyle().setWidth(searchStringInputWidth, Unit.PX);
     }
 
     @Override
     public void setHasSelectedTags(boolean hasSelectedTags) {
         if (hasSelectedTags) {
-            searchBoxPanel.addStyleName(style.searchBoxPanel_HasSelectedTags());
-            searchBoxClear.addStyleName(style.searchBoxClear_HasSelectedTags());
+            searchStringPrefixLabel.addStyleName(style.hasSelectedTags());
+            searchStringInput.addStyleName(style.hasSelectedTags());
+            searchBoxClear.addStyleName(style.hasSelectedTags());
         }
         else {
-            searchBoxPanel.setStyleName(style.searchBoxPanel());
-            searchBoxClear.setStyleName(style.searchBoxClear());
+            searchStringPrefixLabel.removeStyleName(style.hasSelectedTags());
+            searchStringInput.removeStyleName(style.hasSelectedTags());
+            searchBoxClear.removeStyleName(style.hasSelectedTags());
         }
     }
 
@@ -165,7 +153,7 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
 
     @Override
     public void hideSuggestionBox() {
-        ((SearchSuggestionDisplay) searchStringInput.getSuggestionDisplay()).hideSuggestions();
+        searchStringInput.hideSuggestion();
     }
 
     @Override

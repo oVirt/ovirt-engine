@@ -1,57 +1,80 @@
 package org.ovirt.engine.ui.common.widget.action;
 
+import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.FormGroup;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.Kebab;
 
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
+/**
+ * Contain the toolbar portion of a data table including the search panel, action buttons, action kebab
+ * and search results.  The search panel will take up all the space available from the action buttons,
+ * pushing them to the right.  If no search panel is provided, the action buttons are displayed flush left.
+ */
 public class PatternflyActionPanel extends FlowPanel {
+    private FlowPanel actionContainer;
     private FormGroup searchFormGroup;
     private FormGroup actionFormGroup;
-    private FlowPanel container;
+    private FlowPanel resultsContainer;
     private Kebab actionKebab;
 
     public PatternflyActionPanel() {
-        FlowPanel actionToolbarColumn = new FlowPanel();
-        addStyleName(PatternflyConstants.PF_TOOLBAR);
-
-        container = new FlowPanel();
-        container.add(actionToolbarColumn);
-        add(container);
-        FlowPanel actionContainer = new FlowPanel();
+        actionContainer = new FlowPanel(); // filer/search + actions + action-right
         actionContainer.addStyleName(PatternflyConstants.PF_TOOLBAR_ACTIONS);
-        actionToolbarColumn.add(actionContainer);
 
-        searchFormGroup = new FormGroup();
-        searchFormGroup.addStyleName(PatternflyConstants.PF_TOOLBAR_FILTER);
-        // Need to add 1 px to show left side of search bar. TODO: remove me once we have right layout.
-        searchFormGroup.getElement().getStyle().setPaddingLeft(1, Style.Unit.PX);
-        actionContainer.add(searchFormGroup);
-
-        actionFormGroup = new FormGroup();
+        actionFormGroup = new FormGroup(); // action buttons + kebab menu
         actionFormGroup.addStyleName(Styles.ROW);
         actionContainer.add(actionFormGroup);
 
         actionKebab = new Kebab();
         actionKebab.setVisible(false);
         actionFormGroup.add(actionKebab);
+
+        resultsContainer = new FlowPanel();
+
+        Column column = new Column(ColumnSize.SM_12);
+        column.add(actionContainer);
+        column.add(resultsContainer);
+
+        addStyleName(Styles.ROW);
+        addStyleName(PatternflyConstants.PF_TOOLBAR);
+        add(column);
         setVisible(false);
     }
 
+    /**
+     * Create the container to hold the search panel as necessary and insert the
+     * provided search panel to be displayed.
+     */
     public void setSearchPanel(IsWidget searchPanel) {
-        searchFormGroup.clear();
-        if (searchPanel != null) {
+        if (searchPanel == null) {
+            if (searchFormGroup != null) {
+                actionContainer.remove(searchFormGroup);
+                searchFormGroup = null;
+            }
+        } else {
+            if (searchFormGroup != null) {
+                searchFormGroup.clear();
+            } else {
+                searchFormGroup = new FormGroup();
+                searchFormGroup.addStyleName(PatternflyConstants.PF_TOOLBAR_FILTER);
+                actionContainer.insert(searchFormGroup, 0);
+            }
             searchFormGroup.add(searchPanel);
+
             actionFormGroup.removeStyleName(Styles.ROW);
         }
     }
 
+    /**
+     * Add the toolbar's search result / applied filter row to the action panel below the search panel and buttons
+     */
     public void addResult(IsWidget result) {
-        container.add(result);
+        resultsContainer.add(result);
     }
 
     public void addButtonToActionGroup(ActionButton button) {

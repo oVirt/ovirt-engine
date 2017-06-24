@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView.Style">
         @external gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner;
@@ -12,6 +14,7 @@
 
         .gwt-SuggestBoxPopup {
             z-index: 1;
+            margin-left: 0;
         }
 
         .gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner {
@@ -34,112 +37,26 @@
             display: none;
         }
 
-        .searchLabel {
-            float: left;
-            margin-left: 20px;
-            line-height:25px;
-        }
-
-        .searchBoxPanel {
-            width: 100%;
-            height: 25px;
-        }
-
-        .searchBoxPanel_HasSelectedTags {
+        .hasSelectedTags {
             background-image: url(images/search_bar_middle_HasSelectedTags.png);
-        }
-
-        .searchBoxClear_HasSelectedTags {
-            background-image: url(images/search_bar_middle_HasSelectedTags.png);
-        }
-
-        .searchBoxMiddleSearchPrefix {
-            float: left;
-            height: 25px;
-        }
-
-        .searchBoxMiddleSearchString {
-            float: left;
-            height: 25px;
-            width: 100%;
-        }
-
-        .searchBoxMiddleSearchString td {
-            outline: 1px gray solid;
-        }
-
-        .searchStringPrefixLabel {
-            border: none;
-            outline: 1px gray solid;
-            font-size: 14px;
-            color: grey;
-            padding-left: 10px;
-            padding-right: 10px;
-            white-space: nowrap;
-            background-color: #CACACA;
-            color: #000000;
-        }
-
-        .searchSuggestBox {
-            padding-left: 10px;
-            padding-right: 2px;
-            padding-bottom: 0px;
-            padding-top: 0px;
-            margin: 0px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            height: 25px;
-            line-height: 25px;
-            width: 100% !important;
-        }
-
-        .searchBoxClear, .searchBoxBookmark, .searchBoxSearch {
-            width: 30px;
-            height: 25px;
-            background-color: #fff;
-            outline: 1px gray solid;
-            text-align: center;
-            float: left;
-            padding-top: 3px;
-            cursor: pointer;
-        }
-
-        .searchBoxPanelContainer {
-            width: 100%;
         }
     </ui:style>
 
-    <g:HTMLPanel>
-        <g:HorizontalPanel ui:field="searchPanelContainer">
+    <b:Row>
+        <b:Column size="SM_12">
+            <b:InputGroup>
+                <b:InputGroupAddon ui:field="searchStringPrefixLabel" />
 
-            <g:VerticalPanel ui:field="searchBoxPanel" addStyleNames="{style.searchBoxPanel}">
-                <g:HorizontalPanel ui:field="searchBoxPanelContainer" addStyleNames="{style.searchBoxPanelContainer}">
-                    <g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchPrefix}">
-                        <g:Label ui:field="searchStringPrefixLabel" addStyleNames="{style.searchStringPrefixLabel} spv_searchStringPrefixLabel_pfly_fix" />
-                    </g:HorizontalPanel>
-                    <g:HorizontalPanel addStyleNames="{style.searchBoxMiddleSearchString}">
-                        <g:SuggestBox ui:field="searchStringInput" addStyleNames="{style.searchSuggestBox}" />
-                    </g:HorizontalPanel>
-                </g:HorizontalPanel>
-            </g:VerticalPanel>
+                <b:SuggestBox ui:field="searchStringInput" />
 
-
-            <g:FocusPanel ui:field="searchBoxClear" addStyleNames="{style.searchBoxClear}">
-                <g:InlineHTML addStyleNames="pficon pficon-close"></g:InlineHTML>
-            </g:FocusPanel>
-
-            <g:FocusPanel ui:field="searchBoxBookmark" addStyleNames="{style.searchBoxBookmark}">
-                <g:InlineHTML addStyleNames="glyphicon glyphicon-star-empty"></g:InlineHTML>
-            </g:FocusPanel>
-
-            <g:FocusPanel ui:field="searchBoxSearch" addStyleNames="{style.searchBoxSearch}">
-                <g:InlineHTML addStyleNames="glyphicon glyphicon-search"></g:InlineHTML>
-            </g:FocusPanel>
-        </g:HorizontalPanel>
-
-        <div style="clear: both;" />
-
-    </g:HTMLPanel>
+                <b:InputGroupButton>
+                  <!-- NOTE: To avoid ugly hacks, we're just using gwt-bootstrap3 default FontAwesome icons. -->
+                  <b:Button ui:field="searchBoxClear" icon="CLOSE" />
+                  <b:Button ui:field="searchBoxBookmark" icon="STAR_O" />
+                  <b:Button ui:field="searchBoxSearch" icon="SEARCH" />
+                </b:InputGroupButton>
+            </b:InputGroup>
+        </b:Column>
+    </b:Row>
 
 </ui:UiBinder>

@@ -5,14 +5,10 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -64,13 +60,10 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
     }
 
     void addModelListeners() {
-        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                // Update search string when 'SearchString' property changes
-                if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
-                    updateViewSearchString();
-                }
+        model.getPropertyChangedEvent().addListener((event, sender, args) -> {
+            // Update search string when 'SearchString' property changes
+            if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
+                updateViewSearchString();
             }
         });
     }
@@ -79,20 +72,16 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getBookmarkButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                bookmarkModelProvider.getModel().getNewCommand().execute();
-            }
+        registerHandler(getView().getBookmarkButton().addClickHandler(event -> {
+            BookmarkListModel bookmarkListModel = bookmarkModelProvider.getModel();
+            bookmarkListModel.setSearchString(getView().getSearchString());
+            bookmarkListModel.getNewCommand().execute();
         }));
 
-        registerHandler(getView().getClearButton().addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                model.setSearchString("");
-                updateViewSearchString();
-                updateModelSearchString();
-            }
+        registerHandler(getView().getClearButton().addClickHandler(event -> {
+            model.setSearchString(""); //$NON-NLS-1$
+            updateViewSearchString();
+            updateModelSearchString();
         }));
 
         registerHandler(getView().getSearchButton().addClickHandler(event -> updateModelSearchString()));

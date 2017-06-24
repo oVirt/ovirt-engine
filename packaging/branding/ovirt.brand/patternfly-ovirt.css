@@ -157,3 +157,32 @@
   }
 }
 
+.toolbar-pf .toolbar-pf-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-bottom: 0;
+}
+
+.toolbar-pf .form-group, .toolbar-pf .form-group:last-child {
+  margin-bottom: 10px;
+  margin-right: 20px;
+}
+
+.toolbar-pf .form-group:last-child {
+  margin-bottom: 10px;
+  padding-left: 0;
+}
+
+.toolbar-pf .toolbar-pf-actions .toolbar-pf-filter {
+  flex: 1;
+  min-width: 25%;
+}
+
+.toolbar-pf .toolbar-pf-actions .toolbar-pf-filter .input-group .input-group-btn .btn+.btn {
+  margin-left: -1px;
+}
+
+.toolbar-pf .toolbar-pf-actions .form-group:last-child .dropdown-kebab-pf {
+  margin-right: 15px;
+}
