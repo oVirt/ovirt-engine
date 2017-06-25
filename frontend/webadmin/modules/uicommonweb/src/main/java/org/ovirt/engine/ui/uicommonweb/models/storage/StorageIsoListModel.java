@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -115,8 +116,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
     }
 
     private void importImages() {
-        @SuppressWarnings("unchecked")
-        ArrayList<RepoImage> repoImages = (ArrayList<RepoImage>) getSelectedItems();
+        List<RepoImage> repoImages = getSelectedItems();
 
         if (repoImages == null || getWindow() != null) {
             return;
@@ -143,12 +143,10 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
 
     private void updateActionAvailability() {
         StorageDomain storageDomain = getEntity();
-        @SuppressWarnings("unchecked")
-        ArrayList<RepoImage> selectedImages =
-                getSelectedItems() != null ? (ArrayList<RepoImage>) getSelectedItems() : new ArrayList<RepoImage>();
+
         if (storageDomain != null && storageDomain.getStorageType() == StorageType.GLANCE) {
             getImportImagesCommand().setIsAvailable(true);
-            getImportImagesCommand().setIsExecutionAllowed(selectedImages.size() > 0);
+            getImportImagesCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
         } else {
             getImportImagesCommand().setIsAvailable(false);
         }
