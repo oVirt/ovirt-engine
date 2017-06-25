@@ -69,6 +69,10 @@ public class OvfVmWriter extends OvfWriter {
         if (vm.getLastStopTime() != null) {
             _writer.writeElement(OvfProperties.STOP_TIME, OvfParser.localDateToUtcDateString(vm.getLastStopTime()));
         }
+
+        if (vm.getBootTime() != null) {
+            _writer.writeElement(OvfProperties.BOOT_TIME, OvfParser.localDateToUtcDateString(vm.getBootTime()));
+        }
     }
 
     private void writeLogEvent(String name, String value) {

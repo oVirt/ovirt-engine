@@ -86,4 +86,5 @@ public class OvfProperties {
     static final String MAX_MEMORY_SIZE_MB = "MaxMemorySizeMb";
     static final String VM_LEASE = "LeaseDomainId";
     static final String STOP_TIME = "StopTime";
+    static final String BOOT_TIME = "BootTime";
 }

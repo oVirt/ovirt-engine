@@ -295,6 +295,9 @@ public class ResourceManager implements BackendService {
                 vm.setRunOnVds(null);
                 vm.setPauseStatus(VmPauseStatus.NONE);
                 vm.setLastStopTime(new Date());
+                if (status == VMStatus.Down) {
+                    vm.setBootTime(null);
+                }
             }
         }
     }

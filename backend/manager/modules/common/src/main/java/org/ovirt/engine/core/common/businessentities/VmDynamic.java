@@ -22,6 +22,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private String vmHost;
     @UnchangeableByVdsm
+    private Date bootTime;
+    @UnchangeableByVdsm
     private Date lastStartTime;
     @UnchangeableByVdsm
     private Date lastStopTime;
@@ -106,6 +108,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 ip,
                 fqdn,
                 lastStartTime,
+                bootTime,
                 lastStopTime,
                 lastWatchdogEvent,
                 lastWatchdogAction,
@@ -161,6 +164,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(ip, other.ip)
                 && Objects.equals(fqdn, other.fqdn)
                 && Objects.equals(lastStartTime, other.lastStartTime)
+                && Objects.equals(bootTime, other.bootTime)
                 && Objects.equals(lastStopTime, other.lastStopTime)
                 && Objects.equals(lastWatchdogEvent, other.lastWatchdogEvent)
                 && Objects.equals(lastWatchdogAction, other.lastWatchdogAction)
@@ -181,6 +185,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(guestOsArch, other.guestOsArch)
                 && Objects.equals(guestOsType, other.guestOsType)
                 && Objects.equals(guestContainers, other.guestContainers);
+    }
+
+    public Date getBootTime() {
+        return bootTime;
+    }
+
+    public void setBootTime(Date bootTime) {
+        this.bootTime = bootTime;
     }
 
     public String getExitMessage() {
@@ -236,6 +248,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         fqdn = template.getFqdn();
         vmHost = template.getVmHost();
         lastStartTime = template.getLastStartTime();
+        bootTime = template.getBootTime();
         lastStopTime = template.getLastStopTime();
         guestCurUserName = template.getGuestCurrentUserName();
         consoleCurrentUserName = template.getConsoleCurrentUserName();

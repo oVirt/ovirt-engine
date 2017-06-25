@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.vdscommands.CreateVDSCommandParameters;
@@ -30,7 +31,7 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
             return;
         }
 
-        vm.setLastStartTime(new Date());
+        Date now = new Date();
         VDSReturnValue vdsReturnValue = null;
         try {
             vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.CreateBroker, getParameters());
@@ -44,6 +45,11 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
                 if (!vm.isInitialized()) {
                     vmDao.saveIsInitialized(vm.getId(), true);
                 }
+                boolean vmBoots = StringUtils.isEmpty(getParameters().getHibernationVolHandle());
+                if (vmBoots) {
+                    vm.setBootTime(now);
+                }
+                vm.setLastStartTime(now);
                 vm.setStopReason(null);
                 vm.setInitialized(true);
                 vm.setRunOnVds(getParameters().getVdsId());
