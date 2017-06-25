@@ -583,7 +583,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         CreateVDSCommandParameters parameters  = new CreateVDSCommandParameters(getVdsId(), getVm());
         parameters.setRunInUnknownStatus(getParameters().isRunInUnknownStatus());
         parameters.setVmPayload(vmPayload);
-        parameters.setHibernationVolHandle(getMemoryFromActiveSnapshot());
+        String memoryFromActiveSnapshot = getMemoryFromActiveSnapshot();
+        if (StringUtils.isNotEmpty(memoryFromActiveSnapshot)) {
+            parameters.setHibernationVolHandle(memoryFromActiveSnapshot);
+            parameters.setDownSince(getVm().getStatus() == VMStatus.Suspended ?
+                    getVm().getLastStopTime()
+                    : getActiveSnapshot().getCreationDate());
+        }
         parameters.setPassthroughVnicToVfMap(flushPassthroughVnicToVfMap());
         if (initializationType == InitializationType.Sysprep
                 && osRepository.isWindows(getVm().getVmOsId())

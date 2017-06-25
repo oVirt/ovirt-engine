@@ -24,6 +24,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private Date bootTime;
     @UnchangeableByVdsm
+    private long downtime;
+    @UnchangeableByVdsm
     private Date lastStartTime;
     @UnchangeableByVdsm
     private Date lastStopTime;
@@ -109,6 +111,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 fqdn,
                 lastStartTime,
                 bootTime,
+                downtime,
                 lastStopTime,
                 lastWatchdogEvent,
                 lastWatchdogAction,
@@ -165,6 +168,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && Objects.equals(fqdn, other.fqdn)
                 && Objects.equals(lastStartTime, other.lastStartTime)
                 && Objects.equals(bootTime, other.bootTime)
+                && Objects.equals(downtime, other.downtime)
                 && Objects.equals(lastStopTime, other.lastStopTime)
                 && Objects.equals(lastWatchdogEvent, other.lastWatchdogEvent)
                 && Objects.equals(lastWatchdogAction, other.lastWatchdogAction)
@@ -193,6 +197,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setBootTime(Date bootTime) {
         this.bootTime = bootTime;
+    }
+
+    public long getDowntime() {
+        return downtime;
+    }
+
+    public void setDowntime(long downtime) {
+        this.downtime = downtime;
     }
 
     public String getExitMessage() {
@@ -249,6 +261,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         vmHost = template.getVmHost();
         lastStartTime = template.getLastStartTime();
         bootTime = template.getBootTime();
+        downtime = template.getDowntime();
         lastStopTime = template.getLastStopTime();
         guestCurUserName = template.getGuestCurrentUserName();
         consoleCurrentUserName = template.getConsoleCurrentUserName();

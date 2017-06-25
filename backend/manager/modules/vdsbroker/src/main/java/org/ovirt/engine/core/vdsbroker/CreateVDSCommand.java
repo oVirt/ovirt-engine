@@ -45,9 +45,12 @@ public class CreateVDSCommand<P extends CreateVDSCommandParameters> extends Mana
                 if (!vm.isInitialized()) {
                     vmDao.saveIsInitialized(vm.getId(), true);
                 }
-                boolean vmBoots = StringUtils.isEmpty(getParameters().getHibernationVolHandle());
-                if (vmBoots) {
+                boolean vmIsBooting = StringUtils.isEmpty(getParameters().getHibernationVolHandle());
+                if (vmIsBooting) {
                     vm.setBootTime(now);
+                    vm.setDowntime(0);
+                } else {
+                    vm.setDowntime(vm.getDowntime() + now.getTime() - getParameters().getDownSince().getTime());
                 }
                 vm.setLastStartTime(now);
                 vm.setStopReason(null);

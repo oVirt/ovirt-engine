@@ -87,4 +87,5 @@ public class OvfProperties {
     static final String VM_LEASE = "LeaseDomainId";
     static final String STOP_TIME = "StopTime";
     static final String BOOT_TIME = "BootTime";
+    static final String DOWNTIME = "Downtime";
 }

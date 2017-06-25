@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.SysPrepParams;
@@ -19,6 +20,7 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String hibernationVolHandle;
     private Map<Guid, String> passthroughVnicToVfMap;
     private boolean volatileRun;
+    private Date downSince;
 
     public CreateVDSCommandParameters() {
     }
@@ -87,6 +89,14 @@ public class CreateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
 
     public void setVolatileRun(boolean volatileRun) {
         this.volatileRun = volatileRun;
+    }
+
+    public Date getDownSince() {
+        return downSince;
+    }
+
+    public void setDownSince(Date downSince) {
+        this.downSince = downSince;
     }
 
     @Override

@@ -532,6 +532,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
         this.vmDynamic.setBootTime(value);
     }
 
+    public long getDowntime() {
+        return this.vmDynamic.getDowntime();
+    }
+
+    public void setDowntime(long value) {
+        this.vmDynamic.setDowntime(value);
+    }
+
     public Date getLastStopTime() {
         return this.vmDynamic.getLastStopTime();
     }
