@@ -870,6 +870,9 @@ public class VmAnalyzer {
                 vdsmVm.getVmStatistics(),
                 getVmManager().getNumOfCpus(),
                 updateMigrationProgress);
+        if (dbVm.getBootTime() != null) {
+            statistics.setElapsedTime((System.currentTimeMillis() - dbVm.getBootTime().getTime()  - dbVm.getDowntime()) / 1000.0);
+        }
     }
 
     private void updateDiskImageDynamics() {
