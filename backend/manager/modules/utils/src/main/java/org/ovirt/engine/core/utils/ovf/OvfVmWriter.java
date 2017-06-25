@@ -18,48 +18,47 @@ import org.ovirt.engine.core.compat.Version;
 
 public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
-    private VM _vm;
+    private VM vm;
 
     public OvfVmWriter(VM vm, List<DiskImage> images, Version version) {
         super(vm.getStaticData(), images, version);
-        _vm = vm;
+        this.vm = vm;
     }
 
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
-        _writer.writeElement(OvfProperties.NAME, _vm.getStaticData().getName());
-        _writer.writeElement(OvfProperties.TEMPLATE_ID, _vm.getStaticData().getVmtGuid().toString());
-        _writer.writeElement(OvfProperties.TEMPLATE_NAME, _vm.getVmtName());
-        if (_vm.getInstanceTypeId() != null ) {
-            _writer.writeElement(OvfProperties.INSTANCE_TYPE_ID, _vm.getInstanceTypeId().toString());
+        _writer.writeElement(OvfProperties.TEMPLATE_ID, vm.getVmtGuid().toString());
+        _writer.writeElement(OvfProperties.TEMPLATE_NAME, vm.getVmtName());
+        if (vm.getInstanceTypeId() != null ) {
+            _writer.writeElement(OvfProperties.INSTANCE_TYPE_ID, vm.getInstanceTypeId().toString());
         }
-        if (_vm.getImageTypeId() != null ) {
-            _writer.writeElement(OvfProperties.IMAGE_TYPE_ID, _vm.getImageTypeId().toString());
+        if (vm.getImageTypeId() != null ) {
+            _writer.writeElement(OvfProperties.IMAGE_TYPE_ID, vm.getImageTypeId().toString());
         }
-        _writer.writeElement(OvfProperties.IS_INITIALIZED, String.valueOf(_vm.getStaticData().isInitialized()));
-        _writer.writeElement(OvfProperties.ORIGIN, String.valueOf(_vm.getOrigin().getValue()));
-        if (!StringUtils.isBlank(_vm.getAppList())) {
-            _writer.writeElement(OvfProperties.APPLICATIONS_LIST, _vm.getAppList());
+        _writer.writeElement(OvfProperties.IS_INITIALIZED, String.valueOf(vm.isInitialized()));
+        _writer.writeElement(OvfProperties.ORIGIN, String.valueOf(vm.getOrigin().getValue()));
+        if (!StringUtils.isBlank(vm.getAppList())) {
+            _writer.writeElement(OvfProperties.APPLICATIONS_LIST, vm.getAppList());
         }
-        if (_vm.getQuotaId() != null) {
-            _writer.writeElement(OvfProperties.QUOTA_ID, _vm.getQuotaId().toString());
+        if (vm.getQuotaId() != null) {
+            _writer.writeElement(OvfProperties.QUOTA_ID, vm.getQuotaId().toString());
         }
-        _writer.writeElement(OvfProperties.VM_DEFAULT_DISPLAY_TYPE, String.valueOf(_vm.getDefaultDisplayType().getValue()));
-        _writer.writeElement(OvfProperties.TRUSTED_SERVICE, String.valueOf(_vm.isTrustedService()));
+        _writer.writeElement(OvfProperties.VM_DEFAULT_DISPLAY_TYPE, String.valueOf(vm.getDefaultDisplayType().getValue()));
+        _writer.writeElement(OvfProperties.TRUSTED_SERVICE, String.valueOf(vm.isTrustedService()));
 
-        if (_vm.getStaticData().getOriginalTemplateGuid() != null) {
-            _writer.writeElement(OvfProperties.ORIGINAL_TEMPLATE_ID, _vm.getStaticData().getOriginalTemplateGuid().toString());
-        }
-
-        if (_vm.getStaticData().getOriginalTemplateName() != null) {
-            _writer.writeElement(OvfProperties.ORIGINAL_TEMPLATE_NAME, _vm.getStaticData().getOriginalTemplateName());
+        if (vm.getOriginalTemplateGuid() != null) {
+            _writer.writeElement(OvfProperties.ORIGINAL_TEMPLATE_ID, vm.getOriginalTemplateGuid().toString());
         }
 
-        _writer.writeElement(OvfProperties.USE_HOST_CPU, String.valueOf(_vm.getStaticData().isUseHostCpuFlags()));
-        _writer.writeElement(OvfProperties.USE_LATEST_VERSION, String.valueOf(_vm.isUseLatestVersion()));
+        if (vm.getOriginalTemplateName() != null) {
+            _writer.writeElement(OvfProperties.ORIGINAL_TEMPLATE_NAME, vm.getOriginalTemplateName());
+        }
 
-        OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
+        _writer.writeElement(OvfProperties.USE_HOST_CPU, String.valueOf(vm.isUseHostCpuFlags()));
+        _writer.writeElement(OvfProperties.USE_LATEST_VERSION, String.valueOf(vm.isUseLatestVersion()));
+
+        OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(vm.getStaticData());
         // Gets a map that its keys are aliases to fields that should be OVF
         // logged.
         Map<String, String> aliasesValuesMap = handler.getAliasesValuesMap();
@@ -77,7 +76,7 @@ public class OvfVmWriter extends OvfWriter {
 
     @Override
     protected Integer maxNumOfVcpus() {
-        return VmCpuCountHelper.calcMaxVCpu(_vm, getVersion());
+        return VmCpuCountHelper.calcMaxVCpu(vm, getVersion());
     }
 
     @Override
@@ -128,7 +127,7 @@ public class OvfVmWriter extends OvfWriter {
      * If no snapshots were set to be written, this section will not be written.
      */
     private void writeSnapshotsSection() {
-        List<Snapshot> snapshots = _vm.getSnapshots();
+        List<Snapshot> snapshots = vm.getSnapshots();
         if (snapshots == null || snapshots.isEmpty()) {
             return;
         }

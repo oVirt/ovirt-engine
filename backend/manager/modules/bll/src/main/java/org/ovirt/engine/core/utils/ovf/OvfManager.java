@@ -81,9 +81,7 @@ public class OvfManager {
             throw new OvfReaderException(message);
         }
         Guid id = vm.getStaticData().getId();
-        for (VmNetworkInterface iface : interfaces) {
-            iface.setVmId(id);
-        }
+        interfaces.forEach(iface -> iface.setVmId(id));
     }
 
     public void importTemplate(String ovfstring, VmTemplate vmTemplate,

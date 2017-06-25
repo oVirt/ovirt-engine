@@ -239,6 +239,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeGeneralData() {
+        _writer.writeElement(OvfProperties.NAME, vmBase.getName());
         if (vmBase.getDescription() != null) {
             _writer.writeElement(OvfProperties.DESCRIPTION, vmBase.getDescription());
         }
@@ -515,13 +516,6 @@ public abstract class OvfWriter implements IOvfBuilder {
         return _writer.getStringXML();
     }
 
-    protected String getBackwardCompatibleUsbPolicy(UsbPolicy usbPolicy) {
-        if (usbPolicy == null) {
-            return UsbPolicy.DISABLED.name();
-        }
-        return usbPolicy.toString();
-    }
-
     protected void writeOS() {
         _writer.writeStartElement("Section");
         _writer.writeAttributeString(OVF_URI, "id", vmBase.getId().toString());
@@ -670,7 +664,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeRaw(OvfHardware.USB);
         _writer.writeEndElement();
         _writer.writeStartElement(RASD_URI, "UsbPolicy");
-        _writer.writeRaw(getBackwardCompatibleUsbPolicy(vmBase.getUsbPolicy()));
+        _writer.writeRaw(vmBase.getUsbPolicy() != null ? vmBase.getUsbPolicy().toString() : UsbPolicy.DISABLED.name());
         _writer.writeEndElement();
         _writer.writeEndElement(); // item
     }

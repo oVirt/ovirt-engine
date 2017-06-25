@@ -405,9 +405,7 @@ public class SnapshotsManager {
             disks.addAll(ImagesHandler.getCinderLeafImages(diskDao.getAllForVm(vm.getId())));
         }
         populateDisksWithVmData(disks, vm.getId());
-        for (DiskImage image : disks) {
-            image.setStorageIds(null);
-        }
+        disks.forEach(image -> image.setStorageIds(null));
         return ovfManager.exportVm(vm, new ArrayList<>(disks), ClusterUtils.getCompatibilityVersion(vm));
     }
 
