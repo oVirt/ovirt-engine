@@ -81,7 +81,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
         boolean isDomainActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active ||
                 storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
         if (storageDomain.getStorageDomainType() == StorageDomainType.ISO && !isDomainActive) {
-            setItems(Collections.<RepoImage>emptyList());
+            setItems(Collections.emptyList());
             return;
         }
 
