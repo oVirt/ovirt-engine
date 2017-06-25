@@ -165,6 +165,9 @@ public class OvfVmReader extends OvfReader {
         consumeReadProperty(content,
                 OvfProperties.USE_HOST_CPU,
                 val -> _vm.setUseHostCpuFlags(Boolean.parseBoolean(val)));
+        consumeReadProperty(content,
+                OvfProperties.STOP_TIME,
+                val -> _vm.setLastStopTime(OvfParser.utcDateStringToLocalDate(val)));
     }
 
     @Override

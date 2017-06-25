@@ -560,6 +560,9 @@ public class SnapshotsManager {
         try {
             VmStatic oldVmStatic = vm.getStaticData();
             VM tempVM = new VM();
+            if (vm.getDynamicData() != null) {
+                tempVM.setDynamicData(vm.getDynamicData());
+            }
             ArrayList<DiskImage> images = new ArrayList<>();
             ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
             ovfManager.importVm(configuration, tempVM, images, interfaces);

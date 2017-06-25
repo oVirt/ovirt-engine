@@ -85,4 +85,5 @@ public class OvfProperties {
     static final String USER_DEFINED_PROPERTIES = "UserDefinedProperties";
     static final String MAX_MEMORY_SIZE_MB = "MaxMemorySizeMb";
     static final String VM_LEASE = "LeaseDomainId";
+    static final String STOP_TIME = "StopTime";
 }
