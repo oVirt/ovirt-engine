@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -27,10 +28,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StepSubjectEntityDao;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,9 +174,27 @@ public class VdsCommandsHelper {
         jobProperties.put(VdcObjectType.VDS.name().toLowerCase(), getVdsDao().get(vdsForExecution).getName());
         step.setDescription(ExecutionMessageDirector.resolveStepMessage(stepEnum, jobProperties));
         getStepDao().update(step);
+
+        // Add an audit log entry if a corresponding AuditLogType exists. Note that we expect an AuditLogType
+        // with name equals to Step_Enum to exist. If an AuditLogType exists, the arguments in the audit
+        // message must match these in the StepEnum message.
+        AuditLogType logType = null;
+        try {
+            logType = AuditLogType.valueOf(getAuditLogType(cmd));
+        } catch (IllegalArgumentException e) {
+            // Ignore this exception and do nothing as no corresponding AuditLogType found.
+            log.debug("No AuditLogType found for " + getAuditLogType(cmd));
+            return;
+        }
+        jobProperties.entrySet().stream().forEach(entry -> cmd.addCustomValue(entry.getKey(), entry.getValue()));
+        Injector.get(AuditLogDirector.class).log(cmd, logType);
     }
 
     private static String getStepWithHostname(CommandBase<?> cmd) {
         return cmd.getCommandStep().toString() + "_ON_HOST";
+    }
+
+    private static String getAuditLogType(CommandBase<?> cmd) {
+        return getStepWithHostname(cmd);
     }
 }
