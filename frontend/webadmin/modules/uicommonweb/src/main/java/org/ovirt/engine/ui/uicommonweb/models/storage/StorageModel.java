@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -404,7 +403,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                         SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 dc = (StoragePool) dataCenterItem.getEntity();
 
-                getDataCenter().setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
+                getDataCenter().setItems(new ArrayList<>(Collections.singletonList(dc)));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
@@ -421,7 +420,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                         SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
                 dc = (StoragePool) dataCenterItem.getEntity();
 
-                getDataCenter().setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
+                getDataCenter().setItems(new ArrayList<>(Collections.singletonList(dc)));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangeable(false);
                 getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
@@ -465,7 +464,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
                                     }
                                     else {
                                         dataCenters =
-                                                new ArrayList<>(Arrays.asList(new StoragePool[]{dataCentersWithStorage.get(0)}));
+                                                new ArrayList<>(Collections.singletonList(dataCentersWithStorage.get(0)));
                                     }
                                     getDataCenter().setItems(dataCenters);
                                     getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
