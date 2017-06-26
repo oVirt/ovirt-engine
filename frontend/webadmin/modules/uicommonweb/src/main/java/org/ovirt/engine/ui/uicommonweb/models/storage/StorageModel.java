@@ -511,7 +511,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         //any host can perform the operation, thus no need to filter to use just the SPM
         if (getStorage() != null && getStorage().getStatus() != StorageDomainStatus.Maintenance) {
             VDS spm = getSPM(hosts);
-            hosts = spm != null ? Collections.singletonList(spm) : Collections.<VDS> emptyList();
+            hosts = spm != null ? Collections.singletonList(spm) : Collections.emptyList();
         }
 
         // Try to select previously selected host.
