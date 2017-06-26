@@ -31,8 +31,6 @@ public enum ConfigurationValues {
     StoragePoolNameSizeLimit(ConfigAuthType.User),
     UserDefinedVMProperties(ConfigAuthType.User),
     PredefinedVMProperties(ConfigAuthType.User),
-    VdsFenceOptionTypes,
-    VdsFenceOptionMapping,
     VdsFenceType,
     SupportedClusterLevels(ConfigAuthType.User),
     ProductRPMVersion(ConfigAuthType.User),
