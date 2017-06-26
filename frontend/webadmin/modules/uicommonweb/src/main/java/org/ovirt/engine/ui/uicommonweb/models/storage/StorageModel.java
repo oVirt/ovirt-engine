@@ -496,7 +496,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         boolean localFsOnly = getCurrentStorageItem() instanceof LocalStorageModel;
         Guid dataCenterId = dataCenter == null ? null : dataCenter.getId();
 
-        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery<>(hosts -> postUpdateHost(hosts)), dataCenterId, localFsOnly);
+        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery<>(this::postUpdateHost), dataCenterId, localFsOnly);
     }
 
     public void postUpdateHost(Collection<VDS> hosts) {
