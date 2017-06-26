@@ -11,6 +11,6 @@ public class OvfParserTest {
     @Test
     public void utcDateStringToLocaDateNoDep() {
         Date date = OvfParser.utcDateStringToLocalDate("1984/06/19 14:25:11");
-        assertEquals(456503111000L, date.getTime());
+        assertEquals(new Date(456503111000L), date);
     }
 }
