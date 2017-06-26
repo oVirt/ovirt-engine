@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.CreateVGVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
@@ -100,17 +101,15 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     }
 
     @Override
-    protected boolean getDefaultDiscardAfterDelete(Version compatibilityVersion) {
+    protected boolean getDefaultDiscardAfterDelete() {
+        Version compatibilityVersion = VersionStorageFormatUtil.getEarliestVersionSupported(
+                getStorageDomain().getStorageFormat());
         return FeatureSupported.discardAfterDeleteSupported(compatibilityVersion);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator,
-            Version compatibilityVersion) {
-        if (!validate(storageDomainValidator.isDiscardAfterDeleteSupportedByDcVersion(compatibilityVersion))) {
-            return false;
-        }
+    protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
         ArrayList<LUNs> luns = (ArrayList<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList,
                 new GetDeviceListVDSCommandParameters(getVds().getId(), getStorageDomain().getStorageType(), false,
                         getParameters().getLunIds())).getReturnValue();

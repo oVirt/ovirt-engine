@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -65,12 +64,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     public AddStorageDomainCommand(T parameters,
             CommandContext commandContext) {
         super(parameters, commandContext);
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        initStorageDomainDiscardAfterDelete(getTargetStoragePool().getCompatibilityVersion());
     }
 
     protected void initializeStorageDomain() {
@@ -214,10 +207,15 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StorageDomainToPoolRelationValidator storageDomainToPoolRelationValidator = getAttachDomainValidator();
         StorageDomainValidator sdValidator = getStorageDomainValidator();
         if (!validate(storageDomainToPoolRelationValidator.isStorageDomainFormatCorrectForDC()) ||
-                !validate(sdValidator.isStorageFormatCompatibleWithDomain()) ||
-                !validateDiscardAfterDeleteLegal(sdValidator, getTargetStoragePool().getCompatibilityVersion())) {
+                !validate(sdValidator.isStorageFormatCompatibleWithDomain())) {
             return false;
         }
+
+        initStorageDomainDiscardAfterDeleteIfNeeded();
+        if (!validateDiscardAfterDeleteLegal(sdValidator)) {
+            return false;
+        }
+
         return canAddDomain();
     }
 
@@ -276,14 +274,13 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         return new StorageDomainValidator(getStorageDomain());
     }
 
-    private void initStorageDomainDiscardAfterDelete(Version compatibilityVersion) {
+    private void initStorageDomainDiscardAfterDeleteIfNeeded() {
         if (getStorageDomain().getDiscardAfterDelete() == null) {
-            getStorageDomain().setDiscardAfterDelete(getDefaultDiscardAfterDelete(compatibilityVersion));
+            getStorageDomain().setDiscardAfterDelete(getDefaultDiscardAfterDelete());
         }
     }
 
-    protected abstract boolean getDefaultDiscardAfterDelete(Version compatibilityVersion);
+    protected abstract boolean getDefaultDiscardAfterDelete();
 
-    protected abstract boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator,
-            Version compatibilityVersion);
+    protected abstract boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator);
 }

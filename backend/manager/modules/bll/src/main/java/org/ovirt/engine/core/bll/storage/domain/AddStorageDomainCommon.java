@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 
@@ -72,13 +71,12 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
     }
 
     @Override
-    protected boolean getDefaultDiscardAfterDelete(Version compatibilityVersion) {
+    protected boolean getDefaultDiscardAfterDelete() {
         return false;
     }
 
     @Override
-    protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator,
-            Version compatibilityVersion) {
+    protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
         /*
         Discard after delete is only relevant for block storage domains.
         Therefore, if it is enabled for a non block storage domain, the validation should fail.
