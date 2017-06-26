@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Bookmark;
@@ -42,8 +41,9 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         // Clear tag selection when a tag is saved/edited/deleted
         model.getItemSavedEvent().addListener((ev, sender, args) -> clearSelection());
         getModel().getSelectionModel().addSelectionChangeHandler(event -> {
-            BookmarkModelProvider.this.setSelectedItems(Collections.singletonList(
-                    ((SingleSelectionModel<Bookmark>) getModel().getSelectionModel()).getSelectedObject()));
+            Bookmark bookmark = getModel().getSelectedObjects().isEmpty() ? null
+                    : (Bookmark) getModel().getSelectedObjects().get(0);
+            BookmarkModelProvider.this.getModel().setSelectedItem(bookmark);
         });
 
     }

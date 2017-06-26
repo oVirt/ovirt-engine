@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.overlay;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 import org.gwtbootstrap3.client.ui.Button;
@@ -59,7 +58,6 @@ public class BookmarkView extends AbstractView implements BookmarkPresenter.View
                     @Override
                     public void onClick(ClickEvent event) {
                         model.setSelectedItem(bookmark);
-                        model.setSelectedItems(Arrays.asList(bookmark));
                         model.executeCommand(model.getEditCommand());
                     }
 
@@ -69,7 +67,6 @@ public class BookmarkView extends AbstractView implements BookmarkPresenter.View
                     @Override
                     public void onClick(ClickEvent event) {
                         model.setSelectedItem(bookmark);
-                        model.setSelectedItems(Arrays.asList(bookmark));
                         model.executeCommand(model.getRemoveCommand());
                     }
 

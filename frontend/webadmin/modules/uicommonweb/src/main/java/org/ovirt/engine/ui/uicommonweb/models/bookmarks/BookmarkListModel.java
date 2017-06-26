@@ -167,11 +167,7 @@ public class BookmarkListModel extends SearchableListModel {
         model.setHashName("remove_bookmark"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<>();
-        for (Object item : getSelectedItems()) {
-            org.ovirt.engine.core.common.businessentities.Bookmark i =
-                    (org.ovirt.engine.core.common.businessentities.Bookmark) item;
-            list.add(i.getName());
-        }
+        list.add(((Bookmark) getSelectedItem()).getName());
         model.setItems(list);
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
