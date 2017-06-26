@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -325,12 +325,10 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     private void nfsStorageModel_PathChanged(Object sender) {
         NfsStorageModel senderModel = (NfsStorageModel) sender;
 
-        for (Object item : getStorageModels()) {
-            if (item instanceof NfsStorageModel && item != sender) {
-                NfsStorageModel model = (NfsStorageModel) item;
-                model.getPath().setEntity(senderModel.getPath().getEntity());
-            }
-        }
+        getStorageModels().stream()
+                .filter(item -> item instanceof NfsStorageModel && item != sender)
+                .map(item -> (NfsStorageModel) item)
+                .forEach(model -> model.getPath().setEntity(senderModel.getPath().getEntity()));
     }
 
     protected void storageType_SelectedItemChanged() {
@@ -345,14 +343,14 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
     protected void storageItemsChanged() {
         if (getStorageModels() != null) {
-            for (IStorageModel item : getStorageModels()) {
+            getStorageModels().forEach(item -> {
                 item.setContainer(this);
 
                 if (item instanceof NfsStorageModel) {
                     NfsStorageModel nfsModel = (NfsStorageModel) item;
                     nfsModel.getPathChangedEvent().addListener(this);
                 }
-            }
+            });
         }
     }
 
@@ -377,13 +375,13 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
                 String prefix = host.isOvirtVintageNode() ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix)) {
-                    for (IStorageModel item : getStorageModels()) {
-                        if (item instanceof LocalStorageModel) {
-                            LocalStorageModel model = (LocalStorageModel) item;
-                            model.getPath().setEntity(prefix);
-                            model.getPath().setIsChangeable(false);
-                        }
-                    }
+                    getStorageModels().stream()
+                            .filter(item -> item instanceof LocalStorageModel)
+                            .map(item -> (LocalStorageModel) item)
+                            .forEach(model -> {
+                                model.getPath().setEntity(prefix);
+                                model.getPath().setIsChangeable(false);
+                            });
                 }
             }
         }
@@ -526,14 +524,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         getHost().setItems(hosts, selectedItem);
     }
 
-    private VDS getSPM(Iterable<VDS> hosts) {
-        for (VDS host : hosts) {
-            if (host.getSpmStatus() == VdsSpmStatus.SPM) {
-                return host;
-            }
-        }
-
-        return null;
+    private VDS getSPM(Collection<VDS> hosts) {
+        return hosts.stream().filter(host -> host.getSpmStatus() == VdsSpmStatus.SPM).findFirst().orElse(null);
     }
 
     void updateFormat() {
@@ -694,12 +686,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     }
 
     private boolean storageDomainSupportsDiscard(Collection<LunModel> luns) {
-        for (LunModel lun : luns) {
-            if (!lun.getEntity().supportsDiscard()) {
-                return false;
-            }
-        }
-        return true;
+        return luns.stream().allMatch(lun -> lun.getEntity().supportsDiscard());
     }
 
     private void validateListItems(ListModel<?> listModel) {
@@ -751,22 +738,13 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     public void updateCurrentStorageItem() {
         StorageDomainType storageDomainType = getAvailableStorageDomainTypeItems().getSelectedItem();
         StorageType storageType = getAvailableStorageTypeItems().getSelectedItem();
-        for (IStorageModel model : getStorageModels()) {
-            if (model.getType() == storageType && model.getRole() == storageDomainType) {
-                setCurrentStorageItem(model);
-                break;
-            }
-        }
+        getStorageModels().stream()
+                .filter(model -> model.getType() == storageType && model.getRole() == storageDomainType)
+                .findFirst()
+                .ifPresent(this::setCurrentStorageItem);
     }
 
     public List<IStorageModel> getStorageModelsByRole(StorageDomainType role) {
-        List<IStorageModel> filteredModels = new LinkedList<>();
-        for (IStorageModel model : getStorageModels()) {
-            if (model.getRole() == role) {
-                filteredModels.add(model);
-            }
-        }
-        return filteredModels;
+        return getStorageModels().stream().filter(model -> model.getRole() == role).collect(Collectors.toList());
     }
-
 }
