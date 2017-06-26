@@ -1453,6 +1453,8 @@ public interface UIConstants extends Constants {
 
     String nullOperationTooManyNonVlans();
 
+    String nullOperationDuplicateVlanIds();
+
     String nullOperationInvalidBondMode();
 
     String diskTypeSearchPrefix();

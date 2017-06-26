@@ -127,6 +127,7 @@ public class NetworkOperationFactory {
 
         // go over the networks and check whether they comply, if not - the reason is important
         int nonVlanCounter = 0;
+        Set<Integer> vLanIds = new HashSet<>();
         for (LogicalNetworkModel network : networks) {
             if (!network.isManaged()) {
                 if (op1 instanceof LogicalNetworkModel) {
@@ -150,7 +151,9 @@ public class NetworkOperationFactory {
                 }
             }
 
-            if (!network.hasVlan()) {
+            if (network.hasVlan()) {
+                vLanIds.add(network.getVlanId());
+            } else {
                 ++nonVlanCounter;
             }
 
@@ -173,6 +176,11 @@ public class NetworkOperationFactory {
                     }
                 }
             }
+        }
+
+        Integer vLanCounter = networks.size() - nonVlanCounter;
+        if (vLanCounter > vLanIds.size()) {
+            return NetworkOperation.NULL_OPERATION_DUPLICATE_VLAN_IDS;
         }
 
         // networks comply, all that's left is to return the correct operation
