@@ -5,9 +5,7 @@ import java.util.List;
 
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.Divider;
 import org.gwtbootstrap3.client.ui.DropDown;
-import org.gwtbootstrap3.client.ui.DropDownHeader;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.gwtbootstrap3.client.ui.constants.Toggle;
@@ -19,13 +17,8 @@ import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -36,9 +29,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class AbstractActionPanel<T> extends Composite implements ActionPanel<T>, HasElementId,
         ProvidesElementId {
-
-    private static final String ARIA_EXPANDED = "aria-expanded"; // $NON-NLS-1$
-    private static final String OPEN = "open";  // $NON-NLS-1$
 
     // List of action buttons that show in the tool-bar and context menu
     private final List<ActionButtonDefinition<T>> actionButtonList = new ArrayList<>();
@@ -182,87 +172,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
     void addSelectionChangeListener(IEventListener<EventArgs> itemSelectionChangeHandler) {
         dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
         dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
-    }
-
-    /**
-     * Adds a context menu handler to the given widget.
-     * @param widget The widget.
-     */
-    public void addContextMenuHandler(Widget widget) {
-        widget.addDomHandler(event -> AbstractActionPanel.this.onContextMenu(event), ContextMenuEvent.getType());
-    }
-
-    /**
-     * Show the context menu.
-     * @param event The {@code ContextMenuEvent}
-     */
-    protected void onContextMenu(ContextMenuEvent event) {
-        final int eventX = event.getNativeEvent().getClientX();
-        final int eventY = event.getNativeEvent().getClientY();
-
-        // Suppress default browser context menu
-        event.preventDefault();
-        event.stopPropagation();
-
-        // Use deferred command to ensure that the context menu
-        // is shown only after other event handlers do their job
-        Scheduler.get().scheduleDeferred(() -> {
-            // Avoid showing empty context menu
-            if (hasActionButtons()) {
-                updateContextMenu(menu, actionButtonList);
-                styleAndPositionMenuContainer(eventX, eventY);
-            }
-        });
-    }
-
-    private void styleAndPositionMenuContainer(final int eventX, final int eventY) {
-        menuContainer.addStyleName(OPEN);
-        clickButton.getElement().setAttribute(ARIA_EXPANDED, Boolean.TRUE.toString());
-        menuContainer.getElement().getStyle().setPosition(Position.ABSOLUTE);
-        menuContainer.getElement().getStyle().setTop(Window.getScrollTop() + eventY, Unit.PX);
-        menuContainer.getElement().getStyle().setLeft(eventX, Unit.PX);
-    }
-
-    DropDownMenu updateContextMenu(DropDownMenu menuBar, List<ActionButtonDefinition<T>> actions) {
-        return updateContextMenu(menuBar, actions, true);
-    }
-
-    /**
-     * Rebuilds context menu items to match the action button list.
-     * @param dropDownMenu The menu bar to populate.
-     * @param actions A list of {@code ActionButtonDefinition}s used to populate the {@code MenuBar}.
-     * @param popupPanel The pop-up panel containing the {@code MenuBar}.
-     * @param removeOldItems A flag to indicate if we should remove old items.
-     * @return A {@code MenuBar} containing all the action buttons as menu items.
-     */
-    DropDownMenu updateContextMenu(DropDownMenu dropDownMenu,
-            List<ActionButtonDefinition<T>> actions,
-            boolean removeOldItems) {
-        if (removeOldItems) {
-            ElementTooltipUtils.destroyMenuItemTooltips(dropDownMenu);
-            dropDownMenu.clear();
-        }
-
-        for (final ActionButtonDefinition<T> buttonDef : actions) {
-            if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                UiMenuBarButtonDefinition<T> menuBarDef = (UiMenuBarButtonDefinition<T>) buttonDef;
-                DropDownHeader subMenuHeader = new DropDownHeader(buttonDef.getText());
-                dropDownMenu.add(new Divider());
-                subMenuHeader.setVisible(buttonDef.isVisible(getSelectedItems()));
-                dropDownMenu.add(subMenuHeader);
-                updateContextMenu(dropDownMenu, menuBarDef.getSubActions(), false);
-            } else {
-                AnchorListItem item = new AnchorListItem(buttonDef.getText());
-                item.addClickHandler(e -> {
-                    buttonDef.onClick(getSelectedItems());
-                });
-
-                updateMenuItem(item, buttonDef);
-                dropDownMenu.add(item);
-            }
-        }
-
-        return dropDownMenu;
     }
 
     /**

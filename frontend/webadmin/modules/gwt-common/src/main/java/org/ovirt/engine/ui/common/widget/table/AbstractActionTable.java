@@ -22,10 +22,8 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -448,9 +446,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
         }, KeyDownEvent.getType());
 
-        // Add context menu handler for table widget
-        addContextMenuHandler(tableContainer);
-
         // Use fixed table layout
         setWidth("100%", true); //$NON-NLS-1$
 
@@ -512,44 +507,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public void resetScrollPosition() {
         tableContainerHorizontalScrollPosition = 0;
         enforceScrollPosition();
-    }
-
-    @Override
-    protected void onContextMenu(ContextMenuEvent event) {
-        super.onContextMenu(event);
-
-        Element target = event.getNativeEvent().getEventTarget().cast();
-        T value = getValueFromElement(target);
-
-        if (value != null && !selectionModel.isSelected(value)) {
-            selectionModel.setMultiSelectEnabled(false);
-            selectionModel.setMultiRangeSelectEnabled(false);
-            selectionModel.setSelected(value, true);
-        }
-    }
-
-    private T getValueFromElement(Element target) {
-        TableCellElement tableCell = findNearestParentCell(target);
-
-        if (tableCell != null) {
-            Element trElem = tableCell.getParentElement();
-            TableRowElement tr = TableRowElement.as(trElem);
-            int row = tr.getSectionRowIndex();
-            return table.getVisibleItemCount() > 0 ? table.getVisibleItem(row) : null;
-        } else {
-            return null;
-        }
-    }
-
-    private TableCellElement findNearestParentCell(Element elem) {
-        while ((elem != null) && (elem != table.getElement())) {
-            String tagName = elem.getTagName();
-            if ("td".equalsIgnoreCase(tagName) || "th".equalsIgnoreCase(tagName)) { //$NON-NLS-1$ //$NON-NLS-2$
-                return elem.cast();
-            }
-            elem = elem.getParentElement();
-        }
-        return null;
     }
 
     public void setWidth(String width, boolean isFixedLayout) {

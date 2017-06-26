@@ -59,7 +59,6 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
         actionPanel = createActionPanel(modelProvider);
         if (actionPanel != null) {
             actionPanelContainer.add(pfActionPanel);
-            actionPanel.addContextMenuHandler(tree);
         }
     }
 

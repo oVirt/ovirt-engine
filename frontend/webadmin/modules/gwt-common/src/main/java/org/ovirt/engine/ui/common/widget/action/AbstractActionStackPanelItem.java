@@ -27,14 +27,6 @@ public abstract class AbstractActionStackPanelItem<M, T, W extends Widget> exten
         addDoubleClickHandler(dataDisplayWidget, modelProvider);
     }
 
-    @Override
-    protected void initWidget(Widget widget) {
-        super.initWidget(widget);
-
-        // Add context menu handler for data display widget
-        actionPanel.addContextMenuHandler(dataDisplayWidget);
-    }
-
     public W getDataDisplayWidget() {
         return dataDisplayWidget;
     }
