@@ -83,6 +83,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private final List<VM> vmsDiskPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
     private final List<VM> vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
+    private List<DiskImage> allDiskImages = null;
 
     @Inject
     VmSlaPolicyUtils vmSlaPolicyUtils;
@@ -241,7 +242,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     private boolean isAllDiskVolumesRaw() {
-        List<DiskImage> images = diskImageDao.getAllSnapshotsForImageGroup(getOldDisk().getId());
+        List<DiskImage> images = getDiskImages(getOldDisk().getId());
         return images.stream().noneMatch(DiskImage::isQcowFormat);
     }
 
@@ -291,8 +292,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 return failValidation(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
             }
 
-            List<DiskImage> diskImageList =
-                    diskImageDao.getAllSnapshotsForImageGroup(getOldDisk().getId());
+            List<DiskImage> diskImageList = getDiskImages(getOldDisk().getId());
 
             // If disk image list is more than one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
@@ -782,6 +782,13 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                     ((DiskImage) getNewDisk()).getQcowCompat().getCompatValue());
         }
         return false;
+    }
+
+    private List<DiskImage> getDiskImages(Guid diskId) {
+        if (allDiskImages == null) {
+            allDiskImages = diskImageDao.getAllSnapshotsForImageGroup(diskId);
+        }
+        return allDiskImages;
     }
 
     private boolean updateParametersRequiringVmDownRequested() {
