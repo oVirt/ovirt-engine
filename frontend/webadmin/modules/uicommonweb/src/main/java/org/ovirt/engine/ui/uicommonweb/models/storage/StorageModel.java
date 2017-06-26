@@ -345,9 +345,8 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
     protected void storageItemsChanged() {
         if (getStorageModels() != null) {
-            for (Object item : getStorageModels()) {
-                IStorageModel model = (IStorageModel) item;
-                model.setContainer(this);
+            for (IStorageModel item : getStorageModels()) {
+                item.setContainer(this);
 
                 if (item instanceof NfsStorageModel) {
                     NfsStorageModel nfsModel = (NfsStorageModel) item;
@@ -378,7 +377,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
                 String prefix = host.isOvirtVintageNode() ? localFSPath : ""; //$NON-NLS-1$
                 if (!StringHelper.isNullOrEmpty(prefix)) {
-                    for (Object item : getStorageModels()) {
+                    for (IStorageModel item : getStorageModels()) {
                         if (item instanceof LocalStorageModel) {
                             LocalStorageModel model = (LocalStorageModel) item;
                             model.getPath().setEntity(prefix);
