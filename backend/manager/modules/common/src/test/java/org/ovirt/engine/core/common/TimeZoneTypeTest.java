@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 
@@ -32,12 +31,6 @@ public class TimeZoneTypeTest {
         assertNotNull(map);
         assertNull(map.get("Asia/Riyadh78"));
         assertEquals("(GMT+02:00) Israel Standard Time", map.get("Asia/Jerusalem"));
-    }
-
-    @Test
-    public void testDefaultConfigValues() {
-        assertEquals(ConfigValues.DefaultWindowsTimeZone, windows.getDefaultTimeZoneConfigKey());
-        assertEquals(ConfigValues.DefaultGeneralTimeZone, general.getDefaultTimeZoneConfigKey());
     }
 
     @Test
