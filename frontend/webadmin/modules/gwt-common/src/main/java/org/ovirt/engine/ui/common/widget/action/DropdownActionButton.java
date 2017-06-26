@@ -6,6 +6,8 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
+import org.gwtbootstrap3.client.ui.Divider;
+import org.gwtbootstrap3.client.ui.DropDownHeader;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Placement;
@@ -15,7 +17,6 @@ import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -72,22 +73,26 @@ public class DropdownActionButton<T> extends ButtonGroup implements ActionButton
     }
 
     private void initMenuPopup(List<ActionButtonDefinition<T>> actions) {
-        menuPopup = new DropDownMenu();
+        if (menuPopup == null) {
+            menuPopup = new DropDownMenu();
+        }
 
         for (final ActionButtonDefinition<T> buttonDef : actions) {
-            AnchorListItem menuItem = new AnchorListItem(buttonDef.getText());
-            menuItem.addClickHandler(new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
+            if (buttonDef instanceof UiMenuBarButtonDefinition) {
+                UiMenuBarButtonDefinition<T> menuBarDef = (UiMenuBarButtonDefinition<T>) buttonDef;
+                DropDownHeader subMenuHeader = new DropDownHeader(buttonDef.getText());
+                menuPopup.add(new Divider());
+                menuPopup.add(subMenuHeader);
+                initMenuPopup(menuBarDef.getSubActions());
+            } else {
+                AnchorListItem menuItem = new AnchorListItem(buttonDef.getText());
+                menuItem.addClickHandler(e -> {
                     buttonDef.onClick(selectedItemsProvider.getSelectedItems());
-                }
-
-            });
-            updateMenuItem(menuItem, buttonDef, selectedItemsProvider.getSelectedItems());
-            menuPopup.add(menuItem);
-
-            items.add(new Pair<>(menuItem, buttonDef));
+                });
+                updateMenuItem(menuItem, buttonDef, selectedItemsProvider.getSelectedItems());
+                menuPopup.add(menuItem);
+                items.add(new Pair<>(menuItem, buttonDef));
+            }
         }
         add(menuPopup);
     }
