@@ -438,7 +438,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
                             StorageModelBehavior storageModelBehavior = behavior;
                             dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
-                            StorageModel.addEmptyDataCenterToList(dataCenters);
+                            addEmptyDataCenterToList(dataCenters);
                             StoragePool oldSelectedItem = getDataCenter().getSelectedItem();
                             getDataCenter().setItems(dataCenters);
                             if (oldSelectedItem != null) {
@@ -460,7 +460,7 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
 
                                     List<StoragePool> dataCenters = new ArrayList<>();
                                     if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null) {
-                                        StorageModel.addEmptyDataCenterToList(dataCenters);
+                                        addEmptyDataCenterToList(dataCenters);
                                     }
                                     else {
                                         dataCenters =
