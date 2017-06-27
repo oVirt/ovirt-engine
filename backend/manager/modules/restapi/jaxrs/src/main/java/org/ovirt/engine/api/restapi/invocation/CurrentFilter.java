@@ -33,10 +33,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigCommon;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -123,7 +123,7 @@ public class CurrentFilter implements Filter {
 
     private ApplicationMode findApplicationMode(String sessionId) {
         GetConfigurationValueParameters parameters = new GetConfigurationValueParameters(
-            ConfigurationValues.ApplicationMode,
+            ConfigValues.ApplicationMode,
             ConfigCommon.defaultConfigurationVersion
         );
         parameters.setSessionId(sessionId);

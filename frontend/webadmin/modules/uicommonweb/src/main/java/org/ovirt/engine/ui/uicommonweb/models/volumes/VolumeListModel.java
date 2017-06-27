@@ -23,10 +23,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -284,7 +284,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
 
         // Get the meta volume name
         AsyncDataProvider.getInstance()
-                .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterMetaVolumeName,
+                .getConfigFromCache(new GetConfigurationValueParameters(ConfigValues.GlusterMetaVolumeName,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                         new AsyncQuery<String>(returnValue -> glusterMetaVolumeName = returnValue));
     }
@@ -898,10 +898,10 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             setConfirmWindow(null);
         }
         AsyncDataProvider.getInstance().getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                new AsyncQuery<String>(optionGroupVirt -> AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
+                new GetConfigurationValueParameters(ConfigValues.GlusterVolumeOptionGroupVirtValue, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
+                new AsyncQuery<String>(optionGroupVirt -> AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigValues.GlusterVolumeOptionOwnerUserVirtValue,
                                 AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
-                        new AsyncQuery<String>(optionOwnerUserVirt -> AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
+                        new AsyncQuery<String>(optionOwnerUserVirt -> AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigValues.GlusterVolumeOptionOwnerGroupVirtValue,
                                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                                 new AsyncQuery<String>(optionOwnerGroupVirt -> {
 

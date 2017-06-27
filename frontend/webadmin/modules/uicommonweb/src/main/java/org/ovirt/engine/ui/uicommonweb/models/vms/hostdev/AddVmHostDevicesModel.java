@@ -8,7 +8,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmHostDevice;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -74,7 +74,7 @@ public class AddVmHostDevicesModel extends ModelWithPinnedHost {
     @SuppressWarnings("unchecked")
     private void initCapabilities() {
         List<String> capabilities = (List<String>) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigurationValues.HostDevicePassthroughCapabilities);
+                .getConfigValuePreConverted(ConfigValues.HostDevicePassthroughCapabilities);
         getCapability().setItems(capabilities);
     }
 

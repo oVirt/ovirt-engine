@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -186,7 +186,7 @@ public abstract class Configurator {
     }
 
     public boolean isWebSocketProxyDefined() {
-        String wsConfig = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
+        String wsConfig = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WebSocketProxy);
         return wsConfig != null && !"".equals(wsConfig) && !"Off".equalsIgnoreCase(wsConfig); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
@@ -217,7 +217,7 @@ public abstract class Configurator {
         AsyncDataProvider.getInstance().getSpiceUsbAutoShare(new AsyncQuery<>(returnValue -> spice.getOptions().setUsbAutoShare(returnValue)));
     }
 
-    protected abstract ConfigurationValues spiceFullScreenConfigKey();
+    protected abstract ConfigValues spiceFullScreenConfigKey();
 
     private void updateSpiceFullScreenDefault(final ConsoleClient spice) {
         AsyncDataProvider.getInstance().getConfigurationValueBoolean(new AsyncQuery<>(

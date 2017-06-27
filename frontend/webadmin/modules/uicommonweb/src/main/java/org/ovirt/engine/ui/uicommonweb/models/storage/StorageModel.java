@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -273,7 +273,7 @@ public class StorageModel extends Model {
         setDiscardAfterDelete(new EntityModel<>(false));
         getDiscardAfterDelete().getEntityChangedEvent().addListener(this);
 
-        localFSPath = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
+        localFSPath = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.RhevhLocalFSPath);
     }
 
     @Override
@@ -582,7 +582,7 @@ public class StorageModel extends Model {
             }
 
             boolean discardAfterDeleteSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                    ConfigurationValues.DiscardAfterDeleteSupported,
+                    ConfigValues.DiscardAfterDeleteSupported,
                     getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
 
             getDiscardAfterDelete().setIsAvailable(discardAfterDeleteSupported);
@@ -670,14 +670,14 @@ public class StorageModel extends Model {
 
     private int getWarningLowSpaceIndicatorValue() {
         if (isNewStorage()) {
-            return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WarningLowSpaceIndicator);
+            return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WarningLowSpaceIndicator);
         }
         return getStorage().getWarningLowSpaceIndicator();
     }
 
     private int getCriticalSpaceThresholdValue() {
         if (isNewStorage()) {
-            return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CriticalSpaceActionBlocker);
+            return (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.CriticalSpaceActionBlocker);
         }
         return getStorage().getCriticalSpaceActionBlocker();
     }

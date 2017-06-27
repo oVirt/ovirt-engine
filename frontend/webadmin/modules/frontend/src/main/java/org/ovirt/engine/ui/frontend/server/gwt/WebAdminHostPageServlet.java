@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.common.config.ConfigCommon;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
@@ -75,7 +75,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
 
     protected Integer getApplicationMode(String sessionId) {
         return (Integer) runPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.ApplicationMode,
+                new GetConfigurationValueParameters(ConfigValues.ApplicationMode,
                         ConfigCommon.defaultConfigurationVersion), sessionId);
     }
 

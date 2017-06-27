@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
@@ -25,7 +25,7 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
 
     protected WebsocketProxyConfig getConfig() {
         if (config == null) {
-            config = new WebsocketProxyConfig((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
+            config = new WebsocketProxyConfig((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WebSocketProxy),
                     getOptions().getHost());
         }
         return config;

@@ -29,9 +29,9 @@ import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.invocation.VersionSource;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -449,7 +449,7 @@ public class BackendApiResourceTest {
     protected VdcQueryParametersBase getProductRPMVersionParams() {
         return eqParams(GetConfigurationValueParameters.class,
                 new String[] { "SessionId", "ConfigValue" },
-                new Object[] { SESSION_ID, ConfigurationValues.ProductRPMVersion });
+                new Object[] { SESSION_ID, ConfigValues.ProductRPMVersion });
     }
 
     protected VdcQueryParametersBase queryParams() {

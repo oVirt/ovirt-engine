@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -35,7 +35,7 @@ public class CpuQosParametersModel extends QosParametersModel<CpuQos> {
         getCpuLimit().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new IntegerValidation(0, (Integer) AsyncDataProvider.getInstance()
-                        .getConfigValuePreConverted(ConfigurationValues.MaxCpuLimitQosValue)) });
+                        .getConfigValuePreConverted(ConfigValues.MaxCpuLimitQosValue)) });
 
         setIsValid(getCpuLimit().getIsValid());
         return getIsValid();

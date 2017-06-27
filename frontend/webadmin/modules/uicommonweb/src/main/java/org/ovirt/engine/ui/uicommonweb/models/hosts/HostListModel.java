@@ -47,9 +47,9 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -1062,7 +1062,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     public void onHostConsole() {
         String cockpitPort = (String) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigurationValues.CockpitPort);
+                .getConfigValuePreConverted(ConfigValues.CockpitPort);
         for (VDS item : getSelectedItems()) { // open new browser-tab for every selected host
             StringBuilder cockpitUrl = new StringBuilder();
             cockpitUrl.append(Uri.SCHEME_HTTPS);
@@ -1515,7 +1515,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private void configureLocalStorage2(ConfigureLocalStorageModel model) {
-        String prefix = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
+        String prefix = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.RhevhLocalFSPath);
         if (!StringUtils.isEmpty(prefix)) {
             EntityModel<String> pathModel = model.getStorage().getPath();
             pathModel.setEntity(prefix);

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1238,7 +1238,7 @@ public abstract class RunOnceModel extends Model {
     private void initVncKeyboardLayout() {
 
         List<String> layouts =
-                (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+                (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.VncKeyboardLayoutValidValues);
         List<String> vncKeyboardLayoutItems = new ArrayList<>();
         vncKeyboardLayoutItems.add(null);
         vncKeyboardLayoutItems.addAll(layouts);

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.common.utils;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
@@ -140,8 +140,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     }
 
     private boolean getRemapCtrlAltDelDefault() {
-        return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.RemapCtrlAltDelDefault);
+        return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.RemapCtrlAltDelDefault);
     }
 
     private void loadVncData(VmConsoles vmConsoles, KeyMaker keyMaker) {

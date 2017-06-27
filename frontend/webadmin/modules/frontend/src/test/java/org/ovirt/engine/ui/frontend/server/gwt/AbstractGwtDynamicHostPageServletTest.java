@@ -37,8 +37,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -239,11 +239,11 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
         when(mockBackend.runPublicQuery(
                 eq(VdcQueryType.GetConfigurationValue),
-                argThat(configValueParams(ConfigurationValues.ProductRPMVersion))
+                argThat(configValueParams(ConfigValues.ProductRPMVersion))
         )).thenReturn(returnValue);
     }
 
-    ArgumentMatcher<GetConfigurationValueParameters> configValueParams(final ConfigurationValues configValue) {
+    ArgumentMatcher<GetConfigurationValueParameters> configValueParams(final ConfigValues configValue) {
         return argument -> argument.getConfigValue() == configValue;
     }
 

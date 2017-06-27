@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.ReportedConfigurations;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -59,7 +59,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     }
 
     private static int defaultMtu = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-            ConfigurationValues.DefaultMTU);
+            ConfigValues.DefaultMTU);
 
     public ItemInfoPopup() {
         super(true);

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -422,7 +422,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         Version compatibilityVersion = getModel().getCompatibilityVersion();
         boolean hotplugCpuSupported = Boolean.parseBoolean(
                     ((Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                            ConfigurationValues.HotPlugCpuSupported,
+                            ConfigValues.HotPlugCpuSupported,
                             compatibilityVersion.getValue()))
                     .get(selectedCluster.getArchitecture().name()));
 

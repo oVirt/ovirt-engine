@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
@@ -605,10 +605,10 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     /**
      * Update Model's changeability based on the support of given feature in given version.
      *
-     * @param feature {@link org.ovirt.engine.core.common.queries.ConfigurationValues} [SomeFeature]Supported value
+     * @param feature {@link ConfigValues} [SomeFeature]Supported value
      * @param version compatibility version to check the feature against
      */
-    public void updateChangeability(ConfigurationValues feature, Version version) {
+    public void updateChangeability(ConfigValues feature, Version version) {
         boolean featureSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(feature, version.getValue());
 
         setIsChangeable(featureSupported);

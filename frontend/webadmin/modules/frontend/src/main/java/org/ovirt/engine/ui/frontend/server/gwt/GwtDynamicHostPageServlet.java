@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -308,7 +307,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     protected String getEngineRpmVersion(String sessionId) {
         return (String) runPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
+                new GetConfigurationValueParameters(ConfigValues.ProductRPMVersion,
                         ConfigCommon.defaultConfigurationVersion), sessionId);
     }
 

@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 
 @RunWith(Parameterized.class)
@@ -20,7 +20,7 @@ public class MtuValueHelperTest {
     @Test
     public void validateRanges() {
         assertEquals(expectedResult,
-                validator.validate(ConfigKeyFactory.getInstance().generateBlankConfigKey(ConfigurationValues.DefaultMTU.name(), "Mtu"), values)
+                validator.validate(ConfigKeyFactory.getInstance().generateBlankConfigKey(ConfigValues.DefaultMTU.name(), "Mtu"), values)
                         .isOk());
     }
 

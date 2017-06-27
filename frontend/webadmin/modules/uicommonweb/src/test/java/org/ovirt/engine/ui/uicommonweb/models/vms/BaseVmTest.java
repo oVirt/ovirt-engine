@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -89,7 +89,7 @@ public class BaseVmTest {
     public static void mockAsyncDataProvider() {
         adp = setup.getMocks().asyncDataProvider();
 
-        when(adp.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues)).thenReturn(Collections.emptyList());
+        when(adp.getConfigValuePreConverted(ConfigValues.VncKeyboardLayoutValidValues)).thenReturn(Collections.emptyList());
         when(adp.osNameExists(OS_TYPE)).thenReturn(true);
         when(adp.getMaxVmNameLength()).thenReturn(64);
         when(adp.getOsDefaultIconId(OS_TYPE, false)).thenReturn(LARGE_OS_DEFAULT_ICON_ID);

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.utils;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
@@ -24,7 +24,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
 
     @Override
     public boolean isSpiceProxyDefined(VM vm) {
-        return !StringHelper.isNullOrEmpty((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault)) ||
+        return !StringHelper.isNullOrEmpty((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.SpiceProxyDefault)) ||
             !StringHelper.isNullOrEmpty(vm.getClusterSpiceProxy()) ||
             !StringHelper.isNullOrEmpty(vm.getVmPoolSpiceProxy());
     }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -66,15 +66,15 @@ public class NetworkQosParametersModel extends Model {
         getAverage().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new IntegerValidation(0,
-                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MaxAverageNetworkQoSValue)) });
+                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxAverageNetworkQoSValue)) });
         getPeak().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new IntegerValidation(0,
-                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MaxPeakNetworkQoSValue)) });
+                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxPeakNetworkQoSValue)) });
         getBurst().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new IntegerValidation(0,
-                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MaxBurstNetworkQoSValue)) });
+                                      (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBurstNetworkQoSValue)) });
 
         setIsValid(getAverage().getIsValid() && getPeak().getIsValid() && getBurst().getIsValid());
         return getIsValid();

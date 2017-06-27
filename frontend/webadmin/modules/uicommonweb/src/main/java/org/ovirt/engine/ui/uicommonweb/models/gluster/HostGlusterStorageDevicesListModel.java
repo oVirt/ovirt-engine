@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.RaidType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -129,7 +129,7 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel<VDS,
             lvModel.getDefaultMountFolder().setEntity(defaultMountPoint);
         });
         AsyncDataProvider.getInstance()
-                .getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterDefaultBrickMountPoint,
+                .getConfigFromCache(new GetConfigurationValueParameters(ConfigValues.GlusterDefaultBrickMountPoint,
                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                         asyncQueryForDefaultMountPoint);
 

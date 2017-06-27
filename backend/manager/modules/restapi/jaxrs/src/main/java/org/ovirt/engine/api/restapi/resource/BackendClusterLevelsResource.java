@@ -36,7 +36,7 @@ import org.ovirt.engine.api.restapi.types.PermitMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Version;
@@ -92,7 +92,7 @@ public class BackendClusterLevelsResource extends BackendResource implements Clu
     }
 
     public List<String> getSupportedClusterLevels() {
-        Set<Version> versions = getConfigurationValueDefault(ConfigurationValues.SupportedClusterLevels);
+        Set<Version> versions = getConfigurationValueDefault(ConfigValues.SupportedClusterLevels);
         if (versions == null) {
             return Collections.emptyList();
         }

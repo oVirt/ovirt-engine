@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -370,14 +370,14 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             customPropertiesModel.setIsAvailable(true);
             Map<String, String> validProperties =
                     KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                            ConfigurationValues.PreDefinedNetworkCustomProperties,
+                            ConfigValues.PreDefinedNetworkCustomProperties,
                             version));
             // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
             // to backend and frontend (lvernia)
             if (!network.isVmNetwork()) {
                 validProperties.remove("bridge_opts"); //$NON-NLS-1$
             }
-            validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
+            validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.UserDefinedNetworkCustomProperties,
                     version)));
             customPropertiesModel.setKeyValueMap(validProperties);
             customPropertiesModel.deserialize(KeyValueModel.convertProperties(networkAttachment.getProperties()));

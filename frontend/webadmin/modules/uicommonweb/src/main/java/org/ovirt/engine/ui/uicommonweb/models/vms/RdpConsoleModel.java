@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -68,8 +68,8 @@ public class RdpConsoleModel extends ConsoleModel {
         setTitle(ConstantsManager.getInstance().getConstants().rdpTitle());
         this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
         setRdpImplementation(
-                ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeRdpDefault)));
-        setUseFqdnIfAvailable((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UseFqdnForRdpIfAvailable));
+                ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.ClientModeRdpDefault)));
+        setUseFqdnIfAvailable((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.UseFqdnForRdpIfAvailable));
     }
 
     @Override

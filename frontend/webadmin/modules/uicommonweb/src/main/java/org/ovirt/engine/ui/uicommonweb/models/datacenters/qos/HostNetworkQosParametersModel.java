@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -50,7 +50,7 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
     protected Collection<IValidation> getOutLinkshareValidations() {
         Collection<IValidation> validations = new ArrayList<>();
         validations.add(new IntegerValidation(1, (Integer) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigurationValues.MaxHostNetworkQosShares)));
+                .getConfigValuePreConverted(ConfigValues.MaxHostNetworkQosShares)));
         return validations;
     }
 
@@ -65,7 +65,7 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
 
         IValidation[] rateRangeValidation =
                 new IValidation[] { new IntegerValidation(1, (Integer) AsyncDataProvider.getInstance()
-                        .getConfigValuePreConverted(ConfigurationValues.MaxAverageNetworkQoSValue)) };
+                        .getConfigValuePreConverted(ConfigValues.MaxAverageNetworkQoSValue)) };
         getOutAverageUpperlimit().validateEntity(rateRangeValidation);
         getOutAverageRealtime().validateEntity(rateRangeValidation);
 

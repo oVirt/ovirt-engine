@@ -9,12 +9,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
 
 public enum TimeZoneType {
-    GENERAL_TIMEZONE(ConfigurationValues.DefaultGeneralTimeZone, "Etc/GMT") {
+    GENERAL_TIMEZONE(ConfigValues.DefaultGeneralTimeZone, "Etc/GMT") {
         @Override
         protected Map<String, String> initializeTimeZoneList() {
             Map<String, String> generalTimeZones = new HashMap<>();
@@ -102,7 +102,7 @@ public enum TimeZoneType {
         }
     },
 
-    WINDOWS_TIMEZONE(ConfigurationValues.DefaultWindowsTimeZone, "GMT Standard Time") {
+    WINDOWS_TIMEZONE(ConfigValues.DefaultWindowsTimeZone, "GMT Standard Time") {
         @Override
         protected Map<String, String> initializeTimeZoneList() {
             Map<String, String> windowsTimeZones = new HashMap<>();
@@ -185,16 +185,16 @@ public enum TimeZoneType {
         }
     };
 
-    private ConfigurationValues defaultTimeZoneConfigurationKey;
+    private ConfigValues defaultTimeZoneConfigurationKey;
     private String ultimateFallback;
     private Map<String, String> timeZones;
 
-    TimeZoneType(ConfigurationValues defaultTimeZoneConfigurationKey, String ultimateFallback) {
+    TimeZoneType(ConfigValues defaultTimeZoneConfigurationKey, String ultimateFallback) {
         this.defaultTimeZoneConfigurationKey = defaultTimeZoneConfigurationKey;
         this.ultimateFallback = ultimateFallback;
     }
 
-    public ConfigurationValues getDefaultTimeZoneConfigurationKey() {
+    public ConfigValues getDefaultTimeZoneConfigurationKey() {
         return defaultTimeZoneConfigurationKey;
     }
 

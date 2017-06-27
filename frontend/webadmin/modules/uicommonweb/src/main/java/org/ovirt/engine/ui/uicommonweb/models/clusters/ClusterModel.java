@@ -26,11 +26,11 @@ import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterF
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.network.SwitchType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -1357,7 +1357,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getMigrationPolicies().setSelectedItem(migrationPolicy != null ? migrationPolicy :
                 findMigrationPolicyById(NoMigrationPolicy.ID, policies));
 
-        getMigrationPolicies().updateChangeability(ConfigurationValues.MigrationPoliciesSupported, version);
+        getMigrationPolicies().updateChangeability(ConfigValues.MigrationPoliciesSupported, version);
     }
 
     private MigrationPolicy findFirstNonEmptyMigrationPolicy(List<MigrationPolicy> policies) {
@@ -1400,7 +1400,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     private boolean isOvsSupported(Version version) {
         AsyncDataProvider instance = AsyncDataProvider.getInstance();
-        return (Boolean) instance.getConfigValuePreConverted(ConfigurationValues.OvsSupported, version.getValue());
+        return (Boolean) instance.getConfigValuePreConverted(ConfigValues.OvsSupported, version.getValue());
     }
 
     boolean isClusterDetached() {
@@ -2130,7 +2130,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private String defaultClusterRngSourcesCsv(Version ver) {
-        String srcs = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClusterRequiredRngSourcesDefault, ver.toString());
+        String srcs = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.ClusterRequiredRngSourcesDefault, ver.toString());
         return (srcs == null)
                 ? ""
                 : srcs;

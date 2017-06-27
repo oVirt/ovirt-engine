@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
@@ -25,7 +25,7 @@ public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
     protected WebsocketProxyConfig getConfig() {
         if (config == null) {
             config = new WebsocketProxyConfig(
-                    (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
+                    (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.WebSocketProxy),
                     getOptions().getHost());
         }
         return config;

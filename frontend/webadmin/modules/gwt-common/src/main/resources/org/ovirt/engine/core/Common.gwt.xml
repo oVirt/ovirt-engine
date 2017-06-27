@@ -7,6 +7,7 @@
         <!--======================COMMON====================== -->
         <!-- Config -->
         <include name="common/config/**" />
+        <include name="common/EngineWorkingMode.java" />
 
         <!-- Business entities -->
         <include name="common/businessentities/HasStoragePool.java" />

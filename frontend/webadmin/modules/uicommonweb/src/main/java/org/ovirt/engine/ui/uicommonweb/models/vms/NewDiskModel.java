@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
@@ -44,8 +44,7 @@ public class NewDiskModel extends AbstractDiskModel {
             if (description == null || description.isEmpty() || descriptionDerivedFromLunId) {
                 LunModel selectedLunModel = args.getValue();
                 if (selectedLunModel.getLunId() != null) {
-                    int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                            ConfigurationValues.PopulateDirectLUNDiskDescriptionWithLUNId);
+                    int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.PopulateDirectLUNDiskDescriptionWithLUNId);
                     if (numOfChars == 0) {
                         return;
                     }
@@ -206,7 +205,7 @@ public class NewDiskModel extends AbstractDiskModel {
         IntegerValidation sizeValidation = new IntegerValidation();
         sizeValidation.setMinimum(getMinimumDiskSize());
         if (storageType.isBlockDomain()) {
-            sizeValidation.setMaximum((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
+            sizeValidation.setMaximum((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.MaxBlockDiskSize));
         }
         getSize().validateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });
         getStorageDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });

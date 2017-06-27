@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -774,7 +774,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     public enum MtuSelector {
         defaultMtu(ConstantsManager.getInstance()
                 .getMessages()
-                .defaultMtu((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMTU))),
+                .defaultMtu((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.DefaultMTU))),
         customMtu(ConstantsManager.getInstance().getConstants().customMtu());
 
         private String description;

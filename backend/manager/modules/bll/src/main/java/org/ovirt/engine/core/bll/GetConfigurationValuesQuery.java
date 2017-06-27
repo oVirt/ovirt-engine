@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.Version;
@@ -30,9 +29,9 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
 
     @Override
     protected void executeQueryCommand() {
-        Map<KeyValuePairCompat<ConfigurationValues, String>, Object> configValuesMap = new HashMap<>();
+        Map<KeyValuePairCompat<ConfigValues, String>, Object> configValuesMap = new HashMap<>();
 
-        for (ConfigurationValues configValue : ConfigurationValues.values()) {
+        for (ConfigValues configValue : ConfigValues.values()) {
             // Ignore an admin configuration value on filtered mode
             // Ignore a configuration value that doesn't exist in ConfigValues enum
             if (!shouldReturnValue(configValue)) {
@@ -48,11 +47,11 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
         getQueryReturnValue().setReturnValue(configValuesMap);
     }
 
-    private void populateValueForConfigValue(ConfigurationValues configValue,
+    private void populateValueForConfigValue(ConfigValues configValue,
             String version,
-            Map<KeyValuePairCompat<ConfigurationValues, String>, Object> configValuesMap) {
-        KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
-        Object value = Config.getValue(ConfigValues.valueOf(configValue.toString()), version);
+            Map<KeyValuePairCompat<ConfigValues, String>, Object> configValuesMap) {
+        KeyValuePairCompat<ConfigValues, String> key = new KeyValuePairCompat<>(configValue, version);
+        Object value = Config.getValue(configValue, version);
 
         configValuesMap.put(key, value);
     }
@@ -62,10 +61,10 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
      * <ul>
      * <li>If the query is run as an administrator (note that since we've reached the {@link #executeQueryCommand()} method,
      * we've already validated that the use is indeed an administrator), the results from the database queries should be returned.</li>
-     * <li>If the query is run as a user, it may return results <b>ONLY</b> if the configuration value has {@link org.ovirt.engine.core.common.queries.ConfigurationValues.ConfigAuthType#User}.</li>
+     * <li>If the query is run as a user, it may return results <b>ONLY</b> if the configuration value has {@link ConfigValues.ClientAccessLevel#User}.</li>
      * </ul>
      */
-    private boolean shouldReturnValue(ConfigurationValues configValue) {
-        return !getParameters().isFiltered() || !configValue.isAdmin();
+    private boolean shouldReturnValue(ConfigValues configValue) {
+        return !getParameters().isFiltered() || configValue.nonAdminVisible();
     }
 }

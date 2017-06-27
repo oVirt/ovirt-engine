@@ -17,7 +17,7 @@ public class GetConfigurationValueQuery<P extends GetConfigurationValueParameter
         if (shouldReturnValue()) {
             try {
                 final GetConfigurationValueParameters params = getParameters();
-                final ConfigValues value = ConfigValues.valueOf(params.getConfigValue().toString());
+                final ConfigValues value = params.getConfigValue();
                 String version = params.getVersion();
                 if (version == null) {
                     log.warn("calling {} ({}) with null version, using default {} for version",
@@ -39,10 +39,10 @@ public class GetConfigurationValueQuery<P extends GetConfigurationValueParameter
      * <ul>
      * <li>If the query is run as an administrator (note that since we've reached the {@link #executeQueryCommand()} method,
      * we've already validated that the use is indeed an administrator), the results from the database queries should be returned.</li>
-     * <li>If the query is run as a user, it may return results <b>ONLY</b> if the configuration value has {@link org.ovirt.engine.core.common.queries.ConfigurationValues.ConfigAuthType#User}.</li>
+     * <li>If the query is run as a user, it may return results <b>ONLY</b> if the configuration value has {@link ConfigValues.ClientAccessLevel#User}.</li>
      * </ul>
      */
     private boolean shouldReturnValue() {
-        return !getParameters().isFiltered() || !getParameters().getConfigValue().isAdmin();
+        return !getParameters().isFiltered() || getParameters().getConfigValue().nonAdminVisible();
     }
 }

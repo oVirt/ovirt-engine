@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.widget.dialog.TooltippedIcon;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
@@ -120,7 +120,7 @@ public class BondPanel extends HostInterfaceHorizontalPanel {
         boolean isIfcUp = InterfaceStatus.UP.equals(bond.getStatistics().getStatus());
         boolean isBond4 = BondMode.BOND4.equals(BondMode.parseBondMode(bond.getBondOptions()));
         boolean isAdPartnerSupportedForCluster = (Boolean)AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.AdPartnerMacSupported, vds.getClusterCompatibilityVersion().getValue());
+                ConfigValues.AdPartnerMacSupported, vds.getClusterCompatibilityVersion().getValue());
 
         return !isAdPartnerMacEmpty || !isIfcUp || !isBond4 || !isAdPartnerSupportedForCluster;
     }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.userportal.uicommon;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
@@ -136,11 +136,11 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     @Override
-    protected ConfigurationValues spiceFullScreenConfigKey() {
+    protected ConfigValues spiceFullScreenConfigKey() {
         if (placeManager.isMainSectionBasicPlaceVisible()) {
-            return ConfigurationValues.FullScreenUserportalBasicDefault;
+            return ConfigValues.FullScreenUserportalBasicDefault;
         }
 
-        return ConfigurationValues.FullScreenUserportalExtendedDefault;
+        return ConfigValues.FullScreenUserportalExtendedDefault;
     }
 }

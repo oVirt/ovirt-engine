@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -13,7 +13,7 @@ public class VncKeyMapRenderer extends AbstractRenderer<String> {
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public VncKeyMapRenderer() {
-        globalLayout = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
+        globalLayout = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.VncKeyboardLayout);
     }
 
     @Override

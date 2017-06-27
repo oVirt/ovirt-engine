@@ -103,9 +103,9 @@ import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -322,7 +322,7 @@ public class BackendApiResource
     }
 
     private Api addSystemVersion(Api api) {
-        String productVersion = getConfigurationValueDefault(ConfigurationValues.ProductRPMVersion);
+        String productVersion = getConfigurationValueDefault(ConfigValues.ProductRPMVersion);
         if (productVersion != null) {
             BrandingManager obrand = BrandingManager.getInstance();
             ProductInfo productInfo = new ProductInfo();

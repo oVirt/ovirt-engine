@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 
 public class TimeZoneTypeTest {
@@ -35,8 +35,8 @@ public class TimeZoneTypeTest {
 
     @Test
     public void testDefaultConfigurationValues() {
-        assertEquals(ConfigurationValues.DefaultWindowsTimeZone, windows.getDefaultTimeZoneConfigurationKey());
-        assertEquals(ConfigurationValues.DefaultGeneralTimeZone, general.getDefaultTimeZoneConfigurationKey());
+        assertEquals(ConfigValues.DefaultWindowsTimeZone, windows.getDefaultTimeZoneConfigurationKey());
+        assertEquals(ConfigValues.DefaultGeneralTimeZone, general.getDefaultTimeZoneConfigurationKey());
     }
 
     @Test

@@ -22,9 +22,9 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunAsyncActionParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.config.ConfigCommon;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -285,7 +285,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T getConfigurationValueDefault(ConfigurationValues config) {
+    protected <T> T getConfigurationValueDefault(ConfigValues config) {
         VdcQueryReturnValue result = runQuery(
             VdcQueryType.GetConfigurationValue,
             new GetConfigurationValueParameters(config, ConfigCommon.defaultConfigurationVersion)

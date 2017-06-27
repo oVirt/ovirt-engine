@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -18,13 +18,11 @@ public class StorageQosMetricParametersModel extends Model {
     private EntityModel<Boolean> choiceGroupTotal;
     private EntityModel<Boolean> choiceGroupReadWrite;
 
-    private final ConfigurationValues maxTotal;
-    private final ConfigurationValues maxRead;
-    private final ConfigurationValues maxWrite;
+    private final ConfigValues maxTotal;
+    private final ConfigValues maxRead;
+    private final ConfigValues maxWrite;
 
-    public StorageQosMetricParametersModel(ConfigurationValues maxTotal,
-            ConfigurationValues maxRead,
-            ConfigurationValues maxWrite) {
+    public StorageQosMetricParametersModel(ConfigValues maxTotal, ConfigValues maxRead, ConfigValues maxWrite) {
         this.maxTotal = maxTotal;
         this.maxRead = maxRead;
         this.maxWrite = maxWrite;

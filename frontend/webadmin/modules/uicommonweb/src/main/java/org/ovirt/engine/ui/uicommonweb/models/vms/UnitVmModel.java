@@ -41,9 +41,9 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -2239,7 +2239,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void initVncKeyboardLayout() {
         final List<String> layouts =
-                (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+                (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.VncKeyboardLayoutValidValues);
         final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<>();
         vncKeyboardLayoutItems.add(null); // null value means the global VncKeyboardLayout from vdc_options will be used
         vncKeyboardLayoutItems.addAll(layouts);

@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster;
 import java.util.Optional;
 
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
@@ -57,7 +57,7 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
             }
         });
         String spiceProxyInConfig =
-                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.SpiceProxyDefault);
         String spiceProxyMessage =
                 StringHelper.isNullOrEmpty(spiceProxyInConfig) ? messages.noSpiceProxyDefined() : spiceProxyInConfig;
         getView().setSpiceProxyOverrideExplanation(messages.consoleOverrideSpiceProxyMessage(messages.consoleOverrideDefinedInGlobalConfig(),

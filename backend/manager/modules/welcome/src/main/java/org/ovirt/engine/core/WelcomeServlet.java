@@ -17,8 +17,8 @@ import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.config.ConfigCommon;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -139,7 +139,7 @@ public class WelcomeServlet extends HttpServlet {
             }
             request.setAttribute(LOCALE_KEYS, UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys()));
             String oVirtVersion = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
-                    new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
+                    new GetConfigurationValueParameters(ConfigValues.ProductRPMVersion,
                             ConfigCommon.defaultConfigurationVersion)).getReturnValue();
             request.setAttribute("sso_credential_change_url", getCredentialsChangeUrl(request));
             request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");

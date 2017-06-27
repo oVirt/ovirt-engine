@@ -104,6 +104,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
 import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -113,7 +114,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
 import org.ovirt.engine.core.common.queries.ClusterEditParameters;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -223,9 +223,9 @@ public class AsyncDataProvider {
     private static int DEFAULT_OS_ID = 0;
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
-    private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues = new HashMap<>();
+    private HashMap<KeyValuePairCompat<ConfigValues, String>, Object> cachedConfigValues = new HashMap<>();
 
-    private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValuesPreConvert = new HashMap<>();
+    private HashMap<KeyValuePairCompat<ConfigValues, String>, Object> cachedConfigValuesPreConvert = new HashMap<>();
 
     private String _defaultConfigurationVersion = null;
 
@@ -789,12 +789,12 @@ public class AsyncDataProvider {
     public void getSpiceUsbAutoShare(AsyncQuery<Boolean> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(Boolean.TRUE);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.SpiceUsbAutoShare,
+                new GetConfigurationValueParameters(ConfigValues.SpiceUsbAutoShare,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
 
-    public void getConfigurationValueBoolean(AsyncQuery<Boolean> aQuery, ConfigurationValues configVal) {
+    public void getConfigurationValueBoolean(AsyncQuery<Boolean> aQuery, ConfigValues configVal) {
         aQuery.converterCallback = new DefaultValueConverter<>(Boolean.TRUE);
         getConfigFromCache(
                 new GetConfigurationValueParameters(configVal, getDefaultConfigurationVersion()), aQuery);
@@ -804,7 +804,7 @@ public class AsyncDataProvider {
         aQuery.converterCallback =
                 source -> source != null ? WanColorDepth.fromInt((Integer) source) : WanColorDepth.depth16;
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.WANColorDepth, getDefaultConfigurationVersion()),
+                new GetConfigurationValueParameters(ConfigValues.WANColorDepth, getDefaultConfigurationVersion()),
                 aQuery);
     }
 
@@ -833,7 +833,7 @@ public class AsyncDataProvider {
 
         };
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.WANDisableEffects,
+                new GetConfigurationValueParameters(ConfigValues.WANDisableEffects,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -845,14 +845,14 @@ public class AsyncDataProvider {
     public void getMaxVmsInPool(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(1000);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxVmsInPool, getDefaultConfigurationVersion()),
+                new GetConfigurationValueParameters(ConfigValues.MaxVmsInPool, getDefaultConfigurationVersion()),
                 aQuery);
     }
 
     public void getMaxNumOfVmSockets(AsyncQuery<Integer> aQuery, String version) {
         aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfVmSockets);
+                new GetConfigurationValueParameters(ConfigValues.MaxNumOfVmSockets);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
@@ -860,7 +860,7 @@ public class AsyncDataProvider {
     public void getMaxNumOfVmCpus(AsyncQuery<Integer> aQuery, String version) {
         aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfVmCpus);
+                new GetConfigurationValueParameters(ConfigValues.MaxNumOfVmCpus);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
@@ -868,7 +868,7 @@ public class AsyncDataProvider {
     public void getMaxNumOfCPUsPerSocket(AsyncQuery<Integer> aQuery, String version) {
         aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfCpuPerSocket);
+                new GetConfigurationValueParameters(ConfigValues.MaxNumOfCpuPerSocket);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
@@ -876,7 +876,7 @@ public class AsyncDataProvider {
     public void getMaxNumOfThreadsPerCpu(AsyncQuery<Integer> aQuery, String version) {
         aQuery.converterCallback = new DefaultValueConverter<>(1);
         GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.MaxNumOfThreadsPerCpu);
+                new GetConfigurationValueParameters(ConfigValues.MaxNumOfThreadsPerCpu);
         tempVar.setVersion(version);
         getConfigFromCache(tempVar, aQuery);
     }
@@ -1068,7 +1068,7 @@ public class AsyncDataProvider {
             return nums;
         };
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.ValidNumOfMonitors,
+                new GetConfigurationValueParameters(ConfigValues.ValidNumOfMonitors,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1083,7 +1083,7 @@ public class AsyncDataProvider {
     public void getMaxVmPriority(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(100);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue,
+                new GetConfigurationValueParameters(ConfigValues.VmPriorityMaxValue,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1145,29 +1145,29 @@ public class AsyncDataProvider {
             return getMaxMaxMemoryForAllOss();
         }
 
-        final ConfigurationValues maxMaxMemoryConfigValue = getMaxMaxMemoryConfigValue(osId);
+        final ConfigValues maxMaxMemoryConfigValue = getMaxMaxMemoryConfigValue(osId);
         return (Integer) getConfigValuePreConvertedOptionalVersion(maxMaxMemoryConfigValue, compatVersion);
     }
 
     private int getMaxMaxMemoryForAllOss() {
         final int x86_32MaxMaxMemory =
-                (Integer) getConfigValuePreConverted(ConfigurationValues.VM32BitMaxMemorySizeInMB);
+                (Integer) getConfigValuePreConverted(ConfigValues.VM32BitMaxMemorySizeInMB);
         final int x86_64MaxMaxMemory =
-                (Integer) getConfigValuePreConverted(ConfigurationValues.VM64BitMaxMemorySizeInMB);
+                (Integer) getConfigValuePreConverted(ConfigValues.VM64BitMaxMemorySizeInMB);
         final int ppc64MaxMaxMemory =
-                (Integer) getConfigValuePreConverted(ConfigurationValues.VMPpc64BitMaxMemorySizeInMB);
+                (Integer) getConfigValuePreConverted(ConfigValues.VMPpc64BitMaxMemorySizeInMB);
         return Math.max(Math.max(x86_32MaxMaxMemory, x86_64MaxMaxMemory), ppc64MaxMaxMemory);
     }
 
-    private ConfigurationValues getMaxMaxMemoryConfigValue(int osId) {
+    private ConfigValues getMaxMaxMemoryConfigValue(int osId) {
         return oses64bit.contains(osId)
                 ? (osArchitectures.get(osId).getFamily() == ArchitectureType.ppc
-                        ? ConfigurationValues.VMPpc64BitMaxMemorySizeInMB
-                        : ConfigurationValues.VM64BitMaxMemorySizeInMB)
-                : ConfigurationValues.VM32BitMaxMemorySizeInMB;
+                        ? ConfigValues.VMPpc64BitMaxMemorySizeInMB
+                        : ConfigValues.VM64BitMaxMemorySizeInMB)
+                : ConfigValues.VM32BitMaxMemorySizeInMB;
     }
 
-    private Object getConfigValuePreConvertedOptionalVersion(ConfigurationValues configValue, Version version) {
+    private Object getConfigValuePreConvertedOptionalVersion(ConfigValues configValue, Version version) {
         return version != null
                 ? getConfigValuePreConverted(configValue, version.toString())
                 : getConfigValuePreConverted(configValue);
@@ -1518,7 +1518,7 @@ public class AsyncDataProvider {
     public void getSearchResultsLimit(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(100);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.SearchResultsLimit,
+                new GetConfigurationValueParameters(ConfigValues.SearchResultsLimit,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1625,7 +1625,7 @@ public class AsyncDataProvider {
     public void getDataCenterMaxNameLength(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(1);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.StoragePoolNameSizeLimit,
+                new GetConfigurationValueParameters(ConfigValues.StoragePoolNameSizeLimit,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1633,7 +1633,7 @@ public class AsyncDataProvider {
     public void getClusterServerMemoryOverCommit(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(0);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommitForServers,
+                new GetConfigurationValueParameters(ConfigValues.MaxVdsMemOverCommitForServers,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1641,7 +1641,7 @@ public class AsyncDataProvider {
     public void getClusterDesktopMemoryOverCommit(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(0);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.MaxVdsMemOverCommit,
+                new GetConfigurationValueParameters(ConfigValues.MaxVdsMemOverCommit,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1649,7 +1649,7 @@ public class AsyncDataProvider {
     public void getAllowClusterWithVirtGlusterEnabled(AsyncQuery<Boolean> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(Boolean.TRUE);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.AllowClusterWithVirtGlusterEnabled,
+                new GetConfigurationValueParameters(ConfigValues.AllowClusterWithVirtGlusterEnabled,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1672,7 +1672,7 @@ public class AsyncDataProvider {
             }
             return list;
         };
-        GetConfigurationValueParameters param = new GetConfigurationValueParameters(ConfigurationValues.VdsFenceType);
+        GetConfigurationValueParameters param = new GetConfigurationValueParameters(ConfigValues.VdsFenceType);
         param.setVersion(version != null ? version.toString() : getDefaultConfigurationVersion());
         Frontend.getInstance().runQuery(VdcQueryType.GetFenceConfigurationValue, param, aQuery);
     }
@@ -1766,7 +1766,7 @@ public class AsyncDataProvider {
     public void getStorageDomainMaxNameLength(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(1);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.StorageDomainNameSizeLimit,
+                new GetConfigurationValueParameters(ConfigValues.StorageDomainNameSizeLimit,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1787,7 +1787,7 @@ public class AsyncDataProvider {
     public void getNetworkConnectivityCheckTimeoutInSeconds(AsyncQuery<Integer> aQuery) {
         aQuery.converterCallback = new DefaultValueConverter<>(120);
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.NetworkConnectivityCheckTimeoutInSeconds,
+                new GetConfigurationValueParameters(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }
@@ -1804,7 +1804,7 @@ public class AsyncDataProvider {
 
     public void getDefaultPmProxyPreferences(AsyncQuery<String> query) {
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.FenceProxyDefaultPreferences,
+                new GetConfigurationValueParameters(ConfigValues.FenceProxyDefaultPreferences,
                         getDefaultConfigurationVersion()),
                 query);
     }
@@ -2063,10 +2063,10 @@ public class AsyncDataProvider {
     /**
      * Cache configuration values [raw (not converted) values from vdc_options table].
      */
-    private void cacheConfigValues(AsyncQuery<Map<KeyValuePairCompat<ConfigurationValues, String>, Object>> aQuery) {
+    private void cacheConfigValues(AsyncQuery<Map<KeyValuePairCompat<ConfigValues, String>, Object>> aQuery) {
         aQuery.converterCallback = returnValue -> {
             if (returnValue != null) {
-                cachedConfigValuesPreConvert.putAll((HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>) returnValue);
+                cachedConfigValuesPreConvert.putAll((HashMap<KeyValuePairCompat<ConfigValues, String>, Object>) returnValue);
             }
             return cachedConfigValuesPreConvert;
         };
@@ -2076,8 +2076,8 @@ public class AsyncDataProvider {
     /**
      * Get configuration value from 'cachedConfigValuesPreConvert' (raw values from vdc_options table).
      */
-    public Object getConfigValuePreConverted(ConfigurationValues configValue, String version) {
-        KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
+    public Object getConfigValuePreConverted(ConfigValues configValue, String version) {
+        KeyValuePairCompat<ConfigValues, String> key = new KeyValuePairCompat<>(configValue, version);
 
         return cachedConfigValuesPreConvert.get(key);
     }
@@ -2085,8 +2085,8 @@ public class AsyncDataProvider {
     /**
      * Get configuration value from 'cachedConfigValuesPreConvert' (raw values from vdc_options table).
      */
-    public Object getConfigValuePreConverted(ConfigurationValues configValue) {
-        KeyValuePairCompat<ConfigurationValues, String> key =
+    public Object getConfigValuePreConverted(ConfigValues configValue) {
+        KeyValuePairCompat<ConfigValues, String> key =
                 new KeyValuePairCompat<>(configValue, getDefaultConfigurationVersion());
 
         return cachedConfigValuesPreConvert.get(key);
@@ -2102,7 +2102,7 @@ public class AsyncDataProvider {
      */
     public <T> void getConfigFromCache(GetConfigurationValueParameters parameters, AsyncQuery<T> aQuery) {
         // cache key
-        final KeyValuePairCompat<ConfigurationValues, String> config_key =
+        final KeyValuePairCompat<ConfigValues, String> config_key =
                 new KeyValuePairCompat<>(parameters.getConfigValue(), parameters.getVersion());
 
         T returnValue = null;
@@ -2136,7 +2136,7 @@ public class AsyncDataProvider {
     }
 
     public boolean isDestroyRebootSupported(Version compatibilityVersion) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.DestroyOnRebootSupported, compatibilityVersion.getValue());
+        return (Boolean) getConfigValuePreConverted(ConfigValues.DestroyOnRebootSupported, compatibilityVersion.getValue());
     }
 
     private static class TemplateConverter implements Converter<List<VmTemplate>, List<VmTemplate>> {
@@ -2582,7 +2582,7 @@ public class AsyncDataProvider {
     }
 
     public int getMaxVmPriority() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.VmPriorityMaxValue,
+        return (Integer) getConfigValuePreConverted(ConfigValues.VmPriorityMaxValue,
                 getDefaultConfigurationVersion());
     }
 
@@ -2646,7 +2646,7 @@ public class AsyncDataProvider {
     }
 
     public Integer getMaxIoThreadsPerVm() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.MaxIoThreadsPerVm);
+        return (Integer) getConfigValuePreConverted(ConfigValues.MaxIoThreadsPerVm);
     }
 
     public ArrayList<Cluster> getClusterByServiceList(List<Cluster> list,
@@ -2689,7 +2689,7 @@ public class AsyncDataProvider {
     }
 
     public Integer getMaxVmNameLength() {
-        Integer maxVmNameLength = (Integer) getConfigValuePreConverted(ConfigurationValues.MaxVmNameLength);
+        Integer maxVmNameLength = (Integer) getConfigValuePreConverted(ConfigValues.MaxVmNameLength);
         if (maxVmNameLength == null) {
             return 64;
         }
@@ -2697,7 +2697,7 @@ public class AsyncDataProvider {
     }
 
     public Integer getMaxVmNameLengthSysprep() {
-        Integer maxVmNameLengthSysprep = (Integer) getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthSysprep);
+        Integer maxVmNameLengthSysprep = (Integer) getConfigValuePreConverted(ConfigValues.MaxVmNameLengthSysprep);
         if (maxVmNameLengthSysprep == null) {
             return 64;
         }
@@ -2705,17 +2705,17 @@ public class AsyncDataProvider {
     }
 
     public int getOptimizeSchedulerForSpeedPendingRequests() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.SpeedOptimizationSchedulingThreshold,
+        return (Integer) getConfigValuePreConverted(ConfigValues.SpeedOptimizationSchedulingThreshold,
                 getDefaultConfigurationVersion());
     }
 
     public boolean getScheudulingAllowOverbookingSupported() {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.SchedulerAllowOverBooking,
+        return (Boolean) getConfigValuePreConverted(ConfigValues.SchedulerAllowOverBooking,
                 getDefaultConfigurationVersion());
     }
 
     public int getSchedulerAllowOverbookingPendingRequestsThreshold() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.SchedulerOverBookingThreshold,
+        return (Integer) getConfigValuePreConverted(ConfigValues.SchedulerOverBookingThreshold,
                 getDefaultConfigurationVersion());
     }
 
@@ -2739,17 +2739,16 @@ public class AsyncDataProvider {
     }
 
     public boolean isMigrationPoliciesSupported(Version clusterVersion) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.MigrationPoliciesSupported, clusterVersion.toString());
+        return (Boolean) getConfigValuePreConverted(ConfigValues.MigrationPoliciesSupported, clusterVersion.toString());
     }
 
     public List<String> getMigrationPoliciesSupportedVersions() {
-        return getSupportedVersions(ConfigurationValues.MigrationPoliciesSupported);
+        return getSupportedVersions(ConfigValues.MigrationPoliciesSupported);
     }
 
-    private List<String> getSupportedVersions(ConfigurationValues option) {
+    private List<String> getSupportedVersions(ConfigValues option) {
         List<String> versions = new ArrayList<>();
-        for (Entry<KeyValuePairCompat<ConfigurationValues, String>, Object> entry :
-                cachedConfigValuesPreConvert.entrySet()) {
+        for (Entry<KeyValuePairCompat<ConfigValues, String>, Object> entry : cachedConfigValuesPreConvert.entrySet()) {
             if (entry.getKey().getKey() == option && (Boolean) entry.getValue()) {
                 versions.add(entry.getKey().getValue());
             }
@@ -3098,23 +3097,23 @@ public class AsyncDataProvider {
     }
 
     public int getUploadImageUiInactivityTimeoutInSeconds() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageUiInactivityTimeoutInSeconds);
+        return (Integer) getConfigValuePreConverted(ConfigValues.UploadImageUiInactivityTimeoutInSeconds);
     }
 
     public int getUploadImageChunkSizeKB() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageChunkSizeKB);
+        return (Integer) getConfigValuePreConverted(ConfigValues.UploadImageChunkSizeKB);
     }
 
     public int getUploadImageXhrTimeoutInSeconds() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrTimeoutInSeconds);
+        return (Integer) getConfigValuePreConverted(ConfigValues.UploadImageXhrTimeoutInSeconds);
     }
 
     public int getUploadImageXhrRetryIntervalInSeconds() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrRetryIntervalInSeconds);
+        return (Integer) getConfigValuePreConverted(ConfigValues.UploadImageXhrRetryIntervalInSeconds);
     }
 
     public int getUploadImageXhrMaxRetries() {
-        return (Integer) getConfigValuePreConverted(ConfigurationValues.UploadImageXhrMaxRetries);
+        return (Integer) getConfigValuePreConverted(ConfigValues.UploadImageXhrMaxRetries);
     }
 
     private static final class QuotaConverter implements Converter<List<Quota>, List<Quota>> {
@@ -3149,17 +3148,17 @@ public class AsyncDataProvider {
     }
 
     public boolean isGetNamesOfVmsFromExternalProviderSupported(Version dataCenterVersion) {
-        return (Boolean) getConfigValuePreConverted(ConfigurationValues.GetNamesOfVmsFromExternalProviderSupported, dataCenterVersion.toString());
+        return (Boolean) getConfigValuePreConverted(ConfigValues.GetNamesOfVmsFromExternalProviderSupported, dataCenterVersion.toString());
     }
 
     public boolean isPassDiscardFeatureSupported(Version dataCenterVersion) {
         return (Boolean) getConfigValuePreConverted(
-                ConfigurationValues.PassDiscardSupported, dataCenterVersion.getValue());
+                ConfigValues.PassDiscardSupported, dataCenterVersion.getValue());
     }
 
     public boolean isVmLeasesFeatureSupported(Version clusterVersion) {
         return (Boolean) getConfigValuePreConverted(
-                ConfigurationValues.VmLeasesSupported, clusterVersion.getValue());
+                ConfigValues.VmLeasesSupported, clusterVersion.getValue());
     }
 
     public void getGlusterVolumesForStorageDomain(AsyncQuery<List<GlusterVolumeEntity>> aQuery) {

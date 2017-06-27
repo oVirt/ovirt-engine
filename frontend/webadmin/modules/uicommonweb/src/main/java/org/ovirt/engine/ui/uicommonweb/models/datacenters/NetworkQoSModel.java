@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -37,17 +37,17 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
         getDataCenters().setSelectedItem(dataCenter);
         getDataCenters().setIsChangeable(false);
         getInbound().getAverage()
-                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.QoSInboundAverageDefaultValue));
         getInbound().getPeak()
-                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSInboundPeakDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.QoSInboundPeakDefaultValue));
         getInbound().getBurst()
-                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSInboundBurstDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.QoSInboundBurstDefaultValue));
         getOutbound().getAverage()
-                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSOutboundAverageDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.QoSOutboundAverageDefaultValue));
         getOutbound().getPeak()
-                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSOutboundPeakDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.QoSOutboundPeakDefaultValue));
         getOutbound().getBurst()
-                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSOutboundBurstDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.QoSOutboundBurstDefaultValue));
         addCommands();
     }
 

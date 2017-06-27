@@ -37,8 +37,8 @@ import javax.servlet.ServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.ebaysf.web.cors.CORSFilter;
 import org.ovirt.engine.core.common.config.ConfigCommon;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetDefaultAllowedOriginsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -131,10 +131,10 @@ public class CORSSupportFilter implements Filter {
     public void init(final FilterConfig config) throws ServletException {
         this.config = config;
 
-        this.enabled = (Boolean) getBackendParameter(ConfigurationValues.CORSSupport);
-        this.enabledDefaultOrigins = (Boolean) getBackendParameter(ConfigurationValues.CORSAllowDefaultOrigins);
+        this.enabled = (Boolean) getBackendParameter(ConfigValues.CORSSupport);
+        this.enabledDefaultOrigins = (Boolean) getBackendParameter(ConfigValues.CORSAllowDefaultOrigins);
         String sufficesFromConf = StringUtils.defaultString(
-                (String) getBackendParameter(ConfigurationValues.CORSDefaultOriginSuffixes), "");
+                (String) getBackendParameter(ConfigValues.CORSDefaultOriginSuffixes), "");
         this.defaultOriginsSuffixes = new HashSet<>(Arrays.asList(sufficesFromConf.split(",")));
     }
 
@@ -153,7 +153,7 @@ public class CORSSupportFilter implements Filter {
         }
 
         // Get the allowed origins from the backend configuration:
-        final String allowedOriginsConfig = (String) getBackendParameter(ConfigurationValues.CORSAllowedOrigins);
+        final String allowedOriginsConfig = (String) getBackendParameter(ConfigValues.CORSAllowedOrigins);
         final Set<String> allowedDefaultOrigins = getDefaultAllowedOrigins();
         final String allowedOrigins = mergeOrigins(allowedOriginsConfig, allowedDefaultOrigins);
         if (StringUtils.isEmpty(allowedOrigins)) {
@@ -222,7 +222,7 @@ public class CORSSupportFilter implements Filter {
         return fromConfig + "," + StringUtils.join(fromDefault, ',');
     }
 
-    private Object getBackendParameter(final ConfigurationValues key) throws ServletException {
+    private Object getBackendParameter(final ConfigValues key) throws ServletException {
         final GetConfigurationValueParameters parameters = new GetConfigurationValueParameters();
         parameters.setConfigValue(key);
         parameters.setVersion(ConfigCommon.defaultConfigurationVersion);

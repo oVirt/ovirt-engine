@@ -1,19 +1,19 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
     private StorageQosMetricParametersModel throughput;
     private StorageQosMetricParametersModel iops;
 
     public StorageQosParametersModel() {
-        setThroughput(new StorageQosMetricParametersModel(ConfigurationValues.MaxThroughputUpperBoundQosValue,
-                ConfigurationValues.MaxReadThroughputUpperBoundQosValue,
-                ConfigurationValues.MaxWriteThroughputUpperBoundQosValue));
-        setIops(new StorageQosMetricParametersModel(ConfigurationValues.MaxIopsUpperBoundQosValue,
-                ConfigurationValues.MaxReadIopsUpperBoundQosValue,
-                ConfigurationValues.MaxWriteIopsUpperBoundQosValue));
+        setThroughput(new StorageQosMetricParametersModel(ConfigValues.MaxThroughputUpperBoundQosValue,
+                ConfigValues.MaxReadThroughputUpperBoundQosValue,
+                ConfigValues.MaxWriteThroughputUpperBoundQosValue));
+        setIops(new StorageQosMetricParametersModel(ConfigValues.MaxIopsUpperBoundQosValue,
+                ConfigValues.MaxReadIopsUpperBoundQosValue,
+                ConfigValues.MaxWriteIopsUpperBoundQosValue));
 
         getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$

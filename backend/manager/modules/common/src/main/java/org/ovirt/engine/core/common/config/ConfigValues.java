@@ -130,7 +130,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh," +
             "ipmilan,rsa,rsb,wti")
-    VdsFenceType,
+    VdsFenceType(ClientAccessLevel.Admin),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
@@ -178,7 +178,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("cluster,dc")
-    FenceProxyDefaultPreferences,
+    FenceProxyDefaultPreferences(ClientAccessLevel.Admin),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/updates/ovirt-node-image.iso")
@@ -198,7 +198,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    SearchResultsLimit,
+    SearchResultsLimit(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2")
@@ -211,16 +211,16 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     //This value is in percents
-    WarningLowSpaceIndicator,
+    WarningLowSpaceIndicator(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     //This value is in GB
-    CriticalSpaceActionBlocker,
+    CriticalSpaceActionBlocker(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("1.0.0.0")
-    VdcVersion,
+    VdcVersion(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -232,11 +232,11 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("40")
-    StoragePoolNameSizeLimit,
+    StoragePoolNameSizeLimit(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("50")
-    StorageDomainNameSizeLimit,
+    StorageDomainNameSizeLimit(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
@@ -253,28 +253,28 @@ public enum ConfigValues {
     MaxRerunVmOnVdsCount,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
-    MaxVmsInPool,
+    MaxVmsInPool(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("1,2,4")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    ValidNumOfMonitors,
+    ValidNumOfMonitors(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    MaxNumOfVmCpus,
+    MaxNumOfVmCpus(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    MaxNumOfVmSockets,
+    MaxNumOfVmSockets(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    MaxNumOfCpuPerSocket,
+    MaxNumOfCpuPerSocket(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8")
-    MaxNumOfThreadsPerCpu,
+    MaxNumOfThreadsPerCpu(ClientAccessLevel.User),
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     NumberVmRefreshesBeforeSave,
@@ -308,7 +308,7 @@ public enum ConfigValues {
     VmGracefulShutdownTimeout,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    VmPriorityMaxValue,
+    VmPriorityMaxValue(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Shutting Down")
@@ -328,19 +328,19 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    SpiceUsbAutoShare,
+    SpiceUsbAutoShare(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    FullScreenWebadminDefault,
+    FullScreenWebadminDefault(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    FullScreenUserportalBasicDefault,
+    FullScreenUserportalBasicDefault(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    FullScreenUserportalExtendedDefault,
+    FullScreenUserportalExtendedDefault(ClientAccessLevel.User),
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EncryptHostCommunication,
@@ -383,7 +383,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8192")
-    MaxBlockDiskSize,
+    MaxBlockDiskSize(ClientAccessLevel.User),
     // the order is- {level}:{name}:{flags}:{vdsm};
     // {level}:{name}:{flags}:{vdsm};1:cpu_name:cpu_flags,..,:vdsm_exec,+..,-..;..
     @TypeConverterAttribute(String.class)
@@ -478,12 +478,12 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    MaxVdsMemOverCommit,
+    MaxVdsMemOverCommit(ClientAccessLevel.User),
     // a default of 120% memory over commit.
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    MaxVdsMemOverCommitForServers,
+    MaxVdsMemOverCommitForServers(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
@@ -551,7 +551,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("en-us")
-    VncKeyboardLayout,
+    VncKeyboardLayout(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
@@ -571,11 +571,11 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20480")
-    VM32BitMaxMemorySizeInMB,
+    VM32BitMaxMemorySizeInMB(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("4194304")
-    VM64BitMaxMemorySizeInMB,
+    VM64BitMaxMemorySizeInMB(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
@@ -620,7 +620,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(HashSet.class)
     @DefaultValueAttribute("2.2,3.0")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedVersionArray)
-    SupportedClusterLevels,
+    SupportedClusterLevels(ClientAccessLevel.User),
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ENGINE")
@@ -643,11 +643,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("GMT Standard Time")
-    DefaultWindowsTimeZone,
+    DefaultWindowsTimeZone(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Etc/GMT")
-    DefaultGeneralTimeZone,
+    DefaultGeneralTimeZone(ClientAccessLevel.Admin),
 
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
@@ -660,16 +660,16 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("30")
-    UserSessionTimeOutInterval,
+    UserSessionTimeOutInterval(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/images/rhev")
-    RhevhLocalFSPath,
+    RhevhLocalFSPath(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    UserDefinedVMProperties,
+    UserDefinedVMProperties(ClientAccessLevel.User),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("sap_agent=^(true|false)$;" +
@@ -678,7 +678,7 @@ public enum ConfigValues {
             "viodiskcache=^(none|writeback|writethrough)$;" +
             "mdev_type=^.*$;" +
             "hugepages=^[0-9]+$")
-    PredefinedVMProperties,
+    PredefinedVMProperties(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("250")
@@ -687,12 +687,12 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("15")
-    MaxVmNameLengthSysprep,
+    MaxVmNameLengthSysprep(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("64")
-    MaxVmNameLength,
+    MaxVmNameLength(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -774,7 +774,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("3.0.0.0")
-    ProductRPMVersion,
+    ProductRPMVersion(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -951,23 +951,23 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
-    UploadImageUiInactivityTimeoutInSeconds,
+    UploadImageUiInactivityTimeoutInSeconds(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8192")
-    UploadImageChunkSizeKB,
+    UploadImageChunkSizeKB(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    UploadImageXhrTimeoutInSeconds,
+    UploadImageXhrTimeoutInSeconds(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    UploadImageXhrRetryIntervalInSeconds,
+    UploadImageXhrRetryIntervalInSeconds(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    UploadImageXhrMaxRetries,
+    UploadImageXhrMaxRetries(ClientAccessLevel.Admin),
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
@@ -1014,7 +1014,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("255")
-    ApplicationMode,
+    ApplicationMode(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("4")
@@ -1022,15 +1022,15 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
-    PopulateDirectLUNDiskDescriptionWithLUNId,
+    PopulateDirectLUNDiskDescriptionWithLUNId(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("animation")
-    WANDisableEffects,
+    WANDisableEffects(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("16")
-    WANColorDepth,
+    WANColorDepth(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
@@ -1038,11 +1038,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    CpuPinMigrationEnabled,
+    CpuPinMigrationEnabled(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
-    NetworkConnectivityCheckTimeoutInSeconds,
+    NetworkConnectivityCheckTimeoutInSeconds(ClientAccessLevel.Admin),
 
     @Reloadable
     @TypeConverterAttribute(Map.class)
@@ -1087,7 +1087,7 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    AllowClusterWithVirtGlusterEnabled,
+    AllowClusterWithVirtGlusterEnabled(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1105,19 +1105,19 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("virt")
-    GlusterVolumeOptionGroupVirtValue,
+    GlusterVolumeOptionGroupVirtValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("36")
-    GlusterVolumeOptionOwnerUserVirtValue,
+    GlusterVolumeOptionOwnerUserVirtValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("36")
-    GlusterVolumeOptionOwnerGroupVirtValue,
+    GlusterVolumeOptionOwnerGroupVirtValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/gluster-bricks")
-    GlusterDefaultBrickMountPoint,
+    GlusterDefaultBrickMountPoint(ClientAccessLevel.Admin),
 
     @Reloadable
     @TypeConverterAttribute(String.class)
@@ -1258,12 +1258,12 @@ public enum ConfigValues {
     @TypeConverterAttribute(List.class)
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     @DefaultValueAttribute("ar,da,de,de-ch,en-gb,en-us,es,et,fi,fo,fr,fr-be,fr-ca,fr-ch,hr,hu,is,it,ja,lt,lv,mk,nl,nl-be,no,pl,pt,pt-br,ru,sl,sv,th,tr")
-    VncKeyboardLayoutValidValues,
+    VncKeyboardLayoutValidValues(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SpiceProxyDefault,
+    SpiceProxyDefault(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(String.class)
@@ -1278,7 +1278,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    RemapCtrlAltDelDefault,
+    RemapCtrlAltDelDefault(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("600")
@@ -1318,7 +1318,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("gluster_shared_storage")
-    GlusterMetaVolumeName,
+    GlusterMetaVolumeName(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
@@ -1359,11 +1359,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
-    ClientModeSpiceDefault,
+    ClientModeSpiceDefault(ClientAccessLevel.User),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Native")
-    ClientModeVncDefault,
+    ClientModeVncDefault(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(Double.class)
@@ -1382,12 +1382,12 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
-    ClientModeRdpDefault,
+    ClientModeRdpDefault(ClientAccessLevel.User),
 
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Off")
-    WebSocketProxy,
+    WebSocketProxy(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
@@ -1399,11 +1399,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    PreDefinedNetworkCustomProperties,
+    PreDefinedNetworkCustomProperties(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    UserDefinedNetworkCustomProperties,
+    UserDefinedNetworkCustomProperties(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/osinfo.conf.d")
@@ -1428,31 +1428,31 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1024")
-    MaxAverageNetworkQoSValue,
+    MaxAverageNetworkQoSValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("2048")
-    MaxPeakNetworkQoSValue,
+    MaxPeakNetworkQoSValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10240")
-    MaxBurstNetworkQoSValue,
+    MaxBurstNetworkQoSValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    MaxHostNetworkQosShares,
+    MaxHostNetworkQosShares(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    QoSInboundAverageDefaultValue,
+    QoSInboundAverageDefaultValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    QoSInboundPeakDefaultValue,
+    QoSInboundPeakDefaultValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    QoSInboundBurstDefaultValue,
+    QoSInboundBurstDefaultValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
@@ -1492,7 +1492,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    UseFqdnForRdpIfAvailable,
+    UseFqdnForRdpIfAvailable(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("15")
@@ -1516,15 +1516,15 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    SpeedOptimizationSchedulingThreshold,
+    SpeedOptimizationSchedulingThreshold(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    SchedulerAllowOverBooking,
+    SchedulerAllowOverBooking(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
-    SchedulerOverBookingThreshold,
+    SchedulerOverBookingThreshold(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1562,11 +1562,11 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("0")
-    DefaultMaximumMigrationDowntime,
+    DefaultMaximumMigrationDowntime(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"x86\":\"true\",\"ppc\":\"false\"}")
-    HotPlugCpuSupported,
+    HotPlugCpuSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"x86\":\"false\",\"ppc\":\"false\"}")
@@ -1634,11 +1634,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    ClusterRequiredRngSourcesDefault,
+    ClusterRequiredRngSourcesDefault(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1500")
-    DefaultMTU,
+    DefaultMTU(ClientAccessLevel.Admin),
 
     /**
      * Defines the hostname(s) or IP address(es) to send fence_kdump messages to. If empty, engine FQDN is used.
@@ -1707,7 +1707,7 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    CORSSupport,
+    CORSSupport(ClientAccessLevel.Admin),
 
     /**
      * If CORS is enabled (with the {@code CORSSupport} parameter set to {@code true} then this indicates which are the
@@ -1715,7 +1715,7 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    CORSAllowedOrigins,
+    CORSAllowedOrigins(ClientAccessLevel.Admin),
 
     /**
      * If CORS is enabled (with the {@code CORSSupport} parameter set to {@code true} then this indicates
@@ -1723,7 +1723,7 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    CORSAllowDefaultOrigins,
+    CORSAllowDefaultOrigins(ClientAccessLevel.Admin),
 
     /**
      * If CORS is enabled (with the {@code CORSSupport} parameter set to {@code true}
@@ -1735,7 +1735,7 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    CORSDefaultOriginSuffixes,
+    CORSDefaultOriginSuffixes(ClientAccessLevel.Admin),
 
     /**
      * Port the Cockpit is listening on.
@@ -1743,7 +1743,7 @@ public enum ConfigValues {
      */
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("9090")
-    CockpitPort,
+    CockpitPort(ClientAccessLevel.Admin),
 
     /**
      * Interval in seconds after which is safe to check host storage lease status when host stopped responding
@@ -1755,27 +1755,27 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000000")
-    MaxThroughputUpperBoundQosValue,
+    MaxThroughputUpperBoundQosValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000000")
-    MaxReadThroughputUpperBoundQosValue,
+    MaxReadThroughputUpperBoundQosValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000000")
-    MaxWriteThroughputUpperBoundQosValue,
+    MaxWriteThroughputUpperBoundQosValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000000")
-    MaxIopsUpperBoundQosValue,
+    MaxIopsUpperBoundQosValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000000")
-    MaxReadIopsUpperBoundQosValue,
+    MaxReadIopsUpperBoundQosValue(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000000")
-    MaxWriteIopsUpperBoundQosValue,
+    MaxWriteIopsUpperBoundQosValue(ClientAccessLevel.Admin),
 
     /**
      * UseHostNameIdentifier this will run external headers on STOMP connect frame, in order to identify hosts
@@ -1793,7 +1793,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("100")
-    MaxCpuLimitQosValue,
+    MaxCpuLimitQosValue(ClientAccessLevel.Admin),
 
     @Reloadable
     @TypeConverterAttribute(List.class)
@@ -1832,7 +1832,7 @@ public enum ConfigValues {
     @TypeConverterAttribute(List.class)
     @DefaultValueAttribute("pci,scsi,usb_device")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    HostDevicePassthroughCapabilities,
+    HostDevicePassthroughCapabilities(ClientAccessLevel.Admin),
 
     /**
      * A comma delimited list of package names for checking if updates are available for the host
@@ -1915,11 +1915,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("127")
-    MaxIoThreadsPerVm,
+    MaxIoThreadsPerVm(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1048576")
-    VMPpc64BitMaxMemorySizeInMB,
+    VMPpc64BitMaxMemorySizeInMB(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1931,11 +1931,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    AdPartnerMacSupported,
+    AdPartnerMacSupported(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    OvsSupported,
+    OvsSupported(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1943,15 +1943,15 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    DisplayUncaughtUIExceptions,
+    DisplayUncaughtUIExceptions(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    MigrationPoliciesSupported,
+    MigrationPoliciesSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    MigrationPolicies,
+    MigrationPolicies(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20480")
@@ -1967,7 +1967,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    GetNamesOfVmsFromExternalProviderSupported,
+    GetNamesOfVmsFromExternalProviderSupported(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1975,11 +1975,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    PassDiscardSupported,
+    PassDiscardSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    DiscardAfterDeleteSupported,
+    DiscardAfterDeleteSupported(ClientAccessLevel.Admin),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
@@ -1999,7 +1999,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    VmLeasesSupported,
+    VmLeasesSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
@@ -2035,7 +2035,27 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    DestroyOnRebootSupported,
+    DestroyOnRebootSupported(ClientAccessLevel.User),
 
-    Invalid
+    Invalid;
+
+    private ClientAccessLevel accessLevel;
+
+    private ConfigValues(ClientAccessLevel accessLevel) {
+        this.accessLevel = accessLevel;
+    }
+
+    private ConfigValues() {
+        this(ClientAccessLevel.Internal);
+    }
+
+    public boolean nonAdminVisible() {
+        return accessLevel == ClientAccessLevel.User;
+    }
+
+    public enum ClientAccessLevel {
+        Internal,
+        Admin,
+        User
+    }
 }
