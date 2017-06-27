@@ -45,10 +45,10 @@ public class FenceConfigValueHelperTest {
     @Parameterized.Parameters
     public static Object[][] fenceAgentMappingParams() {
         return new Object[][]{
-                {"agent1=agent2", "key1=val1", "agent1:secure=secure", "agent1", true},
-                {"agent1=agent2,agent3=agent4", "key1=val1,flag", "agent1:secure=secure,port=port;agent2:", "agent1,agent2,agent3", true},
-                {"agent1", "key1=val1,,flag", "agent1:secure", "agent1,,", false},
-                {"agent1=", "key1==val1", "agent1:slot=slot,port", "agent1,,agent2", false},
+                {"agent1=agent2", "agent1:key1=val1", "agent1:secure=secure", "agent1", true},
+                {"agent1=agent2,agent3=agent4", "agent1:key1=val1,flag=1", "agent1:secure=secure,port=port;agent2:", "agent1,agent2,agent3", true},
+                {"agent1", "key1=val1,flag=1", "agent1:secure=0,key", "agent1,,", false},
+                {"agent1=", "agent1:key1", "agent1:slot=slot,port", "agent1,,agent2", false},
                 {null, null, null, null, false},
                 {"", "", "", "", false},
                 {" ", " ", " ", " ", false},

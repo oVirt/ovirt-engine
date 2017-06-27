@@ -19,8 +19,7 @@ public class FenceConfigHelper {
     private static Logger log = LoggerFactory.getLogger(FenceConfigHelper.class);
     private static boolean initialized=false;
     private static final String FenceAgentMappingExpr = "((\\w)+[=](\\w)+[,]{0,1})+";
-    private static final String FenceAgentDefaultParamsExpr = "([\\w]+([=][\\w]+){0,1}[,]{0,1})+";
-    private static final String VdsFenceOptionMappingExpr = "([\\w]+[:]([\\w]*[=][\\w]*[,]{0,1}[;]{0,1}){0,3}[;]{0,1})+";
+    private static final String GeneralAgentOptionsExpr = "([\\w]+[:]([\\w]*[=][\\w]*[,]{0,1}[;]{0,1}){0,3}[;]{0,1})+";
     private static final String CustomVdsFenceTypeExpr = "((\\w)+[,]{0,1})+";
     private static final String FencePowerWaitParamExpr = "((\\w)+[=](\\w)+[,]{0,1})+";
     private static final String COMMA = ",";
@@ -30,15 +29,15 @@ public class FenceConfigHelper {
        if (!initialized) {
            keyValidatorMap = new HashMap<>();
            keyValidatorMap.put("FenceAgentMapping", FenceAgentMappingExpr);
-           keyValidatorMap.put("FenceAgentDefaultParams", FenceAgentDefaultParamsExpr);
-           keyValidatorMap.put("FenceAgentDefaultParamsForPPC", FenceAgentDefaultParamsExpr);
-           keyValidatorMap.put("VdsFenceOptionMapping", VdsFenceOptionMappingExpr);
+           keyValidatorMap.put("FenceAgentDefaultParams", GeneralAgentOptionsExpr);
+           keyValidatorMap.put("FenceAgentDefaultParamsForPPC", GeneralAgentOptionsExpr);
+           keyValidatorMap.put("VdsFenceOptionMapping", GeneralAgentOptionsExpr);
            keyValidatorMap.put("VdsFenceType", CustomVdsFenceTypeExpr);
            keyValidatorMap.put("FencePowerWaitParam", FencePowerWaitParamExpr);
            keyValidatorMap.put("CustomFenceAgentMapping", FenceAgentMappingExpr);
-           keyValidatorMap.put("CustomFenceAgentDefaultParams", FenceAgentDefaultParamsExpr);
-           keyValidatorMap.put("CustomFenceAgentDefaultParamsForPPC", FenceAgentDefaultParamsExpr);
-           keyValidatorMap.put("CustomVdsFenceOptionMapping", VdsFenceOptionMappingExpr);
+           keyValidatorMap.put("CustomFenceAgentDefaultParams", GeneralAgentOptionsExpr);
+           keyValidatorMap.put("CustomFenceAgentDefaultParamsForPPC", GeneralAgentOptionsExpr);
+           keyValidatorMap.put("CustomVdsFenceOptionMapping", GeneralAgentOptionsExpr);
            keyValidatorMap.put("CustomVdsFenceType", CustomVdsFenceTypeExpr);
            keyValidatorMap.put("CustomFencePowerWaitParam", FencePowerWaitParamExpr);
            keyValidatorExampleMap = new HashMap<>();
