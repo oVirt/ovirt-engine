@@ -21,24 +21,15 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class TagListModel extends SearchableListModel<Void, TagModel> {
 
-    public static final EventDefinition resetRequestedEventDefinition;
-
-    static {
-        resetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
-    }
-
     private Map<Guid, Boolean> attachedTagsToEntities;
-    private Event<EventArgs> resetRequestedEvent;
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
@@ -46,8 +37,6 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     private List<SelectionTreeNodeModel> selectionNodeList;
 
     public TagListModel() {
-        setResetRequestedEvent(new Event<>(resetRequestedEventDefinition));
-
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
@@ -69,15 +58,6 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
     public boolean isSingleSelectionOnly() {
         return true;
     }
-
-    public Event<EventArgs> getResetRequestedEvent() {
-        return resetRequestedEvent;
-    }
-
-    private void setResetRequestedEvent(Event<EventArgs> value) {
-        resetRequestedEvent = value;
-    }
-
 
     public UICommand getNewCommand() {
         return newCommand;
@@ -362,11 +342,6 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
                 resetInternal((TagModel) item);
             }
         }
-
-        // Async tag search will cause tree selection to be cleared
-        // Search();
-
-        getResetRequestedEvent().raise(this, EventArgs.EMPTY);
     }
 
     private void resetInternal(TagModel root) {

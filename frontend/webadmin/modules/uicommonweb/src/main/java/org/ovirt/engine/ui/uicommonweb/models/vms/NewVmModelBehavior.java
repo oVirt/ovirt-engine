@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -21,8 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
@@ -35,8 +32,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private boolean updateStatelessFlag = true;
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        super.initialize(systemTreeSelectedItem);
+    public void initialize() {
+        super.initialize();
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
         getModel().getVmType().setIsChangeable(true);
@@ -270,34 +267,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             return;
         }
 
-        // Filter according to system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
-            final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
-
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(
-                    templatesByDataCenter -> AsyncDataProvider.getInstance().getTemplateListByStorage(asyncQuery(
-                            templatesByStorage -> {
-                                VmTemplate blankTemplate =
-                                        Linq.firstOrNull(templatesByDataCenter,
-                                                new Linq.IdPredicate<>(Guid.Empty));
-                                if (blankTemplate != null) {
-                                    templatesByStorage.add(0, blankTemplate);
-                                }
-
-                                List<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
-                                                dataCenterWithCluster.getCluster().getArchitecture());
-
-                                postInitTemplate(templateList);
-
-                            }),
-                            storage.getId())),
-                    dataCenter.getId());
-        }
-        else {
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(
-                    templates -> postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
-                            dataCenterWithCluster.getCluster().getArchitecture()))), dataCenter.getId());
-        }
+        AsyncDataProvider.getInstance().getTemplateListByDataCenter(asyncQuery(
+                templates -> postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                        dataCenterWithCluster.getCluster().getArchitecture()))), dataCenter.getId());
     }
 
     protected void postInitTemplate(List<VmTemplate> templates) {

@@ -361,7 +361,6 @@ public class VirtualMachineModule extends AbstractGinModule {
                         if (lastExecutedCommand == getModel().getNewCommand()) {
                             return createPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
-                            getModel().setSystemTreeSelectedItem(this.getMainModel().getSystemTreeSelectedItem());
                             return cloneVmPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getPreviewCommand()) {
                             return previewPopupProvider.get();

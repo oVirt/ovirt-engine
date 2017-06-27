@@ -45,7 +45,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -143,17 +142,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
     private void setCanSelectSnapshot(EntityModel value) {
         privateCanSelectSnapshot = value;
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        systemTreeSelectedItem = value;
-        onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     private HashMap<Guid, SnapshotModel> snapshotsMap;
@@ -589,7 +577,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             model.setHashName("clone_template_from_snapshot"); //$NON-NLS-1$
             model.setIsNew(true);
             model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
-            model.initialize(VmSnapshotListModel.this.getSystemTreeSelectedItem());
+            model.initialize();
             model.getVmType().setSelectedItem(vm.getVmType());
             model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
             model.getCommands().add(
@@ -712,7 +700,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             unitVmModel.setHelpTag(HelpTag.clone_vm_from_snapshot);
             unitVmModel.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
             unitVmModel.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
-            unitVmModel.initialize(getSystemTreeSelectedItem());
+            unitVmModel.initialize();
 
             VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
             switchModeCommand.init(unitVmModel);

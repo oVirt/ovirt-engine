@@ -39,8 +39,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
@@ -56,7 +54,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> implements ISupportSystemTreeContext {
+public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
 
     private UICommand privateEditCommand;
 
@@ -97,20 +95,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
     private void setCreateVmFromTemplateCommand(UICommand value) {
         privateCreateVmfromTemplateCommand = value;
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-        }
     }
 
     @Inject
@@ -353,7 +337,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     protected void addCustomModelsDetailModelList(final List<HasEntity<VmTemplate>> list, int customPosition,
             final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
             final PermissionListModel<VmTemplate> permissionListModel) {
-        templateDiskListModel.setSystemTreeContext(this);
         list.add(customPosition, templateDiskListModel);
         list.add(templateEventListModel);
         list.add(permissionListModel);
@@ -433,7 +416,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         model.getVmType().setSelectedItem(template.getVmType());
         model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
 
-        model.initialize(this.getSystemTreeSelectedItem());
+        model.initialize();
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
         switchModeCommand.init(model);
@@ -611,7 +594,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
         AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery<>(withVmInit -> setupNewVmModel(new UnitVmModel(new NewVmFromTemplateModelBehavior(withVmInit), TemplateListModel.this),
-                withVmInit.getVmType(), getSystemTreeSelectedItem(), commands)), template.getId());
+                withVmInit.getVmType(), commands)), template.getId());
     }
 
     private void onSaveVm() {
@@ -876,9 +859,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     @Override
     protected void setupNewVmModel(UnitVmModel model,
             VmType vmType,
-            SystemTreeItemModel systemTreeItemModel,
             List<UICommand> uiCommands) {
-        super.setupNewVmModel(model, vmType, systemTreeItemModel, uiCommands);
+        super.setupNewVmModel(model, vmType, uiCommands);
         model.getProvisioning().setEntity(vmType == VmType.Server);
     }
 }

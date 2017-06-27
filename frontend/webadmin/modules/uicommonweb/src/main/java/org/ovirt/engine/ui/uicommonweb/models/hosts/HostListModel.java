@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.HostedEngineDeployConfigura
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -70,12 +69,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HostMaintenanceConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.HostAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
@@ -89,7 +85,6 @@ import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -100,8 +95,7 @@ import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 
 @SuppressWarnings("unchecked")
-public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> implements
-        ISupportSystemTreeContext, TagAssigningModel<VDS> {
+public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> implements TagAssigningModel<VDS> {
 
     private final HostGeneralModel generalModel;
 
@@ -708,50 +702,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             HostModel innerHostModel = (HostModel) getWindow();
             final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
-            if (getSystemTreeSelectedItem() != null) {
-                switch (getSystemTreeSelectedItem().getType()) {
-                    case Host:
-                        innerHostModel.getName().setIsChangeable(false);
-                        innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-                        break;
-                    case Hosts:
-                    case Cluster:
-                    case Cluster_Gluster:
-                        Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
-                        for (StoragePool dc : dataCenters) {
-                            if (dc.getId().equals(cluster.getStoragePoolId())) {
-                                innerHostModel.getDataCenter()
-                                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
-                                innerHostModel.getDataCenter().setSelectedItem(dc);
-                                break;
-                            }
-                        }
-                        innerHostModel.getDataCenter().setIsChangeable(false);
-                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                        innerHostModel.getCluster().setItems(Arrays.asList(cluster));
-                        innerHostModel.getCluster().setSelectedItem(cluster);
-                        innerHostModel.getCluster().setIsChangeable(false);
-                        innerHostModel.getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
-                        break;
-                    case DataCenter:
-                        StoragePool selectDataCenter =
-                                (StoragePool) getSystemTreeSelectedItem().getEntity();
-                        innerHostModel.getDataCenter()
-                                .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
-                        innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
-                        innerHostModel.getDataCenter().setIsChangeable(false);
-                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                        break;
-                    default:
-                        innerHostModel.getDataCenter().setItems(dataCenters);
-                        innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-                        break;
-                }
-            } else {
-                innerHostModel.getDataCenter().setItems(dataCenters);
-                innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-            }
-
+            innerHostModel.getDataCenter().setItems(dataCenters);
+            innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
             innerHostModel.onDataInitialized();
 
             UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", HostListModel.this); //$NON-NLS-1$
@@ -771,12 +723,11 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
 
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
             VDS host = getSelectedItem();
 
             final EditHostModel hostModel = new EditHostModel();
-            hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis, getSystemTreeSelectedItem());
+            hostModel.updateModelFromVds(host, dataCenters, isEditWithPMemphasis);
             hostModel.setSelectedCluster(host);
             hostModel.onDataInitialized();
             hostModel.setTitle(ConstantsManager.getInstance().getConstants().editHostTitle());
@@ -800,14 +751,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
             UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", HostListModel.this); //$NON-NLS-1$
             hostModel.getCommands().add(cancelCommand);
-
-            if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
-                hostModel.getName().setIsChangeable(false);
-                hostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-            }
-
         }));
-
 
     }
 
@@ -1250,7 +1194,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
             HostModel innerHostModel = (HostModel) getWindow();
             VDS host = getSelectedItem();
-            innerHostModel.updateModelFromVds(host, dataCenters, false, getSystemTreeSelectedItem());
+            innerHostModel.updateModelFromVds(host, dataCenters, false);
             innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
             innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
             innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
@@ -1752,18 +1696,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<VDS> e) {
-        super.itemsCollectionChanged(sender, e);
-
-        // Try to select an item corresponding to the system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
-            VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
-
-            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(host.getId())));
-        }
-    }
-
-    @Override
     protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
@@ -2126,25 +2058,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         }
 
         return true;
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
     }
 
     @Override

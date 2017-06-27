@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.HwOnlyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase {
@@ -37,8 +36,8 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
     }
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        super.initialize(systemTreeSelectedItem);
+    public void initialize() {
+        super.initialize();
         updateNumOfSockets();
         getModel().getUsbPolicy().setItems(Arrays.asList(UsbPolicy.values()));
 

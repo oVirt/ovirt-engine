@@ -34,7 +34,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BalloonEnabled;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
@@ -252,7 +251,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
     protected void setupNewVmModel(UnitVmModel model,
             VmType vmtype,
-            SystemTreeItemModel systemTreeItemModel,
             List<UICommand> uiCommands) {
         model.setTitle(ConstantsManager.getInstance().getConstants().newVmTitle());
         model.setHelpTag(HelpTag.new_vm);
@@ -263,7 +261,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog"); //$NON-NLS-1$
 
         setWindow(model);
-        model.initialize(systemTreeItemModel);
+        model.initialize();
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
         switchModeCommand.init(model);

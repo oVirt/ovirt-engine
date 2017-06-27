@@ -91,7 +91,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         UnitVmModel model = spy(createModel(behavior));
         doReturn(cluster).when(model).getSelectedCluster();
         doReturn(new EntityModel<>(true)).when(model).getIsSingleQxlEnabled();
-        model.initialize(null);
+        model.initialize();
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
 
         return model;

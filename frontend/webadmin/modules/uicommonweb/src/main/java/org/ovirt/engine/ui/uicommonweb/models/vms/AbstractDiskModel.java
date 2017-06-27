@@ -46,7 +46,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
@@ -84,7 +83,6 @@ public abstract class AbstractDiskModel extends DiskModel {
     private SanStorageModelBase sanStorageModelBase;
     private boolean previousIsQuotaAvailable;
 
-    private SystemTreeItemModel systemTreeSelectedItem;
     private UICommand cancelCommand;
 
     private StorageModel storageModel;
@@ -191,14 +189,6 @@ public abstract class AbstractDiskModel extends DiskModel {
 
     public void setSanStorageModelBase(SanStorageModelBase sanStorageModelBase) {
         this.sanStorageModelBase = sanStorageModelBase;
-    }
-
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    public void setSystemTreeSelectedItem(SystemTreeItemModel systemTreeSelectedItem) {
-        this.systemTreeSelectedItem = systemTreeSelectedItem;
     }
 
     public EntityModel<String> getSizeExtend() {

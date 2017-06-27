@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -31,8 +30,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -59,8 +56,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        super.initialize(systemTreeSelectedItem);
+    public void initialize() {
+        super.initialize();
         getModel().getVmInitEnabled().setEntity(vm.getVmInit() != null);
         getModel().getVmInitModel().init(vm.getStaticData());
 
@@ -117,33 +114,9 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             return;
         }
 
-        // Filter according to system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
-            final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
-
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
-                            templatesByDataCenter -> AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery<>(
-                                            templatesByStorage -> {
-
-                                                VmTemplate blankTemplate = Linq.firstOrNull(templatesByDataCenter, new Linq.IdPredicate<>(Guid.Empty));
-                                                if (blankTemplate != null) {
-                                                    templatesByStorage.add(0, blankTemplate);
-                                                }
-
-                                                ArrayList<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
-                                                                dataCenterWithCluster.getCluster().getArchitecture());
-
-                                                postInitTemplate(templateList);
-
-                                            }),
-                                    storage.getId())),
-                    dataCenter.getId());
-        }
-        else {
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
-                    templates -> postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
-                            dataCenterWithCluster.getCluster().getArchitecture()))), dataCenter.getId());
-        }
+        AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery<>(
+                templates -> postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                        dataCenterWithCluster.getCluster().getArchitecture()))), dataCenter.getId());
     }
 
     private void postInitTemplate(List<VmTemplate> templates) {
@@ -335,24 +308,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                     }
 
                     if (activeStorageDomainList.size() > 0) {
-                        if (getSystemTreeSelectedItem() != null
-                                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
-                            StorageDomain selectStorage =
-                                    (StorageDomain) getSystemTreeSelectedItem().getEntity();
-                            StorageDomain s =
-                                    Linq.firstOrNull(activeStorageDomainList,
-                                            new Linq.IdPredicate<>(selectStorage.getId()));
-                            activeStorageDomainList =
-                                    new ArrayList<>(Arrays.asList(new StorageDomain[]{s}));
-
-                            getModel().getStorageDomain().setItems(activeStorageDomainList);
-                            getModel().getStorageDomain().setIsChangeable(false);
-                            getModel().getStorageDomain().setSelectedItem(s);
-                        }
-                        else {
-                            getModel().getStorageDomain().setItems(activeStorageDomainList);
-                            getModel().getStorageDomain().setIsChangeable(true);
-                        }
+                        getModel().getStorageDomain().setItems(activeStorageDomainList);
+                        getModel().getStorageDomain().setIsChangeable(true);
                     }
                     else {
                         disableNewTemplateModel(ConstantsManager.getInstance()

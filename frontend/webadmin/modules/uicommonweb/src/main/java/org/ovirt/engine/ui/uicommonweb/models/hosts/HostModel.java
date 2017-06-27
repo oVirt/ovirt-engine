@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,7 +39,6 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
@@ -1085,8 +1083,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
 
     public void updateModelFromVds(VDS vds,
             List<StoragePool> dataCenters,
-            boolean isEditWithPMemphasis,
-            SystemTreeItemModel selectedSystemTreeItem) {
+            boolean isEditWithPMemphasis) {
         setHostId(vds.getId());
         setIsHostedEngineDeployed(vds.isHostedEngineDeployed());
         updateExternalHostModels(vds.getHostProviderId());
@@ -1172,32 +1169,6 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
             vds.getStatus() != VDSStatus.PendingApproval &&
             vds.getStatus() != VDSStatus.InstallingOS) {
             setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
-        }
-        else if (selectedSystemTreeItem != null) {
-            final UIConstants constants = ConstantsManager.getInstance().getConstants();
-
-            switch (selectedSystemTreeItem.getType()) {
-            case Host:
-                getName().setIsChangeable(false);
-                getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-                break;
-            case Hosts:
-            case Cluster:
-            case Cluster_Gluster:
-                getCluster().setIsChangeable(false);
-                getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
-                getDataCenter().setIsChangeable(false);
-                break;
-            case DataCenter:
-                StoragePool selectDataCenter = (StoragePool) selectedSystemTreeItem.getEntity();
-                getDataCenter()
-                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
-                getDataCenter().setSelectedItem(selectDataCenter);
-                getDataCenter().setIsChangeable(false);
-                break;
-            default:
-                break;
-            }
         }
 
         getKernelCmdline().setEntity(vds.getCurrentKernelCmdline());

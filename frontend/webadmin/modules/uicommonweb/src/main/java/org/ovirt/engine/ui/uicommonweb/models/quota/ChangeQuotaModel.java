@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,20 +8,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 
 public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
 
@@ -72,59 +65,5 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
             ChangeQuotaModel.this.setItems(list);
             ChangeQuotaModel.this.stopProgress();
         });
-    }
-
-    /**
-     * Static utility method for change quota command availability.
-     * the command is available when the selected item in the tree is DC
-     * and one of the disks (shown in the tab) has quota mode != QuotaEnforcementTypeEnum.DISABLED.
-     * The command is enabled (isExecutionAllowed == true) if it's available
-     * and all the selected disks quota mode != QuotaEnforcementTypeEnum.DISABLED.
-     * @param allDisks - model's disks (visible in page)
-     * @param selectedDisks - model's selected disks
-     */
-    public static void updateChangeQuotaActionAvailability(Collection<? extends Disk> allDisks,
-            Collection<? extends Disk> selectedDisks,
-            SystemTreeItemModel systemTreeSelectedItem,
-            UICommand changeQuotaCommand) {
-        boolean isAvailable = true;
-        boolean isExecutionAllowed = true;
-        if (systemTreeSelectedItem != null
-                && systemTreeSelectedItem.getType() == SystemTreeItemType.DataCenter) {
-            if (selectedDisks != null && !selectedDisks.isEmpty()) {
-                for (Disk diskItem : selectedDisks) {
-                    if (!diskItem.getDiskStorageType().isInternal() ||
-                            !(diskItem instanceof DiskImageBase) ||
-                            ((DiskImageBase) diskItem).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED) {
-                        isExecutionAllowed = false;
-                        break;
-                    }
-                }
-            } else {
-                isExecutionAllowed = false;
-            }
-        } else {
-            isAvailable = false;
-        }
-        // show the button iff there are disks with quota mode != disabled
-        if (isAvailable && !isExecutionAllowed) {
-            boolean hasDisksWithQuotaMode = false;
-            if (allDisks != null && !allDisks.isEmpty()) {
-                for (Disk diskItem : allDisks) {
-                    if (diskItem.getDiskStorageType().isInternal() &&
-                            (diskItem instanceof DiskImageBase) &&
-                            ((DiskImageBase) diskItem).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-                        hasDisksWithQuotaMode = true;
-                        break;
-                    }
-                }
-            }
-            isAvailable = hasDisksWithQuotaMode;
-        }
-
-        changeQuotaCommand.setIsAvailable(isAvailable);
-        if (isAvailable) {
-            changeQuotaCommand.setIsExecutionAllowed(isExecutionAllowed);
-        }
     }
 }

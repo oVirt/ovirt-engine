@@ -73,8 +73,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -99,7 +97,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class VmListModel<E> extends VmBaseListModel<E, VM>
-        implements ISupportSystemTreeContext, ICancelable, HasDiskWindow, TagAssigningModel<VM> {
+        implements ICancelable, HasDiskWindow, TagAssigningModel<VM> {
 
     public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
     public static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
@@ -448,7 +446,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         List<HasEntity<VM>> list = new ArrayList<>();
         list.add(vmGeneralModel);
         list.add(vmInterfaceListModel);
-        vmDiskListModel.setSystemTreeContext(this);
         list.add(vmDiskListModel);
         list.add(vmSnapshotListModel);
         list.add(vmEventListModel);
@@ -614,7 +611,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         commands.add(UICommand.createDefaultOkUiCommand("OnSave", this)); //$NON-NLS-1$
         commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
         UnitVmModel model = new UnitVmModel(new NewVmModelBehavior(), this);
-        setupNewVmModel(model, VmType.Server, getSystemTreeSelectedItem(), commands);
+        setupNewVmModel(model, VmType.Server, commands);
     }
 
     private void editConsole() {
@@ -671,7 +668,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
 
-        model.initialize(this.getSystemTreeSelectedItem());
+        model.initialize();
         model.initForemanProviders(vm.getProviderId());
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
@@ -1103,7 +1100,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
 
-        model.initialize(getSystemTreeSelectedItem());
+        model.initialize();
 
         model.getCommands().add(
                 new UICommand("OnNewTemplate", this) //$NON-NLS-1$
@@ -2343,19 +2340,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         if (errorMessages != null) {
             errorPopupManager.show(errorMessages.toString());
         }
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        systemTreeSelectedItem = value;
-        onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
     }
 
     @Override

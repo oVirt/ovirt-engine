@@ -11,15 +11,14 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 
 public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        super.initialize(systemTreeSelectedItem);
+    public void initialize() {
+        super.initialize();
 
         getModel().getIsVirtioScsiEnabled().setIsAvailable(true);
         getModel().getIsVirtioScsiEnabled().setEntity(false);

@@ -61,8 +61,6 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
@@ -1870,7 +1868,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    public void initialize(SystemTreeItemModel SystemTreeSelectedItem) {
+    public void initialize() {
         super.initialize();
 
         getMemSize().setEntity(256);
@@ -1903,7 +1901,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initConsoleDisconnectAction();
         updateLabelList();
 
-        behavior.initialize(SystemTreeSelectedItem);
+        behavior.initialize();
     }
 
     @Override
@@ -2661,39 +2659,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             List<Cluster> clusters,
             Guid selectedCluster) {
 
-        if (model.getBehavior().getSystemTreeSelectedItem() != null
-                && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
-            setupDataCenterWithClustersFromSystemTree(model, dataCenters, clusters, selectedCluster);
-        } else {
-            setupDataCenterWithClusters(model, dataCenters, clusters, selectedCluster);
-        }
-
-    }
-
-    protected void setupDataCenterWithClustersFromSystemTree(UnitVmModel model,
-            List<StoragePool> dataCenters,
-            List<Cluster> clusters,
-            Guid selectedCluster) {
-
-        StoragePool dataCenter = getDataCenterAccordingSystemTree(model, dataCenters);
-
-        // the dataCenters are the entities just downloaded from server while the dataCenter can be a cached one from the system tree
-        dataCenter = dataCenter == null ? null : findDataCenterById(dataCenters, dataCenter.getId());
-
-        List<Cluster> possibleClusters = getClusterAccordingSystemTree(model, clusters);
-        if (dataCenter == null || possibleClusters == null) {
-            getDataCenterWithClustersList().setIsChangeable(false);
-            return;
-        }
-
-        List<DataCenterWithCluster> dataCentersWithClusters = new ArrayList<>();
-
-        for (Cluster cluster : possibleClusters) {
-            if (cluster.getStoragePoolId() != null && cluster.getStoragePoolId().equals(dataCenter.getId())) {
-                dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
-            }
-        }
-        selectDataCenterWithCluster(selectedCluster, dataCentersWithClusters);
+        setupDataCenterWithClusters(model, dataCenters, clusters, selectedCluster);
     }
 
     protected void setupDataCenterWithClusters(UnitVmModel model,
@@ -2733,34 +2699,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getDataCenterWithClustersList().setItems(dataCentersWithClusters, selectedDataCenterWithCluster);
     }
 
-    private StoragePool getDataCenterAccordingSystemTree(UnitVmModel model, List<StoragePool> list) {
-        if (model.getBehavior().getSystemTreeSelectedItem() != null
-                && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
-            switch (model.getBehavior().getSystemTreeSelectedItem().getType()) {
-            case Templates:
-            case DataCenter:
-                return (StoragePool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-            case Cluster:
-            case Cluster_Gluster:
-            case VMs:
-                Cluster cluster = (Cluster) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                if (cluster.supportsVirtService()) {
-                    return findDataCenterById(list, cluster.getStoragePoolId());
-                }
-                break;
-
-            case Host:
-                VDS host = (VDS) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                return findDataCenterById(list, host.getStoragePoolId());
-
-            case Storage:
-                StorageDomain storage = (StorageDomain) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                return findDataCenterById(list, storage.getStoragePoolId());
-            }
-        }
-        return null;
-    }
-
     private StoragePool findDataCenterById(List<StoragePool> list, Guid id) {
         if (id == null) {
             return null;
@@ -2769,31 +2707,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         for (StoragePool dc : list) {
             if (dc.getId().equals(id)) {
                 return dc;
-            }
-        }
-
-        return null;
-    }
-
-    private List<Cluster> getClusterAccordingSystemTree(UnitVmModel model, List<Cluster> clusters) {
-        if (behavior.getSystemTreeSelectedItem() != null
-                && behavior.getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
-            switch (model.getBehavior().getSystemTreeSelectedItem().getType()) {
-            case Cluster:
-            case VMs:
-                Cluster cluster = (Cluster) behavior.getSystemTreeSelectedItem().getEntity();
-                return Arrays.asList(cluster);
-
-            case Host:
-                VDS host = (VDS) behavior.getSystemTreeSelectedItem().getEntity();
-                for (Cluster iterCluster : clusters) {
-                    if (iterCluster.getId().equals(host.getClusterId())) {
-                        return Arrays.asList(iterCluster);
-                    }
-                }
-                break;
-            default:
-                return clusters;
             }
         }
 

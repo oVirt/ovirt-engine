@@ -21,15 +21,12 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskImage> {
     private UICommand privateCopyCommand;
 
@@ -39,16 +36,6 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
 
     private void setCopyCommand(UICommand value) {
         privateCopyCommand = value;
-    }
-
-    ISupportSystemTreeContext systemTreeContext;
-
-    public ISupportSystemTreeContext getSystemTreeContext() {
-        return systemTreeContext;
-    }
-
-    public void setSystemTreeContext(ISupportSystemTreeContext systemTreeContext) {
-        this.systemTreeContext = systemTreeContext;
     }
 
     private UICommand privateChangeQuotaCommand;
@@ -163,11 +150,6 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
     private void updateActionAvailability() {
         getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isCopyCommandAvailable());
-
-        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? getItems() : null,
-                getSelectedItems() != null ? getSelectedItems() : null,
-                getSystemTreeSelectedItem(),
-                getChangeQuotaCommand());
     }
 
     private boolean isCopyCommandAvailable() {
@@ -267,13 +249,6 @@ public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskI
         Frontend.getInstance().runMultipleAction(ActionType.ChangeQuotaForDisk, paramerterList,
                 result -> cancel(),
                 this);
-    }
-
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        if (getSystemTreeContext() == null) {
-            return null;
-        }
-        return getSystemTreeContext().getSystemTreeSelectedItem();
     }
 
 }

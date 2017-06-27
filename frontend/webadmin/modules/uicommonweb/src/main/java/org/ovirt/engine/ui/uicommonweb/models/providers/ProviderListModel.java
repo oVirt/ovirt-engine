@@ -15,16 +15,13 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider> implements ISupportSystemTreeContext {
+public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider> {
 
     private static final String CMD_ADD = "Add"; //$NON-NLS-1$
     private static final String CMD_EDIT = "Edit"; //$NON-NLS-1$
@@ -36,8 +33,6 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
 
     private final ProviderNetworkListModel providerNetworkListModel;
     private final ProviderSecretListModel providerSecretListModel;
-
-    private SystemTreeItemModel systemTreeSelectedItem;
 
     @Inject
     public ProviderListModel(final ProviderGeneralModel providerGeneralModel,
@@ -120,23 +115,6 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
     }
 
     @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
-    }
-
-    @Override
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
@@ -155,12 +133,8 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
 
-        // Hide add/remove commands if a specific provider is chosen in the system tree
-        boolean isAvailable =
-                getSystemTreeSelectedItem() == null
-                        || getSystemTreeSelectedItem().getType() != SystemTreeItemType.Provider;
-        getAddCommand().setIsAvailable(isAvailable);
-        getRemoveCommand().setIsAvailable(isAvailable);
+        getAddCommand().setIsAvailable(true);
+        getRemoveCommand().setIsAvailable(true);
     }
 
     @Override

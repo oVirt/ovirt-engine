@@ -33,8 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -111,16 +109,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private void setUnPlugCommand(UICommand value) {
         privateUnPlugCommand = value;
-    }
-
-    ISupportSystemTreeContext systemTreeContext;
-
-    public ISupportSystemTreeContext getSystemTreeContext() {
-        return systemTreeContext;
-    }
-
-    public void setSystemTreeContext(ISupportSystemTreeContext systemTreeContext) {
-        this.systemTreeContext = systemTreeContext;
     }
 
     private UICommand privateChangeQuotaCommand;
@@ -480,11 +468,6 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         getPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(true));
 
         getUnPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(false));
-
-        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
-                getSelectedItems() != null ? getSelectedItems() : null,
-                getSystemTreeSelectedItem(),
-                getChangeQuotaCommand());
     }
 
     public boolean isVmDown() {
@@ -721,12 +704,5 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     @Override
     protected String getListName() {
         return "VmDiskListModel"; //$NON-NLS-1$
-    }
-
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        if (getSystemTreeContext() == null) {
-            return null;
-        }
-        return getSystemTreeContext().getSystemTreeSelectedItem();
     }
 }

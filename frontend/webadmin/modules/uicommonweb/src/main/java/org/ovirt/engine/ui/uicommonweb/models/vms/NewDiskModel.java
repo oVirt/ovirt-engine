@@ -21,8 +21,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
@@ -36,7 +34,8 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 public class NewDiskModel extends AbstractDiskModel {
     private boolean descriptionDerivedFromLunId;
 
-    private IEventListener lunSelectionChangedEventListener = new IEventListener <ValueEventArgs<LunModel>>() {
+    private IEventListener<ValueEventArgs<LunModel>> lunSelectionChangedEventListener =
+            new IEventListener<ValueEventArgs<LunModel>> () {
         @Override
         public void eventRaised(Event<? extends ValueEventArgs<LunModel>> ev,
                 Object sender,
@@ -45,7 +44,8 @@ public class NewDiskModel extends AbstractDiskModel {
             if (description == null || description.isEmpty() || descriptionDerivedFromLunId) {
                 LunModel selectedLunModel = args.getValue();
                 if (selectedLunModel.getLunId() != null) {
-                    int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PopulateDirectLUNDiskDescriptionWithLUNId);
+                    int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                            ConfigurationValues.PopulateDirectLUNDiskDescriptionWithLUNId);
                     if (numOfChars == 0) {
                         return;
                     }
@@ -63,13 +63,6 @@ public class NewDiskModel extends AbstractDiskModel {
             updatePassDiscardChangeability();
         }
     };
-
-    public NewDiskModel() {
-    }
-
-    public NewDiskModel(SystemTreeItemModel systemTreeSelectedItem) {
-        setSystemTreeSelectedItem(systemTreeSelectedItem);
-    }
 
     @Override
     public void initialize() {
@@ -115,20 +108,7 @@ public class NewDiskModel extends AbstractDiskModel {
 
     @Override
     protected boolean isDatacenterAvailable(StoragePool dataCenter) {
-        boolean isStatusUp = dataCenter.getStatus() == StoragePoolStatus.Up;
-
-        boolean isInTreeContext = true;
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
-            switch (getSystemTreeSelectedItem().getType()) {
-            case DataCenter:
-                StoragePool selectedDataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
-                isInTreeContext = selectedDataCenter.getId().equals(dataCenter.getId());
-            default:
-                break;
-            }
-        }
-
-        return isStatusUp && isInTreeContext;
+        return dataCenter.getStatus() == StoragePoolStatus.Up;
     }
 
     @Override

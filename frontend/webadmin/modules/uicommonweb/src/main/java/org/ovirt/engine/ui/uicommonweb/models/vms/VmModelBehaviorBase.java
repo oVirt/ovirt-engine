@@ -56,8 +56,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ExistingBlankTemplateModelBehavior;
@@ -84,8 +82,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private TModel privateModel;
 
     protected List<String> dedicatedHostsNames;
-
-    private SystemTreeItemModel privateSystemTreeSelectedItem;
 
     private PriorityUtil priorityUtil;
 
@@ -117,16 +113,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         privateModel = value;
     }
 
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return privateSystemTreeSelectedItem;
-    }
-
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        privateSystemTreeSelectedItem = value;
-    }
-
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        this.setSystemTreeSelectedItem(systemTreeSelectedItem);
+    public void initialize() {
         commonInitialize();
     }
 
@@ -503,7 +490,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateDefaultHost() {
         Cluster cluster = getModel().getSelectedCluster();
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         if (cluster == null) {
             getModel().getDefaultHost().setItems(new ArrayList<VDS>());
@@ -513,37 +499,21 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         getHostListByCluster(cluster, asyncQuery(hosts -> {
                     List<VDS> oldDefaultHosts = getModel().getDefaultHost().getSelectedItems();
-                    if (getModel().getBehavior().getSystemTreeSelectedItem() != null
-                            && getModel().getBehavior().getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
-                        VDS host = (VDS) getModel().getBehavior().getSystemTreeSelectedItem().getEntity();
-                        for (VDS vds : hosts) {
-                            if (host.getId().equals(vds.getId())) {
-                                getModel().getDefaultHost()
-                                        .setItems(new ArrayList<>(Collections.singletonList(vds)));
-                                getModel().getDefaultHost().setSelectedItems(Collections.singletonList(vds));
-                                getModel().getDefaultHost().setIsChangeable(false);
-                                getModel().getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
-                                break;
-                            }
-                        }
-                    }
-                    else {
-                        getModel().getDefaultHost().setItems(hosts);
+                    getModel().getDefaultHost().setItems(hosts);
 
-                        // attempt to preserve selection as much as possible
-                        if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
-                            Set<VDS> oldSelectedIntersectionNewHosts = new HashSet<>(oldDefaultHosts);
-                            oldSelectedIntersectionNewHosts.retainAll(hosts);
-                            oldDefaultHosts = new ArrayList<>(oldSelectedIntersectionNewHosts);
-                        }
-
-                        List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
-                                          ? oldDefaultHosts
-                                          : !hosts.isEmpty()
-                                                  ? Collections.singletonList(hosts.get(0))
-                                                  : Collections.<VDS>emptyList();
-                        getModel().getDefaultHost().setSelectedItems(hostsToSelect);
+                    // attempt to preserve selection as much as possible
+                    if (oldDefaultHosts != null && !oldDefaultHosts.isEmpty()) {
+                        Set<VDS> oldSelectedIntersectionNewHosts = new HashSet<>(oldDefaultHosts);
+                        oldSelectedIntersectionNewHosts.retainAll(hosts);
+                        oldDefaultHosts = new ArrayList<>(oldSelectedIntersectionNewHosts);
                     }
+
+                    List<VDS> hostsToSelect = oldDefaultHosts != null && !oldDefaultHosts.isEmpty()
+                                      ? oldDefaultHosts
+                                      : !hosts.isEmpty()
+                                              ? Collections.singletonList(hosts.get(0))
+                                              : Collections.<VDS>emptyList();
+                    getModel().getDefaultHost().setSelectedItems(hostsToSelect);
                     changeDefaultHost();
 
                 }));
@@ -734,14 +704,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 list.add(a);
             }
         }
-
-        // Filter according to system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
-            StorageDomain selectStorage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
-            StorageDomain sd = Linq.firstOrNull(list, new Linq.IdPredicate<>(selectStorage.getId()));
-            list = new ArrayList<>(Arrays.asList(new StorageDomain[]{sd}));
-        }
-
         return list;
     }
 

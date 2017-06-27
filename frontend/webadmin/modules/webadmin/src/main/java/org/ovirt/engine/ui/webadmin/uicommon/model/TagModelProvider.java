@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -51,18 +49,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
     @Override
     protected void initializeModelHandlers(final TagListModel model) {
         super.initializeModelHandlers(model);
-
-        // Add model reset handler
-        model.getResetRequestedEvent().addListener((ev, sender, args) -> {
-            if (model.getItems() == null) {
-                return;
-            }
-            Iterator<TagModel> iterator = model.getItems().iterator();
-            if (iterator.hasNext()) {
-                TagModel root = model.cloneTagModel(iterator.next());
-                updateDataProvider(Arrays.asList(root));
-            }
-        });
 
         model.getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 

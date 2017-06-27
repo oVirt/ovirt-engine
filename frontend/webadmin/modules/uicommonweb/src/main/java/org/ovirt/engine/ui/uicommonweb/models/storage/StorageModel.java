@@ -26,11 +26,8 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -42,7 +39,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-public class StorageModel extends Model implements ISupportSystemTreeContext {
+public class StorageModel extends Model {
     public static final Guid UnassignedDataCenterId = Guid.Empty;
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -388,87 +385,49 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
     }
 
     private void initDataCenter() {
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
-            SystemTreeItemModel dataCenterItem;
-            StoragePool dc;
-            switch (getSystemTreeSelectedItem().getType()) {
-            case DataCenter:
-            case Cluster:
-            case Storages:
-            case Storage:
-                dataCenterItem =
-                        SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
-                dc = (StoragePool) dataCenterItem.getEntity();
+        if (getStorage() == null
+                || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
+        // We are either adding a new storage or editing an unattached storage
+        // -> fill DataCenters drop-down with all possible Data-Centers, choose the empty one:
+        // [TODO: In case of an Unattached SD, choose only DCs of the same type]
+            AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(
+                    dataCenters -> {
 
-                getDataCenter().setItems(new ArrayList<>(Collections.singletonList(dc)));
-                getDataCenter().setSelectedItem(dc);
-                getDataCenter().setIsChangeable(false);
-                getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                break;
+                        StorageModelBehavior storageModelBehavior = behavior;
+                        dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
+                        addEmptyDataCenterToList(dataCenters);
+                        StoragePool oldSelectedItem = getDataCenter().getSelectedItem();
+                        getDataCenter().setItems(dataCenters);
+                        if (oldSelectedItem != null) {
+                            getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
+                                    new Linq.IdPredicate<>(oldSelectedItem.getId())));
+                        } else {
+                            getDataCenter()
+                                    .setSelectedItem(getStorage() == null ? Linq.firstOrNull(dataCenters)
+                                            : Linq.firstOrNull(dataCenters,
+                                                    new Linq.IdPredicate<>(UnassignedDataCenterId)));
+                        }
 
-            case Host:
-                VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
-
-                getHost().setIsChangeable(false);
-                getHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
-                getHost().setSelectedItem(host);
-
-                dataCenterItem =
-                        SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
-                dc = (StoragePool) dataCenterItem.getEntity();
-
-                getDataCenter().setItems(new ArrayList<>(Collections.singletonList(dc)));
-                getDataCenter().setSelectedItem(dc);
-                getDataCenter().setIsChangeable(false);
-                getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
-                break;
-            }
+                    }));
         }
-        else {
-            if (getStorage() == null
-                    || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
-            // We are either adding a new storage or editing an unattached storage
-            // -> fill DataCenters drop-down with all possible Data-Centers, choose the empty one:
-            // [TODO: In case of an Unattached SD, choose only DCs of the same type]
-                AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(
-                        dataCenters -> {
 
-                            StorageModelBehavior storageModelBehavior = behavior;
-                            dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
-                            addEmptyDataCenterToList(dataCenters);
-                            StoragePool oldSelectedItem = getDataCenter().getSelectedItem();
-                            getDataCenter().setItems(dataCenters);
-                            if (oldSelectedItem != null) {
-                                getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters,
-                                        new Linq.IdPredicate<>(oldSelectedItem.getId())));
-                            } else {
-                                getDataCenter()
-                                        .setSelectedItem(getStorage() == null ? Linq.firstOrNull(dataCenters)
-                                                : Linq.firstOrNull(dataCenters,
-                                                        new Linq.IdPredicate<>(UnassignedDataCenterId)));
-                            }
+        else { // "Edit Storage" mode:
+            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
+                            dataCentersWithStorage -> {
 
-                        }));
-            }
+                                List<StoragePool> dataCenters = new ArrayList<>();
+                                if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null) {
+                                    addEmptyDataCenterToList(dataCenters);
+                                }
+                                else {
+                                    dataCenters =
+                                            new ArrayList<>(Collections.singletonList(dataCentersWithStorage.get(0)));
+                                }
+                                getDataCenter().setItems(dataCenters);
+                                getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
 
-            else { // "Edit Storage" mode:
-                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
-                                dataCentersWithStorage -> {
-
-                                    List<StoragePool> dataCenters = new ArrayList<>();
-                                    if (dataCentersWithStorage.size() < 1 || dataCentersWithStorage.get(0) == null) {
-                                        addEmptyDataCenterToList(dataCenters);
-                                    }
-                                    else {
-                                        dataCenters =
-                                                new ArrayList<>(Collections.singletonList(dataCentersWithStorage.get(0)));
-                                    }
-                                    getDataCenter().setItems(dataCenters);
-                                    getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-
-                                }),
-                        getStorage().getId());
-            }
+                            }),
+                    getStorage().getId());
         }
     }
 
@@ -693,18 +652,6 @@ public class StorageModel extends Model implements ISupportSystemTreeContext {
         ValidationResult result = new NotEmptyValidation().validate(listModel.getSelectedItem());
         listModel.setIsValid(result.getSuccess());
         listModel.getInvalidityReasons().addAll(result.getReasons());
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        systemTreeSelectedItem = value;
     }
 
     public boolean isStorageActive() {

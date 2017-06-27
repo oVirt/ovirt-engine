@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.gin;
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -142,7 +141,6 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(SearchSuggestModel.class).in(Singleton.class);
         bind(BookmarkListModel.class).in(Singleton.class);
         bind(TagListModel.class).in(Singleton.class);
-        bind(SystemTreeModel.class).in(Singleton.class);
         bind(AlertListModel.class).in(Singleton.class);
         bind(TaskListModel.class).in(Singleton.class);
     }

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.SupportedAdditionalClusterFeature;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -41,10 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.ClusterAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
@@ -56,13 +52,12 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
 import com.google.inject.Inject;
 
-public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> implements ISupportSystemTreeContext {
+public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final UIMessages messages = ConstantsManager.getInstance().getMessages();
@@ -319,23 +314,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
             ClusterModel cModel = (ClusterModel) getWindow();
 
-            // Be aware of system tree selection.
-            // Strict data center as neccessary.
-            if (getSystemTreeSelectedItem() != null
-                    && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
-                SystemTreeItemModel treeSelectedItem = getSystemTreeSelectedItem();
-                SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
-                StoragePool selectDataCenter = (StoragePool) treeSelectedDc.getEntity();
-
-                final StoragePool selectedDataCenter = Linq.firstOrNull(dataCenters,
-                        new Linq.IdPredicate<>(selectDataCenter.getId()));
-                cModel.getDataCenter().setItems(dataCenters, selectedDataCenter);
-                cModel.getDataCenter().setIsChangeable(false);
-            }
-            else {
-                cModel.getDataCenter().setItems(dataCenters, Linq.firstOrNull(dataCenters));
-            }
-
+            cModel.getDataCenter().setItems(dataCenters, Linq.firstOrNull(dataCenters));
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", ClusterListModel.this); //$NON-NLS-1$
             cModel.getCommands().add(tempVar);
             UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", ClusterListModel.this); //$NON-NLS-1$
@@ -351,7 +330,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
             return;
         }
 
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final ClusterModel clusterModel = new ClusterModel();
         clusterModel.setAddMacPoolCommand(addMacPoolCommand);
         clusterModel.setEntity(cluster);
@@ -427,13 +405,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         }));
 
         clusterModel.refreshMigrationPolicies();
-
-        if (getSystemTreeSelectedItem() != null && (getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster ||
-                getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster_Gluster)) {
-            clusterModel.getName().setIsChangeable(false);
-            clusterModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-        }
-
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         clusterModel.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
@@ -969,18 +940,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         updateActionAvailability();
     }
 
-    @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e) {
-        super.itemsCollectionChanged(sender, e);
-
-        // Try to select an item corresponding to the system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
-            Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
-
-            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(cluster.getId())));
-        }
-    }
-
     private void updateActionAvailability() {
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
                 && getSelectedItems().size() == 1);
@@ -992,14 +951,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         getResetEmulatedMachineCommand().setIsExecutionAllowed(
                 getSelectedItems() != null && getSelectedItems().size() > 0);
-
-        // System tree dependent actions.
-        boolean isAvailable =
-                !(getSystemTreeSelectedItem() != null &&
-                (getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster || getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster_Gluster));
-
-        getNewCommand().setIsAvailable(isAvailable);
-        getRemoveCommand().setIsAvailable(isAvailable);
     }
 
     @Override
@@ -1058,25 +1009,6 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         else if ("OnSaveHosts".equals(command.getName())) { //$NON-NLS-1$
             onSaveHosts();
         }
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
     }
 
     @Override

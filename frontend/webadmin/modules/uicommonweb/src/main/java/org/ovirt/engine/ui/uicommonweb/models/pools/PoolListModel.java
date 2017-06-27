@@ -42,9 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
@@ -53,12 +51,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> implements ISupportSystemTreeContext {
-    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
+public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
 
     private UICommand privateNewCommand;
 
@@ -91,18 +87,6 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
     private void setRemoveCommand(UICommand value) {
         privateRemoveCommand = value;
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        systemTreeSelectedItem = value;
     }
 
     protected Object[] getSelectedKeys() {
@@ -180,7 +164,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         model.setHelpTag(HelpTag.new_pool);
         model.setHashName("new_pool"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(VmType.Desktop);
-        model.initialize(getSystemTreeSelectedItem());
+        model.initialize();
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
         switchModeCommand.init(model);
@@ -263,7 +247,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
                     model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
                     model.setHelpTag(HelpTag.edit_pool);
                     model.setHashName("edit_pool"); //$NON-NLS-1$
-                    model.initialize(getSystemTreeSelectedItem());
+                    model.initialize();
                     model.getName().setEntity(pool.getName());
                     model.getDescription().setEntity(pool.getVmPoolDescription());
                     model.getComment().setEntity(pool.getComment());

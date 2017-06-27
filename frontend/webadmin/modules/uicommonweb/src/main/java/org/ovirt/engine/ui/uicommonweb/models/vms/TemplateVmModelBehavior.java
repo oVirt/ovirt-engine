@@ -24,7 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     private VmTemplate template;
@@ -34,8 +33,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     @Override
-    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
-        super.initialize(systemTreeSelectedItem);
+    public void initialize() {
+        super.initialize();
         getModel().getTemplateWithVersion().setIsChangeable(false);
         getModel().getBaseTemplate().setIsChangeable(false);
         getModel().getTemplateWithVersion().setIsChangeable(false);

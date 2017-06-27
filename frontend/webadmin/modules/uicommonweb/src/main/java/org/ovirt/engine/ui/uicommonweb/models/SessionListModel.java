@@ -16,14 +16,11 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, UserSession>
-        implements ISupportSystemTreeContext {
+public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, UserSession> {
 
     private static final String CMD_TERMINATE = "Terminate"; //$NON-NLS-1$
 
     private UICommand terminateCommand;
-
-    private SystemTreeItemModel systemTreeSelectedItem;
 
     @Inject
     public SessionListModel() {
@@ -57,23 +54,6 @@ public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, Us
     @Override
     protected String getListName() {
         return "SessionListModel"; //$NON-NLS-1$
-    }
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        terminateActionAvailability();
     }
 
     @Override

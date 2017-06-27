@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -18,10 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
@@ -29,18 +25,15 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.RemoveNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, NetworkView> implements ISupportSystemTreeContext {
+public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, NetworkView> {
     private UICommand newCommand;
     private UICommand importCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
-
-    private SystemTreeItemModel systemTreeSelectedItem;
 
     private final NetworkExternalSubnetListModel networkExternalSubnetListModel;
     private final Provider<ImportNetworksModel> importNetworkModelProvider;
@@ -117,7 +110,6 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     }
 
     public void edit() {
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final Network network = getSelectedItem();
 
         if (getWindow() != null) {
@@ -128,11 +120,6 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         setWindow(networkModel);
 
         initDcList(networkModel);
-
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Network) {
-            networkModel.getName().setIsChangeable(false);
-            networkModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-        }
     }
 
     public void remove() {
@@ -145,15 +132,6 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     }
 
     private void initDcList(final NetworkModel networkModel) {
-        SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
-        if (treeSelectedDc != null) {
-            StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
-            networkModel.getDataCenters().setItems(Arrays.asList(dc));
-            networkModel.getDataCenters().setSelectedItem(dc);
-            networkModel.getDataCenters().setIsChangeable(false);
-            return;
-        }
-
         // Get all data centers
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
 
@@ -216,18 +194,14 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     }
 
     private void updateActionAvailability() {
-        List tempVar = getSelectedItems();
-        List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
+        List<NetworkView> tempVar = getSelectedItems();
+        List<NetworkView> selectedItems = (tempVar != null) ? tempVar : new ArrayList<>();
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
 
-        // System tree dependent actions.
-        boolean isAvailable =
-                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Network);
-
-        getNewCommand().setIsAvailable(isAvailable);
-        getRemoveCommand().setIsAvailable(isAvailable);
+        getNewCommand().setIsAvailable(true);
+        getRemoveCommand().setIsAvailable(true);
     }
 
     @Override
@@ -247,23 +221,6 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         else if (command == getRemoveCommand()) {
             remove();
         }
-    }
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
     }
 
     @Override

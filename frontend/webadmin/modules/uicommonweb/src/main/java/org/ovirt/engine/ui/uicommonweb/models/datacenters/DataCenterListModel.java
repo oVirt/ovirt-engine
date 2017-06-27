@@ -35,17 +35,13 @@ import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
@@ -53,13 +49,12 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetw
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, StoragePool> implements ISupportSystemTreeContext {
+public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, StoragePool> {
 
     private UICommand privateNewCommand;
 
@@ -291,12 +286,6 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         model.setHelpTag(HelpTag.edit_data_center);
         model.setHashName("edit_data_center"); //$NON-NLS-1$
         model.getName().setEntity(dataCenter.getName());
-
-        if (getSystemTreeSelectedItem() != null
-                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
-            model.getName().setIsChangeable(false);
-            model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-        }
 
         model.getDescription().setEntity(dataCenter.getdescription());
         model.getComment().setEntity(dataCenter.getComment());
@@ -711,19 +700,6 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e) {
-        super.itemsCollectionChanged(sender, e);
-
-        // Try to select an item corresponding to the system tree selection.
-        if (getSystemTreeSelectedItem() != null
-                && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
-            StoragePool dataCenter = (StoragePool) getSystemTreeSelectedItem().getEntity();
-
-            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(dataCenter.getId())));
-        }
-    }
-
-    @Override
     protected void selectedItemPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.selectedItemPropertyChanged(sender, e);
 
@@ -771,13 +747,9 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 && !storagePoolItem.isLocal() && storagePoolItem.getStatus() != StoragePoolStatus.Uninitialized
                 && storagePoolItem.getStatus() != StoragePoolStatus.Up);
 
-        // System tree dependent actions.
-        boolean isAvailable =
-                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter);
-
-        getNewCommand().setIsAvailable(isAvailable);
-        getRemoveCommand().setIsAvailable(isAvailable);
-        getForceRemoveCommand().setIsAvailable(isAvailable);
+        getNewCommand().setIsAvailable(true);
+        getRemoveCommand().setIsAvailable(true);
+        getForceRemoveCommand().setIsAvailable(true);
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
@@ -838,27 +810,6 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         else if ("OnRecover".equals(command.getName())) { //$NON-NLS-1$
             onRecover();
         }
-    }
-
-
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
     }
 
     @Override

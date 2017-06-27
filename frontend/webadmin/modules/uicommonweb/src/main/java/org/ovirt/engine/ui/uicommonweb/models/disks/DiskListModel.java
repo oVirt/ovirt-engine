@@ -27,9 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
@@ -43,11 +41,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implements ISupportSystemTreeContext {
+public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     private UICommand privateNewCommand;
 
     public UICommand getNewCommand() {
@@ -179,19 +176,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         this.diskViewType = diskViewType;
     }
 
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        systemTreeSelectedItem = value;
-        onPropertyChanged(new PropertyChangedEventArgs("SystemTreeSelectedItem")); //$NON-NLS-1$
-    }
-
     private final DiskVmListModel diskVmListModel;
     private final DiskTemplateListModel diskTemplateListModel;
     private final DiskStorageListModel diskStorageListModel;
@@ -302,7 +286,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
     }
 
     private void newEntity() {
-        NewDiskModel model = new NewDiskModel(getSystemTreeSelectedItem());
+        NewDiskModel model = new NewDiskModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
         model.setHelpTag(HelpTag.new_virtual_disk);
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
@@ -524,11 +508,6 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 disks != null && disks.size() > 0 && isScanAlignmentCommandAvailable());
         getExportCommand().setIsExecutionAllowed(isExportCommandAvailable());
         updateCopyAndMoveCommandAvailability(disks);
-
-        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? getItems() : null,
-                getSelectedItems() != null ? getSelectedItems() : null,
-                getSystemTreeSelectedItem(),
-                getChangeQuotaCommand());
 
         getCancelUploadCommand().setIsExecutionAllowed(UploadImageModel.isCancelAllowed(disks));
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));

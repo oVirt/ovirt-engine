@@ -495,7 +495,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         windowModel.setHashName("new_template"); //$NON-NLS-1$
         windowModel.setIsNew(true);
         windowModel.getVmType().setSelectedItem(vm.getVmType());
-        windowModel.initialize(null);
+        windowModel.initialize();
         windowModel.getIsTemplatePublic().setEntity(false);
 
         windowModel.getCommands().add(
@@ -676,7 +676,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         model.setIsAdvancedModeLocalStorageKey("up_vm_dialog");  //$NON-NLS-1$
         setWindow(model);
 
-        model.initialize(null);
+        model.initialize();
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
         switchModeCommand.init(model);
@@ -727,7 +727,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
 
         setWindow(model);
 
-        model.initialize(null);
+        model.initialize();
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
         switchModeCommand.init(model);

@@ -22,22 +22,18 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> implements ISupportSystemTreeContext {
+public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
 
     private static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
@@ -176,15 +172,6 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
                 quotaModel.getDataCenter().setItems(dataCenterList);
                 quotaModel.getDataCenter().setSelectedItem(dataCenterList.get(0));
 
-                if (getSystemTreeSelectedItem() != null
-                        && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
-                    StoragePool selectDataCenter =
-                            (StoragePool) getSystemTreeSelectedItem().getEntity();
-
-                    quotaModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenterList,
-                            new Linq.IdPredicate<>(selectDataCenter.getId())));
-                    quotaModel.getDataCenter().setIsChangeable(false);
-                }
             }));
         }
 
@@ -620,25 +607,6 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> impl
         else if (command.getName().equals("CancelConfirmation")) { //$NON-NLS-1$
             cancelConfirmation();
         }
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        search();
     }
 
     @Override

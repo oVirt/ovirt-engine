@@ -15,8 +15,6 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParamet
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterVolumeSnapshotConfigParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
-import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -44,10 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterClusterSnapshotConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotConfigModel;
@@ -67,7 +62,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVolumeEntity> implements ISupportSystemTreeContext {
+public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVolumeEntity> {
 
     public static final Integer REPLICATE_COUNT_DEFAULT = 3;
     public static final Integer STRIPE_COUNT_DEFAULT = 4;
@@ -323,50 +318,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery<>(dataCenters -> {
             VolumeModel innerVolumeModel = (VolumeModel) getWindow();
             final UIConstants constants = ConstantsManager.getInstance().getConstants();
-
-            if (getSystemTreeSelectedItem() != null) {
-                switch (getSystemTreeSelectedItem().getType()) {
-                    case Volumes:
-                    case Cluster:
-                    case Cluster_Gluster:
-                        Cluster cluster = (Cluster) getSystemTreeSelectedItem().getEntity();
-                        for (StoragePool dc : dataCenters) {
-                            if (dc.getId().equals(cluster.getStoragePoolId())) {
-                                innerVolumeModel.getDataCenter()
-                                        .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{dc})));
-                                innerVolumeModel.getDataCenter().setSelectedItem(dc);
-                                break;
-                            }
-                        }
-                        innerVolumeModel.getDataCenter().setIsChangeable(false);
-                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(
-                                constants.cannotChangeDCInTreeContext());
-                        innerVolumeModel.getCluster().setItems(Arrays.asList(cluster));
-                        innerVolumeModel.getCluster().setSelectedItem(cluster);
-                        innerVolumeModel.getCluster().setIsChangeable(false);
-                        innerVolumeModel.getCluster().setChangeProhibitionReason(
-                                constants.cannotChangeClusterInTreeContext());
-                        break;
-                    case Clusters:
-                    case DataCenter:
-                        StoragePool selectDataCenter =
-                                (StoragePool) getSystemTreeSelectedItem().getEntity();
-                        innerVolumeModel.getDataCenter()
-                                .setItems(new ArrayList<>(Arrays.asList(new StoragePool[]{selectDataCenter})));
-                        innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
-                        innerVolumeModel.getDataCenter().setIsChangeable(false);
-                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(
-                                constants.cannotChangeDCInTreeContext());
-                        break;
-                    default:
-                        innerVolumeModel.getDataCenter().setItems(dataCenters);
-                        innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-                        break;
-                }
-            } else {
-                innerVolumeModel.getDataCenter().setItems(dataCenters);
-                innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
-            }
+            innerVolumeModel.getDataCenter().setItems(dataCenters);
+            innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
 
             UICommand command = UICommand.createDefaultOkUiCommand("onCreateVolume", VolumeListModel.this); //$NON-NLS-1$
             innerVolumeModel.getCommands().add(command);
@@ -556,12 +509,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         getCreateSnapshotCommand().setIsExecutionAllowed(allowCreateSnapshot);
         getEditSnapshotScheduleCommand().setIsExecutionAllowed(allowEditSnapshotSchedule);
 
-        // System tree dependent actions.
-        boolean isAvailable =
-                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Volume);
-
-        getNewVolumeCommand().setIsAvailable(isAvailable);
-        getRemoveVolumeCommand().setIsAvailable(isAvailable);
+        getNewVolumeCommand().setIsAvailable(true);
+        getRemoveVolumeCommand().setIsAvailable(true);
         getStartVolumeProfilingCommand().setIsExecutionAllowed(allowStartProfiling);
         getStopVolumeProfilingCommand().setIsExecutionAllowed(allowStopProfiling);
         getShowVolumeProfileDetailsCommand().setIsExecutionAllowed(allowProfileStatisticsDetails);
@@ -1209,18 +1158,13 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         setWindow(clusterSnapshotConfigModel);
 
         AsyncDataProvider.getInstance().getClustersHavingHosts(new AsyncQuery<>(returnValue -> {
-            if (getSystemTreeSelectedItem() != null) {
-                Cluster selectedCluster = (Cluster) getSystemTreeSelectedItem().getEntity();
-                clusterSnapshotConfigModel.getClusters().setItems(returnValue, selectedCluster);
-            } else {
-                if (getSelectedItems() != null) {
-                    GlusterVolumeEntity volumeEntity = getSelectedItems().get(0);
-                    if (volumeEntity != null) {
-                        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> clusterSnapshotConfigModel.getClusters().setItems(returnValue, cluster)), volumeEntity.getClusterId());
-                    }
-                } else {
-                    clusterSnapshotConfigModel.getClusters().setItems(returnValue);
+            if (getSelectedItems() != null) {
+                GlusterVolumeEntity volumeEntity = getSelectedItems().get(0);
+                if (volumeEntity != null) {
+                    AsyncDataProvider.getInstance().getClusterById(new AsyncQuery<>(cluster -> clusterSnapshotConfigModel.getClusters().setItems(returnValue, cluster)), volumeEntity.getClusterId());
                 }
+            } else {
+                clusterSnapshotConfigModel.getClusters().setItems(returnValue);
             }
         }));
 
@@ -1410,25 +1354,6 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     @Override
     protected String getListName() {
         return "VolumeListModel"; //$NON-NLS-1$
-    }
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
     }
 
     @Override

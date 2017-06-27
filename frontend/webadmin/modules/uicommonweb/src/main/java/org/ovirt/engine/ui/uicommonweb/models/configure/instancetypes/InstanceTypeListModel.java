@@ -314,7 +314,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         model.setHashName(hashName); //$NON-NLS-1$
         model.setIsNew(isNew);
 
-        model.initialize(null);
+        model.initialize();
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
         switchModeCommand.init(model);

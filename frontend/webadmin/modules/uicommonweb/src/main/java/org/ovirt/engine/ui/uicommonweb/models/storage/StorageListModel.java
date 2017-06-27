@@ -45,11 +45,8 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -60,15 +57,13 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
-import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDomain> implements ITaskTarget, ISupportSystemTreeContext {
+public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDomain> implements ITaskTarget {
 
     private UICommand newDomainCommand;
 
@@ -294,7 +289,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         model.setTitle(ConstantsManager.getInstance().getConstants().newDomainTitle());
         model.setHelpTag(HelpTag.new_domain);
         model.setHashName("new_domain"); //$NON-NLS-1$
-        model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
 
         // putting all Data domains at the beginning on purpose (so when choosing the
         // first selectable storage type/function, it will be a Data one, if relevant).
@@ -322,13 +316,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             return;
         }
 
-        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editDomainTitle());
         model.setHelpTag(HelpTag.edit_domain);
         model.setHashName("edit_domain"); //$NON-NLS-1$
-        model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.setStorage(storage);
         model.getName().setEntity(storage.getStorageName());
         model.getDescription().setEntity(storage.getDescription());
@@ -360,12 +352,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         model.setCurrentStorageItem(item);
 
         model.initialize();
-
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
-            model.getName().setIsChangeable(false);
-            model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
-        }
-
 
         UICommand command;
         command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
@@ -428,7 +414,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         model.setTitle(ConstantsManager.getInstance().getConstants().importPreConfiguredDomainTitle());
         model.setHelpTag(HelpTag.import_pre_configured_domain);
         model.setHashName("import_pre-configured_domain"); //$NON-NLS-1$
-        model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.getFormat().setIsAvailable(false);
 
         model.initialize();
@@ -822,18 +807,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     }
 
     @Override
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e) {
-        super.itemsCollectionChanged(sender, e);
-
-        // Try to select an item corresponding to the system tree selection.
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage) {
-            StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
-
-            setSelectedItem(Linq.firstOrNull(getItems(), new Linq.IdPredicate<>(storage.getId())));
-        }
-    }
-
-    @Override
     protected void updateDetailsAvailability() {
         if (getSelectedItem() != null) {
             StorageDomain storage = getSelectedItem();
@@ -917,16 +890,12 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getUpdateOvfsCommand().setIsExecutionAllowed(item != null && items.size() == 1
                 && item.getStorageDomainType().isDataDomain()
                 && item.getStatus() == StorageDomainStatus.Active);
+        getNewDomainCommand().setIsAvailable(true);
+        getRemoveCommand().setIsAvailable(true);
+        getDestroyCommand().setIsAvailable(true);
+        getScanDisksCommand().setIsAvailable(true);
+        getUpdateOvfsCommand().setIsAvailable(true);
 
-        // System tree dependent actions.
-        boolean isAvailable =
-                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage);
-
-        getNewDomainCommand().setIsAvailable(isAvailable);
-        getRemoveCommand().setIsAvailable(isAvailable);
-        getDestroyCommand().setIsAvailable(isAvailable);
-        getScanDisksCommand().setIsAvailable(isAvailable);
-        getUpdateOvfsCommand().setIsAvailable(isAvailable);
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
@@ -1868,26 +1837,6 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 ((Model) data.get(2)).setMessage((String) data.get(3));
             }
         }
-    }
-
-
-    private SystemTreeItemModel systemTreeSelectedItem;
-
-    @Override
-    public SystemTreeItemModel getSystemTreeSelectedItem() {
-        return systemTreeSelectedItem;
-    }
-
-    @Override
-    public void setSystemTreeSelectedItem(SystemTreeItemModel value) {
-        if (systemTreeSelectedItem != value) {
-            systemTreeSelectedItem = value;
-            onSystemTreeSelectedItemChanged();
-        }
-    }
-
-    private void onSystemTreeSelectedItemChanged() {
-        updateActionAvailability();
     }
 
     @Override

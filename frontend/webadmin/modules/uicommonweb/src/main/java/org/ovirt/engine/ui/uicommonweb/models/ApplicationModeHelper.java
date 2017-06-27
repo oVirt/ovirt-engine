@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -57,29 +56,4 @@ public class ApplicationModeHelper {
 
         return tree.getLeafRoles().size() == 0;
     }
-
-    public static boolean filterSystemTreeByApplictionMode(SystemTreeItemModel systemItem) {
-        List<SystemTreeItemModel> list = new ArrayList<>();
-        for (SystemTreeItemModel item : systemItem.getChildren()) {
-            if (filterSystemTreeByApplictionMode(item)) {
-                list.add(item);
-            }
-        }
-        if (list.size() > 0 && list.size() == systemItem.getChildren().size()) {
-            List<SystemTreeItemModel> childItems = new ArrayList<>();
-            for (SystemTreeItemModel item : list) {
-                childItems.addAll(item.getChildren());
-            }
-            systemItem.setChildren(childItems);
-        }
-
-        for (SystemTreeItemModel systemTreeItemModel : list) {
-            systemItem.getChildren().remove(systemTreeItemModel);
-            if(systemTreeItemModel.getChildren() != null && !systemItem.getChildren().containsAll(systemTreeItemModel.getChildren())) {
-                systemItem.getChildren().addAll(systemTreeItemModel.getChildren());
-            }
-        }
-        return !((systemItem.getApplicationMode().getValue() & getUiMode().getValue()) > 0);
-    }
-
 }
