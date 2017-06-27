@@ -10,8 +10,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ShortEntityModelTextBoxE
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
@@ -123,6 +125,20 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
                 if (args.propertyName.equals("Title")) { //$NON-NLS-1$
                     mountOptionsEditor.setTitle(object.getMountOptions().getTitle());
                 }
+            }
+        });
+
+        retransmissionsEditor.getValidityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                object.getRetransmissions().setIsValid(((ValueEventArgs<Boolean>) args).getValue());
+            }
+        });
+
+        timeoutEditor.getValidityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                object.getTimeout().setIsValid(((ValueEventArgs<Boolean>) args).getValue());
             }
         });
 

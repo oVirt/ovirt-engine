@@ -191,13 +191,17 @@ public class NfsStorageModel extends FileStorageModel {
             new NoSpacesValidation()
         });
 
-        getRetransmissions().validateEntity(new IValidation[] {
-            new IntegerValidation(0, RETRANS_MAX)
-        });
+        if (getRetransmissions().getIsValid()) {
+            getRetransmissions().validateEntity(new IValidation[] {
+                    new IntegerValidation(0, RETRANS_MAX)
+            });
+        }
 
-        getTimeout().validateEntity(new IValidation[] {
-            new IntegerValidation(1, TIMEOUT_MAX)
-        });
+        if (getTimeout().getIsValid()) {
+            getTimeout().validateEntity(new IValidation[] {
+                    new IntegerValidation(1, TIMEOUT_MAX)
+            });
+        }
 
         getMountOptions().validateEntity(new IValidation[] {
             new NonUtfValidation()
