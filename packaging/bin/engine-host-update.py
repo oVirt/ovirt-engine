@@ -423,7 +423,7 @@ def hostsByClusterName(api, name):
     logging.debug(
         'Cluster %s contains the following hosts: %s' % (
             name,
-            str(list(hosts)),
+            str(sorted(list(hosts))),
         )
     )
     return hosts
@@ -512,6 +512,10 @@ def usage():
         'specified, from which one forwards the cluster will be upgraded.'
     )
     print(
+        '--after - When used together with --resume it will begin with the '
+        'host right after the one specified.'
+    )
+    print(
         '--skip-invalid-host-names - Skip invalid host names and continue.'
     )
     print(
@@ -532,6 +536,7 @@ if __name__ == '__main__':
                 'cluster=',
                 'clusters=',
                 'resume',
+                'after',
                 'engine=',
                 'username=',
                 'password=',
@@ -554,6 +559,7 @@ if __name__ == '__main__':
     hosts = set()
     clusters = set()
     resume = False
+    after = False
     ca = '/etc/pki/ovirt-engine/ca.pem'
     insecure = False
     skipInvalidHostNames = False
@@ -570,6 +576,8 @@ if __name__ == '__main__':
             clusters = arg
         elif opt in ('-r', '--resume'):
             resume = True
+        elif opt in ('-a', '--after'):
+            after = True
         elif opt in ('-e', '--engine'):
             engineFqdn = arg
         elif opt in ('-u', '--username'):
@@ -687,23 +695,39 @@ if __name__ == '__main__':
             )
             sys.exit(1)
         name = hosts[0]
+        if name.endswith('++') or name.endswith('+1'):
+            name = name[:-2]
+            after = True
         if api.hosts.list(name=name):
             hostObj = api.hosts.list(name=name)[0]
         else:
             print('Invalid host name.\n')
-            sys.exit(2)
+            sys.exit(3)
         hostClusterObj = hostObj.get_cluster()
         clusterObjs = api.clusters.list()
         for clusterObj in clusterObjs:
             if clusterObj.id == hostClusterObj.id:
                 break
         hosts = sorted(list(hostsByClusterName(api, clusterObj.name)))
+        hostIndex = hosts.index(name)
+        if after:
+            hostIndex += 1
+            if hostIndex == len(hosts):
+                print(
+                    'The host %s is the last host in the cluster. '
+                    'No more hosts to process.' % (
+                        name,
+                    )
+                )
+                sys.exit(0)
+            else:
+                name = hosts[hostIndex]
         print(
             'Resuming operation on cluster %s, starting from host %s' % (
                 clusterObj.name,
                 name,
             )
         )
-        hosts = hosts[hosts.index(name):]
+        hosts = hosts[hostIndex:]
         for host in hosts:
             processHost(api, host, skipInvalidHostNames)
