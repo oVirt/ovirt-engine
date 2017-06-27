@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -43,6 +45,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -80,6 +83,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private VdsDao vdsDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private DiskLunMapDao diskLunMapDao;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -124,11 +129,22 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      */
     private void syncAllUsedLunsInStoragePool() {
         if (discardInformationWasIntroduced() || reduceDeviceFromStorageDomainWasIntroduced()) {
-            /*
-            - We don't want to fail the whole storage pool upgrade because some of the
-              luns could not be synced, so SyncAllUsedLuns only logs errors on such cases.
-             */
-            runInternalAction(ActionType.SyncAllUsedLuns, new SyncLunsParameters(getStoragePoolId()));
+            if (getOldStoragePool().getStatus() == StoragePoolStatus.Up) {
+                /*
+                - We don't want to fail the whole storage pool upgrade because some of the
+                  luns could not be synced, so SyncAllUsedLuns only logs errors on such cases.
+                 */
+                runInternalAction(ActionType.SyncAllUsedLuns, new SyncLunsParameters(getStoragePoolId()));
+            } else {
+                List<DiskLunMap> diskLunMapsForVmsInPool = diskLunMapDao.getDiskLunMapsForVmsInPool(getStoragePoolId());
+                if (!diskLunMapsForVmsInPool.isEmpty()) {
+                    addCustomValue("DirectLunDisksIds", diskLunMapsForVmsInPool.stream()
+                            .map(DiskLunMap::getDiskId)
+                            .map(Guid::toString)
+                            .collect(Collectors.joining(", ")));
+                    auditLogDirector.log(this, AuditLogType.DIRECT_LUNS_COULD_NOT_BE_SYNCED);
+                }
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.pool;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -90,22 +90,14 @@ public class SyncDirectLunsCommandTest {
     }
 
     @Test
-    public void validateNoDirectLunIdAndNoStoragePoolId() {
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+    public void validateNoDirectLunIdAndInvalidStoragePool() {
+        doReturn(false).when(command).validateStoragePool();
+        assertFalse(command.validate());
     }
 
     @Test
-    public void validateNoDirectLunIdAndRandomStoragePoolId() {
-        setStoragePoolId(Guid.newGuid());
-        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
-    }
-
-    @Test
-    public void validateNoDirectLunIdAndValidStoragePoolId() {
-        StoragePool storagePool = new StoragePool();
-        storagePool.setId(Guid.newGuid());
-        when(storagePoolDao.get(storagePool.getId())).thenReturn(storagePool);
-        setStoragePoolId(storagePool.getId());
+    public void validateNoDirectLunIdAndValidStoragePool() {
+        doReturn(true).when(command).validateStoragePool();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -141,11 +133,6 @@ public class SyncDirectLunsCommandTest {
         when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
         when(hostValidator.isUp()).thenReturn(ValidationResult.VALID);
         ValidateTestUtils.runAndAssertValidateSuccess(command);
-    }
-
-    private void setStoragePoolId(Guid storagePoolId) {
-        command.getParameters().setStoragePoolId(storagePoolId);
-        command.setStoragePoolId(storagePoolId);
     }
 
     private void mockLunToDiskIdsOfDirectLunsAttachedToVmsInPool(LUNs... luns) {

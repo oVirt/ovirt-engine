@@ -58,16 +58,11 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     @Override
     protected boolean validate() {
         if (getParameters().getDirectLunId() == null) {
-            return canSyncAllDirectLunsAttachedToVmsInPool();
+            // To sync all the direct luns that are attached to VMs in
+            // the storage pool, a valid and active storage pool is required.
+            return validateStoragePool();
         }
         return canSyncDirectLun();
-    }
-
-    private boolean canSyncAllDirectLunsAttachedToVmsInPool() {
-        // To sync all the direct luns that are attached to VMs in
-        // the storage pool, a valid storage pool ID is required.
-        return (getParameters().getStoragePoolId() != null && getStoragePool() != null)
-                || failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
     }
 
     private boolean canSyncDirectLun() {

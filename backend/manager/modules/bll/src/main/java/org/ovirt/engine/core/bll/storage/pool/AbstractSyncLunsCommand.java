@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
@@ -22,10 +23,12 @@ public abstract class AbstractSyncLunsCommand<T extends SyncLunsParameters> exte
 
     @Override
     protected boolean validate() {
-        if (!checkStoragePool()) {
-            return false;
-        }
-        return super.validate();
+        return validateStoragePool();
+    }
+
+    protected boolean validateStoragePool() {
+        return checkStoragePool() &&
+                checkStoragePoolStatus(StoragePoolStatus.Up);
     }
 
     protected List<LUNs> getDeviceList() {
