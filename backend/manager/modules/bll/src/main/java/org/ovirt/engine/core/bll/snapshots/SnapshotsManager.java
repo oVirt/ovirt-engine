@@ -137,6 +137,7 @@ public class SnapshotsManager {
                 SnapshotStatus.OK,
                 "",
                 null,
+                null,
                 compensationContext);
     }
 
@@ -164,6 +165,7 @@ public class SnapshotsManager {
                 snapshotStatus,
                 "",
                 null,
+                null,
                 compensationContext);
     }
 
@@ -191,6 +193,7 @@ public class SnapshotsManager {
                 SnapshotStatus.OK,
                 memoryVolume,
                 null,
+                null,
                 compensationContext);
     }
 
@@ -204,6 +207,8 @@ public class SnapshotsManager {
      *            The VM to save the snapshot for.
      * @param memoryVolume
      *            The memory state for the created snapshot
+     * @param creationDate
+     *            predefined creation date for the snapshot, null indicates 'now'
      * @param disks
      *            The disks contained in the snapshot
      * @param compensationContext
@@ -213,12 +218,14 @@ public class SnapshotsManager {
     public Snapshot addActiveSnapshot(Guid snapshotId,
                                       VM vm,
                                       String memoryVolume,
+                                      Date creationDate,
                                       List<DiskImage> disks,
                                       final CompensationContext compensationContext) {
         return addActiveSnapshot(snapshotId,
                 vm,
                 SnapshotStatus.OK,
                 memoryVolume,
+                creationDate,
                 disks,
                 compensationContext);
     }
@@ -246,6 +253,7 @@ public class SnapshotsManager {
                 snapshotStatus,
                 memoryVolume,
                 null,
+                null,
                 compensationContext);
     }
 
@@ -259,6 +267,8 @@ public class SnapshotsManager {
      *            The VM to save the snapshot for.
      * @param snapshotStatus
      *            The initial status of the snapshot
+     * @param creationDate
+     *            predefined creation date for the snapshot, null indicates 'now'
      * @param disks
      *            The disks contained in the snapshot
      * @param compensationContext
@@ -268,6 +278,7 @@ public class SnapshotsManager {
             VM vm,
             SnapshotStatus snapshotStatus,
             String memoryVolume,
+            Date creationDate,
             List<DiskImage> disks,
             final CompensationContext compensationContext) {
         return addSnapshot(snapshotId,
@@ -277,6 +288,7 @@ public class SnapshotsManager {
                 vm,
                 false,
                 memoryVolume,
+                creationDate,
                 disks,
                 compensationContext);
     }
@@ -307,7 +319,7 @@ public class SnapshotsManager {
             String memoryVolume,
             final CompensationContext compensationContext) {
         return addSnapshot(snapshotId, description, SnapshotStatus.LOCKED,
-                snapshotType, vm, true, memoryVolume, null, compensationContext);
+                snapshotType, vm, true, memoryVolume, null, null, compensationContext);
     }
 
     /**addSnapshot
@@ -325,6 +337,8 @@ public class SnapshotsManager {
      *            The VM to link to & save configuration for (if necessary).
      * @param saveVmConfiguration
      *            Should VM configuration be generated and saved?
+     * @param creationDate
+     *            predefined creation date for the snapshot, null indicates 'now'
      * @param compensationContext
      *            In case compensation is needed.
      * @return the saved snapshot
@@ -336,6 +350,7 @@ public class SnapshotsManager {
             VM vm,
             boolean saveVmConfiguration,
             String memoryVolume,
+            Date creationDate,
             List<DiskImage> disks,
             final CompensationContext compensationContext) {
         return addSnapshot(snapshotId,
@@ -345,6 +360,7 @@ public class SnapshotsManager {
                 vm,
                 saveVmConfiguration,
                 memoryVolume,
+                creationDate,
                 disks,
                 null,
                 compensationContext);
@@ -357,6 +373,7 @@ public class SnapshotsManager {
                                 VM vm,
                                 boolean saveVmConfiguration,
                                 String memoryVolume,
+                                Date creationDate,
                                 List<DiskImage> disks,
                                 Map<Guid, VmDevice> vmDevices,
                                 final CompensationContext compensationContext) {
@@ -366,7 +383,7 @@ public class SnapshotsManager {
                 saveVmConfiguration ? generateVmConfiguration(vm, disks, vmDevices) : null,
                 snapshotType,
                 description,
-                new Date(),
+                creationDate != null ? creationDate : new Date(),
                 vm.getAppList(),
                 memoryVolume,
                 MemoryUtils.getMemoryDiskId(memoryVolume),

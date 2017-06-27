@@ -207,6 +207,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             getSnapshotsManager().addActiveSnapshot(newActiveSnapshotId,
                     getVm(),
                     restoreMemory ? snapshotToBePreviewed.getMemoryVolume() : StringUtils.EMPTY,
+                    snapshotToBePreviewed.getCreationDate(),
                     images,
                     getCompensationContext());
 

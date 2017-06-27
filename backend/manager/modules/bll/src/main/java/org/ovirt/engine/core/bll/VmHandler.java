@@ -1270,6 +1270,7 @@ public class VmHandler implements BackendService {
                 newVm,
                 true,
                 StringUtils.EMPTY,
+                null,
                 Collections.emptyList(),
                 vmDeviceUtils.getVmDevicesForNextRun(existingVm,
                         objectWithEditableDeviceFields,
