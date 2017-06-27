@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
@@ -62,9 +64,7 @@ import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsProxy;
@@ -83,7 +83,7 @@ import org.slf4j.LoggerFactory;
 
 public class VdsManager {
     private static Logger log = LoggerFactory.getLogger(VdsManager.class);
-    private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<>();
+    private static Map<Guid, ScheduledFuture> recoveringJobIdMap = new ConcurrentHashMap<>();
 
     private final ResourceManager resourceManager;
 
@@ -100,7 +100,8 @@ public class VdsManager {
     private RefresherFactory refresherFactory;
 
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService executor;
 
     @Inject
     private DbFacade dbFacade;
@@ -139,7 +140,7 @@ public class VdsManager {
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
-    private List<String> registeredJobs;
+    private List<ScheduledFuture> registeredJobs;
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
     private EngineLock monitoringLock;
@@ -206,14 +207,10 @@ public class VdsManager {
     }
 
     public void scheduleJobs() {
-        SchedulerUtil sched = getSchedulUtil();
         int refreshRate = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
 
-        registeredJobs.add(sched.scheduleAFixedDelayJob(
-                this,
-                "onTimer",
-                new Class[0],
-                new Object[0],
+        registeredJobs.add(executor.scheduleWithFixedDelay(
+                this::refresh,
                 refreshRate,
                 refreshRate,
                 TimeUnit.MILLISECONDS));
@@ -227,10 +224,6 @@ public class VdsManager {
 
     private RefresherFactory getRefresherFactory() {
         return refresherFactory;
-    }
-
-    private SchedulerUtil getSchedulUtil() {
-        return schedulerUtil;
     }
 
     private void initVdsBroker() {
@@ -250,8 +243,7 @@ public class VdsManager {
                 heartbeat);
     }
 
-    @OnTimerMethodAnnotation("onTimer")
-    public void onTimer() {
+    public void refresh() {
         if (lockManager.acquireLock(monitoringLock).getFirst()) {
             try {
                 setIsSetNonOperationalExecuted(false);
@@ -415,14 +407,15 @@ public class VdsManager {
                     ex.getMessage());
             log.debug("Exception", ex);
             final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMinutes);
-            String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
-                    new Object[0], VDS_RECOVERY_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
-            recoveringJobIdMap.put(cachedVds.getId(), jobId);
+            ScheduledFuture scheduled = executor.schedule(
+                    this::handleVdsRecovering,
+                    VDS_RECOVERY_TIMEOUT_IN_MINUTES,
+                    TimeUnit.MINUTES);
+            recoveringJobIdMap.put(cachedVds.getId(), scheduled);
         }
     }
 
-    @OnTimerMethodAnnotation("onTimerHandleVdsRecovering")
-    public void onTimerHandleVdsRecovering() {
+    public void handleVdsRecovering() {
         recoveringJobIdMap.remove(getVdsId());
         VDS vds = vdsDao.get(getVdsId());
         if (vds.getStatus() == VDSStatus.Initializing) {
@@ -628,7 +621,6 @@ public class VdsManager {
      * This scheduled method allows this cachedVds to recover from
      * Error status.
      */
-    @OnTimerMethodAnnotation("recoverFromError")
     public void recoverFromError() {
         VDS vds = vdsDao.get(getVdsId());
 
@@ -658,12 +650,8 @@ public class VdsManager {
             resourceManager.runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.Error));
 
-            SchedulerUtil sched = getSchedulUtil();
-            sched.scheduleAOneTimeJob(
-                    this,
-                    "recoverFromError",
-                    new Class[0],
-                    new Object[0],
+            executor.schedule(
+                    this::recoverFromError,
                     Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
                     TimeUnit.MINUTES);
             AuditLogable logable = createAuditLogableForHost(vds);
@@ -927,8 +915,8 @@ public class VdsManager {
 
     public void dispose() {
         log.info("vdsManager::disposing");
-        for (String jobId : registeredJobs) {
-            getSchedulUtil().deleteJob(jobId);
+        for (ScheduledFuture job : registeredJobs) {
+            job.cancel(true);
         }
 
         vmsRefresher.stopMonitoring();
@@ -1073,13 +1061,13 @@ public class VdsManager {
     }
 
     public void cancelRecoveryJob() {
-        String jobId = recoveringJobIdMap.remove(vdsId);
-        if (jobId != null) {
+        ScheduledFuture scheduled = recoveringJobIdMap.remove(vdsId);
+        if (scheduled != null) {
             log.info("Cancelling the recovery from crash timer for VDS '{}' because vds started initializing", vdsId);
             try {
-                Injector.get(SchedulerUtilQuartzImpl.class).deleteJob(jobId);
+                scheduled.cancel(true);
             } catch (Exception e) {
-                log.warn("Failed deleting job '{}' at cancelRecoveryJob: {}", jobId, e.getMessage());
+                log.warn("Failed deleting cancelRecoveryJob: {} for VDS '{}'", e.getMessage(), vdsId);
                 log.debug("Exception", e);
             }
         }

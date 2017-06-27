@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 
 @Singleton
 public class EngineThreadPools implements BackendService {
