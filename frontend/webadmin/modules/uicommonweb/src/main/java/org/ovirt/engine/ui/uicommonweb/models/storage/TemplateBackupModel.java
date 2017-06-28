@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -89,10 +90,11 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         model.setTitle(constants.removeBackedUpTemplatesTitle());
         model.setHelpTag(HelpTag.remove_backed_up_template);
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
-        List<String> items = new ArrayList<>();
-        for (VmTemplate template : getSelectedItems()) {
-            items.add(template.getName() + getTemplateVersionNameAndNumber(template));
-        }
+        List<String> items = getSelectedItems()
+                .stream()
+                .map(template -> template.getName() + getTemplateVersionNameAndNumber(template))
+                .collect(Collectors.toList());
+
         model.setItems(items);
 
         model.setNote(constants.noteTheDeletedItemsMightStillAppearOntheSubTab());
@@ -134,13 +136,11 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void showRemoveTemplateWithDependentVMConfirmationWindow(Map<String, List<String>> problematicVmNames) {
-        List<String> missingTemplatesFromVms = new ArrayList<>();
-
-        for (Map.Entry<String, List<String>> templateEntry : problematicVmNames.entrySet()) {
-            List<String> vms = templateEntry.getValue();
-            String vmsListString = StringUtils.join(vms, ", "); //$NON-NLS-1$
-            missingTemplatesFromVms.add(messages.templatesWithDependentVMs(templateEntry.getKey(), vmsListString));
-        }
+        List<String> missingTemplatesFromVms = problematicVmNames
+                .entrySet()
+                .stream()
+                .map(e -> messages.templatesWithDependentVMs(e.getKey(), StringUtils.join(e.getValue(), ", ")))  //$NON-NLS-1$
+                .collect(Collectors.toList());
 
         setConfirmWindow(null);
         ConfirmationModel confirmModel = new ConfirmationModel();
@@ -161,29 +161,18 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         // Build a map between the template ID and the template instance
         Map<Guid, VmTemplate> templateMap = Entities.businessEntitiesById(templates);
         // Build a map between the template name  and a list of dependent VMs names
-        Map<String, List<String>> problematicVmNames = new HashMap<>();
-
-        for (VM vm : vmsInExportDomain) {
-            VmTemplate template = templateMap.get(vm.getVmtGuid());
-            if (template != null) {
-                List<String> vms = problematicVmNames.get(template.getName());
-                if (vms == null) {
-                    vms = new ArrayList<>();
-                    problematicVmNames.put(template.getName(), vms);
-                }
-                vms.add(vm.getName());
-            }
-        }
-        return problematicVmNames;
+        return vmsInExportDomain
+                .stream()
+                .filter(vm -> templateMap.containsKey(vm.getVmtGuid()))
+                .collect(Collectors.groupingBy(vm -> templateMap.get(vm.getVmtGuid()).getName(),
+                        Collectors.mapping(VM::getName, Collectors.toList())));
     }
 
     private void removeTemplateBackup() {
-        List<ActionParametersBase> prms = new ArrayList<>();
-        for (VmTemplate template : getSelectedItems()) {
-            prms.add(new VmTemplateImportExportParameters(template.getId(),
-                    getEntity().getId(),
-                    pool.getId()));
-        }
+        List<ActionParametersBase> prms =  getSelectedItems()
+                .stream()
+                .map(item -> new VmTemplateImportExportParameters(item.getId(), getEntity().getId(), pool.getId()))
+                .collect(Collectors.toList());
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVmTemplateFromImportExport, prms);
         cancel();
     }
@@ -202,13 +191,9 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
-        for (ImportTemplateData object : objectsToClone) {
-            VmTemplate template = object.getTemplate();
-            if (!validateName(template.getName() + suffix, entityModel, getClonedAppendedNameValidators())) {
-                return false;
-            }
-        }
-        return true;
+        return objectsToClone.stream()
+                .map(itd -> itd.getTemplate().getName())
+                .allMatch(n -> validateName(n + suffix, entityModel, getClonedAppendedNameValidators()));
     }
 
     protected boolean validateName(String newVmName, EntityModel<String> entity, IValidation[] validators) {
