@@ -202,8 +202,8 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     protected boolean validateSuffix(String suffix, EntityModel entityModel) {
-        for (Object object : objectsToClone) {
-            VmTemplate template = ((ImportTemplateData) object).getTemplate();
+        for (ImportTemplateData object : objectsToClone) {
+            VmTemplate template = object.getTemplate();
             if (!validateName(template.getName() + suffix, entityModel, getClonedAppendedNameValidators())) {
                 return false;
             }
