@@ -136,10 +136,10 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     private void showRemoveTemplateWithDependentVMConfirmationWindow(Map<String, List<String>> problematicVmNames) {
         List<String> missingTemplatesFromVms = new ArrayList<>();
 
-        for (Map.Entry<String, List<String>> templateName : problematicVmNames.entrySet()) {
-            List<String> vms = problematicVmNames.get(templateName.getKey());
+        for (Map.Entry<String, List<String>> templateEntry : problematicVmNames.entrySet()) {
+            List<String> vms = templateEntry.getValue();
             String vmsListString = StringUtils.join(vms, ", "); //$NON-NLS-1$
-            missingTemplatesFromVms.add(messages.templatesWithDependentVMs(templateName.getKey(), vmsListString));
+            missingTemplatesFromVms.add(messages.templatesWithDependentVMs(templateEntry.getKey(), vmsListString));
         }
 
         setConfirmWindow(null);
