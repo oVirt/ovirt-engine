@@ -86,6 +86,12 @@
   }
 }
 
+@media (max-width: 1088px) {
+  .toolbar-pf .form-group:last-child {
+    padding-left: 0;
+  }
+}
+
 @media (min-width: 768px) {
   .navbar-pf .navbar-brand {
     padding: 4px 0 6px;
@@ -164,19 +170,10 @@
   margin-bottom: 0;
 }
 
-.toolbar-pf .form-group, .toolbar-pf .form-group:last-child {
-  margin-bottom: 10px;
-  margin-right: 20px;
-}
-
-.toolbar-pf .form-group:last-child {
-  margin-bottom: 10px;
-  padding-left: 0;
-}
-
 .toolbar-pf .toolbar-pf-actions .toolbar-pf-filter {
   flex: 1;
   min-width: 25%;
+  margin-bottom: 10px;
 }
 
 .toolbar-pf .toolbar-pf-actions .toolbar-pf-filter .input-group .input-group-btn .btn+.btn {
@@ -186,3 +183,8 @@
 .toolbar-pf .toolbar-pf-actions .form-group:last-child .dropdown-kebab-pf {
   margin-right: 15px;
 }
+
+.toolbar-pf .form-group:last-child {
+  margin-bottom: 10px;
+}
+

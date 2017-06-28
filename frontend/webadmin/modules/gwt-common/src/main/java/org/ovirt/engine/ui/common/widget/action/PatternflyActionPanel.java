@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.common.widget.action;
 
-import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.FormGroup;
-import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.Kebab;
@@ -36,13 +34,12 @@ public class PatternflyActionPanel extends FlowPanel {
 
         resultsContainer = new FlowPanel();
 
-        Column column = new Column(ColumnSize.SM_12);
-        column.add(actionContainer);
-        column.add(resultsContainer);
+        FlowPanel panel = new FlowPanel();
+        panel.add(actionContainer);
+        panel.add(resultsContainer);
 
-        addStyleName(Styles.ROW);
         addStyleName(PatternflyConstants.PF_TOOLBAR);
-        add(column);
+        add(panel);
         setVisible(false);
     }
 

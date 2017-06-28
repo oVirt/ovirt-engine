@@ -278,15 +278,6 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             }
         }));
 
-        // Host Console (link to Cockpit)
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.hostConsole()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getHostConsoleCommand();
-            }
-        }));
-
         // Management operations drop down
         List<ActionButtonDefinition<VDS>> managementSubActions = new LinkedList<>();
         // Maintenance button
@@ -447,6 +438,15 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 }
             })
         ));
+
+        // Host Console (link to Cockpit)
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.hostConsole()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getHostConsoleCommand();
+            }
+        }));
 
         // Assign tags
         addMenuItemToKebab(
