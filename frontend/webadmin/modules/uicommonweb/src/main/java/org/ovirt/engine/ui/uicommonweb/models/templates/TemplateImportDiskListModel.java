@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 
 @SuppressWarnings("unused")
 public class TemplateImportDiskListModel extends SearchableListModel {
-    private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
+    private List<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
 
     public TemplateImportDiskListModel() {
         setIsTimerDisabled(true);
@@ -45,7 +45,7 @@ public class TemplateImportDiskListModel extends SearchableListModel {
         super.setEntity(value != null ? ((ImportTemplateData) value).getTemplate() : null);
     }
 
-    public void setExtendedItems(ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> arrayList) {
+    public void setExtendedItems(List<Map.Entry<VmTemplate, List<DiskImage>>> arrayList) {
         this.extendedItems = arrayList;
     }
 

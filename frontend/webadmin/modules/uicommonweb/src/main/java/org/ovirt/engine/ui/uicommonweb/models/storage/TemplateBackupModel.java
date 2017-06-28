@@ -56,7 +56,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
-    private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
+    private List<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
     private StoragePool pool;
     protected ImportTemplateModel importModel;
     protected Provider<? extends ImportTemplateModel> importModelProvider;
@@ -89,7 +89,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         model.setTitle(constants.removeBackedUpTemplatesTitle());
         model.setHelpTag(HelpTag.remove_backed_up_template);
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
-        ArrayList<String> items = new ArrayList<>();
+        List<String> items = new ArrayList<>();
         for (VmTemplate template : getSelectedItems()) {
             items.add(template.getName() + getTemplateVersionNameAndNumber(template));
         }
@@ -123,7 +123,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                 return;
             }
             List<VM> vmsInExportDomain = returnValue.getReturnValue();
-            HashMap<String, List<String>> problematicVmNames =
+            Map<String, List<String>> problematicVmNames =
                     getDependentVMsForTemplates(vmsInExportDomain, getSelectedItems());
             if (!problematicVmNames.isEmpty()) {
                 showRemoveTemplateWithDependentVMConfirmationWindow(problematicVmNames);
@@ -133,8 +133,8 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         };
     }
 
-    private void showRemoveTemplateWithDependentVMConfirmationWindow(HashMap<String, List<String>> problematicVmNames) {
-        ArrayList<String> missingTemplatesFromVms = new ArrayList<>();
+    private void showRemoveTemplateWithDependentVMConfirmationWindow(Map<String, List<String>> problematicVmNames) {
+        List<String> missingTemplatesFromVms = new ArrayList<>();
 
         for (Map.Entry<String, List<String>> templateName : problematicVmNames.entrySet()) {
             List<String> vms = problematicVmNames.get(templateName.getKey());
@@ -156,12 +156,12 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         confirmModel.getCommands().add(UICommand.createCancelUiCommand(CANCEL_CONFIRMATION_COMMAND, this));
     }
 
-    private HashMap<String, List<String>> getDependentVMsForTemplates(List<VM> vmsInExportDomain,
+    private Map<String, List<String>> getDependentVMsForTemplates(List<VM> vmsInExportDomain,
             List<VmTemplate> templates) {
         // Build a map between the template ID and the template instance
         Map<Guid, VmTemplate> templateMap = Entities.businessEntitiesById(templates);
         // Build a map between the template name  and a list of dependent VMs names
-        HashMap<String, List<String>> problematicVmNames = new HashMap<>();
+        Map<String, List<String>> problematicVmNames = new HashMap<>();
 
         for (VM vm : vmsInExportDomain) {
             VmTemplate template = templateMap.get(vm.getVmtGuid());
@@ -178,7 +178,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void removeTemplateBackup() {
-        ArrayList<ActionParametersBase> prms = new ArrayList<>();
+        List<ActionParametersBase> prms = new ArrayList<>();
         for (VmTemplate template : getSelectedItems()) {
             prms.add(new VmTemplateImportExportParameters(template.getId(),
                     getEntity().getId(),
@@ -246,7 +246,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         if (!model.validate()) {
             return;
         }
-        ArrayList<ActionParametersBase> prms = new ArrayList<>();
+        List<ActionParametersBase> prms = new ArrayList<>();
         for (Object object : importModel.getItems()) {
             ImportTemplateData importData = (ImportTemplateData) object;
             VmTemplate template = importData.getTemplate();
@@ -297,8 +297,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                     TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
                     templateBackupModel.getWindow().stopProgress();
                     templateBackupModel.cancel();
-                    ArrayList<VdcReturnValueBase> retVals =
-                            (ArrayList<VdcReturnValueBase>) result.getReturnValue();
+                    List<VdcReturnValueBase> retVals = result.getReturnValue();
                     if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size()) {
 
                         StringBuilder importedTemplates = new StringBuilder();
@@ -352,9 +351,9 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                     Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain,
                             new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
                                     getEntity().getId()), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
-                                        ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
-                                        HashMap<VmTemplate, List<DiskImage>> dictionary = returnValue.getReturnValue();
-                                        ArrayList<VmTemplate> list1 = new ArrayList<>();
+                                        List<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
+                                        Map<VmTemplate, List<DiskImage>> dictionary = returnValue.getReturnValue();
+                                        List<VmTemplate> list1 = new ArrayList<>();
                                         for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
                                             items1.add(item);
                                             VmTemplate template = item.getKey();
