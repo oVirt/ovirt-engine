@@ -358,7 +358,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                                         for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet()) {
                                             items1.add(item);
                                             VmTemplate template = item.getKey();
-                                            template.setDiskList(new ArrayList<DiskImage>());
+                                            template.setDiskList(new ArrayList<>());
                                             template.getDiskList().addAll(item.getValue());
                                             list1.add(template);
                                         }
