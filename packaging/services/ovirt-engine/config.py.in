@@ -18,6 +18,7 @@ ENGINE_VARS = '@ENGINE_VARS@'
 
 
 import sys
+
 if DEV_PYTHON_DIR:
     sys.path.insert(0, DEV_PYTHON_DIR)
 

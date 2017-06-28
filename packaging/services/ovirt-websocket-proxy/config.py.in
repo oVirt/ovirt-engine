@@ -19,6 +19,7 @@ ENGINE_WSPROXY_VARS = '@ENGINE_WSPROXY_VARS@'
 
 
 import sys
+
 if DEV_PYTHON_DIR:
     sys.path.append(DEV_PYTHON_DIR)
 
