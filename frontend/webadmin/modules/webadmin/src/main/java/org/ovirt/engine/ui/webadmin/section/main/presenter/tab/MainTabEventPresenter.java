@@ -49,8 +49,8 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
             MainModelProvider<AuditLog, EventListModel<Void>> modelProvider, WebadminMenuLayout menuLayout) {
         MenuLayoutMenuDetails menuTabDetails =
                 menuLayout.getDetails(WebAdminApplicationPlaces.eventMainTabPlace);
-        return new ModelBoundTabData(menuTabDetails.getPrimaryTitle(), 0,
-                null, menuTabDetails.getPrimaryPriority(), modelProvider,
+        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
                 menuTabDetails.getIcon());
     }
 

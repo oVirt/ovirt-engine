@@ -7,12 +7,12 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 
-public enum DefaultMenuLayout {
-    COMPUTE(AssetProvider.getConstants().computeLabel(), null, 0, PatternflyIconType.PF_CPU),
-    NETWORK(AssetProvider.getConstants().networkHost(), null, 1, PatternflyIconType.PF_NETWORK),
-    STORAGE(AssetProvider.getConstants().storageMainTabLabel(), null, 2, IconType.DATABASE),
-    ADMIN(AssetProvider.getConstants().administration(), null, 3, IconType.COG),
-    EVENTS(AssetProvider.getConstants().eventsEventFooter(), WebAdminApplicationPlaces.eventMainTabPlace,  4,
+public enum GlusterModeMenuLayout implements PrimaryMenuItem {
+    STORAGE(AssetProvider.getConstants().storageMainTabLabel(), null, 0, IconType.DATABASE),
+    NETWORK(AssetProvider.getConstants().networkHost(), WebAdminApplicationPlaces.networkMainTabPlace, 1,
+            PatternflyIconType.PF_NETWORK),
+    ADMIN(AssetProvider.getConstants().administration(), null, 2, IconType.COG),
+    EVENTS(AssetProvider.getConstants().eventsEventFooter(), WebAdminApplicationPlaces.eventMainTabPlace, 3,
             PatternflyIconType.PF_FLAG);
 
 
@@ -21,7 +21,7 @@ public enum DefaultMenuLayout {
     private final int index;
     private final HasCssName icon;
 
-    DefaultMenuLayout(String title, String href, int index, HasCssName icon) {
+    GlusterModeMenuLayout(String title, String href, int index, HasCssName icon) {
         this.title = title;
         this.index = index;
         this.href = href;

@@ -17,9 +17,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginsReadyCallback;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -30,12 +30,13 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
 
     private boolean pluginsReady = false;
 
+    private final WebadminMenuLayout menuLayout;
+
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
             CurrentUser user,
-            EventBus eventBus,
             Provider<LoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
             Frontend frontend,
@@ -43,11 +44,13 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
             AlertManager alertManager,
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
+            WebadminMenuLayout menuLayout,
             PluginManager pluginManager) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user,
-                eventBus, loginModelProvider, lockInteractionManager, frontend, currentUserRole,
+                loginModelProvider, lockInteractionManager, frontend, currentUserRole,
                 applicationLogManager, alertManager);
         this.dynamicMessages = dynamicMessages;
+        this.menuLayout = menuLayout;
         pluginManager.setPluginsReadyCallback(this);
     }
 
@@ -60,6 +63,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
         ApplicationMode uiMode = UiModeData.getUiMode();
         if (uiMode != null) {
             ApplicationModeHelper.setUiMode(uiMode);
+            menuLayout.setUiMode(uiMode);
         }
     }
 

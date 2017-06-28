@@ -286,9 +286,10 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
                 String groupName = group.getElement().getAttribute(GROUP_NAME);
                 if (title != null && title.equals(groupName)) {
                     group.setVisible(accessible);
-                } else if (title != null && group.getWidgetCount() > 2) {
+                }
+                if (title != null && group.getWidgetCount() > 2) {
                     FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
-                    if (updateSubMenu(title, (ListGroup) groupContainer.getWidget(1), accessible)) {
+                    if (updateSubMenu(href, (ListGroup) groupContainer.getWidget(1), accessible)) {
                         break;
                     }
                 }
@@ -296,14 +297,20 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         }
     }
 
-    private boolean updateSubMenu(String title, ListGroup container, boolean accessible) {
+    private boolean updateSubMenu(String href, ListGroup container, boolean accessible) {
         for (int i = 0; i < container.getWidgetCount(); i++) {
             if (container.getWidget(i) instanceof ListGroupItem) {
-                ListGroupItem group = (ListGroupItem) container.getWidget(i);
-                String groupName = group.getElement().getAttribute(GROUP_NAME);
-                if (title != null && title.equals(groupName)) {
-                    group.setVisible(accessible);
-                    return true;
+                ListGroupItem item = (ListGroupItem) container.getWidget(i);
+                if (item.getWidgetCount() > 1) {
+                    Anchor groupAnchor = (Anchor) item.getWidget(1);
+                    if (groupAnchor.getHref().endsWith(href)) {
+                        item.setVisible(accessible);
+                        if (accessible) {
+                            // I need to get the parents parent to set it visible.
+                            container.getParent().getParent().setVisible(true);
+                        }
+                        return true;
+                    }
                 }
             }
         }

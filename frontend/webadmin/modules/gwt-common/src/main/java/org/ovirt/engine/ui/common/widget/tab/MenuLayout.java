@@ -42,7 +42,7 @@ public class MenuLayout {
         for (Entry<GroupedTabData, List<GroupedTabData>> entry: menuMap.entrySet()) {
             List<GroupedTabData> secondaryMenus = entry.getValue();
             for (GroupedTabData data: secondaryMenus) {
-                if (data.getLabel().equals(secondaryLabel)) {
+                if (data != null && data.getLabel() != null && data.getLabel().equals(secondaryLabel)) {
                     return entry.getKey().getGroupTitle();
                 }
             }

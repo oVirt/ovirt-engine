@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.Bootstrapper;
@@ -37,7 +36,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     protected final FrontendFailureEventListener frontendFailureEventListener;
 
     protected final CurrentUser user;
-    protected final EventBus eventBus;
     protected final Frontend frontend;
     private final CurrentUserRole currentUserRole;
 
@@ -52,7 +50,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
-            CurrentUser user, EventBus eventBus,
+            CurrentUser user,
             Provider<T> loginModelProvider,
             LockInteractionManager lockInteractionManager,
             Frontend frontend, CurrentUserRole currentUserRole,
@@ -62,7 +60,6 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
         this.user = user;
-        this.eventBus = eventBus;
         this.loginModelProvider = loginModelProvider;
         this.lockInteractionManager = lockInteractionManager;
         this.frontend = frontend;

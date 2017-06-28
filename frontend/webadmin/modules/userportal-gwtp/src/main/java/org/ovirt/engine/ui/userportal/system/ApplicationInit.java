@@ -12,17 +12,13 @@ import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
-    private final PlaceManager placeManager;
     private final UserPortalCurrentUserRole userRole;
     private final ApplicationDynamicMessages dynamicMessages;
 
@@ -31,19 +27,16 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             FrontendEventsHandlerImpl frontendEventsHandler,
             FrontendFailureEventListener frontendFailureEventListener,
             CurrentUser user,
-            EventBus eventBus,
             Provider<UserPortalLoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
             Frontend frontend,
             ApplicationLogManager applicationLogManager,
             AlertManager alertManager,
-            PlaceManager placeManager,
             UserPortalCurrentUserRole userRole,
             ApplicationDynamicMessages dynamicMessages) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user,
-                eventBus, loginModelProvider, lockInteractionManager, frontend, userRole,
+                loginModelProvider, lockInteractionManager, frontend, userRole,
                 applicationLogManager, alertManager);
-        this.placeManager = placeManager;
         this.userRole = userRole;
         this.dynamicMessages = dynamicMessages;
     }
@@ -56,7 +49,6 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
     @Override
     protected void beforeLogin() {
-        UserPortalModelInitEvent.fire(eventBus);
     }
 
     @Override
