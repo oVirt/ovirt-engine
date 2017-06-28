@@ -343,7 +343,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     protected void syncSearch() {
         if (getEntity() == null || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
                 || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active) {
-            setItems(Collections.<VmTemplate>emptyList());
+            setItems(Collections.emptyList());
         }
         else {
             AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(list -> {
