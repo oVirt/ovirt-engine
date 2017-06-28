@@ -595,5 +595,5 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
 
         return messages.templateVersionNameAndNumber(template.getTemplateVersionName() != null ? template.getTemplateVersionName() : "", //$NON-NLS-1$
                 template.getTemplateVersionNumber());
-    };
+    }
 }
