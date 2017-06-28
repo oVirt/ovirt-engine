@@ -264,9 +264,6 @@ Conflicts:	postgresql-jdbc >= 9.3
 Requires:	yum-plugin-versionlock
 %endif
 
-%if 0%{?fedora}
-Requires:	(yum-plugin-versionlock if yum)
-Requires:	apache-sshd
 Requires:	openstack-java-cinder-client >= %{openstack_java_version}
 Requires:	openstack-java-cinder-model >= %{openstack_java_version}
 Requires:	openstack-java-client >= %{openstack_java_version}
@@ -277,6 +274,10 @@ Requires:	openstack-java-keystone-model >= %{openstack_java_version}
 Requires:	openstack-java-quantum-client >= %{openstack_java_version}
 Requires:	openstack-java-quantum-model >= %{openstack_java_version}
 Requires:	openstack-java-resteasy-connector >= %{openstack_java_version}
+
+%if 0%{?fedora}
+Requires:	(yum-plugin-versionlock if yum)
+Requires:	apache-sshd
 Requires:	python-dnf-plugins-extras-versionlock
 Requires:	python3-dnf-plugins-extras-versionlock
 Requires:	quartz
@@ -775,6 +776,16 @@ while read dst src; do
 	rm -f "%{buildroot}${dst}"
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
+common/com/woorea/openstack/sdk/main/cinder-client.jar openstack-java-sdk/cinder-client.jar
+common/com/woorea/openstack/sdk/main/cinder-model.jar openstack-java-sdk/cinder-model.jar
+common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
+common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
+common/com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
+common/com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
+common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar
+common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
+common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
+common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
 common/org/aopalliance/main/aopalliance.jar
 common/org/apache/commons/compress/main/commons-compress.jar
 common/org/apache/commons/configuration/main/commons-configuration.jar
@@ -801,16 +812,6 @@ common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 
 %if 0%{?fedora}
 common/com/mchange/c3p0/main/c3p0.jar c3p0/c3p0.jar
-common/com/woorea/openstack/sdk/main/cinder-client.jar openstack-java-sdk/cinder-client.jar
-common/com/woorea/openstack/sdk/main/cinder-model.jar openstack-java-sdk/cinder-model.jar
-common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
-common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
-common/com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
-common/com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
-common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar
-common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
-common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
-common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
 common/org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
 common/org/quartz/main/quartz.jar
 common/org/snmp4j/main/snmp4j.jar snmp4j.jar
