@@ -46,9 +46,10 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         // the remove done here is a "clenaup", either on the source domain or on the target - so
         // other operations on the image shouldn't be dependent and wait for it.
         removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, Guid.newGuid()));
-        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
+        VdcReturnValueBase returnValue = runInternalAction(
                 ActionType.RemoveImage,
-                removeImageParams);
+                removeImageParams,
+                cloneContextAndDetachFromParent());
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {
