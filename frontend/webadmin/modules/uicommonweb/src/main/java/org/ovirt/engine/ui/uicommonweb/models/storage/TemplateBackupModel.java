@@ -346,7 +346,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                                             template.getDiskList().addAll(item.getValue());
                                             list1.add(template);
                                         }
-                                        Collections.sort(list1, new LexoNumericNameableComparator<>());
+                                        list1.sort(new LexoNumericNameableComparator<>());
                                         setItems(list1);
                                         TemplateBackupModel.this.extendedItems = items1;
                                     }));
