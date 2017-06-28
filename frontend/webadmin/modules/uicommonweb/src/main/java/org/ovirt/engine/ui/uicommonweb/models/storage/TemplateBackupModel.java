@@ -160,7 +160,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             List<VmTemplate> templates) {
         // Build a map between the template ID and the template instance
         Map<Guid, VmTemplate> templateMap = Entities.businessEntitiesById(templates);
-        // Build a map between the template ID and a list of dependent VMs names
+        // Build a map between the template name  and a list of dependent VMs names
         HashMap<String, List<String>> problematicVmNames = new HashMap<>();
 
         for (VM vm : vmsInExportDomain) {
