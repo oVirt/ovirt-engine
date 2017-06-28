@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.widget.AlertManager;
 
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -44,6 +45,9 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         setInSlot(TYPE_SetHeader, header);
 
+        // Remove the loading page placeholder
+        removeHostPagePlaceholder();
+
         // Enable alerts within the scope of main section
         alertManager.setCanShowAlerts(true);
     }
@@ -54,6 +58,10 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
 
         // Disable alerts outside the scope of main section
         alertManager.setCanShowAlerts(false);
+    }
+
+    protected void removeHostPagePlaceholder() {
+        Document.get().getElementById("host-page-placeholder").removeFromParent(); //$NON-NLS-1$
     }
 
 }

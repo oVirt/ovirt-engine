@@ -35,6 +35,60 @@
     </script>
 </head>
 <body>
+    <!-- launch GWT. This takes a while -->
     <script type="text/javascript" src="${requestScope['selectorScript']}"></script>
+
+    <!-- in the meantime... -->
+    <div id="host-page-placeholder">
+        <style>
+            #host-page-placeholder-spinner {
+                margin-top: 20px;
+                margin-right: -50px;
+            }
+            #host-page-placeholder-loading {
+                font-size: 18px;
+                margin-left: 20px;
+                margin-top: 19px;
+                float: left;
+            }
+            .vertical-align {
+                display: flex;
+                flex-direction: row;
+                height: 100vh;
+            }
+            .vertical-align > [class^="col-"],
+            .vertical-align > [class*=" col-"] {
+                display: flex;
+                align-items: center;
+            }
+        </style>
+        <nav class="navbar navbar-pf-vertical" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="javascript:;" class="navbar-brand"><img class="obrand_headerLogoImage" src="clear.cache.gif"></a>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="row vertical-align">
+                <div class="col-xs-6">
+                    <div id="host-page-placeholder-spinner" class="spinner spinner-lg"></div>
+                </div>
+                <div class="col-xs-6">
+                    <div id="host-page-placeholder-loading">Loading ...</div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="nav-pf-vertical nav-pf-vertical-with-sub-menus">
+                <ul class="list-group"></ul>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
