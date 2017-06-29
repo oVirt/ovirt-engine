@@ -362,9 +362,14 @@ public class IrsProxy {
                             .getReturnValue();
             int masterVersion = data.getKey().getMasterDomainVersion();
             HashSet<Guid> domainsInVds = new HashSet<>();
-            for (StorageDomain domainData : data.getValue()) {
-                domainsInVds.add(domainData.getId());
-                proceedStorageDomain(domainData, masterVersion, storagePool);
+            List<StorageDomain> storageDomainsToSync = data.getValue()
+                    .stream()
+                    .peek(storageDomain -> domainsInVds.add(storageDomain.getId()))
+                    .filter(storageDomain -> proceedStorageDomain(storageDomain, masterVersion, storagePool))
+                    .collect(Collectors.toList());
+            if (!storageDomainsToSync.isEmpty()) {
+                getEventListener().syncStorageDomainsLuns(getCurrentVdsId(),
+                        storageDomainsToSync.stream().map(StorageDomain::getId).collect(Collectors.toList()));
             }
             for (final StorageDomain domainInDb : domainsInDb) {
                 if (domainInDb.getStorageDomainType() != StorageDomainType.Master
@@ -435,7 +440,7 @@ public class IrsProxy {
         this.preferredHostId = preferredHostId;
     }
 
-    private void proceedStorageDomain(StorageDomain domainFromVdsm, int dataMasterVersion, StoragePool storagePool) {
+    private boolean proceedStorageDomain(StorageDomain domainFromVdsm, int dataMasterVersion, StoragePool storagePool) {
         StorageDomain storage_domain = storageDomainDao.getForStoragePool(domainFromVdsm.getId(), _storagePoolId);
 
         if (storage_domain != null) {
@@ -488,11 +493,6 @@ public class IrsProxy {
                         getEventListener().storagePoolStatusChanged(pool.getId(), StoragePoolStatus.Maintenance);
                     }
                 }
-            }
-
-            // For block domains, synchronize LUN details comprising the storage domain with the DB
-            if (statusChanged && domainFromVdsm.getStatus() == StorageDomainStatus.Active && storage_domain.getStorageType().isBlockDomain()) {
-                getEventListener().syncLunsInfoForBlockStorageDomain(domainFromVdsm.getId(), getCurrentVdsId());
             }
 
             // if status didn't change and still not active no need to
@@ -550,9 +550,17 @@ public class IrsProxy {
                 }
             }
 
+            // Block domains should have their LUNs synchronized and updated in the DB.
+            if (statusChanged &&
+                    domainFromVdsm.getStatus() == StorageDomainStatus.Active &&
+                    storage_domain.getStorageType().isBlockDomain()) {
+                return true;
+            }
+
         } else {
             log.debug("The domain with id '{}' was not found in DB", domainFromVdsm.getId());
         }
+        return false;
     }
 
     /**

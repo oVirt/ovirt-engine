@@ -70,6 +70,8 @@ public interface IVdsEventListener {
 
     void syncLunsInfoForBlockStorageDomain(final Guid storageDomainId, final Guid vdsId);
 
+    void syncStorageDomainsLuns(Guid vdsId, Collection<Guid> storageDomainsToSync);
+
     /**
      * Updates VMs QoS
      */
