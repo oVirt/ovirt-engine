@@ -14,7 +14,7 @@ public class ObjectCompensation {
     @Inject
     private MacPoolPerCluster macPoolPerCluster;
 
-    public void compensate(CommandBase command, TransientCompensationBusinessEntity entity) {
+    public void compensate(String commandType, TransientCompensationBusinessEntity entity) {
         switch (entity.getTransientEntityType()) {
         case RELEASE_MACS:
             handleReleaseMacsCompensation((ReleaseMacsTransientCompensation) entity);
@@ -23,7 +23,7 @@ public class ObjectCompensation {
             throw new IllegalArgumentException(String.format(
                     "Unable to compensate type %s, please handle this compensation in command %s.",
                     BusinessEntitySnapshot.SnapshotType.TRANSIENT_ENTITY,
-                    command));
+                    commandType));
         }
     }
 

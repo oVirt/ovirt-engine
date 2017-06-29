@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import javax.interceptor.ExcludeClassInterceptors;
 import javax.interceptor.Interceptors;
 
-import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
@@ -42,9 +41,6 @@ import org.ovirt.engine.core.bll.job.JobRepositoryCleanupManager;
 import org.ovirt.engine.core.bll.network.macpool.MacPoolPerCluster;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.storage.domain.IsoDomainListSynchronizer;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
-import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.ThreadPoolMonitoringService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -73,13 +69,11 @@ import org.ovirt.engine.core.common.utils.EngineThreadPools;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbConnectionUtil;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dal.utils.CacheManager;
-import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.VdcOptionDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -146,8 +140,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @Inject
     private VdsDynamicDao vdsDynamicDao;
     @Inject
-    private BusinessEntitySnapshotDao businessEntitySnapshotDao;
-    @Inject
     private OsInfoDao osInfoDao;
     @Inject
     private JobRepository jobRepository;
@@ -166,6 +158,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Inject
     private MultipleActionsRunnersFactory multipleActionsRunnersFactory;
+
+    @Inject
+    private CommandCompensator compensator;
 
     public static BackendInternal getInstance() {
         return Injector.get(BackendInternal.class);
@@ -274,7 +269,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             macPoolPerCluster.logFreeMacs();
             // In case of a server termination that had uncompleted compensation-aware related commands
             // we have to get all those commands and call compensate on each
-            compensate();
+            compensator.compensate();
             firstInitialization = false;
         }
 
@@ -286,11 +281,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         serviceLoader.load(TagsDirector.class);
 
         serviceLoader.load(IsoDomainListSynchronizer.class);
-
-        serviceLoader.load(AsyncTaskManager.class);
-        serviceLoader.load(CommandCoordinatorUtil.class);
-        serviceLoader.load(CommandCallbacksPoller.class);
-        serviceLoader.load(CommandEntityCleanupManager.class);
 
         initSearchDependencies();
         initHandlers();
@@ -395,37 +385,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             log.error("Failed to initialize ExecutionMessageDirector", e);
         }
 
-    }
-
-    /**
-     * Handles compensation in case of uncompleted compensation-aware commands resulted from server failure.
-     */
-    private void compensate() {
-        // get all command snapshot entries
-        List<KeyValue> commandSnapshots = businessEntitySnapshotDao.getAllCommands();
-        for (KeyValue commandSnapshot : commandSnapshots) {
-            // create an instance of the related command by its class name and command id
-            CommandBase<?> cmd =
-                    CommandsFactory.createCommand(commandSnapshot.getValue().toString(),
-                            (Guid) commandSnapshot.getKey());
-            if (cmd != null) {
-                try {
-                    cmd.compensate();
-                } catch (RuntimeException e) {
-                    log.error(
-                            "Failed to run compensation on startup for Command '{}', Command Id '{}': {}",
-                            commandSnapshot.getValue(),
-                            commandSnapshot.getKey(),
-                            e.getMessage());
-                    log.error("Exception", e);
-                }
-                log.info("Running compensation on startup for Command '{}', Command Id '{}'",
-                        commandSnapshot.getValue(), commandSnapshot.getKey());
-            } else {
-                log.error("Failed to run compensation on startup for Command '{}', Command Id '{}'",
-                        commandSnapshot.getValue(), commandSnapshot.getKey());
-            }
-        }
     }
 
     @Override

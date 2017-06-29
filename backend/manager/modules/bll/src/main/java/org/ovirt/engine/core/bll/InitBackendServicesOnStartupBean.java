@@ -17,6 +17,9 @@ import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
+import org.ovirt.engine.core.bll.tasks.AsyncTaskManager;
+import org.ovirt.engine.core.bll.tasks.CommandCallbacksPoller;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -86,6 +89,11 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
             serviceLoader.load(HostDeviceManager.class);
             serviceLoader.load(DwhHeartBeat.class);
+
+            serviceLoader.load(AsyncTaskManager.class);
+            serviceLoader.load(CommandCoordinatorUtil.class);
+            serviceLoader.load(CommandCallbacksPoller.class);
+            serviceLoader.load(CommandEntityCleanupManager.class);
 
             if(Config.<Boolean> getValue(ConfigValues.AffinityRulesEnforcementManagerEnabled)) {
                 serviceLoader.load(AffinityRulesEnforcementManager.class);

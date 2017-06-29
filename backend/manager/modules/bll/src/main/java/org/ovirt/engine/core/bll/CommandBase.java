@@ -55,15 +55,10 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
-import org.ovirt.engine.core.common.businessentities.TransientCompensationBusinessEntity;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -87,7 +82,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -95,12 +89,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDao;
 import org.ovirt.engine.core.dao.EntityDao;
-import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.PermissionDao;
-import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
-import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -174,6 +165,9 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     @Inject
     private CommandCoordinatorUtil commandCoordinatorUtil;
+
+    @Inject
+    private CommandCompensator compensator;
 
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
@@ -472,75 +466,8 @@ public abstract class CommandBase<T extends ActionParametersBase>
         if (!commandId.equals(getCompensationContext().getCommandId())) {
             return;
         }
-        TransactionSupport.executeInNewTransaction(() -> {
-            Deserializer deserializer =
-                    SerializationFactory.getDeserializer();
-            List<BusinessEntitySnapshot> entitySnapshots = businessEntitySnapshotDao.getAllForCommandId(commandId);
-            log.debug("Command [id={}]: {} compensation data.", commandId,
-                    entitySnapshots.isEmpty() ? "No" : "Going over");
-            for (BusinessEntitySnapshot snapshot : entitySnapshots) {
-                Class<Serializable> snapshotClass =
-                        (Class<Serializable>) ReflectionUtils.getClassFor(snapshot.getSnapshotClass());
-                Serializable snapshotData = deserializer.deserialize(snapshot.getEntitySnapshot(), snapshotClass);
-                log.info("Command [id={}]: Compensating {} of {}; snapshot: {}.",
-                        commandId,
-                        snapshot.getSnapshotType(),
-                        snapshot.getEntityType(),
-                        snapshot.getSnapshotType() == SnapshotType.DELETED_OR_UPDATED_ENTITY ? "id=" + snapshot.getEntityId()
-                                : snapshotData.toString());
-                Class<BusinessEntity<Serializable>> entityClass =
-                        (Class<BusinessEntity<Serializable>>) ReflectionUtils.getClassFor(snapshot.getEntityType());
 
-                switch (snapshot.getSnapshotType()) {
-                case CHANGED_STATUS_ONLY:
-                    EntityStatusSnapshot entityStatusSnapshot = (EntityStatusSnapshot) snapshotData;
-                    ((StatusAwareDao<Serializable, Enum<?>>) getDaoForEntity(entityClass)).updateStatus(
-                            entityStatusSnapshot.getId(), entityStatusSnapshot.getStatus());
-                    break;
-                case DELETED_OR_UPDATED_ENTITY:
-                    deletedOrUpdateEntity(entityClass, (BusinessEntity<Serializable>) snapshotData);
-                    break;
-                case UPDATED_ONLY_ENTITY:
-                    getDaoForEntity(entityClass).update((BusinessEntity<Serializable>)snapshotData);
-                    break;
-                case NEW_ENTITY_ID:
-                    getDaoForEntity(entityClass).remove(snapshotData);
-                    break;
-                case TRANSIENT_ENTITY:
-                    objectCompensation.compensate(CommandBase.this, (TransientCompensationBusinessEntity) snapshotData);
-                    break;
-                default:
-                    throw new IllegalArgumentException(String.format(
-                            "Unknown %s value, unable to compensate value %s.",
-                            SnapshotType.class.getName(),
-                            snapshot.getSnapshotType()));
-                }
-            }
-
-            getCompensationContext().afterCompensationCleanup();
-            return null;
-        });
-    }
-
-    /*
-     * method introduced to fix variable scope in switches (as nested scope is not created for switches),
-     * when static analysis disallows nested blocks
-     */
-    private void deletedOrUpdateEntity(Class<BusinessEntity<Serializable>> entityClass,
-            BusinessEntity<Serializable> entitySnapshot) {
-        GenericDao<BusinessEntity<Serializable>, Serializable> daoForEntity = getDaoForEntity(entityClass);
-
-        if (daoForEntity.get(entitySnapshot.getId()) == null) {
-            daoForEntity.save(entitySnapshot);
-        } else {
-            daoForEntity.update(entitySnapshot);
-        }
-    }
-
-    private GenericDao<BusinessEntity<Serializable>, Serializable> getDaoForEntity(
-            Class<BusinessEntity<Serializable>> entityClass) {
-
-        return DbFacade.getInstance().getDaoForEntity(entityClass);
+        compensator.compensate(commandId, getClass().getName(), getCompensationContext());
     }
 
     protected void handleStepsOnEnd() {
