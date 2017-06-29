@@ -130,6 +130,13 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     }
 
     @Override
+    protected void onHide() {
+        super.onHide();
+        // Notify model provider that the tab has been hidden
+        modelProvider.onSubTabDeselected();
+    }
+
+    @Override
     protected void onReset() {
         super.onReset();
 
