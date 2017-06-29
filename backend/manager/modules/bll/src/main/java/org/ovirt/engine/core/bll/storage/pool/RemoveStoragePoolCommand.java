@@ -48,6 +48,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SynchronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -378,8 +379,8 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
                     @Override
                     public ISingleAsyncOperation createSingleAsyncOperation() {
-
-                        return new ConnectVDSToPoolAndDomains(vdsList, masterDomain, storagePool);
+                        return Injector.injectMembers(
+                                new ConnectVDSToPoolAndDomains(vdsList, masterDomain, storagePool));
                     }
 
                     @Override

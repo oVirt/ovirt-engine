@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
@@ -24,8 +25,7 @@ public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSi
 
     @Override
     public ISingleAsyncOperation createSingleAsyncOperation() {
-        ISingleAsyncOperation tempVar = new RefreshPoolSingleAsyncOperation(getVdss(), getStorageDomain(),
-                getStoragePool(), vdsIdsToSetNonOperational);
-        return tempVar;
+        return Injector.injectMembers(
+                new RefreshPoolSingleAsyncOperation(getVdss(), getStorageDomain(), getStoragePool(), vdsIdsToSetNonOperational));
     }
 }
