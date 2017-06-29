@@ -13,6 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends VdsBrokerCommand<P> {
 
@@ -24,13 +25,16 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     @Inject
     private AuditLogDirector auditLogDirector;
 
+    @Inject
+    private VdsDao vdsDao;
+
     public FenceVdsVDSCommand(P parameters) {
         super(parameters);
     }
 
     protected VDS getTargetVds() {
         if (targetVds == null) {
-            targetVds = getDbFacade().getVdsDao().get(getParameters().getTargetVdsID());
+            targetVds = vdsDao.get(getParameters().getTargetVdsID());
         }
         return targetVds;
     }

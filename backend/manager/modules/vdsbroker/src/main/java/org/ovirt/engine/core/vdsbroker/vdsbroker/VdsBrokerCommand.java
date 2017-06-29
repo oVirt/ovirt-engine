@@ -12,10 +12,10 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportRunTimeException;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
@@ -30,6 +30,10 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     @Inject
     Event<VDSNetworkException> networkError;
+
+    @Inject
+    private VdsStaticDao vdsStaticDao;
+
     /**
      * Construct the command using the parameters and the {@link VDS} which is loaded from the DB.
      *
@@ -87,7 +91,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     protected VdsStatic getAndSetVdsStatic() {
         if (vdsStatic == null) {
-            vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getVdsId());
+            vdsStatic = vdsStaticDao.get(getParameters().getVdsId());
         }
         return vdsStatic;
     }
@@ -99,10 +103,6 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     protected void setVdsAndVdsStatic(VDS vds) {
         this.vds = vds;
         this.vdsStatic = vds.getStaticData();
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     @Override
