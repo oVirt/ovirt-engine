@@ -9,7 +9,6 @@
   <dependencies>
     <module name="javax.api"/>
     <module name="org.slf4j"/>
-    <module name="com.mchange.c3p0"/>
   </dependencies>
 
 </module>

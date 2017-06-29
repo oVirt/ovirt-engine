@@ -243,12 +243,6 @@
     </dependency>
 
     <dependency>
-      <groupId>c3p0</groupId>
-      <artifactId>c3p0</artifactId>
-      <version>${c3p0.version}</version>
-    </dependency>
-
-    <dependency>
       <groupId>aopalliance</groupId>
       <artifactId>aopalliance</artifactId>
       <version>${aopalliance.version}</version>
@@ -499,12 +493,6 @@
                 <groupId>com.woorea</groupId>
                 <artifactId>resteasy-connector</artifactId>
                 <moduleName>com.woorea.openstack.sdk</moduleName>
-              </module>
-
-              <module>
-                <groupId>c3p0</groupId>
-                <artifactId>c3p0</artifactId>
-                <moduleName>com.mchange.c3p0</moduleName>
               </module>
 
               <module>
