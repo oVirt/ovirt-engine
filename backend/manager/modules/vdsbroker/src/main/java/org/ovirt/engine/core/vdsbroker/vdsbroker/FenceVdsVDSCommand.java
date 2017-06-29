@@ -15,10 +15,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 
 public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends VdsBrokerCommand<P> {
-    /**
-     * VDS which acts as fence proxy
-     */
-    private VDS proxyVds;
 
     /**
      * VDS which should be fenced
@@ -30,13 +26,6 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
 
     public FenceVdsVDSCommand(P parameters) {
         super(parameters);
-    }
-
-    protected VDS getProxyVds() {
-        if (proxyVds == null) {
-            proxyVds = getDbFacade().getVdsDao().get(getParameters().getVdsId());
-        }
-        return proxyVds;
     }
 
     protected VDS getTargetVds() {
