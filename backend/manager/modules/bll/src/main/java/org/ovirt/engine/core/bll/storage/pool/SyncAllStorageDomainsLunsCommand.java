@@ -27,7 +27,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
  */
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-public class SyncStorageDomainsLunsCommand<T extends SyncLunsParameters> extends AbstractSyncLunsCommand<T> {
+public class SyncAllStorageDomainsLunsCommand<T extends SyncLunsParameters> extends AbstractSyncLunsCommand<T> {
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -35,7 +35,7 @@ public class SyncStorageDomainsLunsCommand<T extends SyncLunsParameters> extends
     @Inject
     private StorageDomainDao storageDomainDao;
 
-    public SyncStorageDomainsLunsCommand(T parameters, CommandContext commandContext) {
+    public SyncAllStorageDomainsLunsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 

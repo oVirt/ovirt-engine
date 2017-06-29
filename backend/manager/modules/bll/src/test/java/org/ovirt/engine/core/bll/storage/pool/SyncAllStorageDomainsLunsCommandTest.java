@@ -29,7 +29,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SyncStorageDomainsLunsCommandTest {
+public class SyncAllStorageDomainsLunsCommandTest {
 
     private Guid storagePoolId = Guid.newGuid();
     private SyncLunsParameters parameters = new SyncLunsParameters(storagePoolId);
@@ -47,8 +47,8 @@ public class SyncStorageDomainsLunsCommandTest {
 
     @Spy
     @InjectMocks
-    private SyncStorageDomainsLunsCommand<SyncLunsParameters> command =
-            new SyncStorageDomainsLunsCommand<>(parameters, null);
+    private SyncAllStorageDomainsLunsCommand<SyncLunsParameters> command =
+            new SyncAllStorageDomainsLunsCommand<>(parameters, null);
 
     @Before
     public void setUp() {

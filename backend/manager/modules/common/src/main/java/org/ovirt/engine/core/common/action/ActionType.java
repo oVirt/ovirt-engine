@@ -346,7 +346,7 @@ public enum ActionType {
     RemoveVmLease(1041, QuotaDependency.NONE),
 
     // Sync luns
-    SyncStorageDomainsLuns(1042, QuotaDependency.NONE),
+    SyncAllStorageDomainsLuns(1042, QuotaDependency.NONE),
     SyncDirectLuns(1043, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     SyncAllUsedLuns(1044, QuotaDependency.NONE),
 

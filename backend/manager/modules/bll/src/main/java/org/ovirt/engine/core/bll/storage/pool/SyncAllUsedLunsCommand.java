@@ -29,7 +29,7 @@ public class SyncAllUsedLunsCommand<T extends SyncLunsParameters> extends Abstra
 
     private void syncStorageDomainsLuns(List<LUNs> deviceList) {
         SyncLunsParameters parameters = new SyncLunsParameters(getParameters().getStoragePoolId(), deviceList);
-        runInternalAction(ActionType.SyncStorageDomainsLuns, parameters);
+        runInternalAction(ActionType.SyncAllStorageDomainsLuns, parameters);
     }
 
     private void syncDirectLunsAttachedToVmsInPool(List<LUNs> deviceList) {
