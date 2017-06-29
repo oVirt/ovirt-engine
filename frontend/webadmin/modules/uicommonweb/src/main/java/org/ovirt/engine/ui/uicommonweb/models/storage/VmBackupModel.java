@@ -242,7 +242,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
         if (getEntity() == null
                 || getEntity().getStorageDomainType() != StorageDomainType.ImportExport
                 || getEntity().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Active) {
-            setItems(Collections.<VM>emptyList());
+            setItems(Collections.emptyList());
         } else {
             AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(list -> {
                 if (list != null && list.size() > 0) {
