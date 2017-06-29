@@ -43,13 +43,6 @@
 
     <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
-      <artifactId>userportal</artifactId>
-      <version>${engine.version}</version>
-      <type>war</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ovirt.engine.ui</groupId>
       <artifactId>webadmin</artifactId>
       <version>${engine.version}</version>
       <type>war</type>
@@ -200,13 +193,6 @@
               <artifactId>root-war</artifactId>
               <bundleFileName>root.war</bundleFileName>
               <contextRoot>/</contextRoot>
-            </webModule>
-
-            <webModule>
-              <groupId>org.ovirt.engine.ui</groupId>
-              <artifactId>userportal</artifactId>
-              <bundleFileName>userportal.war</bundleFileName>
-              <contextRoot>/ovirt-engine/userportal</contextRoot>
             </webModule>
 
             <webModule>

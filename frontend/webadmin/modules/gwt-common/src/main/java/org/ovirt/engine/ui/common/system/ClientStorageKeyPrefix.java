@@ -14,7 +14,9 @@ import com.google.inject.BindingAnnotation;
  * Such prefix exists to avoid clashes between WebAdmin vs. UserPortal instances running
  * on the same browser (but not necessarily at the same time) where one instance might
  * read data originally persisted by another instance.
+ * TODO - remove
  */
+@Deprecated
 @BindingAnnotation
 @Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

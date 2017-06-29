@@ -19,7 +19,6 @@
     <module>gwt-common</module>
     <module>frontend-assemblies</module>
     <module>webadmin</module>
-    <module>userportal-gwtp</module>
   </modules>
   <properties>
     <aspectj.version>1.8.10</aspectj.version>

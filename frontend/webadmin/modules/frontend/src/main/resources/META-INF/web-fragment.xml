@@ -24,12 +24,12 @@
         </init-param>
 
         <!-- Resources which always need to be checked for changes: -->
-        <!-- * application host page: WebAdmin.html | UserPortal.html -->
+        <!-- * application host page: WebAdmin.html -->
         <!-- * permutation selector script: <applicationName>.nocache.js -->
         <!-- * UI plugin static resources: */plugin/* -->
         <init-param>
             <param-name>no-cache</param-name>
-            <param-value>.*WebAdmin\.html|UserPortal\.html|.*\.nocache\.js|.*\/plugin\/.*</param-value>
+            <param-value>.*WebAdmin\.html|.*\.nocache\.js|.*\/plugin\/.*</param-value>
         </init-param>
 
         <!-- Resources not intended to be cached on the client at all: -->
@@ -60,11 +60,6 @@
         <filter-name>HeaderFilter</filter-name>
         <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
     </filter>
-
-    <servlet>
-        <servlet-name>UserPortalHostPageServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.ui.frontend.server.gwt.UserPortalHostPageServlet</servlet-class>
-    </servlet>
 
     <servlet>
         <servlet-name>WebAdminHostPageServlet</servlet-name>

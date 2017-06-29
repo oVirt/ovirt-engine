@@ -329,15 +329,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    FullScreenWebadminDefault(ClientAccessLevel.User),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    FullScreenUserportalBasicDefault(ClientAccessLevel.User),
-    @Reloadable
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("false")
-    FullScreenUserportalExtendedDefault(ClientAccessLevel.User),
+    FullScreenWebadminDefault,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EncryptHostCommunication,

@@ -248,7 +248,6 @@ class Const(object):
             '-restapi',
             '-tools',
             '-tools-backup',
-            '-userportal',
             '-webadmin-portal',
             '-dashboard',
         )

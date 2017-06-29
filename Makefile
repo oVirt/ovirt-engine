@@ -18,8 +18,6 @@
 # CUSTOMIZATION-BEGIN
 #
 BUILD_GWT=1
-BUILD_GWT_USERPORTAL=1
-BUILD_GWT_WEBADMIN=1
 BUILD_ALL_USER_AGENTS=0
 BUILD_LOCALES=0
 BUILD_DEV=0
@@ -103,12 +101,7 @@ endif
 
 BUILD_FLAGS:=
 ifneq ($(BUILD_GWT),0)
-ifneq ($(BUILD_GWT_USERPORTAL),0)
-BUILD_FLAGS:=$(BUILD_FLAGS) -P gwt-user
-endif
-ifneq ($(BUILD_GWT_WEBADMIN),0)
 BUILD_FLAGS:=$(BUILD_FLAGS) -P gwt-admin
-endif
 endif
 ifneq ($(BUILD_ALL_USER_AGENTS),0)
 BUILD_FLAGS:=$(BUILD_FLAGS) -P all-user-agents
@@ -447,10 +440,8 @@ endif
 	fi
 
 install-gwt-symbols:
-	for gwt_app in webadmin userportal; do \
-		install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/$${gwt_app}"; \
-		find "$(MAVEN_OUTPUT_DIR)" -name "$${gwt_app}-*-gwt-symbols.zip" -type f | grep -v tmp.repos | head -n 1 | xargs -I{} cp {} "$(DESTDIR)$(DATA_DIR)/gwt-symbols/$${gwt_app}/symbolMaps.zip"; \
-	done
+	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/webadmin"; \
+	find "$(MAVEN_OUTPUT_DIR)" -name "webadmin-*-gwt-symbols.zip" -type f | grep -v tmp.repos | head -n 1 | xargs -I{} cp {} "$(DESTDIR)$(DATA_DIR)/gwt-symbols/webadmin/symbolMaps.zip"; \
 
 install-layout: \
 		install-packaging-files \
@@ -495,13 +486,12 @@ install-layout: \
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 
 gwt-debug:
-	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
-	$(MVN) -pl "frontend/webadmin/modules/$(DEBUG_MODULE)" \
+	$(MVN) -pl "frontend/webadmin/modules/webadmin" \
 		$(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS) \
 		$(DEV_EXTRA_BUILD_FLAGS) \
 		-Dgwt.noserver=true \
 		-P $(GWT_DEBUG_PROFILES) \
-		-P gwt-admin,gwt-user \
+		-P gwt-admin \
 			$(GWT_DEBUG_TARGET)
 
 all-dev:

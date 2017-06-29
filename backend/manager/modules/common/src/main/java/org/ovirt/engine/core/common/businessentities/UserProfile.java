@@ -17,10 +17,7 @@ public class UserProfile  implements Queryable {
 
     private String loginName;
 
-    private boolean userPortalVmLoginAutomatically;
-
     public UserProfile() {
-        userPortalVmLoginAutomatically = true;
         sshPublicKeyId = Guid.Empty;
         sshPublicKey = "";
     }
@@ -75,7 +72,6 @@ public class UserProfile  implements Queryable {
         return Objects.hash(
                 sshPublicKeyId,
                 sshPublicKey,
-                userPortalVmLoginAutomatically,
                 loginName
         );
     }
@@ -91,15 +87,7 @@ public class UserProfile  implements Queryable {
         UserProfile other = (UserProfile) obj;
         return  Objects.equals(sshPublicKeyId, other.sshPublicKeyId)
                 && Objects.equals(sshPublicKey, other.sshPublicKey)
-                && Objects.equals(userPortalVmLoginAutomatically, other.userPortalVmLoginAutomatically)
                 && Objects.equals(loginName, other.loginName);
     }
 
-    public Boolean isUserPortalVmLoginAutomatically() {
-        return userPortalVmLoginAutomatically;
-    }
-
-    public void setUserPortalVmLoginAutomatically(boolean userPortalVmLoginAutomatically) {
-        this.userPortalVmLoginAutomatically = userPortalVmLoginAutomatically;
-    }
 }

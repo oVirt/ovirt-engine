@@ -219,7 +219,6 @@ Requires:	%{name}-cli >= 3.6.2.0
 Requires:	%{name}-dbscripts = %{version}-%{release}
 Requires:	%{name}-restapi = %{version}-%{release}
 Requires:	%{name}-tools = %{version}-%{release}
-Requires:	%{name}-userportal = %{version}-%{release}
 Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	%{name}-vmconsole-proxy-helper >= %{version}-%{release}
@@ -472,13 +471,6 @@ Requires:	%{name} = %{version}-%{release}
 %description dbscripts
 Database scripts for %{ovirt_product_name_short}
 
-%package userportal
-Summary:	User Portal of %{ovirt_product_name_short}
-Group:		%{ovirt_product_group}
-Requires:	%{name} = %{version}-%{release}
-
-%description userportal
-The user portal interface to %{ovirt_product_name_short}
 
 %package webadmin-portal
 Summary:	Web Admin Portal of %{ovirt_product_name_short}
@@ -656,7 +648,7 @@ install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 # Force TLS/SSL for selected applications.
 #
 for war in \
-	"%{buildroot}%{engine_ear}"/{userportal,webadmin,enginesso,welcome}.war \
+	"%{buildroot}%{engine_ear}"/{webadmin,enginesso,welcome}.war \
 	"%{buildroot}%{engine_restapi_war}" \
 	; do
 	sed -i \
@@ -701,7 +693,6 @@ done << __EOF__
 %{engine_jboss_modules}/common/org/ovirt/engine/extensions/builtin/main/builtin.jar
 %{engine_ear}/docs.war/WEB-INF/lib/branding.jar
 %{engine_ear}/enginesso.war/WEB-INF/lib/branding.jar
-%{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
 %{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
 %{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
 __EOF__
@@ -1088,15 +1079,10 @@ fi
 %{engine_restapi_war}/
 %{engine_apidoc_war}/
 
-%files userportal
-%license LICENSE
-%config %{engine_etc}/usbfilter.txt
-%{engine_ear}/userportal.war
-%{engine_data}/gwt-symbols/userportal/
-
 %files webadmin-portal
 %license LICENSE
 %license frontend/webadmin/modules/gwt-extension/src/main/java/org/ovirt/engine/ui/uioverrides/java/util/LICENSE
+%config %{engine_etc}/usbfilter.txt
 %{engine_ear}/webadmin.war
 %{engine_data}/gwt-symbols/webadmin/
 

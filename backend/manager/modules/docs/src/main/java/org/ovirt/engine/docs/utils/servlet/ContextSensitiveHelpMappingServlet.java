@@ -38,12 +38,10 @@ import org.slf4j.LoggerFactory;
  *   * Detect which locales are installed
  *   * For each locale
  *     * get the conf.d directory
- *     * for each application subdir (webadmin, userportal, etc)
- *       * Look for json mapping files
- *       * concatenate them into a single json file for this locale+application
- *   * concatenate all of the locale+application jsons into one giant json per application
+ *     * Look for json mapping files
+ *     * concatenate them into a single json file for this locale
  *
- * This happens for every request of an application's json mapping file, which is once per user login.
+ * This happens for every request for the json mapping file, which is once per user login.
  *
  * @see ContextSensitiveHelpManager for the client-side portion of this operation.
  */
@@ -52,12 +50,11 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
     private static final long serialVersionUID = -393894763659009626L;
     private static final Logger log = LoggerFactory.getLogger(ContextSensitiveHelpMappingServlet.class);
 
+    private static final String APPLICATION = "webadmin"; //$NON-NLS-1$
     private static final String MANUAL_DIR_KEY = "manualDir"; //$NON-NLS-1$
     private static final String CSH_MAPPING_DIR = "csh.conf.d"; //$NON-NLS-1$
     private static final String JSON = ".json"; //$NON-NLS-1$
 
-    // parse xxxxxx from /some/path/xxxxxx.json
-    private static Pattern REQUEST_PATTERN = Pattern.compile(".*?(?<key>[^/]*)\\.json"); //$NON-NLS-1$
     private static Pattern LOCALE_PATTERN = Pattern.compile("\\w\\w-\\w\\w"); //$NON-NLS-1$
 
     private static ObjectMapper mapper = new ObjectMapper();
@@ -70,19 +67,13 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String application = getApplication(request);
-        if (application == null) {
-            log.warn("ContextSensitiveHelpMappingServlet could not handle request. URL = " + request.getRequestURI()); //$NON-NLS-1$
-            return;
-        }
-
         String manualPath = getManualDir(getServletConfig());
         List<String> locales = getLocales(new File(manualPath));
 
         ObjectNode appCsh = mapper.createObjectNode();
 
         for (String locale : locales) {
-            File cshConfigDir = new File(manualPath + "/" + locale + "/" + CSH_MAPPING_DIR + "/" + application); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            File cshConfigDir = new File(manualPath + "/" + locale + "/" + CSH_MAPPING_DIR + "/" + APPLICATION); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             if (cshConfigDir.exists() && cshConfigDir.canRead()) {
                 List<JsonNode> configData = readJsonFiles(cshConfigDir);
                 // merge the data from all the files
@@ -104,17 +95,6 @@ public class ContextSensitiveHelpMappingServlet extends HttpServlet {
         PrintStream printStream = new PrintStream(response.getOutputStream());
         printStream.print(appCsh.toString());
         printStream.flush();
-    }
-
-    /**
-     * parse xxxxxx from /some/path/xxxxxx.json
-     */
-    protected String getApplication(HttpServletRequest request) {
-        Matcher m = REQUEST_PATTERN.matcher(request.getRequestURI());
-        if (m.matches()) {
-            return m.group("key"); //$NON-NLS-1$
-        }
-        return null;
     }
 
     /**

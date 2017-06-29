@@ -139,7 +139,6 @@ public abstract class Configurator {
      * Returns the URL for serving the csh mapping file.
      * <p>
      * Example: <code>https://&lt;ovirt-engine&gt;/docs/csh/webadmin.json</code>
-     *          <code>https://&lt;ovirt-engine&gt;/docs/csh/userportal.json</code>
      *
      * @return the url
      */

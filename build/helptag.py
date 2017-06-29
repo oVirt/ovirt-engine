@@ -43,7 +43,7 @@ This is a utility script that can do two things:
 
 Example usage for update mode:
 
-helptag.py --type userportal --command update --load 10-userportal-en-US.ini
+helptag.py --command update --load 10-webadmin-en-US.ini
 
 Note that the loaded file is not updated in-place. The updated file is
 printed to stdout.
@@ -59,8 +59,6 @@ import sys
 COMMAND_UPDATE = 'update'
 COMMAND_TEMPLATE = 'template'
 TYPE_WEBADMIN = 'webadmin'
-TYPE_USERPORTAL = 'userportal'
-TYPE_COMMON = 'common'
 TYPE_UNKNOWN = 'unknown'
 HELPTAG_SECTION = '[helptags]'
 DEFAULT_FILE = (
@@ -77,7 +75,7 @@ __RE_HELPTAG = re.compile(
             \s*
             "(?P<name>[^"]+)"
             \s*,\s*
-            HelpTagType\.(?P<type>%s|%s|%s|%s)
+            HelpTagType\.(?P<type>%s|%s)
             \s*
             (
                 ,\s*
@@ -89,7 +87,7 @@ __RE_HELPTAG = re.compile(
     """
     %
     (
-        TYPE_WEBADMIN.upper(), TYPE_USERPORTAL.upper(), TYPE_COMMON.upper(),
+        TYPE_WEBADMIN.upper(),
         TYPE_UNKNOWN.upper(),
     )
 )
@@ -131,7 +129,7 @@ def loadTagsFromMappingFile(file):
     return ret
 
 
-def loadTagsFromCodebase(filename, type):
+def loadTagsFromCodebase(filename):
     """
     look for help tags in the source code.
     """
@@ -145,8 +143,7 @@ def loadTagsFromCodebase(filename, type):
                 m = __RE_HELPTAG.match(line)
                 if m:
                     if (
-                        m.group("type") == type.upper() or
-                        m.group("type") == TYPE_COMMON.upper()
+                        m.group("type") == TYPE_WEBADMIN.upper()
                     ):
                         name = m.group("name")
                         if m.group("comment"):
@@ -190,14 +187,6 @@ def main():
         ),
     )
     parser.add_argument(
-        '--type',
-        metavar='COMMAND',
-        dest='type',
-        choices=[TYPE_WEBADMIN, TYPE_USERPORTAL],
-        help='Type (%(choices)s)',
-        required=True
-    )
-    parser.add_argument(
         '--sourcefile',
         metavar='FILE',
         dest='sourcefile',
@@ -221,7 +210,7 @@ def main():
     )
     args = parser.parse_args()
 
-    codebaseTags = loadTagsFromCodebase(args.sourcefile, args.type)
+    codebaseTags = loadTagsFromCodebase(args.sourcefile)
 
     if args.command == COMMAND_TEMPLATE:
         mappingFileTags = {}

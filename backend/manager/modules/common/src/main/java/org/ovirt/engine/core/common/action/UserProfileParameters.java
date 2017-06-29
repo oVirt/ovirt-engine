@@ -13,31 +13,26 @@ public class UserProfileParameters extends ActionParametersBase {
     private UserProfile profile;
 
     public UserProfileParameters() {
-        this(Guid.Empty, Guid.Empty, "", true);
+        this(Guid.Empty, Guid.Empty, "");
     }
 
     public UserProfileParameters(Guid userId) {
-        this(userId, Guid.Empty, "", true);
+        this(userId, Guid.Empty, "");
     }
 
     public UserProfileParameters(String sshPublicKey) {
-        this(Guid.Empty, Guid.newGuid(), sshPublicKey, true);
+        this(Guid.Empty, Guid.newGuid(), sshPublicKey);
     }
 
     public UserProfileParameters(Guid sshPublicKeyId, String sshPublicKey) {
-        this(Guid.Empty, sshPublicKeyId, sshPublicKey, true);
+        this(Guid.Empty, sshPublicKeyId, sshPublicKey);
     }
 
     public UserProfileParameters(Guid userId, Guid sshPublicKeyId, String sshPublicKey) {
-        this(userId, sshPublicKeyId, sshPublicKey, true);
-    }
-
-    public UserProfileParameters(Guid userId, Guid sshPublicKeyId, String sshPublicKey, boolean userPortalVmLoginAutomatically) {
         profile = new UserProfile();
         profile.setUserId(userId);
         profile.setSshPublicKeyId(sshPublicKeyId);
         profile.setSshPublicKey(sshPublicKey);
-        profile.setUserPortalVmLoginAutomatically(userPortalVmLoginAutomatically);
     }
 
     public UserProfile getUserProfile() {

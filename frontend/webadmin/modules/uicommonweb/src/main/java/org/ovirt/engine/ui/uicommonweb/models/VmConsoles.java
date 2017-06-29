@@ -77,7 +77,7 @@ public interface VmConsoles {
     public String cannotConnectReason();
 
     /**
-     * Returns the context where this class is used (Webadmin, Basic/Extended Userportal).
+     * Returns the context where this class is used (webadmin).
      */
     ConsoleContext getConsoleContext();
 

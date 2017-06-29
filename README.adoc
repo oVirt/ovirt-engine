@@ -136,12 +136,6 @@ Default is `/usr/share/ovirt-js-dependencies`.
 
 BUILD_GWT:: Build GWT. Default is `1`.
 
-BUILD_GWT_USERPORTAL:: Build user protal if GWT is enabled. Default is
-`1`.
-
-BUILD_GWT_WEBADMIN:: Build web admin if GWT is enabled. Default is
-`1`.
-
 BUILD_ALL_USER_AGENTS:: Build GWT applications for all supported
 browsers. Default is `0`.
 
@@ -182,7 +176,7 @@ Default value is `0`.
 Do a local Engine development build as you normally would. Then, start
 the Super Dev Mode code server as following:
 
-  $ make gwt-debug DEBUG_MODULE=<module> DEV_BUILD_GWT_SUPER_DEV_MODE=1
+  $ make gwt-debug DEV_BUILD_GWT_SUPER_DEV_MODE=1
 
 In your browser, open http://127.0.0.1:9876/ and save the "Dev Mode On"
 bookmark. Next, visit the GWT application URL (as served from Engine)
@@ -318,20 +312,14 @@ world, add `${PREFIX}/etc/ovirt-engine/engine.conf.d/20-setup-jmx-debug.conf` wi
 == GWT debug
 
   $ make install-dev PREFIX="${PREFIX}"
-  $ make gwt-debug DEBUG_MODULE=<module>
-
-While `<module>` is `webadmin` or `userportal-gwtp`.
+  $ make gwt-debug
 
 Debug port is 8000, detailed instructions for GWT debugging are
 http://wiki.ovirt.org/DebugFrontend[here].
 
-GWT debug URLs, provided components running on same machine:
+GWT debug URL, provided components running on same machine:
 
-WebAdmin::
 http://127.0.0.1:8080/ovirt-engine/webadmin/WebAdmin.html?gwt.codesvr=127.0.0.1:9997
-
-UserPortal::
-http://127.0.0.1:8080/ovirt-engine/userportal/UserPortal.html?gwt.codesvr=127.0.0.1:9997
 
 Note that `gwt.codesvr` parameter does not apply when using Super Dev Mode.
 

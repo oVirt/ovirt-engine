@@ -34,12 +34,10 @@ the manual content.
 
 The format of this file is:
 
-  helptags.APPLICATION = [index1.json[, index2.json[, ....]]]
+  helptags.webadmin = [index1.json[, index2.json[, ....]]]
 
-`APPLICATION` is the name of the application that issues the request
-(e.g. webadmin or userportal), the value is list of json files relative to
-configuration file that map between help tag and URI. Their content is
-merged left to right, last wins.
+The value is list of json files relative to configuration file that map between
+help tag and URI. Their content is merged left to right, last wins.
 
 The format of index mapping file is a JSON object. Key is help tag and value
 is uri relative to the package, for example:

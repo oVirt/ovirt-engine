@@ -1,4 +1,4 @@
-<core | restapi | tools | history | engine | userportal | webadmin>: short summary under 50 chars
+<core | restapi | tools | history | engine | webadmin>: short summary under 50 chars
 
 Longer description using lines' length under 72 chars.
 

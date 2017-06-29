@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 /**
  * Maps properties that are common to non-pool VMs and Templates. Thus explicitly is used
- * only when New Template dialogue is created (in UserPortalListModel and VmListModel).
+ * only when New Template dialogue is created (in VmListModel).
  *
  * This builder is further subsumed by {@link FullUnitToVmBaseBuilder}
  * that performs full mapping of VmBase fields.

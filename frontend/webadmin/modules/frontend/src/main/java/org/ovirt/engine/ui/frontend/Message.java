@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.frontend;
 
-// Should be in a higher level common module shared by Webadmin & Userportal, placed here for the while
 public class Message {
     private String description;
     private String text;

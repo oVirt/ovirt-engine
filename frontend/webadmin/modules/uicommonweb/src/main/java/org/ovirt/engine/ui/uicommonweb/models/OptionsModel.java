@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
@@ -49,17 +48,6 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
         model.getCommands().add(okCommand);
         UICommand cancelCommand = UICommand.createCancelUiCommand(constants.cancel(), this);
         model.getCommands().add(cancelCommand);
-
-        AsyncDataProvider.getInstance().getUserProfile(model.asyncQuery(returnValue -> {
-            Boolean connectAutomatically = Boolean.TRUE;
-            UserProfile profile = returnValue.getReturnValue();
-            if (profile != null) {
-                setUserProfile(profile);
-                connectAutomatically = profile.isUserPortalVmLoginAutomatically();
-                model.getPublicKey().setEntity(profile.getSshPublicKey());
-            }
-            model.getEnableConnectAutomatically().setEntity(connectAutomatically);
-        }));
     }
 
     private void onSave() {
@@ -70,7 +58,6 @@ public class OptionsModel extends EntityModel<EditOptionsModel> {
             action = ActionType.UpdateUserProfile;
             params.setUserProfile(getUserProfile());
         }
-        params.getUserProfile().setUserPortalVmLoginAutomatically(model.getEnableConnectAutomatically().getEntity().booleanValue());
         params.getUserProfile().setSshPublicKey(model.getPublicKey().getEntity());
         model.startProgress(null);
         Frontend.getInstance().runAction(action, params, result -> {

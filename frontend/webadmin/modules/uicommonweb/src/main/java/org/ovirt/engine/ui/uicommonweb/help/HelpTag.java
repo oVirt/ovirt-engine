@@ -22,7 +22,7 @@ public enum HelpTag {
 
     add_hosts("add_hosts", HelpTagType.WEBADMIN, "[gluster] In 'New Cluster' context: Allows to add/import Hosts to a newly-created gluster-cluster"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    add_permission_to_user("add_permission_to_user", HelpTagType.COMMON, "Each Main Tab > Permissions Sub-Tab > Add Permission"), //$NON-NLS-1$ //$NON-NLS-2$
+    add_permission_to_user("add_permission_to_user", HelpTagType.WEBADMIN, "Each Main Tab > Permissions Sub-Tab > Add Permission"), //$NON-NLS-1$ //$NON-NLS-2$
 
     add_provider("add_provider", HelpTagType.WEBADMIN, "[Neutron integration] 'Providers' main tab -> 'Add Provider' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -70,7 +70,7 @@ public enum HelpTag {
 
     cannot_add_bricks("cannot_add_bricks", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Bricks sub tab (Add Bricks context), dialog shows the following message: 'Could not find any host in Up status in the cluster. Please try again later.'"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    change_cd("change_cd", HelpTagType.COMMON, "VMs Tab > Change CD"), //$NON-NLS-1$ //$NON-NLS-2$
+    change_cd("change_cd", HelpTagType.WEBADMIN, "VMs Tab > Change CD"), //$NON-NLS-1$ //$NON-NLS-2$
 
     change_cluster_compatibility_version("change_cluster_compatibility_version", HelpTagType.WEBADMIN, "Cluster Tab > Edit > Confirm Cluster Compatibility Version Change"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -80,7 +80,7 @@ public enum HelpTag {
 
     change_data_center_quota_enforcement_mode("change_data_center_quota_enforcement_mode", HelpTagType.WEBADMIN, "Edit Data-Center: confirmation dialog that appears when changing the Data-Center's quota mode to 'enforce'."), //$NON-NLS-1$ //$NON-NLS-2$
 
-    change_quota_disks("change_quota_disks", HelpTagType.COMMON, "'Assign Disk Quota' dialog (available from 'Disks' main tab and 'Disks' sub-tab in VMs/Templates main tabs)"), //$NON-NLS-1$ //$NON-NLS-2$
+    change_quota_disks("change_quota_disks", HelpTagType.WEBADMIN, "'Assign Disk Quota' dialog (available from 'Disks' main tab and 'Disks' sub-tab in VMs/Templates main tabs)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     clone_vm_from_snapshot("clone_vm_from_snapshot", HelpTagType.WEBADMIN, "VMs Tab > Snapshots Sub-Tab > Clone VM From Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -92,7 +92,7 @@ public enum HelpTag {
 
     configure_local_storage("configure_local_storage", HelpTagType.WEBADMIN, "Host Tab > Configure Local Storage"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    confirm_console_connect("confirm_console_connect", HelpTagType.COMMON, "'Console Connect' confirmation dialog with the following message: 'There may be users connected to the console who will not be able to reconnect. Do you want to proceed?'"), //$NON-NLS-1$ //$NON-NLS-2$
+    confirm_console_connect("confirm_console_connect", HelpTagType.WEBADMIN, "'Console Connect' confirmation dialog with the following message: 'There may be users connected to the console who will not be able to reconnect. Do you want to proceed?'"), //$NON-NLS-1$ //$NON-NLS-2$
 
     console_disconnected("console_disconnected", HelpTagType.WEBADMIN, "VMs Tab > Console Disconnected"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -102,9 +102,9 @@ public enum HelpTag {
 
     copy_disks("copy_disks", HelpTagType.WEBADMIN, "Disks Tab > Copy Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    create_snapshot("create_snapshot", HelpTagType.COMMON, "VMs Tab > Snapshots Tabs > Create Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
+    create_snapshot("create_snapshot", HelpTagType.WEBADMIN, "VMs Tab > Snapshots Tabs > Create Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    custom_preview_snapshot("custom_preview_snapshot", HelpTagType.COMMON, "VMs Tab > Snapshots Sub Tab > Custom Preview Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
+    custom_preview_snapshot("custom_preview_snapshot", HelpTagType.WEBADMIN, "VMs Tab > Snapshots Sub Tab > Custom Preview Snapshot"), //$NON-NLS-1$ //$NON-NLS-2$
 
     data_center("data_center", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
@@ -136,7 +136,7 @@ public enum HelpTag {
 
     leases("leases", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
-    editConsole("editConsole", HelpTagType.USERPORTAL), //$NON-NLS-1$
+    editConsole("editConsole", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
     edit_affinity_group("edit_affinity_group", HelpTagType.WEBADMIN, "Clusters main tab -> Affinity Groups sub-tab -> Edit"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -164,9 +164,9 @@ public enum HelpTag {
 
     edit_network_interface_hosts("edit_network_interface_hosts", HelpTagType.WEBADMIN, "Host Tab > Logical Network Sub-Tab > Edit Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_network_interface_tmps("edit_network_interface_tmps", HelpTagType.COMMON, "Templates Tab > Logical Network Sub-Tab > Edit Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_network_interface_tmps("edit_network_interface_tmps", HelpTagType.WEBADMIN, "Templates Tab > Logical Network Sub-Tab > Edit Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_network_interface_vms("edit_network_interface_vms", HelpTagType.COMMON, "VMs Tab > Logical Network Sub-Tab > Edit Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_network_interface_vms("edit_network_interface_vms", HelpTagType.WEBADMIN, "VMs Tab > Logical Network Sub-Tab > Edit Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_network_qos("edit_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'Edit Network QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -176,19 +176,19 @@ public enum HelpTag {
 
     edit_host_network_qos("edit_host_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Host Network QoS' sub-tab -> 'Edit Host Network QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_pool("edit_pool", HelpTagType.COMMON, "Pools Tab > Edit Pool"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_pool("edit_pool", HelpTagType.WEBADMIN, "Pools Tab > Edit Pool"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_provider("edit_provider", HelpTagType.WEBADMIN, "[Neutron integration] 'Providers' main tab -> 'Edit Provider' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_tag("edit_tag", HelpTagType.WEBADMIN, "Main > tags > Edit Tag"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_template("edit_template", HelpTagType.COMMON, "Templates Tab > Edit Template"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_template("edit_template", HelpTagType.WEBADMIN, "Templates Tab > Edit Template"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_instance_type("edit_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'Edit Instance Type' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_virtual_disk("edit_virtual_disk", HelpTagType.COMMON, "VMs Tab > Virtual Disks Sub-Tab > Edit Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_virtual_disk("edit_virtual_disk", HelpTagType.WEBADMIN, "VMs Tab > Virtual Disks Sub-Tab > Edit Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_vm("edit_vm", HelpTagType.COMMON, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_vm("edit_vm", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_vnic_profile("edit_vnic_profile", HelpTagType.WEBADMIN, "'Networks' main tab -> 'Profiles' sub-tab -> '(Edit) VM (Network) Interface Profile' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -280,9 +280,9 @@ public enum HelpTag {
 
     migrate_virtual_machine("migrate_virtual_machine", HelpTagType.WEBADMIN, "VMs Tab > Migrate Virtual Machine(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_next_run_configuration("edit_next_run_configuration", HelpTagType.COMMON, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_next_run_configuration("edit_next_run_configuration", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog [replaces the old 'Edit Desktop' (edit_desktop) and 'Edit Server' (edit_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_unsupported_cpu("edit_unsupported_cpu", HelpTagType.COMMON, "'VMs' main tab -> 'Edit VM' dialog -> 'System' sub tab -> 'Advanced Parameters' -> 'Custom CPU Type'"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_unsupported_cpu("edit_unsupported_cpu", HelpTagType.WEBADMIN, "'VMs' main tab -> 'Edit VM' dialog -> 'System' sub tab -> 'Advanced Parameters' -> 'Custom CPU Type'"), //$NON-NLS-1$ //$NON-NLS-2$
 
     monitor("monitor", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
@@ -338,9 +338,9 @@ public enum HelpTag {
 
     new_logical_network("new_logical_network", HelpTagType.WEBADMIN, "Data Center Tab > Logical Network Sub-Tab > New Logical Network"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    new_network_interface_tmps("new_network_interface_tmps", HelpTagType.COMMON, "Templates Tab > Logical Network Sub-Tab > New Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
+    new_network_interface_tmps("new_network_interface_tmps", HelpTagType.WEBADMIN, "Templates Tab > Logical Network Sub-Tab > New Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    new_network_interface_vms("new_network_interface_vms", HelpTagType.COMMON, "VMs Tab > Logical Network Sub-Tab > New Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
+    new_network_interface_vms("new_network_interface_vms", HelpTagType.WEBADMIN, "VMs Tab > Logical Network Sub-Tab > New Network Interface"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_network_qos("new_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'New Network QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -356,19 +356,19 @@ public enum HelpTag {
 
     new_tag("new_tag", HelpTagType.WEBADMIN, "Main > tags > New Tag"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    new_template("new_template", HelpTagType.COMMON, "VMs Tab > Make Template"), //$NON-NLS-1$ //$NON-NLS-2$
+    new_template("new_template", HelpTagType.WEBADMIN, "VMs Tab > Make Template"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_instance_type("new_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'New Instance Type' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    new_virtual_disk("new_virtual_disk", HelpTagType.COMMON, "VMs Tab > Virtual Disks Sub-Tab > New Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
+    new_virtual_disk("new_virtual_disk", HelpTagType.WEBADMIN, "VMs Tab > Virtual Disks Sub-Tab > New Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    attach_virtual_disk("attach_virtual_disk", HelpTagType.COMMON, "VMs Tab > Virtual Disks Sub-Tab > Attach Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
+    attach_virtual_disk("attach_virtual_disk", HelpTagType.WEBADMIN, "VMs Tab > Virtual Disks Sub-Tab > Attach Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_virtual_machine___guide_me("new_virtual_machine___guide_me", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
-    new_vm("new_vm", HelpTagType.COMMON, "'VMs' main tab -> 'New VM' dialog [replaces the old 'New Desktop' (new_desktop) and 'New Server' (new_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
+    new_vm("new_vm", HelpTagType.WEBADMIN, "'VMs' main tab -> 'New VM' dialog [replaces the old 'New Desktop' (new_desktop) and 'New Server' (new_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    clone_vm("clone_vm", HelpTagType.COMMON, "'VMs tab > Clone VM"), //$NON-NLS-1$ //$NON-NLS-2$
+    clone_vm("clone_vm", HelpTagType.WEBADMIN, "'VMs tab > Clone VM"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_vnic_profile("new_vnic_profile", HelpTagType.WEBADMIN, "'Networks' main tab -> 'Profiles' sub-tab -> '(New) VM (Network) Interface Profile' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -390,9 +390,9 @@ public enum HelpTag {
 
     power_management_configuration("power_management_configuration", HelpTagType.WEBADMIN, "Host Tab > Power Management Configuration"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    preview_snapshot("preview_snapshot", HelpTagType.COMMON, "VMs main tab -> Snapshots sub-tab -> 'Preview Snapshot' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    preview_snapshot("preview_snapshot", HelpTagType.WEBADMIN, "VMs main tab -> Snapshots sub-tab -> 'Preview Snapshot' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    preview_partial_snapshot("preview_partial_snapshot", HelpTagType.COMMON, "VMs main tab -> Snapshots sub-tab -> 'Preview Partial Snapshot' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    preview_partial_snapshot("preview_partial_snapshot", HelpTagType.WEBADMIN, "VMs main tab -> Snapshots sub-tab -> 'Preview Partial Snapshot' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     profiles("profiles", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
@@ -418,9 +418,9 @@ public enum HelpTag {
 
     remove_data_center("remove_data_center", HelpTagType.WEBADMIN, "Data Center Tab > Remove Data Center(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_disk("remove_disk", HelpTagType.COMMON, "VMs Tab > Disks Sub-Tab > Remove Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_disk("remove_disk", HelpTagType.WEBADMIN, "VMs Tab > Disks Sub-Tab > Remove Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    sparsify_disk("sparsify_disk", HelpTagType.COMMON, "VMs Tab > Disks Sub-Tab > Sparsify Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+    sparsify_disk("sparsify_disk", HelpTagType.WEBADMIN, "VMs Tab > Disks Sub-Tab > Sparsify Disk(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_external_subnet("remove_external_subnet", HelpTagType.WEBADMIN, "Networks main tab -> External Subnet sub tab -> Remove"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -430,9 +430,9 @@ public enum HelpTag {
 
     remove_logical_network("remove_logical_network", HelpTagType.WEBADMIN, "Data Center Tab > Logical Network Sub-Tab > Remove Logical Network(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_network_interface_tmps("remove_network_interface_tmps", HelpTagType.COMMON, "Templates Tab > Logical Network Sub-Tab > Remove Network Interface(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_network_interface_tmps("remove_network_interface_tmps", HelpTagType.WEBADMIN, "Templates Tab > Logical Network Sub-Tab > Remove Network Interface(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_network_interface_vms("remove_network_interface_vms", HelpTagType.COMMON, "VMs Tab > Logical Network Sub-Tab > Remove Network Interface(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_network_interface_vms("remove_network_interface_vms", HelpTagType.WEBADMIN, "VMs Tab > Logical Network Sub-Tab > Remove Network Interface(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_network_qos("remove_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'Remove Network QoS' confirmation dialog."), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -442,7 +442,7 @@ public enum HelpTag {
 
     remove_host_network_qos("remove_host_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Host Network QoS' sub-tab -> 'Remove Host Network QoS' confirmation dialog."), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_permission("remove_permission", HelpTagType.COMMON, "Each Main Tab > Permissions Sub-Tab > Remove Permission"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_permission("remove_permission", HelpTagType.WEBADMIN, "Each Main Tab > Permissions Sub-Tab > Remove Permission"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_pool("remove_pool", HelpTagType.WEBADMIN, "Pools Tab > Remove Pool(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -462,7 +462,7 @@ public enum HelpTag {
 
     remove_tag("remove_tag", HelpTagType.WEBADMIN, "Main > tags > Remove Tag(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_template("remove_template", HelpTagType.COMMON, "Templates Tab > Remove Template(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_template("remove_template", HelpTagType.WEBADMIN, "Templates Tab > Remove Template(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_instance_type("remove_instance_type", HelpTagType.WEBADMIN, "Configure' dialog -> 'Instance Types' section -> 'Remove Instance Type'"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -470,7 +470,7 @@ public enum HelpTag {
 
     remove_user("remove_user", HelpTagType.WEBADMIN, "Users Tab > Remove User(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_virtual_machine("remove_virtual_machine", HelpTagType.COMMON, "VMs Tab > Remove Desktop(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_virtual_machine("remove_virtual_machine", HelpTagType.WEBADMIN, "VMs Tab > Remove Desktop(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_vnic_prfoile("remove_vnic_prfoile", HelpTagType.WEBADMIN, "'Networks' main tab -> 'Profiles' sub-tab -> 'Remove VM (Network) Interface Profile(s)' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -488,7 +488,7 @@ public enum HelpTag {
 
     restart_host("restart_host", HelpTagType.WEBADMIN, "Host Tab > Power Management Menu > Restart Host(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    run_once_virtual_machine("run_once_virtual_machine", HelpTagType.COMMON, "VMs Tab > Run Once"), //$NON-NLS-1$ //$NON-NLS-2$
+    run_once_virtual_machine("run_once_virtual_machine", HelpTagType.WEBADMIN, "VMs Tab > Run Once"), //$NON-NLS-1$ //$NON-NLS-2$
 
     save_network_configuration("save_network_configuration", HelpTagType.WEBADMIN, "'Hosts' main tab -> Network sub-tab -> 'Save Network Configuration' confirmation dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -504,7 +504,7 @@ public enum HelpTag {
 
     snapshots("snapshots", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
-    sso_did_not_succeeded("sso_did_not_succeeded", HelpTagType.COMMON, "'Guest Agent is not responsive' dialog - appears when connecting to SPICE and guest agent is not responsive"), //$NON-NLS-1$ //$NON-NLS-2$
+    sso_did_not_succeeded("sso_did_not_succeeded", HelpTagType.WEBADMIN, "'Guest Agent is not responsive' dialog - appears when connecting to SPICE and guest agent is not responsive"), //$NON-NLS-1$ //$NON-NLS-2$
 
     stop_host("stop_host", HelpTagType.WEBADMIN, "Host Tab > Stop Host(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 

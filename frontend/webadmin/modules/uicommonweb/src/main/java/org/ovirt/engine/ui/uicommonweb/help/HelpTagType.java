@@ -5,5 +5,5 @@ package org.ovirt.engine.ui.uicommonweb.help;
  *
  */
 public enum HelpTagType {
-    WEBADMIN, USERPORTAL, UNKNOWN, COMMON
+    WEBADMIN, UNKNOWN
 }

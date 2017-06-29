@@ -53,15 +53,15 @@ public class BrandingManagerTest {
 
     @Test
     public void testGetMessages() throws JsonParseException, IOException {
-        String result = testManager.getMessages("user_portal", Locale.US);
+        String result = testManager.getMessages("webadmin", Locale.US);
         assertNotNull("There should be a result", result); //$NON-NLS-1$
         ObjectMapper mapper = new ObjectMapper();
         JsonFactory factory = mapper.getJsonFactory();
         JsonParser parser = factory.createJsonParser(result);
         JsonNode resultNode = mapper.readTree(parser);
-        // There should be 5 key value pairs (1 from user portal, 4 common)
-        assertEquals("Size should be 5", 5, resultNode.size()); //$NON-NLS-1$
-        assertEquals("User Portal", resultNode.get("application_title").getTextValue()); //$NON-NLS-1$ //$NON-NLS-2$
+        // There should be 6 key value pairs (2 from webadmin, 4 common)
+        assertEquals("Size should be 6", 6, resultNode.size()); //$NON-NLS-1$
+        assertEquals("Web Admin", resultNode.get("application_title").getTextValue()); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test

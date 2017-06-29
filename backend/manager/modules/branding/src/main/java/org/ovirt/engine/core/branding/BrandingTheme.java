@@ -369,7 +369,6 @@ public class BrandingTheme {
     @Override
     public String toString() {
         return "Path to theme: " + getPath() + ", User portal css: " //$NON-NLS-1$ //$NON-NLS-2$
-        + getThemeStylesheets("userportal") + ", Web admin css: " //$NON-NLS-1$ //$NON-NLS-2$
         + getThemeStylesheets("webadmin") + ", Welcome page css: " //$NON-NLS-1$ //$NON-NLS-2$
         + getThemeStylesheets("welcome"); //$NON-NLS-1$
     }
