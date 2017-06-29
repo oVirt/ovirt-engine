@@ -88,7 +88,7 @@ public class WelcomeServletTest {
         when(mockSession.getAttribute("authCode")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
         when(mockSession.getAttribute("token")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
         when(mockSession.getAttribute("error")).thenReturn("");
-        when(mockSession.getAttribute("error_code")).thenReturn("");
+        when(mockSession.getAttribute("error_description")).thenReturn("");
         when(mockRequest.getServletContext().getAttribute("sso_logout_url")).thenReturn(
                 new StringBuffer("http://localhost:8080/ovirt-engine/logout"));
         when(mockRequest.getServletContext().getAttribute("sso_switch_user_url")).thenReturn(
@@ -109,7 +109,7 @@ public class WelcomeServletTest {
         when(mockSession.getAttribute("authCode")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
         when(mockSession.getAttribute("token")).thenReturn("aU1KZG1OUytQSktnd29SQ3NIOVhWckls");
         when(mockSession.getAttribute("error")).thenReturn("");
-        when(mockSession.getAttribute("error_code")).thenReturn("");
+        when(mockSession.getAttribute("error_description")).thenReturn("");
         when(mockRequest.getServletContext().getAttribute("sso_logout_url")).thenReturn(
                 new StringBuffer("http://localhost:8080/ovirt-engine/logout"));
         when(mockRequest.getServletContext().getAttribute("sso_switch_user_url")).thenReturn(

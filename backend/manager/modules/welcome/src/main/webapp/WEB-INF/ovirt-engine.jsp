@@ -54,7 +54,7 @@
                                 <span class="pficon pficon-warning-triangle"></span>
                                 <span class="pficon pficon-warning-exclamation"></span>
                             </span>
-                            ${sessionScope.error}
+                            ${sessionScope.error_description}
                         </div>
                         <c:remove var="error" scope="session"/>
                         <c:remove var="error_description" scope="session"/>

@@ -110,10 +110,11 @@ public class OAuthAuthorizeServlet extends HttpServlet {
         if (SsoUtils.isUserAuthenticated(request)) {
             log.debug("User is authenticated redirecting to interactive-redirect-to-module");
             redirectUrl = request.getContextPath() + SsoConstants.INTERACTIVE_REDIRECT_TO_MODULE_URI;
-        } else if (SsoUtils.scopeAsList(ssoSession.getScope()).contains("ovirt-ext=auth:identity")) {
+        } else if (SsoUtils.scopeAsList(SsoUtils.getScopeRequestParameter(request, ""))
+                .contains("ovirt-ext=auth:identity")) {
             redirectUrl = new URLBuilder(SsoUtils.getRedirectUrl(request))
-                    .addParameter("error_code", SsoConstants.ERR_OVIRT_CODE_NOT_AUTHENTICATED)
-                    .addParameter("error", SsoConstants.ERR_CODE_NOT_AUTHENTICATED_MSG).build();
+                    .addParameter(SsoConstants.ERROR, SsoConstants.ERR_OVIRT_CODE_NOT_AUTHENTICATED)
+                    .addParameter(SsoConstants.ERROR_DESCRIPTION, SsoConstants.ERR_CODE_NOT_AUTHENTICATED_MSG).build();
         } else {
             ssoSession.setAuthStack(getAuthSeq(ssoSession));
             if (ssoSession.getAuthStack().isEmpty()) {

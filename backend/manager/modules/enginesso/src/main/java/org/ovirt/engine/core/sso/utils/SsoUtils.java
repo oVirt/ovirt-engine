@@ -145,14 +145,8 @@ public class SsoUtils {
                 ssoSession.setStatus(SsoSession.Status.unauthenticated);
             }
             URLBuilder redirectUrlBuilder = new URLBuilder(getRedirectUrl(request));
-            if (ssoSession.isOpenIdScope() ||
-                    scopeAsList(getScopeRequestParameter(request, "")).contains(SsoConstants.OPENID_SCOPE)) {
-                redirectUrlBuilder.addParameter("error", ex.getCode())
-                        .addParameter("error_description", ex.getMessage());
-            } else {
-                redirectUrlBuilder.addParameter("error_code", ex.getCode())
-                        .addParameter("error", ex.getMessage());
-            }
+            redirectUrlBuilder.addParameter(SsoConstants.ERROR, ex.getCode())
+                    .addParameter(SsoConstants.ERROR_DESCRIPTION, ex.getMessage());
             String state = SsoUtils.getRequestParameter(request, SsoConstants.HTTP_PARAM_STATE, "");
             if (StringUtils.isNotEmpty(state)) {
                 redirectUrlBuilder.addParameter("state", state);
