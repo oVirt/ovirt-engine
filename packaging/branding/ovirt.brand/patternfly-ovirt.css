@@ -170,10 +170,28 @@
   margin-bottom: 0;
 }
 
+.toolbar-pf .form-group, .toolbar-pf .form-group:last-child {
+  margin-bottom: 10px;
+}
+
+.toolbar-pf .form-group:last-child {
+  margin-bottom: 10px;
+  padding-left: 0;
+  margin-left: auto;
+}
+
 .toolbar-pf .toolbar-pf-actions .toolbar-pf-filter {
   flex: 1;
   min-width: 25%;
-  margin-bottom: 10px;
+  max-width: 600px;
+  border-right: 0;
+}
+
+@media (max-width: 1240px) {
+  .toolbar-pf .toolbar-pf-actions .toolbar-pf-filter {
+    min-width: 100%;
+    max-width: 100%;
+  }
 }
 
 .toolbar-pf .toolbar-pf-actions .toolbar-pf-filter .input-group .input-group-btn .btn+.btn {
