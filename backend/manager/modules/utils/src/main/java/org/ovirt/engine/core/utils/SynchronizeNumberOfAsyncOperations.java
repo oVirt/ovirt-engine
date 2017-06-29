@@ -6,12 +6,12 @@ import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
-public final class SyncronizeNumberOfAsyncOperations {
+public final class SynchronizeNumberOfAsyncOperations {
     private int _numberOfOperations;
     private ISingleAsyncOperationFactory _factory;
 
-    public SyncronizeNumberOfAsyncOperations(int numberOfOperations, ArrayList<?> parameters,
-            ISingleAsyncOperationFactory factory) {
+    public SynchronizeNumberOfAsyncOperations(int numberOfOperations, ArrayList<?> parameters,
+                                              ISingleAsyncOperationFactory factory) {
         _numberOfOperations = numberOfOperations;
         _factory = factory;
         _factory.initialize(parameters);

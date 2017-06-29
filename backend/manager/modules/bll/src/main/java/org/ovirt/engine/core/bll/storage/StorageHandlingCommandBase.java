@@ -83,7 +83,7 @@ import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
-import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
+import org.ovirt.engine.core.utils.SynchronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 import org.ovirt.engine.core.utils.ovf.OvfParser;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -656,7 +656,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (addionalParams.length > 0) {
             parameters.addAll(Arrays.asList(addionalParams));
         }
-        SyncronizeNumberOfAsyncOperations sync = new SyncronizeNumberOfAsyncOperations(allRunningVdsInPool.size(),
+        SynchronizeNumberOfAsyncOperations sync = new SynchronizeNumberOfAsyncOperations(allRunningVdsInPool.size(),
                 parameters, factory);
         sync.execute();
     }

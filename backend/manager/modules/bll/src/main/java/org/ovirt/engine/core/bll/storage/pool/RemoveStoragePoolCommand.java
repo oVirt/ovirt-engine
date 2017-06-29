@@ -49,7 +49,7 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
-import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
+import org.ovirt.engine.core.utils.SynchronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
@@ -373,7 +373,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     protected void connectAllHostToPoolAndDomain(final StorageDomain masterDomain) {
         final List<VDS> vdsList = getAllRunningVdssInPool();
         final StoragePool storagePool = getStoragePool();
-        SyncronizeNumberOfAsyncOperations sync = new SyncronizeNumberOfAsyncOperations(vdsList.size(),
+        SynchronizeNumberOfAsyncOperations sync = new SynchronizeNumberOfAsyncOperations(vdsList.size(),
                 null, new ActivateDeactivateSingleAsyncOperationFactory() {
 
                     @Override
