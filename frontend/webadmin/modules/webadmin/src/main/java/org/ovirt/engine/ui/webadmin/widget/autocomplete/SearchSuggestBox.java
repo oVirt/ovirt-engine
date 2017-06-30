@@ -172,9 +172,9 @@ public class SearchSuggestBox extends SuggestBox implements HasElementId {
             suggestionPopup.setWidget(suggestionsTable);
 
             // Show the popup under the TextBox and make it the same width as the TextBox
-            suggestionPopup.showRelativeTo(suggestBox);
-
             if (suggestBox != null) {
+                suggestionPopup.showRelativeTo(suggestBox);
+
                 int suggestBoxInputWidth = suggestBox.getValueBox().getElement().getOffsetWidth();
                 suggestionPopup.setWidth(suggestBoxInputWidth + "px"); //$NON-NLS-1$
             }
