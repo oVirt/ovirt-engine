@@ -15,13 +15,16 @@ public class MoveImageGroupVDSCommand<P extends MoveImageGroupVDSCommandParamete
     @Inject
     private StoragePoolDao storagePoolDao;
 
+    @Inject
+    private StorageDomainHelper storageDomainHelper;
+
     public MoveImageGroupVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeIrsBrokerCommand() {
-        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getDstDomainId());
+        storageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getDstDomainId());
         uuidReturn = moveImage(getParameters().getStoragePoolId().toString(),
                                              getParameters().getStorageDomainId().toString(),
                                              getParameters().getDstDomainId().toString(),

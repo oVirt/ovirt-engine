@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
@@ -12,13 +14,16 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
 
     private static final Logger log = LoggerFactory.getLogger(CreateSnapshotVDSCommand.class);
 
+    @Inject
+    private StorageDomainHelper storageDomainHelper;
+
     public CreateSnapshotVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeIrsBrokerCommand() {
-        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
+        storageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
         setReturnValue(Guid.Empty);
 
         log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");

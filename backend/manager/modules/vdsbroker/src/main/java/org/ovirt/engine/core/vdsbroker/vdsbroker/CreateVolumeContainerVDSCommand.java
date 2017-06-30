@@ -3,6 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.vdscommands.CreateVolumeVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -11,13 +13,16 @@ import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 public class CreateVolumeContainerVDSCommand<P extends CreateVolumeVDSCommandParameters> extends
         StorageJobVDSCommand<P> {
 
+    @Inject
+    private StorageDomainHelper storageDomainHelper;
+
     public CreateVolumeContainerVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeVdsBrokerCommand() {
-        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
+        storageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
         setReturnValue(Guid.Empty);
 
         log.info("-- executeJobCommand: calling 'createVolumeContainer'");

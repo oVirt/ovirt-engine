@@ -19,13 +19,16 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
     @Inject
     private StoragePoolDao storagePoolDao;
 
+    @Inject
+    private StorageDomainHelper storageDomainHelper;
+
     public CopyImageVDSCommand(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeIrsBrokerCommand() {
-        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getDstStorageDomainId());
+        storageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getDstStorageDomainId());
         setReturnValue(Guid.Empty);
 
         log.info("-- executeIrsBrokerCommand: calling 'copyImage' with two new parameters: description and UUID. Parameters:");
