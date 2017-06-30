@@ -106,6 +106,9 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
     @Inject
     private ImagesHandler imagesHandler;
 
+    @Inject
+    private IconUtils iconUtils;
+
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
@@ -279,7 +282,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         currVm.setStateless(!getVmPool().isStateful());
 
         if (getParameters().getVmLargeIcon() != null) {
-            final VmIconIdSizePair iconIds = IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
+            final VmIconIdSizePair iconIds = iconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
             currVm.setSmallIconId(iconIds.getSmall());
             currVm.setLargeIconId(iconIds.getLarge());
         }

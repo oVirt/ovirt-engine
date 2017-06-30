@@ -204,6 +204,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     @Inject
     private VmInitDao vmInitDao;
 
+    @Inject
+    private IconUtils iconUtils;
+
     protected AddVmCommand(Guid commandId) {
         super(commandId);
     }
@@ -1761,8 +1764,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
      */
     private void setIconIds(VmStatic vmStatic) {
         if (getParameters().getVmLargeIcon() != null){
-            final VmIconIdSizePair iconIds =
-                    IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
+            final VmIconIdSizePair iconIds = iconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
             vmStatic.setLargeIconId(iconIds.getLarge());
             vmStatic.setSmallIconId(iconIds.getSmall());
         } else {

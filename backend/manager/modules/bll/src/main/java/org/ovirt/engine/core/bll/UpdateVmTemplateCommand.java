@@ -77,6 +77,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private VmStaticDao vmStaticDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private IconUtils iconUtils;
 
     private VmTemplate oldTemplate;
     private List<GraphicsDevice> cachedGraphics;
@@ -353,10 +355,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         updateOriginalTemplateNameOnDerivedVms();
         List<Guid> oldIconIds = Collections.emptyList();
         if (isTemplate()) {
-            oldIconIds = IconUtils.updateVmIcon(oldTemplate, getVmTemplate(), getParameters().getVmLargeIcon());
+            oldIconIds = iconUtils.updateVmIcon(oldTemplate, getVmTemplate(), getParameters().getVmLargeIcon());
         }
         updateVmTemplate();
-        IconUtils.removeUnusedIcons(oldIconIds);
+        iconUtils.removeUnusedIcons(oldIconIds);
         updateWatchdog(getParameters().getVmTemplateData().getId());
         updateRngDevice(getParameters().getVmTemplateData().getId());
         updateGraphicsDevice();

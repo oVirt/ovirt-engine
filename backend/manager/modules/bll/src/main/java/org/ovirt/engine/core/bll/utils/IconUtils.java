@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.xml.bind.DatatypeConverter;
 
 import org.ovirt.engine.core.bll.validator.IconValidator;
@@ -16,15 +18,20 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmIconDao;
+import org.ovirt.engine.core.dao.VmIconDefaultDao;
 
 /**
  * Shared code related to Vm Icons
  */
+@Singleton
 public class IconUtils {
 
-    private IconUtils() {
-    }
+    @Inject
+    private VmIconDao vmIconDao;
+
+    @Inject
+    private VmIconDefaultDao vmIconDefaultDao;
 
     /**
      *
@@ -102,25 +109,25 @@ public class IconUtils {
         return dataUrl;
     }
 
-    public static VmIconIdSizePair ensureIconPairInDatabase(String largeIconDataUrl) {
+    public VmIconIdSizePair ensureIconPairInDatabase(String largeIconDataUrl) {
         final String smallIconDataUrl = IconUtils.computeSmallIcon(largeIconDataUrl);
-        Guid largeIconId = DbFacade.getInstance().getVmIconDao().ensureIconInDatabase(largeIconDataUrl);
-        Guid smallIconId = DbFacade.getInstance().getVmIconDao().ensureIconInDatabase(smallIconDataUrl);
+        Guid largeIconId = vmIconDao.ensureIconInDatabase(largeIconDataUrl);
+        Guid smallIconId = vmIconDao.ensureIconInDatabase(smallIconDataUrl);
         return new VmIconIdSizePair(smallIconId, largeIconId);
     }
 
     /**
      * @return smallIconId
      */
-    private static Guid ensureSmallIconInDatabase(Guid largeIconId) {
-        final String largeIconDataUrl = DbFacade.getInstance().getVmIconDao().get(largeIconId).getDataUrl();
+    private Guid ensureSmallIconInDatabase(Guid largeIconId) {
+        final String largeIconDataUrl = vmIconDao.get(largeIconId).getDataUrl();
         return ensureIconPairInDatabase(largeIconDataUrl).getSmall();
     }
 
     /**
      * @return list of icon ids that was previously used and are not used any more by this vm_static entity
      */
-    public static List<Guid> updateVmIcon(VmBase originalVmBase, VmBase newVmBase, String vmIconParameter) {
+    public List<Guid> updateVmIcon(VmBase originalVmBase, VmBase newVmBase, String vmIconParameter) {
         if (vmIconParameter != null) {
             addNewIconPair(newVmBase, vmIconParameter);
         } else {
@@ -140,13 +147,12 @@ public class IconUtils {
         return unusedIconIds;
     }
 
-    private static void computeSmallByLargeIconId(VmBase vmBase) {
+    private void computeSmallByLargeIconId(VmBase vmBase) {
         if (vmBase.getLargeIconId() == null) {
             return;
         }
 
-        final List<VmIconDefault> iconDefaultsByLargeIconId = DbFacade.getInstance().getVmIconsDefaultDao()
-                .getByLargeIconId(vmBase.getLargeIconId());
+        final List<VmIconDefault> iconDefaultsByLargeIconId = vmIconDefaultDao.getByLargeIconId(vmBase.getLargeIconId());
         if (!iconDefaultsByLargeIconId.isEmpty()) {
             vmBase.setSmallIconId(iconDefaultsByLargeIconId.get(0).getSmallIconId());
         } else {
@@ -154,16 +160,15 @@ public class IconUtils {
         }
     }
 
-    private static void addNewIconPair(VmBase vmBase, String largeIconDataUrl) {
-        final VmIconIdSizePair iconIds =
-                IconUtils.ensureIconPairInDatabase(largeIconDataUrl);
+    private void addNewIconPair(VmBase vmBase, String largeIconDataUrl) {
+        final VmIconIdSizePair iconIds = ensureIconPairInDatabase(largeIconDataUrl);
         vmBase.setLargeIconId(iconIds.getLarge());
         vmBase.setSmallIconId(iconIds.getSmall());
     }
 
-    public static void removeUnusedIcons(List<Guid> iconIds) {
+    public void removeUnusedIcons(List<Guid> iconIds) {
         for (Guid iconId : iconIds) {
-            DbFacade.getInstance().getVmIconDao().removeIfUnused(iconId);
+            vmIconDao.removeIfUnused(iconId);
         }
     }
 

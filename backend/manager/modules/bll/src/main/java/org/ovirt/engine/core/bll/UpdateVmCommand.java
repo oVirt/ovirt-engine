@@ -146,6 +146,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private LabelDao labelDao;
     @Inject
     private NetworkHelper networkHelper;
+    @Inject
+    private IconUtils iconUtils;
 
     private VM oldVm;
     private boolean quotaSanityOnly = false;
@@ -277,7 +279,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             hotSetCpus(userVm);
             updateCurrentMemory(userVm);
         }
-        final List<Guid> oldIconIds = IconUtils.updateVmIcon(
+        final List<Guid> oldIconIds = iconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
         resourceManager.getVmManager(getVmId()).update(newVmStatic);
         if (getVm().isNotRunning()) {
@@ -289,7 +291,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateVmHostDevices();
             updateDeviceAddresses();
         }
-        IconUtils.removeUnusedIcons(oldIconIds);
+        iconUtils.removeUnusedIcons(oldIconIds);
         vmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
         checkTrustedService();

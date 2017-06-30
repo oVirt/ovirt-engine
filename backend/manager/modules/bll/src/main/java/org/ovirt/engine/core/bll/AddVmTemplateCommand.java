@@ -153,6 +153,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Inject
     private MultiLevelAdministrationHandler multiLevelAdministrationHandler;
 
+    @Inject
+    private IconUtils iconUtils;
+
     protected final List<DiskImage> images = new ArrayList<>();
     private Guid[] targetDiskIds;
     private List<PermissionSubject> permissionCheckSubject;
@@ -935,8 +938,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private void updateVmIcons() {
         if (getParameters().getVmLargeIcon() != null) {
-            final VmIconIdSizePair iconIdPair =
-                    IconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
+            final VmIconIdSizePair iconIdPair = iconUtils.ensureIconPairInDatabase(getParameters().getVmLargeIcon());
             getVmTemplate().setSmallIconId(iconIdPair.getSmall());
             getVmTemplate().setLargeIconId(iconIdPair.getLarge());
         }
