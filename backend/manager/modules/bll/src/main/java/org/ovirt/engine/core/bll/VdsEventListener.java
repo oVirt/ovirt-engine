@@ -78,11 +78,11 @@ import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -124,6 +124,8 @@ public class VdsEventListener implements IVdsEventListener {
     private CpuQosDao cpuQosDao;
     @Inject
     private StorageQosDao storageQosDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private DiskDao diskDao;
     @Inject
@@ -281,7 +283,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, Guid domainId) {
-        StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+        StorageDomainStatic storageDomain = storageDomainStaticDao.get(domainId);
         Map<String, String> customLogValues = null;
         if (storageDomain != null) {
             customLogValues = Collections.singletonMap("StorageDomainNames", storageDomain.getName());
@@ -320,14 +322,13 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     private void moveBricksToUnknown(final VDS vds) {
-        List<GlusterBrickEntity> brickEntities =
-                DbFacade.getInstance().getGlusterBrickDao().getGlusterVolumeBricksByServerId(vds.getId());
+        List<GlusterBrickEntity> brickEntities = glusterBrickDao.getGlusterVolumeBricksByServerId(vds.getId());
         for (GlusterBrickEntity brick : brickEntities) {
             if (brick.getStatus() == GlusterStatus.UP) {
                 brick.setStatus(GlusterStatus.UNKNOWN);
             }
         }
-        DbFacade.getInstance().getGlusterBrickDao().updateBrickStatuses(brickEntities);
+        glusterBrickDao.updateBrickStatuses(brickEntities);
     }
 
     @Override
@@ -339,8 +340,7 @@ public class VdsEventListener implements IVdsEventListener {
                 try {
                     // migrate vms that its their default vds and failback
                     // is on
-                    List<VmStatic> vmsToMigrate =
-                            DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
+                    List<VmStatic> vmsToMigrate = vmStaticDao.getAllWithFailbackByVds(vds.getId());
                     if (!vmsToMigrate.isEmpty()) {
                         CommandContext ctx = new CommandContext(new EngineContext());
                         ctx.getExecutionContext().setMonitored(true);
