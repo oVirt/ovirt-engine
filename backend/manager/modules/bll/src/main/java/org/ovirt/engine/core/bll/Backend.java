@@ -325,7 +325,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void updatePredefinedIcons() {
-        IconLoader.load();
+        serviceLoader.load(IconLoader.class);
     }
 
     private void initAttestation() {

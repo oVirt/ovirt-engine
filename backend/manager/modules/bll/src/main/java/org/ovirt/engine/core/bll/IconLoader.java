@@ -6,8 +6,13 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
+import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -16,7 +21,8 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VmIconDao;
+import org.ovirt.engine.core.dao.VmIconDefaultDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -36,7 +42,8 @@ import org.slf4j.LoggerFactory;
  *         this is only useful during the first run and to fix inconsistencies</li>
  * </ul>
  */
-public class IconLoader {
+@Singleton
+public class IconLoader implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(IconLoader.class);
     private static final Path ICONS_DIR = EngineLocalConfig.getInstance().getUsrDir().toPath().resolve("icons");
@@ -45,7 +52,20 @@ public class IconLoader {
     private final Map<Integer, VmIconIdSizePair> osIdToIconIdMap = new HashMap<>();
     private final int DEFAULT_OS_ID = OsRepository.DEFAULT_X86_OS;
 
-    private IconLoader() {
+    @Inject
+    private VmStaticDao vmStaticDao;
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmIconDao vmIconDao;
+
+    @Inject
+    private VmIconDefaultDao vmIconDefaultDao;
+
+    @PostConstruct
+    private void init() {
         loadIconsToDatabase();
         ensureDefaultOsIconExists();
         updateVmIconDefaultsTable();
@@ -64,13 +84,11 @@ public class IconLoader {
     }
 
     private void updateVmStaticTable() {
-        final VmStaticDao vmStaticDao = DbFacade.getInstance().getVmStaticDao();
         for (VmStatic vmStatic : vmStaticDao.getAllWithoutIcon()) {
             setIconsByOs(vmStatic);
             vmStaticDao.update(vmStatic);
         }
 
-        final VmTemplateDao vmTemplateDao = DbFacade.getInstance().getVmTemplateDao();
         for (VmTemplate vmTemplate : vmTemplateDao.getAllWithoutIcon()) {
             setIconsByOs(vmTemplate);
             vmTemplateDao.update(vmTemplate);
@@ -96,13 +114,13 @@ public class IconLoader {
      * It recreates 'vm_icon_defaults' table based on new configuration.
      */
     private void updateVmIconDefaultsTable() {
-        DbFacade.getInstance().getVmIconsDefaultDao().removeAll();
+        vmIconDefaultDao.removeAll();
         for (Map.Entry<Integer, VmIconIdSizePair> entry : osIdToIconIdMap.entrySet()) {
             final VmIconDefault osDefautlIconIds = new VmIconDefault(Guid.newGuid(),
                     entry.getKey(),
                     entry.getValue().getSmall(),
                     entry.getValue().getLarge());
-            DbFacade.getInstance().getVmIconsDefaultDao().save(osDefautlIconIds);
+            vmIconDefaultDao.save(osDefautlIconIds);
         }
     }
 
@@ -112,11 +130,7 @@ public class IconLoader {
         }
     }
 
-    public static void load() {
-        new IconLoader();
-    }
-
-    private static VmIconIdSizePair ensureIconsInDatabase(String osName) {
+    private VmIconIdSizePair ensureIconsInDatabase(String osName) {
         final Guid smallIconId = ensureIconInDatabase(SMALL_ICON_DIR, osName);
         final Guid largeIconId = ensureIconInDatabase(LARGE_ICON_DIR, osName);
         if (smallIconId != null && largeIconId != null) {
@@ -125,7 +139,7 @@ public class IconLoader {
         return null;
     }
 
-    private static Guid ensureIconInDatabase(Path dir, String osName) {
+    private Guid ensureIconInDatabase(Path dir, String osName) {
         try {
             return ensureIconInDatabaseUnchecked(dir, osName);
         } catch (RuntimeException e) {
@@ -133,10 +147,10 @@ public class IconLoader {
             return null;
         }
     }
-    private static Guid ensureIconInDatabaseUnchecked(Path dir, String osName) {
+    private Guid ensureIconInDatabaseUnchecked(Path dir, String osName) {
         final ResolvedIcon resolvedIcon = resolveIconName(dir, osName);
         final String dataUrl = loadIcon(resolvedIcon);
-        return DbFacade.getInstance().getVmIconDao().ensureIconInDatabase(dataUrl);
+        return vmIconDao.ensureIconInDatabase(dataUrl);
     }
 
     private static String loadIcon(ResolvedIcon resolvedIcon) {
