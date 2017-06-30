@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.profile;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
@@ -22,7 +22,7 @@ public class VnicProfileSubTabPanelView extends AbstractSubTabPanelView implemen
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public VnicProfileSubTabPanelView(OvirtBreadCrumbs<VnicProfileView, VnicProfileListModel> breadCrumbs,
+    public VnicProfileSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VnicProfileView, VnicProfileListModel> breadCrumbs,
             DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());

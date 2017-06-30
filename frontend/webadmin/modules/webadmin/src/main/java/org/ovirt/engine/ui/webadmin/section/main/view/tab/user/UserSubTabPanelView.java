@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.user;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
@@ -22,7 +22,7 @@ public class UserSubTabPanelView extends AbstractSubTabPanelView implements User
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public UserSubTabPanelView(OvirtBreadCrumbs<DbUser, UserListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public UserSubTabPanelView(OvirtBreadCrumbsPresenterWidget<DbUser, UserListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

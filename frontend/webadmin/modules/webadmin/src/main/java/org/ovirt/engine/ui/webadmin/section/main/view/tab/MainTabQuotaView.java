@@ -59,7 +59,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
             @Override
             public void update(int index, Quota quota, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

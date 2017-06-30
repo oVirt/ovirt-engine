@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.errata;
 
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
@@ -21,7 +21,7 @@ public class ErrataSubTabPanelView extends AbstractSubTabPanelView implements Er
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public ErrataSubTabPanelView(OvirtBreadCrumbs<Erratum, EngineErrataListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public ErrataSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Erratum, EngineErrataListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

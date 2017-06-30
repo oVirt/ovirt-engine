@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.pool;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
@@ -22,7 +22,7 @@ public class PoolSubTabPanelView extends AbstractSubTabPanelView implements Pool
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public PoolSubTabPanelView(OvirtBreadCrumbs<VmPool, PoolListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public PoolSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VmPool, PoolListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

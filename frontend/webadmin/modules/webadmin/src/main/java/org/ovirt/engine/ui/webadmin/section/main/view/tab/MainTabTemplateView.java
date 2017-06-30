@@ -51,7 +51,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
             @Override
             public void update(int index, VmTemplate template, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

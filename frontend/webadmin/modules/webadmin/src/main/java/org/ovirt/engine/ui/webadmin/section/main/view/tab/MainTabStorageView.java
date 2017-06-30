@@ -62,7 +62,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
             @Override
             public void update(int index, StorageDomain storageDomain, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

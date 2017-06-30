@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
+import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -14,10 +15,16 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.QuotaBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.view.OvirtBreadCrumbsView;
+import org.ovirt.engine.ui.common.view.QuotaBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
+import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -26,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -766,7 +774,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<StoragePool, DataCenterListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DataCenterListModel>>(){},
                 new TypeLiteral<SearchPanelView<DataCenterListModel>>(){});
-
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<StoragePool, DataCenterListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<StoragePool>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<StoragePool, DataCenterListModel>>(){});
         // Storage
         bindPresenter(StorageSubTabPanelPresenter.class,
                 StorageSubTabPanelPresenter.ViewDef.class,
@@ -848,6 +859,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<StorageDomain, StorageListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<StorageListModel>>(){},
                 new TypeLiteral<SearchPanelView<StorageListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<StorageDomain, StorageListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<StorageDomain>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<StorageDomain, StorageListModel>>(){});
 
         // Cluster
         bindPresenter(ClusterSubTabPanelPresenter.class,
@@ -907,6 +922,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<Cluster, ClusterListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ClusterListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelView<ClusterListModel<Void>>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<Cluster, ClusterListModel<Void>>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<Cluster>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<Cluster, ClusterListModel<Void>>>(){});
 
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,
@@ -961,6 +980,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<VDS, HostListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<HostListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelView<HostListModel<Void>>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<VDS, HostListModel<Void>>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<VDS>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<VDS, HostListModel<Void>>>(){});
         bindPresenter(SubTabHostAffinityLabelPresenter.class,
                 SubTabHostAffinityLabelPresenter.ViewDef.class,
                 SubTabHostAffinityLabelView.class,
@@ -1027,6 +1050,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<VM, VmListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VmListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelView<VmListModel<Void>>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<VM, VmListModel<Void>>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<VM>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<VM, VmListModel<Void>>>(){});
         bindPresenter(SubTabVirtualMachineAffinityLabelPresenter.class,
                 SubTabVirtualMachineAffinityLabelPresenter.ViewDef.class,
                 SubTabVirtualMachineAffinityLabelView.class,
@@ -1059,6 +1086,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<VmPool, PoolListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<PoolListModel>>(){},
                 new TypeLiteral<SearchPanelView<PoolListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<VmPool, PoolListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<VmPool>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<VmPool, PoolListModel>>(){});
 
         // Template
         bindPresenter(TemplateSubTabPanelPresenter.class,
@@ -1097,6 +1128,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<VmTemplate, TemplateListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<TemplateListModel>>(){},
                 new TypeLiteral<SearchPanelView<TemplateListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<VmTemplate, TemplateListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<VmTemplate>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<VmTemplate, TemplateListModel>>(){});
 
         // User
         bindPresenter(UserSubTabPanelPresenter.class,
@@ -1131,6 +1166,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<DbUser, UserListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<UserListModel>>(){},
                 new TypeLiteral<SearchPanelView<UserListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<DbUser, UserListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<DbUser>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<DbUser, UserListModel>>(){});
 
         // Quota
         bindPresenter(QuotaSubTabPanelPresenter.class,
@@ -1169,6 +1208,9 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<Quota, QuotaListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<QuotaListModel>>(){},
                 new TypeLiteral<SearchPanelView<QuotaListModel>>(){});
+        bindPresenterWidget(QuotaBreadCrumbsPresenterWidget.class,
+                QuotaBreadCrumbsPresenterWidget.QuotaBreadCrumbsViewDef.class,
+                QuotaBreadCrumbsView.class);
 
         // Disk
         bindPresenter(DiskSubTabPanelPresenter.class,
@@ -1199,6 +1241,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<Disk, DiskListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<DiskListModel>>(){},
                 new TypeLiteral<SearchPanelView<DiskListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<Disk, DiskListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<Disk>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<Disk, DiskListModel>>(){});
 
         // Network
         bindPresenter(NetworkSubTabPanelPresenter.class,
@@ -1241,6 +1287,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<NetworkView, NetworkListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<NetworkListModel>>(){},
                 new TypeLiteral<SearchPanelView<NetworkListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<NetworkView>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<NetworkView, NetworkListModel>>(){});
 
         // Provider
         bindPresenter(ProviderSubTabPanelPresenter.class,
@@ -1263,6 +1313,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<Provider, ProviderListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<ProviderListModel>>(){},
                 new TypeLiteral<SearchPanelView<ProviderListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<Provider, ProviderListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<Provider>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<Provider, ProviderListModel>>(){});
 
         // Errata
         bindPresenter(ErrataSubTabPanelPresenter.class,
@@ -1273,6 +1327,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabEngineErrataDetailsPresenter.ViewDef.class,
                 SubTabEngineErrataDetailsView.class,
                 SubTabEngineErrataDetailsPresenter.ProxyDef.class);
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<Erratum, EngineErrataListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<Erratum>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<Erratum, EngineErrataListModel>>(){});
 
         // Profile
         bindPresenter(VnicProfileSubTabPanelPresenter.class,
@@ -1291,18 +1349,30 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVnicProfileTemplatePresenter.ViewDef.class,
                 SubTabVnicProfileTemplateView.class,
                 SubTabVnicProfileTemplatePresenter.ProxyDef.class);
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<VnicProfileView, VnicProfileListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<VnicProfileView>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<VnicProfileView, VnicProfileListModel>>(){});
 
         // User Sessions
         bindSingletonPresenterWidget(
                 new TypeLiteral<SearchPanelPresenterWidget<UserSession, SessionListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<SessionListModel>>(){},
                 new TypeLiteral<SearchPanelView<SessionListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<UserSession, SessionListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<UserSession>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<UserSession, SessionListModel>>(){});
 
         // Volume
         bindSingletonPresenterWidget(
                 new TypeLiteral<SearchPanelPresenterWidget<GlusterVolumeEntity, VolumeListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<VolumeListModel>>(){},
                 new TypeLiteral<SearchPanelView<VolumeListModel>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<GlusterVolumeEntity, VolumeListModel>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<GlusterVolumeEntity>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<GlusterVolumeEntity, VolumeListModel>>(){});
 
         // Main section: popups
 
@@ -1773,6 +1843,10 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<AuditLog, EventListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<EventListModel<Void>>>(){},
                 new TypeLiteral<SearchPanelView<EventListModel<Void>>>(){});
+        bindPresenterWidget(
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<AuditLog, EventListModel<Void>>>(){},
+                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<AuditLog>>(){},
+                new TypeLiteral<OvirtBreadCrumbsView<AuditLog, EventListModel<Void>>>(){});
 
         // Provider
         bindPresenterWidget(ProviderPopupPresenterWidget.class,
@@ -1840,4 +1914,9 @@ public class PresenterModule extends BasePresenterModule {
         bind(view).to(viewImpl).in(Singleton.class);
     }
 
+    <P extends PresenterWidget<?>, V extends View> void bindPresenterWidget(
+            TypeLiteral<P> presenterImpl, TypeLiteral<V> view, TypeLiteral<? extends V> viewImpl) {
+        bind(presenterImpl);
+        bind(view).to(viewImpl);
+    }
 }

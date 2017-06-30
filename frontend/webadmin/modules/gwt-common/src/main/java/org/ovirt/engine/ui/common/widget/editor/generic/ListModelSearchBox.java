@@ -60,7 +60,6 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
 
     private String currentSearch;
 
-    private SelectionModel<? super T> selectionModel;
     private final MainModelProvider<T, M> listModelProvider;
     private int currentFocusIndex = -1;
 
@@ -151,7 +150,6 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
         M listModel = listModelProvider.getModel();
         for (T model: listModel.getItems()) {
             if(getName(model).asString().equals(name)) {
-                selectionModel.setSelected(model, true);
                 for (ListModelSelectedCallback<T> callback: this.callbacks) {
                     callback.modelSelected(model);
                 }
@@ -283,7 +281,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
 
     @Override
     public void setSelectionModel(SelectionModel<? super T> selectionModel) {
-        this.selectionModel = selectionModel;
+        // No-op we use the search models own selection model. Just here to satisfy the interface contract.
     }
 
     @Override

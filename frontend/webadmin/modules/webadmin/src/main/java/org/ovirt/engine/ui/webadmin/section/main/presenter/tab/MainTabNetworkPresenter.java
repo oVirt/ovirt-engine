@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -64,7 +64,7 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
             PlaceManager placeManager,
             MainModelProvider<NetworkView, NetworkListModel> modelProvider,
             SearchPanelPresenterWidget<NetworkView, NetworkListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<NetworkView, NetworkListModel> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 

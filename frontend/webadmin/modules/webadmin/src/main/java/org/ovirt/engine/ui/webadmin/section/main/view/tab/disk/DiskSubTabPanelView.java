@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.disk;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -21,7 +21,7 @@ public class DiskSubTabPanelView extends AbstractSubTabPanelView implements Disk
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public DiskSubTabPanelView(OvirtBreadCrumbs<Disk, DiskListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public DiskSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Disk, DiskListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

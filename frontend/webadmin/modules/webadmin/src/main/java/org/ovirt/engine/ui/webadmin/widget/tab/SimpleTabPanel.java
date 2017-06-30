@@ -4,7 +4,7 @@ import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.NavTabs;
 import org.gwtbootstrap3.client.ui.constants.Styles;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
@@ -35,7 +35,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
     @UiField
     FlowPanel tabContainer;
 
-    final OvirtBreadCrumbs<?, ?> breadCrumbs;
+    final OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs;
 
     @UiField
     Column breadCrumbsContainer;
@@ -44,7 +44,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
     private NavTabs navTabs;
     private HandlerRegistration keyHandler;
 
-    public SimpleTabPanel(OvirtBreadCrumbs<?, ?> breadCrumbs, DetailTabLayout tabLayout) {
+    public SimpleTabPanel(OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs, DetailTabLayout tabLayout) {
         navTabs = createPatternFlyNavTabs();
         this.tabLayout = tabLayout;
         this.breadCrumbs = breadCrumbs;
@@ -88,7 +88,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
                             if (nativeEvent.getCtrlKey() && nativeEvent.getAltKey()) {
                                 nativeEvent.preventDefault();
                                 nativeEvent.stopPropagation();
-                                SimpleTabPanel.this.breadCrumbs.toggleSearchWidget();
+                                SimpleTabPanel.this.breadCrumbs.toggleSearch();
                                 event.cancel();
                             }
                         } else if (!SimpleTabPanel.this.breadCrumbs.isSearchVisible() && nativeEvent.getKeyCode() == KeyCodes.KEY_DOWN) {
@@ -139,9 +139,6 @@ public class SimpleTabPanel extends AbstractTabPanel {
                     item.removeStyleName(Styles.ACTIVE);
                 }
             }
-        }
-        if (breadCrumbs != null) {
-            breadCrumbs.setActiveSubTab(title);
         }
     }
 

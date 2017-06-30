@@ -77,7 +77,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             @Override
             public void update(int index, DbUser user, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {
@@ -103,7 +103,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             @Override
             public void update(int index, DbUser user, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

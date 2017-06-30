@@ -45,7 +45,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
             @Override
             public void update(int index, Provider provider, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

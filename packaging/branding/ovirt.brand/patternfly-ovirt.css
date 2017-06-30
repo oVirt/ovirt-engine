@@ -206,3 +206,11 @@
   margin-bottom: 10px;
 }
 
+.quickswitch > i {
+  color: #0088ce;
+}
+
+.quickswitch {
+  margin-left: 9px;
+}
+

@@ -44,7 +44,7 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
             @Override
             public void update(int index, VnicProfileView vnicProfile, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

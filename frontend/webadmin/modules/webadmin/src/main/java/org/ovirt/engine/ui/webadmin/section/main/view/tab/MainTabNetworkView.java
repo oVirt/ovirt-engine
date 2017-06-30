@@ -65,7 +65,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             @Override
             public void update(int index, NetworkView network, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

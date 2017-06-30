@@ -46,7 +46,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
             @Override
             public void update(int index, VmPool pool, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

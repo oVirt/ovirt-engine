@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -60,7 +60,7 @@ public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresen
     public MainTabDataCenterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<StoragePool, DataCenterListModel> modelProvider,
             SearchPanelPresenterWidget<StoragePool, DataCenterListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<StoragePool, DataCenterListModel> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<StoragePool, DataCenterListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 

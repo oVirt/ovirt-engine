@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -57,7 +57,7 @@ public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPrese
     @Inject
     public MainTabVnicProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VnicProfileView, VnicProfileListModel> modelProvider,
-            OvirtBreadCrumbs<VnicProfileView, VnicProfileListModel> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<VnicProfileView, VnicProfileListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, null, breadCrumbs);
     }
 

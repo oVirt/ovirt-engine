@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -59,7 +59,7 @@ public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter
     public MainTabClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Cluster, ClusterListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<Cluster, ClusterListModel<Void>> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<Cluster, ClusterListModel<Void>> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<Cluster, ClusterListModel<Void>> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 

@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -66,7 +66,7 @@ public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPres
     @Inject
     public MainTabEngineErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Erratum, EngineErrataListModel> modelErrata,
-            OvirtBreadCrumbs<Erratum, EngineErrataListModel> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<Erratum, EngineErrataListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelErrata, null, breadCrumbs);
     }
 

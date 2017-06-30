@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -51,7 +51,7 @@ public class MainTabSessionPresenter extends AbstractMainTabWithDetailsPresenter
             PlaceManager placeManager,
             MainModelProvider<UserSession, SessionListModel> modelProvider,
             SearchPanelPresenterWidget<UserSession, SessionListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<UserSession, SessionListModel> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<UserSession, SessionListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 

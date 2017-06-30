@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -22,7 +22,7 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public NetworkSubTabPanelView(OvirtBreadCrumbs<NetworkView, NetworkListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public NetworkSubTabPanelView(OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

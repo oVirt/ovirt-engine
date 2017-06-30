@@ -89,7 +89,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             @Override
             public void update(int index, VM vm, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

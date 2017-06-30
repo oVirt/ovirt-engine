@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -60,7 +60,7 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
     public MainTabEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<AuditLog, EventListModel<Void>> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<AuditLog, EventListModel<Void>> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<AuditLog, EventListModel<Void>> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 
@@ -75,7 +75,7 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
     }
 
     @Override
-    public void handlePlaceTransition() {
+    public void handlePlaceTransition(boolean linkClicked) {
         // No-op, Event main tab has no sub tabs
     }
 

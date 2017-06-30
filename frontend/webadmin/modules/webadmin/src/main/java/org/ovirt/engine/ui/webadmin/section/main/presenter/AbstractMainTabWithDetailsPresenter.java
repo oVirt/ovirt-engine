@@ -5,8 +5,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ApplySearchStringEvent;
@@ -46,15 +46,16 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
 
     public interface ViewDef<T> extends View, HasActionTable<T> {
         void setDetailPlaceTransitionHandler(DetailsTransitionHandler<T> handler);
-        void setBreadCrumbs(OvirtBreadCrumbs<T, ?> breadCrumbs);
     }
 
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetSearchPanel = new Type<>();
 
-    private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
+    @ContentSlot
+    public static final Type<RevealContentHandler<?>> TYPE_SetBreadCrumbs = new Type<>();
 
-    private final OvirtBreadCrumbs<T, M> breadCrumbs;
+    private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
+    private final OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget;
 
     @Inject
     private SearchStringCollector searchStringCollector;
@@ -62,10 +63,11 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     public AbstractMainTabWithDetailsPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
             SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<T, M> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget) {
         super(eventBus, view, proxy, placeManager, modelProvider);
         this.searchPanelPresenterWidget = searchPanelPresenterWidget;
-        this.breadCrumbs = breadCrumbs;
+        this.breadCrumbsPresenterWidget = breadCrumbsPresenterWidget;
+        this.breadCrumbsPresenterWidget.hideSelectedName();
     }
 
     @Override
@@ -85,8 +87,10 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
                     // Let others know that the table selection has changed
                     fireTableSelectionChangeEvent();
 
-                    if (!isVisible()) {
-                        handlePlaceTransition();
+                    // We need to be visible so we don't display ourselves when the detail tabs
+                    // quick switch search is run.
+                    if (isVisible()) {
+                        handlePlaceTransition(false);
                     }
                 }));
         registerHandler(getEventBus().addHandler(ApplySearchStringEvent.getType(), event -> {
@@ -114,15 +118,15 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         }
     }
 
-    public void handlePlaceTransition() {
-        if (hasSelection() && hasSelectionDetails()) {
+    @Override
+    public void handlePlaceTransition(boolean linkClicked) {
+        if (hasSelection() && hasSelectionDetails() && linkClicked) {
             // Sub tab panel is shown upon revealing the sub tab, in order to avoid
             // the 'flicker' effect due to the panel still showing previous content
             placeManager.revealPlace(getSubTabRequest());
         } else {
             // Hide sub tab panel when there is nothing selected
             setSubTabPanelVisible(false);
-            getBreadCrumbs().clearActiveSubTab();
             placeManager.revealPlace(getMainTabRequest());
         }
     }
@@ -136,12 +140,9 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         super.onReveal();
 
         setSubTabPanelVisible(false);
-        getBreadCrumbs().clearActiveSubTab();
         getTable().resetScrollPosition();
-        getView().setBreadCrumbs(getBreadCrumbs());
-        if (hasSearchPanelPresenterWidget()) {
-            setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
-        }
+        setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
+        setInSlot(TYPE_SetBreadCrumbs, breadCrumbsPresenterWidget);
     }
 
     /**
@@ -180,17 +181,11 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         return searchPanelPresenterWidget;
     }
 
-    public boolean hasSearchPanelPresenterWidget() {
-        return getSearchPanelPresenterWidget() != null;
-    }
-
-    public OvirtBreadCrumbs<T, M> getBreadCrumbs() {
-        return breadCrumbs;
+    public OvirtBreadCrumbsPresenterWidget<T, M> getBreadCrumbs() {
+        return breadCrumbsPresenterWidget;
     }
 
     protected void setTags(List<TagModel> tags) {
-        if (hasSearchPanelPresenterWidget()) {
-            searchPanelPresenterWidget.setTags(tags);
-        }
+        searchPanelPresenterWidget.setTags(tags);
     }
 }

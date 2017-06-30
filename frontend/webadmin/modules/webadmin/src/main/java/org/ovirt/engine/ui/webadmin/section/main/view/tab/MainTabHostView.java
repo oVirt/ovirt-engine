@@ -101,7 +101,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
                 @Override
                 public void update(int index, VDS host, String value) {
-                    transitionHandler.handlePlaceTransition();
+                    transitionHandler.handlePlaceTransition(true);
                 }
 
             }) {

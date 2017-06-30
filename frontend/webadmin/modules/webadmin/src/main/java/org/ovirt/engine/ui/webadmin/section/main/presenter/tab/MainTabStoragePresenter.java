@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -59,7 +59,7 @@ public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter
     public MainTabStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<StorageDomain, StorageListModel> dataProvider,
             SearchPanelPresenterWidget<StorageDomain, StorageListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<StorageDomain, StorageListModel> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<StorageDomain, StorageListModel> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, dataProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 

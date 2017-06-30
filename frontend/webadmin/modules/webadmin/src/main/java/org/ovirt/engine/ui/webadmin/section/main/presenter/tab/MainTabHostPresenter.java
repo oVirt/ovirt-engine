@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -65,7 +65,7 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
     public MainTabHostPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VDS, HostListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<VDS, HostListModel<Void>> searchPanelPresenterWidget,
-            OvirtBreadCrumbs<VDS, HostListModel<Void>> breadCrumbs) {
+            OvirtBreadCrumbsPresenterWidget<VDS, HostListModel<Void>> breadCrumbs) {
         super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
     }
 

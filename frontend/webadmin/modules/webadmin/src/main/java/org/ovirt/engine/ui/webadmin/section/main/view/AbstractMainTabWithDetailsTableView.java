@@ -13,7 +13,6 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.gwtbootstrap3.client.ui.html.UnorderedList;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
@@ -84,6 +83,13 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
             if (content != null) {
                 actionPanel.setSearchPanel(content);
                 actionPanel.setVisible(true);
+            } else {
+                actionPanel.setVisible(false);
+            }
+        } else if (slot == AbstractMainTabWithDetailsPresenter.TYPE_SetBreadCrumbs) {
+            breadCrumbsColumn.clear();
+            if (content != null) {
+                breadCrumbsColumn.add(content);
             }
         } else {
             super.setInSlot(slot, content);
@@ -148,14 +154,6 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
             resultList.add(tagItem);
         }
         resultRow.setVisible(!tags.isEmpty());
-    }
-
-    @Override
-    public void setBreadCrumbs(OvirtBreadCrumbs<T, ?> breadCrumbs) {
-        if (breadCrumbsColumn != null) {
-            breadCrumbsColumn.clear();
-            breadCrumbsColumn.add(breadCrumbs);
-        }
     }
 
     protected void addButtonToActionGroup(ActionButton button) {

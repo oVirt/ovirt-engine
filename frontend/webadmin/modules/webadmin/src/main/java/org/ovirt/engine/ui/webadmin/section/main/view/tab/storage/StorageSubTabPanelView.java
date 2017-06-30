@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
+import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -22,7 +22,7 @@ public class StorageSubTabPanelView extends AbstractSubTabPanelView implements S
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public StorageSubTabPanelView(OvirtBreadCrumbs<StorageDomain, StorageListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public StorageSubTabPanelView(OvirtBreadCrumbsPresenterWidget<StorageDomain, StorageListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

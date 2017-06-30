@@ -52,7 +52,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Clus
             @Override
             public void update(int index, Cluster cluster, String value) {
                 //The link was clicked, now fire an event to switch to details.
-                transitionHandler.handlePlaceTransition();
+                transitionHandler.handlePlaceTransition(true);
             }
 
         }) {

@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -35,7 +34,6 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -61,7 +59,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
 
                 @Override
                 public void update(int index, StoragePool storagePool, String value) {
-                    transitionHandler.handlePlaceTransition();
+                    transitionHandler.handlePlaceTransition(true);
                 }
             }) {
             @Override
