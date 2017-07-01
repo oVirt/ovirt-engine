@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.action.gluster.SetUpPasswordLessSSHParameter
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -37,7 +37,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
 
     @SuppressWarnings("unchecked")
     private List<String> readPubKey(Guid upServerId) {
-        VdcQueryReturnValue readPubKeyReturnvalue =
+        QueryReturnValue readPubKeyReturnvalue =
                 runInternalQuery(QueryType.GetGlusterHostPublicKeys, new IdQueryParameters(upServerId));
         if (readPubKeyReturnvalue.getSucceeded()) {
             return (List<String>) readPubKeyReturnvalue.getReturnValue();

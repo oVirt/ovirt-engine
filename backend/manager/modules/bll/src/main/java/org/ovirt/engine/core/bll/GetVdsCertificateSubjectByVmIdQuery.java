@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
@@ -26,7 +26,7 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> e
     @Override
     protected void executeQueryCommand() {
         // Initially we set the command as failed:
-        VdcQueryReturnValue queryReturnValue = getQueryReturnValue();
+        QueryReturnValue queryReturnValue = getQueryReturnValue();
         queryReturnValue.setSucceeded(false);
 
         // Check if the virtual machine is running on a host, and if does then retrieve the host and copy the subject

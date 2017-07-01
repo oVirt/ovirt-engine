@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -220,7 +220,7 @@ public abstract class VnicProfileModel extends Model {
     private void populateDataCenters(Guid dcId) {
         if (dcId == null) {
             SearchParameters tempVar = new SearchParameters("DataCenter:", SearchType.StoragePool); // $NON-NLS-1$
-            Frontend.getInstance().runQuery(QueryType.Search, tempVar, new AsyncQuery<VdcQueryReturnValue>(
+            Frontend.getInstance().runQuery(QueryType.Search, tempVar, new AsyncQuery<QueryReturnValue>(
                     returnValue -> getDataCenters().setItems(returnValue.getReturnValue())));
         } else {
             AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery<StoragePool>(
@@ -233,7 +233,7 @@ public abstract class VnicProfileModel extends Model {
         startProgress();
 
         IdQueryParameters queryParams = new IdQueryParameters(dataCenterId);
-        Frontend.getInstance().runQuery(QueryType.GetAllNetworks, queryParams, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetAllNetworks, queryParams, new AsyncQuery<QueryReturnValue>(returnValue -> {
             Collection<Network> networks = returnValue.getReturnValue();
 
             getNetwork().setItems(networks);
@@ -337,7 +337,7 @@ public abstract class VnicProfileModel extends Model {
         startProgress();
         Frontend.getInstance().runQuery(QueryType.GetDeviceCustomProperties,
                 params,
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                             if (returnValue != null) {
                                 Map<String, String> customPropertiesList = returnValue.getReturnValue();
 
@@ -369,7 +369,7 @@ public abstract class VnicProfileModel extends Model {
     private void initNetworkFilterList(Version dcCompatibilityVersion) {
         Frontend.getInstance().runQuery(QueryType.GetAllSupportedNetworkFiltersByVersion,
                 new VersionQueryParameters(dcCompatibilityVersion),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<NetworkFilter> networkFilters =
                             new ArrayList((Collection<NetworkFilter>) returnValue.getReturnValue());
                     networkFilters.add(EMPTY_FILTER);

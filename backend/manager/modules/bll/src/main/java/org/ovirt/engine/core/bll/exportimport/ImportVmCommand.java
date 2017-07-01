@@ -81,8 +81,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
@@ -424,7 +424,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      */
     @SuppressWarnings("unchecked")
     protected List<VM> getVmsFromExportDomain() {
-        VdcQueryReturnValue qRetVal = runInternalQuery(
+        QueryReturnValue qRetVal = runInternalQuery(
                 QueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(
                         getParameters().getStoragePoolId(),
@@ -626,7 +626,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return true;
         }
 
-        VdcQueryReturnValue qRetVal = runInternalQuery(
+        QueryReturnValue qRetVal = runInternalQuery(
                 QueryType.GetTemplatesFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getParameters().getStoragePoolId(),
                         getParameters().getSourceDomainId()));

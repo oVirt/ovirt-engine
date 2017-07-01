@@ -31,9 +31,9 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -720,7 +720,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                                 true,
                                 unkownStatusLuns,
                                 false),
-                        new AsyncQuery<VdcQueryReturnValue>(response -> {
+                        new AsyncQuery<QueryReturnValue>(response -> {
                             if (response.getSucceeded()) {
                                 List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
                                 postGetLunsMessages(sanStorageModelBase.getUsedLunsMessages(checkedLuns));

@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -302,7 +302,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
 
         param.setClusterId(cluster.getId());
 
-        Frontend.getInstance().runQuery(QueryType.GetFenceAgentStatus, param, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetFenceAgentStatus, param, new AsyncQuery<QueryReturnValue>(returnValue -> {
             String msg;
             if (returnValue == null) {
                 msg = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();

@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.HasErrata;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -79,7 +79,7 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
     }
 
     private void runQuery(Guid guid) {
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             if (returnValue.getSucceeded()) {
                 ErrataData errataData = returnValue.getReturnValue();
                 unfilteredResultList = errataData.getErrata();

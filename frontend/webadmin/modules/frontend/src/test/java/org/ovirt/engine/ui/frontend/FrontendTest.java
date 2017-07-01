@@ -26,9 +26,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
@@ -322,7 +322,7 @@ public class FrontendTest {
         QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
-        VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue mockReturnValue = new QueryReturnValue();
         mockReturnValue.setExceptionString("Fake failure for test"); //$NON-NLS-1$
         // Return value set to failure
         mockReturnValue.setSucceeded(false);
@@ -347,7 +347,7 @@ public class FrontendTest {
         QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
-        VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue mockReturnValue = new QueryReturnValue();
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
         // Return value set to failure
         mockReturnValue.setSucceeded(false);
@@ -376,7 +376,7 @@ public class FrontendTest {
         QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
-        VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue mockReturnValue = new QueryReturnValue();
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
         // Return value set to failure
         mockReturnValue.setSucceeded(false);
@@ -403,7 +403,7 @@ public class FrontendTest {
         QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
-        VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue mockReturnValue = new QueryReturnValue();
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);
         verify(mockAsyncCallback).onSuccess(mockReturnValue);
@@ -430,7 +430,7 @@ public class FrontendTest {
         QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
-        VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue mockReturnValue = new QueryReturnValue();
         mockReturnValue.setReturnValue(mockResultModel);
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
         when(mockConverter.convert(mockResultModel)).thenReturn(mockConvertedModel);
@@ -460,7 +460,7 @@ public class FrontendTest {
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
-        VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue mockReturnValue = new QueryReturnValue();
         mockReturnValue.setExceptionString("USER_IS_NOT_LOGGED_IN"); //$NON-NLS-1$
         // Return value set to success
         mockReturnValue.setSucceeded(true);
@@ -596,14 +596,14 @@ public class FrontendTest {
                 eq(queryParamsList),
                 callbackMultipleQueries.capture());
         // Call the failure handler.
-        List<VdcQueryReturnValue> result = new ArrayList<>();
-        result.add(new VdcQueryReturnValue());
+        List<QueryReturnValue> result = new ArrayList<>();
+        result.add(new QueryReturnValue());
         result.get(0).setSucceeded(true);
-        result.add(new VdcQueryReturnValue());
+        result.add(new QueryReturnValue());
         result.get(1).setSucceeded(true);
         ArgumentCaptor<FrontendMultipleQueryAsyncResult> multipleResultCaptor =
                 ArgumentCaptor.forClass(FrontendMultipleQueryAsyncResult.class);
-        callbackMultipleQueries.getValue().onSuccess((ArrayList<VdcQueryReturnValue>) result);
+        callbackMultipleQueries.getValue().onSuccess((ArrayList<QueryReturnValue>) result);
         verify(mockMultipleQueryCallback).executed(multipleResultCaptor.capture());
         assertEquals("callback result much match", result, //$NON-NLS-1$
                 multipleResultCaptor.getValue().getReturnValues());
@@ -633,14 +633,14 @@ public class FrontendTest {
         verify(mockService).runMultipleQueries(eq(queryTypeList), eq(queryParamsList),
                 callbackMultipleQueries.capture());
         // Call the failure handler.
-        List<VdcQueryReturnValue> result = new ArrayList<>();
-        result.add(new VdcQueryReturnValue());
+        List<QueryReturnValue> result = new ArrayList<>();
+        result.add(new QueryReturnValue());
         result.get(0).setSucceeded(false);
-        result.add(new VdcQueryReturnValue());
+        result.add(new QueryReturnValue());
         result.get(1).setSucceeded(true);
         ArgumentCaptor<FrontendMultipleQueryAsyncResult> multipleResultCaptor =
                 ArgumentCaptor.forClass(FrontendMultipleQueryAsyncResult.class);
-        callbackMultipleQueries.getValue().onSuccess((ArrayList<VdcQueryReturnValue>) result);
+        callbackMultipleQueries.getValue().onSuccess((ArrayList<QueryReturnValue>) result);
         verify(mockMultipleQueryCallback).executed(multipleResultCaptor.capture());
         assertEquals("callback result much match", result, //$NON-NLS-1$
                 multipleResultCaptor.getValue().getReturnValues());

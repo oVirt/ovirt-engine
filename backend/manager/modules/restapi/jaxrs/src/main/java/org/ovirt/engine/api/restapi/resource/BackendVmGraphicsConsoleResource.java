@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.GetSignedWebsocketProxyTicketParams;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,13 +46,13 @@ public class BackendVmGraphicsConsoleResource
         this.consoleId = consoleId;
     }
 
-    private VdcQueryReturnValue generateDescriptorResponse() throws Exception {
+    private QueryReturnValue generateDescriptorResponse() throws Exception {
         org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType =
             BackendGraphicsConsoleHelper.asGraphicsType(consoleId);
 
         ConsoleOptions consoleOptions = new ConsoleOptions(graphicsType);
         consoleOptions.setVmId(guid);
-        VdcQueryReturnValue configuredOptionsReturnValue = runQuery(
+        QueryReturnValue configuredOptionsReturnValue = runQuery(
             QueryType.ConfigureConsoleOptions,
             new ConfigureConsoleOptionsParams(consoleOptions, true)
         );
@@ -76,7 +76,7 @@ public class BackendVmGraphicsConsoleResource
     @Produces(ApiMediaType.APPLICATION_X_VIRT_VIEWER)
     public Response generateDescriptor() {
         try {
-            VdcQueryReturnValue consoleDescriptorReturnValue = generateDescriptorResponse();
+            QueryReturnValue consoleDescriptorReturnValue = generateDescriptorResponse();
             Response.ResponseBuilder builder;
             if (consoleDescriptorReturnValue.getSucceeded() && consoleDescriptorReturnValue.getReturnValue() != null) {
                 builder = Response.ok(((String) consoleDescriptorReturnValue.getReturnValue())
@@ -93,7 +93,7 @@ public class BackendVmGraphicsConsoleResource
     @Override
     public Response remoteViewerConnectionFile(Action action) {
         try {
-            VdcQueryReturnValue consoleDescriptorReturnValue = generateDescriptorResponse();
+            QueryReturnValue consoleDescriptorReturnValue = generateDescriptorResponse();
             Response.ResponseBuilder builder;
             if (consoleDescriptorReturnValue.getSucceeded() && consoleDescriptorReturnValue.getReturnValue() != null) {
                 action.setRemoteViewerConnectionFile(consoleDescriptorReturnValue.getReturnValue());
@@ -138,7 +138,7 @@ public class BackendVmGraphicsConsoleResource
     private String getTicket(org.ovirt.engine.core.common.businessentities.GraphicsType graphicsTypeEntity) {
         final GetSignedWebsocketProxyTicketParams params =
                 new GetSignedWebsocketProxyTicketParams(guid, graphicsTypeEntity);
-        final VdcQueryReturnValue ticketQueryReturnValue =
+        final QueryReturnValue ticketQueryReturnValue =
                 runQuery(QueryType.GetSignedWebsocketProxyTicket, params);
         if (!ticketQueryReturnValue.getSucceeded()) {
             try {

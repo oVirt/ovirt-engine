@@ -17,7 +17,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
@@ -68,7 +68,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
         doReturn(vm).when(snapshotVmConfigurationHelper).getVmFromConfiguration(
                 anyString(), any(Guid.class), any(Guid.class));
         query.execute();
-        VdcQueryReturnValue returnValue = query.getQueryReturnValue();
+        QueryReturnValue returnValue = query.getQueryReturnValue();
         assertNotNull("Return value from query cannot be null", returnValue);
         VM returnedVm = returnValue.getReturnValue();
         assertEquals(vm, returnedVm);
@@ -78,7 +78,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     public void testNonExistingSnapshotQuery() throws Exception {
         GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
                 setupQueryBySnapshotId(Guid.newGuid());
-        VdcQueryReturnValue returnValue = query.getQueryReturnValue();
+        QueryReturnValue returnValue = query.getQueryReturnValue();
         VM returnedVm = returnValue.getReturnValue();
         assertNull("Return value from non existent query should be null", returnedVm);
     }

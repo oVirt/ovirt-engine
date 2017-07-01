@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 
 import com.google.gwt.event.shared.EventBus;
@@ -54,9 +54,9 @@ public class GWTRPCCommunicationProviderTest {
     @Captor
     ArgumentCaptor<AsyncCallback<List<VdcReturnValueBase>>> actionCallbackList;
     @Captor
-    ArgumentCaptor<AsyncCallback<VdcQueryReturnValue>> queryCallback;
+    ArgumentCaptor<AsyncCallback<QueryReturnValue>> queryCallback;
     @Captor
-    ArgumentCaptor<AsyncCallback<ArrayList<VdcQueryReturnValue>>> queryCallbackList;
+    ArgumentCaptor<AsyncCallback<ArrayList<QueryReturnValue>>> queryCallbackList;
 
     /**
      * The provider under test.
@@ -127,15 +127,15 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationQuery_success() {
         QueryParametersBase testParameters = new QueryParametersBase();
-        final VdcQueryReturnValue testResult = new VdcQueryReturnValue();
+        final QueryReturnValue testResult = new QueryReturnValue();
         final List<VdcOperation<QueryType, QueryParametersBase>> operationList = new ArrayList<>();
         final VdcOperation<QueryType, QueryParametersBase> testOperation =
                 new VdcOperation<>(QueryType.Search, testParameters,
-                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, VdcQueryReturnValue>() {
+                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, QueryReturnValue>() {
 
             @Override
             public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
-                    VdcQueryReturnValue result) {
+                    QueryReturnValue result) {
                 assertEquals("Test results should match", testResult, result); //$NON-NLS-1$
                 assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
             }
@@ -158,11 +158,11 @@ public class GWTRPCCommunicationProviderTest {
         final List<VdcOperation<QueryType, QueryParametersBase>> operationList = new ArrayList<>();
         final VdcOperation<QueryType, QueryParametersBase> testOperation =
                 new VdcOperation<>(QueryType.Search, testParameters,
-                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, VdcQueryReturnValue>() {
+                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, QueryReturnValue>() {
 
             @Override
             public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
-                    VdcQueryReturnValue result) {
+                    QueryReturnValue result) {
                 fail("Should not get here"); //$NON-NLS-1$
             }
 
@@ -366,7 +366,7 @@ public class GWTRPCCommunicationProviderTest {
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), queryCallback.capture());
-        VdcQueryReturnValue testResult = new VdcQueryReturnValue();
+        QueryReturnValue testResult = new QueryReturnValue();
         queryCallback.getValue().onSuccess(testResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testResult);
     }
@@ -402,13 +402,13 @@ public class GWTRPCCommunicationProviderTest {
         List<QueryParametersBase> testParameterList = createQueryParameterList(testParameters, 2);
         List<QueryType> testQueryList = createQueryList(QueryType.Search, 2);
         testProvider.transmitOperationList(testList);
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-        List<VdcQueryReturnValue> resultList = createQueryResultList(returnValue, 2);
-        List<VdcQueryReturnValue> return1List = createQueryResultList(returnValue, 1);
-        List<VdcQueryReturnValue> return2List = createQueryResultList(returnValue, 1);
+        QueryReturnValue returnValue = new QueryReturnValue();
+        List<QueryReturnValue> resultList = createQueryResultList(returnValue, 2);
+        List<QueryReturnValue> return1List = createQueryResultList(returnValue, 1);
+        List<QueryReturnValue> return2List = createQueryResultList(returnValue, 1);
         verify(mockService).runMultipleQueries(eq((ArrayList<QueryType>) testQueryList),
                 (ArrayList<QueryParametersBase>) eq(testParameterList), queryCallbackList.capture());
-        queryCallbackList.getValue().onSuccess((ArrayList<VdcQueryReturnValue>) resultList);
+        queryCallbackList.getValue().onSuccess((ArrayList<QueryReturnValue>) resultList);
         verify(mockOperationCallbackList1).onSuccess(eq(operation1List), eq(return1List));
         verify(mockOperationCallbackList2).onSuccess(eq(operation2List), eq(return2List));
     }
@@ -451,7 +451,7 @@ public class GWTRPCCommunicationProviderTest {
         operationList.add(testOperation2);
         testProvider.transmitOperationList(operationList);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testQueryParameters), queryCallback.capture());
-        VdcQueryReturnValue testQueryResult = new VdcQueryReturnValue();
+        QueryReturnValue testQueryResult = new QueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
         VdcReturnValueBase testActionResult = new VdcReturnValueBase();
@@ -470,7 +470,7 @@ public class GWTRPCCommunicationProviderTest {
         operationList.add(testOperation1);
         testProvider.transmitOperationList(operationList);
         verify(mockService).runPublicQuery(eq(QueryType.Search), eq(testQueryParameters), queryCallback.capture());
-        VdcQueryReturnValue testQueryResult = new VdcQueryReturnValue();
+        QueryReturnValue testQueryResult = new QueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
     }
@@ -487,14 +487,14 @@ public class GWTRPCCommunicationProviderTest {
         operationList.add(testOperation2);
         testProvider.transmitOperationList(operationList);
         verify(mockService).runPublicQuery(eq(QueryType.Search), eq(testQueryParameters), queryCallback.capture());
-        VdcQueryReturnValue testQueryResult = new VdcQueryReturnValue();
+        QueryReturnValue testQueryResult = new QueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
 
         verify(mockService).runPublicQuery(eq(QueryType.GetConfigurationValues),
                 eq(testQueryParameters),
                 queryCallback.capture());
-        testQueryResult = new VdcQueryReturnValue();
+        testQueryResult = new QueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle2).onSuccess(testOperation2, testQueryResult);
     }
@@ -533,8 +533,8 @@ public class GWTRPCCommunicationProviderTest {
         return result;
     }
 
-    private List<VdcQueryReturnValue> createQueryResultList(final VdcQueryReturnValue resultValue, int count) {
-        List<VdcQueryReturnValue> result = new ArrayList<>();
+    private List<QueryReturnValue> createQueryResultList(final QueryReturnValue resultValue, int count) {
+        List<QueryReturnValue> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(resultValue);
         }

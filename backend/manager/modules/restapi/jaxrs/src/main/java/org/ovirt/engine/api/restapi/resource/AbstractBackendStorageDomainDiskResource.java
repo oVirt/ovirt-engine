@@ -12,8 +12,8 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AbstractBackendStorageDomainDiskResource
@@ -32,7 +32,7 @@ public class AbstractBackendStorageDomainDiskResource
         Disk disk;
         boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED, true, false);
         if (unregistered) {
-            VdcQueryReturnValue result = runQuery(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
+            QueryReturnValue result = runQuery(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
             if (!result.getSucceeded() || result.getReturnValue() == null) {
                 Guid dataCenterId = BackendDataCenterHelper.lookupByStorageDomainId(this, storageDomainId);
                 disk = performGet(

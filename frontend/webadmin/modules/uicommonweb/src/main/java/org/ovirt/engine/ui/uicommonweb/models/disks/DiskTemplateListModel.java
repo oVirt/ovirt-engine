@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -41,7 +41,7 @@ public class DiskTemplateListModel extends SearchableListModel<DiskImage, VmTemp
         IdQueryParameters getVmTemplatesByImageGuidParameters = new IdQueryParameters(diskImage.getImageId());
         getVmTemplatesByImageGuidParameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(QueryType.GetVmTemplatesByImageGuid, getVmTemplatesByImageGuidParameters, new AsyncQuery<VdcQueryReturnValue>(
+        Frontend.getInstance().runQuery(QueryType.GetVmTemplatesByImageGuid, getVmTemplatesByImageGuidParameters, new AsyncQuery<QueryReturnValue>(
                 returnValue -> {
                     HashMap<Boolean, VmTemplate> map = returnValue.getReturnValue();
                     List<VmTemplate> templates = new ArrayList<>();

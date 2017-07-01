@@ -56,8 +56,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -381,7 +381,7 @@ public class BackendHostResourceTest
         Action action = new Action();
         action.setIscsi(iscsiDetails);
 
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         queryResult.setSucceeded(true);
 
         when(backend.runQuery(eq(QueryType.DiscoverSendTargets),

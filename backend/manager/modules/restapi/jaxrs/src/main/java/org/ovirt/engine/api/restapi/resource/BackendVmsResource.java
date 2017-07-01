@@ -87,8 +87,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
@@ -603,7 +603,7 @@ public class BackendVmsResource extends
             // Fill VmInit for entities - the search query no join the VmInit to Vm
             IdsQueryParameters params = new IdsQueryParameters();
             params.setId(vmIds);
-            VdcQueryReturnValue queryReturnValue = runQuery(QueryType.GetVmsInit, params);
+            QueryReturnValue queryReturnValue = runQuery(QueryType.GetVmsInit, params);
             if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
                 List<VmInit> vmInits = queryReturnValue.getReturnValue();
                 Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
@@ -685,7 +685,7 @@ public class BackendVmsResource extends
     }
 
     protected Vm setVmOvfConfiguration (Vm model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        VdcQueryReturnValue queryReturnValue =
+        QueryReturnValue queryReturnValue =
                 runQuery(QueryType.GetVmOvfByVmId,
                         new GetVmOvfByVmIdParameters(entity.getId(), entity.getDbGeneration()));
 

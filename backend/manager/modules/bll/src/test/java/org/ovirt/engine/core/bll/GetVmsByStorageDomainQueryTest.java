@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -43,7 +43,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
 
         when(vmDao.getAllForStorageDomain(domainId)).thenReturn(vmsOfDomain);
 
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(true);
         List<DiskImage> diskImages = new ArrayList<>();
         returnValue.setReturnValue(diskImages);
@@ -61,7 +61,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
 
         when(vmDao.getAllForStorageDomain(domainId)).thenReturn(vmsOfDomain);
 
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(true);
         List<DiskImage> diskImages = new ArrayList<>();
         returnValue.setReturnValue(diskImages);
@@ -86,7 +86,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
 
         when(vmDao.getAllForStorageDomain(domainId)).thenReturn(vmsOfDomain);
 
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(true);
         List<DiskImage> diskImages = new ArrayList<>();
         DiskImage d1 = mock(DiskImage.class);

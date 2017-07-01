@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExportDomainDiskResourceTest
@@ -133,7 +133,7 @@ public class BackendExportDomainDiskResourceTest
             Object[] queryValues,
             Object queryReturn,
             Object failure) {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         queryResult.setSucceeded(failure == null);
         if (failure == null) {
             queryResult.setReturnValue(queryReturn);

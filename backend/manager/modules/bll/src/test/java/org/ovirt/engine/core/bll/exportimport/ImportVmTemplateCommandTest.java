@@ -49,8 +49,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -217,7 +217,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     }
 
     private void mockGetTemplatesFromExportDomainQuery(VolumeFormat volumeFormat, VolumeType volumeType) {
-        final VdcQueryReturnValue result = new VdcQueryReturnValue();
+        final QueryReturnValue result = new QueryReturnValue();
         Map<VmTemplate, List<DiskImage>> resultMap = new HashMap<>();
 
         DiskImage image = new DiskImage();

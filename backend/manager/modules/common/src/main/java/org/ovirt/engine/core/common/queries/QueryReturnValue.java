@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.HasCorrelationId;
  * object itself to carry any additional data.
  * </p>
  */
-public final class VdcQueryReturnValue implements Serializable, HasCorrelationId {
+public final class QueryReturnValue implements Serializable, HasCorrelationId {
     private static final long serialVersionUID = -8111910149841490393L;
 
     private boolean succeeded;

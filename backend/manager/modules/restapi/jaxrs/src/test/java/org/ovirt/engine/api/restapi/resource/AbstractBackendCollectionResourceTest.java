@@ -30,9 +30,9 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -177,7 +177,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     }
 
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         SearchParameters params = new SearchParameters(prefix + query, searchType);
         queryResult.setSucceeded(failure == null);
         if (failure == null) {
@@ -259,7 +259,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
         }
         if (asyncTasks != null) {
             taskResult.setVdsmTaskIdList(asyncTasks);
-            VdcQueryReturnValue monitorResult = new VdcQueryReturnValue();
+            QueryReturnValue monitorResult = new QueryReturnValue();
             monitorResult.setSucceeded(success);
             monitorResult.setReturnValue(asyncStatuses);
             when(backend.runQuery(eq(QueryType.GetTasksStatusesByTasksIDs),

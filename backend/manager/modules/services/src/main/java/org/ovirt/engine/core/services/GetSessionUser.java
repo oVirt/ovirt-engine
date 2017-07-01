@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +56,7 @@ public class GetSessionUser extends HttpServlet {
 
         log.debug("Calling ValidateSession query");
 
-        VdcQueryReturnValue queryReturnValue = backend.runInternalQuery(QueryType.ValidateSession,
+        QueryReturnValue queryReturnValue = backend.runInternalQuery(QueryType.ValidateSession,
                 new QueryParametersBase(sessionID));
 
         if (queryReturnValue != null) {

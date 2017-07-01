@@ -27,8 +27,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExternalComputeResourceResource
@@ -53,7 +53,7 @@ public class BackendExternalComputeResourceResource
         // The backend doesn't have a way to retrieve a host by ide, so we have to iterate them:
         ProviderQueryParameters parameters = new ProviderQueryParameters();
         parameters.setProvider(provider);
-        VdcQueryReturnValue result = runQuery(QueryType.GetComputeResourceFromExternalProvider, parameters);
+        QueryReturnValue result = runQuery(QueryType.GetComputeResourceFromExternalProvider, parameters);
         List<org.ovirt.engine.core.common.businessentities.ExternalComputeResource> entities =
             result.getReturnValue();
         if (entities != null) {

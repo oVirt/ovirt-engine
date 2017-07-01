@@ -18,7 +18,7 @@ import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
@@ -39,10 +39,10 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
 
     private Guid storageId = Guid.newGuid();
 
-    private VdcQueryReturnValue generateQueryReturnValueForGetDiskImages() {
-        VdcQueryReturnValue vdcQueryReturnValue = new VdcQueryReturnValue();
-        vdcQueryReturnValue.setSucceeded(true);
-        return vdcQueryReturnValue;
+    private QueryReturnValue generateQueryReturnValueForGetDiskImages() {
+        QueryReturnValue queryReturnValue = new QueryReturnValue();
+        queryReturnValue.setSucceeded(true);
+        return queryReturnValue;
     }
 
     @Test
@@ -53,7 +53,7 @@ public class ScanStorageForUnregisteredDisksCommandTest extends BaseCommandTest 
 
     @Before
     public void setUpCommandEntities() throws OvfReaderException {
-        VdcQueryReturnValue vdcRetVal = generateQueryReturnValueForGetDiskImages();
+        QueryReturnValue vdcRetVal = generateQueryReturnValueForGetDiskImages();
         doReturn(vdcRetVal).when(cmd).getUnregisteredDisksFromHost();
 
         List<OvfEntityData> allEntities = new ArrayList<>();

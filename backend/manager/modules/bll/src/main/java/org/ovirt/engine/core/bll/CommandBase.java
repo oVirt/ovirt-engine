@@ -75,8 +75,8 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.ExecutionMethod;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.PersistedCommandContext;
@@ -2306,7 +2306,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
         getReturnValue().setValid(internalReturnValue.isValid());
     }
 
-    protected void propagateFailure(VdcQueryReturnValue internalReturnValue) {
+    protected void propagateFailure(QueryReturnValue internalReturnValue) {
         getReturnValue().getExecuteFailedMessages().add(internalReturnValue.getExceptionString());
     }
 
@@ -2497,7 +2497,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
                 ExecutionHandler.createDefaultContextForTasks(getContext(), lock));
     }
 
-    protected VdcQueryReturnValue runInternalQuery(QueryType type, QueryParametersBase queryParams) {
+    protected QueryReturnValue runInternalQuery(QueryType type, QueryParametersBase queryParams) {
         return getBackend().runInternalQuery(type, queryParams, context.getEngineContext());
     }
 

@@ -11,10 +11,10 @@ import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 
-public class VdcQueryReturnValue_CustomFieldSerializer {
+public class QueryReturnValue_CustomFieldSerializer {
 
     public static void deserialize(SerializationStreamReader streamReader,
-            VdcQueryReturnValue instance) throws SerializationException {
+            QueryReturnValue instance) throws SerializationException {
         instance.setSucceeded(streamReader.readBoolean());
         instance.setExceptionString(streamReader.readString());
 
@@ -51,14 +51,14 @@ public class VdcQueryReturnValue_CustomFieldSerializer {
         }
     }
 
-    public static VdcQueryReturnValue instantiate(
+    public static QueryReturnValue instantiate(
             SerializationStreamReader streamReader)
             throws SerializationException {
-        return new VdcQueryReturnValue();
+        return new QueryReturnValue();
     }
 
     public static void serialize(SerializationStreamWriter streamWriter,
-            VdcQueryReturnValue instance) throws SerializationException {
+            QueryReturnValue instance) throws SerializationException {
         streamWriter.writeBoolean(instance.getSucceeded());
         streamWriter.writeString(instance.getExceptionString());
 

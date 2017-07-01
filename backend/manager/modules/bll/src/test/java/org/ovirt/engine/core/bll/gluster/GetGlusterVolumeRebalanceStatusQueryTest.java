@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskSt
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -211,7 +211,7 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
         doReturn(Guid.Empty).when(getQueryParameters()).getVolumeId();
 
         getQuery().executeQueryCommand();
-        VdcQueryReturnValue returnValue = (VdcQueryReturnValue)getQuery().getReturnValue();
+        QueryReturnValue returnValue = (QueryReturnValue)getQuery().getReturnValue();
         assertEquals(EngineMessage.GLUSTER_VOLUME_ID_INVALID.toString(), returnValue.getExceptionString());
     }
 }

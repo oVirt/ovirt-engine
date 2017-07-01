@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.net.URLBuilder;
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class SsoLogoutServlet extends HttpServlet {
                 try {
                     QueryParametersBase params = new QueryParametersBase(engineSessionId);
                     params.setFiltered(true);
-                    VdcQueryReturnValue retValue = FiltersHelper.getBackend(ctx).runQuery(
+                    QueryReturnValue retValue = FiltersHelper.getBackend(ctx).runQuery(
                             QueryType.GetEngineSessionIdToken,
                             params
                     );

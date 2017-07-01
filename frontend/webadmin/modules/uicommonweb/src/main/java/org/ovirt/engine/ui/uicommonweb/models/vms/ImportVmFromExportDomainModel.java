@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -128,7 +128,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         Frontend.getInstance().runMultipleQueries(queryTypeList,
                 queryParamsList,
                 result -> {
-                    List<VdcQueryReturnValue> returnValueList =
+                    List<QueryReturnValue> returnValueList =
                             result.getReturnValues();
                     boolean noQuota = true;
                     for (int i = 0; i < filteredStorageDomains.size(); i++) {
@@ -206,10 +206,10 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                 queryParamsList.add(new IdQueryParameters(templateId));
             }
             Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {
-                List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+                List<QueryReturnValue> returnValueList = result.getReturnValues();
                 Map<Guid, ArrayList<StorageDomain>> templateDisksStorageDomains =
                         new HashMap<>();
-                for (VdcQueryReturnValue returnValue : returnValueList) {
+                for (QueryReturnValue returnValue : returnValueList) {
                     for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
                         templateDisksStorageDomains.put(diskImage.getImageId(),
                                 getStorageDomainsByIds(diskImage.getStorageIds()));
@@ -267,7 +267,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters(storagePool.getId(), (Guid) getEntity());
         Frontend.getInstance().runQuery(QueryType.GetTemplatesFromExportDomain, tempVar,
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     Map<VmTemplate, List<DiskImage>> dictionary = (HashMap<VmTemplate, List<DiskImage>>) returnValue.getReturnValue();
                     Map<Guid, Guid> tempMap = new HashMap<>();
                     for (Entry<VmTemplate, List<DiskImage>> entry : dictionary.entrySet()) {

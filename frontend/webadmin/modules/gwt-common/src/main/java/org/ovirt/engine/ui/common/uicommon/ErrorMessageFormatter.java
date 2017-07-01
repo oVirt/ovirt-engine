@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.frontend.Message;
@@ -85,10 +85,10 @@ public class ErrorMessageFormatter {
         return msg.toString();
     }
 
-    public static String formatQueryReturnValues(List<VdcQueryReturnValue> values) {
+    public static String formatQueryReturnValues(List<QueryReturnValue> values) {
         StringBuilder msg = new StringBuilder();
 
-        for (VdcQueryReturnValue val : values) {
+        for (QueryReturnValue val : values) {
             msg.append(val.getExceptionString());
         }
 

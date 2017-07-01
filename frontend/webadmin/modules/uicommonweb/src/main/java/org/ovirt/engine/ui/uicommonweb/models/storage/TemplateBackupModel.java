@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericName
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -119,7 +119,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                 new AsyncQuery<>(createGetVmsFromExportDomainCallback()));
     }
 
-    private AsyncCallback<VdcQueryReturnValue> createGetVmsFromExportDomainCallback() {
+    private AsyncCallback<QueryReturnValue> createGetVmsFromExportDomainCallback() {
         return returnValue -> {
             if (returnValue == null || returnValue.getReturnValue() == null || !returnValue.getSucceeded()) {
                 return;
@@ -335,7 +335,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                     StoragePool dataCenter = list.get(0);
                     Frontend.getInstance().runQuery(QueryType.GetTemplatesFromExportDomain,
                             new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
-                                    getEntity().getId()), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+                                    getEntity().getId()), new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
                                         List<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();
                                         Map<VmTemplate, List<DiskImage>> dictionary = returnValue.getReturnValue();
                                         List<VmTemplate> list1 = new ArrayList<>();

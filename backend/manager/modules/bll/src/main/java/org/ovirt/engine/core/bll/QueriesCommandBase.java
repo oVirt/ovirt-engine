@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -34,7 +34,7 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
     private static final String QuerySuffix = "Query";
 
     // get correct return value type
-    private final VdcQueryReturnValue returnValue;
+    private final QueryReturnValue returnValue;
     private final QueryType queryType;
     private DbUser user;
     private final P parameters;
@@ -60,7 +60,7 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
             CorrelationIdTracker.setCorrelationId(parameters.getCorrelationId());
         }
         this.parameters = parameters;
-        returnValue = new VdcQueryReturnValue();
+        returnValue = new QueryReturnValue();
         returnValue.setCorrelationId(parameters.getCorrelationId());
         queryType = initQueryType();
         this.engineContext = engineContext == null ? new EngineContext().withSessionId(parameters.getSessionId()) : engineContext;
@@ -175,7 +175,7 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
         return true;
     }
 
-    public VdcQueryReturnValue getQueryReturnValue() {
+    public QueryReturnValue getQueryReturnValue() {
         return returnValue;
     }
 
@@ -226,7 +226,7 @@ public abstract class QueriesCommandBase<P extends QueryParametersBase> extends 
         return getSessionDataContainer().getEngineSessionSeqId(engineContext.getSessionId());
     }
 
-    protected VdcQueryReturnValue runInternalQuery(QueryType actionType, QueryParametersBase parameters) {
+    protected QueryReturnValue runInternalQuery(QueryType actionType, QueryParametersBase parameters) {
         //All internal queries should have refresh set to false, since the decision to refresh the session should
         //be up to the client. All internal queries will not refresh the session.
         parameters.setRefresh(false);

@@ -4,20 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 public final class FrontendMultipleQueryAsyncResult {
     public FrontendMultipleQueryAsyncResult(List<QueryType> queryTypes,
             List<QueryParametersBase> parameters,
-            List<VdcQueryReturnValue> returnValues) {
+            List<QueryReturnValue> returnValues) {
         setQueryTypes(queryTypes);
         setParameters(parameters);
         setReturnValues(returnValues);
     }
 
     public FrontendMultipleQueryAsyncResult() {
-        setReturnValues(new ArrayList<VdcQueryReturnValue>());
+        setReturnValues(new ArrayList<QueryReturnValue>());
     }
 
     private List<QueryType> privateQueryTypes;
@@ -40,13 +40,13 @@ public final class FrontendMultipleQueryAsyncResult {
         privateParameters = value;
     }
 
-    private List<VdcQueryReturnValue> privateReturnValues;
+    private List<QueryReturnValue> privateReturnValues;
 
-    public List<VdcQueryReturnValue> getReturnValues() {
+    public List<QueryReturnValue> getReturnValues() {
         return privateReturnValues;
     }
 
-    private void setReturnValues(List<VdcQueryReturnValue> value) {
+    private void setReturnValues(List<QueryReturnValue> value) {
         privateReturnValues = value;
     }
 }

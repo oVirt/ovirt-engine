@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -76,7 +76,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                                 }), template.getId());
 
                                         Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery<>(
-                                                (VdcQueryReturnValue returnValue) ->
+                                                (QueryReturnValue returnValue) ->
                                                         getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
                                         ));
 
@@ -88,7 +88,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     template.getStoragePoolId());
         }
 
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
             UnitVmModel model = getModel();
             @SuppressWarnings("unchecked")
             Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();

@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -190,7 +190,7 @@ public class AddVmTemplateFromSnapshotCommand<T extends AddVmTemplateFromSnapsho
     }
 
     protected VM getVmFromConfiguration() {
-        VdcQueryReturnValue queryReturnValue = runInternalQuery(
+        QueryReturnValue queryReturnValue = runInternalQuery(
                 QueryType.GetVmConfigurationBySnapshot,
                 new IdQueryParameters(getParameters().getSourceSnapshotId()));
         return queryReturnValue.getSucceeded() ? queryReturnValue.getReturnValue() : null;

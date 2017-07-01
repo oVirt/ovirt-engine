@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -86,7 +86,7 @@ public class DataCenterNetworkListModel extends SearchableListModel<StoragePool,
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(QueryType.GetAllNetworks, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetAllNetworks, tempVar, new AsyncQuery<QueryReturnValue>(returnValue -> {
             ArrayList<Network> newItems = returnValue.getReturnValue();
             Collections.sort(newItems, new NameableComparator());
             setItems(newItems);

@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -185,7 +185,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         Frontend.getInstance().runQuery(QueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getName() //$NON-NLS-1$
                 + " status=maintenance or status=pendingapproval ", SearchType.VDS), //$NON-NLS-1$
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<VDS> hosts = returnValue.getReturnValue();
                     if (hosts == null) {
                         hosts = new ArrayList<>();
@@ -867,7 +867,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                                 true,
                                 unkownStatusLuns,
                                 false),
-                        new AsyncQuery<VdcQueryReturnValue>(response -> {
+                        new AsyncQuery<QueryReturnValue>(response -> {
                             if (response.getSucceeded()) {
                                 List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
                                 postGetLunsMessages(sanStorageModelBase.getUsedLunsMessages(checkedLuns));

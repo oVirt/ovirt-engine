@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -369,7 +369,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         qModel.getCommands().add(cancelCommand);
 
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             final Quota quota = returnValue.getReturnValue();
             qModel.setEntity(quota);
             if (quota.getGlobalQuotaCluster() != null) {

@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.dao.VmPoolDao;
 
 
@@ -25,7 +25,7 @@ public class GetVmDataByPoolNameQuery<P extends NameQueryParameters> extends Que
         VM vm = null;
         VmPool vmpool = vmPoolDao.getByName(getParameters().getName());
         if (vmpool != null) {
-            VdcQueryReturnValue getVmRet = backend.runInternalQuery(QueryType.GetVmDataByPoolId,
+            QueryReturnValue getVmRet = backend.runInternalQuery(QueryType.GetVmDataByPoolId,
                     new IdQueryParameters(vmpool.getVmPoolId()));
 
             if (getVmRet != null) {

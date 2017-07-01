@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -96,7 +96,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         QueryParametersBase queryParameters = new QueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetAllVmsAndVmPools, queryParameters,
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     ArrayList<VM> vms = new ArrayList<>();
                     ArrayList<VmPool> pools = new ArrayList<>();
 
@@ -159,7 +159,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
             VmPool pool = (VmPool) entity;
             Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
-                    new AsyncQuery<VdcQueryReturnValue>(result -> {
+                    new AsyncQuery<QueryReturnValue>(result -> {
                         if (result != null) {
                             VM vm = result.getReturnValue();
                             if (vm != null) {

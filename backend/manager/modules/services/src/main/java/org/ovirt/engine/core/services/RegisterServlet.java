@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.PKIResources;
@@ -92,7 +92,7 @@ public class RegisterServlet extends HttpServlet {
             throw new RuntimeException("Unique id was not provided");
         }
 
-        VdcQueryReturnValue queryReturnValue  =  backend.runInternalQuery(
+        QueryReturnValue queryReturnValue  =  backend.runInternalQuery(
             QueryType.RegisterVds,
             new RegisterVdsParameters(
                 Guid.Empty,

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmPoolDao;
 
@@ -35,7 +35,7 @@ public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends Queries
             boolean loadTemplateData = false;
             Guid vmtGuid = vm.getVmtGuid();
             if (vm.isNextRunConfigurationExists()) {
-                VdcQueryReturnValue nextRunRet = backend.runInternalQuery(QueryType.GetVmNextRunConfiguration, new IdQueryParameters(vm.getId()));
+                QueryReturnValue nextRunRet = backend.runInternalQuery(QueryType.GetVmNextRunConfiguration, new IdQueryParameters(vm.getId()));
                 if (nextRunRet != null) {
                     VM nextRunVm = nextRunRet.getReturnValue();
                     if (nextRunVm != null) { // template version was changed -> load data from template
@@ -48,12 +48,12 @@ public class GetVmDataByPoolIdQuery<P extends IdQueryParameters> extends Queries
 
             VmTemplate templateData = null;
             if (isLatestLoad) {
-                VdcQueryReturnValue latestRet = backend.runInternalQuery(QueryType.GetLatestTemplateInChain, new IdQueryParameters(vmtGuid));
+                QueryReturnValue latestRet = backend.runInternalQuery(QueryType.GetLatestTemplateInChain, new IdQueryParameters(vmtGuid));
                 if (latestRet != null) {
                     templateData = latestRet.getReturnValue();
                 }
             } else if (loadTemplateData) {
-                VdcQueryReturnValue templateRet = backend.runInternalQuery(QueryType.GetVmTemplate, new GetVmTemplateParameters(vmtGuid));
+                QueryReturnValue templateRet = backend.runInternalQuery(QueryType.GetVmTemplate, new GetVmTemplateParameters(vmtGuid));
                 if (templateRet != null) {
                     templateData = templateRet.getReturnValue();
                 }

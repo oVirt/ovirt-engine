@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class HealthStatus extends HttpServlet {
 
             QueryParametersBase params = new QueryParametersBase();
 
-            VdcQueryReturnValue v = backend.runInternalQuery(QueryType.CheckDBConnection, params);
+            QueryReturnValue v = backend.runInternalQuery(QueryType.CheckDBConnection, params);
             if (v != null) {
                 fReturn = v.getSucceeded();
                 out.print(fReturn ? "DB Up!" : "DB Down!");

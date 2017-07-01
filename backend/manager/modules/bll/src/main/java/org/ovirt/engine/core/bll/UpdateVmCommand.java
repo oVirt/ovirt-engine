@@ -80,8 +80,8 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
@@ -384,7 +384,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return;
         }
 
-        VdcQueryReturnValue query =
+        QueryReturnValue query =
                 runInternalQuery(QueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
 
         List<VmRngDevice> rngDevs = query.getReturnValue();
@@ -574,7 +574,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void updateWatchdog() {
         // do not update if this flag is not set
         if (getParameters().isUpdateWatchdog()) {
-            VdcQueryReturnValue query =
+            QueryReturnValue query =
                     runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
             List<VmWatchdog> watchdogs = query.getReturnValue();
             if (watchdogs.isEmpty()) {

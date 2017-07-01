@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAliasComparator;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
@@ -42,7 +42,7 @@ public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
 
             Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
-                    new AsyncQuery<VdcQueryReturnValue>(result -> {
+                    new AsyncQuery<QueryReturnValue>(result -> {
                         if (result != null) {
                             VM vm = result.getReturnValue();
                             if (vm == null) {

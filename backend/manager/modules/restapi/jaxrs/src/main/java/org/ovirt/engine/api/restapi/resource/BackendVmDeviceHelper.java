@@ -33,8 +33,8 @@ import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDeviceHelper {
@@ -91,7 +91,7 @@ public class BackendVmDeviceHelper {
     }
 
     public static void setCertificateInfo(BackendResource resouce, Vm vm) {
-        VdcQueryReturnValue result =
+        QueryReturnValue result =
                 resouce.runQuery(QueryType.GetVdsCertificateSubjectByVmId,
                         new IdQueryParameters(resouce.asGuid(vm.getId())));
 

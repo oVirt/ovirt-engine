@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -133,16 +133,16 @@ public class BaseImportNetworksModel extends Model {
             final List<StoragePool> dataCenters = new LinkedList<>(returnValue);
             Collections.sort(dataCenters, new NameableComparator());
 
-            AsyncQuery<VdcQueryReturnValue> externalNetworksQuery = new AsyncQuery<>(vdcQueryReturnValue -> {
-                if (vdcQueryReturnValue.getSucceeded()) {
-                    Map<Network, Set<Guid>> externalNetworkToDataCenters = vdcQueryReturnValue.getReturnValue();
+            AsyncQuery<QueryReturnValue> externalNetworksQuery = new AsyncQuery<>(queryReturnValue -> {
+                if (queryReturnValue.getSucceeded()) {
+                    Map<Network, Set<Guid>> externalNetworkToDataCenters = queryReturnValue.getReturnValue();
                     providerNetworks.setItems(getExternalNetworks(externalNetworkToDataCenters, dataCenters));
                     importedNetworks.setItems(new LinkedList<ExternalNetwork>());
                 } else {
                     final ErrorPopupManager popupManager =
                             (ErrorPopupManager) TypeResolver.getInstance().resolve(ErrorPopupManager.class);
                     popupManager.show(ConstantsManager.getInstance().getMessages().failedToListExternalNetworks(
-                            vdcQueryReturnValue.getExceptionMessage()));
+                            queryReturnValue.getExceptionMessage()));
                 }
                 stopProgress();
             }, true);

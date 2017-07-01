@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractBackendCpuProfilesResource>
@@ -186,7 +186,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
     }
 
     private void setUpCpuProfilesQueryExpectations(Object failure) {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         queryResult.setSucceeded(failure == null);
         List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> entities = new ArrayList<>();
 

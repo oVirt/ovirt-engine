@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -36,7 +36,7 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
         Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {
             Map<Guid, List<Quota>> storageDomainIdMap = new HashMap<>();
             for (int i = 0; i < result.getReturnValues().size(); i++) {
-                VdcQueryReturnValue retVal = result.getReturnValues().get(i);
+                QueryReturnValue retVal = result.getReturnValues().get(i);
                 Guid storageId =
                         ((IdQueryParameters) result.getParameters().get(i)).getId();
                 storageDomainIdMap.put(storageId, (ArrayList<Quota>) retVal.getReturnValue());

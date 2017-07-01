@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.HasAdElementReconnectPermissionParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -145,7 +145,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
                 new HasAdElementReconnectPermissionParameters(Frontend.getInstance().getLoggedInUser().getId(),
                         vm.getId());
 
-        final AsyncQuery<VdcQueryReturnValue> portalUserReconnectPermissionQuery = new AsyncQuery<>(result -> {
+        final AsyncQuery<QueryReturnValue> portalUserReconnectPermissionQuery = new AsyncQuery<>(result -> {
             boolean returnValue = result.getReturnValue();
             if (returnValue) {
                 displayConsoleConnectConfirmPopup(command);
@@ -154,7 +154,7 @@ public abstract class ConsoleModel extends EntityModel<VM> {
             }
         });
 
-        final AsyncQuery<VdcQueryReturnValue> consoleUserReconnectPermissionQuery = new AsyncQuery<>(result -> {
+        final AsyncQuery<QueryReturnValue> consoleUserReconnectPermissionQuery = new AsyncQuery<>(result -> {
             boolean returnValue = result.getReturnValue();
             if (returnValue) {
                 command.execute();

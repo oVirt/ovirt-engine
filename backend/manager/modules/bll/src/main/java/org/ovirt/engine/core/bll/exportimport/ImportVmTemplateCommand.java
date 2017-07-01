@@ -58,8 +58,8 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
@@ -183,7 +183,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             // Set the template images from the Export domain and change each image id storage is to the import domain
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
-            VdcQueryReturnValue qretVal = runInternalQuery(
+            QueryReturnValue qretVal = runInternalQuery(
                     QueryType.GetTemplatesFromExportDomain, tempVar);
             if (!qretVal.getSucceeded()) {
                 return false;

@@ -26,8 +26,8 @@ import org.ovirt.engine.core.bll.network.vm.mac.VmMacsValidation;
 import org.ovirt.engine.core.bll.network.vm.mac.VmMacsValidationsFactory;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.ValidateVmMacsParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -74,7 +74,7 @@ public class ValidateVmMacsQueryTest extends
                 .thenReturn(new ValidationResult(EngineMessage.Unassigned, REPLACEMENT1, REPLACEMENT2));
 
         getQuery().executeQueryCommand();
-        final VdcQueryReturnValue queryReturnValue = getQuery().getQueryReturnValue();
+        final QueryReturnValue queryReturnValue = getQuery().getQueryReturnValue();
         final Map<Guid, List<List<String>>> actual = queryReturnValue.getReturnValue();
 
         assertValidVmInOutput(actual, VM_ID1);

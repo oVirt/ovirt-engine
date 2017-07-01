@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotsResource
@@ -164,7 +164,7 @@ public class BackendSnapshotsResource
     }
 
     private Snapshot populateSnapshotConfiguration (Snapshot model) {
-        VdcQueryReturnValue queryReturnValue =
+        QueryReturnValue queryReturnValue =
                 runQuery(QueryType.GetSnapshotBySnapshotId,
                         new IdQueryParameters(Guid.createGuidFromString(model.getId())));
 

@@ -23,9 +23,9 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -562,7 +562,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     private void checkForActiveVms(ClusterModel model, final ConfirmationModel confirmModel) {
         Guid clusterId = model.getEntity().getId();
         Frontend.getInstance().runQuery(QueryType.GetNumberOfActiveVmsInClusterByClusterId,
-                new IdQueryParameters(clusterId), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+                new IdQueryParameters(clusterId), new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
                     Integer numOfActiveVms = returnValue.getReturnValue();
                     if (numOfActiveVms != 0) {
                         confirmModel.setMessage(messages.thereAreActiveVMsRequiringRestart(numOfActiveVms));
@@ -755,10 +755,10 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
     private void fetchAndImportClusterHosts(final ClusterModel clusterModel) {
         getWindow().startProgress();
-        AsyncQuery<VdcQueryReturnValue> aQuery = new AsyncQuery<>(result -> {
+        AsyncQuery<QueryReturnValue> aQuery = new AsyncQuery<>(result -> {
             getWindow().stopProgress();
 
-            VdcQueryReturnValue returnValue = result;
+            QueryReturnValue returnValue = result;
             if (returnValue == null) {
                 onEmptyGlusterHosts(clusterModel);
                 return;
@@ -1029,9 +1029,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                     List<VDS> hosts = null;
                     if (returnValue instanceof List) {
                         hosts = (List<VDS>) returnValue;
-                    } else if (returnValue instanceof VdcQueryReturnValue
-                            && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof List) {
-                        hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    } else if (returnValue instanceof QueryReturnValue
+                            && ((QueryReturnValue) returnValue).getReturnValue() instanceof List) {
+                        hosts = ((QueryReturnValue) returnValue).getReturnValue();
                     }
 
                     boolean foundNRHosts = false;

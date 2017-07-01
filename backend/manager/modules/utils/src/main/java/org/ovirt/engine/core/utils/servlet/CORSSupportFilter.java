@@ -41,8 +41,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetDefaultAllowedOriginsQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,7 +226,7 @@ public class CORSSupportFilter implements Filter {
         final GetConfigurationValueParameters parameters = new GetConfigurationValueParameters();
         parameters.setConfigValue(key);
         parameters.setVersion(ConfigCommon.defaultConfigurationVersion);
-        VdcQueryReturnValue value = backend.runPublicQuery(QueryType.GetConfigurationValue, parameters);
+        QueryReturnValue value = backend.runPublicQuery(QueryType.GetConfigurationValue, parameters);
         if (!value.getSucceeded()) {
             throw new ServletException("Can't get value of backend parameter \"" + key + "\".");
         }
@@ -237,7 +237,7 @@ public class CORSSupportFilter implements Filter {
         if (this.enabledDefaultOrigins) {
             GetDefaultAllowedOriginsQueryParameters parameters = new GetDefaultAllowedOriginsQueryParameters();
             parameters.addSuffixes(defaultOriginsSuffixes);
-            VdcQueryReturnValue value = backend.runPublicQuery(QueryType.GetDefaultAllowedOrigins, parameters);
+            QueryReturnValue value = backend.runPublicQuery(QueryType.GetDefaultAllowedOrigins, parameters);
             if (!value.getSucceeded()) {
                 throw new ServletException("Can't get list of default origins");
             }

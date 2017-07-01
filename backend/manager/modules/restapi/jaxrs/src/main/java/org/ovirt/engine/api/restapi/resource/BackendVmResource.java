@@ -92,8 +92,8 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmResource
@@ -634,7 +634,7 @@ public class BackendVmResource
     }
 
     public void setCertificateInfo(Vm model) {
-        VdcQueryReturnValue result =
+        QueryReturnValue result =
             runQuery(QueryType.GetVdsCertificateSubjectByVmId,
                     new IdQueryParameters(asGuid(model.getId())));
 

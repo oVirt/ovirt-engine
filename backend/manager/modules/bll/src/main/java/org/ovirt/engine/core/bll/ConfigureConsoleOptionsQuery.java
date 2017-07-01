@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -140,7 +140,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         options.setSsoToken(ssoToken);
         options.setAdminConsole(!getParameters().isFiltered());
 
-        final VdcQueryReturnValue caCertificateReturnValue = getCACertificate();
+        final QueryReturnValue caCertificateReturnValue = getCACertificate();
         if (!caCertificateReturnValue.getSucceeded()) {
             getQueryReturnValue().setExceptionString("No CA found!");
             getQueryReturnValue().setSucceeded(false);
@@ -315,7 +315,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
     }
 
-    private VdcQueryReturnValue getCACertificate() {
+    private QueryReturnValue getCACertificate() {
         return backend.runInternalQuery(QueryType.GetCACertificate, new QueryParametersBase());
     }
 
@@ -325,7 +325,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
         // if we don't have display ip, we try management network of host
         if (StringUtils.isBlank(result) || "0".equals(result)) {
-            VdcQueryReturnValue returnValue = backend.runInternalQuery(
+            QueryReturnValue returnValue = backend.runInternalQuery(
                     QueryType.GetManagementInterfaceAddressByVmId,
                     new IdQueryParameters(getCachedVm().getId()));
             result = returnValue.getReturnValue();

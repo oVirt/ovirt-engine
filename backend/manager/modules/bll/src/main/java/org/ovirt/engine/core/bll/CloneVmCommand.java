@@ -37,8 +37,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -121,7 +121,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     @Override
     protected Collection<DiskImage> getAdjustedDiskImagesFromConfiguration() {
         if (diskImagesFromConfiguration == null) {
-            VdcQueryReturnValue vdcReturnValue = runInternalQuery(
+            QueryReturnValue vdcReturnValue = runInternalQuery(
                     QueryType.GetAllDisksByVmId,
                     new IdQueryParameters(oldVmId));
 
@@ -215,7 +215,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private void attachDetachDisks(ActionType actionType) {
-        VdcQueryReturnValue vdcReturnValue = runInternalQuery(
+        QueryReturnValue vdcReturnValue = runInternalQuery(
                 QueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
 
@@ -251,7 +251,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         getParameters().setBalloonEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.BALLOON));
         setGraphicsDevices(devices);
 
-        VdcQueryReturnValue watchdogs = runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(oldVmId));
+        QueryReturnValue watchdogs = runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(oldVmId));
         if (!((List<VmWatchdog>) watchdogs.getReturnValue()).isEmpty()) {
             VmWatchdog watchdog = ((List<VmWatchdog>) watchdogs.getReturnValue()).iterator().next();
             getParameters().setUpdateWatchdog(true);

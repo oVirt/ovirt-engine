@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
 
@@ -235,7 +235,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      */
     protected Object runQuery(QueryType queryType, QueryParametersBase queryParams, String sessionId) {
         initQueryParams(queryParams, sessionId);
-        VdcQueryReturnValue result = backend.runQuery(queryType, queryParams);
+        QueryReturnValue result = backend.runQuery(queryType, queryParams);
         return result != null && result.getSucceeded() ? result.getReturnValue() : null;
     }
 
@@ -247,7 +247,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      */
     protected Object runPublicQuery(QueryType queryType, QueryParametersBase queryParams, String sessionId) {
         initQueryParams(queryParams, sessionId);
-        VdcQueryReturnValue result = backend.runPublicQuery(queryType, queryParams);
+        QueryReturnValue result = backend.runPublicQuery(queryType, queryParams);
         return result != null && result.getSucceeded() ? result.getReturnValue() : null;
     }
 

@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -851,7 +851,7 @@ public abstract class RunOnceModel extends Model {
 
     private void setIsBootFromHardDiskAllowedForVm() {
         Frontend.getInstance().runQuery(QueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     ArrayList<Disk> vmDisks = returnValue.getReturnValue();
 
                     if (vmDisks.isEmpty()) {
@@ -885,7 +885,7 @@ public abstract class RunOnceModel extends Model {
 
     private void setIsBootFromNetworkAllowedForVm() {
         Frontend.getInstance().runQuery(QueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     Collection<VmNetworkInterface> nics = returnValue.getReturnValue();
                     boolean hasPluggedNics = nics.stream().anyMatch(VmNetworkInterface::isPlugged);
 
@@ -902,7 +902,7 @@ public abstract class RunOnceModel extends Model {
 
     private void updateDisplayProtocols() {
         Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(vm.getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     boolean selectVnc = false;
 
                     List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();

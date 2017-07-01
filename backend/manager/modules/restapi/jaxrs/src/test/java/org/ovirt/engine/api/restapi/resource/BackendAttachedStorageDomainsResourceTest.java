@@ -23,10 +23,10 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 public class BackendAttachedStorageDomainsResourceTest
     extends AbstractBackendCollectionResourceTest<StorageDomain,
@@ -170,7 +170,7 @@ public class BackendAttachedStorageDomainsResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
         String[] paramNames = new String[] { "ServerConnectionId" };
         Object[] paramValues = new Object[] { GUIDS[0].toString() };
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         when(backend.runQuery(eq(QueryType.GetStorageServerConnectionById), eqParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
         .thenReturn(queryResult);
         queryResult.setSucceeded(true);

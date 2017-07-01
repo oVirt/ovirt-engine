@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -345,9 +345,9 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
         Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
-                new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                new AsyncQuery<>(new AsyncCallback<QueryReturnValue>() {
                     @Override
-                    public void onSuccess(VdcQueryReturnValue result) {
+                    public void onSuccess(QueryReturnValue result) {
                         // currently, only query that is being invoked asynchrounously in
                         // this context is GetVmDataByPoolIdQuery. If more async queries will be needed,
                         // refactor to "switch ... case...".
@@ -387,7 +387,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             if (getHasDefaultHost()) {
 
                                 Frontend.getInstance().runQuery(QueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
-                                        + getvm().getClusterName() + " sortby name", SearchType.VDS), new AsyncQuery<VdcQueryReturnValue>(returnValue1 -> { //$NON-NLS-1$
+                                        + getvm().getClusterName() + " sortby name", SearchType.VDS), new AsyncQuery<QueryReturnValue>(returnValue1 -> { //$NON-NLS-1$
                                             String defaultHost1 = "";
                                             ArrayList<VDS> hosts = returnValue1.getReturnValue();
                                             for (VDS host : hosts) {

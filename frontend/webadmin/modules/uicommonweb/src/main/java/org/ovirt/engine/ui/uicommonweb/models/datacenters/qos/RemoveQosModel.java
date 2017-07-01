@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -71,7 +71,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
         setHashName(getRemoveQosHashName());
 
         int index = 0;
-        for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
+        for (QueryReturnValue returnValue : result.getReturnValues()) {
             for (Nameable entity : (List<Nameable>) returnValue.getReturnValue()) {
                 entitiesAndQos.put(entity.getName(), sourceListModel.getSelectedItems()
                         .get(index)

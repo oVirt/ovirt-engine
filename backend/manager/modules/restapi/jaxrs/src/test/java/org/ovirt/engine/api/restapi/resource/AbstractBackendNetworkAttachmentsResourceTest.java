@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends AbstractBackendNetworkAttachmentsResource>
@@ -229,7 +229,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
 
     private void setUpNetworkAttachmentsQueryExpectations(Object failure) {
         setUpVerifyHostExpectations();
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         queryResult.setSucceeded(failure == null);
         List<NetworkAttachment> entities = new ArrayList<>();
 
@@ -256,13 +256,13 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
      * host object.
      */
     private void setUpVerifyHostExpectations() {
-        VdcQueryReturnValue result = new VdcQueryReturnValue();
+        QueryReturnValue result = new QueryReturnValue();
         VDS host = mock(VDS.class);
         result.setSucceeded(true);
         result.setReturnValue(host);
         when(backend.runQuery(eq(QueryType.GetVdsByVdsId), any(IdQueryParameters.class))).thenReturn(result);
 
-        VdcQueryReturnValue interfacesByVdsIdResult = new VdcQueryReturnValue();
+        QueryReturnValue interfacesByVdsIdResult = new QueryReturnValue();
         interfacesByVdsIdResult.setSucceeded(true);
 
         VdsNetworkInterface hostNic = new VdsNetworkInterface();

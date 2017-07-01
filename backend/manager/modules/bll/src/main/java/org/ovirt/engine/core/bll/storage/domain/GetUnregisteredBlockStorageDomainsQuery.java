@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -110,7 +110,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
      */
     protected List<LUNs> getDeviceList() {
         List<LUNs> luns = new ArrayList<>();
-        VdcQueryReturnValue returnValue =
+        QueryReturnValue returnValue =
                 executeGetDeviceList(
                 new GetDeviceListQueryParameters(getParameters().getVdsId(),
                         getParameters().getStorageType(),
@@ -277,7 +277,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         return backend.runInternalAction(ActionType.ConnectStorageToVds, parameters);
     }
 
-    protected VdcQueryReturnValue executeGetDeviceList(GetDeviceListQueryParameters parameters) {
+    protected QueryReturnValue executeGetDeviceList(GetDeviceListQueryParameters parameters) {
         return backend.runInternalQuery(QueryType.GetDeviceList, parameters);
     }
 

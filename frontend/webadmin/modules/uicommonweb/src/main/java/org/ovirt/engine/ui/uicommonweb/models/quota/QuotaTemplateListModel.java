@@ -6,8 +6,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -33,7 +33,7 @@ public class QuotaTemplateListModel extends SearchableListModel<Quota, VM> {
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetTemplatesRelatedToQuotaId, tempVar,
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
             setItems((ArrayList<VM>) returnValue.getReturnValue());
             setIsEmpty(((List) getItems()).size() == 0);
         }));

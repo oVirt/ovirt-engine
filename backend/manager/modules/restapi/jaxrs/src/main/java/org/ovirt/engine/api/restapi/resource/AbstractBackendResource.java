@@ -29,8 +29,8 @@ import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQueryable */>
@@ -105,7 +105,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     private CreationStatus getVdsmTasksStatus(VdcReturnValueBase result) {
         CreationStatus asyncStatus = null;
-        VdcQueryReturnValue monitorResult =
+        QueryReturnValue monitorResult =
             runQuery(QueryType.GetTasksStatusesByTasksIDs, new GetTasksStatusesByTasksIDsParameters(result.getVdsmTaskIdList()));
         if (monitorResult != null
             && monitorResult.getSucceeded()
@@ -124,7 +124,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
             return CreationStatus.COMPLETE;
         } else {
             IdQueryParameters params = new IdQueryParameters(jobId);
-            VdcQueryReturnValue queryResult = runQuery(QueryType.GetJobByJobId, params);
+            QueryReturnValue queryResult = runQuery(QueryType.GetJobByJobId, params);
             if (queryResult != null && queryResult.getSucceeded() && queryResult.getReturnValue() != null) {
                 Job job = queryResult.getReturnValue();
                 return job.getStatus()==JobExecutionStatus.STARTED ? CreationStatus.IN_PROGRESS : CreationStatus.COMPLETE;

@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 /**
  * This filter is responsible for initializing and cleaning the information that is associated to the current request.
@@ -127,12 +127,12 @@ public class CurrentFilter implements Filter {
             ConfigCommon.defaultConfigurationVersion
         );
         parameters.setSessionId(sessionId);
-        VdcQueryReturnValue result = backend.runPublicQuery( QueryType.GetConfigurationValue, parameters);
+        QueryReturnValue result = backend.runPublicQuery( QueryType.GetConfigurationValue, parameters);
         return ApplicationMode.from(result.getReturnValue());
     }
 
     private DbUser findPrincipal(String sessionId) {
-        VdcQueryReturnValue result = backend.runPublicQuery(QueryType.GetDbUserBySession, new QueryParametersBase(sessionId));
+        QueryReturnValue result = backend.runPublicQuery(QueryType.GetDbUserBySession, new QueryParametersBase(sessionId));
         return result.getReturnValue();
     }
 

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -1181,7 +1181,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
         brickModel.startProgress();
 
-        AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery<QueryReturnValue>(returnValue -> {
             brickModel.stopProgress();
 
             if (returnValue == null || !returnValue.getSucceeded()) {

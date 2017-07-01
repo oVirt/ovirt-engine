@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll.executor;
 import javax.enterprise.inject.Alternative;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
@@ -14,15 +14,15 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 public class HystrixBackendQueryExecutor implements BackendQueryExecutor {
 
     @Override
-    public VdcQueryReturnValue execute(final QueriesCommandBase<?> query, final QueryType queryType) {
+    public QueryReturnValue execute(final QueriesCommandBase<?> query, final QueryType queryType) {
         String key = queryType.name();
         if (queryType == QueryType.Search) {
             key = key + ((SearchParameters) query.getParameters()).getSearchTypeValue().name();
         }
         final HystrixCommand.Setter setter = HystrixSettings.setter(key);
-        final HystrixCommand<VdcQueryReturnValue> hystrixCommand = new HystrixCommand<VdcQueryReturnValue>(setter) {
+        final HystrixCommand<QueryReturnValue> hystrixCommand = new HystrixCommand<QueryReturnValue>(setter) {
             @Override
-            protected VdcQueryReturnValue run() throws Exception {
+            protected QueryReturnValue run() throws Exception {
                 query.execute();
                 if (query.getQueryReturnValue().getSucceeded()) {
                     return query.getQueryReturnValue();
@@ -44,13 +44,13 @@ public class HystrixBackendQueryExecutor implements BackendQueryExecutor {
 
     private static class QueryFailedException extends Exception {
 
-        VdcQueryReturnValue returnValue;
+        QueryReturnValue returnValue;
 
-        public QueryFailedException(VdcQueryReturnValue returnValue) {
+        public QueryFailedException(QueryReturnValue returnValue) {
             this.returnValue = returnValue;
         }
 
-        public VdcQueryReturnValue getReturnValue() {
+        public QueryReturnValue getReturnValue() {
             return returnValue;
         }
     }

@@ -8,8 +8,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -105,7 +105,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
         super.syncSearch();
         if (getIsQueryFirstTime()) {
             Frontend.getInstance().runQuery(QueryType.GetAllPolicyUnits, new QueryParametersBase(),
-                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    new AsyncQuery<QueryReturnValue>(returnValue -> {
                         ArrayList<PolicyUnit> list = returnValue.getReturnValue();
                         setPolicyUnits(list);
                         fetchClusterPolicies();
@@ -120,7 +120,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     }
 
     private void fetchClusterPolicies() {
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             ArrayList<ClusterPolicy> list = returnValue.getReturnValue();
             Collections.sort(list,
                     Comparator.comparing(ClusterPolicy::isLocked).reversed()

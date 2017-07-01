@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -120,7 +120,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             return false;
         }
 
-        VdcQueryReturnValue returnValue = getQueryReturnValue();
+        QueryReturnValue returnValue = getQueryReturnValue();
         returnValue.setExceptionString("");
         try {
             String hostName = getParameters().getVdsHostName();

@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.GetJobsByCorrelationIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetJobsByOffsetQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -30,7 +30,7 @@ public class TaskListModel extends SearchableListModel {
 
     @Override
     protected void syncSearch() {
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             List<Job> taskList = returnValue.getReturnValue();
             if (taskList.size() == 0) {
                 detailedTaskMap.clear();
@@ -164,7 +164,7 @@ public class TaskListModel extends SearchableListModel {
                 GetJobsByCorrelationIdQueryParameters parameters = new GetJobsByCorrelationIdQueryParameters();
                 parameters.setCorrelationId(guidOrCorrelationId);
                 Frontend.getInstance().runQuery(QueryType.GetJobsByCorrelationId,
-                        parameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        parameters, new AsyncQuery<QueryReturnValue>(returnValue -> {
                             ArrayList<Job> retTasks = returnValue.getReturnValue();
 
                             ArrayList<Job> taskList = (ArrayList<Job>) getItems();
@@ -215,7 +215,7 @@ public class TaskListModel extends SearchableListModel {
             } else {
                 IdQueryParameters parameters = new IdQueryParameters(new Guid(guidOrCorrelationId));
                 Frontend.getInstance().runQuery(QueryType.GetJobByJobId,
-                        parameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        parameters, new AsyncQuery<QueryReturnValue>(returnValue -> {
                             Job retTask = returnValue.getReturnValue();
                             if (retTask == null) {
                                 return;

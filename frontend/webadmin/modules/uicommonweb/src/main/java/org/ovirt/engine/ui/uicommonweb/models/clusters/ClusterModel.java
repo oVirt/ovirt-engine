@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -920,7 +920,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         startProgress();
         Frontend.getInstance().runQuery(QueryType.GetAllMacPools,
                 new QueryParametersBase(),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     getMacPoolListModel().setItems((Collection<MacPool>) returnValue.getReturnValue());
                     stopProgress();
                 }));
@@ -933,7 +933,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
         Version version = getVersion().getSelectedItem();
         Frontend.getInstance().runQuery(QueryType.GetGlusterTunedProfiles, new IdAndNameQueryParameters(null, version.getValue()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     stopProgress();
                     List<String> glusterTunedProfiles = new ArrayList<>();
                     if (returnValue.getSucceeded()) {
@@ -1276,7 +1276,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setCustomPropertySheet(new KeyValueModel());
         getClusterPolicy().getSelectedItemChangedEvent().addListener(this);
         Frontend.getInstance().runQuery(QueryType.GetAllPolicyUnits, new QueryParametersBase(),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     ArrayList<PolicyUnit> policyUnits = returnValue.getReturnValue();
                     policyUnitMap = new LinkedHashMap<>();
                     for (PolicyUnit policyUnit : policyUnits) {
@@ -1284,7 +1284,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     }
                     Frontend.getInstance().runQuery(QueryType.GetClusterPolicies,
                             new QueryParametersBase(),
-                            new AsyncQuery<VdcQueryReturnValue>(retVal -> {
+                            new AsyncQuery<QueryReturnValue>(retVal -> {
                                         ArrayList<ClusterPolicy> list = retVal.getReturnValue();
                                         getClusterPolicy().setItems(list);
                                         ClusterPolicy defaultClusterPolicy = null;

@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -137,7 +137,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
         final Guid instanceTypeId = getSelectedItem().getId();
         Frontend.getInstance().runQuery(QueryType.GetVmsByInstanceTypeId,
-                new IdQueryParameters(instanceTypeId), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new IdQueryParameters(instanceTypeId), new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<VM> vmsAttachedToInstanceType = returnValue.getReturnValue();
                     if (vmsAttachedToInstanceType == null || vmsAttachedToInstanceType.size() == 0) {
                         window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());

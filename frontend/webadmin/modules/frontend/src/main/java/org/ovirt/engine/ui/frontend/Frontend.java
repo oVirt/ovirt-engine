@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler.MessageFormatter;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
@@ -222,10 +222,10 @@ public class Frontend implements HasHandlers {
 
         final VdcOperation<QueryType, QueryParametersBase> operation =
                 new VdcOperation<>(queryType, parameters, isPublic, false,
-                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, VdcQueryReturnValue>() {
+                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, QueryReturnValue>() {
             @Override
             public void onSuccess(final VdcOperation<QueryType, QueryParametersBase> operation,
-                    final VdcQueryReturnValue result) {
+                    final QueryReturnValue result) {
                 try {
                     if (!result.getSucceeded()) {
 
@@ -235,7 +235,7 @@ public class Frontend implements HasHandlers {
                         logger.log(Level.WARNING, "Failure while invoking runQuery [" + result.getExceptionString() + ", " + result.getExceptionMessage() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
                         if (getEventsHandler() != null) {
-                            ArrayList<VdcQueryReturnValue> failedResult = new ArrayList<>();
+                            ArrayList<QueryReturnValue> failedResult = new ArrayList<>();
 
                             failedResult.add(result);
                             handleNotLoggedInEvent(result.getExceptionString());
@@ -316,11 +316,11 @@ public class Frontend implements HasHandlers {
             final IFrontendMultipleQueryAsyncCallback callback,
             final Object state) {
         VdcOperationCallbackList<VdcOperation<QueryType, QueryParametersBase>,
-            List<VdcQueryReturnValue>> multiCallback = new VdcOperationCallbackList<VdcOperation<QueryType,
-                QueryParametersBase>, List<VdcQueryReturnValue>>() {
+            List<QueryReturnValue>> multiCallback = new VdcOperationCallbackList<VdcOperation<QueryType,
+                QueryParametersBase>, List<QueryReturnValue>>() {
             @Override
             public void onSuccess(final List<VdcOperation<QueryType, QueryParametersBase>> operationList,
-                    final List<VdcQueryReturnValue> resultObject) {
+                    final List<QueryReturnValue> resultObject) {
                 logger.finer("Succesful returned result from runMultipleQueries!"); //$NON-NLS-1$
                 FrontendMultipleQueryAsyncResult f =
                         new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, resultObject);

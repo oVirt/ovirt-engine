@@ -59,9 +59,9 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -254,8 +254,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
             E entity,
             boolean onceOnly)
             throws Exception {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
-        OngoingStubbing<VdcQueryReturnValue> stubbing =
+        QueryReturnValue queryResult = new QueryReturnValue();
+        OngoingStubbing<QueryReturnValue> stubbing =
                 when(backend.runQuery(eq(query), eqParams(clz, addSession(names), addSession(values))))
                         .thenReturn(queryResult);
         if (onceOnly) {
@@ -270,7 +270,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected <E> void setUpGetEntityExpectations(String query,
             SearchType type,
             E entity) throws Exception {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         SearchParameters params = new SearchParameters(query, type);
         when(backend.runQuery(eq(QueryType.Search), eqSearchParams(params))).thenReturn(queryResult);
         enqueueInteraction(
@@ -295,7 +295,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Object[] queryValues,
             Object queryReturn,
             Object failure) {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         queryResult.setSucceeded(failure == null);
         if (failure == null) {
             queryResult.setReturnValue(queryReturn);
@@ -516,7 +516,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         enqueueInteraction(() -> verify(backend, atLeastOnce()).runAction(eq(task),
                 eqParams(clz, addSession(names), addSession(values))));
 
-        VdcQueryReturnValue monitorResult = new VdcQueryReturnValue();
+        QueryReturnValue monitorResult = new QueryReturnValue();
         monitorResult.setSucceeded(success);
 
         // simulate polling on async task's statuses, and/or job status.
@@ -644,7 +644,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     private void setAsyncTaskStatusExpectations(ArrayList<Guid> asyncTasks,
             ArrayList<AsyncTaskStatus> asyncStatuses,
-            VdcQueryReturnValue monitorResult,
+            QueryReturnValue monitorResult,
             VdcReturnValueBase result) {
         if (asyncTasks != null) {
             result.setVdsmTaskIdList(asyncTasks);
@@ -658,7 +658,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     private void setJobStatusExpectations(Guid jobId,
             JobExecutionStatus jobStatus,
-            VdcQueryReturnValue monitorResult,
+            QueryReturnValue monitorResult,
             VdcReturnValueBase result) {
         result.setJobId(jobId);
         if (jobId != null) {

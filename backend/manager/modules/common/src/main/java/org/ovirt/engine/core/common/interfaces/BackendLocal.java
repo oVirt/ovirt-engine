@@ -6,15 +6,15 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 public interface BackendLocal {
     VdcReturnValueBase runAction(ActionType actionType, ActionParametersBase parameters);
 
     VDSBrokerFrontend getResourceManager();
 
-    VdcQueryReturnValue runQuery(QueryType actionType, QueryParametersBase parameters);
+    QueryReturnValue runQuery(QueryType actionType, QueryParametersBase parameters);
 
     ErrorTranslator getErrorsTranslator();
 
@@ -28,7 +28,7 @@ public interface BackendLocal {
             List<ActionParametersBase> parameters,
             boolean isRunOnlyIfAllValidationPass);
 
-    VdcQueryReturnValue runPublicQuery(QueryType actionType, QueryParametersBase parameters);
+    QueryReturnValue runPublicQuery(QueryType actionType, QueryParametersBase parameters);
 
     VdcReturnValueBase logoff(ActionParametersBase parameters);
 }

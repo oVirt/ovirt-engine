@@ -6,8 +6,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.EngineFault;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 public interface IFrontendEventsHandler {
     Boolean isRaiseErrorModalPanel(ActionType action, EngineFault fault);
@@ -22,7 +22,7 @@ public interface IFrontendEventsHandler {
 
     void runMultipleActionsFailed(List<ActionType> actions, List<VdcReturnValueBase> returnValues);
 
-    void runQueryFailed(List<VdcQueryReturnValue> returnValue);
+    void runQueryFailed(List<QueryReturnValue> returnValue);
 
     void publicConnectionClosed(Exception ex);
 

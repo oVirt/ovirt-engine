@@ -27,9 +27,9 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class BackendResource extends BaseBackendResource {
     public static final String JOB_ID_CONSTRAINT = "JobId";
     public static final String STEP_ID_CONSTRAINT = "StepId";
 
-    private <T> T castQueryResultToEntity(Class<T> clz, VdcQueryReturnValue result,
+    private <T> T castQueryResultToEntity(Class<T> clz, QueryReturnValue result,
                                           String constraint) throws BackendFailureException {
         T entity;
 
@@ -65,7 +65,7 @@ public class BackendResource extends BaseBackendResource {
     @Deprecated
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
-            VdcQueryReturnValue result = runQuery(QueryType.Search,
+            QueryReturnValue result = runQuery(QueryType.Search,
                     createSearchParameters(searchType, constraint));
             if (!result.getSucceeded()) {
                 backendFailure(result.getExceptionString());
@@ -76,7 +76,7 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    public VdcQueryReturnValue runQuery(QueryType queryType, QueryParametersBase queryParams) {
+    public QueryReturnValue runQuery(QueryType queryType, QueryParametersBase queryParams) {
         BackendLocal backend = getBackend();
         setCorrelationId(queryParams);
         queryParams.setFiltered(isFiltered());
@@ -132,7 +132,7 @@ public class BackendResource extends BaseBackendResource {
                                 QueryParametersBase queryParams,
                                 String identifier,
                                 boolean isMandatory) throws BackendFailureException {
-        VdcQueryReturnValue result = runQuery(query, queryParams);
+        QueryReturnValue result = runQuery(query, queryParams);
         if (!result.getSucceeded() || (isMandatory && result.getReturnValue() == null)) {
             if (result.getExceptionString() != null) {
                 backendFailure(result.getExceptionString());
@@ -150,7 +150,7 @@ public class BackendResource extends BaseBackendResource {
     protected <T> List<T> getBackendCollection(Class<T> clz, QueryType query, QueryParametersBase queryParams) {
         try {
             List<T> results = asCollection(clz, new ArrayList<T>());
-            VdcQueryReturnValue result = runQuery(query, queryParams);
+            QueryReturnValue result = runQuery(query, queryParams);
             if (result!=null ) {
                 if (!result.getSucceeded()) {
                     backendFailure(result.getExceptionString());
@@ -286,7 +286,7 @@ public class BackendResource extends BaseBackendResource {
 
     @SuppressWarnings("unchecked")
     protected <T> T getConfigurationValueDefault(ConfigValues config) {
-        VdcQueryReturnValue result = runQuery(
+        QueryReturnValue result = runQuery(
             QueryType.GetConfigurationValue,
             new GetConfigurationValueParameters(config, ConfigCommon.defaultConfigurationVersion)
         );

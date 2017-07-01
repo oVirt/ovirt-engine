@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.businessentities.network.NicLabel;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -996,7 +996,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         VDS vds = getEntity();
         Frontend.getInstance().runQuery(QueryType.GetVdsFreeBondsByVdsId,
             new IdQueryParameters(vds.getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     allBonds = returnValue.getReturnValue();
 
                     initNetworkModels();
@@ -1010,7 +1010,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         VDS vds = getEntity();
         IdQueryParameters params = new IdQueryParameters(vds.getId());
         params.setRefresh(false);
-        Frontend.getInstance().runQuery(QueryType.GetVfToPfMapByHostId, params, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetVfToPfMapByHostId, params, new AsyncQuery<QueryReturnValue>(returnValue -> {
             vfMap = returnValue.getReturnValue();
             if (vfMap == null) {
                 vfMap = Collections.emptyMap();
@@ -1026,7 +1026,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         IdQueryParameters params = new IdQueryParameters(vds.getId());
         params.setRefresh(false);
         // query for interfaces
-        Frontend.getInstance().runQuery(QueryType.GetVdsInterfacesByVdsId, params, new AsyncQuery<>((VdcQueryReturnValue returnValue) -> {
+        Frontend.getInstance().runQuery(QueryType.GetVdsInterfacesByVdsId, params, new AsyncQuery<>((QueryReturnValue returnValue) -> {
             allExistingNics = returnValue.getReturnValue();
 
             existingVlanDevicesByVlanId = mapVlanDevicesByVlanId();
@@ -1043,7 +1043,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         IdQueryParameters params = new IdQueryParameters(vds.getId());
         params.setRefresh(false);
         // query for network attachments
-        Frontend.getInstance().runQuery(QueryType.GetNetworkAttachmentsByHostId, params, new AsyncQuery<>((VdcQueryReturnValue returnValue) -> {
+        Frontend.getInstance().runQuery(QueryType.GetNetworkAttachmentsByHostId, params, new AsyncQuery<>((QueryReturnValue returnValue) -> {
             hostSetupNetworksParametersData.getNetworkAttachments().addAll((List<NetworkAttachment>) returnValue.getReturnValue());
 
             initNetworkIdToExistingAttachmentMap();
@@ -1057,7 +1057,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         // query for vfsConfigs
         VDS vds = getEntity();
         IdQueryParameters params = new IdQueryParameters(vds.getId());
-        Frontend.getInstance().runQuery(QueryType.GetAllVfsConfigByHostId, params, new AsyncQuery<VdcQueryReturnValue>(returnValueObj -> {
+        Frontend.getInstance().runQuery(QueryType.GetAllVfsConfigByHostId, params, new AsyncQuery<QueryReturnValue>(returnValueObj -> {
             Object returnValue = returnValueObj.getReturnValue();
             List<HostNicVfsConfig> allHostVfs = (List<HostNicVfsConfig>) returnValue;
 

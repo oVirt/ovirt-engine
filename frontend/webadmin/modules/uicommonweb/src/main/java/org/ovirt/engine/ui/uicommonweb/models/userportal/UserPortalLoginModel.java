@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -167,7 +167,7 @@ public class UserPortalLoginModel extends LoginModel {
         }
         Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {
             for (int i = 0; i < result.getReturnValues().size(); i++) {
-                VdcQueryReturnValue retVal = result.getReturnValues().get(i);
+                QueryReturnValue retVal = result.getReturnValues().get(i);
                 ArrayList<ActionGroup> roleActionGroupList = retVal.getReturnValue();
                 for (ActionGroup actionGroup : roleActionGroupList) {
                     if (!UserPortalLoginModel.this.getLoggedUserActionGroupList().contains(actionGroup)) {

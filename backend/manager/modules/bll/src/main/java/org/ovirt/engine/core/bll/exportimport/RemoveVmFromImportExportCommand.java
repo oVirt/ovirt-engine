@@ -36,8 +36,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -167,7 +167,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
                     getParameters().getStoragePoolId(), getParameters().getStorageDomainId());
             tempVar.setIds(new ArrayList<>(Collections.singletonList(getVmId())));
-            VdcQueryReturnValue qretVal = runInternalQuery(
+            QueryReturnValue qretVal = runInternalQuery(
                     QueryType.GetVmsFromExportDomain, tempVar);
 
             if (qretVal != null && qretVal.getSucceeded()) {

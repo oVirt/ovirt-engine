@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -351,7 +351,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
         QueryParametersBase queryParameters = new QueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetAllVmsAndVmPools, queryParameters,
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     ArrayList<VM> vms = new ArrayList<>();
                     ArrayList<VmPool> pools = new ArrayList<>();
 

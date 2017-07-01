@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkAttachmentParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends AbstractBackendNetworkAttachmentsResource, R extends AbstractBackendNetworkAttachmentResource<C>>
@@ -161,14 +161,14 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
 
     @Test
     public void testRemoveNonExistant() throws Exception {
-        VdcQueryReturnValue vdcQueryReturnValue = new VdcQueryReturnValue();
-        vdcQueryReturnValue.setSucceeded(false);
+        QueryReturnValue queryReturnValue = new QueryReturnValue();
+        queryReturnValue.setSucceeded(false);
 
         setUpEntityQueryExpectations(QueryType.GetNetworkAttachmentById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { new Guid(resource.id) },
-            vdcQueryReturnValue);
+                queryReturnValue);
         try {
             resource.remove();
             fail("expected WebApplicationException");

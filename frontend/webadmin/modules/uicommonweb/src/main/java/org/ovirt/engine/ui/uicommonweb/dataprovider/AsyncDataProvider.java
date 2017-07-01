@@ -151,13 +151,13 @@ import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.ValidateVmMacsParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParameters;
@@ -300,10 +300,10 @@ public class AsyncDataProvider {
     }
 
     private void getDefaultConfigurationVersion(final LoginModel loginModel) {
-        AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> callback = new AsyncQuery<>(returnValue -> {
             if (returnValue != null) {
                 _defaultConfigurationVersion =
-                        ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        ((QueryReturnValue) returnValue).getReturnValue();
             } else {
                 _defaultConfigurationVersion = GENERAL;
             }
@@ -402,12 +402,12 @@ public class AsyncDataProvider {
     public void initDefaultOSes() {
         Frontend.getInstance().runQuery(QueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetDefaultOSes),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> defaultOSes = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> defaultOSes = returnValue.getReturnValue()));
     }
 
     private void initGet64BitOss() {
         Frontend.getInstance().runQuery(QueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.Get64BitOss),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> oses64bit = Collections.unmodifiableSet(
+                new AsyncQuery<QueryReturnValue>(returnValue -> oses64bit = Collections.unmodifiableSet(
                         new HashSet<>(returnValue.<List<Integer>>getReturnValue()))));
     }
 
@@ -460,25 +460,25 @@ public class AsyncDataProvider {
     private void initMigrationSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMigrationSupport),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> migrationSupport = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> migrationSupport = returnValue.getReturnValue()));
     }
 
     private void initMemorySnapshotSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemorySnapshotSupport),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> memorySnapshotSupport = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> memorySnapshotSupport = returnValue.getReturnValue()));
     }
 
     private void initSuspendSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetSuspendSupport),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> suspendSupport = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> suspendSupport = returnValue.getReturnValue()));
     }
 
     private void initMemoryHotUnplugSupportMap() {
         Frontend.getInstance().runQuery(QueryType.GetArchitectureCapabilities,
                 new ArchCapabilitiesParameters(ArchCapabilitiesVerb.GetMemoryHotUnplugSupport),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> memoryHotUnplugSupport = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> memoryHotUnplugSupport = returnValue.getReturnValue()));
     }
 
     /**
@@ -518,7 +518,7 @@ public class AsyncDataProvider {
     public void initNicHotplugSupportMap() {
         Frontend.getInstance().runQuery(QueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetNicHotplugSupportMap),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> nicHotplugSupportMap = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> nicHotplugSupportMap = returnValue.getReturnValue()));
     }
 
     public Map<Pair<Integer, Version>, Boolean> getNicHotplugSupportMap() {
@@ -542,13 +542,13 @@ public class AsyncDataProvider {
     public void initBalloonSupportMap() {
         Frontend.getInstance().runQuery(QueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetBalloonSupportMap),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> balloonSupportMap = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> balloonSupportMap = returnValue.getReturnValue()));
     }
 
     public void initDiskHotpluggableInterfacesMap() {
         Frontend.getInstance().runQuery(QueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetDiskHotpluggableInterfacesMap),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue ->
+                new AsyncQuery<QueryReturnValue>(returnValue ->
                         diskHotpluggableInterfacesMap = returnValue.getReturnValue()));
     }
 
@@ -559,7 +559,7 @@ public class AsyncDataProvider {
     public void initSoundDeviceSupportMap() {
         Frontend.getInstance().runQuery(QueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetSoundDeviceSupportMap),
-                new AsyncQuery<VdcQueryReturnValue>(result -> soundDeviceSupportMap = result.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(result -> soundDeviceSupportMap = result.getReturnValue()));
     }
 
     public Map<Pair<Integer, Version>, Set<String>> getDiskHotpluggableInterfacesMap() {
@@ -581,7 +581,7 @@ public class AsyncDataProvider {
         return diskInterfaces;
     }
 
-    public void getUserProfile(AsyncQuery<VdcQueryReturnValue> aQuery) {
+    public void getUserProfile(AsyncQuery<QueryReturnValue> aQuery) {
         Frontend.getInstance().runQuery(QueryType.GetUserProfile, new QueryParametersBase().withoutRefresh(), aQuery);
     }
 
@@ -746,7 +746,7 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(QueryType.GetVmNextRunConfiguration, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void getVmChangedFieldsForNextRun(VM original, VM updated, VmManagementParametersBase updateVmParameters, AsyncQuery<VdcQueryReturnValue> aQuery) {
+    public void getVmChangedFieldsForNextRun(VM original, VM updated, VmManagementParametersBase updateVmParameters, AsyncQuery<QueryReturnValue> aQuery) {
         Frontend.getInstance().runQuery(QueryType.GetVmChangedFieldsForNextRun,
                 new GetVmChangedFieldsForNextRunParameters(original, updated, updateVmParameters), aQuery);
     }
@@ -1488,24 +1488,24 @@ public class AsyncDataProvider {
                         ServiceType.GLUSTER_SWIFT), aQuery);
     }
 
-    public void getGlusterRebalanceStatus(AsyncQuery<VdcQueryReturnValue> aQuery, Guid clusterId, Guid volumeId) {
+    public void getGlusterRebalanceStatus(AsyncQuery<QueryReturnValue> aQuery, Guid clusterId, Guid volumeId) {
         aQuery.setHandleFailure(true);
         GlusterVolumeQueriesParameters parameters = new GlusterVolumeQueriesParameters(clusterId, volumeId);
         Frontend.getInstance().runQuery(QueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
     }
 
-    public void getGlusterSnapshotConfig(AsyncQuery<VdcQueryReturnValue> aQuery, Guid clusterId, Guid volumeId) {
+    public void getGlusterSnapshotConfig(AsyncQuery<QueryReturnValue> aQuery, Guid clusterId, Guid volumeId) {
         aQuery.setHandleFailure(true);
         Frontend.getInstance().runQuery(QueryType.GetGlusterVolumeSnapshotConfig, new GlusterVolumeQueriesParameters(clusterId, volumeId), aQuery);
     }
 
-    public void getGlusterVolumeProfilingStatistics(AsyncQuery<VdcQueryReturnValue> aQuery, Guid clusterId, Guid volumeId, boolean nfs) {
+    public void getGlusterVolumeProfilingStatistics(AsyncQuery<QueryReturnValue> aQuery, Guid clusterId, Guid volumeId, boolean nfs) {
         aQuery.setHandleFailure(true);
         GlusterVolumeProfileParameters parameters = new GlusterVolumeProfileParameters(clusterId, volumeId, nfs);
         Frontend.getInstance().runQuery(QueryType.GetGlusterVolumeProfileInfo, parameters, aQuery);
     }
 
-    public void getGlusterRemoveBricksStatus(AsyncQuery<VdcQueryReturnValue> aQuery,
+    public void getGlusterRemoveBricksStatus(AsyncQuery<QueryReturnValue> aQuery,
             Guid clusterId,
             Guid volumeId,
             List<GlusterBrickEntity> bricks) {
@@ -1940,7 +1940,7 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getVmFromOva(AsyncQuery<VdcQueryReturnValue> aQuery, Guid vdsId, String path) {
+    public void getVmFromOva(AsyncQuery<QueryReturnValue> aQuery, Guid vdsId, String path) {
         aQuery.setHandleFailure(true);
         Frontend.getInstance().runQuery(
                 QueryType.GetVmFromOva,
@@ -2413,21 +2413,21 @@ public class AsyncDataProvider {
     public void initWindowsOsTypes() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetWindowsOss),
-                new AsyncQuery<VdcQueryReturnValue>(
+                new AsyncQuery<QueryReturnValue>(
                         returnValue -> windowsOsIds = (ArrayList<Integer>) returnValue.getReturnValue()));
     }
 
     public void initLinuxOsTypes() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetLinuxOss),
-                new AsyncQuery<VdcQueryReturnValue>(
+                new AsyncQuery<QueryReturnValue>(
                         returnValue -> linuxOsIds = (ArrayList<Integer>) returnValue.getReturnValue()));
     }
 
     public void initUniqueOsNames() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetUniqueOsNames),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     uniqueOsNames = returnValue.getReturnValue();
                     // Initialize specific UI dependencies for search
                     SimpleDependencyInjector.getInstance().bind(new OsValueAutoCompleter(uniqueOsNames));
@@ -2437,7 +2437,7 @@ public class AsyncDataProvider {
     public void initOsNames() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetOsNames),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     osNames = returnValue.getReturnValue();
                     initOsIds();
                 }));
@@ -2445,7 +2445,7 @@ public class AsyncDataProvider {
 
     private void initOsDefaultIconIds() {
         Frontend.getInstance().runQuery(QueryType.GetVmIconDefaults, new QueryParametersBase(),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     final Map<Integer, VmIconIdSizePair> returnMap = returnValue.getReturnValue();
                     if (returnMap.get(DEFAULT_OS_ID) == null) {
                         throw new RuntimeException("Engine did not provide icon IDs of default OS."); //$NON-NLS-1$
@@ -2470,7 +2470,7 @@ public class AsyncDataProvider {
     public void initOsArchitecture() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetOsArchitectures),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> osArchitectures = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> osArchitectures = returnValue.getReturnValue()));
     }
 
     public boolean osNameExists(Integer osId) {
@@ -2530,7 +2530,7 @@ public class AsyncDataProvider {
     private void initDisplayTypes() {
         Frontend.getInstance().runQuery(QueryType.OsRepository,
                 new OsQueryParameters(OsRepositoryVerb.GetDisplayTypes),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> graphicsAndDisplays = returnValue.getReturnValue()));
+                new AsyncQuery<QueryReturnValue>(returnValue -> graphicsAndDisplays = returnValue.getReturnValue()));
     }
 
     public List<Integer> getOsIds(ArchitectureType architectureType) {
@@ -2549,7 +2549,7 @@ public class AsyncDataProvider {
     }
 
     public void getVmWatchdogTypes(int osId, Version version,
-            AsyncQuery<VdcQueryReturnValue> asyncQuery) {
+            AsyncQuery<QueryReturnValue> asyncQuery) {
         Frontend.getInstance().runQuery(QueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetVmWatchdogTypes, osId, version), asyncQuery);
     }
@@ -2682,7 +2682,7 @@ public class AsyncDataProvider {
         }
     }
 
-    public void getExternalNetworksByProviderId(AsyncQuery<VdcQueryReturnValue> aQuery, Guid providerId) {
+    public void getExternalNetworksByProviderId(AsyncQuery<QueryReturnValue> aQuery, Guid providerId) {
         Frontend.getInstance().runQuery(QueryType.GetAllExternalNetworksOnProvider,
                 new IdQueryParameters(providerId),
                 aQuery);

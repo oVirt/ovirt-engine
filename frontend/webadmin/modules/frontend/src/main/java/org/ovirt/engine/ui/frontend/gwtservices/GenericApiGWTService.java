@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import com.google.gwt.user.client.rpc.XsrfProtectedService;
@@ -17,17 +17,16 @@ import com.google.gwt.user.server.rpc.NoXsrfProtect;
 @RemoteServiceRelativePath("GenericApiGWTService")
 public interface GenericApiGWTService extends XsrfProtectedService {
 
-    VdcQueryReturnValue runQuery(QueryType search,
+    QueryReturnValue runQuery(QueryType search,
             QueryParametersBase searchParameters);
 
     VdcReturnValueBase runAction(ActionType actionType,
             ActionParametersBase params);
 
-    @NoXsrfProtect
-    VdcQueryReturnValue runPublicQuery(QueryType queryType,
+    @NoXsrfProtect QueryReturnValue runPublicQuery(QueryType queryType,
             QueryParametersBase params);
 
-    ArrayList<VdcQueryReturnValue> runMultipleQueries(
+    ArrayList<QueryReturnValue> runMultipleQueries(
             ArrayList<QueryType> queryTypeList,
             ArrayList<QueryParametersBase> paramsList);
 

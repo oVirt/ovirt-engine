@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -277,7 +277,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         Frontend.getInstance().runMultipleQueries(queryTypeList,
                 queryParamsList,
                 result -> {
-                    Iterator<VdcQueryReturnValue> returnValuesIter = result.getReturnValues().iterator();
+                    Iterator<QueryReturnValue> returnValuesIter = result.getReturnValues().iterator();
                     Iterator<StorageDomain> domainsIter = getStorage().getItems().iterator();
                     boolean noQuota = true;
                     while(domainsIter.hasNext()) {

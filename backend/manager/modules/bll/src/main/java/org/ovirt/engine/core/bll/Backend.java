@@ -62,8 +62,8 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
@@ -524,19 +524,19 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public VdcQueryReturnValue runInternalQuery(QueryType actionType, QueryParametersBase parameters, EngineContext engineContext) {
+    public QueryReturnValue runInternalQuery(QueryType actionType, QueryParametersBase parameters, EngineContext engineContext) {
         return runQueryImpl(actionType, parameters, false, engineContext);
     }
 
     @Override
-    public VdcQueryReturnValue runQuery(QueryType actionType, QueryParametersBase parameters) {
+    public QueryReturnValue runQuery(QueryType actionType, QueryParametersBase parameters) {
         return runQueryImpl(actionType,
                 parameters,
                 true,
                 null);
     }
 
-    protected VdcQueryReturnValue runQueryImpl(QueryType actionType, QueryParametersBase parameters,
+    protected QueryReturnValue runQueryImpl(QueryType actionType, QueryParametersBase parameters,
             boolean isPerformUserCheck, EngineContext engineContext) {
         if (isPerformUserCheck) {
             String sessionId = parameters.getSessionId();
@@ -561,7 +561,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         }
         QueriesCommandBase<?> command = createQueryCommand(actionType, parameters, engineContext);
         command.setInternalExecution(!isPerformUserCheck);
-        VdcQueryReturnValue returnValue = queryExecutor.get().execute(command, actionType);
+        QueryReturnValue returnValue = queryExecutor.get().execute(command, actionType);
         if (returnValue.getCorrelationId() == null) {
             returnValue.setCorrelationId(parameters.getCorrelationId());
         }
@@ -569,7 +569,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return returnValue;
     }
 
-    protected VdcQueryReturnValue runQueryImpl(QueryType actionType, QueryParametersBase parameters,
+    protected QueryReturnValue runQueryImpl(QueryType actionType, QueryParametersBase parameters,
             boolean isPerformUserCheck) {
         return runQueryImpl(actionType, parameters, isPerformUserCheck, null);
     }
@@ -640,7 +640,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcQueryReturnValue runPublicQuery(QueryType actionType, QueryParametersBase parameters) {
+    public QueryReturnValue runPublicQuery(QueryType actionType, QueryParametersBase parameters) {
         parameters.setRefresh(false);
         switch (actionType) {
         case GetAAAProfileList:
@@ -697,8 +697,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return null;
     }
 
-    private VdcQueryReturnValue getErrorQueryReturnValue(EngineMessage errorMessage) {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+    private QueryReturnValue getErrorQueryReturnValue(EngineMessage errorMessage) {
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(false);
         returnValue.setExceptionString(errorMessage.toString());
         return returnValue;
@@ -741,7 +741,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcQueryReturnValue runInternalQuery(QueryType queryType, QueryParametersBase queryParameters) {
+    public QueryReturnValue runInternalQuery(QueryType queryType, QueryParametersBase queryParameters) {
         return runInternalQuery(queryType, queryParameters, null);
     }
 }

@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,7 +45,7 @@ public class BackendGlusterHookResource
     @Override
     public GlusterHook get() {
         GlusterHook hook = performGet(QueryType.GetGlusterHookById, new GlusterHookQueryParameters(guid, true));
-        VdcQueryReturnValue result = runQuery(QueryType.GetGlusterHookContent, new GlusterHookContentQueryParameters(guid));
+        QueryReturnValue result = runQuery(QueryType.GetGlusterHookContent, new GlusterHookContentQueryParameters(guid));
         if (result != null
                 && result.getSucceeded()
                 && result.getReturnValue() != null) {

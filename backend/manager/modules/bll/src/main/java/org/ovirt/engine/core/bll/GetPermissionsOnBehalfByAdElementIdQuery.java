@@ -26,8 +26,8 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DbGroupDao;
 import org.ovirt.engine.core.dao.DbUserDao;
@@ -51,7 +51,7 @@ public class GetPermissionsOnBehalfByAdElementIdQuery<P extends IdQueryParameter
 
     @Override
     protected void executeQueryCommand() {
-        VdcQueryReturnValue returnValue = Backend.getInstance().runInternalQuery(
+        QueryReturnValue returnValue = Backend.getInstance().runInternalQuery(
             QueryType.GetAuthzGroupsByUserId,
             getParameters()
         );

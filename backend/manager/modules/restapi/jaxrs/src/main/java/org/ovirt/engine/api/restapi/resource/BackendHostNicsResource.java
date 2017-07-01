@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -145,7 +145,7 @@ public class BackendHostNicsResource
     }
 
     public Map<Guid, Guid> retriveVfMap() {
-        final VdcQueryReturnValue returnValue =
+        final QueryReturnValue returnValue =
                 runQuery(QueryType.GetVfToPfMapByHostId, new IdQueryParameters(asGuid(hostId)));
         return returnValue.getReturnValue();
     }

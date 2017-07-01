@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -188,7 +188,7 @@ public class ResourcesModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
 
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             final ArrayList<VM> list = returnValue.getReturnValue();
 
             // Update calculated properties.
@@ -239,7 +239,7 @@ public class ResourcesModel extends SearchableListModel {
             QueryParametersBase parameters =
                     new QueryParametersBase();
             parameters.setRefresh(getIsQueryFirstTime());
-            Frontend.getInstance().runQuery(QueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<VdcQueryReturnValue>(
+            Frontend.getInstance().runQuery(QueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<QueryReturnValue>(
                     retVal -> {
                         Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = (HashMap<Guid, QuotaUsagePerUser>) retVal.getReturnValue();
 

@@ -22,8 +22,8 @@ import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 public class FiltersHelper {
@@ -80,7 +80,7 @@ public class FiltersHelper {
             InitialContext ctx = null;
             try {
                 ctx = new InitialContext();
-                VdcQueryReturnValue returnValue =
+                QueryReturnValue returnValue =
                         FiltersHelper.getBackend(ctx)
                                 .runPublicQuery(QueryType.ValidateSession,
                                         new QueryParametersBase(session));

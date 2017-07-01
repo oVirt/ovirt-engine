@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
@@ -781,7 +781,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     protected void syncSearch(
             QueryType queryType,
             QueryParametersBase queryParametersBase,
-            AsyncQuery<VdcQueryReturnValue> asyncCallback) {
+            AsyncQuery<QueryReturnValue> asyncCallback) {
         queryParametersBase.setRefresh(getIsQueryFirstTime());
 
         Frontend.getInstance().runQuery(queryType, queryParametersBase, asyncCallback);
@@ -858,11 +858,11 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
-    protected class SetItemsAsyncQuery extends AsyncQuery<VdcQueryReturnValue> {
+    protected class SetItemsAsyncQuery extends AsyncQuery<QueryReturnValue> {
         public SetItemsAsyncQuery() {
-            super(new AsyncCallback<VdcQueryReturnValue>() {
+            super(new AsyncCallback<QueryReturnValue>() {
                 @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
+                public void onSuccess(QueryReturnValue returnValue) {
                     setItems((Collection<T>) returnValue.getReturnValue());
                 }
             });
@@ -880,11 +880,11 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
-    protected class SetSortedItemsAsyncQuery extends AsyncQuery<VdcQueryReturnValue> {
+    protected class SetSortedItemsAsyncQuery extends AsyncQuery<QueryReturnValue> {
         public SetSortedItemsAsyncQuery(final Comparator<? super T> comparator) {
-            super(new AsyncCallback<VdcQueryReturnValue>() {
+            super(new AsyncCallback<QueryReturnValue>() {
                 @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
+                public void onSuccess(QueryReturnValue returnValue) {
                     List<T> items = returnValue.getReturnValue();
                     Collections.sort(items, comparator);
                     setItems(items);

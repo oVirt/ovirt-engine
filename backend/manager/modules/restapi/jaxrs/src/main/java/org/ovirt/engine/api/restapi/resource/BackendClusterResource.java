@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationPa
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterResource<P extends BackendClustersResource>
@@ -120,7 +120,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public Response resetEmulatedMachine(Action action) {
-        VdcQueryReturnValue result = runQuery(QueryType.GetClusterById, new IdQueryParameters(guid));
+        QueryReturnValue result = runQuery(QueryType.GetClusterById, new IdQueryParameters(guid));
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
             ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters(result.getReturnValue());
             param.setForceResetEmulatedMachine(true);

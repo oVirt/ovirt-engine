@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -92,7 +92,7 @@ public class PoolItemBehavior extends ItemBehavior {
         } else {
             Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                     new IdQueryParameters(entity.getVmPoolId()),
-                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    new AsyncQuery<QueryReturnValue>(returnValue -> {
 
                         if (returnValue != null) {
                             VM vm = returnValue.getReturnValue();

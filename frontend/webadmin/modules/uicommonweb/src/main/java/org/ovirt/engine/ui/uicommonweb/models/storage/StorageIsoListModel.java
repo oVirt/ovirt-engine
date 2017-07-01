@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -92,7 +92,7 @@ public class StorageIsoListModel extends SearchableListModel<StorageDomain, Repo
 
         startProgress();
 
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             stopProgress();
 
             ArrayList<RepoImage> repoImageList = new ArrayList<>();

@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -208,7 +208,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             Guid storageDomainId = exportModel.getStorage().getSelectedItem().getId();
             GetAllFromExportDomainQueryParameters tempVar =
                     new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
-            Frontend.getInstance().runQuery(getVmOrTemplateQuery, tempVar, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+            Frontend.getInstance().runQuery(getVmOrTemplateQuery, tempVar, new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
                 ExportVmModel windowModel = (ExportVmModel) getWindow();
                 List<T> foundVms = new ArrayList<>();
 

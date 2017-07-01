@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -422,12 +422,12 @@ public class BackendApiResourceTest {
     }
 
     protected void setUpGetSystemVersionExpectations() {
-        VdcQueryReturnValue productRpmQueryResult = new VdcQueryReturnValue();
+        QueryReturnValue productRpmQueryResult = new QueryReturnValue();
         productRpmQueryResult.setSucceeded(true);
         productRpmQueryResult.setReturnValue(SYSTEM_VERSION);
         when(backend.runQuery(eq(QueryType.GetConfigurationValue), getProductRPMVersionParams())).thenReturn(productRpmQueryResult);
 
-        VdcQueryReturnValue productVersionQueryResult = new VdcQueryReturnValue();
+        QueryReturnValue productVersionQueryResult = new QueryReturnValue();
         productVersionQueryResult.setSucceeded(true);
         productVersionQueryResult.setReturnValue(new Version(MAJOR, MINOR, BUILD, REVISION));
         when(backend.runQuery(eq(QueryType.GetProductVersion), getProductVersionParams())).thenReturn(productVersionQueryResult);
@@ -438,7 +438,7 @@ public class BackendApiResourceTest {
     }
 
     protected void setUpGetSystemStatisticsExpectations() {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
 
         when(backend.runQuery(eq(QueryType.GetSystemStatistics), queryParams())).thenReturn(queryResult);
 

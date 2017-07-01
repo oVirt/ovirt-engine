@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule.KeyValue;
@@ -141,7 +141,7 @@ public class ConfigureConsoleOptionsQueryTest extends
 
         mockSpiceRelatedConfig();
 
-        VdcQueryReturnValue caResult = new VdcQueryReturnValue();
+        QueryReturnValue caResult = new QueryReturnValue();
         caResult.setSucceeded(false);
         doReturn(caResult).when(backend).runInternalQuery(eq(QueryType.GetCACertificate), any(QueryParametersBase.class));
 
@@ -251,7 +251,7 @@ public class ConfigureConsoleOptionsQueryTest extends
     }
 
     void mockGetCaCertificate() {
-        VdcQueryReturnValue caCertificateReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue caCertificateReturnValue = new QueryReturnValue();
         caCertificateReturnValue.setSucceeded(true);
         caCertificateReturnValue.setReturnValue(CA_CERTIFICATE);
         doReturn(caCertificateReturnValue).when(backend)
@@ -259,7 +259,7 @@ public class ConfigureConsoleOptionsQueryTest extends
     }
 
     void mockGetVdsCertificateSubjectByVmId() {
-        VdcQueryReturnValue hostSubjectReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue hostSubjectReturnValue = new QueryReturnValue();
         hostSubjectReturnValue.setReturnValue(HOST_SUBJECT);
         doReturn(hostSubjectReturnValue).when(backend)
                 .runInternalQuery(eq(QueryType.GetVdsCertificateSubjectByVmId), any(IdQueryParameters.class));

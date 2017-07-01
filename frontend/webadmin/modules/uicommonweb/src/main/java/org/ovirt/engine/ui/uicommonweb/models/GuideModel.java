@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -105,7 +105,7 @@ public class GuideModel<T> extends EntityModel<T> {
         }
         Frontend.getInstance().runQuery(QueryType.Search,
                 new SearchParameters(searchStr, SearchType.VDS),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<VDS> hosts = returnValue.getReturnValue();
                     boolean succeeded = true;
                     for (VDS host : hosts) {
@@ -143,7 +143,7 @@ public class GuideModel<T> extends EntityModel<T> {
     protected void checkVdsActivateSucceeded(final String searchStr) {
         Frontend.getInstance().runQuery(QueryType.Search,
                 new SearchParameters(searchStr, SearchType.VDS),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<VDS> hosts = returnValue.getReturnValue();
                     boolean succeeded = true;
                     for (VDS host : hosts) {

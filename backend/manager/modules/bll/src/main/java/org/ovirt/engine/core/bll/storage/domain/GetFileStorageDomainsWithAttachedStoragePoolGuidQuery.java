@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 public class GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<P extends StorageDomainsAndStoragePoolIdQueryParameters> extends GetStorageDomainsWithAttachedStoragePoolGuidQuery<P> {
     public GetFileStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters, EngineContext engineContext) {
@@ -32,7 +32,7 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Sto
 
     protected List<StorageDomainStatic> getStorageDomainsByStorageServerConnections(StorageServerConnections storageServerConnection) {
         List<StorageDomainStatic> storageDomainsWithAttachedStoragePoolId = new ArrayList<>();
-        VdcQueryReturnValue returnValue = getExistingStorageDomainList(storageServerConnection);
+        QueryReturnValue returnValue = getExistingStorageDomainList(storageServerConnection);
         if (returnValue.getSucceeded()) {
             List<StorageDomain> existingStorageDomains = returnValue.getReturnValue();
             if (!existingStorageDomains.isEmpty()) {
@@ -45,8 +45,8 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Sto
         return storageDomainsWithAttachedStoragePoolId;
     }
 
-    protected VdcQueryReturnValue getExistingStorageDomainList(StorageServerConnections storageServerConnection) {
-        VdcQueryReturnValue returnValue = backend.runInternalQuery(QueryType.GetExistingStorageDomainList,
+    protected QueryReturnValue getExistingStorageDomainList(StorageServerConnections storageServerConnection) {
+        QueryReturnValue returnValue = backend.runInternalQuery(QueryType.GetExistingStorageDomainList,
                 new GetExistingStorageDomainListParameters(
                         getVdsId(),
                         storageServerConnection.getStorageType(),

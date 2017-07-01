@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -109,15 +109,15 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         VDSReturnValue returnValue = getVDSReturnValue();
         when(vdsBrokerFrontend.runVdsCommand(eq(VDSCommandType.GlusterServersList),
                 any(VDSParametersBase.class))).thenReturn(returnValue);
-        VdcQueryReturnValue vdcReturnValue = getVdcReturnValue();
+        QueryReturnValue vdcReturnValue = getVdcReturnValue();
         when(backendInternal.runInternalQuery(eq(QueryType.GetServerSSHKeyFingerprint),
                 any(QueryParametersBase.class), any(EngineContext.class))).thenReturn(vdcReturnValue);
         doReturn(params.getClusterId()).when(getQueryParameters()).getClusterId();
         doReturn(true).when(getQueryParameters()).isServerKeyFingerprintRequired();
     }
 
-    private VdcQueryReturnValue getVdcReturnValue() {
-        VdcQueryReturnValue retValue = new VdcQueryReturnValue();
+    private QueryReturnValue getVdcReturnValue() {
+        QueryReturnValue retValue = new QueryReturnValue();
         retValue.setSucceeded(true);
         retValue.setReturnValue(serverKeyFingerprint);
         return retValue;

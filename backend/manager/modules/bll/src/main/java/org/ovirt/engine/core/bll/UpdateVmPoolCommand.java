@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -113,7 +113,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
 
     @Override
     protected void executeCommand() {
-        VdcQueryReturnValue currentVmsInPoolQuery =
+        QueryReturnValue currentVmsInPoolQuery =
                 runInternalQuery(QueryType.GetAllPoolVms, new IdQueryParameters(getVmPool().getVmPoolId()));
         List<VM> poolVmsBeforeAdd =
                 currentVmsInPoolQuery.getSucceeded() ? currentVmsInPoolQuery.getReturnValue() : null;
@@ -162,7 +162,7 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
         Guid currentTemplateVersion = null; // old template version (based on current vm data)
         boolean isCurrentLatest = false; // old latest status
         if (poolVm.isNextRunConfigurationExists()) {
-            VdcQueryReturnValue qRetNextRun =
+            QueryReturnValue qRetNextRun =
                     getBackend().runInternalQuery(QueryType.GetVmNextRunConfiguration,
                             new IdQueryParameters(poolVm.getId()));
             if (qRetNextRun.getSucceeded()) {

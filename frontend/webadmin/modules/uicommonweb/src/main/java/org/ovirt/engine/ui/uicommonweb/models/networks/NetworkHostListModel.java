@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -61,7 +61,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         }
 
         final NetworkHostFilter filter = getViewFilterType();
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             if (filter.equals(getViewFilterType())) {
                 final Iterable returnList = returnValue.getReturnValue();
                 if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
@@ -100,7 +100,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         params.setRefresh(false);
         Frontend.getInstance().runQuery(QueryType.GetInterfacesByLabelForNetwork,
             params,
-            new AsyncQuery<VdcQueryReturnValue>(returnValueObj -> {
+            new AsyncQuery<QueryReturnValue>(returnValueObj -> {
                 if (!filter.equals(getViewFilterType())) {
                     return;
                 }

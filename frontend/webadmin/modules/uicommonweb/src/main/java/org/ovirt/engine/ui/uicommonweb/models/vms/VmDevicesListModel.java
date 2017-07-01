@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -57,10 +57,10 @@ public class VmDevicesListModel<E extends VM>
     protected void syncSearch() {
         if (getEntity() != null) {
             final E vm = getEntity();
-            final AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<VdcQueryReturnValue>(
-                    new AsyncCallback<VdcQueryReturnValue>() {
+            final AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<QueryReturnValue>(
+                    new AsyncCallback<QueryReturnValue>() {
                         @Override
-                        public void onSuccess(VdcQueryReturnValue returnValue) {
+                        public void onSuccess(QueryReturnValue returnValue) {
                             final Collection<VmDevice> vmDevices = returnValue.getReturnValue();
                             final ArrayList<VmDeviceFeEntity> frontendDevices = new ArrayList<>();
                             for (VmDevice vmDevice : vmDevices) {

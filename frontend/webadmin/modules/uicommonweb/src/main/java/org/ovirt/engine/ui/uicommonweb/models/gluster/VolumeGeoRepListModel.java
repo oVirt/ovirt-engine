@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -329,7 +329,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
     private void fetchConfigForSession(GlusterGeoRepSession selectedSession) {
         Frontend.getInstance().runQuery(QueryType.GetGlusterVolumeGeoRepConfigList, new IdQueryParameters(selectedSession.getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
                             (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
                     geoRepConfigModel.stopProgress();

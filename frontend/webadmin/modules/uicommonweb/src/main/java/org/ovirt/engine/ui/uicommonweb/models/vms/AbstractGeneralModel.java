@@ -8,8 +8,8 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -38,7 +38,7 @@ public class AbstractGeneralModel<E> extends EntityModel<E> {
         }
 
         Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices,
-                new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery<QueryReturnValue>(returnValue -> {
                             List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
                             Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 

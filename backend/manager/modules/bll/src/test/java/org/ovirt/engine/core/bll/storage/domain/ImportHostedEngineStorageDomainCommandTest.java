@@ -47,8 +47,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -244,7 +244,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
     }
 
     private Object createQueryReturnValueWith(Object value) {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(value);
         return returnValue;

@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -57,7 +57,7 @@ public class StorageVmListModel extends SearchableListModel<StorageDomain, VM> {
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(QueryType.GetVmsByStorageDomain, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetVmsByStorageDomain, tempVar, new AsyncQuery<QueryReturnValue>(returnValue -> {
             ArrayList<VM> vms = returnValue.getReturnValue();
             Collections.sort(vms, new LexoNumericNameableComparator<>());
             setItems(vms);

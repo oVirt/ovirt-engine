@@ -44,8 +44,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplatesResource
@@ -232,7 +232,7 @@ public class BackendTemplatesResource
             IdsQueryParameters params = new IdsQueryParameters();
             List<Guid> ids = entities.stream().map(VmTemplate::getId).collect(Collectors.toList());
             params.setId(ids);
-            VdcQueryReturnValue queryReturnValue = runQuery(QueryType.GetVmsInit, params);
+            QueryReturnValue queryReturnValue = runQuery(QueryType.GetVmsInit, params);
             if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
                 List<VmInit> vmInits = queryReturnValue.getReturnValue();
                 Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);

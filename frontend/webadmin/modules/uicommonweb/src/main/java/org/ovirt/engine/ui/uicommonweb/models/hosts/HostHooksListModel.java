@@ -7,8 +7,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -65,7 +65,7 @@ public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String,
         setIsEmpty(false);
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(QueryType.GetVdsHooksById, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetVdsHooksById, tempVar, new AsyncQuery<QueryReturnValue>(returnValue -> {
             ArrayList<HashMap<String, String>> list = new ArrayList<>();
             HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = returnValue.getReturnValue();
             HashMap<String, String> row;

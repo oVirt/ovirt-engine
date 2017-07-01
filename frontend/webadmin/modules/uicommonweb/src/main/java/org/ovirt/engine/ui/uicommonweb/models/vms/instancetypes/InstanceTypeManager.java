@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -92,7 +92,7 @@ public abstract class InstanceTypeManager {
         final Guid selectedInstanceTypeId = getSelectedInstanceTypeId();
 
         Frontend.getInstance().runQuery(QueryType.GetAllInstanceTypes, new QueryParametersBase(),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     if (returnValue == null || !returnValue.getSucceeded()) {
                         return;
                     }
@@ -296,7 +296,7 @@ public abstract class InstanceTypeManager {
             activate();
 
             Frontend.getInstance().runQuery(QueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()),
-                    new AsyncQuery<VdcQueryReturnValue>(r -> {
+                    new AsyncQuery<QueryReturnValue>(r -> {
                         deactivate();
                         List<String> consoleDevices = r.getReturnValue();
                         getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
@@ -330,7 +330,7 @@ public abstract class InstanceTypeManager {
     }
 
     private void updateWatchdog(final VmBase vmBase, final boolean continueWithNext) {
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery<QueryReturnValue>(returnValue -> {
             deactivate();
             @SuppressWarnings("unchecked")
             Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
@@ -360,7 +360,7 @@ public abstract class InstanceTypeManager {
     protected void updateBalloon(final VmBase vmBase, final boolean continueWithNext) {
         if (model.getMemoryBalloonDeviceEnabled().getIsChangable() && model.getMemoryBalloonDeviceEnabled().getIsAvailable()) {
             Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()),
-                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    new AsyncQuery<QueryReturnValue>(returnValue -> {
                         deactivate();
                         getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
                         activate();
@@ -379,7 +379,7 @@ public abstract class InstanceTypeManager {
         if (model.getIsRngEnabled().getIsChangable() && model.getIsRngEnabled().getIsAvailable()) {
             if (!isNextRunConfigurationExists()) {
                 Frontend.getInstance().runQuery(QueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()),
-                        new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                        new AsyncQuery<QueryReturnValue>(returnValue -> {
                             deactivate();
                             List<VmDevice> rngDevices = returnValue.getReturnValue();
                             getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
@@ -455,7 +455,7 @@ public abstract class InstanceTypeManager {
 
         // graphics
         Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     deactivate();
 
                     List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();

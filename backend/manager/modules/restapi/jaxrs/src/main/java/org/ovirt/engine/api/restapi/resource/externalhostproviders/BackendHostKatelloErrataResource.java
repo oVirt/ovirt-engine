@@ -11,8 +11,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 
 public class BackendHostKatelloErrataResource extends AbstractBackendCollectionResource<KatelloErratum, Erratum> implements KatelloErrataResource {
 
@@ -28,7 +28,7 @@ public class BackendHostKatelloErrataResource extends AbstractBackendCollectionR
         ErrataData errataData = null;
 
         try {
-            VdcQueryReturnValue returnValue =
+            QueryReturnValue returnValue =
                     runQuery(QueryType.GetErrataForHost, new GetErrataCountsParameters(asGuid(hostId)));
             if (!returnValue.getSucceeded()) {
                 backendFailure(returnValue.getExceptionString());

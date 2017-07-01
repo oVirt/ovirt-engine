@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -49,7 +49,7 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
             setHelpTag(HelpTag.remove_network_qos);
             setHashName("remove_network_qos"); //$NON-NLS-1$
 
-            for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
+            for (QueryReturnValue returnValue : result.getReturnValues()) {
                 vnicProfiles.addAll((ArrayList<VnicProfileView>) returnValue.getReturnValue());
             }
             if (vnicProfiles.isEmpty()) {

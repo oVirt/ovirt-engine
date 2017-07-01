@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -84,7 +84,7 @@ public class EditProviderModel extends ProviderModel {
                 startProgress();
                 Frontend.getInstance().runMultipleQueries(queryTypes, queryParams, result -> {
                     stopProgress();
-                    Iterator<VdcQueryReturnValue> i = result.getReturnValues().iterator();
+                    Iterator<QueryReturnValue> i = result.getReturnValues().iterator();
                     if (providedTypes.contains(VdcObjectType.Network)) {
                         providedNetworks = i.next().getReturnValue();
                     }

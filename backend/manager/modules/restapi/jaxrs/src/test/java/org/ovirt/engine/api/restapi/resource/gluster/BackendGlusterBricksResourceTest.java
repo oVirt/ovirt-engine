@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionPara
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -421,7 +421,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
     }
 
     private void setUpBricksQueryExpectations(Object failure) {
-        VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
+        QueryReturnValue queryResult = new QueryReturnValue();
         queryResult.setSucceeded(failure == null);
         List<GlusterBrickEntity> entities = new ArrayList<>();
 

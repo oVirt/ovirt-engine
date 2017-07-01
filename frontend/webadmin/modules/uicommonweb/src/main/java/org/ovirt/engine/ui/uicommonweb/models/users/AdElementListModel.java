@@ -18,9 +18,9 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -225,7 +225,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     public void searchMyGroups() {
         getSearchInProgress().setEntity(true);
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(queryReturnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(queryReturnValue -> {
             if (handleQueryError(queryReturnValue)) {
                 return;
             }
@@ -317,7 +317,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     }
 
     private void syncSearchUsers() {
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(queryReturnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(queryReturnValue -> {
             if (handleQueryError(queryReturnValue)) {
                 return;
             }
@@ -334,7 +334,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     }
 
     private void syncSearchGroups() {
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(queryReturnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(queryReturnValue -> {
             if (handleQueryError(queryReturnValue)) {
                 return;
             }
@@ -355,7 +355,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                 asyncQuery);
     }
 
-    protected void addUsersToModel(VdcQueryReturnValue returnValue, Set<String> excludeUsers) {
+    protected void addUsersToModel(QueryReturnValue returnValue, Set<String> excludeUsers) {
         for (IVdcQueryable item : (List<IVdcQueryable>) returnValue.getReturnValue()) {
             DirectoryUser a = (DirectoryUser) item;
             if (!excludeUsers.contains(a.getId())) {
@@ -366,7 +366,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         }
     }
 
-    protected void addGroupsToModel(VdcQueryReturnValue returnValue, Set<String> excludeUsers) {
+    protected void addGroupsToModel(QueryReturnValue returnValue, Set<String> excludeUsers) {
         for (IVdcQueryable item : (Collection<IVdcQueryable>) returnValue.getReturnValue()) {
             DirectoryGroup a = (DirectoryGroup) item;
             if (!excludeUsers.contains(a.getId())) {
@@ -490,7 +490,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
      * @param returnValue query return value
      * @return true if a query failure has occurred
      */
-    private boolean handleQueryError(VdcQueryReturnValue returnValue) {
+    private boolean handleQueryError(QueryReturnValue returnValue) {
         setMessage(null);
         if (!returnValue.getSucceeded()) {
             setMessage(Frontend.getInstance().getAppErrorsTranslator()

@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -44,7 +44,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
         }
 
         if (storageDomain.getStorageType().isCinderDomain()) {
-            VdcQueryReturnValue returnValue = runInternalQuery(QueryType.GetUnregisteredCinderDisksByStorageDomainId,
+            QueryReturnValue returnValue = runInternalQuery(QueryType.GetUnregisteredCinderDisksByStorageDomainId,
                     new IdQueryParameters(getStorageDomainId()));
             setReturnValue(returnValue.getReturnValue());
             return;
@@ -69,7 +69,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
         for (Guid unregisteredDiskId : imagesList) {
             GetUnregisteredDiskQueryParameters unregQueryParams = new GetUnregisteredDiskQueryParameters(
                     unregisteredDiskId, getStorageDomainId(), getStoragePoolId());
-            VdcQueryReturnValue unregQueryReturn = runInternalQuery(QueryType.GetUnregisteredDisk,
+            QueryReturnValue unregQueryReturn = runInternalQuery(QueryType.GetUnregisteredDisk,
                     unregQueryParams);
             if (unregQueryReturn.getSucceeded()) {
                 unregisteredDisks.add(unregQueryReturn.getReturnValue());

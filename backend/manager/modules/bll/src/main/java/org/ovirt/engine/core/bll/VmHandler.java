@@ -77,8 +77,8 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -301,7 +301,7 @@ public class VmHandler implements BackendService {
     public static boolean isVmWithSameNameExistStatic(String vmName, Guid storagePoolId) {
         NameQueryParameters params = new NameQueryParameters(vmName);
         params.setDatacenterId(storagePoolId);
-        VdcQueryReturnValue result = Backend.getInstance().runInternalQuery(QueryType.IsVmWithSameNameExist, params);
+        QueryReturnValue result = Backend.getInstance().runInternalQuery(QueryType.IsVmWithSameNameExist, params);
         return (Boolean) result.getReturnValue();
     }
 

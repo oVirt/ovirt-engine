@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -54,7 +54,7 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
 
     @Override
     public void executed(FrontendMultipleQueryAsyncResult result) {
-        List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
+        List<QueryReturnValue> returnValueList = result.getReturnValues();
         ArrayList<VmTemplate> templates = returnValueList.get(0).getReturnValue();
         initTemplates(templates);
     }

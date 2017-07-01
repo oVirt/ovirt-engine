@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -60,7 +60,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
             if (getClusterQuota().getIsAvailable()) {
                 Frontend.getInstance().runQuery(QueryType.GetAllRelevantQuotasForCluster,
                     new IdQueryParameters(getCluster().getSelectedItem().getId()),
-                    new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                    new AsyncQuery<QueryReturnValue>(returnValue -> {
                                 ArrayList<Quota> quotaList = returnValue.getReturnValue();
                                 getClusterQuota().setItems(quotaList);
                                 if (quotaList.isEmpty()
@@ -89,7 +89,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private void fetchCpuProfiles(Guid clusterId) {
         Frontend.getInstance().runQuery(QueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
                     getCpuProfiles().setItems(cpuProfiles);
                 }));
@@ -131,10 +131,10 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         this.storagePool = storagePool;
     }
 
-    public void setItems(final AsyncCallback<VdcQueryReturnValue> callback, final List<VM>  externalVms) {
+    public void setItems(final AsyncCallback<QueryReturnValue> callback, final List<VM>  externalVms) {
         Frontend.getInstance().runQuery(QueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<VM> vms = returnValue.getReturnValue();
 
                     Set<String> existingNames = new HashSet<>();

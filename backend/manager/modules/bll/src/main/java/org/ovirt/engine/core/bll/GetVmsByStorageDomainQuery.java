@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparerByDiskSize;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -34,7 +34,7 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
         List<VM> vms = getAllVMsForStorageDomain(domainId);
 
         // get all disks and snapshots
-        VdcQueryReturnValue queryReturnValue = getAllDisksByStorageDomain(domainId);
+        QueryReturnValue queryReturnValue = getAllDisksByStorageDomain(domainId);
         if (queryReturnValue.getSucceeded()) {
             List<DiskImage> disksOfDomain = queryReturnValue.getReturnValue();
             Map<String, VM> vmNameToVMMap = new HashMap<>();
@@ -70,7 +70,7 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
 
     }
 
-    protected VdcQueryReturnValue getAllDisksByStorageDomain(Guid domainId) {
+    protected QueryReturnValue getAllDisksByStorageDomain(Guid domainId) {
         return runInternalQuery(QueryType.GetAllDisksByStorageDomainId,
                 new IdQueryParameters(domainId));
     }

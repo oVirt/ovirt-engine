@@ -38,9 +38,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.ServerParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
@@ -246,7 +246,7 @@ public class GlusterUtil {
     }
 
     protected Map<String, String> getFingerprints(Set<String> servers) {
-        VdcQueryReturnValue returnValue;
+        QueryReturnValue returnValue;
         Map<String, String> fingerprints = new HashMap<>();
         for (String server : servers) {
             returnValue = backend.

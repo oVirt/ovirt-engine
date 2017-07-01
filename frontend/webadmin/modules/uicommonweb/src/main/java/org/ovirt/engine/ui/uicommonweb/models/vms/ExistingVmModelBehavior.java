@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAlias
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
 import org.ovirt.engine.core.compat.Guid;
@@ -81,7 +81,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
         Frontend.getInstance().runQuery(QueryType.GetVmNumaNodesByVmId,
                 new IdQueryParameters(vm.getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     List<VmNumaNode> nodes = returnValue.getReturnValue();
                     getModel().setVmNumaNodes(nodes);
                     getModel().updateNodeCount(nodes.size());
@@ -90,7 +90,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         if (getVm().getDedicatedVmForVdsList().size() > 0) {
             Frontend.getInstance().runQuery(QueryType.GetAllHostNamesPinnedToVmById,
                     new IdQueryParameters(vm.getId()),
-                    asyncQuery((VdcQueryReturnValue returnValue) ->
+                    asyncQuery((QueryReturnValue returnValue) ->
                             setDedicatedHostsNames((List<String>) returnValue.getReturnValue())));
         }
     }

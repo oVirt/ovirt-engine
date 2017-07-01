@@ -25,9 +25,9 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -527,7 +527,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             startProgress();
 
             IdQueryParameters params = new IdQueryParameters(sp.getId());
-            Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByStoragePoolId, params, new AsyncQuery<VdcQueryReturnValue>(
+            Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByStoragePoolId, params, new AsyncQuery<QueryReturnValue>(
                     returnValue -> {
                         List<StorageDomain> storages = returnValue.getReturnValue();
 
@@ -577,7 +577,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     private void validateDataCenterName(final DataCenterModel dataCenter) {
         Frontend.getInstance().runQuery(QueryType.GetStoragePoolByDatacenterName,
                 new NameQueryParameters(dataCenter.getName().getEntity()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     if (!((Collection<?>)returnValue.getReturnValue()).isEmpty()) {
                         dataCenter.getName().getInvalidityReasons().add(
                                 ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
@@ -597,7 +597,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         IdQueryParameters parameters = new IdQueryParameters(storage_pool.getId());
         Frontend.getInstance().runQuery(QueryType.GetQuotaByStoragePoolId,
                 parameters,
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                     if (((ArrayList<Quota>) returnValue.getReturnValue()).size() == 0) {
                         promptNoQuotaInDCMessage();
                     } else {

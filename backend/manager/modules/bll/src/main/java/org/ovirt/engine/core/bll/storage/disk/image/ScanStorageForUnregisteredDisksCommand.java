@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
@@ -67,7 +67,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     @Override
     protected void executeCommand() {
         // Get all disks from the Storage.
-        VdcQueryReturnValue vdcRetVal = getUnregisteredDisksFromHost();
+        QueryReturnValue vdcRetVal = getUnregisteredDisksFromHost();
         if (!vdcRetVal.getSucceeded()) {
             log.error("An error occurred while fetching unregistered disks from Storage Domain id '{}'",
                     getParameters().getStorageDomainId());
@@ -95,7 +95,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
         unregisteredDisksDao.removeUnregisteredDisk(null, getParameters().getStorageDomainId());
     }
 
-    protected VdcQueryReturnValue getUnregisteredDisksFromHost() {
+    protected QueryReturnValue getUnregisteredDisksFromHost() {
         return getBackend().runInternalQuery(QueryType.GetUnregisteredDisks,
                 new GetUnregisteredDisksQueryParameters(getParameters().getStorageDomainId(),
                         getParameters().getStoragePoolId()));

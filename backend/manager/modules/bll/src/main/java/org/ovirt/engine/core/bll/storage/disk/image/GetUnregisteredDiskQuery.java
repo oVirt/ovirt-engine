@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.businessentities.storage.QemuImageInfo;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -52,7 +52,7 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         }
 
         if (storageDomain.getStorageType().isCinderDomain()) {
-            VdcQueryReturnValue returnValue = runInternalQuery(QueryType.GetUnregisteredCinderDiskByIdAndStorageDomainId,
+            QueryReturnValue returnValue = runInternalQuery(QueryType.GetUnregisteredCinderDiskByIdAndStorageDomainId,
                     new GetCinderEntityByStorageDomainIdParameters(diskId, getParameters().getStorageDomainId()));
             setReturnValue(returnValue.getReturnValue());
             return;

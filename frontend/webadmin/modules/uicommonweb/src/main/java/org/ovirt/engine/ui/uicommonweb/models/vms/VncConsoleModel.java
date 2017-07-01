@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -105,7 +105,7 @@ public class VncConsoleModel extends ConsoleModel {
                 QueryType.ConfigureConsoleOptions,
                 parameters,
                 new ShowErrorAsyncQuery(returnValue -> {
-                    ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    ConsoleOptions configuredOptions = ((QueryReturnValue) returnValue).getReturnValue();
                     // overriding global server settings by frontend settings
                     configuredOptions.setRemapCtrlAltDelete(vncImpl.getOptions().isRemapCtrlAltDelete());
                     vncImpl.setOptions(configuredOptions);

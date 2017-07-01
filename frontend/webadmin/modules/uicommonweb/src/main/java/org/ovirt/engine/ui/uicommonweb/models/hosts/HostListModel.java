@@ -51,9 +51,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -1825,7 +1825,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
             Frontend.getInstance().runQuery(QueryType.GetPermissionsByAdElementId,
                     new IdQueryParameters(dbUser.getId()),
-                    new AsyncQuery<VdcQueryReturnValue>(response -> {
+                    new AsyncQuery<QueryReturnValue>(response -> {
                         if (response == null || !response.getSucceeded()) {
                             hasAdminSystemPermission = false;
                             updateConfigureLocalStorageCommandAvailability1();

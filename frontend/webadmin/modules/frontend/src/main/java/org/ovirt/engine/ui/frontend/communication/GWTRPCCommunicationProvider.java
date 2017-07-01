@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -120,14 +120,14 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runPublicQuery((QueryType) operation.getOperation(),
-                        (QueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+                        (QueryParametersBase) operation.getParameter(), new AsyncCallback<QueryReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         operation.getCallback().onFailure(operation, exception);
                     }
 
                     @Override
-                    public void onSuccess(final VdcQueryReturnValue result) {
+                    public void onSuccess(final QueryReturnValue result) {
                         operation.getCallback().onSuccess(operation, result);
                     }
                 });
@@ -149,7 +149,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runQuery((QueryType) operation.getOperation(),
-                        (QueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+                        (QueryParametersBase) operation.getParameter(), new AsyncCallback<QueryReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         //Clear out the token, and let the retry mechanism try again.
@@ -158,7 +158,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     }
 
                     @Override
-                    public void onSuccess(final VdcQueryReturnValue result) {
+                    public void onSuccess(final QueryReturnValue result) {
                         operation.getCallback().onSuccess(operation, result);
                     }
                 });
@@ -258,7 +258,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 public void serviceFound(GenericApiGWTServiceAsync service) {
                     service.runMultipleQueries((ArrayList<QueryType>) queryTypes,
                             (ArrayList<QueryParametersBase>) parameters,
-                            new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
+                            new AsyncCallback<ArrayList<QueryReturnValue>>() {
                         @Override
                         public void onFailure(final Throwable exception) {
                             //Clear out the token, and let the retry mechanism try again.
@@ -267,12 +267,12 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                         }
 
                         @Override
-                        public void onSuccess(final ArrayList<VdcQueryReturnValue> result) {
+                        public void onSuccess(final ArrayList<QueryReturnValue> result) {
                             Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
                                     getCallbackMap(queriesList);
                             for (Map.Entry<VdcOperationCallback<?, ?>,
                                     List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                                List<VdcQueryReturnValue> queryResult = (List<VdcQueryReturnValue>) getOperationResult(
+                                List<QueryReturnValue> queryResult = (List<QueryReturnValue>) getOperationResult(
                                         callbackEntry.getValue(), queriesList, result);
                                 if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
                                     ((VdcOperationCallbackList) callbackEntry.getKey())

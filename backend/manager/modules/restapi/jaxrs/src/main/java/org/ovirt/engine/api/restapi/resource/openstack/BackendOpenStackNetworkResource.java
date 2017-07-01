@@ -36,8 +36,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackNetworkResource
@@ -120,7 +120,7 @@ public class BackendOpenStackNetworkResource
 
     private Map<Network, Set<Guid>> getAllNetworks() {
         IdQueryParameters parameters = new IdQueryParameters(asGuid(providerId));
-        VdcQueryReturnValue result = runQuery(QueryType.GetAllExternalNetworksOnProvider, parameters);
+        QueryReturnValue result = runQuery(QueryType.GetAllExternalNetworksOnProvider, parameters);
 
         checkResultAndThrowExceptionIfFailed(result);
 
@@ -138,7 +138,7 @@ public class BackendOpenStackNetworkResource
 
     private Guid getDataCenterIdByName(String dataCenterName) {
         NameQueryParameters parameters = new NameQueryParameters(dataCenterName);
-        VdcQueryReturnValue result = runQuery(QueryType.GetStoragePoolByDatacenterName, parameters);
+        QueryReturnValue result = runQuery(QueryType.GetStoragePoolByDatacenterName, parameters);
 
         checkResultAndThrowExceptionIfFailed(result);
 
@@ -150,7 +150,7 @@ public class BackendOpenStackNetworkResource
         return dataCenters.get(0).getId();
     }
 
-    private void checkResultAndThrowExceptionIfFailed(VdcQueryReturnValue result){
+    private void checkResultAndThrowExceptionIfFailed(QueryReturnValue result){
         if (!result.getSucceeded()) {
             try {
                 backendFailure(result.getExceptionString());

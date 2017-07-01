@@ -43,9 +43,9 @@ import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsPa
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -471,7 +471,7 @@ public class BackendStorageDomainsResource
     }
 
     private StorageServerConnections getStorageServerConnection(String id) {
-        VdcQueryReturnValue result = runQuery(
+        QueryReturnValue result = runQuery(
                 QueryType.GetStorageServerConnectionById,
                 new StorageServerConnectionQueryParametersBase(id)
         );

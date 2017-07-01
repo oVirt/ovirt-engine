@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -162,7 +162,7 @@ public class BackendGlusterVolumeResource
     @Override
     public Response getProfileStatistics(Action action) {
         boolean nfsStats = isNfsStatistics();
-        VdcQueryReturnValue result = runQuery(QueryType.GetGlusterVolumeProfileInfo,
+        QueryReturnValue result = runQuery(QueryType.GetGlusterVolumeProfileInfo,
                 new GlusterVolumeProfileParameters(Guid.createGuidFromString(parent.getParent().get().getId()), guid, nfsStats));
         if (result != null
                 && result.getSucceeded()

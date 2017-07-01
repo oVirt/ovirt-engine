@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -268,9 +268,9 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     private void initDataCenterCpuArchitectureMap() {
-        final AsyncQuery<VdcQueryReturnValue> callback = new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+        final AsyncQuery<QueryReturnValue> callback = new AsyncQuery<>(new AsyncCallback<QueryReturnValue>() {
             @Override
-            public void onSuccess(VdcQueryReturnValue returnValue) {
+            public void onSuccess(QueryReturnValue returnValue) {
                 List<Cluster> allClusters = returnValue.getReturnValue();
                 clusterArchitecturesInDataCenters = new HashMap<>();
                 for (Cluster cluster : allClusters) {
@@ -293,7 +293,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     }
 
-    private AsyncCallback<VdcQueryReturnValue> createGetStorageDomainsByStoragePoolIdCallback() {
+    private AsyncCallback<QueryReturnValue> createGetStorageDomainsByStoragePoolIdCallback() {
         return returnValue -> {
             List<StorageDomain> storageDomains = returnValue.getReturnValue();
 
@@ -573,7 +573,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         startProgress();
         Frontend.getInstance().runQuery(QueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getEntity().getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> updateVms(returnValue.<List<VM>>getReturnValue())));
+                new AsyncQuery<QueryReturnValue>(returnValue -> updateVms(returnValue.<List<VM>>getReturnValue())));
     }
 
     public void loadVmFromOva() {
@@ -640,7 +640,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private void loadVMsFromExternalProvider(final OriginType type, String uri, String username, String password, Guid proxyId) {
         startProgress();
         AsyncQuery query = new AsyncQuery(returnValue -> {
-            if (returnValue instanceof VdcQueryReturnValue) {
+            if (returnValue instanceof QueryReturnValue) {
                 setError(messages.providerFailure());
                 stopProgress();
             }

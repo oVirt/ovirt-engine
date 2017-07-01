@@ -7,8 +7,8 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllVmsAndVmPoolsQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
@@ -23,7 +23,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends QueryParametersBase> extends Que
 
         // Add all VMs that the user has direct or indirect privileges on
         // that do not belong to a VM Pool
-        VdcQueryReturnValue queryResult =
+        QueryReturnValue queryResult =
                 runInternalQuery(QueryType.GetAllVms, getParameters());
         if (queryResult != null && queryResult.getSucceeded()) {
             for (VM vm : queryResult.<List<VM>>getReturnValue()) {

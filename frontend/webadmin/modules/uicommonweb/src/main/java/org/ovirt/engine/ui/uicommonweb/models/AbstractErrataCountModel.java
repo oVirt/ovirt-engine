@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.HasErrata;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -100,7 +100,7 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
 
     public void runQuery(Guid guid) {
         startProgress("getCount"); //$NON-NLS-1$
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             stopProgress();
             ErrataCounts resultEntity = returnValue.getReturnValue();
             //Set message to null to make sure the actual setMessage creates an event.

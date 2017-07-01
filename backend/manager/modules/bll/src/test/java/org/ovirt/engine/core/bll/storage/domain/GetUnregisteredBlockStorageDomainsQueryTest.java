@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -236,8 +236,8 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         return returnValue;
     }
 
-    private static VdcQueryReturnValue createGetDeviceListReturnValue(List<LUNs> luns) {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+    private static QueryReturnValue createGetDeviceListReturnValue(List<LUNs> luns) {
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(luns);
 

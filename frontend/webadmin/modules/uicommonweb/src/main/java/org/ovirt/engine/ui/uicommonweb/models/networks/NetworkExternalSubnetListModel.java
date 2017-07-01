@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -99,7 +99,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
                 createProviderReadOnlyCallback());
     }
 
-    private AsyncQuery<VdcQueryReturnValue> createProviderReadOnlyCallback(){
+    private AsyncQuery<QueryReturnValue> createProviderReadOnlyCallback(){
         return new AsyncQuery<>(returnValue -> setCommandExecutionAllowedForProvider((Provider) (returnValue.getReturnValue())));
     }
 

@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -96,7 +96,7 @@ public class ClusterNetworkListModel extends SearchableListModel<Cluster, Networ
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(QueryType.GetAllNetworksByClusterId, tempVar, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetAllNetworksByClusterId, tempVar, new AsyncQuery<>((AsyncCallback<QueryReturnValue>) returnValue -> {
             final List<Network> newItems = returnValue.getReturnValue();
             Collections.sort(newItems,
                     Comparator.comparing((Network n) -> n.getCluster().isManagement()).reversed()

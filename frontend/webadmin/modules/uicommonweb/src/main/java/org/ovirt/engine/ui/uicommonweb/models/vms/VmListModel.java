@@ -43,9 +43,9 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -1626,9 +1626,9 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
         if (selectedItem.isRunningOrPaused() && !selectedItem.isHostedEngine()) {
             AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery<>(
-                    new AsyncCallback<VdcQueryReturnValue>() {
+                    new AsyncCallback<QueryReturnValue>() {
                 @Override
-                public void onSuccess(VdcQueryReturnValue returnValue) {
+                public void onSuccess(QueryReturnValue returnValue) {
                     List<String> changedFields = returnValue.getReturnValue();
                     final boolean cpuHotPluggable = VmCommonUtils.isCpusToBeHotplugged(selectedItem, getcurrentVm());
                     final boolean isHeadlessModeChanged = isHeadlessModeChanged(editedVm, getUpdateVmParameters(false));
@@ -2211,7 +2211,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         importVmModel.setMessage("");
 
         AsyncQuery query = new AsyncQuery(returnValue -> {
-            if (returnValue instanceof VdcQueryReturnValue) {
+            if (returnValue instanceof QueryReturnValue) {
                 importVmsModel.setError(messages.providerFailure());
                 importVmsModel.stopProgress();
             }

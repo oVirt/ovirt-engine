@@ -17,8 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class SsoPostLoginFilter implements Filter {
         QueryParametersBase queryParams = new QueryParametersBase();
         queryParams.setSessionId(sessionId);
         queryParams.setFiltered(FILTER_QUERIES);
-        VdcQueryReturnValue result = FiltersHelper.getBackend(ctx).runQuery(queryType, queryParams);
+        QueryReturnValue result = FiltersHelper.getBackend(ctx).runQuery(queryType, queryParams);
         return result != null && result.getSucceeded() ? result.getReturnValue() : null;
     }
 

@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -100,7 +100,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
      * @param externalProviderIds Set of all external provider id's to which the removed networks belong
      * @return callback object for backend query
      */
-    private AsyncQuery<VdcQueryReturnValue> createProviderReadOnlyCallback(final Set<Guid> externalProviderIds) {
+    private AsyncQuery<QueryReturnValue> createProviderReadOnlyCallback(final Set<Guid> externalProviderIds) {
         return new AsyncQuery<>(returnValue -> {
             List<Provider> providers = returnValue.getReturnValue();
             boolean isReadOnly = checkForRemoveExternalNetworkAvailability(providers, externalProviderIds);

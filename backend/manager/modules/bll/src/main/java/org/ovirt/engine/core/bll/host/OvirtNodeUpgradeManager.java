@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.HostUpgradeManagerResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -31,7 +31,7 @@ public class OvirtNodeUpgradeManager implements UpdateAvailable {
 
     @Override
     public HostUpgradeManagerResult checkForUpdates(VDS host) {
-        VdcQueryReturnValue returnValue =
+        QueryReturnValue returnValue =
                 backendInternal.runInternalQuery(QueryType.GetoVirtISOs, new IdQueryParameters(host.getId()));
         List<RpmVersion> isos = returnValue.getReturnValue();
         boolean updateAvailable = RpmVersionUtils.isUpdateAvailable(isos, host.getHostOs());

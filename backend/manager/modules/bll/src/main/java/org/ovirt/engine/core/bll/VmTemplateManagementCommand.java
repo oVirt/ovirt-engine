@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
@@ -48,7 +48,7 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
     protected void updateWatchdog(Guid templateId) {
         // do not update if this flag is not set
         if (getParameters().isUpdateWatchdog()) {
-            VdcQueryReturnValue query =
+            QueryReturnValue query =
                     runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(templateId));
             List<VmWatchdog> watchdogs = query.getReturnValue();
             if (watchdogs.isEmpty()) {
@@ -84,7 +84,7 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
     protected void updateRngDevice(Guid templateId) {
         // do not update if this flag is not set
         if (getParameters().isUpdateRngDevice()) {
-            VdcQueryReturnValue query =
+            QueryReturnValue query =
                     runInternalQuery(QueryType.GetRngDevice, new IdQueryParameters(templateId));
 
             List<VmRngDevice> rngDevs = query.getReturnValue();

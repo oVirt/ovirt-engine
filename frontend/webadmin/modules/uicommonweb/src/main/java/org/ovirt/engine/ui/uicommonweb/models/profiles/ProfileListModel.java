@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -137,7 +137,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         } else {
         Frontend.getInstance().runQuery(QueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dcId, getQosType()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+                new AsyncQuery<QueryReturnValue>(returnValue -> {
                         List<Q> qosList = (ArrayList<Q>) returnValue.getReturnValue();
                         qosMap = new HashMap<>();
                     if (qosList != null) {
@@ -156,7 +156,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         }
         Frontend.getInstance().runQuery(getQueryType(),
                 new IdQueryParameters(getEntity().getId()),
-                new AsyncQuery<VdcQueryReturnValue>(returnValue -> setItems((List<P>) returnValue.getReturnValue())));
+                new AsyncQuery<QueryReturnValue>(returnValue -> setItems((List<P>) returnValue.getReturnValue())));
     }
 
     @Override

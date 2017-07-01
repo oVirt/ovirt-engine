@@ -27,8 +27,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExternalDiscoveredHostResource
@@ -50,7 +50,7 @@ public class BackendExternalDiscoveredHostResource
         Provider provider = BackendExternalProviderHelper.getProvider(this, providerId);
         ProviderQueryParameters parameters = new ProviderQueryParameters();
         parameters.setProvider(provider);
-        VdcQueryReturnValue result = runQuery(QueryType.GetDiscoveredHostListFromExternalProvider, parameters);
+        QueryReturnValue result = runQuery(QueryType.GetDiscoveredHostListFromExternalProvider, parameters);
         List<org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost> entities = result.getReturnValue();
         if (entities != null) {
             for (org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost entity : entities) {

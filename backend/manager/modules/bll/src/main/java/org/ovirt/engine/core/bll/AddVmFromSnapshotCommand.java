@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDao;
@@ -199,7 +199,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     @Override
     protected VM getVmFromConfiguration() {
         if (vmFromConfiguration == null) {
-            VdcQueryReturnValue queryReturnValue =
+            QueryReturnValue queryReturnValue =
                     runInternalQuery(QueryType.GetVmConfigurationBySnapshot,
                             new IdQueryParameters(snapshot.getId()));
             if (queryReturnValue.getSucceeded()) {

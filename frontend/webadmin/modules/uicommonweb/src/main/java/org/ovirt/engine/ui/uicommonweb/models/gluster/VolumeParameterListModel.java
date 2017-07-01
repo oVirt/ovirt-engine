@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsPara
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -110,7 +110,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         setWindow(volumeParameterModel);
         volumeParameterModel.startProgress();
 
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
             if (!returnValue.getSucceeded()) {
                 innerParameterModel.setOptionsMap(new HashMap<String, GlusterVolumeOptionInfo>());
@@ -204,7 +204,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
         volumeParameterModel.getKeyList().setIsChangeable(false);
         volumeParameterModel.startProgress();
 
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             VolumeParameterModel innerParameterModel = (VolumeParameterModel) getWindow();
 
             if (!returnValue.getSucceeded()) {

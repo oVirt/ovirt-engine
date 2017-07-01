@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -373,7 +373,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setMessage(null);
 
         final SanStorageModelBase model = this;
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(returnValue -> {
             Object result = returnValue.getReturnValue();
             model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
                     : new ArrayList<>());
@@ -479,7 +479,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         initializeItems(null, null);
 
         final SanStorageModelBase model = this;
-        AsyncQuery<VdcQueryReturnValue> asyncQuery = new AsyncQuery<>(response -> {
+        AsyncQuery<QueryReturnValue> asyncQuery = new AsyncQuery<>(response -> {
             if (response.getSucceeded()) {
                 model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected);
                 model.setGetLUNsFailure(""); //$NON-NLS-1$

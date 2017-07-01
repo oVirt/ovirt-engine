@@ -1,14 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -38,7 +37,7 @@ public class RemoveStorageQosModel extends RemoveQosModel<StorageQos> {
         int index = 0;
         int numberOfTimesUsedByDiskProfiles = 0;
         ArrayList<String> list = new ArrayList<>();
-        for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
+        for (QueryReturnValue returnValue : result.getReturnValues()) {
             List<Nameable> diskProfileEntities = returnValue.getReturnValue();
 
             String qosName = sourceListModel.getSelectedItems().get(index).getName();

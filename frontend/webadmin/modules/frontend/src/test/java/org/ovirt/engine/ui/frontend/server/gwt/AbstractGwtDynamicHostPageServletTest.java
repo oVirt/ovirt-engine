@@ -41,8 +41,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamicHostPageServlet> {
@@ -178,7 +178,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     public void testRunPublicQuery_GetConfigurationValue() {
         String sessionId = "sessionId"; //$NON-NLS-1$
         QueryType queryType = QueryType.GetConfigurationValue;
-        VdcQueryReturnValue returnIntValue = new VdcQueryReturnValue();
+        QueryReturnValue returnIntValue = new QueryReturnValue();
         returnIntValue.setSucceeded(true);
         returnIntValue.setReturnValue(Integer.valueOf(255));
         when(mockBackend.runPublicQuery(eq(QueryType.GetConfigurationValue),
@@ -222,7 +222,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     void stubGetUserBySessionIdQuery() {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(mockUser);
 
@@ -233,7 +233,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     void stubGetConfigurationValuePublicQuery() {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
+        QueryReturnValue returnValue = new QueryReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setReturnValue("1.2.3"); //$NON-NLS-1$
 

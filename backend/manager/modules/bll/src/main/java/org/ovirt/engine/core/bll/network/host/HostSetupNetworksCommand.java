@@ -56,8 +56,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -210,7 +210,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         fillInUnsetBondingOptions();
 
         IdQueryParameters idParameters = new IdQueryParameters(getVdsId());
-        VdcQueryReturnValue existingBondsResponse = runInternalQuery(QueryType.GetHostBondsByHostId, idParameters);
+        QueryReturnValue existingBondsResponse = runInternalQuery(QueryType.GetHostBondsByHostId, idParameters);
         if (!existingBondsResponse.getSucceeded()) {
             return false;
         }

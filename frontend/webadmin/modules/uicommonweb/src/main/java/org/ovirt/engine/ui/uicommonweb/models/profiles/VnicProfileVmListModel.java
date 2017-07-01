@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -49,7 +49,7 @@ public class VnicProfileVmListModel extends SearchableListModel<VnicProfileView,
         IdQueryParameters params =
                 new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(QueryType.GetVmsByVnicProfileId, params, new AsyncQuery<VdcQueryReturnValue>(
+        Frontend.getInstance().runQuery(QueryType.GetVmsByVnicProfileId, params, new AsyncQuery<QueryReturnValue>(
                 returnValue -> setItems((Collection<VM>) returnValue.getReturnValue())));
     }
 

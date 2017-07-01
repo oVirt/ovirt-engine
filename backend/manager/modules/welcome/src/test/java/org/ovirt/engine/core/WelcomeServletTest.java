@@ -28,8 +28,8 @@ import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
@@ -65,7 +65,7 @@ public class WelcomeServletTest {
     final List<String> localeKeys = createLocaleKeys();
 
     private void mockBackendQuery(QueryType queryType, Object returnValue) {
-        VdcQueryReturnValue queryReturnValue = new VdcQueryReturnValue();
+        QueryReturnValue queryReturnValue = new QueryReturnValue();
         queryReturnValue.setReturnValue(returnValue);
         when(mockBackend.runPublicQuery(eq(queryType), any(QueryParametersBase.class))).thenReturn(queryReturnValue);
     }

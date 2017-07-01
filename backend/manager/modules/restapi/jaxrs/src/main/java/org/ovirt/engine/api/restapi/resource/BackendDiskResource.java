@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDiskResource
@@ -180,7 +180,7 @@ public class BackendDiskResource
     protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         // Populate the references to the VMs that are using this disk:
         List<org.ovirt.engine.core.common.businessentities.VM> vms = new ArrayList<>(1);
-        VdcQueryReturnValue result = runQuery(QueryType.GetVmsByDiskGuid, new IdQueryParameters(entity.getId()));
+        QueryReturnValue result = runQuery(QueryType.GetVmsByDiskGuid, new IdQueryParameters(entity.getId()));
         if (result.getSucceeded()) {
             Map<Boolean, List<org.ovirt.engine.core.common.businessentities.VM>> map = result.getReturnValue();
             if (MapUtils.isNotEmpty(map)) {

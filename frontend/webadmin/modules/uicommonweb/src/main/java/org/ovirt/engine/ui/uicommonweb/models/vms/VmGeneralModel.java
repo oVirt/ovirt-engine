@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -576,9 +576,9 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setHasCreatedByUser(vm.getCreatedByUserId() != null);
         if (getHasCreatedByUser()) {
             Frontend.getInstance().runQuery(QueryType.GetDbUserByUserId, new IdQueryParameters(vm.getCreatedByUserId()),
-                    new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
+                    new AsyncQuery<>(new AsyncCallback<QueryReturnValue>() {
                         @Override
-                        public void onSuccess(VdcQueryReturnValue result) {
+                        public void onSuccess(QueryReturnValue result) {
                             DbUser dbUser = result.getReturnValue();
                             if (dbUser != null) {
                                 setCreatedByUser(getUserName(dbUser));
@@ -603,7 +603,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setHasDefaultHost(vm.getDedicatedVmForVdsList().size() > 0);
         if (getHasDefaultHost()) {
             Frontend.getInstance().runQuery(QueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
-                    + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery<VdcQueryReturnValue>(returnValue -> { //$NON-NLS-1$
+                    + " sortby name", SearchType.VDS).withoutRefresh(), new AsyncQuery<QueryReturnValue>(returnValue -> { //$NON-NLS-1$
 
                         VM localVm = getEntity();
                         if (localVm == null) {

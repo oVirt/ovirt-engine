@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -213,13 +213,13 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         setCompatibilityVersion(cluster.getCompatibilityVersion().getValue());
         generateClusterType(cluster.supportsGlusterService(), cluster.supportsVirtService());
         AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery<>(
-                (VdcQueryReturnValue returnValue) -> setNumberOfVms((Integer) returnValue.getReturnValue())), cluster.getId());
+                (QueryReturnValue returnValue) -> setNumberOfVms((Integer) returnValue.getReturnValue())), cluster.getId());
 
     }
 
     private void updateConsoleAddressPartiallyOverridden(Cluster cluster) {
 
-        AsyncQuery<VdcQueryReturnValue> query = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<QueryReturnValue> query = new AsyncQuery<>(returnValue -> {
                 boolean isConsistent = returnValue.getReturnValue();
                 setConsoleAddressPartiallyOverridden(!isConsistent);
             }
