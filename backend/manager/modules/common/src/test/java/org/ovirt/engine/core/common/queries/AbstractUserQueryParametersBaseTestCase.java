@@ -9,10 +9,10 @@ import java.lang.reflect.Type;
 import org.junit.Test;
 import org.ovirt.engine.core.compat.Guid;
 
-/** A test case for {@link VdcUserQueryParametersBase} */
-public abstract class AbstractVdcUserQueryParametersBaseTestCase<P extends VdcUserQueryParametersBase> {
+/** A test case for {@link UserQueryParametersBase} */
+public abstract class AbstractUserQueryParametersBaseTestCase<P extends UserQueryParametersBase> {
 
-    /** The {@link VdcUserQueryParametersBase} being tested */
+    /** The {@link UserQueryParametersBase} being tested */
     private P param;
 
     protected P getParamObject() {

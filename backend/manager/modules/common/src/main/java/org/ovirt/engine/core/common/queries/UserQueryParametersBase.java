@@ -5,17 +5,17 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * A base class for the parameters of queries which have a user ID as a parameter.
  */
-public class VdcUserQueryParametersBase extends QueryParametersBase {
+public class UserQueryParametersBase extends QueryParametersBase {
 
     private static final long serialVersionUID = 2364338337580478810L;
 
     private Guid userId;
 
-    public VdcUserQueryParametersBase() {
+    public UserQueryParametersBase() {
         super();
     }
 
-    public VdcUserQueryParametersBase(Guid userId) {
+    public UserQueryParametersBase(Guid userId) {
         this.userId = userId;
     }
 

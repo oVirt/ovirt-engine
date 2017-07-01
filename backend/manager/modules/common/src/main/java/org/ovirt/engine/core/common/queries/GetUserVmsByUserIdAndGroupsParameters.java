@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
 
-public class GetUserVmsByUserIdAndGroupsParameters extends VdcUserQueryParametersBase {
+public class GetUserVmsByUserIdAndGroupsParameters extends UserQueryParametersBase {
 
     private static final long serialVersionUID = 98112763182708327L;
 
