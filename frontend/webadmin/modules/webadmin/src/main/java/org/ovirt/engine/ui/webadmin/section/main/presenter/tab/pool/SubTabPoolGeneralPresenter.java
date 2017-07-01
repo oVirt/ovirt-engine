@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -34,9 +34,8 @@ public class SubTabPoolGeneralPresenter
     }
 
     @TabInfo(container = PoolSubTabPanelPresenter.class)
-    static TabData getTabData(
-            DetailModelProvider<PoolListModel, PoolGeneralModel> modelProvider) {
-        return new ModelBoundTabData(constants.poolGeneralSubTabLabel(), 0, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.poolGeneralSubTabLabel(), 0);
     }
 
     @Inject

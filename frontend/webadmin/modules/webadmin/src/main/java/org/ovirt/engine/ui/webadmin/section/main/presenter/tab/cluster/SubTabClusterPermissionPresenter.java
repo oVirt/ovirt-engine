@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,9 +35,8 @@ public class SubTabClusterPermissionPresenter
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>> modelProvider) {
-        return new ModelBoundTabData(constants.clusterPermissionSubTabLabel(), 9, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.clusterPermissionSubTabLabel(), 9);
     }
 
     @Inject

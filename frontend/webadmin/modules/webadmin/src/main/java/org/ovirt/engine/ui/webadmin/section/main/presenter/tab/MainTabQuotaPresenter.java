@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -44,12 +44,14 @@ public class MainTabQuotaPresenter extends AbstractMainTabWithDetailsPresenter<Q
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(
-            MainModelProvider<Quota, QuotaListModel> modelProvider, WebadminMenuLayout menuLayout) {
+    static TabData getTabData(WebadminMenuLayout menuLayout) {
         MenuLayoutMenuDetails menuTabDetails =
                 menuLayout.getDetails(WebAdminApplicationPlaces.quotaMainTabPlace);
-        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
+        return new GroupedTabData(
+                menuTabDetails.getSecondaryTitle(),
+                menuTabDetails.getPrimaryTitle(),
+                menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryPriority(),
                 menuTabDetails.getIcon());
     }
 

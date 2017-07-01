@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderSecretListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,9 +35,8 @@ public class SubTabProviderSecretPresenter
     }
 
     @TabInfo(container = ProviderSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> modelProvider) {
-        return new ModelBoundTabData(constants.providerSecretsSubTabLabel(), 2, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.providerSecretsSubTabLabel(), 2);
     }
 
     @Inject

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,9 +35,8 @@ public class SubTabHostGlusterSwiftPresenter
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel> modelProvider) {
-        return new ModelBoundTabData(constants.hostGlusterSwiftSubTabLabel(), 8, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.hostGlusterSwiftSubTabLabel(), 8);
     }
 
     @Inject

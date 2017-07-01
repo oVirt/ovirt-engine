@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -49,8 +49,8 @@ public class SubTabHostErrataPresenter
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> errataCountModelProvider) {
-        return new ModelBoundTabData(constants.hostGeneralErrataSubTabLabel(), 7, errataCountModelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.hostGeneralErrataSubTabLabel(), 7);
     }
 
     private final HostErrataCountModel errataCountModel;

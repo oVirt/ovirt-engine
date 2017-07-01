@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,9 +35,8 @@ public class SubTabDataCenterQosPresenter
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
-    static TabData getTabData(
-          SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> modelProvider) {
-        return new ModelBoundTabData(constants.dataCenterQosSubTabLabel(), 4, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.dataCenterQosSubTabLabel(), 4);
     }
 
     @Inject

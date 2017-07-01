@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -52,12 +52,14 @@ public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPres
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(
-            MainModelProvider<Erratum, EngineErrataListModel> modelErrata, WebadminMenuLayout menuLayout) {
+    static TabData getTabData(WebadminMenuLayout menuLayout) {
         MenuLayoutMenuDetails menuTabDetails =
                 menuLayout.getDetails(WebAdminApplicationPlaces.errataMainTabPlace);
-        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelErrata,
+        return new GroupedTabData(
+                menuTabDetails.getSecondaryTitle(),
+                menuTabDetails.getPrimaryTitle(),
+                menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryPriority(),
                 menuTabDetails.getIcon());
     }
 

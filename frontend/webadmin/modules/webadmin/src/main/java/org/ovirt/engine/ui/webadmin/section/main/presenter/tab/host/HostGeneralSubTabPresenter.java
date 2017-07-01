@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
@@ -74,9 +74,8 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
 
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(
-            DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
-        return new ModelBoundTabData(constants.hostGeneralSubTabLabel(), 0, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.hostGeneralSubTabLabel(), 0);
     }
 
     @Inject

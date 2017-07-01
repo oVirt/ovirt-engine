@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -34,9 +34,8 @@ public class SubTabNetworkGeneralPresenter
     }
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
-    static TabData getTabData(
-            DetailModelProvider<NetworkListModel, NetworkGeneralModel> modelProvider) {
-        return new ModelBoundTabData(constants.networkGeneralSubTabLabel(), 0, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.networkGeneralSubTabLabel(), 0);
     }
 
     @Inject

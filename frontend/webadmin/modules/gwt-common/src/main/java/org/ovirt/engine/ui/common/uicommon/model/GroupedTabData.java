@@ -17,6 +17,10 @@ public class GroupedTabData extends TabDataBasic {
         this.icon = icon;
     }
 
+    public GroupedTabData(String label, int priority) {
+        this(label, null, priority, -1, null);
+    }
+
     public String getGroupTitle() {
         return groupTitle;
     }

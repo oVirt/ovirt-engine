@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,9 +35,8 @@ public class SubTabUserEventPresenter
     }
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<AuditLog, UserListModel, UserEventListModel> modelProvider) {
-        return new ModelBoundTabData(constants.userEventSubTabLabel(), 5, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.userEventSubTabLabel(), 5);
     }
 
     @Inject

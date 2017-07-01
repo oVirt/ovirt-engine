@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -34,9 +34,8 @@ public class SubTabVolumeGeneralPresenter
     }
 
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
-    static TabData getTabData(
-            DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider) {
-        return new ModelBoundTabData(constants.volumeGeneralSubTabLabel(), 0, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.volumeGeneralSubTabLabel(), 0);
     }
 
     @Inject

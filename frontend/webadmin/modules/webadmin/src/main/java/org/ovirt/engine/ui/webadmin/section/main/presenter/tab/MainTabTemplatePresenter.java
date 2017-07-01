@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -44,12 +44,14 @@ public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresente
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(
-            MainModelProvider<VmTemplate, TemplateListModel> modelProvider, WebadminMenuLayout menuLayout) {
+    static TabData getTabData(WebadminMenuLayout menuLayout) {
         MenuLayoutMenuDetails menuTabDetails =
                 menuLayout.getDetails(WebAdminApplicationPlaces.templateMainTabPlace);
-        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
+        return new GroupedTabData(
+                menuTabDetails.getSecondaryTitle(),
+                menuTabDetails.getPrimaryTitle(),
+                menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryPriority(),
                 menuTabDetails.getIcon());
     }
 

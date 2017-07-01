@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.CellClickHandler;
 import org.ovirt.engine.ui.common.widget.HasCellClickHandlers;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -39,9 +39,8 @@ public class SubTabVirtualMachineVmDevicePresenter
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineVmDevicesSubTabLabel(), 6, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.virtualMachineVmDevicesSubTabLabel(), 6);
     }
 
     @Inject

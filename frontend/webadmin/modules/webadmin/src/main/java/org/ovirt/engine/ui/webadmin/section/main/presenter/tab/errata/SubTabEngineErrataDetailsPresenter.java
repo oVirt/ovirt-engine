@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -41,8 +41,8 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
     }
 
     @TabInfo(container = ErrataSubTabPanelPresenter.class)
-    static TabData getTabData(DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> modelProvider) {
-        return new ModelBoundTabData(constants.errataDetailsSubTabLabel(), 1, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.errataDetailsSubTabLabel(), 1);
     }
 
     @Inject

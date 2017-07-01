@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -34,9 +34,8 @@ public class SubTabUserGeneralPresenter
     }
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
-    static TabData getTabData(
-            DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {
-        return new ModelBoundTabData(constants.userGeneralSubTabLabel(), 0, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.userGeneralSubTabLabel(), 0);
     }
 
     @Inject

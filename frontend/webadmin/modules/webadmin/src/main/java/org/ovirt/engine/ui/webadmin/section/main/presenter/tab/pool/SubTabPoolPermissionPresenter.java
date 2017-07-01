@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,10 +35,8 @@ public class SubTabPoolPermissionPresenter
     }
 
     @TabInfo(container = PoolSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<Permission, PoolListModel,
-            PermissionListModel<VmPool>> modelProvider) {
-        return new ModelBoundTabData(constants.poolPermissionSubTabLabel(), 2, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.poolPermissionSubTabLabel(), 2);
     }
 
     @Inject

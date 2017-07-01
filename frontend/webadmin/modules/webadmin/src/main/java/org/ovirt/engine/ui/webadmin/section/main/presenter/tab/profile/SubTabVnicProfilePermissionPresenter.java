@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,11 +35,8 @@ public class SubTabVnicProfilePermissionPresenter
     }
 
     @TabInfo(container = VnicProfileSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<Permission, VnicProfileListModel,
-            PermissionListModel<VnicProfileView>> modelProvider) {
-        return new ModelBoundTabData(constants.vnicProfilePermissionSubTabLabel(), 2,
-                modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.vnicProfilePermissionSubTabLabel(), 2);
     }
 
     @Inject

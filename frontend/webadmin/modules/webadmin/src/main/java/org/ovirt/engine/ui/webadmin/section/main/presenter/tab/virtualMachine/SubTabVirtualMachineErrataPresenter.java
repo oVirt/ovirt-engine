@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -51,8 +51,8 @@ public class SubTabVirtualMachineErrataPresenter
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> errataCountModelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineErrataSubTabLabel(), 10, errataCountModelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.virtualMachineErrataSubTabLabel(), 10);
     }
 
     private final VmErrataCountModel errataCountModel;

@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.OvirtBreadCrumbs;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -50,12 +50,14 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(
-            MainModelProvider<VDS, HostListModel<Void>> modelProvider, WebadminMenuLayout menuLayout) {
+    static TabData getTabData(WebadminMenuLayout menuLayout) {
         MenuLayoutMenuDetails menuTabDetails =
                 menuLayout.getDetails(WebAdminApplicationPlaces.hostMainTabPlace);
-        return new ModelBoundTabData(menuTabDetails.getSecondaryTitle(), menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryTitle(), menuTabDetails.getPrimaryPriority(), modelProvider,
+        return new GroupedTabData(
+                menuTabDetails.getSecondaryTitle(),
+                menuTabDetails.getPrimaryTitle(),
+                menuTabDetails.getSecondaryPriority(),
+                menuTabDetails.getPrimaryPriority(),
                 menuTabDetails.getIcon());
     }
 

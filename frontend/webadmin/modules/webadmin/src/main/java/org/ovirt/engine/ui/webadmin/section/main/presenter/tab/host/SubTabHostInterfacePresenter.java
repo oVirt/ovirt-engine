@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -38,9 +38,8 @@ public class SubTabHostInterfacePresenter
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> modelProvider) {
-        return new ModelBoundTabData(constants.hostIfaceSubTabLabel(), 2, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.hostIfaceSubTabLabel(), 2);
     }
 
     @Inject

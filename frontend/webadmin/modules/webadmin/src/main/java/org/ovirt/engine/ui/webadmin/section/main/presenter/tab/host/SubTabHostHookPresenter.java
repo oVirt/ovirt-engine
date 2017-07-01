@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -36,9 +36,8 @@ public class SubTabHostHookPresenter
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> modelProvider) {
-        return new ModelBoundTabData(constants.hostHookSubTabLabel(), 3, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.hostHookSubTabLabel(), 3);
     }
 
     @Inject

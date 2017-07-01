@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -35,9 +35,8 @@ public class SubTabUserQuotaPresenter
     }
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
-    static TabData getTabData(
-            SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel> modelProvider) {
-        return new ModelBoundTabData(constants.userQuotaSubTabLabel(), 2, modelProvider);
+    static TabData getTabData() {
+        return new GroupedTabData(constants.userQuotaSubTabLabel(), 2);
     }
 
     @Inject
