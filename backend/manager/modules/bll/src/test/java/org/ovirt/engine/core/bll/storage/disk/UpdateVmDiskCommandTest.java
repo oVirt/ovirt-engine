@@ -23,6 +23,7 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -469,6 +470,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         command.getParameters().setDiskInfo(newDisk);
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
+        mockGetAllSnapshotsForDisk(Collections.singletonList(oldDisk));
         command.executeVmCommand();
         verify(command, times(1)).amendDiskImage();
     }
@@ -485,6 +487,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         newDisk.setQcowCompat(QcowCompat.QCOW2_V3);
         newDisk.setDiskAlias("New Disk Alias");
         command.getParameters().setDiskInfo(newDisk);
+        mockGetAllSnapshotsForDisk(Collections.singletonList(oldDisk));
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
@@ -512,6 +515,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         ret.setValidationMessages(msgList);
         when(backend.runInternalAction(eq(VdcActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
         mockVdsCommandSetVolumeDescription();
+        mockGetAllSnapshotsForDisk(Collections.singletonList(oldDisk));
         command.executeVmCommand();
         verify(command, times(1)).amendDiskImage();
         verify(command, times(1)).setVolumeDescription(any(DiskImage.class), any(StorageDomain.class));
@@ -540,6 +544,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         command.getParameters().setDiskInfo(newDiskImage);
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
+        mockGetAllSnapshotsForDisk(Collections.singletonList(oldDiskImage));
         initializeCommand();
         ValidateTestUtils.runAndAssertValidateFailure(command,
                 EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
@@ -554,9 +559,14 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         DiskImage newDisk = DiskImage.copyOf(oldDisk);
         newDisk.setQcowCompat(QcowCompat.QCOW2_V3);
         command.getParameters().setDiskInfo(newDisk);
+        mockGetAllSnapshotsForDisk(Collections.singletonList(oldDisk));
         initializeCommand();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
         verify(command, never()).amendDiskImage();
+    }
+
+    private void mockGetAllSnapshotsForDisk(List<DiskImage> images) {
+        when(diskImageDao.getAllSnapshotsForImageGroup(any(Guid.class))).thenReturn(images);
     }
 
     @Test

@@ -784,9 +784,9 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
 
     protected boolean amendDiskRequested() {
         if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage oldDisk = (DiskImage) getOldDisk();
-            return !Objects.equals(oldDisk.getQcowCompat().getCompatValue(),
-                    ((DiskImage) getNewDisk()).getQcowCompat().getCompatValue());
+            QcowCompat qcowCompat = ((DiskImage) getNewDisk()).getQcowCompat();
+            return getDiskImages(getOldDisk().getId()).stream().anyMatch(disk -> disk.isQcowFormat()
+                    && disk.getQcowCompat() != qcowCompat);
         }
         return false;
     }

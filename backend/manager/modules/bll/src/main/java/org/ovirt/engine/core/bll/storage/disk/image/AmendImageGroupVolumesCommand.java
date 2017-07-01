@@ -91,7 +91,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         List<DiskImage> images = diskImageDao
                 .getAllSnapshotsForImageGroup(getParameters().getImageGroupID());
         getParameters().setImageIds(ImagesHandler.getDiskImageIds(images.stream()
-                .filter(disk -> disk.isQcowFormat())
+                .filter(disk -> disk.isQcowFormat() && disk.getQcowCompat() != getParameters().getQcowCompat())
                 .collect(Collectors.toList())));
         persistCommand(getActionType(), getCallback() != null);
         setSucceeded(true);
