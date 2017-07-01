@@ -541,8 +541,8 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
         initializeCommand();
-        assertTrue(command.amendDiskRequested());
-        verify(command, times(0)).amendDiskImage();
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
     }
 
     @Test
