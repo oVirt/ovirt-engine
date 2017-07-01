@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -228,7 +229,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         if (resizeDiskImageRequested() && amendDiskRequested()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_AMEND_AND_EXTEND_IN_ONE_OPERATION);
         }
-        if (amendDiskRequested() && isAllDiskVolumesRaw()) {
+        if (isQcowCompatChangedOnRawDisk()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_CANT_AMEND_RAW_DISK);
         }
 
@@ -241,9 +242,15 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
                 validatePassDiscardSupported(diskVmElementValidator);
     }
 
-    private boolean isAllDiskVolumesRaw() {
-        List<DiskImage> images = getDiskImages(getOldDisk().getId());
-        return images.stream().noneMatch(DiskImage::isQcowFormat);
+    private boolean isQcowCompatChangedOnRawDisk() {
+        if (getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+            QcowCompat qcowCompat = ((DiskImage) getNewDisk()).getQcowCompat();
+            if (qcowCompat != QcowCompat.Undefined) {
+                List<DiskImage> images = getDiskImages(getOldDisk().getId());
+                return images.stream().noneMatch(DiskImage::isQcowFormat);
+            }
+        }
+        return false;
     }
 
     private boolean validatePassDiscardSupported(DiskVmElementValidator diskVmElementValidator) {
