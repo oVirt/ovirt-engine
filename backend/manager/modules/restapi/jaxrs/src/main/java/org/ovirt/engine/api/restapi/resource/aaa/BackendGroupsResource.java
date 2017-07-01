@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -128,7 +128,7 @@ public class BackendGroupsResource
     @Override
     public Groups list() {
         if (isFiltered()) {
-            return mapDbGroupCollection(getBackendCollection(QueryType.GetAllDbGroups, new VdcQueryParametersBase(), SearchType.DBGroup));
+            return mapDbGroupCollection(getBackendCollection(QueryType.GetAllDbGroups, new QueryParametersBase(), SearchType.DBGroup));
         }
         else {
             return mapDbGroupCollection(getBackendCollection(SearchType.DBGroup, getSearchPattern()));
@@ -140,7 +140,7 @@ public class BackendGroupsResource
         List<String> authzProvidersNames = getBackendCollection(
                 String.class,
                 QueryType.GetDomainList,
-                new VdcQueryParametersBase());
+                new QueryParametersBase());
         validateParameters(group, "name");
         if (AuthzUtils.getAuthzNameFromEntityName(group.getName(), authzProvidersNames) == null) {
             validateParameters(group, "domain.id|name");

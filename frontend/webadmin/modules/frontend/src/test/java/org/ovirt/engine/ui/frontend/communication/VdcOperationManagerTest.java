@@ -16,8 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 import com.google.gwt.event.shared.EventBus;
 
@@ -48,7 +48,7 @@ public class VdcOperationManagerTest {
 
     @Test
     public void testAddOperationMultipleQuery() {
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(QueryType.Search, new VdcQueryParametersBase().withRefresh(), null);
+        VdcOperation<QueryType, QueryParametersBase> testOperation = new VdcOperation<>(QueryType.Search, new QueryParametersBase().withRefresh(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
         verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
@@ -63,9 +63,9 @@ public class VdcOperationManagerTest {
     public void testAddOperationList() {
         VdcOperation<ActionType, ActionParametersBase> testOperation1 =
                 new VdcOperation<>(ActionType.AddNetworkOnProvider, new ActionParametersBase(), null);
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase().withRefresh();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation2 = new VdcOperation<>(QueryType.Search, testParameters, null);
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation3 = new VdcOperation<>(QueryType.Search, testParameters, null);
+        QueryParametersBase testParameters = new QueryParametersBase().withRefresh();
+        VdcOperation<QueryType, QueryParametersBase> testOperation2 = new VdcOperation<>(QueryType.Search, testParameters, null);
+        VdcOperation<QueryType, QueryParametersBase> testOperation3 = new VdcOperation<>(QueryType.Search, testParameters, null);
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
         operationList.add(testOperation2);

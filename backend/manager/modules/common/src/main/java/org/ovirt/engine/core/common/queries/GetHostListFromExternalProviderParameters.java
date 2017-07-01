@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetHostListFromExternalProviderParameters extends VdcQueryParametersBase {
+public class GetHostListFromExternalProviderParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = 8729202312358351850L;
     private Guid providerId;

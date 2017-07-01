@@ -4,10 +4,10 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.dao.DiskDao;
 
-public class GetAllDisksQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetAllDisksQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
     @Inject
     private DiskDao diskDao;
 

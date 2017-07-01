@@ -8,10 +8,10 @@ import static org.mockito.Mockito.when;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ValidateSessionQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, ValidateSessionQuery<VdcQueryParametersBase>> {
+public class ValidateSessionQueryTest extends AbstractUserQueryTest<QueryParametersBase, ValidateSessionQuery<QueryParametersBase>> {
 
     @Test
     public void testSuccessfulSessionId() {

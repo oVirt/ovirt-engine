@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-public class SignStringParameters extends VdcQueryParametersBase implements Serializable {
+public class SignStringParameters extends QueryParametersBase implements Serializable {
 
     private String string;
 

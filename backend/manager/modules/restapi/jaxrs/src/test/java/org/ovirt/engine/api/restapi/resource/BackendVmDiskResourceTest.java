@@ -53,8 +53,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -443,7 +443,7 @@ public class BackendVmDiskResourceTest
             setUpFilteredQueryExpectations();
             setUpEntityQueryExpectations(
                 QueryType.GetAllStorageDomains,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 Collections.singletonList(getStorageDomain(2))

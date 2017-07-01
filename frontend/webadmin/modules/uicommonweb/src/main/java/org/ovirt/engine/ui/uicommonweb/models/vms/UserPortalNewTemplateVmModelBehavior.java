@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -46,8 +46,8 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
                 new GetEntitiesWithPermittedActionParameters();
         getEntitiesWithPermittedActionParameters.setActionGroup(CREATE_VM);
 
-        ArrayList<VdcQueryParametersBase> parametersList =
-                new ArrayList<>(Arrays.asList(new VdcQueryParametersBase[]{getEntitiesWithPermittedActionParameters}));
+        ArrayList<QueryParametersBase> parametersList =
+                new ArrayList<>(Arrays.asList(new QueryParametersBase[]{getEntitiesWithPermittedActionParameters}));
 
         Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel());
     }

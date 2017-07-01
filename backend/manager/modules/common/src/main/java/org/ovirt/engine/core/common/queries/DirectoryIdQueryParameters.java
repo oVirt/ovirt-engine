@@ -4,7 +4,7 @@ package org.ovirt.engine.core.common.queries;
 /**
  * Parameter class for queries that need a domain name and an identifier.
  */
-public class DirectoryIdQueryParameters extends VdcQueryParametersBase {
+public class DirectoryIdQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = -4231839007150359638L;
 
     private String domain;

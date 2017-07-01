@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmCdromsResourceTest
@@ -188,7 +188,7 @@ public class BackendVmCdromsResourceTest
 
     private void setUpEntityQueryExpectations(
             QueryType query,
-            Class<? extends VdcQueryParametersBase> queryClass,
+            Class<? extends QueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,
             Object queryReturn,

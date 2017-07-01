@@ -6,8 +6,8 @@ import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.model.SchedulingPolicyUnits;
 import org.ovirt.engine.api.resource.SchedulingPolicyUnitResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyUnitsResource;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 
 public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollectionResource<SchedulingPolicyUnit, PolicyUnit> implements SchedulingPolicyUnitsResource {
@@ -26,7 +26,7 @@ public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollect
     }
 
     public List<PolicyUnit> getCollection() {
-        return getBackendCollection(QueryType.GetAllPolicyUnits, new VdcQueryParametersBase());
+        return getBackendCollection(QueryType.GetAllPolicyUnits, new QueryParametersBase());
     }
 
     @Override

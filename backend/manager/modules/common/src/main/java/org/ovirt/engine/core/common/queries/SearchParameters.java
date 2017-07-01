@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class SearchParameters extends VdcQueryParametersBase implements Serializable {
+public class SearchParameters extends QueryParametersBase implements Serializable {
     private static final long serialVersionUID = 2275481072329075722L;
 
     private String _searchPattern;

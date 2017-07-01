@@ -20,8 +20,8 @@ import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -30,11 +30,11 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
 
     protected static final Guid NETWORK_ID = GUIDS[1];
     private QueryType listQueryType;
-    private Class<? extends VdcQueryParametersBase> listQueryParamsClass;
+    private Class<? extends QueryParametersBase> listQueryParamsClass;
 
     public AbstractBackendVnicProfilesResourceTest(C collection,
             QueryType listQueryType,
-            Class<? extends VdcQueryParametersBase> queryParamsClass) {
+            Class<? extends QueryParametersBase> queryParamsClass) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
         this.listQueryParamsClass = queryParamsClass;

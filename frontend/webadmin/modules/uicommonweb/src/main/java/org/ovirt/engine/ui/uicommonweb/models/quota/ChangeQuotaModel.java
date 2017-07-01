@@ -10,8 +10,8 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -21,7 +21,7 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
 
     public void init(final ArrayList<DiskImage> disks) {
         ArrayList<QueryType> queryTypeList = new ArrayList<>();
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        ArrayList<QueryParametersBase> queryParamsList = new ArrayList<>();
         Set<Guid> storageDomainIdSet = new HashSet<>();
         for (DiskImage diskImage : disks) {
             for (Guid storageDomainId : diskImage.getStorageIds()) {

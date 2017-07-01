@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
@@ -93,7 +93,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     @Override
     protected void syncSearch() {
         super.syncSearch();
-        VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
+        QueryParametersBase queryParameters = new QueryParametersBase();
         queryParameters.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(QueryType.GetAllVmsAndVmPools, queryParameters,
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {

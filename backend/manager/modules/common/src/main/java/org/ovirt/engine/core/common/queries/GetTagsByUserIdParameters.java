@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-public class GetTagsByUserIdParameters extends VdcQueryParametersBase {
+public class GetTagsByUserIdParameters extends QueryParametersBase {
     private static final long serialVersionUID = -6658285833163439520L;
 
     public GetTagsByUserIdParameters(String userId) {

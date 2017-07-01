@@ -2,10 +2,10 @@ package org.ovirt.engine.core.common.queries.hostdeploy;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class RegisterVdsParameters extends VdcQueryParametersBase implements Serializable {
+public class RegisterVdsParameters extends QueryParametersBase implements Serializable {
     private static final long serialVersionUID = 4661626618754048420L;
 
     private Guid privateVdsId;

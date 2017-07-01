@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -138,7 +138,7 @@ public final class CommandsFactory {
         }
     }
 
-    public static QueriesCommandBase<?> createQueryCommand(QueryType query, VdcQueryParametersBase parameters, EngineContext engineContext) {
+    public static QueriesCommandBase<?> createQueryCommand(QueryType query, QueryParametersBase parameters, EngineContext engineContext) {
         Class<?> type = null;
         try {
             type = getQueryClass(query.name());

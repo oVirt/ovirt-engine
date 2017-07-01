@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.businessentities.MacPool;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -68,7 +68,7 @@ public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, Mac
 
     @Override
     protected void syncSearch() {
-        super.syncSearch(QueryType.GetAllMacPools, new VdcQueryParametersBase());
+        super.syncSearch(QueryType.GetAllMacPools, new QueryParametersBase());
     }
 
     private void updateActionAvailability() {

@@ -29,9 +29,9 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -209,7 +209,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              boolean success,
                                              Object taskReturn,
                                              QueryType query,
-                                             Class<? extends VdcQueryParametersBase> queryClass,
+                                             Class<? extends QueryParametersBase> queryClass,
                                              String[] queryNames,
                                              Object[] queryValues,
                                              Object queryReturn) {
@@ -239,7 +239,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              ArrayList<Guid> asyncTasks,
                                              ArrayList<AsyncTaskStatus> asyncStatuses,
                                              QueryType query,
-                                             Class<? extends VdcQueryParametersBase> queryClass,
+                                             Class<? extends QueryParametersBase> queryClass,
                                              String[] queryNames,
                                              Object[] queryValues,
                                              Object queryReturn) {

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.common.businessentities.ConfigurationType;
 
-public class GetVmFromConfigurationQueryParameters extends VdcQueryParametersBase {
+public class GetVmFromConfigurationQueryParameters extends QueryParametersBase {
 
     private String vmConfiguration;
     private ConfigurationType configurationType;

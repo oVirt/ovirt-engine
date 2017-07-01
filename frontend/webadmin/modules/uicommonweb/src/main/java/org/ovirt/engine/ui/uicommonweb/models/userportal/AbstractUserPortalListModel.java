@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -142,7 +142,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<V
             IconUtils.prefetchIcons(vms, true, fetchLargeIcons(), idToIconMap -> finishSearch(vmPairs));
         } else { // if we have pools we have to update their console cache and THEN finish search
             List<QueryType> poolQueryList = new ArrayList<>();
-            List<VdcQueryParametersBase> poolParamList = new ArrayList<>();
+            List<QueryParametersBase> poolParamList = new ArrayList<>();
 
             for (VmPool p : filteredPools) {
                 poolQueryList.add(QueryType.GetVmDataByPoolId);

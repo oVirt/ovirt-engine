@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolsResource
@@ -44,7 +44,7 @@ public class BackendVmPoolsResource
     public VmPools list() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllVmPoolsAttachedToUser,
-                    new VdcQueryParametersBase(), SearchType.VmPools));
+                    new QueryParametersBase(), SearchType.VmPools));
         } else {
             return mapCollection(getBackendCollection(SearchType.VmPools));
         }

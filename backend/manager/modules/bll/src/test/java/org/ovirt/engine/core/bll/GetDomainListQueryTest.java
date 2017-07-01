@@ -10,13 +10,13 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 
 /**
  * A test case for the {@link GetDomainListQuery} class.
  */
 public class GetDomainListQueryTest
-        extends AbstractQueryTest<VdcQueryParametersBase, GetDomainListQuery<VdcQueryParametersBase>> {
+        extends AbstractQueryTest<QueryParametersBase, GetDomainListQuery<QueryParametersBase>> {
 
     @Before
     @Override

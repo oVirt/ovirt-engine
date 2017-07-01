@@ -31,8 +31,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendOpenStackVolumeTypeResourceTest
         extends AbstractBackendSubResourceTest<OpenStackVolumeType, CinderVolumeType, BackendOpenStackVolumeTypeResource> {
@@ -89,7 +89,7 @@ public class BackendOpenStackVolumeTypeResourceTest
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpEntityQueryExpectations(
             QueryType.GetAllStorageDomains,
-            VdcQueryParametersBase.class,
+            QueryParametersBase.class,
             new String[] {},
             new Object[] {},
             getStorageDomains()

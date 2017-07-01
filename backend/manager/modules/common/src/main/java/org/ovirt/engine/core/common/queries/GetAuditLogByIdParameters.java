@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-public class GetAuditLogByIdParameters extends VdcQueryParametersBase {
+public class GetAuditLogByIdParameters extends QueryParametersBase {
 
     public GetAuditLogByIdParameters() {
     }

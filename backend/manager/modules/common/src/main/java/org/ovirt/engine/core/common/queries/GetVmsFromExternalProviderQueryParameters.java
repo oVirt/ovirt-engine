@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class GetVmsFromExternalProviderQueryParameters extends VdcQueryParametersBase {
+public class GetVmsFromExternalProviderQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = 5436719744430725756L;
 
     private String url;

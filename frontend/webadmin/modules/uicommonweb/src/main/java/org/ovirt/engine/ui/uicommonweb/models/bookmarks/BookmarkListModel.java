@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -142,7 +142,7 @@ public class BookmarkListModel extends SearchableListModel {
     protected void syncSearch() {
         super.syncSearch();
 
-        Frontend.getInstance().runQuery(QueryType.GetAllBookmarks, new VdcQueryParametersBase(), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetAllBookmarks, new QueryParametersBase(), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
             List<Bookmark> resultList = returnValue.getReturnValue();
             if (resultList != null) {
                 Collections.sort(resultList, COMPARATOR);

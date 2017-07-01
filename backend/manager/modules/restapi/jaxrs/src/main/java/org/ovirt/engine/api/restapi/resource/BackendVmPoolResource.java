@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolResource
@@ -175,9 +175,9 @@ public class BackendVmPoolResource
     protected class VmQueryIdResolver extends EntityResolver {
 
         private QueryType query;
-        private Class<? extends VdcQueryParametersBase> queryParamsClass;
+        private Class<? extends QueryParametersBase> queryParamsClass;
 
-        public VmQueryIdResolver(QueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
+        public VmQueryIdResolver(QueryType query, Class<? extends QueryParametersBase> queryParamsClass) {
             this.query = query;
             this.queryParamsClass = queryParamsClass;
         }

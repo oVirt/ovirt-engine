@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 
 /** A base class for parameters of queries that retrieve images lists */
-public abstract class GetImagesListParametersBase extends VdcQueryParametersBase {
+public abstract class GetImagesListParametersBase extends QueryParametersBase {
     private static final long serialVersionUID = 2562476365144558247L;
     private boolean forceRefresh;
     private ImageFileType imageType;

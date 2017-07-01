@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagsResourceTest
@@ -55,7 +55,7 @@ public class BackendTagsResourceTest
     public void testListLimitResultsBadFormat() throws Exception {
         UriInfo uriInfo = setUpUriExpectationsWithMax(true);
         setUpEntityQueryExpectations(QueryType.GetAllTags,
-                                     VdcQueryParametersBase.class,
+                                     QueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
                                      setUpTags(),
@@ -189,7 +189,7 @@ public class BackendTagsResourceTest
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetAllTags,
-                                     VdcQueryParametersBase.class,
+                                     QueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
                                      setUpTags(),
@@ -197,7 +197,7 @@ public class BackendTagsResourceTest
 
         if (failure == null) {
             setUpEntityQueryExpectations(QueryType.GetRootTag,
-                                         VdcQueryParametersBase.class,
+                                         QueryParametersBase.class,
                                          new String[] { },
                                          new Object[] { },
                                          setUpRootTag());

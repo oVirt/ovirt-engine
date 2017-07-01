@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetStepsWithSubjectEntitiesByJobIdQueryParameters extends VdcQueryParametersBase {
+public class GetStepsWithSubjectEntitiesByJobIdQueryParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = 758029173419093849L;
 

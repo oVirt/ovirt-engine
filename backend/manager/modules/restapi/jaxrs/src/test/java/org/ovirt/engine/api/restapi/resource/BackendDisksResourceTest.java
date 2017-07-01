@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendDisksResourceTest extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendDisksResource> {
 
@@ -109,7 +109,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
         setUpEntityQueryExpectations(QueryType.GetAllStorageDomains,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 getStorageDomains());

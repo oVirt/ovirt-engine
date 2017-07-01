@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -242,7 +242,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                     getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                             QueryType.GetAllStorageDomains,
-                            new VdcQueryParametersBase());
+                            new QueryParametersBase());
             for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
                 if (storageDomain.getStorageName().equals(name)) {
                     return storageDomain.getId();
@@ -266,7 +266,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         private Class<? extends BaseResource> apiClass;
         private Class<? extends BusinessEntity<?>> blClass;
         private QueryType query;
-        private Class<? extends VdcQueryParametersBase> queryParamsClass;
+        private Class<? extends QueryParametersBase> queryParamsClass;
 
         /**
          * Create a resolver.
@@ -280,7 +280,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
                 Class<? extends BaseResource> apiClass,
                 Class<? extends BusinessEntity<?>> blClass,
                 QueryType query,
-                Class<? extends VdcQueryParametersBase> queryParamsClass
+                Class<? extends QueryParametersBase> queryParamsClass
         ) {
             this.apiClass = apiClass;
             this.blClass = blClass;

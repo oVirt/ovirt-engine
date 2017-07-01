@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 
-public class GetVmChangedFieldsForNextRunParameters extends VdcQueryParametersBase {
+public class GetVmChangedFieldsForNextRunParameters extends QueryParametersBase {
 
     private VM original;
 

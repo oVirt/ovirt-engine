@@ -5,8 +5,8 @@ import java.util.stream.Stream;
 
 import org.junit.BeforeClass;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class QueriesCtorsTest extends CtorsTestBase {
     private static Collection<Class<?>> queryClasses;
@@ -23,6 +23,6 @@ public class QueriesCtorsTest extends CtorsTestBase {
 
     @Override
     protected Stream<MandatoryCtorPredicate> getMandatoryCtorPredicates() {
-        return Stream.of(new MandatoryCtorPredicate(VdcQueryParametersBase.class, EngineContext.class));
+        return Stream.of(new MandatoryCtorPredicate(QueryParametersBase.class, EngineContext.class));
     }
 }

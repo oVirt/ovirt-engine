@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 
-public class GetAvailableNamespacesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetAvailableNamespacesQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
 
     public GetAvailableNamespacesQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);

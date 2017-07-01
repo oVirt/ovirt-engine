@@ -6,7 +6,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Parameter class for the "GetByName" queries
  */
-public class NameQueryParameters extends VdcQueryParametersBase {
+public class NameQueryParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = 4281700157334399396L;
     private String name;

@@ -10,14 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /**
  * A test case for {@link GetUserBySessionIdQuery}.
  */
-public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetUserBySessionIdQuery<VdcQueryParametersBase>> {
+public class GetUserBySessionIdQueryTest extends AbstractUserQueryTest<QueryParametersBase, GetUserBySessionIdQuery<QueryParametersBase>> {
 
     private static final String sessionID = RandomUtils.instance().nextString(10);
 

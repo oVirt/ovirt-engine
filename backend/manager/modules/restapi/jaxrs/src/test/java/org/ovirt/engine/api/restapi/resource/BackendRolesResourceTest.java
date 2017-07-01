@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendRolesResourceTest
         extends AbstractBackendCollectionResourceTest<Role, org.ovirt.engine.core.common.businessentities.Role, BackendRolesResource> {
@@ -115,7 +115,7 @@ public class BackendRolesResourceTest
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetAllRoles,
-                                     VdcQueryParametersBase.class,
+                                     QueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
                                      setUpRoles(),

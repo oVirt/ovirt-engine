@@ -8,8 +8,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 
@@ -120,7 +120,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runPublicQuery((QueryType) operation.getOperation(),
-                        (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+                        (QueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         operation.getCallback().onFailure(operation, exception);
@@ -149,7 +149,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runQuery((QueryType) operation.getOperation(),
-                        (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
+                        (QueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         //Clear out the token, and let the retry mechanism try again.
@@ -241,7 +241,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
         if (queriesList.size() > 1 || (queriesList.size() == 1
                 && queriesList.get(0).getCallback() instanceof VdcOperationCallbackList)) {
             final List<QueryType> queryTypes = new ArrayList<>();
-            final List<VdcQueryParametersBase> parameters = new ArrayList<>();
+            final List<QueryParametersBase> parameters = new ArrayList<>();
 
             for (VdcOperation<?, ?> operation: new ArrayList<>(queriesList)) {
                 if (operation.isPublic()) {
@@ -249,7 +249,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     runPublicQuery(operation);
                 } else {
                     queryTypes.add((QueryType) operation.getOperation());
-                    parameters.add((VdcQueryParametersBase) operation.getParameter());
+                    parameters.add((QueryParametersBase) operation.getParameter());
                 }
             }
 
@@ -257,7 +257,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                 @Override
                 public void serviceFound(GenericApiGWTServiceAsync service) {
                     service.runMultipleQueries((ArrayList<QueryType>) queryTypes,
-                            (ArrayList<VdcQueryParametersBase>) parameters,
+                            (ArrayList<QueryParametersBase>) parameters,
                             new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
                         @Override
                         public void onFailure(final Throwable exception) {

@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendRolesResource
@@ -31,7 +31,7 @@ public class BackendRolesResource
 
     @Override
     public Roles list() {
-        return mapCollection(getBackendCollection(QueryType.GetAllRoles, new VdcQueryParametersBase()));
+        return mapCollection(getBackendCollection(QueryType.GetAllRoles, new QueryParametersBase()));
     }
 
     @Override

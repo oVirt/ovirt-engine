@@ -38,8 +38,8 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -197,7 +197,7 @@ public class BackendDiskAttachmentsResource
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                 getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                         QueryType.GetAllStorageDomains,
-                        new VdcQueryParametersBase());
+                        new QueryParametersBase());
         for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getStorageName().equals(storageDomainName)) {
                 return storageDomain.getId();

@@ -19,8 +19,8 @@ import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -28,12 +28,12 @@ public class BackendMacPoolsResourceTest
         extends AbstractBackendCollectionResourceTest<MacPool, org.ovirt.engine.core.common.businessentities.MacPool, BackendMacPoolsResource> {
 
     private QueryType listQueryType;
-    private Class<? extends VdcQueryParametersBase> listQueryParamsClass;
+    private Class<? extends QueryParametersBase> listQueryParamsClass;
 
     public BackendMacPoolsResourceTest() {
         super(new BackendMacPoolsResource(), null, "");
         this.listQueryType = QueryType.GetAllMacPools;
-        this.listQueryParamsClass = VdcQueryParametersBase.class;
+        this.listQueryParamsClass = QueryParametersBase.class;
     }
 
     @Override

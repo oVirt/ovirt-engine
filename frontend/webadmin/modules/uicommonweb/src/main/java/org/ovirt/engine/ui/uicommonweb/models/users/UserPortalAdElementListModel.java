@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -18,8 +18,8 @@ public class UserPortalAdElementListModel extends AdElementListModel {
         Frontend.getInstance().runQuery(QueryType.GetAllDbUsers, getParameters(), query);
     }
 
-    private VdcQueryParametersBase getParameters() {
-        VdcQueryParametersBase parameters = new VdcQueryParametersBase();
+    private QueryParametersBase getParameters() {
+        QueryParametersBase parameters = new QueryParametersBase();
         parameters.setFiltered(true);
         return parameters;
     }

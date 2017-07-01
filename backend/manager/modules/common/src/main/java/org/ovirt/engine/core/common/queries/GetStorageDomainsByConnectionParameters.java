@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetStorageDomainsByConnectionParameters extends VdcQueryParametersBase {
+public class GetStorageDomainsByConnectionParameters extends QueryParametersBase {
     private static final long serialVersionUID = -5734691653801921062L;
 
     private Guid storagePoolId;

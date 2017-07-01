@@ -345,7 +345,7 @@
         <include name="common/businessentities/AsyncTaskStatusEnum.java" />
         <include name="common/businessentities/AsyncTaskResultEnum.java" />
 
-        <!-- Sadly because VdcQueryParametersBase / ActionParametersBase :/ -->
+        <!-- Sadly because QueryParametersBase / ActionParametersBase :/ -->
         <include name="common/HasCorrelationId.java" />
         <include name="common/queries/*.java" />
         <include name="common/action/*.java" />

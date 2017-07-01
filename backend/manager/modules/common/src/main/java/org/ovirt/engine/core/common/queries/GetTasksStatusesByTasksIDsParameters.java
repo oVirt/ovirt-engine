@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetTasksStatusesByTasksIDsParameters extends VdcQueryParametersBase {
+public class GetTasksStatusesByTasksIDsParameters extends QueryParametersBase {
     private static final long serialVersionUID = -7279145473727752108L;
 
     public GetTasksStatusesByTasksIDsParameters(ArrayList<Guid> tasksIDs) {

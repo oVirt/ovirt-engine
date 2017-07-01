@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
-public class GetEntitiesWithPermittedActionParameters extends VdcQueryParametersBase {
+public class GetEntitiesWithPermittedActionParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = -5471065721016495847L;
     private ActionGroup actionGroup;

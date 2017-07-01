@@ -7,8 +7,8 @@ import org.ovirt.engine.api.model.Icons;
 import org.ovirt.engine.api.resource.IconResource;
 import org.ovirt.engine.api.resource.IconsResource;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendIconsResource
         extends AbstractBackendCollectionResource<Icon, VmIcon>
@@ -20,7 +20,7 @@ public class BackendIconsResource
 
     @Override
     public Icons list() {
-        return mapCollection(getBackendCollection(QueryType.GetAllVmIcons, new VdcQueryParametersBase()));
+        return mapCollection(getBackendCollection(QueryType.GetAllVmIcons, new QueryParametersBase()));
     }
 
     private Icons mapCollection(List<VmIcon> backendEntities) {

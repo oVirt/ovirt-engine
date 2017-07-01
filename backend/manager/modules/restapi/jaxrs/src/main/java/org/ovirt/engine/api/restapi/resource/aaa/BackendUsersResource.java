@@ -29,8 +29,8 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetDirectoryUserByPrincipalParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -144,7 +144,7 @@ public class BackendUsersResource
 
     public Users list() {
         if (isFiltered()) {
-            return mapDbUserCollection(getBackendCollection(QueryType.GetAllDbUsers, new VdcQueryParametersBase(), SearchType.DBUser));
+            return mapDbUserCollection(getBackendCollection(QueryType.GetAllDbUsers, new QueryParametersBase(), SearchType.DBUser));
         }
         else {
           return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));
@@ -157,7 +157,7 @@ public class BackendUsersResource
         List<String> authzProvidersNames = getBackendCollection(
                 String.class,
                 QueryType.GetDomainList,
-                new VdcQueryParametersBase());
+                new QueryParametersBase());
         if (AuthzUtils.getAuthzNameFromEntityName(user.getUserName(), authzProvidersNames) == null) {// user-name may contain the domain (e.g: oliel@xxx.yyy)
             validateParameters(user, "domain.id|name");
         }

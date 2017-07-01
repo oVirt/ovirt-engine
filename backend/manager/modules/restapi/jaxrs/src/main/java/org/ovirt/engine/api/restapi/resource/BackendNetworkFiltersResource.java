@@ -22,8 +22,8 @@ import org.ovirt.engine.api.model.NetworkFilter;
 import org.ovirt.engine.api.model.NetworkFilters;
 import org.ovirt.engine.api.resource.NetworkFilterResource;
 import org.ovirt.engine.api.resource.NetworkFiltersResource;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendNetworkFiltersResource
     extends AbstractBackendCollectionResource<NetworkFilter, org.ovirt.engine.core.common.businessentities.network.NetworkFilter>
@@ -41,7 +41,7 @@ public class BackendNetworkFiltersResource
     @Override
     public NetworkFilters list() {
         return mapCollection(getBackendCollection(QueryType.GetAllNetworkFilters,
-                new VdcQueryParametersBase()));
+                new QueryParametersBase()));
     }
 
     private NetworkFilters mapCollection(

@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
@@ -316,7 +316,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
     }
 
     private VdcQueryReturnValue getCACertificate() {
-        return backend.runInternalQuery(QueryType.GetCACertificate, new VdcQueryParametersBase());
+        return backend.runInternalQuery(QueryType.GetCACertificate, new QueryParametersBase());
     }
 
     private String determineHost() {

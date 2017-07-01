@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -36,10 +36,10 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
 
     private void setMessage() {
 
-        ArrayList<VdcQueryParametersBase> parameters = new ArrayList<>();
+        ArrayList<QueryParametersBase> parameters = new ArrayList<>();
         ArrayList<QueryType> queryTypes = new ArrayList<>();
         for (Object networkQoS : sourceListModel.getSelectedItems()) {
-            VdcQueryParametersBase parameter = new IdQueryParameters(((NetworkQoS) networkQoS).getId());
+            QueryParametersBase parameter = new IdQueryParameters(((NetworkQoS) networkQoS).getId());
             parameters.add(parameter);
             queryTypes.add(QueryType.GetVnicProfilesByNetworkQosId);
         }

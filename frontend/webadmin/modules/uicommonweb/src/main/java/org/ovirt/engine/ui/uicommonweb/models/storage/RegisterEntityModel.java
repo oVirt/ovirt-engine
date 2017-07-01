@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -104,7 +104,7 @@ public abstract class RegisterEntityModel<T, E extends ImportEntityData<T>> exte
         }
 
         List<QueryType> queries = new ArrayList<>();
-        List<VdcQueryParametersBase> params = new ArrayList<>();
+        List<QueryParametersBase> params = new ArrayList<>();
         for (Cluster cluster : clusters) {
             queries.add(QueryType.GetAllRelevantQuotasForCluster);
             params.add(new IdQueryParameters(cluster.getId()));

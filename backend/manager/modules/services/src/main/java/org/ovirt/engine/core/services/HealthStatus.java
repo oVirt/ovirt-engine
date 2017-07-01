@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public class HealthStatus extends HttpServlet {
         try {
             log.debug("Calling CheckDBConnection query");
 
-            VdcQueryParametersBase params = new VdcQueryParametersBase();
+            QueryParametersBase params = new QueryParametersBase();
 
             VdcQueryReturnValue v = backend.runInternalQuery(QueryType.CheckDBConnection, params);
             if (v != null) {

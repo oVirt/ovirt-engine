@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendGroupsResourceTest
     extends AbstractBackendCollectionResourceTest<Group, DbGroup, BackendGroupsResource> {
@@ -132,7 +132,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupWithExplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpDomains());
@@ -185,7 +185,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupWithImplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpDomains());
@@ -225,7 +225,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupWithoutDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpDomains());
@@ -250,7 +250,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupById() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpDomains());
@@ -294,7 +294,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupByIdFailure() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(QueryType.GetDomainList,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpDomains());

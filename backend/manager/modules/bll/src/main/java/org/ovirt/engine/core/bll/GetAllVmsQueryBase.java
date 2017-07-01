@@ -6,10 +6,10 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.dao.VmDao;
 
-public abstract class GetAllVmsQueryBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public abstract class GetAllVmsQueryBase<P extends QueryParametersBase> extends QueriesCommandBase<P> {
     @Inject
     protected VmDao vmDao;
 

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 
-public class VmDeviceIdQueryParameters extends VdcQueryParametersBase {
+public class VmDeviceIdQueryParameters extends QueryParametersBase {
     private VmDeviceId id;
 
     public VmDeviceIdQueryParameters() {

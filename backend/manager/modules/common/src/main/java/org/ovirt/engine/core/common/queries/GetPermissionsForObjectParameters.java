@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetPermissionsForObjectParameters extends VdcQueryParametersBase {
+public class GetPermissionsForObjectParameters extends QueryParametersBase {
     private static final long serialVersionUID = 4719409151543629037L;
 
     private Guid objectId;

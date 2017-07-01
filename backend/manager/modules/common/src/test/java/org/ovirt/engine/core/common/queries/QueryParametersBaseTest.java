@@ -6,14 +6,14 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
-public class VdcQueryParametersBaseTest {
+public class QueryParametersBaseTest {
 
     /** The object to test */
-    private VdcQueryParametersBase base;
+    private QueryParametersBase base;
 
     @Before
     public void setUp() {
-        base = new VdcQueryParametersBase();
+        base = new QueryParametersBase();
     }
 
     @Test

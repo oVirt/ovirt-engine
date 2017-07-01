@@ -42,9 +42,9 @@ import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -64,7 +64,7 @@ public class BackendStorageDomainsResource
     public StorageDomains list() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllStorageDomains,
-                    new VdcQueryParametersBase(), SearchType.StorageDomain));
+                    new QueryParametersBase(), SearchType.StorageDomain));
         } else {
             return mapCollection(getBackendCollection(SearchType.StorageDomain));
         }

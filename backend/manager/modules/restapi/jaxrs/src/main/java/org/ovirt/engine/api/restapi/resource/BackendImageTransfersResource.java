@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.TransferType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendImageTransfersResource
@@ -41,7 +41,7 @@ public class BackendImageTransfersResource
 
     @Override
     public ImageTransfers list() {
-        return mapCollection(getBackendCollection(QueryType.GetAllImageTransfers, new VdcQueryParametersBase()));
+        return mapCollection(getBackendCollection(QueryType.GetAllImageTransfers, new QueryParametersBase()));
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetVmIconsParameters extends VdcQueryParametersBase {
+public class GetVmIconsParameters extends QueryParametersBase {
 
     private List<Guid> iconIds;
 

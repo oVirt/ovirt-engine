@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetQuotasByAdElementIdQueryParameters extends VdcQueryParametersBase {
+public class GetQuotasByAdElementIdQueryParameters extends QueryParametersBase {
 
     /**
      * Auto generated serial id.

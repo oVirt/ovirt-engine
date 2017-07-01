@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Version;
 
-public class OsQueryParameters extends VdcQueryParametersBase {
+public class OsQueryParameters extends QueryParametersBase {
 
     private OsRepositoryVerb osRepositoryVerb;
     private int osId;

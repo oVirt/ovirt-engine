@@ -86,8 +86,8 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.CommonCompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -110,7 +110,7 @@ public class BackendVmsResource extends
     @Override
     public Vms list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(QueryType.GetAllVms, new VdcQueryParametersBase(), SearchType.VM), true);
+            return mapCollection(getBackendCollection(QueryType.GetAllVms, new QueryParametersBase(), SearchType.VM), true);
         } else {
             return mapCollection(getBackendCollection(SearchType.VM), false);
         }

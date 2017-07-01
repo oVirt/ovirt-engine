@@ -21,8 +21,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
@@ -78,7 +78,7 @@ public class OperationProcessorTest {
     @Test
     public void testOnOperationAvailableList() {
         ActionParametersBase testActionParameter = new ActionParametersBase();
-        VdcQueryParametersBase testQueryParameter = new VdcQueryParametersBase();
+        QueryParametersBase testQueryParameter = new QueryParametersBase();
         VdcOperation testOperation1 = new VdcOperation(ActionType.AddEventSubscription, testActionParameter,
                 mockCallback1);
         VdcOperation testOperation2 = new VdcOperation(QueryType.Search, testQueryParameter, mockCallback2);
@@ -128,8 +128,8 @@ public class OperationProcessorTest {
 
     @Test
     public void testOnOperationAvailableSingle_failure_with_retry() {
-        VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase>testOperation =
+        QueryParametersBase testParameter = new QueryParametersBase();
+        VdcOperation<QueryType, QueryParametersBase>testOperation =
                 new VdcOperation<>(QueryType.Search, testParameter, mockCallback1);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation).thenReturn(null);
         testProcessor.processAvailableOperations(mockOperationManager);
@@ -148,9 +148,9 @@ public class OperationProcessorTest {
 
     @Test
     public void testOnOperationAvailableSingle_failure_query_noretry() {
-        VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
+        QueryParametersBase testParameter = new QueryParametersBase();
         // Setup 'previous' retries, so we have exhausted the retries.
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(QueryType.Search, testParameter, mockCallback1);
+        VdcOperation<QueryType, QueryParametersBase> testOperation = new VdcOperation<>(QueryType.Search, testParameter, mockCallback1);
         testOperation = new VdcOperation(testOperation, mockCallback2);
         testOperation = new VdcOperation(testOperation, mockCallback2);
         testOperation = new VdcOperation(testOperation, mockCallback2);
@@ -269,7 +269,7 @@ public class OperationProcessorTest {
 
     @Test
     public void testOnOperationAvailableMultipleQuery_failure() {
-        VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
+        QueryParametersBase testParameter = new QueryParametersBase();
         VdcOperation testOperation1 = new VdcOperation(QueryType.GetDirectoryGroupById, testParameter,
                 mockCallback1);
         VdcOperation testOperation2 = new VdcOperation(QueryType.Search, testParameter,
@@ -295,12 +295,12 @@ public class OperationProcessorTest {
 
     @Test
     public void testOnOperationAvailableMultiple_same_success() {
-        VdcQueryParametersBase testParameter = new VdcQueryParametersBase();
+        QueryParametersBase testParameter = new QueryParametersBase();
         List<VdcOperation<?, ?>> testOperation1List = new ArrayList<>();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testParameter, mockCallbackList1);
         testOperation1List.add(testOperation1);
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation2 =
+        VdcOperation<QueryType, QueryParametersBase> testOperation2 =
                 new VdcOperation<>(QueryType.GetDirectoryGroupById, testParameter, mockCallbackList2);
         when(mockOperationManager.pollOperation()).thenReturn((VdcOperation) testOperation1).
             thenReturn((VdcOperation) testOperation1).thenReturn((VdcOperation) testOperation2).thenReturn(null);

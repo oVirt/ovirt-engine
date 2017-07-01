@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetVmTemplateParameters extends VdcQueryParametersBase {
+public class GetVmTemplateParameters extends QueryParametersBase {
     private static final long serialVersionUID = 8906662143775124331L;
 
     private Guid _id;

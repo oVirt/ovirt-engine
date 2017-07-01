@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClustersResource extends AbstractBackendCollectionResource<org.ovirt.engine.api.model.Cluster, Cluster>
@@ -48,7 +48,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     private Clusters listVirtOnly() {
         if (isFiltered()) {
             return mapVirtOnlyCollection(getBackendCollection(QueryType.GetAllClusters,
-                    new VdcQueryParametersBase()));
+                    new QueryParametersBase()));
         }
         else {
             return mapVirtOnlyCollection(getBackendCollection(SearchType.Cluster));
@@ -58,7 +58,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
     private Clusters listAll() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllClusters,
-                    new VdcQueryParametersBase()));
+                    new QueryParametersBase()));
         }
         else {
             return mapCollection(getBackendCollection(SearchType.Cluster));

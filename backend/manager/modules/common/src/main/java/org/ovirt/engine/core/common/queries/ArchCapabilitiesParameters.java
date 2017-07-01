@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-public class ArchCapabilitiesParameters extends VdcQueryParametersBase {
+public class ArchCapabilitiesParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = -7091068258018831149L;
 

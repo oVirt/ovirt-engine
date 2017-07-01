@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 
 @Logged(executionLevel = LogLevel.TRACE, errorLevel = LogLevel.WARN)
-public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> extends VdcCommandBase {
+public abstract class QueriesCommandBase<P extends QueryParametersBase> extends VdcCommandBase {
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private static final String QuerySuffix = "Query";
@@ -226,7 +226,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return getSessionDataContainer().getEngineSessionSeqId(engineContext.getSessionId());
     }
 
-    protected VdcQueryReturnValue runInternalQuery(QueryType actionType, VdcQueryParametersBase parameters) {
+    protected VdcQueryReturnValue runInternalQuery(QueryType actionType, QueryParametersBase parameters) {
         //All internal queries should have refresh set to false, since the decision to refresh the session should
         //be up to the client. All internal queries will not refresh the session.
         parameters.setRefresh(false);

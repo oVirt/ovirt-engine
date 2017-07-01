@@ -61,8 +61,8 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -1640,7 +1640,7 @@ public class BackendVmsResourceTest
         }
 
         setUpGetEntityExpectations(QueryType.GetGraphicsDevicesMultiple,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[]{},
                 new Object[]{},
                 vmDevices);

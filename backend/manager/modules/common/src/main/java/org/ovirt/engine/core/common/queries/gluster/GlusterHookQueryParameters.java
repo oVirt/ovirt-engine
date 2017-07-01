@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.common.queries.gluster;
 
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterHookQueryParameters extends VdcQueryParametersBase {
+public class GlusterHookQueryParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = -7687304241216035713L;
 

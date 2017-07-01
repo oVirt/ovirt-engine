@@ -11,8 +11,8 @@ import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendBookmarksResourceTest extends AbstractBackendCollectionResourceTest<Bookmark,
     org.ovirt.engine.core.common.businessentities.Bookmark, BackendBookmarksResource> {
@@ -92,7 +92,7 @@ public class BackendBookmarksResourceTest extends AbstractBackendCollectionResou
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(QueryType.GetAllBookmarks,
-                                     VdcQueryParametersBase.class,
+                                     QueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
                                      setUpBookmarks(),

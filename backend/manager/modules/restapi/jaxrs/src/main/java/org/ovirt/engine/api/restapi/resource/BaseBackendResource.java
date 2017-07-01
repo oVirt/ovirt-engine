@@ -28,7 +28,7 @@ import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +93,7 @@ public class BaseBackendResource {
         return CurrentManager.get();
     }
 
-    protected <P extends VdcQueryParametersBase> P sessionize(P parameters) {
+    protected <P extends QueryParametersBase> P sessionize(P parameters) {
         String sessionId = getCurrent().getSessionId();
         parameters.setSessionId(sessionId);
         return parameters;

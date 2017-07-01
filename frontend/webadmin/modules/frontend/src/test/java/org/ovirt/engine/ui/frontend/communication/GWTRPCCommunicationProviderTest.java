@@ -19,8 +19,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 
@@ -126,22 +126,22 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationQuery_success() {
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
+        QueryParametersBase testParameters = new QueryParametersBase();
         final VdcQueryReturnValue testResult = new VdcQueryReturnValue();
-        final List<VdcOperation<QueryType, VdcQueryParametersBase>> operationList = new ArrayList<>();
-        final VdcOperation<QueryType, VdcQueryParametersBase> testOperation =
+        final List<VdcOperation<QueryType, QueryParametersBase>> operationList = new ArrayList<>();
+        final VdcOperation<QueryType, QueryParametersBase> testOperation =
                 new VdcOperation<>(QueryType.Search, testParameters,
-                new VdcOperationCallback<VdcOperation<QueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
+                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(VdcOperation<QueryType, VdcQueryParametersBase> operation,
+            public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
                     VdcQueryReturnValue result) {
                 assertEquals("Test results should match", testResult, result); //$NON-NLS-1$
                 assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
             }
 
             @Override
-            public void onFailure(VdcOperation<QueryType, VdcQueryParametersBase> operation, Throwable caught) {
+            public void onFailure(VdcOperation<QueryType, QueryParametersBase> operation, Throwable caught) {
                 fail("Should not get here"); //$NON-NLS-1$
             }
         });
@@ -153,21 +153,21 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationQuery_failure() {
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
+        QueryParametersBase testParameters = new QueryParametersBase();
         final Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
-        final List<VdcOperation<QueryType, VdcQueryParametersBase>> operationList = new ArrayList<>();
-        final VdcOperation<QueryType, VdcQueryParametersBase> testOperation =
+        final List<VdcOperation<QueryType, QueryParametersBase>> operationList = new ArrayList<>();
+        final VdcOperation<QueryType, QueryParametersBase> testOperation =
                 new VdcOperation<>(QueryType.Search, testParameters,
-                new VdcOperationCallback<VdcOperation<QueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
+                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, VdcQueryReturnValue>() {
 
             @Override
-            public void onSuccess(VdcOperation<QueryType, VdcQueryParametersBase> operation,
+            public void onSuccess(VdcOperation<QueryType, QueryParametersBase> operation,
                     VdcQueryReturnValue result) {
                 fail("Should not get here"); //$NON-NLS-1$
             }
 
             @Override
-            public void onFailure(VdcOperation<QueryType, VdcQueryParametersBase> operation, Throwable exception) {
+            public void onFailure(VdcOperation<QueryType, QueryParametersBase> operation, Throwable exception) {
                 assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
                 assertEquals("Exceptions should match", testException, exception); //$NON-NLS-1$
             }
@@ -360,8 +360,8 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationList_oneQuery_success() {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        QueryParametersBase testParameters = new QueryParametersBase();
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
@@ -374,8 +374,8 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationList_oneQuery_failure() {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        QueryParametersBase testParameters = new QueryParametersBase();
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testParameters, mockOperationCallbackSingle1);
         testList.add(testOperation1);
         testProvider.transmitOperationList(testList);
@@ -390,16 +390,16 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         List<VdcOperation<?, ?>> operation1List = new ArrayList<>();
         List<VdcOperation<?, ?>> operation2List = new ArrayList<>();
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        QueryParametersBase testParameters = new QueryParametersBase();
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testParameters, mockOperationCallbackList1);
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation2 =
+        VdcOperation<QueryType, QueryParametersBase> testOperation2 =
                 new VdcOperation<>(QueryType.Search, testParameters, mockOperationCallbackList2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         operation1List.add(testOperation1);
         operation2List.add(testOperation2);
-        List<VdcQueryParametersBase> testParameterList = createQueryParameterList(testParameters, 2);
+        List<QueryParametersBase> testParameterList = createQueryParameterList(testParameters, 2);
         List<QueryType> testQueryList = createQueryList(QueryType.Search, 2);
         testProvider.transmitOperationList(testList);
         VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
@@ -407,7 +407,7 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcQueryReturnValue> return1List = createQueryResultList(returnValue, 1);
         List<VdcQueryReturnValue> return2List = createQueryResultList(returnValue, 1);
         verify(mockService).runMultipleQueries(eq((ArrayList<QueryType>) testQueryList),
-                (ArrayList<VdcQueryParametersBase>) eq(testParameterList), queryCallbackList.capture());
+                (ArrayList<QueryParametersBase>) eq(testParameterList), queryCallbackList.capture());
         queryCallbackList.getValue().onSuccess((ArrayList<VdcQueryReturnValue>) resultList);
         verify(mockOperationCallbackList1).onSuccess(eq(operation1List), eq(return1List));
         verify(mockOperationCallbackList2).onSuccess(eq(operation2List), eq(return2List));
@@ -418,20 +418,20 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         List<VdcOperation<?, ?>> operation1List = new ArrayList<>();
         List<VdcOperation<?, ?>> operation2List = new ArrayList<>();
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        QueryParametersBase testParameters = new QueryParametersBase();
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testParameters, mockOperationCallbackList1);
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation2 =
+        VdcOperation<QueryType, QueryParametersBase> testOperation2 =
                 new VdcOperation<>(QueryType.Search, testParameters, mockOperationCallbackList2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         operation1List.add(testOperation1);
         operation2List.add(testOperation2);
-        List<VdcQueryParametersBase> testParameterList = createQueryParameterList(testParameters, 2);
+        List<QueryParametersBase> testParameterList = createQueryParameterList(testParameters, 2);
         List<QueryType> testQueryList = createQueryList(QueryType.Search, 2);
         testProvider.transmitOperationList(testList);
         verify(mockService).runMultipleQueries(eq((ArrayList<QueryType>) testQueryList),
-                (ArrayList<VdcQueryParametersBase>) eq(testParameterList), queryCallbackList.capture());
+                (ArrayList<QueryParametersBase>) eq(testParameterList), queryCallbackList.capture());
         Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
         queryCallbackList.getValue().onFailure(testException);
         verify(mockOperationCallbackList1).onFailure(eq(operation1List), eq(testException));
@@ -440,9 +440,9 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_query_and_action_success() {
-        VdcQueryParametersBase testQueryParameters = new VdcQueryParametersBase();
+        QueryParametersBase testQueryParameters = new QueryParametersBase();
         ActionParametersBase testActionParameters = new ActionParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testQueryParameters, mockOperationCallbackSingle1);
         VdcOperation<ActionType, ActionParametersBase> testOperation2 =
                 new VdcOperation<>(ActionType.ActivateVds, testActionParameters, mockOperationCallbackSingle2);
@@ -463,8 +463,8 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitPublicOperationList_success() {
-        VdcQueryParametersBase testQueryParameters = new VdcQueryParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        QueryParametersBase testQueryParameters = new QueryParametersBase();
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testQueryParameters, true, false, mockOperationCallbackSingle1);
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
@@ -477,10 +477,10 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitPublicOperationList_two_public_success() {
-        VdcQueryParametersBase testQueryParameters = new VdcQueryParametersBase();
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation1 =
+        QueryParametersBase testQueryParameters = new QueryParametersBase();
+        VdcOperation<QueryType, QueryParametersBase> testOperation1 =
                 new VdcOperation<>(QueryType.Search, testQueryParameters, true, false, mockOperationCallbackSingle1);
-        VdcOperation<QueryType, VdcQueryParametersBase> testOperation2 =
+        VdcOperation<QueryType, QueryParametersBase> testOperation2 =
                 new VdcOperation<>(QueryType.GetConfigurationValues, testQueryParameters, true, false, mockOperationCallbackSingle2);
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
@@ -504,9 +504,9 @@ public class GWTRPCCommunicationProviderTest {
     public void testMissingXsrfToken() {
         //Remove token so there should be a request for it.
         mockXsrfRpcRequestBuilder.setXsrfToken(null);
-        VdcQueryParametersBase testParameters = new VdcQueryParametersBase();
-        final List<VdcOperation<QueryType, VdcQueryParametersBase>> operationList = new ArrayList<>();
-        final VdcOperation<QueryType, VdcQueryParametersBase> testOperation =
+        QueryParametersBase testParameters = new QueryParametersBase();
+        final List<VdcOperation<QueryType, QueryParametersBase>> operationList = new ArrayList<>();
+        final VdcOperation<QueryType, QueryParametersBase> testOperation =
                 new VdcOperation<>(QueryType.Search, testParameters, null);
         operationList.add(testOperation);
         testProvider.transmitOperation(testOperation);
@@ -524,9 +524,9 @@ public class GWTRPCCommunicationProviderTest {
         return result;
     }
 
-    private List<VdcQueryParametersBase> createQueryParameterList(final VdcQueryParametersBase parameters,
+    private List<QueryParametersBase> createQueryParameterList(final QueryParametersBase parameters,
             final int count) {
-        ArrayList<VdcQueryParametersBase> result = new ArrayList<>();
+        ArrayList<QueryParametersBase> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(parameters);
         }

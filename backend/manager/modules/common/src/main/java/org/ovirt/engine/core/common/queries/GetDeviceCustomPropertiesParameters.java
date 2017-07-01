@@ -6,7 +6,7 @@ import org.ovirt.engine.core.compat.Version;
 /**
  * Parameters to get available device custom properties for specified device type
  */
-public class GetDeviceCustomPropertiesParameters extends VdcQueryParametersBase {
+public class GetDeviceCustomPropertiesParameters extends QueryParametersBase {
     private static final long serialVersionUID = 6760061352097116149L;
 
     /**

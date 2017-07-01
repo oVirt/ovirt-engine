@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetVmByVmNameForDataCenterParameters extends VdcQueryParametersBase {
+public class GetVmByVmNameForDataCenterParameters extends QueryParametersBase {
     private static final long serialVersionUID = -3232978226860645746L;
 
     private Guid dataCenterId;

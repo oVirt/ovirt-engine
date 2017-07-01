@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class IdsQueryParameters extends VdcQueryParametersBase {
+public class IdsQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = 575294540991590541L;
 
     private List<Guid> ids;

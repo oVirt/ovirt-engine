@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendIconsResourceTest
         extends AbstractBackendCollectionResourceTest<Icon, VmIcon, BackendIconsResource> {
@@ -54,7 +54,7 @@ public class BackendIconsResourceTest
     @Override
      protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(QueryType.GetAllVmIcons,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpVmIcons(),

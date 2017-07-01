@@ -25,8 +25,8 @@ import org.ovirt.engine.api.resource.OperatingSystemResource;
 import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 
@@ -69,7 +69,7 @@ public class BackendOperatingSystemsResource
     @SuppressWarnings("unchecked")
     private Map<Integer, VmIconIdSizePair> getIconDefaults() {
         return (Map<Integer, VmIconIdSizePair>) getEntity(
-                Map.class, QueryType.GetVmIconDefaults, new VdcQueryParametersBase(), "Icon defaults");
+                Map.class, QueryType.GetVmIconDefaults, new QueryParametersBase(), "Icon defaults");
     }
 
     @Override

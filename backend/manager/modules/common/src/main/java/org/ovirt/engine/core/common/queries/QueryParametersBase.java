@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 
 
-public class VdcQueryParametersBase implements Serializable, HasCorrelationId {
+public class QueryParametersBase implements Serializable, HasCorrelationId {
     private static final long serialVersionUID = -6766170283465888549L;
 
     /**
@@ -39,11 +39,11 @@ public class VdcQueryParametersBase implements Serializable, HasCorrelationId {
     @Size(min = 1, max = BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, groups = PreRun.class)
     private String correlationId;
 
-    public VdcQueryParametersBase() {
+    public QueryParametersBase() {
         refresh = false;
     }
 
-    public VdcQueryParametersBase(String sessionId) {
+    public QueryParametersBase(String sessionId) {
         this();
         this.sessionId = sessionId;
 
@@ -65,12 +65,12 @@ public class VdcQueryParametersBase implements Serializable, HasCorrelationId {
         this.refresh = refresh;
     }
 
-    public VdcQueryParametersBase withoutRefresh() {
+    public QueryParametersBase withoutRefresh() {
         setRefresh(false);
         return this;
     }
 
-    public VdcQueryParametersBase withRefresh() {
+    public QueryParametersBase withRefresh() {
         setRefresh(true);
         return this;
     }

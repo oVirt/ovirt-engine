@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -236,8 +236,8 @@ public class ResourcesModel extends SearchableListModel {
             Collections.sort(list, COMPARATOR);
             setItems(list);
 
-            VdcQueryParametersBase parameters =
-                    new VdcQueryParametersBase();
+            QueryParametersBase parameters =
+                    new QueryParametersBase();
             parameters.setRefresh(getIsQueryFirstTime());
             Frontend.getInstance().runQuery(QueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<VdcQueryReturnValue>(
                     retVal -> {

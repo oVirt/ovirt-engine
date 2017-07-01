@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-public class GetVmIconDefaultParameters extends VdcQueryParametersBase {
+public class GetVmIconDefaultParameters extends QueryParametersBase {
 
 
     private int operatingSystemId;

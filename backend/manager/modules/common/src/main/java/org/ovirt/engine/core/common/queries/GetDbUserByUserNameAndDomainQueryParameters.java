@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-public class GetDbUserByUserNameAndDomainQueryParameters extends VdcQueryParametersBase {
+public class GetDbUserByUserNameAndDomainQueryParameters extends QueryParametersBase {
 
     public GetDbUserByUserNameAndDomainQueryParameters() {
         super();

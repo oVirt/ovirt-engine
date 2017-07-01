@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Version;
 
-public class GetClusterFeaturesByVersionAndCategoryParameters extends VdcQueryParametersBase {
+public class GetClusterFeaturesByVersionAndCategoryParameters extends QueryParametersBase {
     private static final long serialVersionUID = 4623643366378282119L;
     private Version version;
     private ApplicationMode category;

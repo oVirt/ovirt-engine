@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class UnmanagedNetworkParameters extends VdcQueryParametersBase {
+public class UnmanagedNetworkParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = 3874444912691547792L;
     private Guid hostId;

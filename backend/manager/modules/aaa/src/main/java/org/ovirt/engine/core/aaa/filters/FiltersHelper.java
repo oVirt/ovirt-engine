@@ -21,8 +21,8 @@ import org.apache.http.message.BasicHeaderValueParser;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
@@ -83,7 +83,7 @@ public class FiltersHelper {
                 VdcQueryReturnValue returnValue =
                         FiltersHelper.getBackend(ctx)
                                 .runPublicQuery(QueryType.ValidateSession,
-                                        new VdcQueryParametersBase(session));
+                                        new QueryParametersBase(session));
                 return returnValue.getSucceeded();
             } finally {
                 if (ctx != null) {

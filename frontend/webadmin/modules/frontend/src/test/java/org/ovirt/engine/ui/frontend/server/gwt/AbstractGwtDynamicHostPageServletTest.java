@@ -40,8 +40,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -71,7 +71,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     private DbUser mockUser;
 
     @Mock
-    private VdcQueryParametersBase mockQueryParams;
+    private QueryParametersBase mockQueryParams;
 
     @Mock
     private GetConfigurationValueParameters mockConfigQueryParams;
@@ -228,7 +228,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
 
         when(mockBackend.runQuery(
                 eq(QueryType.GetUserBySessionId),
-                isA(VdcQueryParametersBase.class)
+                isA(QueryParametersBase.class)
         )).thenReturn(returnValue);
     }
 

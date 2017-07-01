@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class HostDeviceParameters extends VdcQueryParametersBase {
+public class HostDeviceParameters extends QueryParametersBase {
 
     private Guid hostId;
     private String deviceName;

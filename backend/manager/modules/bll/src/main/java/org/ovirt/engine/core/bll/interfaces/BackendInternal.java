@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.DateTime;
 
@@ -49,7 +49,7 @@ public interface BackendInternal extends BackendLocal {
             CommandContext context);
 
     VdcQueryReturnValue runInternalQuery(QueryType actionType,
-            VdcQueryParametersBase parameters,
+            QueryParametersBase parameters,
             EngineContext context);
 
     List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
@@ -80,6 +80,6 @@ public interface BackendInternal extends BackendLocal {
 
     DateTime getStartedAt();
 
-    VdcQueryReturnValue runInternalQuery(QueryType queryType, VdcQueryParametersBase queryParameters);
+    VdcQueryReturnValue runInternalQuery(QueryType queryType, QueryParametersBase queryParameters);
 
 }

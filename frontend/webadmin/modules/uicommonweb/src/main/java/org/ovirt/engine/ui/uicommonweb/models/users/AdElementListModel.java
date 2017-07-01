@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -244,7 +244,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         asyncQuery.setHandleFailure(true);
 
         Frontend.getInstance()
-                .runQuery(QueryType.GetDirectoryGroupsForUser, new VdcQueryParametersBase(), asyncQuery);
+                .runQuery(QueryType.GetDirectoryGroupsForUser, new QueryParametersBase(), asyncQuery);
     }
 
     protected void populateProfiles(List<ProfileEntry> profiles) {

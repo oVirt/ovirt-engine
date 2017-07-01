@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.frontend.communication;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -132,7 +132,7 @@ public class VdcOperationManager {
         }
 
         // Queries optionally refresh the Engine session
-        else if (((VdcQueryParametersBase) operation.getParameter()).getRefresh()) {
+        else if (((QueryParametersBase) operation.getParameter()).getRefresh()) {
             return true;
         }
 

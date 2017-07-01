@@ -10,8 +10,8 @@ import org.ovirt.engine.api.resource.DiskProfileResource;
 import org.ovirt.engine.api.resource.DiskProfilesResource;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesResource implements DiskProfilesResource {
 
@@ -22,7 +22,7 @@ public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesReso
 
     @Override
     protected List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> getDiskProfilesCollection() {
-        return getBackendCollection(QueryType.GetAllDiskProfiles, new VdcQueryParametersBase());
+        return getBackendCollection(QueryType.GetAllDiskProfiles, new QueryParametersBase());
     }
 
     @Override

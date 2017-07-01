@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
+public class GetFenceAgentStatusParameters extends QueryParametersBase {
     private static final long serialVersionUID = -3663389765505476776L;
 
     private Guid vdsId;

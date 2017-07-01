@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-public class GetAgentFenceOptionsQueryParameters extends VdcQueryParametersBase {
+public class GetAgentFenceOptionsQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = 3645032828911858219L;
     private String version;
 

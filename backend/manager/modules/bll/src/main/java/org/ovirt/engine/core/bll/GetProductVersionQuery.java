@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Version;
  * looks something like: 3.5.1-0.2.el6ev This query tries to parse ProduceRPMVersion to get 'major', 'minor' and 'build'
  * info. If it fails, it falls back to VdcVersion which has only 'major' and 'minor' info.
  */
-public class GetProductVersionQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetProductVersionQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
 
     public static final String RPM_REG_EX = "^(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<build>\\d+)";
     public static final String VDC_VERSION_REG_EX =

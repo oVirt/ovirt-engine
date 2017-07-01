@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -82,8 +82,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                 new GetEntitiesWithPermittedActionParameters();
         getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
 
-        ArrayList<VdcQueryParametersBase> parametersList =
-                new ArrayList<>(Arrays.asList(new VdcQueryParametersBase[]{
+        ArrayList<QueryParametersBase> parametersList =
+                new ArrayList<>(Arrays.asList(new QueryParametersBase[]{
                         getEntitiesWithPermittedActionParameters}));
 
         // Get clusters and templates

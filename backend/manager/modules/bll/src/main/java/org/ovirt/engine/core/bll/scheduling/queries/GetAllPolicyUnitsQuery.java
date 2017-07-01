@@ -10,12 +10,12 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetAllPolicyUnitsQuery extends QueriesCommandBase<VdcQueryParametersBase> {
-    public GetAllPolicyUnitsQuery(VdcQueryParametersBase parameters, EngineContext engineContext) {
+public class GetAllPolicyUnitsQuery extends QueriesCommandBase<QueryParametersBase> {
+    public GetAllPolicyUnitsQuery(QueryParametersBase parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 

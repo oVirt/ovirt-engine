@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
@@ -13,7 +13,7 @@ import org.ovirt.engine.core.dao.StoragePoolDao;
  * Class which encapsulates logic of figuring out macPoolId for data center based on pools used by data centers
  * clusters.
  */
-public abstract class StoragePoolQueryBase<P extends VdcQueryParametersBase>  extends QueriesCommandBase<P> {
+public abstract class StoragePoolQueryBase<P extends QueryParametersBase>  extends QueriesCommandBase<P> {
 
     @Inject
     protected StoragePoolDao storagePoolDao;

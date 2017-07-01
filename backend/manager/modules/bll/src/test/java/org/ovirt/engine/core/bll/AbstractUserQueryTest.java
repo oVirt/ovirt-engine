@@ -5,11 +5,11 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 /** An abstract test class for query classes that handles common mocking requirements */
-public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>>
+public abstract class AbstractUserQueryTest<P extends QueryParametersBase, Q extends QueriesCommandBase<? extends P>>
         extends AbstractQueryTest<P, Q> {
 
     protected static final long UNPRIVILEGED_USER_SESSION_ID = 1;

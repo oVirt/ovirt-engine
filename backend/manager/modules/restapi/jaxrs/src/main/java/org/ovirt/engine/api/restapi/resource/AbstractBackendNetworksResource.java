@@ -6,8 +6,8 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendNetworksResource
@@ -22,7 +22,7 @@ public abstract class AbstractBackendNetworksResource
         this.addAction = addAction;
     }
 
-    protected abstract VdcQueryParametersBase getQueryParameters();
+    protected abstract QueryParametersBase getQueryParameters();
 
     protected abstract ActionParametersBase getAddParameters(Network network, org.ovirt.engine.core.common.businessentities.network.Network entity);
 

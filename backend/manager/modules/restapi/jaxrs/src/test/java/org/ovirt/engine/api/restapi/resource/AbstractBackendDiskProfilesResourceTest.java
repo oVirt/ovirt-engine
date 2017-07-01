@@ -20,8 +20,8 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -30,11 +30,11 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
 
     protected static final Guid STORAGE_DOMAIN_ID = GUIDS[1];
     private final QueryType listQueryType;
-    private final Class<? extends VdcQueryParametersBase> listQueryParamsClass;
+    private final Class<? extends QueryParametersBase> listQueryParamsClass;
 
     public AbstractBackendDiskProfilesResourceTest(C collection,
             QueryType listQueryType,
-            Class<? extends VdcQueryParametersBase> queryParamsClass) {
+            Class<? extends QueryParametersBase> queryParamsClass) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
         this.listQueryParamsClass = queryParamsClass;

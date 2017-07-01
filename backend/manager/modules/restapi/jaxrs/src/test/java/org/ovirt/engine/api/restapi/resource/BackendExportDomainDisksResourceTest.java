@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -168,7 +168,7 @@ public class BackendExportDomainDisksResourceTest
     }
     @Override
     protected void setUpEntityQueryExpectations(QueryType query,
-            Class<? extends VdcQueryParametersBase> queryClass,
+            Class<? extends QueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,
             Object queryReturn,

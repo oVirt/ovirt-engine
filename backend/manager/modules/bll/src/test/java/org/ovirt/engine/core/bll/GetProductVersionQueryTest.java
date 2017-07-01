@@ -6,16 +6,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.Version;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetProductVersionQueryTest extends AbstractQueryTest<VdcQueryParametersBase, GetProductVersionQuery<VdcQueryParametersBase>> {
+public class GetProductVersionQueryTest extends AbstractQueryTest<QueryParametersBase, GetProductVersionQuery<QueryParametersBase>> {
 
     @Test
     public void testExecuteQuery() {
         mcr.mockConfigValue(ConfigValues.ProductRPMVersion, "11.1.12asdf.");
-        GetProductVersionQuery<VdcQueryParametersBase> query = getQuery();
+        GetProductVersionQuery<QueryParametersBase> query = getQuery();
         query.executeQueryCommand();
         Object returnValue = query.getQueryReturnValue().getReturnValue();
         verifyVersionEqual(returnValue, 11, 1, 12);
@@ -25,7 +25,7 @@ public class GetProductVersionQueryTest extends AbstractQueryTest<VdcQueryParame
     public void testExecuteQueryUseVdcVersion() {
         mcr.mockConfigValue(ConfigValues.ProductRPMVersion, "1unparsable1.1.12.");
         mcr.mockConfigValue(ConfigValues.VdcVersion, "3.3.0.0.");
-        GetProductVersionQuery<VdcQueryParametersBase> query = getQuery();
+        GetProductVersionQuery<QueryParametersBase> query = getQuery();
         query.executeQueryCommand();
         Object returnValue = query.getQueryReturnValue().getReturnValue();
         verifyVersionEqual(returnValue, 3, 3, 0);

@@ -42,9 +42,9 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
@@ -731,7 +731,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     private void initRemoveDisksCheckboxes(final Map<Guid, EntityModel> vmsMap) {
-        ArrayList<VdcQueryParametersBase> params = new ArrayList<>();
+        ArrayList<QueryParametersBase> params = new ArrayList<>();
         ArrayList<QueryType> queries = new ArrayList<>();
 
         for (Entry<Guid, EntityModel> entry : vmsMap.entrySet()) {

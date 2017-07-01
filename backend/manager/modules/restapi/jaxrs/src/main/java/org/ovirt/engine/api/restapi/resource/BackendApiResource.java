@@ -107,8 +107,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.QueryConstants;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
@@ -313,7 +313,7 @@ public class BackendApiResource
     }
 
     private Version getVersion() {
-        VdcQueryReturnValue result = runQuery(QueryType.GetProductVersion, new VdcQueryParametersBase());
+        VdcQueryReturnValue result = runQuery(QueryType.GetProductVersion, new QueryParametersBase());
         return VersionMapper.map((org.ovirt.engine.core.compat.Version) result.getReturnValue());
     }
 

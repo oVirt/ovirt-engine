@@ -10,11 +10,11 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.core.compat.Version;
 
-public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetConfigurationValuesQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
     private static final List<String> versions = getVersionsList();
 
     public GetConfigurationValuesQuery(P parameters, EngineContext engineContext) {

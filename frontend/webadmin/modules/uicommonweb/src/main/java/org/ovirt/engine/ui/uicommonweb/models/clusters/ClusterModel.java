@@ -32,8 +32,8 @@ import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -919,7 +919,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getMacPoolListModel().getSelectedItemChangedEvent().addListener(this);
         startProgress();
         Frontend.getInstance().runQuery(QueryType.GetAllMacPools,
-                new VdcQueryParametersBase(),
+                new QueryParametersBase(),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     getMacPoolListModel().setItems((Collection<MacPool>) returnValue.getReturnValue());
                     stopProgress();
@@ -1275,7 +1275,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setClusterPolicy(new ListModel<ClusterPolicy>());
         setCustomPropertySheet(new KeyValueModel());
         getClusterPolicy().getSelectedItemChangedEvent().addListener(this);
-        Frontend.getInstance().runQuery(QueryType.GetAllPolicyUnits, new VdcQueryParametersBase(),
+        Frontend.getInstance().runQuery(QueryType.GetAllPolicyUnits, new QueryParametersBase(),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     ArrayList<PolicyUnit> policyUnits = returnValue.getReturnValue();
                     policyUnitMap = new LinkedHashMap<>();
@@ -1283,7 +1283,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                         policyUnitMap.put(policyUnit.getId(), policyUnit);
                     }
                     Frontend.getInstance().runQuery(QueryType.GetClusterPolicies,
-                            new VdcQueryParametersBase(),
+                            new QueryParametersBase(),
                             new AsyncQuery<VdcQueryReturnValue>(retVal -> {
                                         ArrayList<ClusterPolicy> list = retVal.getReturnValue();
                                         getClusterPolicy().setItems(list);

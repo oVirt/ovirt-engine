@@ -4,14 +4,14 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
-public class GetAllCpuProfilesQuery extends QueriesCommandBase<VdcQueryParametersBase> {
+public class GetAllCpuProfilesQuery extends QueriesCommandBase<QueryParametersBase> {
     @Inject
     private CpuProfileDao cpuProfileDao;
 
-    public GetAllCpuProfilesQuery(VdcQueryParametersBase parameters, EngineContext engineContext) {
+    public GetAllCpuProfilesQuery(QueryParametersBase parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
 

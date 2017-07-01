@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineFault;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler.MessageFormatter;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
@@ -202,7 +202,7 @@ public class Frontend implements HasHandlers {
      * @param callback The callback to call when the query completes.
      */
     public void runQuery(final QueryType queryType,
-            final VdcQueryParametersBase parameters,
+            final QueryParametersBase parameters,
             final AsyncQuery callback) {
         runQuery(queryType, parameters, callback, false);
     }
@@ -216,15 +216,15 @@ public class Frontend implements HasHandlers {
      * @param isPublic Determine if the query is public or not.
      */
     public void runQuery(final QueryType queryType,
-            final VdcQueryParametersBase parameters,
+            final QueryParametersBase parameters,
             final AsyncQuery callback, final boolean isPublic) {
         initQueryParamsFilter(parameters);
 
-        final VdcOperation<QueryType, VdcQueryParametersBase> operation =
+        final VdcOperation<QueryType, QueryParametersBase> operation =
                 new VdcOperation<>(queryType, parameters, isPublic, false,
-                new VdcOperationCallback<VdcOperation<QueryType, VdcQueryParametersBase>, VdcQueryReturnValue>() {
+                new VdcOperationCallback<VdcOperation<QueryType, QueryParametersBase>, VdcQueryReturnValue>() {
             @Override
-            public void onSuccess(final VdcOperation<QueryType, VdcQueryParametersBase> operation,
+            public void onSuccess(final VdcOperation<QueryType, QueryParametersBase> operation,
                     final VdcQueryReturnValue result) {
                 try {
                     if (!result.getSucceeded()) {
@@ -257,7 +257,7 @@ public class Frontend implements HasHandlers {
             }
 
             @Override
-            public void onFailure(final VdcOperation<QueryType, VdcQueryParametersBase> operation,
+            public void onFailure(final VdcOperation<QueryType, QueryParametersBase> operation,
                     final Throwable caught) {
                 try {
                     if (ignoreFailure(caught)) {
@@ -287,7 +287,7 @@ public class Frontend implements HasHandlers {
      * @param callback The callback to when the query completes.
      */
     public void runPublicQuery(final QueryType queryType,
-        final VdcQueryParametersBase parameters,
+        final QueryParametersBase parameters,
         final AsyncQuery callback) {
         runQuery(queryType, parameters, callback, true);
     }
@@ -299,7 +299,7 @@ public class Frontend implements HasHandlers {
      * @param callback The callback to call when the query completes.
      */
     public void runMultipleQueries(final List<QueryType> queryTypeList,
-            final List<VdcQueryParametersBase> queryParamsList,
+            final List<QueryParametersBase> queryParamsList,
             final IFrontendMultipleQueryAsyncCallback callback) {
         runMultipleQueries(queryTypeList, queryParamsList, callback, null);
     }
@@ -312,14 +312,14 @@ public class Frontend implements HasHandlers {
      * @param state The state object.
      */
     public void runMultipleQueries(final List<QueryType> queryTypeList,
-            final List<VdcQueryParametersBase> queryParamsList,
+            final List<QueryParametersBase> queryParamsList,
             final IFrontendMultipleQueryAsyncCallback callback,
             final Object state) {
-        VdcOperationCallbackList<VdcOperation<QueryType, VdcQueryParametersBase>,
+        VdcOperationCallbackList<VdcOperation<QueryType, QueryParametersBase>,
             List<VdcQueryReturnValue>> multiCallback = new VdcOperationCallbackList<VdcOperation<QueryType,
-            VdcQueryParametersBase>, List<VdcQueryReturnValue>>() {
+                QueryParametersBase>, List<VdcQueryReturnValue>>() {
             @Override
-            public void onSuccess(final List<VdcOperation<QueryType, VdcQueryParametersBase>> operationList,
+            public void onSuccess(final List<VdcOperation<QueryType, QueryParametersBase>> operationList,
                     final List<VdcQueryReturnValue> resultObject) {
                 logger.finer("Succesful returned result from runMultipleQueries!"); //$NON-NLS-1$
                 FrontendMultipleQueryAsyncResult f =
@@ -329,7 +329,7 @@ public class Frontend implements HasHandlers {
             }
 
             @Override
-            public void onFailure(final List<VdcOperation<QueryType, VdcQueryParametersBase>> operationList,
+            public void onFailure(final List<VdcOperation<QueryType, QueryParametersBase>> operationList,
                     final Throwable caught) {
                 try {
                     if (ignoreFailure(caught)) {
@@ -348,10 +348,10 @@ public class Frontend implements HasHandlers {
 
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         for (int i = 0; i < queryTypeList.size(); i++) {
-            VdcQueryParametersBase parameters = queryParamsList.get(i);
+            QueryParametersBase parameters = queryParamsList.get(i);
             parameters.setRefresh(false); // Why do we do this?
             initQueryParamsFilter(parameters);
-            operationList.add(new VdcOperation<QueryType, VdcQueryParametersBase>(queryTypeList.get(i),
+            operationList.add(new VdcOperation<QueryType, QueryParametersBase>(queryTypeList.get(i),
                     parameters, true, multiCallback, false));
         }
 
@@ -1112,7 +1112,7 @@ public class Frontend implements HasHandlers {
      * set the filterQueries parameter.
      * @param parameters The parameters to set.
      */
-    private void initQueryParamsFilter(final VdcQueryParametersBase parameters) {
+    private void initQueryParamsFilter(final QueryParametersBase parameters) {
         parameters.setFiltered(filterQueries);
     }
 

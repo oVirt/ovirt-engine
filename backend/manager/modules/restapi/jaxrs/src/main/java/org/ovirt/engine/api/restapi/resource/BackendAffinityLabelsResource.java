@@ -11,8 +11,8 @@ import org.ovirt.engine.api.resource.AffinityLabelsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityLabelsResource extends AbstractBackendCollectionResource<AffinityLabel, org.ovirt.engine.core.common.businessentities.Label>
@@ -37,7 +37,7 @@ public class BackendAffinityLabelsResource extends AbstractBackendCollectionReso
     public AffinityLabels list() {
         return mapCollection(
                 getBackendCollection(
-                        QueryType.GetAllLabels, new VdcQueryParametersBase()));
+                        QueryType.GetAllLabels, new QueryParametersBase()));
     }
 
     @Override

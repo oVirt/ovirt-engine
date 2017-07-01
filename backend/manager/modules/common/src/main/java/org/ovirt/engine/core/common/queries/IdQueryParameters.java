@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Parameter class for the "GetById" queries
  */
-public class IdQueryParameters extends VdcQueryParametersBase {
+public class IdQueryParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = -4601447036978553847L;
     private Guid id;

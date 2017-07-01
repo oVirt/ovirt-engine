@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendPermissionResourceTest
         extends AbstractBackendSubResourceTest<
@@ -69,7 +69,7 @@ public class BackendPermissionResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetAllDbUsers,
-                VdcQueryParametersBase.class,
+                QueryParametersBase.class,
                 new String[] { "Refresh", "Filtered" },
                 new Object[] { false, false },
                 getUsers());
@@ -84,7 +84,7 @@ public class BackendPermissionResourceTest
         setUpGetEntityExpectations(2);
         setUpEntityQueryExpectations(
             QueryType.GetAllDbUsers,
-            VdcQueryParametersBase.class,
+            QueryParametersBase.class,
             new String[] { "Refresh", "Filtered" },
             new Object[] { false, false },
             getUsers()
@@ -106,7 +106,7 @@ public class BackendPermissionResourceTest
     public void testRemoveCantDo() throws Exception {
         setUpEntityQueryExpectations(
             QueryType.GetAllDbUsers,
-            VdcQueryParametersBase.class,
+            QueryParametersBase.class,
             new String[] {},
             new Object[] {},
             getUsers()
@@ -118,7 +118,7 @@ public class BackendPermissionResourceTest
     public void testRemoveFailed() throws Exception {
         setUpEntityQueryExpectations(
             QueryType.GetAllDbUsers,
-            VdcQueryParametersBase.class,
+            QueryParametersBase.class,
             new String[] {},
             new Object[] {},
             getUsers()

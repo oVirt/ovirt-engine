@@ -7,10 +7,10 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 
-public abstract class GetAllTemplateBasedEntityQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public abstract class GetAllTemplateBasedEntityQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
     @Inject
     private VmTemplateDao vmTemplateDao;
 

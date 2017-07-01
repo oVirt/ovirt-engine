@@ -10,8 +10,8 @@ import org.ovirt.engine.api.resource.CpuProfileResource;
 import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResource implements CpuProfilesResource {
 
@@ -22,7 +22,7 @@ public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResour
 
     @Override
     protected List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> getCpuProfilesCollection() {
-        return getBackendCollection(QueryType.GetAllCpuProfiles, new VdcQueryParametersBase());
+        return getBackendCollection(QueryType.GetAllCpuProfiles, new QueryParametersBase());
     }
 
     @Override

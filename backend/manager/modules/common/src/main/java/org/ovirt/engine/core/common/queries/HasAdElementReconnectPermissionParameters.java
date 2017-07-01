@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class HasAdElementReconnectPermissionParameters extends VdcQueryParametersBase {
+public class HasAdElementReconnectPermissionParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = -2361449851899615454L;
 

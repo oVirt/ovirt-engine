@@ -32,8 +32,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
@@ -55,7 +55,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
     private List<Map<String, String>> availablePublicKeys(String keyFingerPrint, String keyType, String keyContent) {
 
         List<Map<String, String>> jsonUsers = new ArrayList<>();
-        VdcQueryParametersBase userProfileParams = new VdcQueryParametersBase();
+        QueryParametersBase userProfileParams = new QueryParametersBase();
 
         VdcQueryReturnValue v = backend.runInternalQuery(QueryType.GetAllUserProfiles, userProfileParams);
 

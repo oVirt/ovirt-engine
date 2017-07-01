@@ -25,9 +25,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
@@ -149,7 +149,7 @@ public class FrontendTest {
      */
     @Test
     public void testrunQuery_ignored_failure() {
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         // Repeat 4 times, because of retries.
@@ -172,7 +172,7 @@ public class FrontendTest {
      */
     @Test
     public void testrunQuery_failure_404() {
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
@@ -200,7 +200,7 @@ public class FrontendTest {
         Object mockModel = new Object();
         when(mockAsyncQuery.isHandleFailure()).thenReturn(true);
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
@@ -228,7 +228,7 @@ public class FrontendTest {
      */
     @Test
     public void testrunQuery_failure_404_with_pending() {
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
@@ -258,7 +258,7 @@ public class FrontendTest {
      */
     @Test
     public void testrunQuery_failure_404_with_pending_3times() {
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
@@ -288,7 +288,7 @@ public class FrontendTest {
      */
     @Test
     public void testrunQuery_failure_404_with_pending_5times() {
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
@@ -319,7 +319,7 @@ public class FrontendTest {
      */
     @Test
     public void testrunQuery_success_not_succeeded_noeventshandler_nocallbackhandler() {
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
@@ -344,7 +344,7 @@ public class FrontendTest {
      */
     @Test
     public void testrunQuery_success_not_succeeded_eventshandler_nocallbackhandler() {
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
@@ -373,7 +373,7 @@ public class FrontendTest {
         Object mockModel = new Object();
         when(mockAsyncQuery.isHandleFailure()).thenReturn(true);
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
@@ -400,7 +400,7 @@ public class FrontendTest {
     public void testrunQuery_success_succeeded_eventshandler_noconverter() {
         Object mockModel = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
@@ -427,7 +427,7 @@ public class FrontendTest {
         Object mockConvertedModel = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
         when(mockAsyncQuery.getConverter()).thenReturn(mockConverter);
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
         VdcQueryReturnValue mockReturnValue = new VdcQueryReturnValue();
@@ -456,7 +456,7 @@ public class FrontendTest {
     public void testrunQuery_success_succeeded_multiple_same_eventshandler_noconverter() {
         Object mockModel = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(mockModel);
-        VdcQueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
+        QueryParametersBase testParameters = new SearchParameters("*win*", SearchType.VM); //$NON-NLS-1$
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         frontend.runQuery(QueryType.Search, testParameters, mockAsyncQuery, false);
         verify(mockService).runQuery(eq(QueryType.Search), eq(testParameters), callback.capture());
@@ -482,7 +482,7 @@ public class FrontendTest {
     public void testrunMultipleQueries_ignored_failure() {
         ArrayList<QueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(QueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        ArrayList<QueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
@@ -513,7 +513,7 @@ public class FrontendTest {
         ArrayList<QueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(QueryType.Search);
         queryTypeList.add(QueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        ArrayList<QueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
@@ -549,7 +549,7 @@ public class FrontendTest {
         ArrayList<QueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(QueryType.Search);
         queryTypeList.add(QueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        ArrayList<QueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
@@ -588,7 +588,7 @@ public class FrontendTest {
         ArrayList<QueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(QueryType.Search);
         queryTypeList.add(QueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        ArrayList<QueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
@@ -626,7 +626,7 @@ public class FrontendTest {
         ArrayList<QueryType> queryTypeList = new ArrayList<>();
         queryTypeList.add(QueryType.Search);
         queryTypeList.add(QueryType.Search);
-        ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+        ArrayList<QueryParametersBase> queryParamsList = new ArrayList<>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
         frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$

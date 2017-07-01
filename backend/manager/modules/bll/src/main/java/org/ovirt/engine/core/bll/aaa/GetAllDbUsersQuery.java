@@ -4,10 +4,10 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.dao.DbUserDao;
 
-public class GetAllDbUsersQuery<P extends VdcQueryParametersBase>
+public class GetAllDbUsersQuery<P extends QueryParametersBase>
         extends QueriesCommandBase<P> {
     @Inject
     private DbUserDao dbUserDao;

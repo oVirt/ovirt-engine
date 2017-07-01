@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -433,8 +433,8 @@ public class BackendApiResourceTest {
         when(backend.runQuery(eq(QueryType.GetProductVersion), getProductVersionParams())).thenReturn(productVersionQueryResult);
     }
 
-    private VdcQueryParametersBase getProductVersionParams() {
-        return eqParams(VdcQueryParametersBase.class, new String[0], new Object[0]);
+    private QueryParametersBase getProductVersionParams() {
+        return eqParams(QueryParametersBase.class, new String[0], new Object[0]);
     }
 
     protected void setUpGetSystemStatisticsExpectations() {
@@ -446,13 +446,13 @@ public class BackendApiResourceTest {
         queryResult.setReturnValue(setUpStats());
     }
 
-    protected VdcQueryParametersBase getProductRPMVersionParams() {
+    protected QueryParametersBase getProductRPMVersionParams() {
         return eqParams(GetConfigurationValueParameters.class,
                 new String[] { "SessionId", "ConfigValue" },
                 new Object[] { SESSION_ID, ConfigValues.ProductRPMVersion });
     }
 
-    protected VdcQueryParametersBase queryParams() {
+    protected QueryParametersBase queryParams() {
         return eqParams(GetSystemStatisticsQueryParameters.class,
                              new String[] { "SessionId" },
                 new Object[] { SESSION_ID });

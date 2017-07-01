@@ -43,8 +43,8 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -63,7 +63,7 @@ public class BackendTemplatesResource
     public Templates list() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllVmTemplates,
-                    new VdcQueryParametersBase(), SearchType.VmTemplate));
+                    new QueryParametersBase(), SearchType.VmTemplate));
         } else {
             return mapCollection(getBackendCollection(SearchType.VmTemplate));
         }

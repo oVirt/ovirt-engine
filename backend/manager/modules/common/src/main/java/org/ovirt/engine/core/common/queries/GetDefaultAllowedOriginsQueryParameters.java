@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-public class GetDefaultAllowedOriginsQueryParameters extends VdcQueryParametersBase {
+public class GetDefaultAllowedOriginsQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = -4231839007150359638L;
 
     private Set<String> suffixes = new HashSet<>();

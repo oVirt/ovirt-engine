@@ -6,7 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ValidateVmMacsParameters extends VdcQueryParametersBase {
+public class ValidateVmMacsParameters extends QueryParametersBase {
 
     private Map<Guid, List<VM>> vmsByCluster;
 

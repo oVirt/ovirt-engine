@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -328,8 +328,8 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         model.getLinks().add(link);
     }
 
-    protected <T> VdcQueryParametersBase getQueryParams(Class<? extends VdcQueryParametersBase> queryParamsClass, T id) {
-        VdcQueryParametersBase params = null;
+    protected <T> QueryParametersBase getQueryParams(Class<? extends QueryParametersBase> queryParamsClass, T id) {
+        QueryParametersBase params = null;
         try {
             params = queryParamsClass.getConstructor(id.getClass()).newInstance(id);
         } catch (Exception e) {
@@ -423,9 +423,9 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     public class QueryIdResolver<T> extends EntityIdResolver<T> {
 
         private final QueryType query;
-        private final Class<? extends VdcQueryParametersBase> queryParamsClass;
+        private final Class<? extends QueryParametersBase> queryParamsClass;
 
-        public QueryIdResolver(QueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
+        public QueryIdResolver(QueryType query, Class<? extends QueryParametersBase> queryParamsClass) {
             this.query = query;
             this.queryParamsClass = queryParamsClass;
         }

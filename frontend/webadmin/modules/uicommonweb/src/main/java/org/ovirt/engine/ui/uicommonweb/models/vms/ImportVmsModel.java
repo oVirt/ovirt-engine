@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -289,7 +289,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 architectures.add(architecture);
             }
         });
-        Frontend.getInstance().runQuery(QueryType.GetAllClusters, new VdcQueryParametersBase(), callback);
+        Frontend.getInstance().runQuery(QueryType.GetAllClusters, new QueryParametersBase(), callback);
 
     }
 

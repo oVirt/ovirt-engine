@@ -5,7 +5,7 @@ import java.io.Serializable;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetSignedWebsocketProxyTicketParams extends VdcQueryParametersBase implements Serializable {
+public class GetSignedWebsocketProxyTicketParams extends QueryParametersBase implements Serializable {
 
     private Guid vmId;
     private GraphicsType graphicsType;

@@ -17,8 +17,8 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     private DbUser mockDbUser;
 
     @Mock
-    private VdcQueryParametersBase params;
+    private QueryParametersBase params;
 
     /* Getters and Setters tests */
 

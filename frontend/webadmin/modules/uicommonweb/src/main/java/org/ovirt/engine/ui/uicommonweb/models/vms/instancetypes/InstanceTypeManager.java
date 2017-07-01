@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -91,7 +91,7 @@ public abstract class InstanceTypeManager {
     public void updateAll() {
         final Guid selectedInstanceTypeId = getSelectedInstanceTypeId();
 
-        Frontend.getInstance().runQuery(QueryType.GetAllInstanceTypes, new VdcQueryParametersBase(),
+        Frontend.getInstance().runQuery(QueryType.GetAllInstanceTypes, new QueryParametersBase(),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     if (returnValue == null || !returnValue.getSucceeded()) {
                         return;

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 
-public class GetAllProvidersParameters extends VdcQueryParametersBase {
+public class GetAllProvidersParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = 1L;
     private ProviderType[] providerTypes;

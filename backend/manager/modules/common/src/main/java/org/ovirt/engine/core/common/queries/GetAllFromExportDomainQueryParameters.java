@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBase {
+public class GetAllFromExportDomainQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = 5436719744430725750L;
     private Guid privateStoragePoolId;
 

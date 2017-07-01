@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendInstanceTypesResource
@@ -39,7 +39,7 @@ public class BackendInstanceTypesResource
     public InstanceTypes list() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllInstanceTypes,
-                    new VdcQueryParametersBase()));
+                    new QueryParametersBase()));
         } else {
             return mapCollection(getBackendCollection(SearchType.InstanceType));
         }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-public class GetSystemStatisticsQueryParameters extends VdcQueryParametersBase {
+public class GetSystemStatisticsQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = -1449030042803469926L;
     private int privateMax;
 

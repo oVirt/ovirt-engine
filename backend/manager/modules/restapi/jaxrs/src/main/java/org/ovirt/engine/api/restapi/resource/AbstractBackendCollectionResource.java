@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,14 +63,14 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return searchParams;
     }
 
-    protected List<Q> getBackendCollection(QueryType query, VdcQueryParametersBase queryParams) {
+    protected List<Q> getBackendCollection(QueryType query, QueryParametersBase queryParams) {
         return getBackendCollection(entityType, query, queryParams);
     }
 
     /**
      * get the entities according to the filter and intersect them with those resulted from running the search query
      */
-    protected List<Q> getBackendCollection(QueryType query, VdcQueryParametersBase queryParams, SearchType searchType) {
+    protected List<Q> getBackendCollection(QueryType query, QueryParametersBase queryParams, SearchType searchType) {
         List<Q> filteredList = getBackendCollection(entityType, query, queryParams);
         // check if we got search expression in the URI
         String search = ParametersHelper.getParameter(httpHeaders, uriInfo, QueryHelper.CONSTRAINT_PARAMETER);

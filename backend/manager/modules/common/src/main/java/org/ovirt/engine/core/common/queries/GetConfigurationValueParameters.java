@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
-public class GetConfigurationValueParameters extends VdcQueryParametersBase {
+public class GetConfigurationValueParameters extends QueryParametersBase {
     private static final long serialVersionUID = -2166600418595305124L;
 
     private ConfigValues configValue;

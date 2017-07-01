@@ -6,12 +6,12 @@ import java.util.List;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class GetAllVmsAndVmPoolsQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
     public GetAllVmsAndVmPoolsQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
     }
@@ -52,7 +52,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
         if (isSucceeded) {
             queryResult =
                     runInternalQuery(QueryType.GetAllVmPoolsAttachedToUser,
-                            new VdcQueryParametersBase());
+                            new QueryParametersBase());
             if (queryResult != null && queryResult.getSucceeded()) {
                 retValList.addAll(queryResult.<List<VmPool>>getReturnValue());
             } else {

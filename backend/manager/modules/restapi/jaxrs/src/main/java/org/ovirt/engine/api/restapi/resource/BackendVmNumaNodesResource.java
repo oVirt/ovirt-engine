@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNumaNodesResource
@@ -28,7 +28,7 @@ public class BackendVmNumaNodesResource
     protected Class<VirtualNumaNodes> collectionType;
     protected Guid parentId;
     protected QueryType queryType;
-    protected VdcQueryParametersBase queryParams;
+    protected QueryParametersBase queryParams;
 
     public BackendVmNumaNodesResource(Guid parentId) {
         super(VirtualNumaNode.class, VmNumaNode.class);

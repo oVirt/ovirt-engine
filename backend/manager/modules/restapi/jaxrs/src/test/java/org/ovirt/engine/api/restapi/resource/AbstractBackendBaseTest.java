@@ -58,9 +58,9 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -239,7 +239,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected <E> void setUpGetEntityExpectations(QueryType query,
-                                                  Class<? extends VdcQueryParametersBase> clz,
+                                                  Class<? extends QueryParametersBase> clz,
                                                   String[] names,
                                                   Object[] values,
                                                   E entity)
@@ -248,7 +248,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected <E> void setUpGetEntityExpectations(QueryType query,
-            Class<? extends VdcQueryParametersBase> clz,
+            Class<? extends QueryParametersBase> clz,
             String[] names,
             Object[] values,
             E entity,
@@ -282,7 +282,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected void setUpEntityQueryExpectations(QueryType query,
-            Class<? extends VdcQueryParametersBase> queryClass,
+            Class<? extends QueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,
             Object queryReturn) {
@@ -290,7 +290,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     }
 
     protected void setUpEntityQueryExpectations(QueryType query,
-            Class<? extends VdcQueryParametersBase> queryClass,
+            Class<? extends QueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,
             Object queryReturn,

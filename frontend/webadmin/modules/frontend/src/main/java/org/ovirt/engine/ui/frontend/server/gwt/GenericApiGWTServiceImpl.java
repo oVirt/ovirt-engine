@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
@@ -80,7 +80,7 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
 
     @Override
     public VdcQueryReturnValue runQuery(QueryType search,
-            VdcQueryParametersBase searchParameters) {
+            QueryParametersBase searchParameters) {
         log.debug("Server: RunQuery invoked!"); //$NON-NLS-1$
         debugQuery(search, searchParameters);
         searchParameters.setSessionId(getEngineSessionId());
@@ -92,7 +92,7 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
 
     @Override
     public VdcQueryReturnValue runPublicQuery(QueryType queryType,
-            VdcQueryParametersBase params) {
+            QueryParametersBase params) {
         log.debug("Server: runPublicQuery invoked! '{}'", queryType); //$NON-NLS-1$
         if (params.getCorrelationId() == null) {
             params.setCorrelationId(CorrelationIdTracker.getCorrelationId());
@@ -104,7 +104,7 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
     @Override
     public ArrayList<VdcQueryReturnValue> runMultipleQueries(
             ArrayList<QueryType> queryTypeList,
-            ArrayList<VdcQueryParametersBase> queryParamsList) {
+            ArrayList<QueryParametersBase> queryParamsList) {
         int size = queryTypeList == null ? 0 : queryTypeList.size();
         log.debug("Server: RunMultipleQuery invoked! [amount of queries: {}]", size); //$NON-NLS-1$
         ArrayList<VdcQueryReturnValue> ret = new ArrayList<>();
@@ -233,7 +233,7 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
         super.doUnexpectedFailure(error);
     }
 
-    private void debugQuery(QueryType queryType, VdcQueryParametersBase parameters) {
+    private void debugQuery(QueryType queryType, QueryParametersBase parameters) {
         log.debug("Query type '{}', Parameters '{}'", queryType, parameters); //$NON-NLS-1$
     }
 

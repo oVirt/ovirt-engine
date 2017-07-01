@@ -27,8 +27,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -118,7 +118,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
     private void initQuotaForStorageDomains() {
         ArrayList<QueryType> queryTypeList = new ArrayList<>();
-        ArrayList<VdcQueryParametersBase> queryParamsList =
+        ArrayList<QueryParametersBase> queryParamsList =
                 new ArrayList<>();
         for (StorageDomain storage : filteredStorageDomains) {
             queryTypeList.add(QueryType.GetAllRelevantQuotasForStorage);
@@ -200,7 +200,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         }
         if (!templateDiskMap.isEmpty()) {
             ArrayList<QueryType> queryTypeList = new ArrayList<>();
-            final ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
+            final ArrayList<QueryParametersBase> queryParamsList = new ArrayList<>();
             for (Guid templateId : templateDiskMap.keySet()) {
                 queryTypeList.add(QueryType.GetVmTemplatesDisks);
                 queryParamsList.add(new IdQueryParameters(templateId));

@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworksResource
@@ -66,7 +66,7 @@ public class BackendNetworksResource
     }
 
     @Override
-    protected VdcQueryParametersBase getQueryParameters() {
+    protected QueryParametersBase getQueryParameters() {
         return new IdQueryParameters(Guid.Empty);
     }
 

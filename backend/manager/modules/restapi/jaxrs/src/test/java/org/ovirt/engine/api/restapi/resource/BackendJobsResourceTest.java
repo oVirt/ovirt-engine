@@ -12,8 +12,8 @@ import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTest<Job, org.ovirt.engine.core.common.job.Job, BackendJobsResource> {
 
@@ -39,7 +39,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
         assertEquals("", query);
 
         setUpEntityQueryExpectations(QueryType.GetAllJobs,
-                                    VdcQueryParametersBase.class,
+                                    QueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
                                      setUpJobs(),

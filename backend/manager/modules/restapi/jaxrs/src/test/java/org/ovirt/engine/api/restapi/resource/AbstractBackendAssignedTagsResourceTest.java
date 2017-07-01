@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedTagsResourceTest<C extends AbstractBackendAssignedTagsResource>
@@ -24,7 +24,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
 
     protected static String parentIdName;
     protected static QueryType queryType;
-    protected static Class<? extends VdcQueryParametersBase> queryParams;
+    protected static Class<? extends QueryParametersBase> queryParams;
     protected static ActionType attachAction;
     protected static Class<? extends TagsActionParametersBase> attachParams;
 
@@ -78,7 +78,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
         setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(QueryType.GetAllTags,
-                                     VdcQueryParametersBase.class,
+                                     QueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
                                      setUpTags());

@@ -5,13 +5,13 @@ import java.util.List;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 public class BackendVnicProfilesResourceTest extends AbstractBackendVnicProfilesResourceTest<BackendVnicProfilesResource> {
 
     public BackendVnicProfilesResourceTest() {
-        super(new BackendVnicProfilesResource(), QueryType.GetAllVnicProfiles, VdcQueryParametersBase.class);
+        super(new BackendVnicProfilesResource(), QueryType.GetAllVnicProfiles, QueryParametersBase.class);
     }
 
     @Override

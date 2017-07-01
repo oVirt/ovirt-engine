@@ -3,14 +3,14 @@ package org.ovirt.engine.core.bll.aaa;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /*
  * This query validates the session, returning the user which is logged in this session.
  */
-public class ValidateSessionQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
+public class ValidateSessionQuery<P extends QueryParametersBase> extends QueriesCommandBase<P> {
     private static final Logger log = LoggerFactory.getLogger(ValidateSessionQuery.class);
 
     public ValidateSessionQuery(P parameters, EngineContext engineContext) {

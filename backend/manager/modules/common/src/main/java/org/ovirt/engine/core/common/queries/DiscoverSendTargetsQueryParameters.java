@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DiscoverSendTargetsQueryParameters extends VdcQueryParametersBase {
+public class DiscoverSendTargetsQueryParameters extends QueryParametersBase {
     private static final long serialVersionUID = 5247364599284007838L;
     private StorageServerConnections privateConnection;
 

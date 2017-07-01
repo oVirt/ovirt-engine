@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetUnregisteredBlockStorageDomainsParameters extends VdcQueryParametersBase {
+public class GetUnregisteredBlockStorageDomainsParameters extends QueryParametersBase {
     private static final long serialVersionUID = 6989522172841845637L;
 
     private Guid vdsId;

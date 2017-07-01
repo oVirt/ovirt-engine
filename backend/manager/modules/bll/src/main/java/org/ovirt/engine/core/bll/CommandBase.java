@@ -74,8 +74,8 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.job.StepSubjectEntity;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.ExecutionMethod;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -2497,7 +2497,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
                 ExecutionHandler.createDefaultContextForTasks(getContext(), lock));
     }
 
-    protected VdcQueryReturnValue runInternalQuery(QueryType type, VdcQueryParametersBase queryParams) {
+    protected VdcQueryReturnValue runInternalQuery(QueryType type, QueryParametersBase queryParams) {
         return getBackend().runInternalQuery(type, queryParams, context.getEngineContext());
     }
 

@@ -19,11 +19,11 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends BaseCommandTest {
+public abstract class AbstractQueryTest<P extends QueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends BaseCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();

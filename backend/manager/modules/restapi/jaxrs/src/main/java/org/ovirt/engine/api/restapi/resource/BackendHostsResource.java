@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostsResource extends AbstractBackendCollectionResource<Host, VDS> implements
@@ -48,7 +48,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     private Hosts listGlusterOnly() {
         if (isFiltered()) {
             return mapGlusterOnlyCollection(getBackendCollection(QueryType.GetAllHosts,
-                    new VdcQueryParametersBase()));
+                    new QueryParametersBase()));
         }
         else {
             return mapGlusterOnlyCollection(getBackendCollection(SearchType.VDS));
@@ -58,7 +58,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     private Hosts listAll() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(QueryType.GetAllHosts,
-                    new VdcQueryParametersBase()));
+                    new QueryParametersBase()));
         }
         else {
             return mapCollection(getBackendCollection(SearchType.VDS));

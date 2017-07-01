@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetAllAttachableDisksForVmQueryParameters extends VdcQueryParametersBase {
+public class GetAllAttachableDisksForVmQueryParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = 155490543085422118L;
 

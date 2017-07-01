@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class GetImageByIdParameters extends VdcQueryParametersBase {
+public class GetImageByIdParameters extends QueryParametersBase {
 
     private static final long serialVersionUID = -5607755161097383666L;
 
