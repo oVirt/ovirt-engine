@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQueryable */>
+public abstract class AbstractBackendResource<R extends BaseResource, Q>
     extends BackendResource {
 
     protected static final String ID_SEPARATOR = ",";
