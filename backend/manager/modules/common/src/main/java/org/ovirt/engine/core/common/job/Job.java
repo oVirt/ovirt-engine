@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
  * of steps which describe portions of the entire Job. The Job entity is capable to produce a descriptive tree of
  * steps, reflecting the action parts.
  */
-public class Job implements IVdcQueryable, BusinessEntity<Guid> {
+public class Job implements Queryable, BusinessEntity<Guid> {
 
     /**
      * Automatic generated serial version ID

@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public abstract class AbstractBackendCollectionResourceTest<R extends BaseResource, Q /* extends IVdcQueryable */, C extends AbstractBackendCollectionResource<R, Q>>
+public abstract class AbstractBackendCollectionResourceTest<R extends BaseResource, Q /* extends Queryable */, C extends AbstractBackendCollectionResource<R, Q>>
         extends AbstractBackendResourceTest<R, Q> {
 
     protected static final String QUERY = "name=s* AND id=*0";

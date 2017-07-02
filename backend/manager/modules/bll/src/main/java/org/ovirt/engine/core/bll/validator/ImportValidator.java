@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ImportParameters;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -83,7 +83,7 @@ public class ImportValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateUnregisteredEntity(IVdcQueryable entityFromConfiguration,
+    public ValidationResult validateUnregisteredEntity(Queryable entityFromConfiguration,
             OvfEntityData ovfEntityData) {
         if (ovfEntityData == null && !params.isImportAsNewEntity()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_UNSUPPORTED_OVF);

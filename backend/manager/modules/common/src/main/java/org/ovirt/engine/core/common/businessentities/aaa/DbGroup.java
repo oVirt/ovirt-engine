@@ -5,10 +5,10 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DbGroup implements IVdcQueryable {
+public class DbGroup implements Queryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
     /**

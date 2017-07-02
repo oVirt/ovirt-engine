@@ -2,12 +2,12 @@ package org.ovirt.engine.core.common.utils;
 
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 
 /**
- * A Pair that implements the {@link IVdcQueryable} interface, to enable returning it as the return value of a query.
+ * A Pair that implements the {@link Queryable} interface, to enable returning it as the return value of a query.
  */
-public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> extends Pair<T, K> implements IVdcQueryable {
+public class PairQueryable<T extends Queryable, K extends Queryable> extends Pair<T, K> implements Queryable {
     private static final long serialVersionUID = -8894728003078425184L;
 
     public PairQueryable() {
@@ -38,7 +38,7 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> ext
         return new PairQueryableId(getMemberId(getFirst()), getMemberId(getSecond()));
     }
 
-    private Object getMemberId(IVdcQueryable member) {
+    private Object getMemberId(Queryable member) {
         if (member != null) {
             return member.getQueryableId();
         }

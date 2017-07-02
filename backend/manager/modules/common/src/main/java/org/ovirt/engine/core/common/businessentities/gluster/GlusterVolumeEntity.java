@@ -16,8 +16,8 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -38,7 +38,7 @@ import org.ovirt.engine.core.compat.StringHelper;
  * @see GlusterVolumeOptionEntity
  * @see AccessProtocol
  */
-public class GlusterVolumeEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
+public class GlusterVolumeEntity implements Queryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
     private static final long serialVersionUID = 2355384696827317277L;
 
     @NotNull(message = "VALIDATION_GLUSTER_VOLUME_ID_NOT_NULL", groups = { RemoveEntity.class })

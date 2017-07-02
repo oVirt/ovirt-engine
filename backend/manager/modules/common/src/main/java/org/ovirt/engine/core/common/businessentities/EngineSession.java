@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
-public class EngineSession implements IVdcQueryable {
+public class EngineSession implements Queryable {
     private static final long serialVersionUID = 6964615561527013329L;
 
     private long id;

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AuditLog implements IVdcQueryable {
+public class AuditLog implements Queryable {
     private static final long serialVersionUID = -2808392095455280186L;
     public static final String OVIRT_ORIGIN = "oVirt";
 

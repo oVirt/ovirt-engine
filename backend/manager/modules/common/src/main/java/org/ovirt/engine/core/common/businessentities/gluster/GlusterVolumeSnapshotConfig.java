@@ -2,11 +2,11 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterVolumeSnapshotConfig implements IVdcQueryable {
+public class GlusterVolumeSnapshotConfig implements Queryable {
     private static final long serialVersionUID = 3432543544365L;
     private Guid clusterId;
     private Guid volumeId;

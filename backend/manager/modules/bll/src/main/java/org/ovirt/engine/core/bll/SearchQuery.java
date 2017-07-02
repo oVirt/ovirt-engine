@@ -32,8 +32,8 @@ import org.ovirt.engine.core.bll.storage.pool.DcSingleMacPoolFinder;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -161,7 +161,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     @Override
     protected void executeQueryCommand() {
-        List<? extends IVdcQueryable> returnValue = new ArrayList<>();
+        List<? extends Queryable> returnValue = new ArrayList<>();
         switch (getParameters().getSearchTypeValue()) {
         case VM:
             returnValue = searchVmsFromDb();
@@ -326,7 +326,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(vmTemplateDao, true);
     }
 
-    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDao<T> dao,
+    private <T extends Queryable> List<T> genericSearch(final SearchDao<T> dao,
             final boolean useCache) {
         final QueryData data = initQueryData(useCache);
         if (data == null) {

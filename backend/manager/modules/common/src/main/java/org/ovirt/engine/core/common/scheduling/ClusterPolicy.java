@@ -8,15 +8,15 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Bussiness entity for cluster policy, holds logic for host selections and load balancing logic.
  */
-public class ClusterPolicy implements BusinessEntity<Guid>, IVdcQueryable, Nameable {
+public class ClusterPolicy implements BusinessEntity<Guid>, Queryable, Nameable {
     private static final long serialVersionUID = 7739745365583134911L;
     public static final Guid UPGRADE_POLICY_GUID =
             Guid.createGuidFromString("8d5d7bec-68de-4a67-b53e-0ac54686d586");

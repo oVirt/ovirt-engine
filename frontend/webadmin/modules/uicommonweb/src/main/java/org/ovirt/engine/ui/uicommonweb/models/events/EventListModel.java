@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -259,7 +259,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     }
 
     /**
-     * Returns true if and only if the two entities: <li>are not null <li>implement the IVdcQueryable.getQueryableId()
+     * Returns true if and only if the two entities: <li>are not null <li>implement the Queryable.getQueryableId()
      * method <li>the old.getQueryableId().equals(new.getQueryableId())
      */
     private boolean calculateEntitiesChanged(Object newValue, Object oldValue) {
@@ -267,15 +267,15 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
             return true;
         }
 
-        if (!(newValue instanceof IVdcQueryable && oldValue instanceof IVdcQueryable)) {
+        if (!(newValue instanceof Queryable && oldValue instanceof Queryable)) {
             return true;
         }
 
         Object oldValueQueriable = null;
         Object newValueQueriable = null;
         try {
-            oldValueQueriable = ((IVdcQueryable) oldValue).getQueryableId();
-            newValueQueriable = ((IVdcQueryable) newValue).getQueryableId();
+            oldValueQueriable = ((Queryable) oldValue).getQueryableId();
+            newValueQueriable = ((Queryable) newValue).getQueryableId();
         } catch (UnsupportedOperationException e) {
             return true;
         }
@@ -301,7 +301,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
 
     /**
      * Called when the OnEntityChanged() ensures, that the new entity is different than the old one (based on the
-     * IVdcQueryable). Override it in child classes to refresh your model.
+     * Queryable). Override it in child classes to refresh your model.
      */
     protected void onEntityContentChanged() {
     }

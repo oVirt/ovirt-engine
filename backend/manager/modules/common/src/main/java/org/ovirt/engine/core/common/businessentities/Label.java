@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
  * (currently VMs and Hosts). The label is intended to be used for specifying
  * requirements and membership (not only) for VM scheduling purposes.
  */
-public class Label implements Serializable, BusinessEntity<Guid>, Nameable, IVdcQueryable {
+public class Label implements Serializable, BusinessEntity<Guid>, Nameable, Queryable {
     private static final long serialVersionUID = -6566155246916011274L;
 
     @NotNull

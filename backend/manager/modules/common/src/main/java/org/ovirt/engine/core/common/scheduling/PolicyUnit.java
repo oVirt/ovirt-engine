@@ -4,14 +4,14 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Policy unit BE represents scheduling unit with the following methods: filter, score & balance.
  */
-public class PolicyUnit implements BusinessEntity<Guid>, IVdcQueryable, Nameable {
+public class PolicyUnit implements BusinessEntity<Guid>, Queryable, Nameable {
     private static final long serialVersionUID = 7739555364433134921L;
 
     /**

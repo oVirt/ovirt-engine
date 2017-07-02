@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* extends IVdcQueryable */> extends
+public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* extends Queryable */> extends
         AbstractBackendResource<R, Q> {
 
     private static final String[] STRICTLY_IMMUTABLE = { "id" };

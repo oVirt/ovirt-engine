@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @see GlusterHookStage
  * @see GlusterHookStatus
  */
-public class GlusterHookEntity implements IVdcQueryable, BusinessEntity<Guid> {
+public class GlusterHookEntity implements Queryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1139174348695506810L;
 

@@ -3,13 +3,13 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Represents a service on a gluster server
  */
-public class GlusterServerService implements IVdcQueryable, BusinessEntity<Guid> {
+public class GlusterServerService implements Queryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 108478798053613345L;
 

@@ -17,7 +17,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Statistic;
 
-public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /* extends IVdcQueryable */, S extends AbstractBackendSubResource<R, Q>>
+public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /* extends Queryable */, S extends AbstractBackendSubResource<R, Q>>
         extends AbstractBackendResourceTest<R, Q> {
 
     protected static final String IMMUTABLE_REASON_SERVER_LOCALE = "Scheiterte Unveranderlichkeit Einschrankung";

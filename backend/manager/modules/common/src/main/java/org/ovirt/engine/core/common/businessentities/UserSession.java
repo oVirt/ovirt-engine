@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class UserSession implements IVdcQueryable {
+public class UserSession implements Queryable {
 
     private long id;
     private String userName;

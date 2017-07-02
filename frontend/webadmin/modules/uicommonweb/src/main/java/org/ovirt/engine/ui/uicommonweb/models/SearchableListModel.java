@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -46,7 +46,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
  * @param <E> The type of the entity.
  * @param <T> The type of list items.
  */
-// TODO once all the children of this class will be refactored to use generics, change from <T> to <T extends IVdcQueryable>
+// TODO once all the children of this class will be refactored to use generics, change from <T> to <T extends Queryable>
 public abstract class SearchableListModel<E, T> extends SortedListModel<T> implements HasEntity<E>, GridController {
     private static final int UnknownInteger = -1;
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
@@ -284,7 +284,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
         // Equals doesn't always has the same outcome as checking the ids of the elements.
         if (value != null) {
-            if (!((IVdcQueryable) value).getQueryableId().equals(((IVdcQueryable) getEntity()).getQueryableId())) {
+            if (!((Queryable) value).getQueryableId().equals(((Queryable) getEntity()).getQueryableId())) {
                 entityModel.setEntity(value);
                 return;
             }
@@ -772,8 +772,8 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     private static <T> boolean itemsEqual(T item1, T item2) {
-        if (item1 instanceof IVdcQueryable && item2 instanceof IVdcQueryable) {
-            return ((IVdcQueryable) item1).getQueryableId().equals(((IVdcQueryable) item2).getQueryableId());
+        if (item1 instanceof Queryable && item2 instanceof Queryable) {
+            return ((Queryable) item1).getQueryableId().equals(((Queryable) item2).getQueryableId());
         }
         return Objects.equals(item1, item2);
     }

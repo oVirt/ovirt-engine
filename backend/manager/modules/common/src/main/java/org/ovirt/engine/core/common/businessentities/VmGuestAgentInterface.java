@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmGuestAgentInterface implements IVdcQueryable {
+public class VmGuestAgentInterface implements Queryable {
 
     private static final long serialVersionUID = -9164680367965630250L;
 

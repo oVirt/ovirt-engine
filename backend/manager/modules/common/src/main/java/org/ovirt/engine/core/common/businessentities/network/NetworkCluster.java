@@ -3,11 +3,11 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NetworkCluster implements IVdcQueryable, BusinessEntityWithStatus<NetworkClusterId, NetworkStatus> {
+public class NetworkCluster implements Queryable, BusinessEntityWithStatus<NetworkClusterId, NetworkStatus> {
     private static final long serialVersionUID = -4900811332744926545L;
 
     private NetworkClusterId id;

@@ -11,13 +11,13 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageResourceColumn<IVdcQueryable> {
+public class QuotaUtilizationStatusColumn<Queryable> extends AbstractImageResourceColumn<Queryable> {
 
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
-    public ImageResource getValue(IVdcQueryable quota) {
+    public ImageResource getValue(Queryable quota) {
         boolean quotaExceeded = false;
         if (quota instanceof QuotaStorage) {
             quotaExceeded = getQuotaExceeded((QuotaStorage)quota);
@@ -31,7 +31,7 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageRe
     }
 
     @Override
-    public SafeHtml getTooltip(IVdcQueryable quota) {
+    public SafeHtml getTooltip(Queryable quota) {
         boolean quotaExceeded = false;
         if (quota instanceof QuotaStorage) {
             quotaExceeded = getQuotaExceeded((QuotaStorage)quota);

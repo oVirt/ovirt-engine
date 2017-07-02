@@ -4,10 +4,10 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterVolumeSnapshotEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterSnapshotStatus> {
+public class GlusterVolumeSnapshotEntity implements Queryable, BusinessEntityWithStatus<Guid, GlusterSnapshotStatus> {
     private static final long serialVersionUID = 2355384696827317288L;
     private Guid snapshotId;
     private Guid clusterId;

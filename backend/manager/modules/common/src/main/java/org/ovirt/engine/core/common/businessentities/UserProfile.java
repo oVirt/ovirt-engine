@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class UserProfile  implements IVdcQueryable {
+public class UserProfile  implements Queryable {
     private static final long serialVersionUID = 7251907866347833460L;
 
     private Guid id;

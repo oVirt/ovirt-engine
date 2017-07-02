@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.compat.Guid;
 
-public class QuotaUsagePerUser implements IVdcQueryable {
+public class QuotaUsagePerUser implements Queryable {
 
     private static final long serialVersionUID = -5354235333482503580L;
 

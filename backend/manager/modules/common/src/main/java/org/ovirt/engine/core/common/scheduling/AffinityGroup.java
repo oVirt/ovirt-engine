@@ -9,8 +9,8 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
  * Each VM can be associated with several groups.<br>
  * The VM will be scheduled according to its affinity groups (properties and members) rules
  */
-public class AffinityGroup implements BusinessEntity<Guid>, IVdcQueryable, Nameable {
+public class AffinityGroup implements BusinessEntity<Guid>, Queryable, Nameable {
     private static final long serialVersionUID = 6644745275483134922L;
 
     private Guid id;

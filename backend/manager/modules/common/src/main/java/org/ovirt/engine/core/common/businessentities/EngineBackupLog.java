@@ -6,7 +6,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
 
-public class EngineBackupLog implements IVdcQueryable, BusinessEntity<EngineBackupLogId> {
+public class EngineBackupLog implements Queryable, BusinessEntity<EngineBackupLogId> {
 
     private String scope;
     private Date doneAt;

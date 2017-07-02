@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Permission implements IVdcQueryable, BusinessEntity<Guid> {
+public class Permission implements Queryable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 7249605272394212576L;
 
     private Guid adElementId;

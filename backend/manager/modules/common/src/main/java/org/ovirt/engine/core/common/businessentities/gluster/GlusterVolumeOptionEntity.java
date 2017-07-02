@@ -5,7 +5,7 @@ import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.SetVolumeOption;
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  * @see GlusterVolumeEntity
  */
-public class GlusterVolumeOptionEntity implements IVdcQueryable, BusinessEntity<Guid>, Comparable<GlusterVolumeOptionEntity>{
+public class GlusterVolumeOptionEntity implements Queryable, BusinessEntity<Guid>, Comparable<GlusterVolumeOptionEntity>{
     private static final long serialVersionUID = 5770623263518245638L;
 
     @NotNull(message = "VALIDATION_GLUSTER_OPTION_ID_NOT_NULL", groups = { RemoveEntity.class })

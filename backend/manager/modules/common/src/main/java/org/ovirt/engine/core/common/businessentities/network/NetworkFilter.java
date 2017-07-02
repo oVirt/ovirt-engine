@@ -3,12 +3,12 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class NetworkFilter implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
+public class NetworkFilter implements Queryable, BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = 479750365026775507L;
 

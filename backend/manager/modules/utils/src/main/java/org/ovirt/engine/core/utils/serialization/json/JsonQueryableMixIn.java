@@ -4,11 +4,11 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 
 @SuppressWarnings("serial")
 @JsonTypeInfo(use = Id.CLASS, include = As.PROPERTY)
-public abstract class JsonIVdcQueryableMixIn implements IVdcQueryable {
+public abstract class JsonQueryableMixIn implements Queryable {
 
     @JsonIgnore
     public abstract Object getQueryableId();

@@ -6,11 +6,11 @@ import java.util.Objects;
 import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class LibvirtSecret implements IVdcQueryable, BusinessEntity<Guid> {
+public class LibvirtSecret implements Queryable, BusinessEntity<Guid> {
 
     private Guid id;
     @Pattern(regexp = ValidationUtils.BASE_64_PATTERN, message = "LIBVIRT_SECRET_VALUE_ILLEGAL_FORMAT")

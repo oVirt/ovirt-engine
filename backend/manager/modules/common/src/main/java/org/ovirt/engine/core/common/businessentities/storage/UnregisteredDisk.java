@@ -2,11 +2,11 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class UnregisteredDisk implements IVdcQueryable {
+public class UnregisteredDisk implements Queryable {
 
     private DiskImage diskImage;
     private ArrayList<VmBase> vms;

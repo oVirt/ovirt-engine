@@ -6,8 +6,8 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
  *
  */
 public abstract class NetworkInterface<T extends NetworkStatistics>
-        implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
+        implements Queryable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = -4926026587466645571L;
 
     protected Guid id;

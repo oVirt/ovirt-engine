@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.aaa;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 
-public class AuthzGroup implements IVdcQueryable {
+public class AuthzGroup implements Queryable {
     private static final long serialVersionUID = -5698641275510275709L;
 
     private String authz;

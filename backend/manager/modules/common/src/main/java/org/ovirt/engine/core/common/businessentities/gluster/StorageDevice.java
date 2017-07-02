@@ -3,14 +3,14 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
 /*
  * StorageDevice represents storage devices attached the hosts. It can be a disk or partition or pvs, lvs, etc.
  */
-public class StorageDevice implements IVdcQueryable, BusinessEntity<Guid> {
+public class StorageDevice implements Queryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1613957987974435240L;
 

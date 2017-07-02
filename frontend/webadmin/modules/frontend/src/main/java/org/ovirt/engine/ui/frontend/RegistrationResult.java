@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.frontend;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -34,13 +34,13 @@ public final class RegistrationResult {
         privateId = value;
     }
 
-    private ObservableCollection<IVdcQueryable> privateData;
+    private ObservableCollection<Queryable> privateData;
 
-    public ObservableCollection<IVdcQueryable> getData() {
+    public ObservableCollection<Queryable> getData() {
         return privateData;
     }
 
-    private void setData(ObservableCollection<IVdcQueryable> value) {
+    private void setData(ObservableCollection<Queryable> value) {
         privateData = value;
     }
 
@@ -58,7 +58,7 @@ public final class RegistrationResult {
         RetrievedEventDefinition = new EventDefinition("RetrievedEvent", RegistrationResult.class); //$NON-NLS-1$
     }
 
-    public RegistrationResult(Guid id, ObservableCollection<IVdcQueryable> data) {
+    public RegistrationResult(Guid id, ObservableCollection<Queryable> data) {
         setRetrievedEvent(new Event<>(RetrievedEventDefinition));
 
         setId(id);

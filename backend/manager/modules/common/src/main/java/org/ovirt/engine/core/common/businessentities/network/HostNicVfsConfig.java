@@ -5,11 +5,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class HostNicVfsConfig implements IVdcQueryable, BusinessEntity<Guid> {
+public class HostNicVfsConfig implements Queryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 2762897334386252961L;
 

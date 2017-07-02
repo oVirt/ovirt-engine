@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * <code>QuotaStorage</code> is a business entity that reflects storage limitation.
  */
-public class QuotaStorage implements IVdcQueryable  {
+public class QuotaStorage implements Queryable {
 
     public static final Long UNLIMITED = -1L;
     /**

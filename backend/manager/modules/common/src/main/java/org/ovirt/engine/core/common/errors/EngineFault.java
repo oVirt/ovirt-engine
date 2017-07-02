@@ -2,9 +2,9 @@ package org.ovirt.engine.core.common.errors;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 
-public class EngineFault implements IVdcQueryable {
+public class EngineFault implements Queryable {
     private static final long serialVersionUID = -8004317251171749327L;
     private String privateSessionID;
 

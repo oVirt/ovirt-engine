@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
@@ -44,7 +44,7 @@ public class QueryReturnValue_CustomFieldSerializer {
             instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("java.util.Set")) {
             instance.setReturnValue(streamReader.readObject());
-        } else if (type.equals("IVdcQueryable")) {
+        } else if (type.equals("Queryable")) {
             instance.setReturnValue(streamReader.readObject());
         } else if (type.equals("UNKNOWN")) {
             instance.setReturnValue(streamReader.readObject());
@@ -121,8 +121,8 @@ public class QueryReturnValue_CustomFieldSerializer {
             serializedAs = "java.util.Set";
             streamWriter.writeString(serializedAs);
             streamWriter.writeObject(instance.getReturnValue());
-        } else if (returnValue instanceof IVdcQueryable) {
-            serializedAs = "IVdcQueryable";
+        } else if (returnValue instanceof Queryable) {
+            serializedAs = "Queryable";
             streamWriter.writeString(serializedAs);
             streamWriter.writeObject(instance.getReturnValue());
         } else {

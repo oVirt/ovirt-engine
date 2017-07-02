@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -37,8 +37,8 @@ public final class EntityObject extends JsMutableObjectWithProperties {
         String entityId = ""; //$NON-NLS-1$
         if (businessEntity instanceof BusinessEntity) {
             entityId = ((BusinessEntity<?>) businessEntity).getId().toString();
-        } else if (businessEntity instanceof IVdcQueryable) {
-            entityId = ((IVdcQueryable) businessEntity).getQueryableId().toString();
+        } else if (businessEntity instanceof Queryable) {
+            entityId = ((Queryable) businessEntity).getQueryableId().toString();
         }
         obj.setValueAsString("id", entityId); //$NON-NLS-1$
 

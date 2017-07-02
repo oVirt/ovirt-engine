@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
  * <p>
  * @see http://www.katello.org/docs//user_guide/errata/index.html
  */
-public class Erratum implements IVdcQueryable, BusinessEntity<String> {
+public class Erratum implements Queryable, BusinessEntity<String> {
 
     private static final long serialVersionUID = 1297381071010863377L;
 

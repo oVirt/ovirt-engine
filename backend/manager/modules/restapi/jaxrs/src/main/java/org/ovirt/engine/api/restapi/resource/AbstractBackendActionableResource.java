@@ -31,7 +31,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractBackendActionableResource <R extends BaseResource, Q /* extends IVdcQueryable */ >
+public abstract class AbstractBackendActionableResource <R extends BaseResource, Q /* extends Queryable */ >
     extends AbstractBackendSubResource<R, Q> {
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendActionableResource.class);
 

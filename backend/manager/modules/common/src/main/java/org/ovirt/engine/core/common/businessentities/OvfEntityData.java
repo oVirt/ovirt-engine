@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class OvfEntityData implements IVdcQueryable {
+public class OvfEntityData implements Queryable {
     private static final long serialVersionUID = 3376648147702972152L;
 
     private Guid entityId;

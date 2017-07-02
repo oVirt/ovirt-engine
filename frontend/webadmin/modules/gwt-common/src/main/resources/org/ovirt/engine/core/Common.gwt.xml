@@ -114,7 +114,7 @@
         <include name="common/businessentities/network/ExternalVnicProfileMapping.java"/>
 
         <include name="common/businessentities/Commented.java" />
-        <include name="common/businessentities/IVdcQueryable.java" />
+        <include name="common/businessentities/Queryable.java" />
         <include name="common/businessentities/NfsVersion.java" />
         <include name="common/businessentities/OriginType.java" />
         <include name="common/businessentities/VmEntityType.java" />

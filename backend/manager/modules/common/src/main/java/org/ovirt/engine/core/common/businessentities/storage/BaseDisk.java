@@ -12,9 +12,9 @@ import javax.validation.constraints.Size;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.ProgressEntity;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.compat.Guid;
  * image the Template represents).<br>
  * The active image can also be <code>null</code>, in case that it's missing but should be there.
  */
-public class BaseDisk implements IVdcQueryable, BusinessEntity<Guid>, ProgressEntity, Nameable {
+public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity, Nameable {
 
     /**
      * Needed for java serialization/deserialization mechanism.

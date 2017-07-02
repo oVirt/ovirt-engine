@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendStorageDomainContentsResource<C extends BaseResources,
                                                                    R extends BaseResource,
-                                                                   Q extends IVdcQueryable>
+                                                                   Q extends Queryable>
     extends AbstractBackendCollectionResource<R, Q> {
     protected Guid storageDomainId;
     protected static final String UNREGISTERED_CONSTRAINT_PARAMETER = "unregistered";

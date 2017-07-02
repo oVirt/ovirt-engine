@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class Bookmark implements IVdcQueryable, Serializable {
+public class Bookmark implements Queryable, Serializable {
 
     private static final long serialVersionUID = 8177640907822845847L;
 

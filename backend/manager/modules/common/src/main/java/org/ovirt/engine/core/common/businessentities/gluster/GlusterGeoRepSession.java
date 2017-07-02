@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterGeoRepSession implements IVdcQueryable, BusinessEntityWithStatus<Guid, GeoRepSessionStatus>{
+public class GlusterGeoRepSession implements Queryable, BusinessEntityWithStatus<Guid, GeoRepSessionStatus>{
 
     private static final long serialVersionUID = 1L;
 

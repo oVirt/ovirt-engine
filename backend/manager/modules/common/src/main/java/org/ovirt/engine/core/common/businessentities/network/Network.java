@@ -12,8 +12,8 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Commented;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.Ipv4;
 import org.ovirt.engine.core.common.validation.annotation.MTU;
@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Commented {
+public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 7357288865938773402L;
 
     private Guid id;

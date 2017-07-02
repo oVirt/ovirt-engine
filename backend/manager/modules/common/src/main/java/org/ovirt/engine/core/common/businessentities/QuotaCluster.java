@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * The <code>QuotaCluster</code> is a business entity that reflects cluster limitation.
  */
-public class QuotaCluster implements IVdcQueryable {
+public class QuotaCluster implements Queryable {
 
     public static final Long UNLIMITED_MEM = -1L;
     public static final Integer UNLIMITED_VCPU = -1;

@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class ClusterHostsAndVMs implements IVdcQueryable {
+public class ClusterHostsAndVMs implements Queryable {
 
     private static final long serialVersionUID = -5395392502656683858L;
 

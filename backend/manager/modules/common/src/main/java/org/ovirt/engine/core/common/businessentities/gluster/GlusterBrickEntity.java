@@ -9,8 +9,8 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -27,7 +27,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @see GlusterVolumeEntity
  * @see GlusterBrickStatus
  */
-public class GlusterBrickEntity implements IVdcQueryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
+public class GlusterBrickEntity implements Queryable, BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport, Nameable {
     private static final long serialVersionUID = 7119439284741452278L;
 
     @NotNull(message = "VALIDATION_GLUSTER_BRICK_ID_NOT_NULL", groups = { RemoveBrick.class })

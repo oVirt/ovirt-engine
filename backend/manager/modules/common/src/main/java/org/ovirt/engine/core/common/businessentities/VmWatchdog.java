@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmWatchdog implements IVdcQueryable {
+public class VmWatchdog implements Queryable {
 
     private static final long serialVersionUID = -4515288688595577429L;
     Guid vmId;

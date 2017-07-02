@@ -12,7 +12,7 @@ import java.util.Set;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.ProfileEntry;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -356,7 +356,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     }
 
     protected void addUsersToModel(QueryReturnValue returnValue, Set<String> excludeUsers) {
-        for (IVdcQueryable item : (List<IVdcQueryable>) returnValue.getReturnValue()) {
+        for (Queryable item : (List<Queryable>) returnValue.getReturnValue()) {
             DirectoryUser a = (DirectoryUser) item;
             if (!excludeUsers.contains(a.getId())) {
                 EntityModel<DbUser> tempVar2 = new EntityModel<>();
@@ -367,7 +367,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
     }
 
     protected void addGroupsToModel(QueryReturnValue returnValue, Set<String> excludeUsers) {
-        for (IVdcQueryable item : (Collection<IVdcQueryable>) returnValue.getReturnValue()) {
+        for (Queryable item : (Collection<Queryable>) returnValue.getReturnValue()) {
             DirectoryGroup a = (DirectoryGroup) item;
             if (!excludeUsers.contains(a.getId())) {
                 // TODO: This is a hack, we should either use DbGroup or reimplement user/group representation in GWT

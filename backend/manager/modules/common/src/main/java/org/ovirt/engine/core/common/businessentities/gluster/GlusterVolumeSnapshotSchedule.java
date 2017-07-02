@@ -4,10 +4,10 @@ import java.sql.Time;
 import java.util.Date;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterVolumeSnapshotSchedule implements IVdcQueryable {
+public class GlusterVolumeSnapshotSchedule implements Queryable {
     private static final long serialVersionUID = 2L;
     private Guid clusterId;
     private Guid volumeId;

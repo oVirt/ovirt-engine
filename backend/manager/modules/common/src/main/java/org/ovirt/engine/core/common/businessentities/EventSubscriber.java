@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 
-public class EventSubscriber implements IVdcQueryable {
+public class EventSubscriber implements Queryable {
     private static final long serialVersionUID = 5899827011779820180L;
 
     private EventSubscriberId id;

@@ -11,11 +11,11 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DbUser implements IVdcQueryable, Nameable {
+public class DbUser implements Queryable, Nameable {
     private static final long serialVersionUID = 7052102138405696755L;
 
     /**

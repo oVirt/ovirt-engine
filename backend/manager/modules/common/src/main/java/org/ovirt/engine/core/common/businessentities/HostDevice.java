@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class HostDevice implements IVdcQueryable, BusinessEntity<HostDeviceId>, Nameable {
+public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Nameable {
 
     private static final String CAPABILITY_PCI = "pci";
 

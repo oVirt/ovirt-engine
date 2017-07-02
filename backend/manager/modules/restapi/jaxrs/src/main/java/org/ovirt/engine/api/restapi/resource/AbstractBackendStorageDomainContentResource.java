@@ -8,14 +8,14 @@ import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendStorageDomainContentResource<C extends BaseResources,
                                                                   R extends BaseResource,
-                                                                  Q extends IVdcQueryable>
+                                                                  Q extends Queryable>
     extends AbstractBackendActionableResource<R, Q> {
 
     protected AbstractBackendStorageDomainContentsResource<C, R, Q> parent;

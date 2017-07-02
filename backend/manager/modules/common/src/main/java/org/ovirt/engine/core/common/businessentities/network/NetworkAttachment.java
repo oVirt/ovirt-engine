@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.NetworkIdOrNetworkNameIsSet;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 @NetworkIdOrNetworkNameIsSet(groups = { CreateEntity.class, UpdateEntity.class })
-public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
+public class NetworkAttachment implements Queryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -8052325342869681284L;
 

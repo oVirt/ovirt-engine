@@ -18,7 +18,7 @@ import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractBackendCollectionResource<R extends BaseResource, Q /* extends IVdcQueryable */>
+public abstract class AbstractBackendCollectionResource<R extends BaseResource, Q /* extends Queryable */>
         extends AbstractBackendResource<R, Q> {
 
     private static final String BLOCKING_EXPECTATION = "201-created";
@@ -114,15 +114,15 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     /**
      * Obtains the identifier of a backend object. This id will be used to compare the objects instead of the
      * {@link Object#equals(Object)} method. Should be overridden by resources that manage objects that don't implement
-     * the {@link IVdcQueryable} interface.
+     * the {@link Queryable} interface.
      *
      * @param entity the entity
      * @return the id of the entity, or {@code null} if the entity doesn't have an id
      */
     protected Object getId(Q entity) {
         Object id = null;
-        if (entity != null && entity instanceof IVdcQueryable) {
-            id = ((IVdcQueryable) entity).getQueryableId();
+        if (entity != null && entity instanceof Queryable) {
+            id = ((Queryable) entity).getQueryableId();
         }
         return id;
     }

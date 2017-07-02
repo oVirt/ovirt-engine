@@ -5,10 +5,10 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImageTransfer implements BusinessEntity<Guid>, IVdcQueryable {
+public class ImageTransfer implements BusinessEntity<Guid>, Queryable {
 
     private static final long serialVersionUID = 3761304077670003457L;
     private Guid commandId;

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class NumaNode implements IVdcQueryable, BusinessEntity<Guid> {
+public abstract class NumaNode implements Queryable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -4653434518250957385L;
 

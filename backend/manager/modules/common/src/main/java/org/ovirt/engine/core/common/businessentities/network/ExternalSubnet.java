@@ -5,14 +5,14 @@ import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.Cidr;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 
-public class ExternalSubnet implements IVdcQueryable, Nameable {
+public class ExternalSubnet implements Queryable, Nameable {
 
     private static final long serialVersionUID = 7357288865938773402L;
 

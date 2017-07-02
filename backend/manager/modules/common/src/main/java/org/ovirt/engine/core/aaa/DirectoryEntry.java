@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 
-public class DirectoryEntry implements IVdcQueryable {
+public class DirectoryEntry implements Queryable {
     private static final long serialVersionUID = -5689096270467866486L;
 
     /**

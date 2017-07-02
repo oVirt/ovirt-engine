@@ -7,8 +7,8 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public abstract class ProfileBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable {
+public abstract class ProfileBase implements Queryable, BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 1055016330475623255L;
 
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })

@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -365,7 +365,7 @@ public class UserPortalItemModel extends EntityModel {
     }
 
     public Guid getId() {
-        return (Guid) ((IVdcQueryable) getEntity()).getQueryableId();
+        return (Guid) ((Queryable) getEntity()).getQueryableId();
     }
 
     public boolean entityStateEqualTo(UserPortalItemModel other) {

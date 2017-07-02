@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * represents a meaningful phase of the Job. A Step could be a parent of other steps (e.g. step named EXECUTION could
  * have a list of steps beneath it which are also part of the job)
  */
-public class Step implements IVdcQueryable, BusinessEntity<Guid> {
+public class Step implements Queryable, BusinessEntity<Guid> {
 
     /**
      * Automatic generated serial version ID

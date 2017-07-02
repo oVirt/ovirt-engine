@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
  * @param <T> business entity type
  * @param <D> an <code>ImportEntityData</code> that wraps the business entity
  */
-public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable, D extends ImportEntityData<T>>
+public abstract class StorageRegisterEntityListModel<T extends Queryable, D extends ImportEntityData<T>>
         extends SearchableListModel<StorageDomain, T> {
 
     private UICommand importCommand;
