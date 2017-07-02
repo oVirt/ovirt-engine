@@ -10,15 +10,22 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.LunDao;
+import org.ovirt.engine.core.dao.VdsDao;
 
 public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends QueriesCommandBase<P> {
     @Inject
     private LunDao lunDao;
+
+    @Inject
+    private VdsDao vdsDao;
 
     public GetDeviceListQuery(P parameters, EngineContext engineContext) {
         super(parameters, engineContext);
@@ -26,6 +33,9 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
+        if (getParameters().isValidateHostStatus() && !isActiveVds()) {
+            return;
+        }
         List<LUNs> returnValue = new ArrayList<>();
         // Get Device List
         GetDeviceListVDSCommandParameters parameters =
@@ -54,5 +64,15 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
         }
 
         getQueryReturnValue().setReturnValue(returnValue);
+    }
+
+    private boolean isActiveVds() {
+        VDS vds = vdsDao.get(getParameters().getId());
+        if (vds == null || vds.getStatus() != VDSStatus.Up) {
+            getQueryReturnValue().setExceptionString(EngineMessage.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP.toString());
+            getQueryReturnValue().setSucceeded(false);
+            return false;
+        }
+        return true;
     }
 }

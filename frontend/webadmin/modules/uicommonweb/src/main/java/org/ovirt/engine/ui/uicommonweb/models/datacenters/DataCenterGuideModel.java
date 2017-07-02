@@ -865,7 +865,8 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                         new GetDeviceListQueryParameters(hostId,
                                 sanStorageModelBase.getType(),
                                 true,
-                                unkownStatusLuns),
+                                unkownStatusLuns,
+                                false),
                         new AsyncQuery<VdcQueryReturnValue>(response -> {
                             if (response.getSucceeded()) {
                                 List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();

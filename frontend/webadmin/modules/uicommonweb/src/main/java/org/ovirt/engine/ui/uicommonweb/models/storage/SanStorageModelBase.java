@@ -490,7 +490,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             }
         }, true);
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceList,
-                new GetDeviceListQueryParameters(host.getId(), getType(), false, null),
+                new GetDeviceListQueryParameters(host.getId(), getType(), false, null, false),
                 asyncQuery);
     }
 

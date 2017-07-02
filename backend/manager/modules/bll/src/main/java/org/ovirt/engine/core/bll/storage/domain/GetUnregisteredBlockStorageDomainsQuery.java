@@ -114,7 +114,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
                 executeGetDeviceList(
                 new GetDeviceListQueryParameters(getParameters().getVdsId(),
                         getParameters().getStorageType(),
-                        false, null));
+                        false, null, false));
 
         if (returnValue.getSucceeded()) {
             luns.addAll(returnValue.<List<LUNs>> getReturnValue());

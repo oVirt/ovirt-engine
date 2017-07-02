@@ -718,7 +718,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         new GetDeviceListQueryParameters(hostId,
                                 sanStorageModelBase.getType(),
                                 true,
-                                unkownStatusLuns),
+                                unkownStatusLuns,
+                                false),
                         new AsyncQuery<VdcQueryReturnValue>(response -> {
                             if (response.getSucceeded()) {
                                 List<LUNs> checkedLuns = (ArrayList<LUNs>) response.getReturnValue();
