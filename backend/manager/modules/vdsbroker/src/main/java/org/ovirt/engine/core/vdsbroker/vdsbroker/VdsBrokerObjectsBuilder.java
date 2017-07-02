@@ -2456,11 +2456,13 @@ public class VdsBrokerObjectsBuilder {
             device.setCapability(params.get(VdsProperties.CAPABILITY).toString());
 
             // special case for root device "computer"
-            if (VdsProperties.ROOT_HOST_DEVICE.equals(deviceName)) {
-                device.setParentDeviceName(VdsProperties.ROOT_HOST_DEVICE);  // set parent to self, for DB integrity
-            } else {
-                device.setParentDeviceName(params.get(VdsProperties.PARENT_NAME).toString());
-            }
+            device.setParentDeviceName(VdsProperties.ROOT_HOST_DEVICE.equals(deviceName) ?
+                    VdsProperties.ROOT_HOST_DEVICE  // set parent to self, for DB integrity
+                    : params.get(VdsProperties.PARENT_NAME).toString());
+
+            device.setAssignable(params.containsKey(VdsProperties.IS_ASSIGNABLE) ?
+                    assignBoolValue(params, VdsProperties.IS_ASSIGNABLE)
+                    : true);
 
             if (params.containsKey(VdsProperties.IOMMU_GROUP)) {
                 device.setIommuGroup(Integer.parseInt(params.get(VdsProperties.IOMMU_GROUP).toString()));
@@ -2488,11 +2490,6 @@ public class VdsBrokerObjectsBuilder {
             }
             if (params.containsKey(VdsProperties.DRIVER)) {
                 device.setDriver(params.get(VdsProperties.DRIVER).toString());
-            }
-            if (params.containsKey(VdsProperties.IS_ASSIGNABLE)) {
-                device.setAssignable(assignBoolValue(params, VdsProperties.IS_ASSIGNABLE));
-            } else {
-                device.setAssignable(true);
             }
 
             devices.add(device);
