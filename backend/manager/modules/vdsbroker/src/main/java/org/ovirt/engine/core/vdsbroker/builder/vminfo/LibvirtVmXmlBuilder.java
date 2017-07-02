@@ -21,10 +21,12 @@ import org.ovirt.engine.core.common.businessentities.ChipsetType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmHostDevice;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
@@ -50,9 +52,11 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.StringMapUtils;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
@@ -94,6 +98,8 @@ public class LibvirtVmXmlBuilder {
     private VnicProfileDao vnicProfileDao;
     @Inject
     private NetworkDao networkDao;
+    @Inject
+    private HostDeviceDao hostDeviceDao;
 
     private OsRepository osRepository;
     private String serialConsolePath;
@@ -108,12 +114,14 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Object> createInfo;
     private VM vm;
+    private Guid hostId;
 
-    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, VmDevice runOncePayload, boolean volatileRun) {
+    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, Guid hostId, VmDevice runOncePayload, boolean volatileRun) {
         this.createInfo = createInfo;
         this.vm = vm;
         this.runOncePayload = runOncePayload;
         this.volatileRun = volatileRun;
+        this.hostId = hostId;
         payloadIndex = -1;
         cdRomIndex = -1;
     }
@@ -546,6 +554,11 @@ public class LibvirtVmXmlBuilder {
         Map<DiskInterface, Integer> controllerIndexMap =
                 ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
         int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
+        MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier = new MemoizingSupplier<>(() -> {
+            return hostDeviceDao.getHostDevicesByHostId(hostId)
+                    .stream()
+                    .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device));
+        });
 
         List<VmDevice> interfaceDevices = new ArrayList<>();
         List<VmDevice> diskDevices = new ArrayList<>();
@@ -631,6 +644,7 @@ public class LibvirtVmXmlBuilder {
             case CHANNEL:
                 break;
             case HOSTDEV:
+                writeHostDevice(new VmHostDevice(device), hostDevicesSupplier.get().get(device.getDevice()));
                 break;
             case UNKNOWN:
                 break;
@@ -927,6 +941,110 @@ public class LibvirtVmXmlBuilder {
         return enableSocketFromSpecParams != null && Boolean.parseBoolean(enableSocketFromSpecParams.toString()) ?
                 String.format("/var/run/ovirt-vmconsole-console/%s.sock", vm.getId())
                 : "";
+    }
+
+    private void writeHostDevice(VmHostDevice device, HostDevice hostDevice) {
+        switch (hostDevice.getCapability()) {
+        case "pci":
+            writePciHostDevice(device, hostDevice);
+            break;
+        case "usb":
+        case "usb_device":
+            writeUsbHostDevice(device, hostDevice);
+            break;
+        case "scsi":
+            writeScsiHostDevice(device, hostDevice);
+            break;
+        default:
+            log.warn("Skipping host device: {}", device.getDevice());
+        }
+    }
+
+    private void writeScsiHostDevice(VmHostDevice device, HostDevice hostDevice) {
+        // Create domxml for a host device.
+        //
+        // <hostdev managed="no" mode="subsystem" rawio="yes" type="scsi">
+        // <source>
+        // <adapter name="scsi_host4"/>
+        // <address bus="0" target="0" unit="0"/>
+        // </source>
+        // </hostdev>
+        writer.writeStartElement("hostdev");
+        writer.writeAttributeString("managed", "no");
+        writer.writeAttributeString("mode", "subsystem");
+        writer.writeAttributeString("rawio", "yes");
+        writer.writeAttributeString("type", "scsi");
+
+        writer.writeStartElement("source");
+        writer.writeStartElement("adapter");
+        writer.writeAttributeString("name", String.format("scsi_host%s", hostDevice.getAddress().get("host")));
+        writer.writeEndElement();
+        writer.writeStartElement("address");
+        writer.writeAttributeString("bus", hostDevice.getAddress().get("bus"));
+        writer.writeAttributeString("target", hostDevice.getAddress().get("target"));
+        writer.writeAttributeString("unit", hostDevice.getAddress().get("lun"));
+        writer.writeEndElement();
+        writer.writeEndElement();
+
+        writeAddress(device);
+        // TODO: boot
+        writer.writeEndElement();
+    }
+
+    private void writeUsbHostDevice(VmHostDevice device, HostDevice hostDevice) {
+        // Create domxml for a host device.
+        //
+        // <hostdev managed="no" mode="subsystem" type="usb">
+        //     <source>
+        //         <address bus="1" device="2"/>
+        //     </source>
+        // </hostdev>
+        writer.writeStartElement("hostdev");
+        writer.writeAttributeString("managed", "no");
+        writer.writeAttributeString("mode", "subsystem");
+        writer.writeAttributeString("type", "usb");
+
+        writer.writeStartElement("source");
+        writer.writeStartElement("address");
+        writer.writeAttributeString("bus", hostDevice.getAddress().get("bus"));
+        writer.writeAttributeString("device", hostDevice.getAddress().get("device"));
+        writer.writeEndElement();
+        writer.writeEndElement();
+
+        writeAddress(device);
+        // TODO: boot
+        writer.writeEndElement();
+    }
+
+    private void writePciHostDevice(VmHostDevice device, HostDevice hostDevice) {
+        // <hostdev mode='subsystem' type='pci' managed='no'>
+        // <source>
+        // <address domain='0x0000' bus='0x06' slot='0x02'
+        // function='0x0'/>
+        // </source>
+        // <boot order='1'/>
+        // </hostdev>
+        if (device.isIommuPlaceholder()) {
+            return;
+        }
+
+        writer.writeStartElement("hostdev");
+        writer.writeAttributeString("managed", "no");
+        writer.writeAttributeString("mode", "subsystem");
+        writer.writeAttributeString("type", "pci");
+
+        writer.writeStartElement("source");
+        writer.writeStartElement("address");
+        writer.writeAttributeString("domain", hostDevice.getAddress().get("domain"));
+        writer.writeAttributeString("bus", hostDevice.getAddress().get("bus"));
+        writer.writeAttributeString("slot", hostDevice.getAddress().get("slot"));
+        writer.writeAttributeString("function", hostDevice.getAddress().get("function"));
+        writer.writeEndElement();
+        writer.writeEndElement();
+
+        writeAddress(device);
+        // TODO: boot
+        writer.writeEndElement();
     }
 
     private void writeRedir(VmDevice device) {
@@ -1620,7 +1738,7 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeDeviceAliasAndAddress(VmDevice device) {
-        writeAddress(StringMapUtils.string2Map(device.getAddress()));
+        writeAddress(device);
 
         String alias = device.getAlias();
         if (StringUtils.isNotEmpty(alias)) {
@@ -1628,6 +1746,10 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("name", alias);
             writer.writeEndElement();
         }
+    }
+
+    private void writeAddress(VmDevice device) {
+        writeAddress(StringMapUtils.string2Map(device.getAddress()));
     }
 
     private void writeAddress(Map<String, String> addressMap) {
