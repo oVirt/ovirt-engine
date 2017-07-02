@@ -499,18 +499,18 @@ public enum QueryType implements Serializable {
      * What kind of authorization the query requires. Although this is essentially a <code>boolean</code>, it's
      * implemented as an enum for future extendability.
      */
-    public static enum QueryAuthType {
+    public enum QueryAuthType {
         Admin,
         User
     }
 
     private QueryAuthType authType;
 
-    private QueryType() {
+    QueryType() {
         authType = QueryAuthType.Admin;
     }
 
-    private QueryType(QueryAuthType authType) {
+    QueryType(QueryAuthType authType) {
         this.authType = authType;
     }
 
