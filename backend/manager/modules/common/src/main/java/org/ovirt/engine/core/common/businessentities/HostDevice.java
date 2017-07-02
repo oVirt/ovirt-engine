@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -24,10 +26,23 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
     private Guid vmId;
     private String driver;
     private boolean assignable;
+    private Map<String, String> address;
+
+    public HostDevice() {
+        address = Collections.emptyMap();
+    }
 
     @Override
     public Object getQueryableId() {
         return getId();
+    }
+
+    public Map<String, String> getAddress() {
+        return address;
+    }
+
+    public void setAddress(Map<String, String> address) {
+        this.address = address;
     }
 
     public Guid getHostId() {
@@ -187,6 +202,7 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 && Objects.equals(networkInterfaceName, other.networkInterfaceName)
                 && Objects.equals(driver, other.driver)
                 && Objects.equals(assignable, other.assignable)
+                && Objects.equals(address, other.address)
                 && Objects.equals(vmId, other.vmId);
     }
 
@@ -206,7 +222,8 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 networkInterfaceName,
                 driver,
                 assignable,
-                vmId
+                vmId,
+                address
         );
     }
 
@@ -228,6 +245,7 @@ public class HostDevice implements Queryable, BusinessEntity<HostDeviceId>, Name
                 .append("driver", driver)
                 .append("assignable", assignable)
                 .append("vmId", vmId)
+                .append("address", address)
                 .build();
     }
 
