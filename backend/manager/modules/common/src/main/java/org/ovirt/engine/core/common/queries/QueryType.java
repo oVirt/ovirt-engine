@@ -4,12 +4,12 @@ import java.io.Serializable;
 
 public enum QueryType implements Serializable {
     // VM queries
-    IsVmWithSameNameExist(VdcQueryAuthType.User),
-    GetVmByVmId(VdcQueryAuthType.User),
-    GetVmByVmNameForDataCenter(VdcQueryAuthType.User),
-    GetAllVms(VdcQueryAuthType.User),
-    GetAllVmsForUser(VdcQueryAuthType.User),
-    GetAllVmsForUserAndActionGroup(VdcQueryAuthType.User),
+    IsVmWithSameNameExist(QueryAuthType.User),
+    GetVmByVmId(QueryAuthType.User),
+    GetVmByVmNameForDataCenter(QueryAuthType.User),
+    GetAllVms(QueryAuthType.User),
+    GetAllVmsForUser(QueryAuthType.User),
+    GetAllVmsForUserAndActionGroup(QueryAuthType.User),
     GetAllPoolVms,
     GetUnregisteredVms,
     GetUnregisteredVmTemplates,
@@ -17,29 +17,29 @@ public enum QueryType implements Serializable {
     GetVmsRunningOnOrMigratingToVds,
     GetVmsByStorageDomain,
     GetVmsByInstanceTypeId,
-    GetVmCustomProperties(VdcQueryAuthType.User),
-    GetVmConfigurationBySnapshot(VdcQueryAuthType.User),
-    GetVmFromConfiguration(VdcQueryAuthType.User),
-    GetVmOvfByVmId(VdcQueryAuthType.User),
-    GetSnapshotBySnapshotId(VdcQueryAuthType.User),
+    GetVmCustomProperties(QueryAuthType.User),
+    GetVmConfigurationBySnapshot(QueryAuthType.User),
+    GetVmFromConfiguration(QueryAuthType.User),
+    GetVmOvfByVmId(QueryAuthType.User),
+    GetSnapshotBySnapshotId(QueryAuthType.User),
     GetVmsByDiskGuid,
-    GetVmPayload(VdcQueryAuthType.User),
-    IsBalloonEnabled(VdcQueryAuthType.User),
-    GetSoundDevices(VdcQueryAuthType.User),
+    GetVmPayload(QueryAuthType.User),
+    IsBalloonEnabled(QueryAuthType.User),
+    GetSoundDevices(QueryAuthType.User),
     GetVmsByVnicProfileId,
     GetTemplatesByVnicProfileId,
-    GetVirtioScsiControllers(VdcQueryAuthType.User),
-    GetVmsInit(VdcQueryAuthType.User),
-    GetVmNextRunConfiguration(VdcQueryAuthType.User),
-    GetVmChangedFieldsForNextRun(VdcQueryAuthType.User),
+    GetVirtioScsiControllers(QueryAuthType.User),
+    GetVmsInit(QueryAuthType.User),
+    GetVmNextRunConfiguration(QueryAuthType.User),
+    GetVmChangedFieldsForNextRun(QueryAuthType.User),
     GetVmsFromExternalProvider,
     GetVmFromOva,
-    GetVmIcon(VdcQueryAuthType.User),
-    GetVmIcons(VdcQueryAuthType.User),
-    GetAllVmIcons(VdcQueryAuthType.User),
-    GetVmIconDefaults(VdcQueryAuthType.User),
-    GetVmIconDefault(VdcQueryAuthType.User),
-    GetVmDevicesForVm(VdcQueryAuthType.User),
+    GetVmIcon(QueryAuthType.User),
+    GetVmIcons(QueryAuthType.User),
+    GetAllVmIcons(QueryAuthType.User),
+    GetVmIconDefaults(QueryAuthType.User),
+    GetVmIconDefault(QueryAuthType.User),
+    GetVmDevicesForVm(QueryAuthType.User),
 
     // Vds queries
     GetVdsByVdsId,
@@ -49,10 +49,10 @@ public enum QueryType implements Serializable {
     GetAgentFenceOptions,
     GetAllChildVlanInterfaces,
     GetVdsHooksById,
-    GetAllHosts(VdcQueryAuthType.User),
-    GetHostsByClusterId(VdcQueryAuthType.User),
-    IsDisplayAddressConsistentInCluster(VdcQueryAuthType.User),
-    GetAllVdsByStoragePool(VdcQueryAuthType.User),
+    GetAllHosts(QueryAuthType.User),
+    GetHostsByClusterId(QueryAuthType.User),
+    IsDisplayAddressConsistentInCluster(QueryAuthType.User),
+    GetAllVdsByStoragePool(QueryAuthType.User),
     GetHostListFromExternalProvider(),
     GetHostGroupsFromExternalProvider(),
     GetComputeResourceFromExternalProvider(),
@@ -81,37 +81,37 @@ public enum QueryType implements Serializable {
     GetVdsStaticByName,
 
     // Vds Networks
-    GetVdsInterfacesByVdsId(VdcQueryAuthType.User),
+    GetVdsInterfacesByVdsId(QueryAuthType.User),
     GetHostBondsByHostId,
     GetVdsFreeBondsByVdsId,
-    GetAllNetworks(VdcQueryAuthType.User),
-    GetAllNetworksByClusterId(VdcQueryAuthType.User),
+    GetAllNetworks(QueryAuthType.User),
+    GetAllNetworksByClusterId(QueryAuthType.User),
     GetAllUnmanagedNetworksByHostId,
     GetUnmanagedNetworkByHostIdAndName,
-    GetNetworksByDataCenterId(VdcQueryAuthType.User),
+    GetNetworksByDataCenterId(QueryAuthType.User),
     GetAllNetworksByQosId,
-    GetManagementInterfaceAddressByVmId(VdcQueryAuthType.User),
+    GetManagementInterfaceAddressByVmId(QueryAuthType.User),
     GetInterfacesByLabelForNetwork,
     GetAllVfsConfigByHostId,
     GetVfToPfMapByHostId,
 
     // Vm Network
-    GetVmInterfacesByVmId(VdcQueryAuthType.User),
-    GetVmGuestAgentInterfacesByVmId(VdcQueryAuthType.User),
-    GetVmInterfaceFilterParametersByVmInterfaceId(VdcQueryAuthType.User),
-    GetVmInterfaceFilterParameterById(VdcQueryAuthType.User),
+    GetVmInterfacesByVmId(QueryAuthType.User),
+    GetVmGuestAgentInterfacesByVmId(QueryAuthType.User),
+    GetVmInterfaceFilterParametersByVmInterfaceId(QueryAuthType.User),
+    GetVmInterfaceFilterParameterById(QueryAuthType.User),
     ValidateVmMacs,
 
     // Vnic Profiles
-    GetAllVnicProfiles(VdcQueryAuthType.User),
-    GetVnicProfileById(VdcQueryAuthType.User),
-    GetVnicProfilesByNetworkId(VdcQueryAuthType.User),
-    GetVnicProfilesByDataCenterId(VdcQueryAuthType.User),
-    GetVnicProfilesByClusterId(VdcQueryAuthType.User),
+    GetAllVnicProfiles(QueryAuthType.User),
+    GetVnicProfileById(QueryAuthType.User),
+    GetVnicProfilesByNetworkId(QueryAuthType.User),
+    GetVnicProfilesByDataCenterId(QueryAuthType.User),
+    GetVnicProfilesByClusterId(QueryAuthType.User),
     GetVnicProfilesByNetworkQosId,
 
     // Template Network
-    GetTemplateInterfacesByTemplateId(VdcQueryAuthType.User),
+    GetTemplateInterfacesByTemplateId(QueryAuthType.User),
 
     // Networks
     GetClustersAndNetworksByNetworkId,
@@ -119,7 +119,7 @@ public enum QueryType implements Serializable {
     GetVdsWithoutNetwork,
     GetVmsAndNetworkInterfacesByNetworkId,
     GetVmTemplatesAndNetworkInterfacesByNetworkId,
-    GetNetworkById(VdcQueryAuthType.User),
+    GetNetworkById(QueryAuthType.User),
     GetNetworkByNameAndDataCenter,
     IsManagementNetwork,
     GetManagementNetwork,
@@ -142,16 +142,16 @@ public enum QueryType implements Serializable {
     GetNetworkAttachmentsByHostNicId,
 
     // NUMA
-    GetVdsNumaNodesByVdsId(VdcQueryAuthType.User),
-    GetVmNumaNodesByVmId(VdcQueryAuthType.User),
-    GetAllVmsWithNumaByClusterId(VdcQueryAuthType.User),
+    GetVdsNumaNodesByVdsId(QueryAuthType.User),
+    GetVmNumaNodesByVmId(QueryAuthType.User),
+    GetAllVmsWithNumaByClusterId(QueryAuthType.User),
 
     // Cluster
-    GetVdsCertificateSubjectByVmId(VdcQueryAuthType.User),
-    GetAllClusters(VdcQueryAuthType.User),
-    GetClusterById(VdcQueryAuthType.User),
-    GetClusterByName(VdcQueryAuthType.User),
-    GetClustersByStoragePoolId(VdcQueryAuthType.User),
+    GetVdsCertificateSubjectByVmId(QueryAuthType.User),
+    GetAllClusters(QueryAuthType.User),
+    GetClusterById(QueryAuthType.User),
+    GetClusterByName(QueryAuthType.User),
+    GetClustersByStoragePoolId(QueryAuthType.User),
     GetNumberOfActiveVmsInClusterByClusterId,
     GetNumberOfVmsInClusterByClusterId,
     GetClusterFeaturesByVersionAndCategory,
@@ -162,81 +162,81 @@ public enum QueryType implements Serializable {
     GetNetworkFilterById,
 
     // Certificate
-    GetCACertificate(VdcQueryAuthType.User),
-    SignString(VdcQueryAuthType.User),
+    GetCACertificate(QueryAuthType.User),
+    SignString(QueryAuthType.User),
 
-    GetSignedWebsocketProxyTicket(VdcQueryAuthType.User),
+    GetSignedWebsocketProxyTicket(QueryAuthType.User),
 
     // VM Template based entities queries
-    IsVmTemlateWithSameNameExist(VdcQueryAuthType.User),
-    GetVmTemplate(VdcQueryAuthType.User),
-    GetInstanceType(VdcQueryAuthType.User),
-    GetAllVmTemplates(VdcQueryAuthType.User),
-    GetAllInstanceTypes(VdcQueryAuthType.User),
-    GetVmTemplatesDisks(VdcQueryAuthType.User),
-    GetVmTemplatesByStoragePoolId(VdcQueryAuthType.User),
+    IsVmTemlateWithSameNameExist(QueryAuthType.User),
+    GetVmTemplate(QueryAuthType.User),
+    GetInstanceType(QueryAuthType.User),
+    GetAllVmTemplates(QueryAuthType.User),
+    GetAllInstanceTypes(QueryAuthType.User),
+    GetVmTemplatesDisks(QueryAuthType.User),
+    GetVmTemplatesByStoragePoolId(QueryAuthType.User),
     GetVmTemplatesByImageGuid,
     GetSystemPermissions,
     GetVmTemplatesByBaseTemplateId,
     GetLatestTemplateInChain,
 
     // VM Snapshot queries
-    GetAllVmSnapshotsByVmId(VdcQueryAuthType.User),
-    GetAllVmSnapshotsFromConfigurationByVmId(VdcQueryAuthType.User),
+    GetAllVmSnapshotsByVmId(QueryAuthType.User),
+    GetAllVmSnapshotsFromConfigurationByVmId(QueryAuthType.User),
 
     // Images queries
-    GetImageById(VdcQueryAuthType.User),
-    GetImagesList(VdcQueryAuthType.User),
-    GetImagesListByStoragePoolId(VdcQueryAuthType.User),
-    GetAllDisksByVmId(VdcQueryAuthType.User),
-    GetAllAttachableDisksForVm(VdcQueryAuthType.User),
+    GetImageById(QueryAuthType.User),
+    GetImagesList(QueryAuthType.User),
+    GetImagesListByStoragePoolId(QueryAuthType.User),
+    GetAllDisksByVmId(QueryAuthType.User),
+    GetAllAttachableDisksForVm(QueryAuthType.User),
     GetAllDisksByStorageDomainId,
-    GetAllDisks(VdcQueryAuthType.User),
+    GetAllDisks(QueryAuthType.User),
     GetAllDiskSnapshotsByStorageDomainId,
     GetUnregisteredDisks,
     GetUnregisteredDisk,
-    GetDiskByDiskId(VdcQueryAuthType.User),
+    GetDiskByDiskId(QueryAuthType.User),
     GetDiskSnapshotByImageId,
-    GetAncestorImagesByImagesIds(VdcQueryAuthType.User),
-    GetImageTransferById(VdcQueryAuthType.User),
-    GetAllImageTransfers(VdcQueryAuthType.Admin),
+    GetAncestorImagesByImagesIds(QueryAuthType.User),
+    GetImageTransferById(QueryAuthType.User),
+    GetAllImageTransfers(QueryAuthType.Admin),
 
-    GetDiskVmElementById(VdcQueryAuthType.User),
-    GetDiskVmElementsByVmId(VdcQueryAuthType.User),
+    GetDiskVmElementById(QueryAuthType.User),
+    GetDiskVmElementsByVmId(QueryAuthType.User),
 
     // Users queries
-    GetUserVmsByUserIdAndGroups(VdcQueryAuthType.User),
-    GetAllDbUsers(VdcQueryAuthType.User),
-    GetDbUserByUserId(VdcQueryAuthType.User),
-    GetDbUserByUserNameAndDomain(VdcQueryAuthType.User),
-    GetUserBySessionId(VdcQueryAuthType.User),
-    GetEngineSessionIdToken(VdcQueryAuthType.User),
-    GetEngineSessionIdForSsoToken(VdcQueryAuthType.User),
-    GetUserProfile(VdcQueryAuthType.User),
-    GetUserProfileAsList(VdcQueryAuthType.User),
+    GetUserVmsByUserIdAndGroups(QueryAuthType.User),
+    GetAllDbUsers(QueryAuthType.User),
+    GetDbUserByUserId(QueryAuthType.User),
+    GetDbUserByUserNameAndDomain(QueryAuthType.User),
+    GetUserBySessionId(QueryAuthType.User),
+    GetEngineSessionIdToken(QueryAuthType.User),
+    GetEngineSessionIdForSsoToken(QueryAuthType.User),
+    GetUserProfile(QueryAuthType.User),
+    GetUserProfileAsList(QueryAuthType.User),
     GetAllUserProfiles,
-    IsPasswordDelegationPossible(VdcQueryAuthType.User),
+    IsPasswordDelegationPossible(QueryAuthType.User),
     GetDefaultAllowedOrigins,
 
     // Directory queries:
-    GetDirectoryUserById(VdcQueryAuthType.User),
-    GetDirectoryGroupById(VdcQueryAuthType.User),
-    GetDirectoryGroupsForUser(VdcQueryAuthType.User),
-    GetAvailableNamespaces(VdcQueryAuthType.User),
-    GetDirectoryUserByPrincipal(VdcQueryAuthType.User),
+    GetDirectoryUserById(QueryAuthType.User),
+    GetDirectoryGroupById(QueryAuthType.User),
+    GetDirectoryGroupsForUser(QueryAuthType.User),
+    GetAvailableNamespaces(QueryAuthType.User),
+    GetDirectoryUserByPrincipal(QueryAuthType.User),
 
     // Groups queries:
-    GetAllDbGroups(VdcQueryAuthType.User),
+    GetAllDbGroups(QueryAuthType.User),
     GetDbGroupById,
-    GetAuthzGroupsByUserId(VdcQueryAuthType.User),
+    GetAuthzGroupsByUserId(QueryAuthType.User),
 
     // VM pools queries
-    GetVmPoolById(VdcQueryAuthType.User),
-    GetAllVmPoolsAttachedToUser(VdcQueryAuthType.User),
-    GetAllVmsAndVmPools(VdcQueryAuthType.User),
+    GetVmPoolById(QueryAuthType.User),
+    GetAllVmPoolsAttachedToUser(QueryAuthType.User),
+    GetAllVmsAndVmPools(QueryAuthType.User),
     IsVmPoolWithSameNameExists,
-    GetVmDataByPoolId(VdcQueryAuthType.User),
-    GetVmDataByPoolName(VdcQueryAuthType.User),
+    GetVmDataByPoolId(QueryAuthType.User),
+    GetVmDataByPoolName(QueryAuthType.User),
 
     // Tags queries
     GetAllTags,
@@ -258,84 +258,84 @@ public enum QueryType implements Serializable {
     GetBookmarkByBookmarkName,
 
     // Configuration values
-    GetConfigurationValue(VdcQueryAuthType.User),
-    GetConfigurationValues(VdcQueryAuthType.User),
-    GetFenceConfigurationValue(VdcQueryAuthType.User),
-    GetAvailableStoragePoolVersions(VdcQueryAuthType.User),
-    GetAvailableClusterVersionsByStoragePool(VdcQueryAuthType.User),
+    GetConfigurationValue(QueryAuthType.User),
+    GetConfigurationValues(QueryAuthType.User),
+    GetFenceConfigurationValue(QueryAuthType.User),
+    GetAvailableStoragePoolVersions(QueryAuthType.User),
+    GetAvailableClusterVersionsByStoragePool(QueryAuthType.User),
 
     // AuditLog
-    GetAllEventMessages(VdcQueryAuthType.User),
-    GetAllAuditLogsByVMId(VdcQueryAuthType.User),
-    GetAllAuditLogsByVMTemplateId(VdcQueryAuthType.User),
+    GetAllEventMessages(QueryAuthType.User),
+    GetAllAuditLogsByVMId(QueryAuthType.User),
+    GetAllAuditLogsByVMTemplateId(QueryAuthType.User),
     GetAuditLogById,
 
     // Search queries
-    Search(VdcQueryAuthType.User),
+    Search(QueryAuthType.User),
 
     // Public services
-    GetDomainList(VdcQueryAuthType.User),
-    GetAAAProfileList(VdcQueryAuthType.User),
-    RegisterVds(VdcQueryAuthType.User),
-    CheckDBConnection(VdcQueryAuthType.User),
-    ValidateSession(VdcQueryAuthType.User),
+    GetDomainList(QueryAuthType.User),
+    GetAAAProfileList(QueryAuthType.User),
+    RegisterVds(QueryAuthType.User),
+    CheckDBConnection(QueryAuthType.User),
+    ValidateSession(QueryAuthType.User),
     GetDbUserBySession,
 
     // Auxiliary queries used by architecture compatibility
-    IsClusterEmpty(VdcQueryAuthType.User),
-    GetHostArchitecture(VdcQueryAuthType.User),
+    IsClusterEmpty(QueryAuthType.User),
+    GetHostArchitecture(QueryAuthType.User),
 
     // License queries
-    GetAllServerCpuList(VdcQueryAuthType.User),
-    GetSupportedCpuList(VdcQueryAuthType.User),
+    GetAllServerCpuList(QueryAuthType.User),
+    GetSupportedCpuList(QueryAuthType.User),
 
     // Multi Level Administration queries
-    GetAllRoles(VdcQueryAuthType.User),
-    GetRoleById(VdcQueryAuthType.User),
-    GetPermissionById(VdcQueryAuthType.User),
+    GetAllRoles(QueryAuthType.User),
+    GetRoleById(QueryAuthType.User),
+    GetPermissionById(QueryAuthType.User),
     GetPermissionByRoleId,
-    HasAdElementReconnectPermission(VdcQueryAuthType.User),
-    GetPermissionsByAdElementId(VdcQueryAuthType.User),
-    GetPermissionsOnBehalfByAdElementId(VdcQueryAuthType.User),
-    GetRoleActionGroupsByRoleId(VdcQueryAuthType.User),
-    GetPermissionsForObject(VdcQueryAuthType.User),
-    GetAllStoragePools(VdcQueryAuthType.User),
-    GetDataCentersWithPermittedActionOnClusters(VdcQueryAuthType.User),
-    GetClustersWithPermittedAction(VdcQueryAuthType.User),
-    GetVmTemplatesWithPermittedAction(VdcQueryAuthType.User),
+    HasAdElementReconnectPermission(QueryAuthType.User),
+    GetPermissionsByAdElementId(QueryAuthType.User),
+    GetPermissionsOnBehalfByAdElementId(QueryAuthType.User),
+    GetRoleActionGroupsByRoleId(QueryAuthType.User),
+    GetPermissionsForObject(QueryAuthType.User),
+    GetAllStoragePools(QueryAuthType.User),
+    GetDataCentersWithPermittedActionOnClusters(QueryAuthType.User),
+    GetClustersWithPermittedAction(QueryAuthType.User),
+    GetVmTemplatesWithPermittedAction(QueryAuthType.User),
     GetAllClustersHavingHosts,
 
     // Storage
-    GetStorageDomainById(VdcQueryAuthType.User),
-    GetStorageDomainByName(VdcQueryAuthType.User),
+    GetStorageDomainById(QueryAuthType.User),
+    GetStorageDomainByName(QueryAuthType.User),
     GetStorageServerConnectionById,
     GetAllStorageServerConnections,
     GetStorageServerConnectionsForDomain,
-    GetStoragePoolById(VdcQueryAuthType.User),
+    GetStoragePoolById(QueryAuthType.User),
     GetStorageServerConnectionExtensionsByHostId,
     GetStorageServerConnectionExtensionById,
     GetMacPoolById,
     GetAllMacPools,
-    GetStoragePoolByDatacenterName(VdcQueryAuthType.User),
+    GetStoragePoolByDatacenterName(QueryAuthType.User),
     GetStorageDomainsByConnection,
     GetConnectionsByDataCenterAndStorageType,
-    GetStorageDomainsByStoragePoolId(VdcQueryAuthType.User),
+    GetStorageDomainsByStoragePoolId(QueryAuthType.User),
     GetStorageDomainsByImageId,
     GetUnregisteredBlockStorageDomains,
     GetDeviceList,
     DiscoverSendTargets,
-    GetStorageDomainsByVmTemplateId(VdcQueryAuthType.User),
+    GetStorageDomainsByVmTemplateId(QueryAuthType.User),
     GetVmsFromExportDomain,
     GetTemplatesFromExportDomain,
-    GetVmTemplatesFromStorageDomain(VdcQueryAuthType.User),
-    GetAllStorageDomains(VdcQueryAuthType.User),
+    GetVmTemplatesFromStorageDomain(QueryAuthType.User),
+    GetAllStorageDomains(QueryAuthType.User),
     GetExistingStorageDomainList,
     GetStorageDomainByIdAndStoragePoolId,
     GetStoragePoolsByStorageDomainId,
-    GetStoragePoolsByClusterService(VdcQueryAuthType.User),
+    GetStoragePoolsByClusterService(QueryAuthType.User),
     GetStorageDomainListById,
     GetLunsByVgId,
-    GetPermittedStorageDomainsByStoragePoolId(VdcQueryAuthType.User),
+    GetPermittedStorageDomainsByStoragePoolId(QueryAuthType.User),
     GetIscsiBondsByStoragePoolId,
     GetIscsiBondById,
     GetStorageServerConnectionByIscsiBondId,
@@ -347,7 +347,7 @@ public enum QueryType implements Serializable {
     GetStorageDomainDR,
 
     // Cinder
-    GetCinderVolumeTypesByStorageDomainId(VdcQueryAuthType.User),
+    GetCinderVolumeTypesByStorageDomainId(QueryAuthType.User),
     GetUnregisteredCinderDisksByStorageDomainId,
     GetUnregisteredCinderDiskByIdAndStorageDomainId,
     GetAllLibvirtSecretsByProviderId,
@@ -360,20 +360,20 @@ public enum QueryType implements Serializable {
     GetoVirtISOs,
 
     // Async Tasks
-    GetTasksStatusesByTasksIDs(VdcQueryAuthType.User),
+    GetTasksStatusesByTasksIDs(QueryAuthType.User),
 
     // Quota
     GetQuotaByStoragePoolId,
-    GetQuotaByQuotaId(VdcQueryAuthType.User),
+    GetQuotaByQuotaId(QueryAuthType.User),
     GetQuotaClusterByQuotaId,
     GetQuotaStorageByQuotaId,
     GetVmsRelatedToQuotaId,
     GetTemplatesRelatedToQuotaId,
     GetPermissionsToConsumeQuotaByQuotaId,
     GetQuotasByAdElementId,
-    GetQuotasConsumptionForCurrentUser(VdcQueryAuthType.User),
-    GetAllRelevantQuotasForStorage(VdcQueryAuthType.User),
-    GetAllRelevantQuotasForCluster(VdcQueryAuthType.User),
+    GetQuotasConsumptionForCurrentUser(QueryAuthType.User),
+    GetAllRelevantQuotasForStorage(QueryAuthType.User),
+    GetAllRelevantQuotasForCluster(QueryAuthType.User),
 
     // Jobs
     GetJobByJobId,
@@ -384,7 +384,7 @@ public enum QueryType implements Serializable {
     GetStepsWithSubjectEntitiesByJobId,
 
     // Disks
-    GetNextAvailableDiskAliasNameByVMId(VdcQueryAuthType.User),
+    GetNextAvailableDiskAliasNameByVMId(QueryAuthType.User),
 
     // Gluster
     GetGlusterVolumeById,
@@ -421,10 +421,10 @@ public enum QueryType implements Serializable {
     GetAllGlusterVolumesForStorageDomain,
     GetGeoRepSessionsForStorageDomain,
 
-    GetDefaultConfigurationVersion(VdcQueryAuthType.User),
-    GetProductVersion(VdcQueryAuthType.User),
-    OsRepository(VdcQueryAuthType.User),
-    GetArchitectureCapabilities(VdcQueryAuthType.User),
+    GetDefaultConfigurationVersion(QueryAuthType.User),
+    GetProductVersion(QueryAuthType.User),
+    OsRepository(QueryAuthType.User),
+    GetArchitectureCapabilities(QueryAuthType.User),
 
     // Providers
     GetAllProviders,
@@ -440,19 +440,19 @@ public enum QueryType implements Serializable {
     GetAllQosByStoragePoolIdAndType,
     GetAllQosByType,
 
-    GetWatchdog(VdcQueryAuthType.User),
-    GetConsoleDevices(VdcQueryAuthType.User),
-    GetRngDevice(VdcQueryAuthType.User),
-    GetGraphicsDevices(VdcQueryAuthType.User),
-    GetNextRunGraphicsDevices(VdcQueryAuthType.User),
-    GetGraphicsDevicesMultiple(VdcQueryAuthType.User),
+    GetWatchdog(QueryAuthType.User),
+    GetConsoleDevices(QueryAuthType.User),
+    GetRngDevice(QueryAuthType.User),
+    GetGraphicsDevices(QueryAuthType.User),
+    GetNextRunGraphicsDevices(QueryAuthType.User),
+    GetGraphicsDevicesMultiple(QueryAuthType.User),
 
     GetVmHostDevices,
 
-    ConfigureConsoleOptions(VdcQueryAuthType.User),
-    GetConsoleDescriptorFile(VdcQueryAuthType.User),
+    ConfigureConsoleOptions(QueryAuthType.User),
+    GetConsoleDescriptorFile(QueryAuthType.User),
 
-    GetDeviceCustomProperties(VdcQueryAuthType.User),
+    GetDeviceCustomProperties(QueryAuthType.User),
 
     // Scheduling
     GetClusterPolicies,
@@ -464,25 +464,25 @@ public enum QueryType implements Serializable {
     GetAffinityGroupsByClusterId,
     GetAffinityGroupsByVmId,
 
-    GetAllDisksPartialDataByVmId(VdcQueryAuthType.User),
+    GetAllDisksPartialDataByVmId(QueryAuthType.User),
     GetVmTemplateCount,
 
     //Disk Profiles
     GetDiskProfileById,
     GetAllDiskProfiles,
-    GetDiskProfilesByStorageDomainId(VdcQueryAuthType.User),
+    GetDiskProfilesByStorageDomainId(QueryAuthType.User),
     GetDiskProfilesByStorageQosId,
 
     // Cpu Profiles
     GetCpuProfileById,
     GetAllCpuProfiles,
-    GetCpuProfilesByClusterId(VdcQueryAuthType.User),
+    GetCpuProfilesByClusterId(QueryAuthType.User),
     GetCpuProfilesByCpuQosId,
 
     IsUserApplicationContainerManager,
 
     // migration profiles
-    GetAllMigrationPolicies(VdcQueryAuthType.User),
+    GetAllMigrationPolicies(QueryAuthType.User),
 
     // Labels
     GetAllLabels,
@@ -493,24 +493,24 @@ public enum QueryType implements Serializable {
     GetEntitiesWithLeaseByStorageId,
 
     // Default type instead of having to null check
-    Unknown(VdcQueryAuthType.User);
+    Unknown(QueryAuthType.User);
 
     /**
      * What kind of authorization the query requires. Although this is essentially a <code>boolean</code>, it's
      * implemented as an enum for future extendability.
      */
-    public static enum VdcQueryAuthType {
+    public static enum QueryAuthType {
         Admin,
         User
     }
 
-    private VdcQueryAuthType authType;
+    private QueryAuthType authType;
 
     private QueryType() {
-        authType = VdcQueryAuthType.Admin;
+        authType = QueryAuthType.Admin;
     }
 
-    private QueryType(VdcQueryAuthType authType) {
+    private QueryType(QueryAuthType authType) {
         this.authType = authType;
     }
 
@@ -522,11 +522,11 @@ public enum QueryType implements Serializable {
         return values()[value];
     }
 
-    public VdcQueryAuthType getAuthType() {
+    public QueryAuthType getAuthType() {
         return authType;
     }
 
     public boolean isAdmin() {
-        return authType == VdcQueryAuthType.Admin;
+        return authType == QueryAuthType.Admin;
     }
 }
