@@ -358,7 +358,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         VmValidator vmValidator = createVmValidator(getVm());
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
-                !validateVmNotDuringSnapshot() ||
+                !validateVmSnapshotDisksNotDuringMerge() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
                 !validateSnapshotType() ||
@@ -449,8 +449,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         addValidationMessage(EngineMessage.VAR__ACTION__REMOVE);
     }
 
-    protected boolean validateVmNotDuringSnapshot() {
-        return validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()));
+    protected boolean validateVmSnapshotDisksNotDuringMerge() {
+        return validate(snapshotsValidator.vmSnapshotDisksNotDuringMerge(getVmId(), getParameters().getSnapshotId()));
     }
 
     protected boolean validateVmNotInPreview() {

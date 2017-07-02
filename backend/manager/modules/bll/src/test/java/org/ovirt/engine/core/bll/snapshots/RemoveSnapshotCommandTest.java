@@ -144,6 +144,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     public void testValidateEnoughSpace() {
         prepareForVmValidatorTests();
         spySdValidator();
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
         cmd.getVm().setStatus(VMStatus.Up);
         List<DiskImage> parentSnapshots = mockDisksList(2);
         doReturn(parentSnapshots).when(cmd).getSourceImages();
@@ -158,6 +159,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
         cmd.getVm().setStatus(VMStatus.Up);
         mockDisksList(2);
 
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
         when(storageDomainsValidator.allDomainsHaveSpaceForMerge(anyList(), any()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
 
@@ -182,6 +184,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVmUpHostCapable() {
         prepareForVmValidatorTests();
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
         cmd.getVm().setStatus(VMStatus.Up);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
@@ -189,6 +192,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVmDown() {
         prepareForVmValidatorTests();
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
         cmd.getVm().setStatus(VMStatus.Down);
         ValidateTestUtils.runAndAssertValidateSuccess(cmd);
     }
@@ -196,6 +200,7 @@ public class RemoveSnapshotCommandTest extends BaseCommandTest {
     @Test
     public void testValidateVmMigrating() {
         prepareForVmValidatorTests();
+        doReturn(ValidationResult.VALID).when(snapshotValidator).vmSnapshotDisksNotDuringMerge(any(Guid.class), any(Guid.class));
         cmd.getVm().setStatus(VMStatus.MigratingTo);
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
