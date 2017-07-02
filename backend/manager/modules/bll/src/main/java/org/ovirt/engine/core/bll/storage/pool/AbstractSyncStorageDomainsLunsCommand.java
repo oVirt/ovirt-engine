@@ -76,10 +76,15 @@ public abstract class AbstractSyncStorageDomainsLunsCommand<T extends SyncLunsPa
             List<LUNs> storageDomainLuns) {
         return runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain,
                 new SyncLunsInfoForBlockStorageDomainParameters(
-                        storageDomainId,
-                        VdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId()),
-                        storageDomainLuns))
+                        storageDomainId, getHostToSyncStorageDomainsLuns(), storageDomainLuns))
                 .getSucceeded();
+    }
+
+    private Guid getHostToSyncStorageDomainsLuns() {
+        if (Guid.isNullOrEmpty(getParameters().getStoragePoolId())) {
+            return getParameters().getVdsId();
+        }
+        return VdsCommandsHelper.getHostForExecution(getParameters().getStoragePoolId());
     }
 
     protected abstract Stream<StorageDomain> getStorageDomainsToSync();

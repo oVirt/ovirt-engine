@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -63,19 +62,13 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     }
 
     private boolean canSyncDirectLun() {
-        HostValidator hostValidator = getHostValidator();
-        return validate(hostValidator.hostExists()) &&
-                validate(hostValidator.isUp()) &&
+        return validateVds() &&
                 directLunExists();
     }
 
     private boolean directLunExists() {
         return diskLunMapDao.getDiskLunMapByDiskId(getParameters().getDirectLunId()) != null ||
                 failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
-    }
-
-    protected HostValidator getHostValidator() {
-        return HostValidator.createInstance(getVds());
     }
 
     @Override

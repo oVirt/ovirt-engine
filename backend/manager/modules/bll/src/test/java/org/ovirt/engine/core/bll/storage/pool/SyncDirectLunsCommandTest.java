@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.bll.ValidateTestUtils.runAndAssertValidateFailure;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,8 +18,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
-import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -41,9 +38,6 @@ public class SyncDirectLunsCommandTest {
 
     @Mock
     private VdsDao vdsDao;
-
-    @Mock
-    private HostValidator hostValidator;
 
     private LUNs lun1;
     private LUNs lun2;
@@ -69,8 +63,6 @@ public class SyncDirectLunsCommandTest {
         lun3 = new LUNs();
         lun3.setLUNId("lun3");
         lun3.setDiskId(Guid.newGuid());
-
-        doReturn(hostValidator).when(command).getHostValidator();
     }
 
     @Test
@@ -104,24 +96,14 @@ public class SyncDirectLunsCommandTest {
     @Test
     public void validateWithDirectLunIdAndInvalidVds() {
         command.getParameters().setDirectLunId(Guid.newGuid());
-        when(hostValidator.hostExists()).thenReturn(new ValidationResult(EngineMessage.VDS_INVALID_SERVER_ID));
-        runAndAssertValidateFailure(command, EngineMessage.VDS_INVALID_SERVER_ID);
-    }
-
-    @Test
-    public void validateWithDirectLunIdWhenVdsIsNotUp() {
-        command.getParameters().setDirectLunId(Guid.newGuid());
-        when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
-        when(hostValidator.isUp())
-                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL));
-        runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
+        doReturn(false).when(command).validateVds();
+        assertFalse(command.validate());
     }
 
     @Test
     public void validateWithRandomDirectLunId() {
         command.getParameters().setDirectLunId(Guid.newGuid());
-        when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
-        when(hostValidator.isUp()).thenReturn(ValidationResult.VALID);
+        doReturn(true).when(command).validateVds();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
@@ -130,8 +112,7 @@ public class SyncDirectLunsCommandTest {
         command.getParameters().setDirectLunId(lun1.getDiskId());
         when(diskLunMapDao.getDiskLunMapByDiskId(any())).thenReturn(disk1Lun1Map);
         command.getParameters().setDirectLunId(Guid.newGuid());
-        when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
-        when(hostValidator.isUp()).thenReturn(ValidationResult.VALID);
+        doReturn(true).when(command).validateVds();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 

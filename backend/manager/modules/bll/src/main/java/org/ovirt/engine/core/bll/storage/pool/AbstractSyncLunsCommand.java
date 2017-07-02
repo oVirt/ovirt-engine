@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.utils.VdsCommandsHelper;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -29,6 +30,16 @@ public abstract class AbstractSyncLunsCommand<T extends SyncLunsParameters> exte
     protected boolean validateStoragePool() {
         return checkStoragePool() &&
                 checkStoragePoolStatus(StoragePoolStatus.Up);
+    }
+
+    protected boolean validateVds() {
+        HostValidator hostValidator = getHostValidator();
+        return validate(hostValidator.hostExists()) &&
+                validate(hostValidator.isUp());
+    }
+
+    protected HostValidator getHostValidator() {
+        return HostValidator.createInstance(getVds());
     }
 
     @Override

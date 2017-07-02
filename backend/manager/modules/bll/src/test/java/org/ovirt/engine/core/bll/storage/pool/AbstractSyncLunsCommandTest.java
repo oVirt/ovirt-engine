@@ -16,12 +16,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -36,6 +39,9 @@ public class AbstractSyncLunsCommandTest {
     @Mock
     private StoragePoolDao storagePoolDao;
 
+    @Mock
+    private HostValidator hostValidator;
+
     private SyncLunsParameters parameters = new SyncLunsParameters();
 
     @InjectMocks
@@ -43,6 +49,11 @@ public class AbstractSyncLunsCommandTest {
     private AbstractSyncLunsCommand<SyncLunsParameters> command = mock(
             AbstractSyncLunsCommand.class,
             withSettings().useConstructor(parameters, null).defaultAnswer(CALLS_REAL_METHODS));
+
+    @Before
+    public void setUp() {
+        doReturn(hostValidator).when(command).getHostValidator();
+    }
 
     @Test
     public void testValidateStoragePoolSucceeds() {
@@ -78,6 +89,24 @@ public class AbstractSyncLunsCommandTest {
         assertFalse(command.validateStoragePool());
         ValidateTestUtils.assertValidationMessages("", command,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+    }
+
+    @Test
+    public void testValidateVdsDoesNotExist() {
+        when(hostValidator.hostExists()).thenReturn(new ValidationResult(EngineMessage.VDS_INVALID_SERVER_ID));
+        assertFalse(command.validateVds());
+        ValidateTestUtils.assertValidationMessages("", command,
+                EngineMessage.VDS_INVALID_SERVER_ID);
+    }
+
+    @Test
+    public void validateVdsIsNotUp() {
+        when(hostValidator.hostExists()).thenReturn(ValidationResult.VALID);
+        when(hostValidator.isUp())
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL));
+        assertFalse(command.validateVds());
+        ValidateTestUtils.assertValidationMessages("", command,
+                EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
     }
 
     @Test
