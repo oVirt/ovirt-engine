@@ -1,12 +1,18 @@
 package org.ovirt.engine.core.bll.snapshots;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
@@ -23,6 +29,25 @@ public class SnapshotsValidator {
      */
     public ValidationResult vmNotDuringSnapshot(Guid vmId) {
         return vmNotInStatus(vmId, SnapshotStatus.LOCKED, EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
+    }
+
+    /**
+     * Verify that there is no merge running on same disk(s) of the provided snapshot.
+     *
+     * @param vmId
+     *            The VM to check for.
+     * @param mergedSnapshotId
+     *            The snapshot to check
+     * @return Is the VM during a snapshot on same disk(s).
+     */
+    public ValidationResult vmSnapshotDisksNotDuringMerge(Guid vmId, Guid mergedSnapshotId) {
+        Set<Guid> mergedSnapshotDisksIds = getSnapshotDiskIds(mergedSnapshotId).collect(Collectors.toSet());
+        boolean isVmDuringSnapshot =
+                !mergedSnapshotDisksIds.isEmpty() &&
+                getAllVmLockedSnapshotIds(vmId).flatMap(this::getSnapshotDiskIds).anyMatch(mergedSnapshotDisksIds::contains);
+
+        return isVmDuringSnapshot ? new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT) :
+                ValidationResult.VALID;
     }
 
     /**
@@ -117,5 +142,36 @@ public class SnapshotsValidator {
 
     protected SnapshotDao getSnapshotDao() {
         return DbFacade.getInstance().getSnapshotDao();
+    }
+
+    protected DiskImageDao getDiskImageDao() {
+        return DbFacade.getInstance().getDiskImageDao();
+    }
+
+    /**
+     * Return disk IDs (image groups) of the provided snapshot.
+     *
+     * @param snapshotId
+     *          Snapshot IDs
+     *
+     * @return Stream of disks Id
+     */
+    private Stream<Guid> getSnapshotDiskIds(Guid snapshotId) {
+        return getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId).stream().map(DiskImage::getId);
+    }
+
+    /**
+     * Get all locked snapshot IDs of the provided Vm.
+     *
+     * @param vmId
+     *          Vm Id
+     *
+     * @return Stream of locked snapshot IDs
+     */
+    private Stream<Guid> getAllVmLockedSnapshotIds(Guid vmId) {
+        return getSnapshotDao().getAll(vmId)
+                .stream()
+                .filter(snapshot -> snapshot.getStatus() == SnapshotStatus.LOCKED)
+                .map(Snapshot::getId);
     }
 }
