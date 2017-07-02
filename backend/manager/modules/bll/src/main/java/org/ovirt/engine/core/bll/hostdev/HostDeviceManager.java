@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.bll.hostdev;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -58,12 +58,12 @@ public class HostDeviceManager implements BackendService {
 
     @PostConstruct
     private void init() {
-        ArrayList<ActionParametersBase> parameters = new ArrayList<>();
         // It is sufficient to refresh only the devices of 'UP' hosts since other hosts
         // will have their devices refreshed in InitVdsOnUpCommand
-        for (Guid hostId : hostDynamicDao.getIdsOfHostsWithStatus(VDSStatus.Up)) {
-            parameters.add(new VdsActionParameters(hostId));
-        }
+        List<ActionParametersBase> parameters = hostDynamicDao.getIdsOfHostsWithStatus(VDSStatus.Up)
+                .stream()
+                .map(hostId -> new VdsActionParameters(hostId))
+                .collect(Collectors.toList());
 
         backend.runInternalMultipleActions(ActionType.RefreshHostDevices, parameters);
         hostDeviceDao.cleanDownVms();
