@@ -45,20 +45,6 @@ dbfunc_common_hook_views_refresh() {
 
 # Materilized views functions, override with empty implementation on DBs that not supporting that
 
-dbfunc_common_hook_materialized_views_install() {
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/materialized_views_sp.sql" > /dev/null
-}
-
-dbfunc_common_hook_materialized_views_drop() {
-	echo "Dropping materialized views..."
-	dbfunc_psql_die --command="select DropAllMaterializedViews();" > /dev/null
-}
-
-dbfunc_common_hook_materialized_viewsrefresh_() {
-	echo "Refreshing materialized views..."
-	dbfunc_psql_die --command="select RefreshAllMaterializedViews(true);" > /dev/null
-}
-
 dbfunc_common_hook_sequence_numbers_update() {
 	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/update_sequence_numbers.sql" > /dev/null
 }

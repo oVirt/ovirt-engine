@@ -17,18 +17,6 @@ dbfunc_common_hook_views_refresh() {
 	return 0
 }
 
-dbfunc_common_hook_materialized_views_install() {
-	return 0
-}
-
-dbfunc_common_hook_materialized_views_drop() {
-	return 0
-}
-
-dbfunc_common_hook_materialized_viewsrefresh_() {
-	return 0
-}
-
 dbfunc_common_hook_sequence_numbers_update() {
 	return 0
 }
@@ -322,10 +310,6 @@ _dbfunc_common_run_pre_upgrade() {
 	dbfunc_common_hook_sequence_numbers_update
 	#run pre upgrade scripts
 	_dbfunc_common_psql_statements_in_dir 'pre_upgrade'
-	dbfunc_common_hook_materialized_views_install
-	#drop materialized views to support views changesin upgrade
-	#Materialized views are restored in the post_upgrade step
-	dbfunc_common_hook_materialized_views_drop
 	dbfunc_common_hook_pre_upgrade
 }
 
@@ -344,7 +328,6 @@ _dbfunc_common_run_post_upgrade() {
 			echo "Illegal syntax in custom Materialized Views, Custom Materialized Views were dropped."
 		fi
 	fi
-	dbfunc_common_hook_materialized_viewsrefresh_
 }
 
 # Runs all the SQL scripts in directory upgrade/$1/
