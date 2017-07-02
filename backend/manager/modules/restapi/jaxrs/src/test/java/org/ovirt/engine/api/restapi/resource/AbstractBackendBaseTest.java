@@ -58,10 +58,10 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -238,7 +238,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         return addMatrixParameterExpectations(mockUriInfo, parameterName, "");
     }
 
-    protected <E> void setUpGetEntityExpectations(VdcQueryType query,
+    protected <E> void setUpGetEntityExpectations(QueryType query,
                                                   Class<? extends VdcQueryParametersBase> clz,
                                                   String[] names,
                                                   Object[] values,
@@ -247,7 +247,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         setUpGetEntityExpectations(query, clz, names, values, entity, false);
     }
 
-    protected <E> void setUpGetEntityExpectations(VdcQueryType query,
+    protected <E> void setUpGetEntityExpectations(QueryType query,
             Class<? extends VdcQueryParametersBase> clz,
             String[] names,
             Object[] values,
@@ -272,16 +272,16 @@ public abstract class AbstractBackendBaseTest extends Assert {
             E entity) throws Exception {
         VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
         SearchParameters params = new SearchParameters(query, type);
-        when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(queryResult);
+        when(backend.runQuery(eq(QueryType.Search), eqSearchParams(params))).thenReturn(queryResult);
         enqueueInteraction(
-                () -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.Search), eqSearchParams(params)));
+                () -> verify(backend, atLeastOnce()).runQuery(eq(QueryType.Search), eqSearchParams(params)));
         queryResult.setSucceeded(true);
         List<E> entities = new ArrayList<>();
         entities.add(entity);
         queryResult.setReturnValue(entities);
     }
 
-    protected void setUpEntityQueryExpectations(VdcQueryType query,
+    protected void setUpEntityQueryExpectations(QueryType query,
             Class<? extends VdcQueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,
@@ -289,7 +289,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         setUpEntityQueryExpectations(query, queryClass, queryNames, queryValues, queryReturn, null);
     }
 
-    protected void setUpEntityQueryExpectations(VdcQueryType query,
+    protected void setUpEntityQueryExpectations(QueryType query,
             Class<? extends VdcQueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,
@@ -321,7 +321,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected void setUpGetConsoleExpectations(int... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetConsoleDevices,
+            setUpGetEntityExpectations(QueryType.GetConsoleDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -332,7 +332,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected void setUpGetRngDeviceExpectations(int... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetRngDevice,
+            setUpGetEntityExpectations(QueryType.GetRngDevice,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -649,7 +649,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         if (asyncTasks != null) {
             result.setVdsmTaskIdList(asyncTasks);
             monitorResult.setReturnValue(asyncStatuses);
-            when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+            when(backend.runQuery(eq(QueryType.GetTasksStatusesByTasksIDs),
                     eqParams(GetTasksStatusesByTasksIDsParameters.class,
                             addSession(),
                             addSession(new Object[] {})))).thenReturn(monitorResult);
@@ -665,11 +665,11 @@ public abstract class AbstractBackendBaseTest extends Assert {
             Job jobMock = mock(org.ovirt.engine.core.common.job.Job.class);
             when(jobMock.getStatus()).thenReturn(jobStatus);
             monitorResult.setReturnValue(jobMock);
-            when(backend.runQuery(eq(VdcQueryType.GetJobByJobId),
+            when(backend.runQuery(eq(QueryType.GetJobByJobId),
                     eqParams(IdQueryParameters.class,
                             addSession("Id"),
                             addSession(jobId)))).thenReturn(monitorResult);
-            enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.GetJobByJobId),
+            enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(QueryType.GetJobByJobId),
                     eqParams(IdQueryParameters.class,
                             addSession("Id"),
                             addSession(jobId))));

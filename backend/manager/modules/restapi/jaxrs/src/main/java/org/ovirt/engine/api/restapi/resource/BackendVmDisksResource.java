@@ -34,7 +34,7 @@ import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDisksResource
@@ -54,7 +54,7 @@ public class BackendVmDisksResource
     }
 
     public Disks list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vmId)));
+        return mapCollection(getBackendCollection(QueryType.GetAllDisksByVmId, new IdQueryParameters(vmId)));
     }
 
     private Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {
@@ -115,7 +115,7 @@ public class BackendVmDisksResource
         if (snapshotInfo != null) {
             org.ovirt.engine.core.common.businessentities.Snapshot snapshot =
                     getEntity(org.ovirt.engine.core.common.businessentities.Snapshot.class,
-                            VdcQueryType.GetSnapshotBySnapshotId,
+                            QueryType.GetSnapshotBySnapshotId,
                             new IdQueryParameters(asGuid(snapshotInfo.getId())),
                             snapshotInfo.getId());
             Vm vm = new Vm();
@@ -130,7 +130,7 @@ public class BackendVmDisksResource
     }
 
     private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainById(Guid id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, QueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
     }
 
     @Override
@@ -166,7 +166,7 @@ public class BackendVmDisksResource
         public org.ovirt.engine.core.common.businessentities.storage.Disk resolve(Guid id) throws BackendFailureException {
             return getEntity(
                 org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 new IdQueryParameters(id),
                 id.toString(),
                 true
@@ -185,7 +185,7 @@ public class BackendVmDisksResource
         public org.ovirt.engine.core.common.businessentities.storage.Disk resolve(Guid id) throws BackendFailureException {
             return getEntity(
                     org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-                    VdcQueryType.GetDiskByDiskId,
+                    QueryType.GetDiskByDiskId,
                     new IdQueryParameters(diskId),
                     diskId.toString(),
                     true

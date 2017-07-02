@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendInstanceTypeWatchdogsResource
@@ -47,7 +47,7 @@ public class BackendInstanceTypeWatchdogsResource
 
     @Override
     public Watchdogs list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetWatchdog, new IdQueryParameters(instanteTypeId)));
+        return mapCollection(getBackendCollection(QueryType.GetWatchdog, new IdQueryParameters(instanteTypeId)));
     }
 
     private Watchdogs mapCollection(List<VmWatchdog> entities) {
@@ -88,7 +88,7 @@ public class BackendInstanceTypeWatchdogsResource
     private class WatchdogResolver implements IResolver<Guid, VmWatchdog> {
         @Override
         public VmWatchdog resolve(Guid id) throws BackendFailureException {
-            List<VmWatchdog> watchdogs = getBackendCollection(VdcQueryType.GetWatchdog, new IdQueryParameters(instanteTypeId));
+            List<VmWatchdog> watchdogs = getBackendCollection(QueryType.GetWatchdog, new IdQueryParameters(instanteTypeId));
             for (VmWatchdog watchdog : watchdogs) {
                 if (Objects.equals(watchdog.getId(), id)) {
                     return watchdog;

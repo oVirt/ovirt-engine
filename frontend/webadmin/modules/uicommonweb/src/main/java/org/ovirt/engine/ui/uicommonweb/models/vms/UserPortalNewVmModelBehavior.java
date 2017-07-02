@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -75,8 +75,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     public void dataCenterWithClusterSelectedItemChanged() {
         super.dataCenterWithClusterSelectedItemChanged();
 
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
-        queryTypeList.add(VdcQueryType.GetVmTemplatesWithPermittedAction);
+        ArrayList<QueryType> queryTypeList = new ArrayList<>();
+        queryTypeList.add(QueryType.GetVmTemplatesWithPermittedAction);
 
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
                 new GetEntitiesWithPermittedActionParameters();

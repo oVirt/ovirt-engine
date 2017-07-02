@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -80,7 +80,7 @@ public class StorageRegisterDiskImageListModel extends SearchableListModel<Stora
         }
         IdQueryParameters parameters = new IdAndBooleanQueryParameters(getEntity().getId(), true);
         parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredDisksFromDB, parameters,
+        Frontend.getInstance().runQuery(QueryType.GetUnregisteredDisksFromDB, parameters,
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<UnregisteredDisk> unregisteredDisks = returnValue.getReturnValue();
                     Collections.sort(unregisteredDisks, new UnregisteredDiskByDiskAliasComparator());

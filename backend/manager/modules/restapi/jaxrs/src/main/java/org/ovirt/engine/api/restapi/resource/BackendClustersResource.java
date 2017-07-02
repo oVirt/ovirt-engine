@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClustersResource extends AbstractBackendCollectionResource<org.ovirt.engine.api.model.Cluster, Cluster>
@@ -47,7 +47,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
 
     private Clusters listVirtOnly() {
         if (isFiltered()) {
-            return mapVirtOnlyCollection(getBackendCollection(VdcQueryType.GetAllClusters,
+            return mapVirtOnlyCollection(getBackendCollection(QueryType.GetAllClusters,
                     new VdcQueryParametersBase()));
         }
         else {
@@ -57,7 +57,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
 
     private Clusters listAll() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllClusters,
+            return mapCollection(getBackendCollection(QueryType.GetAllClusters,
                     new VdcQueryParametersBase()));
         }
         else {
@@ -76,7 +76,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
         StoragePool dataCenter = getDataCenter(cluster);
         return performCreate(ActionType.AddCluster,
                 createAddCommandParams(cluster, dataCenter),
-                new QueryIdResolver<Guid>(VdcQueryType.GetClusterById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetClusterById, IdQueryParameters.class));
     }
 
     protected String[] getMandatoryParameters() {
@@ -128,7 +128,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<o
         final Guid clusterId = entity.getId();
         final org.ovirt.engine.core.common.businessentities.network.Network network =
                 getOptionalEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
-                        VdcQueryType.GetManagementNetwork,
+                        QueryType.GetManagementNetwork,
                         new IdQueryParameters(clusterId),
                         clusterId.toString(),
                         false);

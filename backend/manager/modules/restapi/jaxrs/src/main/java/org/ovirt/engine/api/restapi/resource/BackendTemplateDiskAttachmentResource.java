@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.TemplateDiskAttachmentResource;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -25,7 +25,7 @@ public class BackendTemplateDiskAttachmentResource
 
     @Override
     public DiskAttachment get() {
-        return performGet(VdcQueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), templateId)));
+        return performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), templateId)));
     }
 
     @Override

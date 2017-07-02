@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -28,7 +28,7 @@ public class BackendStorageDomainDiskSnapshotResourceTest
     @Test
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,
+        setUpEntityQueryExpectations(QueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,
                 new String[]{"Id"}, new Object[]{IMAGE_ID},
                 getEntity(1));
 
@@ -39,7 +39,7 @@ public class BackendStorageDomainDiskSnapshotResourceTest
     @Test
     public void testRemove() {
         // setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,
+        setUpEntityQueryExpectations(QueryType.GetDiskSnapshotByImageId, IdQueryParameters.class,
                 new String[] { "Id" }, new Object[] { IMAGE_ID },
                 getEntity(1));
         ArrayList<Guid> ids = new ArrayList<>();

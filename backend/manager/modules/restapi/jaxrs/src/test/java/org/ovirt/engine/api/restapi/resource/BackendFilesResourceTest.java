@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendFilesResourceTest
@@ -86,7 +86,7 @@ public class BackendFilesResourceTest
         locales.add(CLIENT_LOCALE);
 
         Throwable t = new RuntimeException(FAILURE);
-        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+        setUpEntityQueryExpectations(QueryType.GetImagesList,
                 GetImagesListParameters.class,
                 new String[] { "StorageDomainId", "ImageType" },
                 new Object[] { GUIDS[0], ImageFileType.All },
@@ -110,7 +110,7 @@ public class BackendFilesResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         Throwable t = new RuntimeException(FAILURE);
-        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+        setUpEntityQueryExpectations(QueryType.GetImagesList,
                 GetImagesListParameters.class,
                 new String[] { "StorageDomainId", "ImageType" },
                 new Object[] { GUIDS[0], ImageFileType.All },
@@ -140,7 +140,7 @@ public class BackendFilesResourceTest
     @Override
     public void testListFailure() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+        setUpEntityQueryExpectations(QueryType.GetImagesList,
                 GetImagesListParameters.class,
                 new String[] { "StorageDomainId", "ImageType" },
                 new Object[] { GUIDS[0], ImageFileType.All },
@@ -158,7 +158,7 @@ public class BackendFilesResourceTest
     }
 
     private void setupGetStorageDomainExpectations(org.ovirt.engine.core.common.businessentities.StorageDomainType type) {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
@@ -176,7 +176,7 @@ public class BackendFilesResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetImagesList,
+        setUpEntityQueryExpectations(QueryType.GetImagesList,
                                      GetImagesListParameters.class,
                                      new String[] { "StorageDomainId", "ImageType" },
                                      new Object[] { GUIDS[0], ImageFileType.All },

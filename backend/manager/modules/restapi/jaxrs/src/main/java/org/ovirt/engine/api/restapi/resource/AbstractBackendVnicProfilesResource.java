@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendVnicProfilesResource
@@ -51,7 +51,7 @@ public abstract class AbstractBackendVnicProfilesResource
         if (!qosMap.isEmpty()) {
             List<NetworkQoS> list = getBackendCollection(
                     NetworkQoS.class,
-                    VdcQueryType.GetAllQosByType,
+                    QueryType.GetAllQosByType,
                     new QosQueryParameterBase(null, QosType.NETWORK));
             for (NetworkQoS networkQoS : list) {
                 Qos qos = qosMap.get(networkQoS.getId());
@@ -69,7 +69,7 @@ public abstract class AbstractBackendVnicProfilesResource
                 new AddVnicProfileParameters(map(vnicProfile), !vnicProfile.isSetNetworkFilter());
         return performCreate(ActionType.AddVnicProfile,
                 addVnicProfileParameters,
-                new QueryIdResolver<Guid>(VdcQueryType.GetVnicProfileById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetVnicProfileById, IdQueryParameters.class));
     }
 
     protected abstract void validateParameters(VnicProfile vnicProfile);

@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LunStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -378,7 +378,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
                     : new ArrayList<>());
         }, true);
-        Frontend.getInstance().runQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
+        Frontend.getInstance().runQuery(QueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 
     protected void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items) {
@@ -489,7 +489,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                         ConstantsManager.getInstance().getConstants().couldNotRetrieveLUNsLunsFailure());
             }
         }, true);
-        Frontend.getInstance().runQuery(VdcQueryType.GetDeviceList,
+        Frontend.getInstance().runQuery(QueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(host.getId(), getType(), false, null, false),
                 asyncQuery);
     }

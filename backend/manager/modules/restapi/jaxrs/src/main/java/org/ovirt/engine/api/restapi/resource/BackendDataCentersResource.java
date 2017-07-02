@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCentersResource extends
@@ -28,7 +28,7 @@ public class BackendDataCentersResource extends
     @Override
     public DataCenters list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllStoragePools,
+            return mapCollection(getBackendCollection(QueryType.GetAllStoragePools,
                     new VdcQueryParametersBase()));
         } else {
             return mapCollection(getBackendCollection(SearchType.StoragePool));
@@ -49,7 +49,7 @@ public class BackendDataCentersResource extends
         StoragePool entity = map(dataCenter);
         return performCreate(ActionType.AddEmptyStoragePool,
                                new StoragePoolManagementParameter(entity),
-                               new QueryIdResolver<Guid>(VdcQueryType.GetStoragePoolById, IdQueryParameters.class));
+                               new QueryIdResolver<Guid>(QueryType.GetStoragePoolById, IdQueryParameters.class));
     }
 
     private DataCenters mapCollection(List<StoragePool> entities) {
@@ -65,7 +65,7 @@ public class BackendDataCentersResource extends
         IdQueryParameters parameters = new IdQueryParameters(asGuid(model.getId()));
         model.setSupportedVersions(getMapper(List.class,
                                              Versions.class).map(getEntity(List.class,
-                                                                                    VdcQueryType.GetAvailableStoragePoolVersions,
+                                                                                    QueryType.GetAvailableStoragePoolVersions,
                                                                                     parameters,
                                                                                     model.getId()),
                                                                           null));

@@ -10,8 +10,8 @@ import org.ovirt.engine.api.resource.DiskProfileResource;
 import org.ovirt.engine.api.resource.DiskProfilesResource;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesResource implements DiskProfilesResource {
 
@@ -22,7 +22,7 @@ public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesReso
 
     @Override
     protected List<org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> getDiskProfilesCollection() {
-        return getBackendCollection(VdcQueryType.GetAllDiskProfiles, new VdcQueryParametersBase());
+        return getBackendCollection(QueryType.GetAllDiskProfiles, new VdcQueryParametersBase());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BackendDiskProfilesResource extends AbstractBackendDiskProfilesReso
         String storageId = diskProfile.getStorageDomain().getId();
         // verify the storagedomain.id is well provided
         getEntity(StorageDomain.class,
-                VdcQueryType.GetStorageDomainById,
+                QueryType.GetStorageDomainById,
                 new IdQueryParameters(asGuid(storageId)),
                 "storagedomain: id="
                         + storageId);

@@ -3,7 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendHostDevicesResourceTest
     extends AbstractBackendHostDevicesResourceTest<BackendHostDevicesResource, HostDevice> {
@@ -17,7 +17,7 @@ public class BackendHostDevicesResourceTest
         resource.setUriInfo(setUpBasicUriExpectations());
 
         setUpEntityQueryExpectations(
-                VdcQueryType.GetHostDevicesByHostId,
+                QueryType.GetHostDevicesByHostId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { HOST_ID },

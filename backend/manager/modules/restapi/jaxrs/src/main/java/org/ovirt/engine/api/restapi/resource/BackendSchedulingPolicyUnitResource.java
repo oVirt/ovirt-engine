@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.SchedulingPolicyUnit;
 import org.ovirt.engine.api.resource.SchedulingPolicyUnitResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.parameters.RemoveExternalPolicyUnitParameters;
 
@@ -19,7 +19,7 @@ public class BackendSchedulingPolicyUnitResource extends AbstractBackendSubResou
 
     @Override
     public SchedulingPolicyUnit get() {
-        return performGet(VdcQueryType.GetPolicyUnitById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetPolicyUnitById, new IdQueryParameters(guid));
     }
 
     @Override

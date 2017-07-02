@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedTagsResourceTest<C extends AbstractBackendAssignedTagsResource>
@@ -23,7 +23,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     protected static final Guid PARENT_GUID = GUIDS[2];
 
     protected static String parentIdName;
-    protected static VdcQueryType queryType;
+    protected static QueryType queryType;
     protected static Class<? extends VdcQueryParametersBase> queryParams;
     protected static ActionType attachAction;
     protected static Class<? extends TagsActionParametersBase> attachParams;
@@ -58,7 +58,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
                                   true,
                                   true,
                                   null,
-                                  VdcQueryType.GetTagByTagId,
+                                  QueryType.GetTagByTagId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -77,7 +77,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
     public void testAddTagByName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAllTags,
+        setUpEntityQueryExpectations(QueryType.GetAllTags,
                                      VdcQueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
@@ -90,7 +90,7 @@ public abstract class AbstractBackendAssignedTagsResourceTest<C extends Abstract
                                   true,
                                   true,
                                   null,
-                                  VdcQueryType.GetTagByTagId,
+                                  QueryType.GetTagByTagId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },

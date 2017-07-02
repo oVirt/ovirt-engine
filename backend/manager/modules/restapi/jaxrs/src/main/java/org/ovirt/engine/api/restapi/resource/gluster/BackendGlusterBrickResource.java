@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,7 +36,7 @@ public class BackendGlusterBrickResource
 
     @Override
     public GlusterBrick get() {
-        return performGet(VdcQueryType.GetGlusterBrickById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetGlusterBrickById, new IdQueryParameters(guid));
     }
 
     @Override
@@ -76,22 +76,22 @@ public class BackendGlusterBrickResource
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class) {
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(QueryType.GetGlusterBrickById, IdQueryParameters.class) {
 
             @Override
             public GlusterBrickEntity lookupEntity(Guid id) throws BackendFailureException {
                 GlusterBrickEntity brickEntity = getEntity(GlusterBrickEntity.class,
-                        VdcQueryType.GetGlusterBrickById,
+                        QueryType.GetGlusterBrickById,
                         new IdQueryParameters(id),
                         null,
                         true);
                 GlusterVolumeEntity volumeEntity = getEntity(GlusterVolumeEntity.class,
-                        VdcQueryType.GetGlusterVolumeById,
+                        QueryType.GetGlusterVolumeById,
                         new IdQueryParameters(brickEntity.getVolumeId()),
                         null,
                         true);
                 GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
-                        VdcQueryType.GetGlusterVolumeAdvancedDetails,
+                        QueryType.GetGlusterVolumeAdvancedDetails,
                         new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
                                                                    volumeEntity.getId(),
                                                                    brickEntity.getId(), true),

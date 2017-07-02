@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmWatchdogResource
@@ -57,7 +57,7 @@ public class BackendVmWatchdogResource
     private VmWatchdog getWatchdog() {
         List<VmWatchdog> entities = getBackendCollection(
             VmWatchdog.class,
-            VdcQueryType.GetWatchdog,
+            QueryType.GetWatchdog,
             new IdQueryParameters(vmId)
         );
         for (VmWatchdog current : entities) {

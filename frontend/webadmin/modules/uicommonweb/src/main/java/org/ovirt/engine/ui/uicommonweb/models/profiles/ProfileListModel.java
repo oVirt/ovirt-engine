@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -64,7 +64,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
 
     protected abstract Guid getStoragePoolId();
 
-    protected abstract VdcQueryType getQueryType();
+    protected abstract QueryType getQueryType();
 
     public void newProfile() {
         if (getWindow() != null) {
@@ -135,7 +135,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         if (dcId == null) { // not attached to data center
             fetchProfiles();
         } else {
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
+        Frontend.getInstance().runQuery(QueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dcId, getQosType()),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                         List<Q> qosList = (ArrayList<Q>) returnValue.getReturnValue();

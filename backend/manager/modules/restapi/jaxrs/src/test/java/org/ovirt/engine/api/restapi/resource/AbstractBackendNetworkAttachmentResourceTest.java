@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkAttachmentParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends AbstractBackendNetworkAttachmentsResource, R extends AbstractBackendNetworkAttachmentResource<C>>
@@ -164,7 +164,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
         VdcQueryReturnValue vdcQueryReturnValue = new VdcQueryReturnValue();
         vdcQueryReturnValue.setSucceeded(false);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworkAttachmentById,
+        setUpEntityQueryExpectations(QueryType.GetNetworkAttachmentById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { new Guid(resource.id) },
@@ -196,7 +196,7 @@ public abstract class AbstractBackendNetworkAttachmentResourceTest<C extends Abs
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetNetworkAttachmentById,
+            setUpEntityQueryExpectations(QueryType.GetNetworkAttachmentById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },

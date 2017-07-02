@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendUserResourceTest
         extends AbstractBackendSubResourceTest<User, DbUser, BackendUserResource> {
@@ -79,7 +79,7 @@ public class BackendUserResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception {
         setUpGetEntityExpectations(
-                VdcQueryType.GetDbUserByUserId,
+                QueryType.GetDbUserByUserId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -125,7 +125,7 @@ public class BackendUserResourceTest
     }
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
+        setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },

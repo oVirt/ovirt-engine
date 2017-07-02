@@ -42,8 +42,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -1260,7 +1260,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateConsoleDevice(Guid vmId) {
         Frontend.getInstance().runQuery(
-                VdcQueryType.GetConsoleDevices,
+                QueryType.GetConsoleDevices,
                 new IdQueryParameters(vmId),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<String> consoleDevices = returnValue.getReturnValue();
@@ -1301,7 +1301,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateRngDevice(Guid templateId) {
         Frontend.getInstance().runQuery(
-                VdcQueryType.GetRngDevice,
+                QueryType.GetRngDevice,
                 new IdQueryParameters(templateId),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                             List<VmRngDevice> devs = returnValue.getReturnValue();
@@ -1398,7 +1398,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         if (clusterId == null) {
             return;
         }
-        Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
+        Frontend.getInstance().runQuery(QueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
@@ -1443,7 +1443,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateGraphics(Guid id) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(id), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(id), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
             List<VmDevice> graphicsVmDevs = returnValue.getReturnValue();
 
             List<GraphicsType> graphicsTypes = new ArrayList<>();

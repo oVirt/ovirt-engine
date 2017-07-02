@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendClustersResourceTest extends
         AbstractBackendCollectionResourceTest<org.ovirt.engine.api.model.Cluster, Cluster, BackendClustersResource> {
@@ -33,13 +33,13 @@ public class BackendClustersResourceTest extends
     @Test
     public void testAddClusterFallbackVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
+        setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
-        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+        setUpGetEntityExpectations(QueryType.GetManagementNetwork,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
@@ -52,7 +52,7 @@ public class BackendClustersResourceTest extends
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetClusterById,
+                                  QueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -70,13 +70,13 @@ public class BackendClustersResourceTest extends
     @Test
     public void testAddClusterSpecificVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
+        setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
-        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+        setUpGetEntityExpectations(QueryType.GetManagementNetwork,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
@@ -89,7 +89,7 @@ public class BackendClustersResourceTest extends
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetClusterById,
+                                  QueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -119,7 +119,7 @@ public class BackendClustersResourceTest extends
 
     private void doTestBadAddCluster(boolean valid, boolean success, String detail)
             throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
+        setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
@@ -146,13 +146,13 @@ public class BackendClustersResourceTest extends
     public void testAddClusterNamedDataCenter() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolByDatacenterName,
+        setUpEntityQueryExpectations(QueryType.GetStoragePoolByDatacenterName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
                 setUpStoragePool(1));
 
-        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+        setUpGetEntityExpectations(QueryType.GetManagementNetwork,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -165,7 +165,7 @@ public class BackendClustersResourceTest extends
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetClusterById,
+                                  QueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -192,7 +192,7 @@ public class BackendClustersResourceTest extends
 
     private void doTestBadAddClusterNamedDataCenter(boolean valid, boolean success, String detail)
             throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolByDatacenterName,
+        setUpEntityQueryExpectations(QueryType.GetStoragePoolByDatacenterName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },

@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParameters;
@@ -347,7 +347,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     private boolean isStorageDomainAttachedToStoragePool(StorageDomain storageDomain) {
         List<StorageDomain> storageDomainList =
-                getBackend().runInternalQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                getBackend().runInternalQuery(QueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
                         new StorageDomainsAndStoragePoolIdQueryParameters(storageDomain,
                                 getStoragePoolId(),
                                 getVds().getId(),

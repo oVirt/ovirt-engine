@@ -13,8 +13,8 @@ import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class OvirtAuthPlugIn extends AbstractPlugIn {
 
@@ -62,7 +62,7 @@ public class OvirtAuthPlugIn extends AbstractPlugIn {
                         return loginSucceeded
                                 && engineSessionId != null
                                 && backend.runQuery(
-                                VdcQueryType.IsUserApplicationContainerManager,
+                                QueryType.IsUserApplicationContainerManager,
                                 new VdcQueryParametersBase(engineSessionId)
                         ).getSucceeded();
                     } finally {

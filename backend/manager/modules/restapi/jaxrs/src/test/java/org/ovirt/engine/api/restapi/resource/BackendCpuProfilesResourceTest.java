@@ -5,13 +5,13 @@ import java.util.List;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendCpuProfilesResourceTest extends AbstractBackendCpuProfilesResourceTest<BackendCpuProfilesResource> {
 
     public BackendCpuProfilesResourceTest() {
-        super(new BackendCpuProfilesResource(), VdcQueryType.GetAllCpuProfiles, VdcQueryParametersBase.class);
+        super(new BackendCpuProfilesResource(), QueryType.GetAllCpuProfiles, VdcQueryParametersBase.class);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BackendCpuProfilesResourceTest extends AbstractBackendCpuProfilesRe
 
     @Override
     protected void setUpClusterQueryExpectations() {
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { CLUSTER_ID },

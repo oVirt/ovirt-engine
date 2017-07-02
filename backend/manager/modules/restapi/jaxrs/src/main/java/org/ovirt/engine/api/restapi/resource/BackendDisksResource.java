@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDisksResource
@@ -44,7 +44,7 @@ public class BackendDisksResource
             params.setVdsId(getHostId(disk.getLunStorage().getHost()));
         }
         return performCreate(ActionType.AddDisk, params,
-                new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetDiskByDiskId, IdQueryParameters.class));
     }
 
     private void updateStorageTypeForDisk(Disk disk, Guid storageDomainId) {
@@ -71,7 +71,7 @@ public class BackendDisksResource
     }
 
     private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainById(Guid id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, QueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
     }
 
     protected void validateDiskForCreation(Disk disk) {
@@ -96,7 +96,7 @@ public class BackendDisksResource
     private Guid getStorageDomainIdByName(String storageDomainName) {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                 getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                        VdcQueryType.GetAllStorageDomains,
+                        QueryType.GetAllStorageDomains,
                         new VdcQueryParametersBase());
         for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getStorageName().equals(storageDomainName)) {
@@ -109,7 +109,7 @@ public class BackendDisksResource
     @Override
     public Disks list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllDisks, new VdcQueryParametersBase()));
+            return mapCollection(getBackendCollection(QueryType.GetAllDisks, new VdcQueryParametersBase()));
         } else {
             return mapCollection(getBackendCollection(SearchType.Disk));
         }

@@ -8,7 +8,7 @@ import org.ovirt.engine.api.resource.AffinityGroupVmResource;
 import org.ovirt.engine.api.resource.AffinityGroupVmsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,7 +55,7 @@ public class BackendAffinityGroupVmsResource extends AbstractBackendCollectionRe
     @Override
     protected org.ovirt.engine.core.common.scheduling.AffinityGroup getEntity() {
         return getEntity(org.ovirt.engine.core.common.scheduling.AffinityGroup.class,
-                VdcQueryType.GetAffinityGroupById,
+                QueryType.GetAffinityGroupById,
                 new IdQueryParameters(affinityGroupId),
                 affinityGroupId.toString());
     }

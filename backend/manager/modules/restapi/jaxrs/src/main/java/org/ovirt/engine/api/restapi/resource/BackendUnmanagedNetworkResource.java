@@ -9,8 +9,8 @@ import org.ovirt.engine.api.model.UnmanagedNetwork;
 import org.ovirt.engine.api.resource.UnmanagedNetworkResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.UnmanagedNetworkParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUnmanagedNetworkResource extends AbstractBackendSubResource<UnmanagedNetwork,
@@ -26,7 +26,7 @@ public class BackendUnmanagedNetworkResource extends AbstractBackendSubResource<
 
     @Override
     public UnmanagedNetwork get() {
-        return performGet(VdcQueryType.GetUnmanagedNetworkByHostIdAndName, new UnmanagedNetworkParameters(hostId, id), Host.class);
+        return performGet(QueryType.GetUnmanagedNetworkByHostIdAndName, new UnmanagedNetworkParameters(hostId, id), Host.class);
     }
 
     @Override

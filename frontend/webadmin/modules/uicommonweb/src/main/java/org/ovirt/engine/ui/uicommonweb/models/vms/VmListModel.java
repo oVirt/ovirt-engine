@@ -42,10 +42,10 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -599,7 +599,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VM, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     private void newVm() {
@@ -732,17 +732,17 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
 
     private void initRemoveDisksCheckboxes(final Map<Guid, EntityModel> vmsMap) {
         ArrayList<VdcQueryParametersBase> params = new ArrayList<>();
-        ArrayList<VdcQueryType> queries = new ArrayList<>();
+        ArrayList<QueryType> queries = new ArrayList<>();
 
         for (Entry<Guid, EntityModel> entry : vmsMap.entrySet()) {
             if (entry.getValue().getIsChangable()) { // No point in fetching VM disks from ones that already determined
                                                      // is unchangeable since they are already initialized
                 params.add(new IdQueryParameters(entry.getKey()));
-                queries.add(VdcQueryType.GetAllDisksByVmId);
+                queries.add(QueryType.GetAllDisksByVmId);
             }
         }
 
-        // TODO: There's no point in creating a VdcQueryType list when you wanna run the same query for all parameters,
+        // TODO: There's no point in creating a QueryType list when you wanna run the same query for all parameters,
         // revise when refactoring org.ovirt.engine.ui.Frontend to support runMultipleQuery with a single query
         if (!params.isEmpty()) {
             Frontend.getInstance().runMultipleQueries(queries, params, result -> {
@@ -817,8 +817,8 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
     }
 
     @Override
-    protected VdcQueryType getEntityExportDomain() {
-        return VdcQueryType.GetVmsFromExportDomain;
+    protected QueryType getEntityExportDomain() {
+        return QueryType.GetVmsFromExportDomain;
     }
 
     @Override

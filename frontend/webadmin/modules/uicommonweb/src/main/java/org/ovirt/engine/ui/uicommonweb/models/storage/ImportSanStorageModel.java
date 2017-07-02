@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -51,7 +51,7 @@ public abstract class ImportSanStorageModel extends SanStorageModelBase {
     protected void getUnregisteredStorageDomains(List<StorageServerConnections> connections) {
         VDS vds = getContainer().getHost().getSelectedItem();
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredBlockStorageDomains,
+        Frontend.getInstance().runQuery(QueryType.GetUnregisteredBlockStorageDomains,
                 new GetUnregisteredBlockStorageDomainsParameters(vds.getId(), getType(), connections),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     Pair<List<StorageDomain>, List<StorageServerConnections>> returnValuePair =

@@ -30,9 +30,9 @@ import org.ovirt.engine.core.common.businessentities.XENVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -289,7 +289,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                 architectures.add(architecture);
             }
         });
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllClusters, new VdcQueryParametersBase(), callback);
+        Frontend.getInstance().runQuery(QueryType.GetAllClusters, new VdcQueryParametersBase(), callback);
 
     }
 
@@ -416,7 +416,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
             StoragePool dataCenter = dataCenters.getSelectedItem();
             Frontend.getInstance().runQuery(
-                    VdcQueryType.GetStorageDomainsByStoragePoolId,
+                    QueryType.GetStorageDomainsByStoragePoolId,
                     new IdQueryParameters(dataCenter.getId()),
                     new AsyncQuery<>(createGetStorageDomainsByStoragePoolIdCallback()));
         });
@@ -571,7 +571,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     public void loadVmsFromExportDomain() {
         clearProblem();
         startProgress();
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
+        Frontend.getInstance().runQuery(QueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getDataCenters().getSelectedItem().getId(), exportDomain.getEntity().getId()),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> updateVms(returnValue.<List<VM>>getReturnValue())));
     }

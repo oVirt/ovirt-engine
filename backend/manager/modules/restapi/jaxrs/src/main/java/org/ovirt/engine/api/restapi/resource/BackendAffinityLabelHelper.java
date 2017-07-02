@@ -21,7 +21,7 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -38,7 +38,7 @@ public class BackendAffinityLabelHelper {
         IdQueryParameters parameters = new IdQueryParameters(GuidUtils.asGuid(id));
         return resource.getEntity(
             Label.class,
-            VdcQueryType.GetLabelById,
+            QueryType.GetLabelById,
             parameters,
             id,
             true

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendFenceAgentsResource
@@ -37,7 +37,7 @@ public class BackendFenceAgentsResource
         validateParameters(agent, "address", "order", "type", "username", "password");
         return performCreate(ActionType.AddFenceAgent,
                 getAddParameters(agent),
-                new QueryIdResolver<Guid>(VdcQueryType.GetFenceAgentById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetFenceAgentById, IdQueryParameters.class));
     }
 
     private FenceAgentCommandParameterBase getAddParameters(Agent agent) {
@@ -64,6 +64,6 @@ public class BackendFenceAgentsResource
     }
 
     private List<FenceAgent> getFenceAgents() {
-        return getBackendCollection(VdcQueryType.GetFenceAgentsByVdsId, new IdQueryParameters(new Guid(hostId)));
+        return getBackendCollection(QueryType.GetFenceAgentsByVdsId, new IdQueryParameters(new Guid(hostId)));
     }
 }

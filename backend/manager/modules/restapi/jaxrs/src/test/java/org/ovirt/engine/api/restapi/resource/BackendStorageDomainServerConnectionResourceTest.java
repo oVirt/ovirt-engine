@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainServerConnectionResourceTest extends AbstractBackendSubResourceTest<StorageConnection, StorageServerConnections, BackendStorageDomainServerConnectionResource> {
 
@@ -59,7 +59,7 @@ public class BackendStorageDomainServerConnectionResourceTest extends AbstractBa
     }
 
     private void setUpGetEntityExpectations() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[3].toString() },

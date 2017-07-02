@@ -33,8 +33,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -567,7 +567,7 @@ public abstract class AbstractDiskModel extends DiskModel {
             return;
         }
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetDiskProfilesByStorageDomainId,
+        Frontend.getInstance().runQuery(QueryType.GetDiskProfilesByStorageDomainId,
                 new IdQueryParameters(storageDomain.getId()),
                 new AsyncQuery<VdcQueryReturnValue>(value -> setDiskProfilesList((List<DiskProfile>) value.getReturnValue())));
     }

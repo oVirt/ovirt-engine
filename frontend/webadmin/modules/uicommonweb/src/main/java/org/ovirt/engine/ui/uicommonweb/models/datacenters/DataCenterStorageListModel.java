@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -170,7 +170,7 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
     protected void syncSearch() {
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, tempVar, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByStoragePoolId, tempVar, new SetItemsAsyncQuery());
     }
 
     public void onMaintenance() {

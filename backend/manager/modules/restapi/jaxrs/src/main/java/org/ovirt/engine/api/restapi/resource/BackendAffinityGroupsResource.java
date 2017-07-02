@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.AffinityGroupResource;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -28,7 +28,7 @@ public class BackendAffinityGroupsResource
     @Override
     public AffinityGroups list() {
         List<org.ovirt.engine.core.common.scheduling.AffinityGroup> entities =
-                getBackendCollection(VdcQueryType.GetAffinityGroupsByClusterId,
+                getBackendCollection(QueryType.GetAffinityGroupsByClusterId,
                         new IdQueryParameters(asGuid(clusterId)));
         return mapCollection(entities);
     }
@@ -50,7 +50,7 @@ public class BackendAffinityGroupsResource
 
         return performCreate(ActionType.AddAffinityGroup,
                 new AffinityGroupCRUDParameters(null, backendEntity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetAffinityGroupById, IdQueryParameters.class),
+                new QueryIdResolver<Guid>(QueryType.GetAffinityGroupById, IdQueryParameters.class),
                 true);
     }
 

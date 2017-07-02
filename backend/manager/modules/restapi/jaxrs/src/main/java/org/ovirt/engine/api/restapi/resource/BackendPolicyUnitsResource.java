@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -39,7 +39,7 @@ public abstract class BackendPolicyUnitsResource<M extends BaseResources, N exte
 
     protected ClusterPolicy getClusterPolicy() {
         return getEntity(ClusterPolicy.class,
-                VdcQueryType.GetClusterPolicyById,
+                QueryType.GetClusterPolicyById,
                 new IdQueryParameters(schedulingPolicyId),
                 schedulingPolicyId.toString());
     }

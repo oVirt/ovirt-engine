@@ -12,7 +12,7 @@ import org.ovirt.engine.api.restapi.types.IscsiBondMapper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondsResource extends AbstractBackendCollectionResource<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>
@@ -28,7 +28,7 @@ public class BackendIscsiBondsResource extends AbstractBackendCollectionResource
     @Override
     public IscsiBonds list() {
         return mapCollection(
-                getBackendCollection(VdcQueryType.GetIscsiBondsByStoragePoolId, new IdQueryParameters(dataCenterId))
+                getBackendCollection(QueryType.GetIscsiBondsByStoragePoolId, new IdQueryParameters(dataCenterId))
         );
     }
 
@@ -41,7 +41,7 @@ public class BackendIscsiBondsResource extends AbstractBackendCollectionResource
 
         return performCreate(ActionType.AddIscsiBond,
                 new AddIscsiBondParameters(entity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetIscsiBondById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetIscsiBondById, IdQueryParameters.class));
     }
 
     @Override

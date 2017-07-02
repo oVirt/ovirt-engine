@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendFilesResource
     extends AbstractBackendCollectionResource<File, String>
@@ -30,7 +30,7 @@ public class BackendFilesResource
     @Override
     public Files list() {
         if (isIsoDomain(getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                                  VdcQueryType.GetStorageDomainById,
+                                  QueryType.GetStorageDomainById,
                                   new IdQueryParameters(asGuid(storageDomainId)),
                                   "storage_domain"))) {
             return mapCollection(listFiles());
@@ -71,7 +71,7 @@ public class BackendFilesResource
         GetImagesListParameters queryParams = new GetImagesListParameters(asGuid(storageDomainId), ImageFileType.All);
         queryParams.setForceRefresh(true);
 
-        List<RepoImage> files = getBackendCollection(RepoImage.class, VdcQueryType.GetImagesList,
+        List<RepoImage> files = getBackendCollection(RepoImage.class, QueryType.GetImagesList,
                                     queryParams);
         return files.stream().map(RepoImage::getRepoImageId).collect(toList());
     }

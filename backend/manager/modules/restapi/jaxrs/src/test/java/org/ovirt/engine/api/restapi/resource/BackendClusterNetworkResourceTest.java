@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworkResourceTest
@@ -40,7 +40,7 @@ public class BackendClusterNetworkResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
+        setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { CLUSTER_ID },
@@ -79,7 +79,7 @@ public class BackendClusterNetworkResourceTest
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllNetworksByClusterId,
+            QueryType.GetAllNetworksByClusterId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { CLUSTER_ID },
@@ -146,7 +146,7 @@ public class BackendClusterNetworkResourceTest
         Cluster group = mock(Cluster.class);
         when(group.getId()).thenReturn(id);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { id },
@@ -176,7 +176,7 @@ public class BackendClusterNetworkResourceTest
     protected void setUpEntityQueryExpectations(int times, boolean isDisplay, boolean isMigration, boolean isRequired, boolean isDefaultRoute)
             throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
+            setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { CLUSTER_ID },

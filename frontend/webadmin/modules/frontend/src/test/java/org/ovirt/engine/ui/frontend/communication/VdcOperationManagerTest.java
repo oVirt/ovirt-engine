@@ -16,8 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 import com.google.gwt.event.shared.EventBus;
 
@@ -48,7 +48,7 @@ public class VdcOperationManagerTest {
 
     @Test
     public void testAddOperationMultipleQuery() {
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(VdcQueryType.Search, new VdcQueryParametersBase().withRefresh(), null);
+        VdcOperation<QueryType, VdcQueryParametersBase> testOperation = new VdcOperation<>(QueryType.Search, new VdcQueryParametersBase().withRefresh(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
         verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
@@ -64,8 +64,8 @@ public class VdcOperationManagerTest {
         VdcOperation<ActionType, ActionParametersBase> testOperation1 =
                 new VdcOperation<>(ActionType.AddNetworkOnProvider, new ActionParametersBase(), null);
         VdcQueryParametersBase testParameters = new VdcQueryParametersBase().withRefresh();
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation2 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);
-        VdcOperation<VdcQueryType, VdcQueryParametersBase> testOperation3 = new VdcOperation<>(VdcQueryType.Search, testParameters, null);
+        VdcOperation<QueryType, VdcQueryParametersBase> testOperation2 = new VdcOperation<>(QueryType.Search, testParameters, null);
+        VdcOperation<QueryType, VdcQueryParametersBase> testOperation3 = new VdcOperation<>(QueryType.Search, testParameters, null);
         List<VdcOperation<?, ?>> operationList = new ArrayList<>();
         operationList.add(testOperation1);
         operationList.add(testOperation2);

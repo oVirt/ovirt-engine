@@ -3,17 +3,17 @@ package org.ovirt.engine.ui.frontend.communication;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 /**
  * This class represents a single operation, which is either a query or an action.
- * @param <T> The type of operation, either {@code VdcQueryType} or {@code ActionType}.
+ * @param <T> The type of operation, either {@code QueryType} or {@code ActionType}.
  * @param <P> The parameter type for the operation.
  */
 public class VdcOperation<T, P> {
 
     /**
-     * The actual operation, can be either {@code VdcQueryType} or {@code ActionType}.
+     * The actual operation, can be either {@code QueryType} or {@code ActionType}.
      */
     private final T operationType;
 
@@ -63,11 +63,11 @@ public class VdcOperation<T, P> {
             final boolean isRunOnlyIfAllValidationPass) {
         if (operation instanceof ActionType) {
             this.isAction = true;
-        } else if (operation instanceof VdcQueryType) {
+        } else if (operation instanceof QueryType) {
             this.isAction = false;
         } else {
             throw new IllegalArgumentException(
-                    "Operation type must be either ActionType or VdcQueryType"); //$NON-NLS-1$
+                    "Operation type must be either ActionType or QueryType"); //$NON-NLS-1$
         }
 
         this.operationType = operation;

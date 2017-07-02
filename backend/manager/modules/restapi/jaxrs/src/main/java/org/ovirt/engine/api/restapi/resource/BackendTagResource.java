@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagResource
@@ -31,7 +31,7 @@ public class BackendTagResource
 
     @Override
     public Tag get() {
-        return performGet(VdcQueryType.GetTagByTagId, new IdQueryParameters(guid));
+        return performGet(QueryType.GetTagByTagId, new IdQueryParameters(guid));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class BackendTagResource
         }
 
         return performUpdate(incoming,
-                             new QueryIdResolver<>(VdcQueryType.GetTagByTagId, IdQueryParameters.class),
+                             new QueryIdResolver<>(QueryType.GetTagByTagId, IdQueryParameters.class),
                              ActionType.UpdateTag,
                              new UpdateParametersProvider());
     }

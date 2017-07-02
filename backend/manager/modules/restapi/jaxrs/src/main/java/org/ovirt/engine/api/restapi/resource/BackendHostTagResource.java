@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostTagResource extends AbstractBackendSubResource<Tag, Tags> implements AssignedTagResource {
@@ -26,7 +26,7 @@ public class BackendHostTagResource extends AbstractBackendSubResource<Tag, Tags
     public Tag get() {
         List<Tags> tags = getBackendCollection(
             Tags.class,
-            VdcQueryType.GetTagsByVdsId,
+            QueryType.GetTagsByVdsId,
             new GetTagsByVdsIdParameters(hostId.toString())
         );
         for (Tags tag : tags) {

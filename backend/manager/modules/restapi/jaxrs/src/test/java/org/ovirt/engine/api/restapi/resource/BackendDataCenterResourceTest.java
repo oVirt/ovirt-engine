@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Version;
 
 public class BackendDataCenterResourceTest
@@ -240,7 +240,7 @@ public class BackendDataCenterResourceTest
 
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
+            setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
@@ -249,7 +249,7 @@ public class BackendDataCenterResourceTest
     }
 
     protected void setUpVersionExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetAvailableStoragePoolVersions,
+        setUpGetEntityExpectations(QueryType.GetAvailableStoragePoolVersions,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },

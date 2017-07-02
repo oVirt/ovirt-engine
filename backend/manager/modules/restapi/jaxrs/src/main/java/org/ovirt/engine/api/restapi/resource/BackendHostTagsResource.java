@@ -7,7 +7,7 @@ import org.ovirt.engine.api.resource.AssignedTagResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendHostTagsResource extends AbstractBackendAssignedTagsResource {
     public BackendHostTagsResource(String parentId) {
@@ -15,7 +15,7 @@ public class BackendHostTagsResource extends AbstractBackendAssignedTagsResource
     }
 
     public List<Tags> getCollection() {
-        return getBackendCollection(VdcQueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(parentId));
+        return getBackendCollection(QueryType.GetTagsByVdsId, new GetTagsByVdsIdParameters(parentId));
     }
 
     @Override

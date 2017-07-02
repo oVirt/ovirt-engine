@@ -13,7 +13,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendDomainUserResourceTest
     extends AbstractBackendSubResourceTest<User, DirectoryUser, BackendDomainUserResource> {
@@ -65,7 +65,7 @@ public class BackendDomainUserResourceTest
 
     private void setUpEntityQueryExpectations(int index, boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetDirectoryUserById,
+            QueryType.GetDirectoryUserById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
                 new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]) },

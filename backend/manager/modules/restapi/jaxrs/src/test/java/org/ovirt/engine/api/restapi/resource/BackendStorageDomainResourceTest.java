@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainResourceTest
         extends AbstractBackendSubResourceTest<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain, BackendStorageDomainResource> {
@@ -85,7 +85,7 @@ public class BackendStorageDomainResourceTest
     @Test
     public void testGetFcp() throws Exception {
         setUpGetEntityExpectations(1, getFcpEntity());
-        setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
+        setUpGetEntityExpectations(QueryType.GetLunsByVgId,
                 GetLunsByVgIdParameters.class,
                 new String[] { "VgId" },
                 new Object[] { GUIDS[0].toString() },
@@ -266,7 +266,7 @@ public class BackendStorageDomainResourceTest
     public void testRemoveWithHostName() throws Exception {
         setUpGetEntityExpectations();
         setUpGetEntityExpectations(
-            VdcQueryType.GetVdsStaticByName,
+            QueryType.GetVdsStaticByName,
             NameQueryParameters.class,
             new String[] { "Name" },
             new Object[] { NAMES[1] },
@@ -323,7 +323,7 @@ public class BackendStorageDomainResourceTest
 
     protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.StorageDomain entity) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetStorageDomainById,
+            setUpGetEntityExpectations(QueryType.GetStorageDomainById,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
@@ -333,7 +333,7 @@ public class BackendStorageDomainResourceTest
 
     protected void setUpGetStorageServerConnectionExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+            setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                                        StorageServerConnectionQueryParametersBase.class,
                                        new String[] { "ServerConnectionId" },
                                        new Object[] { GUIDS[0].toString() },
@@ -342,7 +342,7 @@ public class BackendStorageDomainResourceTest
     }
 
     private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStorageDomainById,
+        setUpGetEntityExpectations(QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

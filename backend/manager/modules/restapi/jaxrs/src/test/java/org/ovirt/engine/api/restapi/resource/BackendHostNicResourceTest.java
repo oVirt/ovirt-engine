@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicResourceTest
@@ -72,7 +72,7 @@ public class BackendHostNicResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
+        setUpEntityQueryExpectations(QueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
@@ -138,7 +138,7 @@ public class BackendHostNicResourceTest
         when(stats.getTransmittedBytes()).thenReturn(TRANSMITTED_BYTES);
         List<VdsNetworkInterface> ifaces = new ArrayList<>();
         ifaces.add(entity);
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
+        setUpEntityQueryExpectations(QueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
@@ -165,7 +165,7 @@ public class BackendHostNicResourceTest
     }
 
     protected void setUpEntityQueryExpectations() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
+        setUpEntityQueryExpectations(QueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
@@ -176,7 +176,7 @@ public class BackendHostNicResourceTest
         while (times-- > 0) {
             VDS vds = new VDS();
             vds.setClusterId(GUIDS[0]);
-            setUpEntityQueryExpectations(VdcQueryType.GetVdsByVdsId,
+            setUpEntityQueryExpectations(QueryType.GetVdsByVdsId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { PARENT_GUID },
@@ -191,7 +191,7 @@ public class BackendHostNicResourceTest
             network.setId(GUIDS[0]);
             network.setName("orcus");
             networks.add(network);
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
+            setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[0] },

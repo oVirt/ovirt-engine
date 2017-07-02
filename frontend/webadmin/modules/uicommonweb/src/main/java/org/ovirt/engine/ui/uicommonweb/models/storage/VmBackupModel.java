@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -247,7 +247,7 @@ public class VmBackupModel extends ManageBackupModel<VM> {
             AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(list -> {
                 if (list != null && list.size() > 0) {
                     StoragePool dataCenter = list.get(0);
-                    Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
+                    Frontend.getInstance().runQuery(QueryType.GetVmsFromExportDomain,
                             new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
                                     getEntity().getId()), new SetSortedItemsAsyncQuery(new LexoNumericNameableComparator<>()));
                 }

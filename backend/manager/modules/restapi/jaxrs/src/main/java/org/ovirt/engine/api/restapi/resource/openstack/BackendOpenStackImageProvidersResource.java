@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackImageProvidersResource
@@ -61,7 +61,7 @@ public class BackendOpenStackImageProvidersResource
     private List<Provider> getBackendCollection() {
         if (isFiltered()) {
             return getBackendCollection(
-                VdcQueryType.GetAllProviders,
+                QueryType.GetAllProviders,
                 new GetAllProvidersParameters(ProviderType.OPENSTACK_IMAGE)
             );
         }
@@ -89,7 +89,7 @@ public class BackendOpenStackImageProvidersResource
         return performCreate(
             ActionType.AddProvider,
             new ProviderParameters(map(provider)),
-            new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class)
+            new QueryIdResolver<Guid>(QueryType.GetProviderById, IdQueryParameters.class)
         );
     }
 

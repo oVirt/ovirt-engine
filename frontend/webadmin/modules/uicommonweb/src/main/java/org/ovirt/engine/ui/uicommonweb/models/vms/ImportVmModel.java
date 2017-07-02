@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -58,7 +58,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (getClusterQuota().getIsAvailable()) {
-                Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForCluster,
+                Frontend.getInstance().runQuery(QueryType.GetAllRelevantQuotasForCluster,
                     new IdQueryParameters(getCluster().getSelectedItem().getId()),
                     new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                                 ArrayList<Quota> quotaList = returnValue.getReturnValue();
@@ -87,7 +87,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     }
 
     private void fetchCpuProfiles(Guid clusterId) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
+        Frontend.getInstance().runQuery(QueryType.GetCpuProfilesByClusterId,
                 new IdQueryParameters(clusterId),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<CpuProfile> cpuProfiles = returnValue.getReturnValue();
@@ -132,7 +132,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     }
 
     public void setItems(final AsyncCallback<VdcQueryReturnValue> callback, final List<VM>  externalVms) {
-        Frontend.getInstance().runQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(QueryType.Search,
                 new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<VM> vms = returnValue.getReturnValue();

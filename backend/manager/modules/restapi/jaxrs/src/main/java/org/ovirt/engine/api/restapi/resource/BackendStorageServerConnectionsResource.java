@@ -11,9 +11,9 @@ import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageServerConnectionsResource
@@ -21,7 +21,7 @@ public class BackendStorageServerConnectionsResource
         implements StorageServerConnectionsResource {
 
     private final EntityIdResolver<String> ENTITY_RETRIEVER =
-            new QueryIdResolver<>(VdcQueryType.GetStorageServerConnectionById,
+            new QueryIdResolver<>(QueryType.GetStorageServerConnectionById,
                     StorageServerConnectionQueryParametersBase.class);
 
     public BackendStorageServerConnectionsResource() {
@@ -30,7 +30,7 @@ public class BackendStorageServerConnectionsResource
 
     @Override
     public StorageConnections list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllStorageServerConnections,
+        return mapCollection(getBackendCollection(QueryType.GetAllStorageServerConnections,
                 new VdcQueryParametersBase()));
     }
 

@@ -15,14 +15,14 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicsResource extends AbstractBackendNicsResource implements VmNicsResource {
     private Guid vmId;
 
     public BackendVmNicsResource(Guid vmId) {
-        super(vmId, VdcQueryType.GetVmInterfacesByVmId);
+        super(vmId, QueryType.GetVmInterfacesByVmId);
         this.vmId = vmId;
     }
 
@@ -30,7 +30,7 @@ public class BackendVmNicsResource extends AbstractBackendNicsResource implement
     public Nics list() {
         Nics nics = new Nics();
         List<VmNetworkInterface> entities = getBackendCollection(
-            VdcQueryType.GetVmInterfacesByVmId,
+            QueryType.GetVmInterfacesByVmId,
             new IdQueryParameters(vmId)
         );
         for (VmNetworkInterface entity : entities) {

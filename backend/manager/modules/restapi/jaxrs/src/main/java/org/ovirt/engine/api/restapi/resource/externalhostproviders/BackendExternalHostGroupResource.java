@@ -27,8 +27,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExternalHostGroupResource
@@ -53,7 +53,7 @@ public class BackendExternalHostGroupResource
         // The backend doesn't have a way to retrieve a host by ide, so we have to iterate them:
         ProviderQueryParameters parameters = new ProviderQueryParameters();
         parameters.setProvider(provider);
-        VdcQueryReturnValue result = runQuery(VdcQueryType.GetHostGroupsFromExternalProvider, parameters);
+        VdcQueryReturnValue result = runQuery(QueryType.GetHostGroupsFromExternalProvider, parameters);
         List<org.ovirt.engine.core.common.businessentities.ExternalHostGroup> entities =  result.getReturnValue();
         if (entities != null) {
             for (org.ovirt.engine.core.common.businessentities.ExternalHostGroup entity : entities) {

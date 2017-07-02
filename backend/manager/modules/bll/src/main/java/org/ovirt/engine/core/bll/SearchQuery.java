@@ -52,9 +52,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.Version;
@@ -478,7 +478,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     String prefix = m.group("prefix");
                     searchText =  m.group("content");
                     // get profile
-                    List<String> profiles = backend.runInternalQuery(VdcQueryType.GetDomainList,
+                    List<String> profiles = backend.runInternalQuery(QueryType.GetDomainList,
                             new VdcQueryParametersBase(getParameters().getSessionId())).getReturnValue();
                     for (String profile : profiles) {
                         if (searchText.startsWith(profile + COLON)) {
@@ -492,7 +492,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     }
                     // get namespace
                     HashMap<String, List<String>> namespacesMap =
-                            backend.runInternalQuery(VdcQueryType.GetAvailableNamespaces,
+                            backend.runInternalQuery(QueryType.GetAvailableNamespaces,
                                     new VdcQueryParametersBase(getParameters().getSessionId())).getReturnValue();
                     List<String> namespaces = namespacesMap.get(queryAuthz);
                     for (String namespace : namespaces) {

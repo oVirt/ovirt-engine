@@ -48,9 +48,9 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -229,7 +229,7 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
         result.setReturnValue(resultMap);
         result.setSucceeded(true);
 
-        when(command.getBackend().runInternalQuery(eq(VdcQueryType.GetTemplatesFromExportDomain),
+        when(command.getBackend().runInternalQuery(eq(QueryType.GetTemplatesFromExportDomain),
                 any(VdcQueryParametersBase.class), any(EngineContext.class))).thenReturn(result);
     }
 

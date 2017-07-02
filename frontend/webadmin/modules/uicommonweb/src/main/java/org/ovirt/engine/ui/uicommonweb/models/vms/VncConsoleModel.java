@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
@@ -102,7 +102,7 @@ public class VncConsoleModel extends ConsoleModel {
         parameters.setEngineBaseUrl(FrontendUrlUtils.getRootURL());
         parameters.setConsoleClientResourcesUrl(dynamicMessages.consoleClientResourcesUrl());
         Frontend.getInstance().runQuery(
-                VdcQueryType.ConfigureConsoleOptions,
+                QueryType.ConfigureConsoleOptions,
                 parameters,
                 new ShowErrorAsyncQuery(returnValue -> {
                     ConsoleOptions configuredOptions = ((VdcQueryReturnValue) returnValue).getReturnValue();

@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.uicommon;
 
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SignStringParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -37,7 +37,7 @@ public class WebClientConsoleInvoker {
     }
 
     public void invokeClient() {
-        Frontend.getInstance().runQuery(VdcQueryType.SignString,
+        Frontend.getInstance().runQuery(QueryType.SignString,
                 new SignStringParameters(createConnectionString(host, port, useSsl)),
                 new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
                     String signedTicket = returnValue.getReturnValue();

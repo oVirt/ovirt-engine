@@ -9,15 +9,14 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendGroupAssignedPermissionsResourceTest
         extends AbstractBackendAssignedPermissionsResourceTest {
 
     public BackendGroupAssignedPermissionsResourceTest() {
         super(GUIDS[1],
-              VdcQueryType.GetPermissionsByAdElementId,
+              QueryType.GetPermissionsByAdElementId,
               new IdQueryParameters(GUIDS[1]),
               Group.class,
               "Group.Id",
@@ -64,7 +63,7 @@ public class BackendGroupAssignedPermissionsResourceTest
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
+        setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {GUIDS[1]},
@@ -78,7 +77,7 @@ public class BackendGroupAssignedPermissionsResourceTest
     public void testListWithEveryonePermissions() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
+        setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
                                     IdQueryParameters.class,
                                     new String[] {"Id"},
                                     new Object[] {GUIDS[1]},

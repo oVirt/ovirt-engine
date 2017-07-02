@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUserTagResourceTest extends AbstractBackendSubResourceTest<Tag, Tags, BackendUserTagResource> {
@@ -86,7 +86,7 @@ public class BackendUserTagResourceTest extends AbstractBackendSubResourceTest<T
 
     private void setUpGetTagExpectations(boolean succeed) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetTagsByUserId,
+            QueryType.GetTagsByUserId,
             GetTagsByUserIdParameters.class,
             new String[] { "UserId" },
             new Object[] { USER_ID.toString() },

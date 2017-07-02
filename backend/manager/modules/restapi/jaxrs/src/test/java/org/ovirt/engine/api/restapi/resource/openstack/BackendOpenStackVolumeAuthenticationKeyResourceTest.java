@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendOpenStackVolumeAuthenticationKeyResourceTest
         extends AbstractBackendSubResourceTest<OpenstackVolumeAuthenticationKey, LibvirtSecret, BackendOpenStackVolumeAuthenticationKeyResource> {
@@ -92,7 +92,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpEntityQueryExpectations(
-                VdcQueryType.GetLibvirtSecretById,
+                QueryType.GetLibvirtSecretById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -134,7 +134,7 @@ public class BackendOpenStackVolumeAuthenticationKeyResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(
-                    VdcQueryType.GetLibvirtSecretById,
+                    QueryType.GetLibvirtSecretById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[1] },

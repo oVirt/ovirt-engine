@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAttachedStorageDomainResource
@@ -31,7 +31,7 @@ public class BackendAttachedStorageDomainResource
 
     @Override
     public StorageDomain get() {
-        return performGet(VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
+        return performGet(QueryType.GetStorageDomainByIdAndStoragePoolId,
                           new StorageDomainAndPoolQueryParameters(guid, dataCenterId));
     }
 

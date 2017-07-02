@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.VmsComparerByDiskSize;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -71,7 +71,7 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
     }
 
     protected VdcQueryReturnValue getAllDisksByStorageDomain(Guid domainId) {
-        return runInternalQuery(VdcQueryType.GetAllDisksByStorageDomainId,
+        return runInternalQuery(QueryType.GetAllDisksByStorageDomainId,
                 new IdQueryParameters(domainId));
     }
 

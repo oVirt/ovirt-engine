@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -85,7 +85,7 @@ public class VmHostDeviceListModel extends HostDeviceListModelBase<VM> {
     @Override
     protected void syncSearch() {
         if (getEntity() != null) {
-            syncSearch(VdcQueryType.GetExtendedVmHostDevicesByVmId, new IdQueryParameters(getEntity().getId()));
+            syncSearch(QueryType.GetExtendedVmHostDevicesByVmId, new IdQueryParameters(getEntity().getId()));
         }
     }
 

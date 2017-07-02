@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase> implements QosResource {
@@ -30,16 +30,16 @@ public class BackendQosResource extends AbstractBackendSubResource<Qos, QosBase>
     @Override
     public Qos get() {
         IdQueryParameters params = new IdQueryParameters(guid);
-        Qos qos = performGet(VdcQueryType.GetQosById, params);
+        Qos qos = performGet(QueryType.GetQosById, params);
         return qos;
     }
 
     @Override
     public Qos update(final Qos incoming) {
         QueryIdResolver<Guid> entityResolver =
-                new QueryIdResolver<>(VdcQueryType.GetQosById, IdQueryParameters.class);
+                new QueryIdResolver<>(QueryType.GetQosById, IdQueryParameters.class);
         final QosBase qosBase =
-                getEntity(new QueryIdResolver<>(VdcQueryType.GetQosById, IdQueryParameters.class), true);
+                getEntity(new QueryIdResolver<>(QueryType.GetQosById, IdQueryParameters.class), true);
         return performUpdate(incoming,
                 entityResolver,
                 updateActionTypeForQosType(qosBase.getQosType()),

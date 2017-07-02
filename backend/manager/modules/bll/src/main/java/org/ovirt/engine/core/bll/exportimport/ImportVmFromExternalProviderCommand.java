@@ -52,7 +52,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -435,7 +435,7 @@ implements QuotaStorageDependent {
 
     private DiskImage getDisk(Guid diskId) {
         return runInternalQuery(
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 new IdQueryParameters(diskId))
                 .getReturnValue();
     }

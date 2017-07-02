@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
@@ -47,7 +47,7 @@ public class DataCenterQuotaListModel extends QuotaListModel<StoragePool> {
         }
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByStoragePoolId,
+        Frontend.getInstance().runQuery(QueryType.GetQuotaByStoragePoolId,
                 parameters,
                 new SetItemsAsyncQuery());
     }

@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class BackendResourceTest extends AbstractBackendBaseTest {
@@ -119,7 +119,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity)
             throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
+            setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[0] },
@@ -128,7 +128,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
     }
 
     protected void setUpGetEntityExpectations(boolean filter) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
+        setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                 IdQueryParameters.class,
                 new String[] { "Id", "Filtered" },
                 new Object[] { GUIDS[0], filter },

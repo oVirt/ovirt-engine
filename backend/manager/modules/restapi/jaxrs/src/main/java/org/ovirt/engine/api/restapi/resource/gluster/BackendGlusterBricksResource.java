@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvanc
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -57,7 +57,7 @@ public class BackendGlusterBricksResource
     @Override
     public GlusterBricks list() {
         List<GlusterBrickEntity> bricks =
-                getBackendCollection(VdcQueryType.GetGlusterVolumeBricks, new IdQueryParameters(asGuid(getVolumeId())));
+                getBackendCollection(QueryType.GetGlusterVolumeBricks, new IdQueryParameters(asGuid(getVolumeId())));
         GlusterBricks bricksModel = mapCollection(bricks);
         return addActions(bricksModel);
     }
@@ -107,7 +107,7 @@ public class BackendGlusterBricksResource
                         replicaCount,
                         stripeCount,
                         isForce()),
-                new QueryIdResolver<>(VdcQueryType.GetGlusterBrickById, IdQueryParameters.class));
+                new QueryIdResolver<>(QueryType.GetGlusterBrickById, IdQueryParameters.class));
     }
 
     private String getVolumeId() {
@@ -169,7 +169,7 @@ public class BackendGlusterBricksResource
 
         GlusterVolumeEntity volume =
                 getEntity(GlusterVolumeEntity.class,
-                        VdcQueryType.GetGlusterVolumeById,
+                        QueryType.GetGlusterVolumeById,
                         new IdQueryParameters(asGuid(getVolumeId())),
                         "");
         if (volume.getAsyncTask() != null && volume.getAsyncTask().getType() == GlusterTaskType.REMOVE_BRICK
@@ -201,12 +201,12 @@ public class BackendGlusterBricksResource
     protected GlusterBrick populateAdvancedDetails(GlusterBrick model, GlusterBrickEntity entity) {
 
         GlusterVolumeEntity volumeEntity = getEntity(GlusterVolumeEntity.class,
-                                                     VdcQueryType.GetGlusterVolumeById,
+                                                     QueryType.GetGlusterVolumeById,
                                                      new IdQueryParameters(entity.getVolumeId()),
                                                      null,
                                                      true);
         GlusterVolumeAdvancedDetails detailsEntity = getEntity(GlusterVolumeAdvancedDetails.class,
-                                                VdcQueryType.GetGlusterVolumeAdvancedDetails,
+                                                QueryType.GetGlusterVolumeAdvancedDetails,
                                                 new GlusterVolumeAdvancedDetailsParameters(volumeEntity.getClusterId(),
                                                                                            volumeEntity.getId(),
                                                                                            entity.getId(), true),
@@ -285,7 +285,7 @@ public class BackendGlusterBricksResource
 
         GlusterVolumeEntity volume =
                 getEntity(GlusterVolumeEntity.class,
-                        VdcQueryType.GetGlusterVolumeById,
+                        QueryType.GetGlusterVolumeById,
                         new IdQueryParameters(asGuid(getVolumeId())),
                         "");
 

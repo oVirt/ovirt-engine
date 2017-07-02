@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.queries.GetVmIconsParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -53,7 +53,7 @@ public class IconCache {
         if (localResult != null) {
             callback.onSuccess(localResult);
         } else {
-            Frontend.getInstance().runQuery(VdcQueryType.GetVmIcons, GetVmIconsParameters.create(iconIds),
+            Frontend.getInstance().runQuery(QueryType.GetVmIcons, GetVmIconsParameters.create(iconIds),
                     new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                         Map<Guid, String> idToIconMap = returnValue.getReturnValue();
                         IconCache.this.cache.putAll(idToIconMap);

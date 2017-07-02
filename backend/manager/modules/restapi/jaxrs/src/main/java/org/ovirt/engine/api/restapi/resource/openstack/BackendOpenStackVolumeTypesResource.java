@@ -26,7 +26,7 @@ import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeTypesResource
@@ -43,7 +43,7 @@ public class BackendOpenStackVolumeTypesResource
     public OpenStackVolumeTypes list() {
         Guid storageDomainId = BackendOpenStackStorageProviderHelper.getStorageDomainId(this, providerId);
         IdQueryParameters parameters = new IdQueryParameters(storageDomainId);
-        return mapCollection(getBackendCollection(VdcQueryType.GetCinderVolumeTypesByStorageDomainId, parameters));
+        return mapCollection(getBackendCollection(QueryType.GetCinderVolumeTypesByStorageDomainId, parameters));
 
     }
 

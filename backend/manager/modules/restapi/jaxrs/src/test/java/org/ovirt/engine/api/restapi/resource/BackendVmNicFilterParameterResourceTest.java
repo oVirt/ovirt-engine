@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicFilterParameterResourceTest
@@ -54,7 +54,7 @@ public class BackendVmNicFilterParameterResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetVmInterfaceFilterParameterById,
+            QueryType.GetVmInterfaceFilterParameterById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { PARAMETER_ID },
@@ -82,7 +82,7 @@ public class BackendVmNicFilterParameterResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetVmInterfaceFilterParameterById,
+            QueryType.GetVmInterfaceFilterParameterById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { PARAMETER_ID },
@@ -186,7 +186,7 @@ public class BackendVmNicFilterParameterResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmInterfaceFilterParameterById,
+                QueryType.GetVmInterfaceFilterParameterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[times] },
@@ -202,7 +202,7 @@ public class BackendVmNicFilterParameterResourceTest
     protected void setUpGetEntityExpectations(int times, VmNicFilterParameter entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(
-                VdcQueryType.GetVmInterfaceFilterParameterById,
+                QueryType.GetVmInterfaceFilterParameterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { entity.getId()},

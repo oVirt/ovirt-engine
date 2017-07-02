@@ -2,13 +2,13 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.labels.list;
 
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostAffinityLabelListModel extends AffinityLabelListModel<VDS> {
 
     public HostAffinityLabelListModel() {
-        super(VdcQueryType.GetLabelByEntityId);
+        super(QueryType.GetLabelByEntityId);
     }
 
     @Override

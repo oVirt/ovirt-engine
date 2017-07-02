@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -20,7 +20,7 @@ public class QuotaClusterListModel extends SearchableListModel<Quota, Quota> {
     protected void syncSearch() {
         super.syncSearch();
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
-        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaClusterByQuotaId,
+        Frontend.getInstance().runQuery(QueryType.GetQuotaClusterByQuotaId,
                 params,
                 new SetItemsAsyncQuery());
     }

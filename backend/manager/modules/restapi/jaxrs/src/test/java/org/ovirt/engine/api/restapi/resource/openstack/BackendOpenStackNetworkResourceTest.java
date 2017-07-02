@@ -33,7 +33,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackNetworkResourceTest
@@ -64,7 +64,7 @@ public class BackendOpenStackNetworkResourceTest
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetAllExternalNetworksOnProvider,
+            QueryType.GetAllExternalNetworksOnProvider,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },

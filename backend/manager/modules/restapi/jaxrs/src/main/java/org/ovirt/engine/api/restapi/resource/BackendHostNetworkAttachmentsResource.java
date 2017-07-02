@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.resource.NetworkAttachmentResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNetworkAttachmentsResource extends AbstractBackendNetworkAttachmentsResource {
@@ -25,7 +25,7 @@ public class BackendHostNetworkAttachmentsResource extends AbstractBackendNetwor
     protected List<org.ovirt.engine.core.common.businessentities.network.NetworkAttachment> getNetworkAttachments() {
         verifyIfHostExistsToHandle404StatusCode();
 
-        return getBackendCollection(VdcQueryType.GetNetworkAttachmentsByHostId, new IdQueryParameters(getHostId()));
+        return getBackendCollection(QueryType.GetNetworkAttachmentsByHostId, new IdQueryParameters(getHostId()));
     }
 
     @Override

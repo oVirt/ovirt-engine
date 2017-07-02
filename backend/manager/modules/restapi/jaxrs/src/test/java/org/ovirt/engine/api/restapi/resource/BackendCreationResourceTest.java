@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendCreationResourceTest
     extends AbstractBackendSubResourceTest<Creation, List/*<AsyncTaskStatus>*/, BackendCreationResource> {
@@ -52,7 +52,7 @@ public class BackendCreationResourceTest
     }
 
     protected void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetTasksStatusesByTasksIDs,
+        setUpGetEntityExpectations(QueryType.GetTasksStatusesByTasksIDs,
                                    GetTasksStatusesByTasksIDsParameters.class,
                                    new String[] {},
                                    new Object[] {},

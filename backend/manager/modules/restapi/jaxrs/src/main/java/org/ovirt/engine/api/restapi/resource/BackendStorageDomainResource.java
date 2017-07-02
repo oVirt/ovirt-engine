@@ -49,8 +49,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainResource
@@ -76,14 +76,14 @@ public class BackendStorageDomainResource
 
     @Override
     public StorageDomain get() {
-        StorageDomain storageDomain = performGet(VdcQueryType.GetStorageDomainById, new IdQueryParameters(guid));
+        StorageDomain storageDomain = performGet(QueryType.GetStorageDomainById, new IdQueryParameters(guid));
         return addLinks(storageDomain, getLinksToExclude(storageDomain));
     }
 
     @Override
     public StorageDomain update(StorageDomain incoming) {
         QueryIdResolver<Guid> storageDomainResolver =
-                new QueryIdResolver<>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
+                new QueryIdResolver<>(QueryType.GetStorageDomainById, IdQueryParameters.class);
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = getEntity(storageDomainResolver, true);
         StorageDomain model = map(entity, new StorageDomain());
         StorageType storageType = entity.getStorageType();
@@ -154,7 +154,7 @@ public class BackendStorageDomainResource
         catch (IllegalArgumentException exception) {
             VdsStatic entity = getEntity(
                 VdsStatic.class,
-                VdcQueryType.GetVdsStaticByName,
+                QueryType.GetVdsStaticByName,
                 new NameQueryParameters(host),
                 host
             );
@@ -171,7 +171,7 @@ public class BackendStorageDomainResource
         Guid hostId = getHostId(action);
         org.ovirt.engine.core.common.businessentities.StorageDomain storageDomainToAttach = getEntity(
             org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-            VdcQueryType.GetStorageDomainById,
+            QueryType.GetStorageDomainById,
             new IdQueryParameters(guid),
             guid.toString()
         );
@@ -180,7 +180,7 @@ public class BackendStorageDomainResource
         parameters.setCheckStoragePoolStatus(false);
         List<StorageDomainStatic> attachedStorageDomains = getEntity(
             List.class,
-            VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+            QueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
             parameters,
             guid.toString(),
             true
@@ -279,7 +279,7 @@ public class BackendStorageDomainResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                VdcQueryType.GetPermissionsForObject,
+                QueryType.GetPermissionsForObject,
                 new GetPermissionsForObjectParameters(guid),
                 StorageDomain.class,
                 VdcObjectType.Storage));

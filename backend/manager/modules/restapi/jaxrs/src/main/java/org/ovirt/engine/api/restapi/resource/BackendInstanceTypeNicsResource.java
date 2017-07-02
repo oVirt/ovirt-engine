@@ -13,21 +13,21 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendInstanceTypeNicsResource extends AbstractBackendNicsResource implements InstanceTypeNicsResource {
     private Guid instanceTypeId;
 
     public BackendInstanceTypeNicsResource(Guid instanceTypeId) {
-        super(instanceTypeId, VdcQueryType.GetTemplateInterfacesByTemplateId);
+        super(instanceTypeId, QueryType.GetTemplateInterfacesByTemplateId);
         this.instanceTypeId = instanceTypeId;
     }
 
     public Nics list() {
         Nics nics = new Nics();
         List<VmNetworkInterface> entities = getBackendCollection(
-            VdcQueryType.GetTemplateInterfacesByTemplateId,
+            QueryType.GetTemplateInterfacesByTemplateId,
             new IdQueryParameters(instanceTypeId)
         );
         for (VmNetworkInterface entity : entities) {

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 import org.ovirt.engine.core.utils.servlet.UnsupportedLocaleHelper;
@@ -138,7 +138,7 @@ public class WelcomeServlet extends HttpServlet {
                 log.error("Unable to set request attributed for user menu: {}", ex.getMessage());
             }
             request.setAttribute(LOCALE_KEYS, UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys()));
-            String oVirtVersion = backend.runPublicQuery(VdcQueryType.GetConfigurationValue,
+            String oVirtVersion = backend.runPublicQuery(QueryType.GetConfigurationValue,
                     new GetConfigurationValueParameters(ConfigValues.ProductRPMVersion,
                             ConfigCommon.defaultConfigurationVersion)).getReturnValue();
             request.setAttribute("sso_credential_change_url", getCredentialsChangeUrl(request));

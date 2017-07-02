@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -45,7 +45,7 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
 
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionByRoleId, tempVar, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.GetPermissionByRoleId, tempVar, new SetItemsAsyncQuery());
     }
 
     @Override

@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -41,7 +41,7 @@ public class BackendOpenStackStorageProviderHelper {
         // complete list. This is potentially very slow, so it should be improved in the future.
         Guid storageDomainId = null;
         List<StorageDomain> storageDomains =
-                resource.runQuery(VdcQueryType.GetAllStorageDomains, new VdcQueryParametersBase()).getReturnValue();
+                resource.runQuery(QueryType.GetAllStorageDomains, new VdcQueryParametersBase()).getReturnValue();
         for (StorageDomain storageDomain : storageDomains) {
             String storageId = storageDomain.getStorage();
             if (providerId.equals(storageId)) {

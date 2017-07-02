@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -20,7 +20,7 @@ public class VmErrataCountModel extends AbstractErrataCountModel {
     }
 
     @Override
-    protected VdcQueryType getQueryType() {
-        return VdcQueryType.GetErrataCountsForVm;
+    protected QueryType getQueryType() {
+        return QueryType.GetErrataCountsForVm;
     }
 }

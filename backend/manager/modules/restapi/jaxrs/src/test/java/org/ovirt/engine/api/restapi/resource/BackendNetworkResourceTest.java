@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworkResourceTest
@@ -35,7 +35,7 @@ public class BackendNetworkResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
+        setUpEntityQueryExpectations(QueryType.GetAllNetworks,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { Guid.Empty },
@@ -59,7 +59,7 @@ public class BackendNetworkResourceTest
     @Test
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
+        setUpEntityQueryExpectations(QueryType.GetAllNetworks,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { Guid.Empty },
@@ -132,7 +132,7 @@ public class BackendNetworkResourceTest
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllNetworks,
+            QueryType.GetAllNetworks,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { Guid.Empty },
@@ -166,7 +166,7 @@ public class BackendNetworkResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllNetworks,
+            QueryType.GetAllNetworks,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { Guid.Empty },
@@ -216,7 +216,7 @@ public class BackendNetworkResourceTest
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
+            setUpEntityQueryExpectations(QueryType.GetAllNetworks,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { Guid.Empty },

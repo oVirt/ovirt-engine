@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -42,7 +42,7 @@ public class StorageLeaseListModel extends SearchableListModel<StorageDomain, Vm
         super.syncSearch();
 
         StorageDomain storageDomain = getEntity();
-        Frontend.getInstance().runQuery(VdcQueryType.GetEntitiesWithLeaseByStorageId,
+        Frontend.getInstance().runQuery(QueryType.GetEntitiesWithLeaseByStorageId,
                 new IdQueryParameters(storageDomain.getId()), new SetItemsAsyncQuery());
     }
 

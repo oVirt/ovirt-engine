@@ -61,9 +61,9 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.DateTime;
@@ -524,19 +524,19 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     @ExcludeClassInterceptors
-    public VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters, EngineContext engineContext) {
+    public VdcQueryReturnValue runInternalQuery(QueryType actionType, VdcQueryParametersBase parameters, EngineContext engineContext) {
         return runQueryImpl(actionType, parameters, false, engineContext);
     }
 
     @Override
-    public VdcQueryReturnValue runQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
+    public VdcQueryReturnValue runQuery(QueryType actionType, VdcQueryParametersBase parameters) {
         return runQueryImpl(actionType,
                 parameters,
                 true,
                 null);
     }
 
-    protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
+    protected VdcQueryReturnValue runQueryImpl(QueryType actionType, VdcQueryParametersBase parameters,
             boolean isPerformUserCheck, EngineContext engineContext) {
         if (isPerformUserCheck) {
             String sessionId = parameters.getSessionId();
@@ -569,7 +569,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return returnValue;
     }
 
-    protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
+    protected VdcQueryReturnValue runQueryImpl(QueryType actionType, VdcQueryParametersBase parameters,
             boolean isPerformUserCheck) {
         return runQueryImpl(actionType, parameters, isPerformUserCheck, null);
     }
@@ -640,7 +640,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcQueryReturnValue runPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
+    public VdcQueryReturnValue runPublicQuery(QueryType actionType, VdcQueryParametersBase parameters) {
         parameters.setRefresh(false);
         switch (actionType) {
         case GetAAAProfileList:
@@ -704,7 +704,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return returnValue;
     }
 
-    protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters, EngineContext engineContext) {
+    protected QueriesCommandBase<?> createQueryCommand(QueryType actionType, VdcQueryParametersBase parameters, EngineContext engineContext) {
         return CommandsFactory.createQueryCommand(actionType, parameters, engineContext);
     }
 
@@ -741,7 +741,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
-    public VdcQueryReturnValue runInternalQuery(VdcQueryType queryType, VdcQueryParametersBase queryParameters) {
+    public VdcQueryReturnValue runInternalQuery(QueryType queryType, VdcQueryParametersBase queryParameters) {
         return runInternalQuery(queryType, queryParameters, null);
     }
 }

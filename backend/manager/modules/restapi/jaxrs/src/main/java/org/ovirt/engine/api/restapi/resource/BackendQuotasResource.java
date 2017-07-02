@@ -12,7 +12,7 @@ import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotasResource extends AbstractBackendCollectionResource<Quota, org.ovirt.engine.core.common.businessentities.Quota> implements QuotasResource {
@@ -30,7 +30,7 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
             return null;
         } else {
             IdQueryParameters params = new IdQueryParameters(dataCenterId);
-            return mapCollection(getBackendCollection(VdcQueryType.GetQuotaByStoragePoolId, params));
+            return mapCollection(getBackendCollection(QueryType.GetQuotaByStoragePoolId, params));
         }
     }
 
@@ -41,7 +41,7 @@ public class BackendQuotasResource extends AbstractBackendCollectionResource<Quo
         entity.setStoragePoolId(dataCenterId);
         return performCreate(ActionType.AddQuota,
                 new QuotaCRUDParameters(entity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetQuotaByQuotaId, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetQuotaByQuotaId, IdQueryParameters.class));
     }
 
     @Override

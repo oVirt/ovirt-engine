@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotasResourceTest
@@ -63,7 +63,7 @@ public class BackendQuotasResourceTest
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetQuotaByQuotaId,
+                QueryType.GetQuotaByQuotaId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -97,7 +97,7 @@ public class BackendQuotasResourceTest
     }
 
     private void setGetQuotasExpectations() {
-        setUpEntityQueryExpectations(VdcQueryType.GetQuotaByStoragePoolId,
+        setUpEntityQueryExpectations(QueryType.GetQuotaByStoragePoolId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { DATACENTER_ID },

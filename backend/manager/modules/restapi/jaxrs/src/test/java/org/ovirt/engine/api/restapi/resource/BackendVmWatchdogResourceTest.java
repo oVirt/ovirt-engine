@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmWatchdogResourceTest
@@ -83,7 +83,7 @@ public class BackendVmWatchdogResourceTest
     private void setUpEntityQueryExpectations(int cnt) throws Exception {
         for (int i = 0; i < cnt; i++) {
             setUpGetEntityExpectations(
-                VdcQueryType.GetWatchdog,
+                QueryType.GetWatchdog,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },

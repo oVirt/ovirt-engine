@@ -18,7 +18,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -35,6 +35,6 @@ public class BackendExternalProviderHelper {
     public static Provider getProvider(BackendResource resource, String id) {
         Guid guid = Guid.createGuidFromString(id);
         IdQueryParameters parameters = new IdQueryParameters(guid);
-        return resource.getEntity(Provider.class, VdcQueryType.GetProviderById, parameters, id, true);
+        return resource.getEntity(Provider.class, QueryType.GetProviderById, parameters, id, true);
     }
 }

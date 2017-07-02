@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -105,7 +105,7 @@ public class GetUnregisteredDisksQueryTest
                 any(GetImagesListVDSCommandParameters.class));
 
         // Mock the get unregistered disk query
-        when(backendMock.runInternalQuery(eq(VdcQueryType.GetUnregisteredDisk), any(GetUnregisteredDiskQueryParameters.class), any(EngineContext.class)))
+        when(backendMock.runInternalQuery(eq(QueryType.GetUnregisteredDisk), any(GetUnregisteredDiskQueryParameters.class), any(EngineContext.class)))
                 .thenAnswer(invocation -> {
                     GetUnregisteredDiskQueryParameters p = (GetUnregisteredDiskQueryParameters) invocation
                             .getArguments()[1];

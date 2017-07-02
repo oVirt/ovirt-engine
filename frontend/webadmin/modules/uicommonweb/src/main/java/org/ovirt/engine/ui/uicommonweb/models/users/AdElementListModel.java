@@ -17,10 +17,10 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -244,7 +244,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         asyncQuery.setHandleFailure(true);
 
         Frontend.getInstance()
-                .runQuery(VdcQueryType.GetDirectoryGroupsForUser, new VdcQueryParametersBase(), asyncQuery);
+                .runQuery(QueryType.GetDirectoryGroupsForUser, new VdcQueryParametersBase(), asyncQuery);
     }
 
     protected void populateProfiles(List<ProfileEntry> profiles) {
@@ -398,13 +398,13 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     protected void findGroups(String searchString, AsyncQuery query) {
         Frontend.getInstance()
-                .runQuery(VdcQueryType.Search,
+                .runQuery(QueryType.Search,
                         new SearchParameters("ADGROUP@" + getProfile().getSelectedItem().getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
         Frontend.getInstance()
-                .runQuery(VdcQueryType.Search,
+                .runQuery(QueryType.Search,
                         new SearchParameters("ADUSER@" + getProfile().getSelectedItem().getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 

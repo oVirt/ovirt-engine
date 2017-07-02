@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResourc
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.HostErratumQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmKatelloErratumResource extends AbstractBackendSubResource<KatelloErratum, Erratum> implements KatelloErratumResource {
@@ -23,7 +23,7 @@ public class BackendVmKatelloErratumResource extends AbstractBackendSubResource<
 
     @Override
     public KatelloErratum get() {
-        return performGet(VdcQueryType.GetErratumByIdForVm,
+        return performGet(QueryType.GetErratumByIdForVm,
                 new HostErratumQueryParameters(asGuid(vmId), hex2string(id)),
                 Vm.class);
     }

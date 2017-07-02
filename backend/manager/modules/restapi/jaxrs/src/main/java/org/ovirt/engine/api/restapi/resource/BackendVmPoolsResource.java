@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolsResource
@@ -43,7 +43,7 @@ public class BackendVmPoolsResource
     @Override
     public VmPools list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllVmPoolsAttachedToUser,
+            return mapCollection(getBackendCollection(QueryType.GetAllVmPoolsAttachedToUser,
                     new VdcQueryParametersBase(), SearchType.VmPools));
         } else {
             return mapCollection(getBackendCollection(SearchType.VmPools));
@@ -75,7 +75,7 @@ public class BackendVmPoolsResource
 
         return performCreate(ActionType.AddVmPool,
                                params,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
+                               new QueryIdResolver<Guid>(QueryType.GetVmPoolById,
                                                    IdQueryParameters.class));
     }
 
@@ -105,7 +105,7 @@ public class BackendVmPoolsResource
 
     protected void setRngDevice(VmPool model) {
         List<VmRngDevice> rngDevices = getEntity(List.class,
-                VdcQueryType.GetRngDevice,
+                QueryType.GetRngDevice,
                 new IdQueryParameters(Guid.createGuidFromString(model.getId())),
                 "GetRngDevice", true);
 
@@ -133,12 +133,12 @@ public class BackendVmPoolsResource
     private VM getVM(VmPool model) {
         if (isFiltered()) {
             return getEntity(VM.class,
-                         VdcQueryType.GetVmDataByPoolId,
+                         QueryType.GetVmDataByPoolId,
                          new IdQueryParameters(asGuid(model.getId())),
                          model.getId());
         }
         return getEntity(VM.class,
-                VdcQueryType.GetVmDataByPoolName,
+                QueryType.GetVmDataByPoolName,
                 new NameQueryParameters(model.getName()),
                 "Vms: pool=" + model.getName());
     }
@@ -177,12 +177,12 @@ public class BackendVmPoolsResource
     protected Cluster getCluster(VmPool pool) {
         if (namedCluster(pool)) {
             return getEntity(Cluster.class,
-                    VdcQueryType.GetClusterByName,
+                    QueryType.GetClusterByName,
                     new NameQueryParameters(pool.getCluster().getName()),
                     "Cluster: name=" + pool.getCluster().getName());
         } else {
             return getEntity(Cluster.class,
-                    VdcQueryType.GetClusterById,
+                    QueryType.GetClusterById,
                     new IdQueryParameters(asGuid(pool.getCluster().getId())),
                     "Cluster: id=" + pool.getCluster().getId());
         }
@@ -195,14 +195,14 @@ public class BackendVmPoolsResource
     protected VmTemplate getVmTemplate(VmPool pool) {
         if (pool.getTemplate().isSetId()) {
             return getEntity(VmTemplate.class,
-                             VdcQueryType.GetVmTemplate,
+                             QueryType.GetVmTemplate,
                              new GetVmTemplateParameters(asGuid(pool.getTemplate().getId())),
                              pool.getTemplate().getId());
         } else {
             GetVmTemplateParameters params = new GetVmTemplateParameters(pool.getTemplate().getName());
             params.setClusterId(asGuid(pool.getCluster().getId()));
             return getEntity(VmTemplate.class,
-                    VdcQueryType.GetVmTemplate,
+                    QueryType.GetVmTemplate,
                     params,
                     "Template: name=" + pool.getTemplate().getName());
         }
@@ -210,7 +210,7 @@ public class BackendVmPoolsResource
 
     private List<String> getConsoleDevicesForEntity(Guid id) {
         return getEntity(List.class,
-                VdcQueryType.GetConsoleDevices,
+                QueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
     }
@@ -231,7 +231,7 @@ public class BackendVmPoolsResource
         }
 
         return getEntity(VmTemplate.class,
-                VdcQueryType.GetInstanceType,
+                QueryType.GetInstanceType,
                 params,
                 identifier);
     }

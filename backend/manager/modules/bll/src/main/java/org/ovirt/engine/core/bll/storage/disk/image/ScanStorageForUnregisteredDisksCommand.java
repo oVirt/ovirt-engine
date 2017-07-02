@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
@@ -96,7 +96,7 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     }
 
     protected VdcQueryReturnValue getUnregisteredDisksFromHost() {
-        return getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
+        return getBackend().runInternalQuery(QueryType.GetUnregisteredDisks,
                 new GetUnregisteredDisksQueryParameters(getParameters().getStorageDomainId(),
                         getParameters().getStoragePoolId()));
     }

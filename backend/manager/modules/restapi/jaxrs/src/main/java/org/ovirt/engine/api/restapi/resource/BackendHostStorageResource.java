@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendHostStorageResource
     extends AbstractBackendCollectionResource<HostStorage, LUNs>
@@ -61,7 +61,7 @@ public class BackendHostStorageResource
         boolean reportStatus = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, REPORT_STATUS, true, true);
         GetDeviceListQueryParameters params =
                 new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN, reportStatus, null, true);
-        return getBackendCollection(VdcQueryType.GetDeviceList, params);
+        return getBackendCollection(QueryType.GetDeviceList, params);
     }
 
     protected HostStorage map(org.ovirt.engine.core.common.businessentities.StorageDomain entity) {

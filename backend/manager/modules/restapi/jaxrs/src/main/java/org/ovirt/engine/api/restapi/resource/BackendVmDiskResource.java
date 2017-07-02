@@ -49,7 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -125,7 +125,7 @@ public class BackendVmDiskResource
     }
 
     protected Disk getDisk() {
-        return performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
+        return performGet(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
 
     protected Guid getSourceStorageDomainId(Disk disk) {
@@ -147,7 +147,7 @@ public class BackendVmDiskResource
 
     @Override
     public Disk get() {
-        return performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
+        return performGet(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
 
     @Override
@@ -158,7 +158,7 @@ public class BackendVmDiskResource
         if (snapshotInfo != null) {
             org.ovirt.engine.core.common.businessentities.Snapshot snapshot =
                     getEntity(org.ovirt.engine.core.common.businessentities.Snapshot.class,
-                            VdcQueryType.GetSnapshotBySnapshotId,
+                            QueryType.GetSnapshotBySnapshotId,
                             new IdQueryParameters(asGuid(snapshotInfo.getId())),
                             snapshotInfo.getId());
             Vm vm = new Vm();
@@ -175,7 +175,7 @@ public class BackendVmDiskResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-            VdcQueryType.GetPermissionsForObject,
+            QueryType.GetPermissionsForObject,
             new GetPermissionsForObjectParameters(guid),
             Disk.class,
             VdcObjectType.Disk));
@@ -217,7 +217,7 @@ public class BackendVmDiskResource
         public org.ovirt.engine.core.common.businessentities.storage.Disk lookupEntity(Guid id) throws BackendFailureException {
             return getEntity(
                 org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 new IdQueryParameters(id),
                 id.toString(),
                 false
@@ -228,7 +228,7 @@ public class BackendVmDiskResource
     protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
         @Override
         public ActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
-            DiskVmElement dveFromDb = runQuery(VdcQueryType.GetDiskVmElementById,
+            DiskVmElement dveFromDb = runQuery(QueryType.GetDiskVmElementById,
                     new VmDeviceIdQueryParameters(new VmDeviceId(entity.getId(), vmId))).getReturnValue();
 
             DiskVmElement updatedDve = updateDiskVmElementFromDisk(incoming, dveFromDb);

@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParamet
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResourceTest<GlusterVolume, GlusterVolumeEntity, BackendGlusterVolumeResource> {
@@ -234,7 +234,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
 
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+            setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[0] },

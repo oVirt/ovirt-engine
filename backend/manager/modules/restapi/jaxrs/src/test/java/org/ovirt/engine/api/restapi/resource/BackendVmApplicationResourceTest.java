@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.Applications;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmApplicationResourceTest
@@ -88,7 +88,7 @@ public class BackendVmApplicationResourceTest
     }
 
     protected void setUpEntityQueryExpectations() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
+        setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{VM_ID},

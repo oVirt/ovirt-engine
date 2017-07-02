@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -37,11 +37,11 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
     private void setMessage() {
 
         ArrayList<VdcQueryParametersBase> parameters = new ArrayList<>();
-        ArrayList<VdcQueryType> queryTypes = new ArrayList<>();
+        ArrayList<QueryType> queryTypes = new ArrayList<>();
         for (Object networkQoS : sourceListModel.getSelectedItems()) {
             VdcQueryParametersBase parameter = new IdQueryParameters(((NetworkQoS) networkQoS).getId());
             parameters.add(parameter);
-            queryTypes.add(VdcQueryType.GetVnicProfilesByNetworkQosId);
+            queryTypes.add(QueryType.GetVnicProfilesByNetworkQosId);
         }
         Frontend.getInstance().runMultipleQueries(queryTypes, parameters, result -> {
             ArrayList<VnicProfileView> vnicProfiles = new ArrayList<>();

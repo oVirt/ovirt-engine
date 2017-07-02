@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,9 +24,9 @@ public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> ext
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
-    private final VdcQueryType queryType;
+    private final QueryType queryType;
 
-    public AffinityGroupListModel(VdcQueryType queryType) {
+    public AffinityGroupListModel(QueryType queryType) {
         this.queryType = queryType;
         setTitle(ConstantsManager.getInstance().getConstants().affinityGroupsTitle());
         setHelpTag(HelpTag.affinity_groups);

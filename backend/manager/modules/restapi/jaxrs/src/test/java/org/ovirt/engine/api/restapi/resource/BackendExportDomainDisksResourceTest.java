@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExportDomainDisksResourceTest
@@ -117,7 +117,7 @@ public class BackendExportDomainDisksResourceTest
     }
 
     protected void setUpGetStorageDomainExpectations(StorageDomainType domainType, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
@@ -132,7 +132,7 @@ public class BackendExportDomainDisksResourceTest
     protected void setUpGetEntityExpectations(StorageDomainType domainType, Guid getStoragePoolsByStorageDomainId, boolean notFound, Object failure) throws Exception {
         switch (domainType) {
         case Data:
-            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+            setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                          GetVmTemplateParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { TEMPLATE_ID },
@@ -140,13 +140,13 @@ public class BackendExportDomainDisksResourceTest
                                          failure);
             break;
         case ImportExport:
-            setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
+            setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { getStoragePoolsByStorageDomainId },
                                          setUpStoragePool(),
                                          null);
-            setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,
+            setUpEntityQueryExpectations(QueryType.GetTemplatesFromExportDomain,
                                          GetAllFromExportDomainQueryParameters.class,
                                          new String[] { "StoragePoolId", "StorageDomainId" },
                                          new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID },
@@ -167,7 +167,7 @@ public class BackendExportDomainDisksResourceTest
         return map;
     }
     @Override
-    protected void setUpEntityQueryExpectations(VdcQueryType query,
+    protected void setUpEntityQueryExpectations(QueryType query,
             Class<? extends VdcQueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,

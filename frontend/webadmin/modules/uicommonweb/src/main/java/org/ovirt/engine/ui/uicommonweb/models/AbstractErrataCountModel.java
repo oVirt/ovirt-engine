@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.HasErrata;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -144,7 +144,7 @@ public abstract class AbstractErrataCountModel extends EntityModel<HasErrata> {
         this.filterCommand = filterCommand;
     }
 
-    protected abstract VdcQueryType getQueryType();
+    protected abstract QueryType getQueryType();
 
     protected abstract void showErrataListWithDetailsPopup(String filterCommand);
 

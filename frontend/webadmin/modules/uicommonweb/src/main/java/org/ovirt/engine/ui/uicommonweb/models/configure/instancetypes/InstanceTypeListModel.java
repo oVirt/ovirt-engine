@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -98,7 +98,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
     protected void syncSearch() {
         SearchParameters params = new SearchParameters(getSearchString(), SearchType.InstanceType, isCaseSensitiveSearch());
         params.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, params);
+        super.syncSearch(QueryType.Search, params);
     }
 
     private void newInstanceType() {
@@ -136,7 +136,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
         window.setHashName("remove_instance_type"); //$NON-NLS-1$
 
         final Guid instanceTypeId = getSelectedItem().getId();
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByInstanceTypeId,
+        Frontend.getInstance().runQuery(QueryType.GetVmsByInstanceTypeId,
                 new IdQueryParameters(instanceTypeId), new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<VM> vmsAttachedToInstanceType = returnValue.getReturnValue();
                     if (vmsAttachedToInstanceType == null || vmsAttachedToInstanceType.size() == 0) {

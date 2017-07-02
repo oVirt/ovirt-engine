@@ -6,17 +6,17 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendNetworksResource
     extends AbstractBackendCollectionResource<Network, org.ovirt.engine.core.common.businessentities.network.Network> {
 
-    protected VdcQueryType queryType;
+    protected QueryType queryType;
     protected ActionType addAction;
 
-    public AbstractBackendNetworksResource(VdcQueryType queryType, ActionType addAction) {
+    public AbstractBackendNetworksResource(QueryType queryType, ActionType addAction) {
         super(Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class);
         this.queryType = queryType;
         this.addAction = addAction;

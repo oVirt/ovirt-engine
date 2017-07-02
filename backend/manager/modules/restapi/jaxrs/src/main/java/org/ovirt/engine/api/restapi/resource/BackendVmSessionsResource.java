@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmSessionsResource extends AbstractBackendCollectionResource<Session, Object> implements VmSessionsResource {
@@ -30,7 +30,7 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
 
     @Override
     public Sessions list() {
-        Object obj = getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), vmId.toString(), true);
+        Object obj = getEntity(entityType, QueryType.GetVmByVmId, new IdQueryParameters(vmId), vmId.toString(), true);
         VM vm = (VM)obj;
         Sessions sessions = VmMapper.map(vm, new Sessions());
         org.ovirt.engine.api.model.Vm vmModel = new org.ovirt.engine.api.model.Vm();
@@ -88,7 +88,7 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
         // Get the user entity and don't fail if user is not found in database:
         DbUser entity = getEntity(
             DbUser.class,
-            VdcQueryType.GetDbUserByUserNameAndDomain,
+            QueryType.GetDbUserByUserNameAndDomain,
             new GetDbUserByUserNameAndDomainQueryParameters(
                 session.getUser().getUserName(),
                 session.getUser().getDomain().getName()

@@ -12,9 +12,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -39,8 +39,8 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
 
     @Override
     protected void updateTemplate() {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
-        queryTypeList.add(VdcQueryType.GetVmTemplatesWithPermittedAction);
+        ArrayList<QueryType> queryTypeList = new ArrayList<>();
+        queryTypeList.add(QueryType.GetVmTemplatesWithPermittedAction);
 
         GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
                 new GetEntitiesWithPermittedActionParameters();

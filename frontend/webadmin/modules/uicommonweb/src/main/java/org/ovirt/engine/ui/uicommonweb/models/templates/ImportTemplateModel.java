@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -74,7 +74,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
     }
 
     public void init(final Collection<VmTemplate> externalTemplates, final Guid storageDomainId) {
-        Frontend.getInstance().runQuery(VdcQueryType.Search,
+        Frontend.getInstance().runQuery(QueryType.Search,
                 new SearchParameters(createSearchPattern(externalTemplates), SearchType.VmTemplate),
                 new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
 

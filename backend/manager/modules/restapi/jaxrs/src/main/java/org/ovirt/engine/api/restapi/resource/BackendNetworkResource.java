@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendNetworkResource extends AbstractBackendNetworkResource implements NetworkResource {
 
@@ -55,7 +55,7 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                VdcQueryType.GetPermissionsForObject,
+                QueryType.GetPermissionsForObject,
                 new GetPermissionsForObjectParameters(guid),
                 Network.class,
                 VdcObjectType.Network));

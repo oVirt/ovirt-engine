@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmCdromResource
@@ -75,7 +75,7 @@ public class BackendVmCdromResource
     private VM getVm() {
         return getEntity(
             VM.class,
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             new IdQueryParameters(vmId),
             vmId.toString(),
             true

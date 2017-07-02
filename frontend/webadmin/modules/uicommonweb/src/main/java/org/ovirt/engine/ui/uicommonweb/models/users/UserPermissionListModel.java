@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -63,7 +63,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
         IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getId());
         mlaParams.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsOnBehalfByAdElementId, mlaParams, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetPermissionsOnBehalfByAdElementId, mlaParams, new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
             ArrayList<Permission> list = returnValue.getReturnValue();
             ArrayList<Permission> newList = new ArrayList<>();
             for (Permission permission : list) {

@@ -17,8 +17,8 @@ import org.mockito.Answers;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     public void testUnknownQuery() throws Exception {
         QueriesCommandBase<?> query = mockQuery();
         assertEquals("Wrong type for 'ThereIsNoSuchQuery' ",
-                VdcQueryType.Unknown,
+                QueryType.Unknown,
                 TestHelperQueriesCommandType.getQueryTypeFieldValue(query));
     }
 
@@ -77,7 +77,7 @@ public class QueriesCommandBaseTest extends BaseCommandTest {
     @Test
     public void testPermissionChecking() throws Exception {
         boolean[] booleans = { true, false };
-        for (VdcQueryType queryType : VdcQueryType.values()) {
+        for (QueryType queryType : QueryType.values()) {
             for (boolean isFiltered : booleans) {
                 for (boolean isUserAdmin : booleans) {
                     for (boolean isInternalExecution : booleans) {

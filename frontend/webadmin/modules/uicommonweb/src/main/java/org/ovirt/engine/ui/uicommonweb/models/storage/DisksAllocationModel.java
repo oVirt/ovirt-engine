@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -214,7 +214,7 @@ public class DisksAllocationModel extends EntityModel {
     }
 
     private void updateDiskProfile(Guid storageDomainId, final ListModel<DiskProfile> diskProfiles) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetDiskProfilesByStorageDomainId,
+        Frontend.getInstance().runQuery(QueryType.GetDiskProfilesByStorageDomainId,
                 new IdQueryParameters(storageDomainId),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<DiskProfile> fetchedDiskProfiles = returnValue.getReturnValue();

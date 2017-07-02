@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericName
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -114,7 +114,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
     }
 
     private void checkVmsDependentOnTemplate(Guid dataCenterId, Guid storageDomainId) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
+        Frontend.getInstance().runQuery(QueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(dataCenterId, storageDomainId),
                 new AsyncQuery<>(createGetVmsFromExportDomainCallback()));
     }
@@ -333,7 +333,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
             AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(list -> {
                 if (list != null && list.size() > 0) {
                     StoragePool dataCenter = list.get(0);
-                    Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain,
+                    Frontend.getInstance().runQuery(QueryType.GetTemplatesFromExportDomain,
                             new GetAllFromExportDomainQueryParameters(dataCenter.getId(),
                                     getEntity().getId()), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
                                         List<Map.Entry<VmTemplate, List<DiskImage>>> items1 = new ArrayList<>();

@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateGraphicsConsolesResource
@@ -55,7 +55,7 @@ public class BackendTemplateGraphicsConsolesResource
     }
 
     protected VmTemplate loadEntity() {
-        return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate,
+        return getEntity(VmTemplate.class, QueryType.GetVmTemplate,
                 new GetVmTemplateParameters(guid), guid.toString(), true);
     }
 

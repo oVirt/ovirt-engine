@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.GetCinderEntityByStorageDomainIdParam
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ public class RegisterCinderDiskCommand<T extends RegisterCinderDiskParameters> e
 
     @Override
     public void executeCommand() {
-        VdcQueryReturnValue returnValue = runInternalQuery(VdcQueryType.GetUnregisteredCinderDiskByIdAndStorageDomainId,
+        VdcQueryReturnValue returnValue = runInternalQuery(QueryType.GetUnregisteredCinderDiskByIdAndStorageDomainId,
                 new GetCinderEntityByStorageDomainIdParameters(
                         getCinderDisk().getId(), getParameters().getStorageDomainId()));
         CinderDisk cinderDisk = returnValue.getReturnValue();

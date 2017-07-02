@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends AbstractBackendNetworkAttachmentsResource>
@@ -33,10 +33,10 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
     private static final Guid NETWORK_ID = GUIDS[1];
     protected static final Guid HOST_ID = GUIDS[2];
     protected static final Guid HOST_NIC_ID = GUIDS[3];
-    private VdcQueryType listQueryType;
+    private QueryType listQueryType;
 
     public AbstractBackendNetworkAttachmentsResourceTest(C collection,
-            VdcQueryType listQueryType) {
+            QueryType listQueryType) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
     }
@@ -52,7 +52,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetNetworkAttachmentById,
+                QueryType.GetNetworkAttachmentById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { Guid.Empty },
@@ -260,7 +260,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         VDS host = mock(VDS.class);
         result.setSucceeded(true);
         result.setReturnValue(host);
-        when(backend.runQuery(eq(VdcQueryType.GetVdsByVdsId), any(IdQueryParameters.class))).thenReturn(result);
+        when(backend.runQuery(eq(QueryType.GetVdsByVdsId), any(IdQueryParameters.class))).thenReturn(result);
 
         VdcQueryReturnValue interfacesByVdsIdResult = new VdcQueryReturnValue();
         interfacesByVdsIdResult.setSucceeded(true);
@@ -269,7 +269,7 @@ public abstract class AbstractBackendNetworkAttachmentsResourceTest<C extends Ab
         hostNic.setId(HOST_NIC_ID);
         List<VdsNetworkInterface> hostNics = Collections.singletonList(hostNic);
         interfacesByVdsIdResult.setReturnValue(hostNics);
-        when(backend.runQuery(eq(VdcQueryType.GetVdsInterfacesByVdsId), any(IdQueryParameters.class)))
+        when(backend.runQuery(eq(QueryType.GetVdsInterfacesByVdsId), any(IdQueryParameters.class)))
                 .thenReturn(interfacesByVdsIdResult);
     }
 }

@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendStorageDomainImagesResourceTest extends AbstractBackendCollectionResourceTest<Image, RepoImage, BackendStorageDomainImagesResource> {
 
@@ -119,7 +119,7 @@ public class BackendStorageDomainImagesResourceTest extends AbstractBackendColle
             entities.add(getEntity(i));
         }
 
-        setUpEntityQueryExpectations( VdcQueryType.GetImagesList, GetImagesListParameters.class,
+        setUpEntityQueryExpectations( QueryType.GetImagesList, GetImagesListParameters.class,
                 new String[]{"StorageDomainId", "ImageType"}, new Object[]{GUIDS[3], ImageFileType.All},
                 entities, failure);
     }

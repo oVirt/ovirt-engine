@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendInstanceTypesResourceTest
     extends BackendTemplatesBasedResourceTest<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType, BackendInstanceTypesResource> {
@@ -113,7 +113,7 @@ public class BackendInstanceTypesResourceTest
 
     @Override
     protected void setUpGetEntityExpectations(int index) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetInstanceType,
+        setUpGetEntityExpectations(QueryType.GetInstanceType,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[index] },
@@ -131,7 +131,7 @@ public class BackendInstanceTypesResourceTest
                 GUIDS[0],
                 asList(GUIDS[2]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetInstanceType,
+                QueryType.GetInstanceType,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

@@ -6,8 +6,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public abstract class AbstractBackendRoleResourceTest
         extends AbstractBackendSubResourceTest<Role, org.ovirt.engine.core.common.businessentities.Role, BackendRoleResource> {
@@ -51,7 +50,7 @@ public abstract class AbstractBackendRoleResourceTest
     }
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetRoleById,
+        setUpGetEntityExpectations(QueryType.GetRoleById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },

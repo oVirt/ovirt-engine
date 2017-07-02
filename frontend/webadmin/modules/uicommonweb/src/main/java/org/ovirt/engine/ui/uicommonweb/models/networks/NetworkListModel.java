@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -173,7 +173,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         SearchParameters tempVar =
                 new SearchParameters(applySortOptions(getSearchString()), SearchType.Network, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override

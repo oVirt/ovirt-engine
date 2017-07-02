@@ -3,16 +3,16 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendNicsResource
         extends AbstractBackendCollectionResource<Nic, VmNetworkInterface> {
 
     private Guid parentId;
-    private VdcQueryType queryType;
+    private QueryType queryType;
 
-    public AbstractBackendNicsResource(Guid parentId, VdcQueryType queryType) {
+    public AbstractBackendNicsResource(Guid parentId, QueryType queryType) {
         super(Nic.class, VmNetworkInterface.class);
         this.parentId = parentId;
         this.queryType = queryType;

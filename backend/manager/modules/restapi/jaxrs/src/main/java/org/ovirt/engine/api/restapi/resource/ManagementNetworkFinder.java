@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ManagementNetworkFinder {
@@ -25,7 +25,7 @@ public class ManagementNetworkFinder {
             } else {
                 final org.ovirt.engine.core.common.businessentities.network.Network managementNetwork =
                         backendResource.getEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
-                                VdcQueryType.GetNetworkByNameAndDataCenter,
+                                QueryType.GetNetworkByNameAndDataCenter,
                                 new IdAndNameQueryParameters(dataCenterId, rawManagementNetwork.getName()),
                                 String.format("Network: %s", rawManagementNetwork.getName()));
 

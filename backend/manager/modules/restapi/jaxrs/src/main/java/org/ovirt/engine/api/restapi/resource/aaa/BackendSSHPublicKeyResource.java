@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSSHPublicKeyResource
@@ -29,7 +29,7 @@ public class BackendSSHPublicKeyResource
 
     @Override
     public SshPublicKey get() {
-        return performGet(VdcQueryType.GetUserProfile, new IdQueryParameters(userId));
+        return performGet(QueryType.GetUserProfile, new IdQueryParameters(userId));
     }
 
     @Override
@@ -40,7 +40,7 @@ public class BackendSSHPublicKeyResource
     @Override
     public SshPublicKey update(SshPublicKey pubkey) {
         return performUpdate(pubkey,
-                new QueryIdResolver<>(VdcQueryType.GetUserProfile, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetUserProfile, IdQueryParameters.class),
                 ActionType.UpdateUserProfile,
                 new UpdateParametersProvider());
     }
@@ -68,7 +68,7 @@ public class BackendSSHPublicKeyResource
 
         UserProfile entity = getEntity(
                 UserProfile.class,
-                VdcQueryType.GetUserProfile,
+                QueryType.GetUserProfile,
                 new IdQueryParameters(userId),
                 userId.toString(),
                 true

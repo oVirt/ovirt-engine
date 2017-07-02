@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -61,7 +61,7 @@ public class SystemPermissionListModel extends SearchableListModel {
         VdcQueryParametersBase params = new VdcQueryParametersBase();
         params.setRefresh(false);
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetSystemPermissions, params, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.GetSystemPermissions, params, new SetItemsAsyncQuery());
     }
 
     private void updateActionAvailability() {

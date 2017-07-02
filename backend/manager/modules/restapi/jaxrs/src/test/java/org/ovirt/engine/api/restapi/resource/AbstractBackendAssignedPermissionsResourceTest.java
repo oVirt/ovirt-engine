@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedPermissionsResourceTest
@@ -28,13 +28,13 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
 
     private Guid targetId;
     private Class<? extends BaseResource> targetType;
-    private VdcQueryType queryType;
+    private QueryType queryType;
     private VdcQueryParametersBase queryParams;
     private String principalParameterName;
     private String queryParameterName;
 
     public AbstractBackendAssignedPermissionsResourceTest(Guid targetId,
-                                                          VdcQueryType queryType,
+                                                          QueryType queryType,
                                                           VdcQueryParametersBase queryParams,
                                                           Class<? extends BaseResource> suggestedParentType,
                                                           String principalParameterName,
@@ -72,7 +72,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetPermissionById,
+                                  QueryType.GetPermissionById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },

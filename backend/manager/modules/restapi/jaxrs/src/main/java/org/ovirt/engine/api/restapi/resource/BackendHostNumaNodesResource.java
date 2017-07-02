@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.HostNumaNodeResource;
 import org.ovirt.engine.api.resource.HostNumaNodesResource;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNumaNodesResource
@@ -44,7 +44,7 @@ public class BackendHostNumaNodesResource
     }
 
     protected List<VdsNumaNode> getCollection() {
-        return getBackendCollection(VdcQueryType.GetVdsNumaNodesByVdsId, new IdQueryParameters(asGuid(hostId)));
+        return getBackendCollection(QueryType.GetVdsNumaNodesByVdsId, new IdQueryParameters(asGuid(hostId)));
     }
 
     @Override

@@ -12,8 +12,8 @@ import org.ovirt.engine.api.resource.aaa.DomainsResource;
 import org.ovirt.engine.api.restapi.model.Directory;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDomainsResource extends AbstractBackendCollectionResource<Domain, Directory>
     implements DomainsResource {
@@ -56,7 +56,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
     private List<String> getDomainList() {
         return getBackendCollection(
                 String.class,
-                VdcQueryType.GetDomainList,
+                QueryType.GetDomainList,
                 new VdcQueryParametersBase());
     }
 

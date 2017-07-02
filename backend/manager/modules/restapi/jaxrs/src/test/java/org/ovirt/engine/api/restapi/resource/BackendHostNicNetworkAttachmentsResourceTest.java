@@ -4,14 +4,14 @@ import static org.mockito.Mockito.when;
 
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendHostNicNetworkAttachmentsResourceTest
         extends AbstractBackendNetworkAttachmentsResourceTest<BackendHostNicNetworkAttachmentsResource> {
 
     public BackendHostNicNetworkAttachmentsResourceTest() {
         super(new BackendHostNicNetworkAttachmentsResource(HOST_NIC_ID, HOST_ID),
-                VdcQueryType.GetNetworkAttachmentsByHostNicId);
+                QueryType.GetNetworkAttachmentsByHostNicId);
     }
 
     @Override

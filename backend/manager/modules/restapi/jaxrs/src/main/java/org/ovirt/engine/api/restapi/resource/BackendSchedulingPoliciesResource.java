@@ -10,8 +10,8 @@ import org.ovirt.engine.api.resource.SchedulingPoliciesResource;
 import org.ovirt.engine.api.resource.SchedulingPolicyResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -19,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendSchedulingPoliciesResource extends AbstractBackendCollectionResource<SchedulingPolicy, ClusterPolicy> implements SchedulingPoliciesResource {
 
     private final QueryIdResolver<Guid> queryIdResolver =
-            new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById,
+            new QueryIdResolver<>(QueryType.GetClusterPolicyById,
                     IdQueryParameters.class);
 
     public BackendSchedulingPoliciesResource() {
@@ -29,7 +29,7 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     @Override
     public SchedulingPolicies list() {
         List<ClusterPolicy> SchedulingPolicys =
-                getBackendCollection(VdcQueryType.GetClusterPolicies, new VdcQueryParametersBase());
+                getBackendCollection(QueryType.GetClusterPolicies, new VdcQueryParametersBase());
         return mapCollection(SchedulingPolicys);
     }
 

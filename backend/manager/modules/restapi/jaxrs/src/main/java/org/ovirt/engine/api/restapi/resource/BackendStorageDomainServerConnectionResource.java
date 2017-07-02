@@ -8,8 +8,8 @@ import org.ovirt.engine.api.resource.StorageDomainServerConnectionResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainServerConnectionResource extends
         AbstractBackendSubResource<StorageConnection, StorageServerConnections> implements StorageDomainServerConnectionResource {
@@ -22,7 +22,7 @@ public class BackendStorageDomainServerConnectionResource extends
 
     @Override
     public StorageConnection get() {
-        return performGet(VdcQueryType.GetStorageServerConnectionById,
+        return performGet(QueryType.GetStorageServerConnectionById,
                 new StorageServerConnectionQueryParametersBase(guid.toString()));
     }
 

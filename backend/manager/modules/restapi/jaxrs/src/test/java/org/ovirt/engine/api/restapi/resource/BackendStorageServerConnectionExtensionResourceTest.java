@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageServerConnectionExtensionResourceTest extends AbstractBackendSubResourceTest<StorageConnectionExtension, StorageServerConnectionExtension, BackendStorageServerConnectionExtensionResource> {
@@ -36,7 +36,7 @@ public class BackendStorageServerConnectionExtensionResourceTest extends Abstrac
     }
 
     private void setUpGetEntityExpectations() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionExtensionById,
+        setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionExtensionById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { extensionID },

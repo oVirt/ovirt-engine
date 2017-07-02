@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedTagsResource
@@ -70,7 +70,7 @@ public abstract class AbstractBackendAssignedTagsResource
     }
 
     protected Tag lookupTagByName(String name) {
-        for (Tags tag : getBackendCollection(Tags.class, VdcQueryType.GetAllTags, new VdcQueryParametersBase())) {
+        for (Tags tag : getBackendCollection(Tags.class, QueryType.GetAllTags, new VdcQueryParametersBase())) {
             if (tag.getTagName().equals(name)) {
                 return map(tag);
             }
@@ -79,7 +79,7 @@ public abstract class AbstractBackendAssignedTagsResource
     }
 
     public Tags lookupTagById(Guid id) {
-        return getEntity(Tags.class, VdcQueryType.GetTagByTagId, new IdQueryParameters(id), id.toString(), true);
+        return getEntity(Tags.class, QueryType.GetTagByTagId, new IdQueryParameters(id), id.toString(), true);
     }
 
     protected class TagIdResolver extends EntityIdResolver<Guid> {

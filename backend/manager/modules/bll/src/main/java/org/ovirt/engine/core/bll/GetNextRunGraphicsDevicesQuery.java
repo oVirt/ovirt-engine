@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 
 public class GetNextRunGraphicsDevicesQuery<P extends IdQueryParameters> extends GetGraphicsDevicesQuery<P> {
@@ -21,7 +21,7 @@ public class GetNextRunGraphicsDevicesQuery<P extends IdQueryParameters> extends
 
     @Override
     protected void executeQueryCommand() {
-        VdcQueryReturnValue nextRun = runInternalQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(getParameters().getId()));
+        VdcQueryReturnValue nextRun = runInternalQuery(QueryType.GetVmNextRunConfiguration, new IdQueryParameters(getParameters().getId()));
         VM vm = nextRun.getReturnValue();
 
         if (vm != null && vm.isNextRunConfigurationExists()) {

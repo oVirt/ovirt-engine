@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 
 /**
@@ -40,7 +40,7 @@ public class BackendGlusterHooksResource
 
     @Override
     public GlusterHooks list() {
-        List<GlusterHookEntity> entities = getBackendCollection(VdcQueryType.GetGlusterHooks, new GlusterParameters(asGuid(parent.get().getId())));
+        List<GlusterHookEntity> entities = getBackendCollection(QueryType.GetGlusterHooks, new GlusterParameters(asGuid(parent.get().getId())));
         return mapCollection(entities);
     }
 

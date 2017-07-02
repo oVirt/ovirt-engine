@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericNameableComparator;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -32,7 +32,7 @@ public class StorageRegisterTemplateListModel extends StorageRegisterEntityListM
 
     @Override
     protected void syncSearch() {
-        syncSearch(VdcQueryType.GetUnregisteredVmTemplates, new LexoNumericNameableComparator<>());
+        syncSearch(QueryType.GetUnregisteredVmTemplates, new LexoNumericNameableComparator<>());
     }
 
     @Override

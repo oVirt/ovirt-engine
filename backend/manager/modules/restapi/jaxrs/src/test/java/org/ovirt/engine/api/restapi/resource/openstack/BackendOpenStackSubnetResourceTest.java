@@ -30,7 +30,7 @@ import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendOpenStackSubnetResourceTest
         extends AbstractBackendSubResourceTest<OpenStackSubnet, ExternalSubnet, BackendOpenStackSubnetResource> {
@@ -60,7 +60,7 @@ public class BackendOpenStackSubnetResourceTest
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetExternalSubnetsOnProviderByExternalNetwork,
+            QueryType.GetExternalSubnetsOnProviderByExternalNetwork,
             GetExternalSubnetsOnProviderByExternalNetworkQueryParameters.class,
             new String[] { "ProviderId", "NetworkId" },
             new Object[] { GUIDS[0], string2hex(NAMES[1]) },

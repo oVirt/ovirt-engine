@@ -13,7 +13,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendDomainGroupResourceTest
     extends AbstractBackendSubResourceTest<Group, DirectoryGroup, BackendDomainGroupResource> {
@@ -65,7 +65,7 @@ public class BackendDomainGroupResourceTest
 
     private void setUpEntityQueryExpectations(int index, boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetDirectoryGroupById,
+            QueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
                 new String[] { "Domain", "Namespace", "Id" },
                 new Object[] { DOMAIN, "", DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index])

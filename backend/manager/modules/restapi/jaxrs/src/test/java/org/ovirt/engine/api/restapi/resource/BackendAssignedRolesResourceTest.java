@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendAssignedRolesResourceTest
         extends AbstractBackendCollectionResourceTest<Role, Permission, BackendAssignedRolesResource> {
@@ -33,7 +33,7 @@ public class BackendAssignedRolesResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetPermissionsOnBehalfByAdElementId,
+        setUpEntityQueryExpectations(QueryType.GetPermissionsOnBehalfByAdElementId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },

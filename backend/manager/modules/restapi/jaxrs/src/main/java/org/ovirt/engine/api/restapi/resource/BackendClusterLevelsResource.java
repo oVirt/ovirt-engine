@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Version;
 
 public class BackendClusterLevelsResource extends BackendResource implements ClusterLevelsResource {
@@ -81,7 +81,7 @@ public class BackendClusterLevelsResource extends BackendResource implements Clu
 
     private List<ServerCpu> getServerCpuList(String version) {
         return getEntity(
-           List.class, VdcQueryType.GetAllServerCpuList,
+           List.class, QueryType.GetAllServerCpuList,
            new GetAllServerCpuListParameters(new Version(version)),
            version
         );

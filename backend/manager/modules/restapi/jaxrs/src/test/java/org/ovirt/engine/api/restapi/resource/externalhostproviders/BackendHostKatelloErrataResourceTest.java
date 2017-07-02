@@ -28,7 +28,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTe
 import org.ovirt.engine.core.common.businessentities.ErrataData;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendHostKatelloErrataResourceTest extends AbstractBackendCollectionResourceTest<KatelloErratum, Erratum, BackendHostKatelloErrataResource> {
     public BackendHostKatelloErrataResourceTest() {
@@ -43,7 +43,7 @@ public class BackendHostKatelloErrataResourceTest extends AbstractBackendCollect
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(
-                VdcQueryType.GetErrataForHost,
+                QueryType.GetErrataForHost,
                 GetErrataCountsParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

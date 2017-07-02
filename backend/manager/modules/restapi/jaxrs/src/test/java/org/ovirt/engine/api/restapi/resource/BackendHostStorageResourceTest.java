@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.StorageResource;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostStorageResourceTest
@@ -58,7 +58,7 @@ public class BackendHostStorageResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetDeviceList,
+        setUpEntityQueryExpectations(QueryType.GetDeviceList,
                                      GetDeviceListQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { HOST_GUID },

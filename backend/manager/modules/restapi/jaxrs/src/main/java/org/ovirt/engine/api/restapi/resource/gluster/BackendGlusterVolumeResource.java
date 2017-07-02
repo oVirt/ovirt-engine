@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeProfileInfo;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -58,7 +58,7 @@ public class BackendGlusterVolumeResource
 
     @Override
     public GlusterVolume get() {
-        return performGet(VdcQueryType.GetGlusterVolumeById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetGlusterVolumeById, new IdQueryParameters(guid));
     }
 
     @Override
@@ -152,7 +152,7 @@ public class BackendGlusterVolumeResource
     public StatisticsResource getStatisticsResource() {
 
         EntityIdResolver<Guid> resolver =
-                new QueryIdResolver<>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class);
+                new QueryIdResolver<>(QueryType.GetGlusterVolumeById, IdQueryParameters.class);
         VolumeStatisticalQuery query = new VolumeStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<>(entityType,
                 guid,
@@ -162,7 +162,7 @@ public class BackendGlusterVolumeResource
     @Override
     public Response getProfileStatistics(Action action) {
         boolean nfsStats = isNfsStatistics();
-        VdcQueryReturnValue result = runQuery(VdcQueryType.GetGlusterVolumeProfileInfo,
+        VdcQueryReturnValue result = runQuery(QueryType.GetGlusterVolumeProfileInfo,
                 new GlusterVolumeProfileParameters(Guid.createGuidFromString(parent.getParent().get().getId()), guid, nfsStats));
         if (result != null
                 && result.getSucceeded()

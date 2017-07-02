@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmHostDevicesParameters;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmHostDevicesResource
@@ -66,7 +66,7 @@ public class BackendVmHostDevicesResource
     }
 
     protected List<HostDeviceView> getCollection() {
-        return getBackendCollection(VdcQueryType.GetExtendedVmHostDevicesByVmId, new IdQueryParameters(vmId));
+        return getBackendCollection(QueryType.GetExtendedVmHostDevicesByVmId, new IdQueryParameters(vmId));
     }
 
     public Guid getVmId() {

@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.KatelloErratum;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendEngineKatelloErratumResourceTest extends AbstractBackendSubResourceTest<KatelloErratum, Erratum, BackendEngineKatelloErratumResource> {
     public BackendEngineKatelloErratumResourceTest() {
@@ -55,7 +55,7 @@ public class BackendEngineKatelloErratumResourceTest extends AbstractBackendSubR
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-                VdcQueryType.GetErratumByIdForEngine,
+                QueryType.GetErratumByIdForEngine,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },

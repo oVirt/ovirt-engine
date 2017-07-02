@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendMacPoolResource extends AbstractBackendSubResource<MacPool,
         org.ovirt.engine.core.common.businessentities.MacPool> implements MacPoolResource {
@@ -20,13 +20,13 @@ public class BackendMacPoolResource extends AbstractBackendSubResource<MacPool,
 
     @Override
     public MacPool get() {
-        return performGet(VdcQueryType.GetMacPoolById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetMacPoolById, new IdQueryParameters(guid));
     }
 
     @Override
     public MacPool update(MacPool macPool) {
         return performUpdate(macPool,
-                new QueryIdResolver<>(VdcQueryType.GetMacPoolById, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetMacPoolById, IdQueryParameters.class),
                 ActionType.UpdateMacPool,
                 new UpdateParametersProvider());
     }

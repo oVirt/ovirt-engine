@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNumaNodesResource
@@ -27,7 +27,7 @@ public class BackendVmNumaNodesResource
     private ActionType updateType;
     protected Class<VirtualNumaNodes> collectionType;
     protected Guid parentId;
-    protected VdcQueryType queryType;
+    protected QueryType queryType;
     protected VdcQueryParametersBase queryParams;
 
     public BackendVmNumaNodesResource(Guid parentId) {
@@ -36,7 +36,7 @@ public class BackendVmNumaNodesResource
         this.updateType = ActionType.UpdateVmNumaNodes;
         this.collectionType = VirtualNumaNodes.class;
         this.parentId = parentId;
-        this.queryType = VdcQueryType.GetVmNumaNodesByVmId;
+        this.queryType = QueryType.GetVmNumaNodesByVmId;
         this.queryParams = new IdQueryParameters(parentId);
     }
 

@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -75,7 +75,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                                                     initCdImage();
                                                 }), template.getId());
 
-                                        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery<>(
+                                        Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(template.getId()), new AsyncQuery<>(
                                                 (VdcQueryReturnValue returnValue) ->
                                                         getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
                                         ));

@@ -32,9 +32,9 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.ticket.TicketDecoder;
@@ -57,7 +57,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
         List<Map<String, String>> jsonUsers = new ArrayList<>();
         VdcQueryParametersBase userProfileParams = new VdcQueryParametersBase();
 
-        VdcQueryReturnValue v = backend.runInternalQuery(VdcQueryType.GetAllUserProfiles, userProfileParams);
+        VdcQueryReturnValue v = backend.runInternalQuery(QueryType.GetAllUserProfiles, userProfileParams);
 
         if (v != null) {
             List<UserProfile> profiles = v.getReturnValue();
@@ -103,7 +103,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
             }
             String engineSessionId = loginResult.getActionReturnValue();
             try {
-                VdcQueryReturnValue retVms = backend.runInternalQuery(VdcQueryType.GetAllVmsForUserAndActionGroup,
+                VdcQueryReturnValue retVms = backend.runInternalQuery(QueryType.GetAllVmsForUserAndActionGroup,
                         new GetEntitiesWithPermittedActionParameters(ActionGroup.CONNECT_TO_SERIAL_CONSOLE),
                         new EngineContext().withSessionId(engineSessionId));
                 if (retVms != null) {
@@ -112,7 +112,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
                         Map<String, String> jsonVm = new HashMap<>();
                         if (vm.getRunOnVds() != null) {
                             // TODO: avoid one query per loop. Bulk query?
-                            VdcQueryReturnValue retValue = backend.runInternalQuery(VdcQueryType.GetVdsByVdsId,
+                            VdcQueryReturnValue retValue = backend.runInternalQuery(QueryType.GetVdsByVdsId,
                                     new IdQueryParameters(vm.getRunOnVds()));
                             if (retValue != null && retValue.getReturnValue() != null) {
                                 VDS vds = retValue.getReturnValue();

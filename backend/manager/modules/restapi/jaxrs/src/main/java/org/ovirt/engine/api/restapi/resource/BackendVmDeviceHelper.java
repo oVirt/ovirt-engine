@@ -33,15 +33,15 @@ import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDeviceHelper {
     public static void setPayload(BackendResource resouce, Vm vm) {
         try {
             VmPayload payload = resouce.getEntity(VmPayload.class,
-                    VdcQueryType.GetVmPayload,
+                    QueryType.GetVmPayload,
                     new IdQueryParameters(new Guid(vm.getId())),
                     null,
                     true);
@@ -74,7 +74,7 @@ public class BackendVmDeviceHelper {
 
     private static List<String> getConsoleDevicesForEntity(BackendResource resouce, Guid id) {
         return resouce.getEntity(List.class,
-                VdcQueryType.GetConsoleDevices,
+                QueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
     }
@@ -92,7 +92,7 @@ public class BackendVmDeviceHelper {
 
     public static void setCertificateInfo(BackendResource resouce, Vm vm) {
         VdcQueryReturnValue result =
-                resouce.runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
+                resouce.runQuery(QueryType.GetVdsCertificateSubjectByVmId,
                         new IdQueryParameters(resouce.asGuid(vm.getId())));
 
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
@@ -106,7 +106,7 @@ public class BackendVmDeviceHelper {
 
     public static void setRngDevice(BackendResource resouce, Vm vm) {
         List<VmRngDevice> rngDevices = resouce.getEntity(List.class,
-                VdcQueryType.GetRngDevice,
+                QueryType.GetRngDevice,
                 new IdQueryParameters(Guid.createGuidFromString(vm.getId())),
                 "GetRngDevice", true);
 

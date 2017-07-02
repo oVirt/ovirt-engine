@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplatesFromStorageDomainParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainTemplatesResourceTest
@@ -85,7 +85,7 @@ public class BackendStorageDomainTemplatesResourceTest
     protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
@@ -93,7 +93,7 @@ public class BackendStorageDomainTemplatesResourceTest
 
         switch (domainType) {
         case Data:
-            setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesFromStorageDomain,
+            setUpEntityQueryExpectations(QueryType.GetVmTemplatesFromStorageDomain,
                                          GetVmTemplatesFromStorageDomainParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { STORAGE_DOMAIN_ID },
@@ -101,7 +101,7 @@ public class BackendStorageDomainTemplatesResourceTest
                                          failure);
             break;
         case ImportExport:
-            setUpEntityQueryExpectations(VdcQueryType.GetTemplatesFromExportDomain,
+            setUpEntityQueryExpectations(QueryType.GetTemplatesFromExportDomain,
                                          GetAllFromExportDomainQueryParameters.class,
                                          new String[] { "StoragePoolId", "StorageDomainId"},
                                          new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
@@ -164,7 +164,7 @@ public class BackendStorageDomainTemplatesResourceTest
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
         while (times-->0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
+            setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { id },

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDiskResourceTest
@@ -36,7 +36,7 @@ public class BackendDiskResourceTest
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
@@ -63,7 +63,7 @@ public class BackendDiskResourceTest
 
     @Test
     public void testMoveById() throws  Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+        setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {DISK_ID},
@@ -78,7 +78,7 @@ public class BackendDiskResourceTest
 
     @Test
     public void testCopyById() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+        setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {DISK_ID},

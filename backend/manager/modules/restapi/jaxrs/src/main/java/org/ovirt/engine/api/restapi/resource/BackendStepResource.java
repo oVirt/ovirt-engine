@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -59,7 +59,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
 
     private Step getStepById(Guid id) {
         IdQueryParameters params =  new IdQueryParameters(id);
-        Step step = performGet(VdcQueryType.GetStepWithSubjectEntitiesByStepId, params);
+        Step step = performGet(QueryType.GetStepWithSubjectEntitiesByStepId, params);
         return step;
     }
 
@@ -77,7 +77,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
         @Override
         public GlusterVolumeTaskStatusEntity resolve(Guid id) throws BackendFailureException {
             org.ovirt.engine.core.common.job.Step stepEntity =  getEntity(org.ovirt.engine.core.common.job.Step.class,
-                    VdcQueryType.GetStepWithSubjectEntitiesByStepId,
+                    QueryType.GetStepWithSubjectEntitiesByStepId,
                     new IdQueryParameters(id),
                     null,
                     true);
@@ -89,7 +89,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
                 return null;
             }
             GlusterVolumeEntity volume = getEntity(GlusterVolumeEntity.class,
-                    VdcQueryType.GetGlusterVolumeByTaskId,
+                    QueryType.GetGlusterVolumeByTaskId,
                     new IdQueryParameters(glusterTaskId),
                     null,
                     true);
@@ -100,7 +100,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
             switch (stepEntity.getStepType()) {
             case REBALANCING_VOLUME:
                 GlusterVolumeTaskStatusEntity rebalanceStatusEntity = getEntity(GlusterVolumeTaskStatusEntity.class,
-                        VdcQueryType.GetGlusterVolumeRebalanceStatus,
+                        QueryType.GetGlusterVolumeRebalanceStatus,
                         new GlusterVolumeQueriesParameters(volume.getClusterId(), volume.getId()),
                         null,
                         true);
@@ -113,7 +113,7 @@ public class BackendStepResource extends AbstractBackendActionableResource<org.o
                     }
                 }
                 GlusterVolumeTaskStatusEntity removeBricksStatusEntity = getEntity(GlusterVolumeTaskStatusEntity.class,
-                        VdcQueryType.GetGlusterVolumeRemoveBricksStatus,
+                        QueryType.GetGlusterVolumeRemoveBricksStatus,
                         new GlusterVolumeRemoveBricksQueriesParameters(volume.getClusterId(), volume.getId(), bricks),
                         null,
                         true);

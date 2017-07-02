@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendPermitsResource
@@ -30,7 +30,7 @@ public class BackendPermitsResource
 
     @Override
     public Permits list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetRoleActionGroupsByRoleId,
+        return mapCollection(getBackendCollection(QueryType.GetRoleActionGroupsByRoleId,
                                                   new IdQueryParameters(roleId)));
     }
 

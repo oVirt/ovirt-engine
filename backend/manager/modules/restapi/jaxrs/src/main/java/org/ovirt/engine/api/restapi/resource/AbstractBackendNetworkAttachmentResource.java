@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkAttachmentParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public abstract class AbstractBackendNetworkAttachmentResource<T extends AbstractBackendNetworkAttachmentsResource>
         extends AbstractBackendActionableResource<NetworkAttachment, org.ovirt.engine.core.common.businessentities.network.NetworkAttachment>
@@ -27,7 +27,7 @@ public abstract class AbstractBackendNetworkAttachmentResource<T extends Abstrac
     @Override
     public NetworkAttachment get() {
         NetworkAttachment model =
-                performGet(VdcQueryType.GetNetworkAttachmentById, new IdQueryParameters(guid), parent.getParentClass());
+                performGet(QueryType.GetNetworkAttachmentById, new IdQueryParameters(guid), parent.getParentClass());
         model = parent.addParents(model);
         return addLinks(model);
     }
@@ -35,7 +35,7 @@ public abstract class AbstractBackendNetworkAttachmentResource<T extends Abstrac
     @Override
     public NetworkAttachment update(NetworkAttachment resource) {
         return performUpdate(resource,
-                new QueryIdResolver<>(VdcQueryType.GetNetworkAttachmentById, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetNetworkAttachmentById, IdQueryParameters.class),
                 ActionType.UpdateNetworkAttachment,
                 new UpdateParametersProvider());
     }

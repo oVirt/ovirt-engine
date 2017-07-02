@@ -74,7 +74,7 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -99,12 +99,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     private Host getVdsByVdsId() {
-        return performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
+        return performGet(QueryType.GetVdsByVdsId, new IdQueryParameters(guid));
     }
 
     @Override
     public Host update(Host incoming) {
-        QueryIdResolver<Guid> hostResolver = new QueryIdResolver<>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
+        QueryIdResolver<Guid> hostResolver = new QueryIdResolver<>(QueryType.GetVdsByVdsId, IdQueryParameters.class);
         VDS entity = getEntity(hostResolver, true);
         if (incoming.isSetCluster() && (incoming.getCluster().isSetId() || incoming.getCluster().isSetName())) {
             Guid clusterId = lookupClusterId(incoming);
@@ -312,20 +312,20 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Map<Guid, NetworkAttachment> getBackendNetworkAttachments() {
         List<NetworkAttachment> backendAttachments =
                 getBackendCollection(NetworkAttachment.class,
-                        VdcQueryType.GetNetworkAttachmentsByHostId,
+                        QueryType.GetNetworkAttachmentsByHostId,
                         new IdQueryParameters(guid));
         return Entities.businessEntitiesById(backendAttachments);
     }
 
     public BusinessEntityMap<Bond> getBackendHostBonds() {
         List<Bond> backendBonds =
-                getBackendCollection(Bond.class, VdcQueryType.GetHostBondsByHostId, new IdQueryParameters(guid));
+                getBackendCollection(Bond.class, QueryType.GetHostBondsByHostId, new IdQueryParameters(guid));
         return new BusinessEntityMap<>(backendBonds);
     }
 
     public BusinessEntityMap<VdsNetworkInterface> getBackendNics() {
         List<VdsNetworkInterface> backendNics =
-                getBackendCollection(VdsNetworkInterface.class, VdcQueryType.GetVdsInterfacesByVdsId, new IdQueryParameters(guid));
+                getBackendCollection(VdsNetworkInterface.class, QueryType.GetVdsInterfacesByVdsId, new IdQueryParameters(guid));
         return new BusinessEntityMap<>(backendNics);
     }
 
@@ -376,7 +376,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     protected Cluster lookupClusterByName(String name) {
         return getEntity(Cluster.class,
-                VdcQueryType.GetClusterByName,
+                QueryType.GetClusterByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name);
     }
@@ -452,7 +452,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         try {
             Pair<List<StorageDomain>, List<StorageServerConnections>> pair =
                     getEntity(Pair.class,
-                        VdcQueryType.GetUnregisteredBlockStorageDomains,
+                        QueryType.GetUnregisteredBlockStorageDomains,
                         unregisteredBlockStorageDomainsParameters,
                         "GetUnregisteredBlockStorageDomains", true);
 
@@ -468,7 +468,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         validateParameters(action, "iscsi.address");
 
         List<StorageServerConnections> result = getBackendCollection(StorageServerConnections.class,
-                                                                       VdcQueryType.DiscoverSendTargets,
+                                                                       QueryType.DiscoverSendTargets,
                                                                        createDiscoveryQueryParams(action));
 
         return actionSuccess(mapTargets(action, result));
@@ -559,7 +559,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     private Response getFenceStatus(Action action) {
         VDSReturnValue result = getEntity(
                 VDSReturnValue.class,
-                VdcQueryType.GetVdsFenceStatus,
+                QueryType.GetVdsFenceStatus,
                 new IdQueryParameters(guid),
                 guid.toString());
         FenceOperationResult fenceResult = (FenceOperationResult) result.getReturnValue();
@@ -642,7 +642,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsForObject,
+                                                             QueryType.GetPermissionsForObject,
                                                              new GetPermissionsForObjectParameters(guid),
                                                              Host.class,
                                                              VdcObjectType.VDS));
@@ -650,7 +650,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetVdsByVdsId, IdQueryParameters.class);
         HostStatisticalQuery query = new HostStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
@@ -671,7 +671,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     protected VDS getEntity() {
-        return getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid), id);
+        return getEntity(VDS.class, QueryType.GetVdsByVdsId, new IdQueryParameters(guid), id);
     }
 
     protected class UpdateParametersProvider implements ParametersProvider<Host, VDS> {

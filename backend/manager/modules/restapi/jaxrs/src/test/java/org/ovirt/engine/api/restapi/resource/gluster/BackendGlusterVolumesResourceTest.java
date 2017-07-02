@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGlusterVolumesResourceTest extends AbstractBackendCollectionResourceTest<GlusterVolume, GlusterVolumeEntity, BackendGlusterVolumesResource> {
@@ -202,7 +202,7 @@ public class BackendGlusterVolumesResourceTest extends AbstractBackendCollection
                                   true,
                                   true,
                                   volumeId,
-                                  VdcQueryType.GetGlusterVolumeById,
+                                  QueryType.GetGlusterVolumeById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { volumeId },

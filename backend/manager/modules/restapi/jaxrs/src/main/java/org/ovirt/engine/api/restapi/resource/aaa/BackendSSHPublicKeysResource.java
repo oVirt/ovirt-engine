@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UserProfileParameters;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSSHPublicKeysResource
@@ -31,7 +31,7 @@ public class BackendSSHPublicKeysResource
 
     @Override
     public SshPublicKeys list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetUserProfileAsList,
+        return mapCollection(getBackendCollection(QueryType.GetUserProfileAsList,
                                                   new IdQueryParameters(userId)));
     }
 

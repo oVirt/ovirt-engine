@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -79,7 +79,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                     new GetUnregisteredDiskQueryParameters(getParameters().getDiskImage().getId(),
                             getStorageDomainId(),
                             getStoragePoolId());
-            VdcQueryReturnValue unregQueryReturn = runInternalQuery(VdcQueryType.GetUnregisteredDisk, unregQueryParams);
+            VdcQueryReturnValue unregQueryReturn = runInternalQuery(QueryType.GetUnregisteredDisk, unregQueryParams);
             if (unregQueryReturn.getSucceeded()) {
                 setDiskImage(unregQueryReturn.getReturnValue());
             }

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendPermissionResource
@@ -35,7 +35,7 @@ public class BackendPermissionResource
 
     @Override
     public Permission get() {
-        return performGet(VdcQueryType.GetPermissionById,
+        return performGet(QueryType.GetPermissionById,
                           new IdQueryParameters(guid),
                           suggestedParentType);
     }
@@ -68,7 +68,7 @@ public class BackendPermissionResource
     private org.ovirt.engine.core.common.businessentities.Permission getPermissions() {
         return getEntity(
             org.ovirt.engine.core.common.businessentities.Permission.class,
-            VdcQueryType.GetPermissionById,
+            QueryType.GetPermissionById,
             new IdQueryParameters(guid),
             guid.toString()
         );

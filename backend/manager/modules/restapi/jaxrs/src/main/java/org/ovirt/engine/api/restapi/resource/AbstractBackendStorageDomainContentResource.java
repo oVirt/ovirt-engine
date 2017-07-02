@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.DiskAttachment;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendStorageDomainContentResource<C extends BaseResources,
@@ -56,7 +56,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
 
     protected Cluster lookupClusterByName(String name) {
         return getEntity(Cluster.class,
-                VdcQueryType.GetClusterByName,
+                QueryType.GetClusterByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name);
     }

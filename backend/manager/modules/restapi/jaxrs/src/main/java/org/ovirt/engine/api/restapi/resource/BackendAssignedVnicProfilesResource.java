@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.VnicProfiles;
 import org.ovirt.engine.api.resource.AssignedVnicProfileResource;
 import org.ovirt.engine.api.resource.AssignedVnicProfilesResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendAssignedVnicProfilesResource extends AbstractBackendVnicProfilesResource implements AssignedVnicProfilesResource {
 
@@ -55,6 +55,6 @@ public class BackendAssignedVnicProfilesResource extends AbstractBackendVnicProf
 
     @Override
     protected List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> getVnicProfilesCollection() {
-        return getBackendCollection(VdcQueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(asGuid(networkId)));
+        return getBackendCollection(QueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(asGuid(networkId)));
     }
 }

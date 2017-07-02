@@ -80,8 +80,8 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
@@ -385,7 +385,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         VdcQueryReturnValue query =
-                runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
+                runInternalQuery(QueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
 
         List<VmRngDevice> rngDevs = query.getReturnValue();
 
@@ -575,7 +575,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // do not update if this flag is not set
         if (getParameters().isUpdateWatchdog()) {
             VdcQueryReturnValue query =
-                    runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
+                    runInternalQuery(QueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
             List<VmWatchdog> watchdogs = query.getReturnValue();
             if (watchdogs.isEmpty()) {
                 if (getParameters().getWatchdog() == null) {
@@ -636,7 +636,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private List<GraphicsDevice> getGraphicsDevices() {
         if (cachedGraphics == null) {
             cachedGraphics = getBackend()
-                    .runInternalQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(getParameters().getVmId())).getReturnValue();
+                    .runInternalQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(getParameters().getVmId())).getReturnValue();
         }
         return cachedGraphics;
     }

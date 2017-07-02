@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -58,7 +58,7 @@ public class ProviderSecretListModel extends SearchableListModel<Provider, Libvi
         if (provider == null) {
             return;
         }
-        super.syncSearch(VdcQueryType.GetAllLibvirtSecretsByProviderId, new IdQueryParameters(provider.getId()));
+        super.syncSearch(QueryType.GetAllLibvirtSecretsByProviderId, new IdQueryParameters(provider.getId()));
     }
 
     @Override

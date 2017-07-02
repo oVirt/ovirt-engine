@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
@@ -104,7 +104,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
     protected void syncSearch() {
         super.syncSearch();
         if (getIsQueryFirstTime()) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(),
+            Frontend.getInstance().runQuery(QueryType.GetAllPolicyUnits, new VdcQueryParametersBase(),
                     new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                         ArrayList<PolicyUnit> list = returnValue.getReturnValue();
                         setPolicyUnits(list);
@@ -130,7 +130,7 @@ public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, C
 
         VdcQueryParametersBase parametersBase = new VdcQueryParametersBase();
         parametersBase.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetClusterPolicies, parametersBase, asyncQuery);
+        Frontend.getInstance().runQuery(QueryType.GetClusterPolicies, parametersBase, asyncQuery);
         setIsQueryFirstTime(false);
     }
 

@@ -4,7 +4,7 @@ import static org.junit.Assert.fail;
 
 import java.lang.reflect.Field;
 
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 /** A helper class containing utilities to help test query types */
 final class TestHelperQueriesCommandType {
@@ -25,15 +25,15 @@ final class TestHelperQueriesCommandType {
      * @param query The query to set the type on
      * @param type The type to set
      */
-    public static void setQueryTypeFieldValue(QueriesCommandBase<?> query, VdcQueryType type)
+    public static void setQueryTypeFieldValue(QueriesCommandBase<?> query, QueryType type)
             throws IllegalArgumentException, IllegalAccessException {
         Field f = getAccessibleQueryTypeField();
         f.set(query, type);
     }
 
     /** @return The private type, via reflection */
-    public static VdcQueryType getQueryTypeFieldValue(QueriesCommandBase<?> query)
+    public static QueryType getQueryTypeFieldValue(QueriesCommandBase<?> query)
             throws IllegalArgumentException, IllegalAccessException {
-        return (VdcQueryType) getAccessibleQueryTypeField().get(query);
+        return (QueryType) getAccessibleQueryTypeField().get(query);
     }
 }

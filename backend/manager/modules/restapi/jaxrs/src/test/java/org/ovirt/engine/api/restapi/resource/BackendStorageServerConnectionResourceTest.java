@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageServerConnectionResourceTest extends AbstractBackendSubResourceTest<StorageConnection, StorageServerConnections, BackendStorageServerConnectionResource> {
     protected static final org.ovirt.engine.api.model.StorageType[] STORAGE_TYPES = {
@@ -200,7 +200,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     private void setUpGetEntityExpectations() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[3].toString() },
@@ -208,7 +208,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
     }
 
     private void setUpGetNotExistingEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[3].toString() },

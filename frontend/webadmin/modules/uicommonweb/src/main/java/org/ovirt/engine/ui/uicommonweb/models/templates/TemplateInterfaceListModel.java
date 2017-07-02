@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -85,7 +85,7 @@ public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, 
             return;
         }
 
-        super.syncSearch(VdcQueryType.GetTemplateInterfacesByTemplateId,
+        super.syncSearch(QueryType.GetTemplateInterfacesByTemplateId,
                 new IdQueryParameters(getEntity().getId()));
     }
 

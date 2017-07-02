@@ -20,20 +20,20 @@ import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendVnicProfilesResourceTest<C extends AbstractBackendVnicProfilesResource>
         extends AbstractBackendCollectionResourceTest<VnicProfile, org.ovirt.engine.core.common.businessentities.network.VnicProfile, C> {
 
     protected static final Guid NETWORK_ID = GUIDS[1];
-    private VdcQueryType listQueryType;
+    private QueryType listQueryType;
     private Class<? extends VdcQueryParametersBase> listQueryParamsClass;
 
     public AbstractBackendVnicProfilesResourceTest(C collection,
-            VdcQueryType listQueryType,
+            QueryType listQueryType,
             Class<? extends VdcQueryParametersBase> queryParamsClass) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
@@ -51,7 +51,7 @@ public abstract class AbstractBackendVnicProfilesResourceTest<C extends Abstract
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetVnicProfileById,
+                QueryType.GetVnicProfileById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { Guid.Empty },

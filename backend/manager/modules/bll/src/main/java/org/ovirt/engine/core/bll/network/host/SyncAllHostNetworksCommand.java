@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 
 public class SyncAllHostNetworksCommand extends VdsCommand {
@@ -50,7 +50,7 @@ public class SyncAllHostNetworksCommand extends VdsCommand {
 
     private PersistentHostSetupNetworksParameters generateSyncAllHostNetworksParameters() {
         PersistentHostSetupNetworksParameters parameters = new PersistentHostSetupNetworksParameters(getVdsId());
-        VdcQueryReturnValue returnValue = runInternalQuery(VdcQueryType.GetNetworkAttachmentsByHostId,
+        VdcQueryReturnValue returnValue = runInternalQuery(QueryType.GetNetworkAttachmentsByHostId,
                 new IdQueryParameters(getVdsId()));
         List<NetworkAttachment> networkAttachments = returnValue.getReturnValue();
         List<NetworkAttachment> unSyncNetworkAttachments =

@@ -30,8 +30,8 @@ import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -107,7 +107,7 @@ public class BackendHostNicsResource
 
     private Map<Guid, NetworkAttachment> getAttachmentsByNetworkId() {
         List<NetworkAttachment> attachments = getBackendCollection(NetworkAttachment.class,
-                VdcQueryType.GetNetworkAttachmentsByHostId,
+                QueryType.GetNetworkAttachmentsByHostId,
                 new IdQueryParameters(asGuid(hostId)));
 
         return new MapNetworkAttachments(attachments).byNetworkId();
@@ -139,14 +139,14 @@ public class BackendHostNicsResource
 
     public Map<Guid, HostNicVfsConfig> findHostNicVfsConfigs() {
         final List<HostNicVfsConfig> hostNicVfsConfigs = getBackendCollection(HostNicVfsConfig.class,
-                VdcQueryType.GetAllVfsConfigByHostId,
+                QueryType.GetAllVfsConfigByHostId,
                 new IdQueryParameters(asGuid(hostId)));
         return hostNicVfsConfigs.stream().collect(toMap(HostNicVfsConfig::getNicId, x -> x));
     }
 
     public Map<Guid, Guid> retriveVfMap() {
         final VdcQueryReturnValue returnValue =
-                runQuery(VdcQueryType.GetVfToPfMapByHostId, new IdQueryParameters(asGuid(hostId)));
+                runQuery(QueryType.GetVfToPfMapByHostId, new IdQueryParameters(asGuid(hostId)));
         return returnValue.getReturnValue();
     }
 
@@ -236,7 +236,7 @@ public class BackendHostNicsResource
     }
 
     protected List<VdsNetworkInterface> getCollection() {
-        return getBackendCollection(VdcQueryType.GetVdsInterfacesByVdsId, new IdQueryParameters(asGuid(hostId)));
+        return getBackendCollection(QueryType.GetVdsInterfacesByVdsId, new IdQueryParameters(asGuid(hostId)));
     }
 
     protected List<VdsNetworkInterface> getCollection(List<VdsNetworkInterface> collection) {
@@ -364,7 +364,7 @@ public class BackendHostNicsResource
         String name = network.getName();
 
         for (org.ovirt.engine.core.common.businessentities.network.Network entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.network.Network.class,
-                                                   VdcQueryType.GetAllNetworks,
+                                                   QueryType.GetAllNetworks,
                                                    new IdQueryParameters(Guid.Empty))) {
             if ((id != null && id.equals(entity.getId().toString())) ||
                 (name != null && name.equals(entity.getName()))) {
@@ -396,8 +396,8 @@ public class BackendHostNicsResource
 
     @SuppressWarnings("unchecked")
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getClusterNetworks(){
-        VDS vds = getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(getHostId())), "Host");
-        return getEntity(List.class, VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(vds.getClusterId()), "Networks");
+        VDS vds = getEntity(VDS.class, QueryType.GetVdsByVdsId, new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(getHostId())), "Host");
+        return getEntity(List.class, QueryType.GetAllNetworksByClusterId, new IdQueryParameters(vds.getClusterId()), "Networks");
     }
 
     public org.ovirt.engine.core.common.businessentities.network.Network lookupClusterNetwork(Network net) {

@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -80,9 +80,9 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
         params.setRefresh(getIsQueryFirstTime());
 
         if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetVdsWithoutNetwork, params, asyncQuery);
+            Frontend.getInstance().runQuery(QueryType.GetVdsWithoutNetwork, params, asyncQuery);
         } else if (NetworkHostFilter.attached.equals(getViewFilterType())) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetVdsAndNetworkInterfacesByNetworkId, params, asyncQuery);
+            Frontend.getInstance().runQuery(QueryType.GetVdsAndNetworkInterfacesByNetworkId, params, asyncQuery);
         }
 
         setIsQueryFirstTime(false);
@@ -98,7 +98,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
 
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(false);
-        Frontend.getInstance().runQuery(VdcQueryType.GetInterfacesByLabelForNetwork,
+        Frontend.getInstance().runQuery(QueryType.GetInterfacesByLabelForNetwork,
             params,
             new AsyncQuery<VdcQueryReturnValue>(returnValueObj -> {
                 if (!filter.equals(getViewFilterType())) {

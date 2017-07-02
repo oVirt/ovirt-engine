@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendGroupResource
         extends AbstractBackendSubResource<Group, DbGroup>
@@ -40,7 +40,7 @@ public class BackendGroupResource
     @Override
     public Group get() {
         return performGet(
-            VdcQueryType.GetDbGroupById,
+            QueryType.GetDbGroupById,
             new IdQueryParameters(guid),
             BaseResource.class
         );
@@ -61,7 +61,7 @@ public class BackendGroupResource
         return inject(
             new BackendAssignedPermissionsResource(
                 guid,
-                VdcQueryType.GetPermissionsOnBehalfByAdElementId,
+                QueryType.GetPermissionsOnBehalfByAdElementId,
                 new IdQueryParameters(guid),
                 Group.class
             )

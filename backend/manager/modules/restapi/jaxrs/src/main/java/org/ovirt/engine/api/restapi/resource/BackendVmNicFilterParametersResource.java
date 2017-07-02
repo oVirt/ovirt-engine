@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicFilterParametersResource
@@ -33,7 +33,7 @@ public class BackendVmNicFilterParametersResource
     public NetworkFilterParameters list() {
         NetworkFilterParameters parameters = new NetworkFilterParameters();
         List<VmNicFilterParameter> entities = getBackendCollection(
-            VdcQueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
+            QueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
             new IdQueryParameters(nicId)
         );
         for (VmNicFilterParameter entity : entities) {
@@ -81,7 +81,7 @@ public class BackendVmNicFilterParametersResource
         private VmNicFilterParameter lookupEntity(Guid id, String name) {
             List<VmNicFilterParameter> parameters = getBackendCollection(
                     VmNicFilterParameter.class,
-                    VdcQueryType.GetVmInterfaceFilterParameterById,
+                    QueryType.GetVmInterfaceFilterParameterById,
                     new IdQueryParameters(id)
             );
 

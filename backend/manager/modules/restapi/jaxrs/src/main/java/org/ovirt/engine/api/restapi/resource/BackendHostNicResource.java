@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.action.UpdateHostNicVfsConfigParameters;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicResource
@@ -114,7 +114,7 @@ public class BackendHostNicResource
             InterfaceAndIdQueryParameters params = new InterfaceAndIdQueryParameters(
                                                                     originalInter.getVdsId(),
                                                                     originalInter);
-            List<VdsNetworkInterface> vlans = getBackendCollection(VdsNetworkInterface.class, VdcQueryType.GetAllChildVlanInterfaces, params);
+            List<VdsNetworkInterface> vlans = getBackendCollection(VdsNetworkInterface.class, QueryType.GetAllChildVlanInterfaces, params);
             if (vlans!=null && !vlans.isEmpty()) {
                 return lookupAtachedNetwork(vlans.get(0).getNetworkName());
             } else {

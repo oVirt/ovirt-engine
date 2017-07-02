@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -74,7 +74,7 @@ public class AlertListModel extends SearchableListModel<Void, AuditLog> implemen
         tempVar.setRefresh(false);
         SearchParameters searchParameters = tempVar;
 
-        Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.Search, searchParameters, new SetItemsAsyncQuery());
     }
 
     public void dismissAlert() {

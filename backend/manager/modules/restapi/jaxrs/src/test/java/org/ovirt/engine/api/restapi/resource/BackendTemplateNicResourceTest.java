@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateNicResourceTest
@@ -92,7 +92,7 @@ public class BackendTemplateNicResourceTest
 
     private void setUpGetNicsExpectations() {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetTemplateInterfacesByTemplateId,
+            QueryType.GetTemplateInterfacesByTemplateId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { TEMPLATE_ID },

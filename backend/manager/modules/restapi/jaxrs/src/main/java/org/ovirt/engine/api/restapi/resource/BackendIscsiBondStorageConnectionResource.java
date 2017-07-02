@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendIscsiBondStorageConnectionResource extends BackendStorageServerConnectionResource {
 
@@ -28,7 +28,7 @@ public class BackendIscsiBondStorageConnectionResource extends BackendStorageSer
 
         StorageServerConnections entity =
                 getEntity(org.ovirt.engine.core.common.businessentities.StorageServerConnections.class,
-                        VdcQueryType.GetStorageServerConnectionById,
+                        QueryType.GetStorageServerConnectionById,
                         new StorageServerConnectionQueryParametersBase(guid),
                         guid.toString());
 

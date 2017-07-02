@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.queries.HostDeviceParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendHostDeviceResourceTest
         extends AbstractBackendHostDevicesResourceTest<BackendHostDeviceResource, org.ovirt.engine.core.common.businessentities.HostDevice> {
@@ -16,7 +16,7 @@ public class BackendHostDeviceResourceTest
     @Test
     public void testGet() throws Exception {
         setUpGetEntityExpectations(
-                VdcQueryType.GetHostDeviceByHostIdAndDeviceName,
+                QueryType.GetHostDeviceByHostIdAndDeviceName,
                 HostDeviceParameters.class,
                 new String[] { "HostId", "DeviceName" },
                 new Object[] { HOST_ID, DEVICE_NAME },

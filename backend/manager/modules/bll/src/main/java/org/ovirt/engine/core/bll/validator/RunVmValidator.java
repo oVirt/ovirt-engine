@@ -55,8 +55,8 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmCommonUtils;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
@@ -550,7 +550,7 @@ public class RunVmValidator {
 
     private boolean isRepoImageExists(String repoImagePath, Guid storageDomainId, ImageFileType imageFileType) {
         VdcQueryReturnValue ret = getBackend().runInternalQuery(
-                VdcQueryType.GetImagesList,
+                QueryType.GetImagesList,
                 new GetImagesListParameters(storageDomainId, imageFileType));
 
         if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {

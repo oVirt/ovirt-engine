@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public abstract class AbstractBackendDiskProfileResource
         extends AbstractBackendSubResource<DiskProfile, org.ovirt.engine.core.common.businessentities.profiles.DiskProfile> {
@@ -20,7 +20,7 @@ public abstract class AbstractBackendDiskProfileResource
     }
 
     protected DiskProfile get() {
-        return performGet(VdcQueryType.GetDiskProfileById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetDiskProfileById, new IdQueryParameters(guid));
     }
 
     @Override
@@ -29,7 +29,7 @@ public abstract class AbstractBackendDiskProfileResource
             String... subCollectionMembersToExclude) {
         if (model.isSetQos() && model.getQos().isSetId()) {
             QosBase qos = getEntity(QosBase.class,
-                    VdcQueryType.GetQosById,
+                    QueryType.GetQosById,
                     new IdQueryParameters(asGuid(model.getQos().getId())),
                     "qos");
             model.getQos().setDataCenter(new DataCenter());
@@ -41,7 +41,7 @@ public abstract class AbstractBackendDiskProfileResource
     private org.ovirt.engine.core.common.businessentities.profiles.DiskProfile getDiskProfile(String id) {
         return getEntity(
             org.ovirt.engine.core.common.businessentities.profiles.DiskProfile.class,
-            VdcQueryType.GetDiskProfileById,
+            QueryType.GetDiskProfileById,
             new IdQueryParameters(asGuidOr404(id)),
             "DiskProfile"
         );

@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageServerConnectionsResource> {
 
@@ -85,7 +85,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAllStorageServerConnections,
+        setUpEntityQueryExpectations(QueryType.GetAllStorageServerConnections,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -122,7 +122,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
                 true,
                 true,
                 GUIDS[0].toString(),
-                VdcQueryType.GetStorageServerConnectionById,
+                QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[0].toString() },
@@ -149,7 +149,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
                 true,
                 true,
                 GUIDS[1].toString(),
-                VdcQueryType.GetStorageServerConnectionById,
+                QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[1].toString() },
@@ -176,7 +176,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
                 false,
                 false,
                 GUIDS[0].toString(),
-                VdcQueryType.GetStorageServerConnectionById,
+                QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[0].toString() },

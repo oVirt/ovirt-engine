@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 
 /**
@@ -19,7 +19,7 @@ public class HostErrataListModel extends AbstractErrataListModel {
     }
 
     @Override
-    protected VdcQueryType getQueryType() {
-        return VdcQueryType.GetErrataForHost;
+    protected QueryType getQueryType() {
+        return QueryType.GetErrataForHost;
     }
 }

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<Tag, Tags, BackendHostTagResource> {
@@ -86,7 +86,7 @@ public class BackendHostTagResourceTest extends AbstractBackendSubResourceTest<T
 
     private void setUpGetTagExpectations(boolean succeed) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetTagsByVdsId,
+            QueryType.GetTagsByVdsId,
             GetTagsByVdsIdParameters.class,
             new String[] { "VdsId" },
             new Object[] { HOST_ID.toString() },

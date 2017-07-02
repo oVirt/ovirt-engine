@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -49,12 +49,12 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
     @Override
     protected void onInitDisks() {
         final ArrayList<DiskModel> disks = new ArrayList<>();
-        List<VdcQueryType> queries = new ArrayList<>();
+        List<QueryType> queries = new ArrayList<>();
         List<VdcQueryParametersBase> params = new ArrayList<>();
 
         for (DiskImage disk : getDiskImages()) {
             disks.add(DiskModel.diskToModel(disk));
-            queries.add(VdcQueryType.GetVmsByDiskGuid);
+            queries.add(QueryType.GetVmsByDiskGuid);
             params.add(new IdQueryParameters(disk.getId()));
         }
 

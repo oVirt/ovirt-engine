@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -160,9 +160,9 @@ public class UserPortalLoginModel extends LoginModel {
     // Use only as 'Step3' of 'UpdateIsENGINEUser'
     public void updateUserActionGroups(ArrayList<Guid> roleIdList) {
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
+        ArrayList<QueryType> queryTypeList = new ArrayList<>();
         for (Guid roleId : roleIdList) {
-            queryTypeList.add(VdcQueryType.GetRoleActionGroupsByRoleId);
+            queryTypeList.add(QueryType.GetRoleActionGroupsByRoleId);
             queryParamsList.add(new IdQueryParameters(roleId));
         }
         Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {

@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -36,7 +36,7 @@ public class DiskStorageListModel extends SearchableListModel<DiskImage, Storage
         IdQueryParameters getStorageDomainsByImageIdParameters = new IdQueryParameters(diskImage.getImageId());
         getStorageDomainsByImageIdParameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByImageId, getStorageDomainsByImageIdParameters, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.GetStorageDomainsByImageId, getStorageDomainsByImageIdParameters, new SetItemsAsyncQuery());
 
         setIsQueryFirstTime(false);
     }

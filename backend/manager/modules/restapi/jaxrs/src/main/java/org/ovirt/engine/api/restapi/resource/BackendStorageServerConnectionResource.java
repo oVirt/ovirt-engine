@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageServerConnectionResource extends
@@ -29,14 +29,14 @@ public class BackendStorageServerConnectionResource extends
 
     @Override
     public StorageConnection get() {
-        return performGet(VdcQueryType.GetStorageServerConnectionById,
+        return performGet(QueryType.GetStorageServerConnectionById,
                 new StorageServerConnectionQueryParametersBase(guid.toString()));
     }
 
     @Override
     public StorageConnection update(StorageConnection connection) {
         return performUpdate(connection,
-                new QueryIdResolver<>(VdcQueryType.GetStorageServerConnectionById,
+                new QueryIdResolver<>(QueryType.GetStorageServerConnectionById,
                         StorageServerConnectionQueryParametersBase.class),
                 ActionType.UpdateStorageServerConnection,
                 new UpdateParametersProvider());
@@ -65,7 +65,7 @@ public class BackendStorageServerConnectionResource extends
         catch (IllegalArgumentException exception) {
             VdsStatic entity = getEntity(
                 VdsStatic.class,
-                VdcQueryType.GetVdsStaticByName,
+                QueryType.GetVdsStaticByName,
                 new NameQueryParameters(host),
                 host
             );
@@ -98,7 +98,7 @@ public class BackendStorageServerConnectionResource extends
                     ? new Guid(host.getId())
                     : host.isSetName()
                             ? getEntity(VdsStatic.class,
-                                    VdcQueryType.GetVdsStaticByName,
+                                    QueryType.GetVdsStaticByName,
                                     new NameQueryParameters(host.getName()),
                                     "Hosts: name=" + host.getName()).getId()
                             : null;

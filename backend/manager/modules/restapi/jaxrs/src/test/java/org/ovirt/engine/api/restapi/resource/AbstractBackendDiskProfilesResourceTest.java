@@ -20,20 +20,20 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendDiskProfilesResourceTest<C extends AbstractBackendDiskProfilesResource>
         extends AbstractBackendCollectionResourceTest<DiskProfile, org.ovirt.engine.core.common.businessentities.profiles.DiskProfile, C> {
 
     protected static final Guid STORAGE_DOMAIN_ID = GUIDS[1];
-    private final VdcQueryType listQueryType;
+    private final QueryType listQueryType;
     private final Class<? extends VdcQueryParametersBase> listQueryParamsClass;
 
     public AbstractBackendDiskProfilesResourceTest(C collection,
-            VdcQueryType listQueryType,
+            QueryType listQueryType,
             Class<? extends VdcQueryParametersBase> queryParamsClass) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
@@ -51,7 +51,7 @@ public abstract class AbstractBackendDiskProfilesResourceTest<C extends Abstract
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetDiskProfileById,
+                QueryType.GetDiskProfileById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { Guid.Empty },

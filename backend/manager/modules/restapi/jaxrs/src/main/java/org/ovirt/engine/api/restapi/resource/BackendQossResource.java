@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQossResource extends AbstractBackendCollectionResource<Qos, QosBase> implements QossResource {
@@ -33,7 +33,7 @@ public class BackendQossResource extends AbstractBackendCollectionResource<Qos, 
 
     @Override
     public Qoss list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllQosByStoragePoolId,
+        return mapCollection(getBackendCollection(QueryType.GetAllQosByStoragePoolId,
                 new QosQueryParameterBase(dataCenterId)));
     }
 
@@ -50,7 +50,7 @@ public class BackendQossResource extends AbstractBackendCollectionResource<Qos, 
         }
         return performCreate(addActionTypeForQosType(qosType),
                 params,
-                new QueryIdResolver<Guid>(VdcQueryType.GetQosById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetQosById, IdQueryParameters.class));
     }
 
     private QosBase createNewQosEntityForQosType(QosType qosType) {

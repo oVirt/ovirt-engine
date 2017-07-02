@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendJobResource extends AbstractBackendActionableResource<Job, org.ovirt.engine.core.common.job.Job> implements JobResource{
 
@@ -44,7 +44,7 @@ public class BackendJobResource extends AbstractBackendActionableResource<Job, o
     @Override
     public Job get() {
         IdQueryParameters params =  new IdQueryParameters(guid);
-        return performGet(VdcQueryType.GetJobByJobId, params);
+        return performGet(QueryType.GetJobByJobId, params);
      }
 
     @Override

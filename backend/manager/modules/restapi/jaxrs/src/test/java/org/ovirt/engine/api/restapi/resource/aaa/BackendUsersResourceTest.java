@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendUsersResourceTest
     extends AbstractBackendCollectionResourceTest<User, DbUser, BackendUsersResource> {
@@ -52,7 +52,7 @@ public class BackendUsersResourceTest
 
     @Test
     public void testAddUser2() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -70,7 +70,7 @@ public class BackendUsersResourceTest
 
     @Test
     public void testAddUser3() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -85,7 +85,7 @@ public class BackendUsersResourceTest
 
     @Test
     public void testAddUser4() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] { },
                 new Object[] { },
@@ -129,7 +129,7 @@ public class BackendUsersResourceTest
             true,
             true,
             GUIDS[0],
-            VdcQueryType.GetDbUserByUserId,
+            QueryType.GetDbUserByUserId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },

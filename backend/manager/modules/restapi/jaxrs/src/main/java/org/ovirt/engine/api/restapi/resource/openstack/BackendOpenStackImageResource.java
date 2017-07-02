@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackImageResource
@@ -45,7 +45,7 @@ public class BackendOpenStackImageResource
     @Override
     public OpenStackImage get() {
         Guid storageDomainId = BackendOpenStackStorageProviderHelper.getStorageDomainId(this, providerId);
-        return performGet(VdcQueryType.GetImageById, new GetImageByIdParameters(storageDomainId, id));
+        return performGet(QueryType.GetImageById, new GetImageByIdParameters(storageDomainId, id));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BackendOpenStackImageResource
         EntityResolver resolver = new SimpleIdResolver(
                 Disk.class,
                 org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class
         );
         return doAction(ActionType.ImportRepoImage, parameters, action, resolver);

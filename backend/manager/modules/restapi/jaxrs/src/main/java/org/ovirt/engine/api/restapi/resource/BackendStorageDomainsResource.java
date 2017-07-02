@@ -42,10 +42,10 @@ import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -54,7 +54,7 @@ public class BackendStorageDomainsResource
         implements StorageDomainsResource {
 
     private final EntityIdResolver<Guid> ID_RESOLVER =
-            new QueryIdResolver<>(VdcQueryType.GetStorageDomainById, IdQueryParameters.class);
+            new QueryIdResolver<>(QueryType.GetStorageDomainById, IdQueryParameters.class);
 
     public BackendStorageDomainsResource() {
         super(StorageDomain.class, org.ovirt.engine.core.common.businessentities.StorageDomain.class);
@@ -63,7 +63,7 @@ public class BackendStorageDomainsResource
     @Override
     public StorageDomains list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllStorageDomains,
+            return mapCollection(getBackendCollection(QueryType.GetAllStorageDomains,
                     new VdcQueryParametersBase(), SearchType.StorageDomain));
         } else {
             return mapCollection(getBackendCollection(SearchType.StorageDomain));
@@ -129,7 +129,7 @@ public class BackendStorageDomainsResource
 
     private Response addExistingSAN(StorageDomain model, StorageType storageType, Guid hostId) {
         getEntity(VDS.class,
-                VdcQueryType.GetVdsByVdsId,
+                QueryType.GetVdsByVdsId,
                 new IdQueryParameters(hostId),
                 "Host: id=" + hostId);
         List<LUNs> existingLuns = getDeviceList(hostId, storageType);
@@ -182,7 +182,7 @@ public class BackendStorageDomainsResource
             List<StorageServerConnections> cnxList) {
         Pair<List<org.ovirt.engine.core.common.businessentities.StorageDomain>, List<StorageServerConnections>> pair =
                 getEntity(Pair.class,
-                        VdcQueryType.GetUnregisteredBlockStorageDomains,
+                        QueryType.GetUnregisteredBlockStorageDomains,
                         new GetUnregisteredBlockStorageDomainsParameters(hostId, storageType, cnxList),
                         "GetUnregisteredBlockStorageDomains", true);
 
@@ -192,7 +192,7 @@ public class BackendStorageDomainsResource
 
     private List<LUNs> getDeviceList(Guid hostId, StorageType storageType) {
         return getEntity(List.class,
-                VdcQueryType.GetDeviceList,
+                QueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(hostId, storageType, false, null, false),
                 "GetDeviceList", true);
     }
@@ -237,7 +237,7 @@ public class BackendStorageDomainsResource
      * which the creation will fail.
      */
     private void refreshHostStorage(Guid hostId) {
-        getBackendCollection(VdcQueryType.GetDeviceList, new GetDeviceListQueryParameters(hostId,
+        getBackendCollection(QueryType.GetDeviceList, new GetDeviceListQueryParameters(hostId,
                 StorageType.ISCSI,
                 false, null, false));
     }
@@ -452,7 +452,7 @@ public class BackendStorageDomainsResource
                 ? new Guid(storageDomain.getHost().getId())
                 : storageDomain.getHost().isSetName()
                         ? getEntity(VdsStatic.class,
-                                VdcQueryType.GetVdsStaticByName,
+                                QueryType.GetVdsStaticByName,
                                 new NameQueryParameters(storageDomain.getHost().getName()),
                                 "Hosts: name=" + storageDomain.getHost().getName()).getId()
                         : null;
@@ -472,7 +472,7 @@ public class BackendStorageDomainsResource
 
     private StorageServerConnections getStorageServerConnection(String id) {
         VdcQueryReturnValue result = runQuery(
-                VdcQueryType.GetStorageServerConnectionById,
+                QueryType.GetStorageServerConnectionById,
                 new StorageServerConnectionQueryParametersBase(id)
         );
         if (result.getSucceeded() && result.getReturnValue() != null) {
@@ -488,7 +488,7 @@ public class BackendStorageDomainsResource
     private List<LUNs> getLunsByVgId(String vgId) {
         return asCollection(LUNs.class,
                 getEntity(List.class,
-                        VdcQueryType.GetLunsByVgId,
+                        QueryType.GetLunsByVgId,
                         new GetLunsByVgIdParameters(vgId),
                         "LUNs for volume group: id=" + vgId));
     }
@@ -500,7 +500,7 @@ public class BackendStorageDomainsResource
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> existing =
                 asCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                         getEntity(ArrayList.class,
-                                VdcQueryType.GetExistingStorageDomainList,
+                                QueryType.GetExistingStorageDomainList,
                                 new GetExistingStorageDomainListParameters(hostId,
                                         storageType,
                                         domainType,

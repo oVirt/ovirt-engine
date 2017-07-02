@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AbstractBackendStorageDomainDisksResource
@@ -28,7 +28,7 @@ public class AbstractBackendStorageDomainDisksResource
     public static final String UNREGISTERED = "unregistered";
 
     private final QueryIdResolver<Guid> ID_RESOLVER = new QueryIdResolver<>(
-        VdcQueryType.GetDiskByDiskId,
+        QueryType.GetDiskByDiskId,
         IdQueryParameters.class
     );
 
@@ -43,11 +43,11 @@ public class AbstractBackendStorageDomainDisksResource
         boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED, true, false);
         if (unregistered) {
             Guid dataCenterId = BackendDataCenterHelper.lookupByStorageDomainId(this, storageDomainId);
-            return mapCollection(getBackendCollection(VdcQueryType.GetUnregisteredDisks,
+            return mapCollection(getBackendCollection(QueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId, dataCenterId)));
         }
         else {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllDisksByStorageDomainId,
+            return mapCollection(getBackendCollection(QueryType.GetAllDisksByStorageDomainId,
                     new IdQueryParameters(storageDomainId)));
         }
     }
@@ -62,7 +62,7 @@ public class AbstractBackendStorageDomainDisksResource
             GetUnregisteredDiskQueryParameters getDiskParams = new GetUnregisteredDiskQueryParameters(
                     asGuid(disk.getId()), storageDomainId, dataCenterId);
             DiskImage unregisteredDisk =
-                    getEntity(DiskImage.class, VdcQueryType.GetUnregisteredDisk, getDiskParams, disk.getId());
+                    getEntity(DiskImage.class, QueryType.GetUnregisteredDisk, getDiskParams, disk.getId());
             unregisteredDisk =
                     (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk,
                             unregisteredDisk);

@@ -23,10 +23,10 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendAttachedStorageDomainsResourceTest
     extends AbstractBackendCollectionResourceTest<StorageDomain,
@@ -56,7 +56,7 @@ public class BackendAttachedStorageDomainsResourceTest
                                   true,
                                   true,
                                   null,
-                                  VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
+                                  QueryType.GetStorageDomainByIdAndStoragePoolId,
                                   StorageDomainAndPoolQueryParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
                                   new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
@@ -84,7 +84,7 @@ public class BackendAttachedStorageDomainsResourceTest
 
         setUpGetConnection(1);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[0] },
@@ -97,7 +97,7 @@ public class BackendAttachedStorageDomainsResourceTest
                                   true,
                                   true,
                                   null,
-                                  VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
+                                  QueryType.GetStorageDomainByIdAndStoragePoolId,
                                   StorageDomainAndPoolQueryParameters.class,
                                   new String[] { "StorageDomainId", "StoragePoolId" },
                                   new Object[] { GUIDS[0], GUIDS[NAMES.length-1] },
@@ -156,7 +156,7 @@ public class BackendAttachedStorageDomainsResourceTest
 
     private void setUpGetConnection(int times) throws Exception {
         for (int i=0; i<times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+            setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                     StorageServerConnectionQueryParametersBase.class,
                     new String[] { "ServerConnectionId" },
                     new Object[] { GUIDS[0].toString() },
@@ -171,7 +171,7 @@ public class BackendAttachedStorageDomainsResourceTest
         String[] paramNames = new String[] { "ServerConnectionId" };
         Object[] paramValues = new Object[] { GUIDS[0].toString() };
         VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
-        when(backend.runQuery(eq(VdcQueryType.GetStorageServerConnectionById), eqParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
+        when(backend.runQuery(eq(QueryType.GetStorageServerConnectionById), eqParams(StorageServerConnectionQueryParametersBase.class, addSession(paramNames), addSession(paramValues))))
         .thenReturn(queryResult);
         queryResult.setSucceeded(true);
         queryResult.setReturnValue(setUpStorageServerConnection());
@@ -185,7 +185,7 @@ public class BackendAttachedStorageDomainsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainsByStoragePoolId,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainsByStoragePoolId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[NAMES.length-1] },

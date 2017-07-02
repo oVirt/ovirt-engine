@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendGroupsResourceTest
     extends AbstractBackendCollectionResourceTest<Group, DbGroup, BackendGroupsResource> {
@@ -131,7 +131,7 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupWithExplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -150,7 +150,7 @@ public class BackendGroupsResourceTest
             true,
             true,
             dbGroup.getId(),
-            VdcQueryType.GetDbGroupById,
+            QueryType.GetDbGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { dbGroup.getId()},
@@ -184,7 +184,7 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupWithImplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -202,7 +202,7 @@ public class BackendGroupsResourceTest
             true,
             true,
             GUIDS[0],
-            VdcQueryType.GetDbGroupById,
+            QueryType.GetDbGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },
@@ -224,7 +224,7 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupWithoutDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -249,13 +249,13 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupById() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpDomains());
         setUpGetEntityExpectations(
-            VdcQueryType.GetDirectoryGroupById,
+            QueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
             new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(EXTERNAL_IDS[0]) },
@@ -269,7 +269,7 @@ public class BackendGroupsResourceTest
             true,
             true,
             GUIDS[0],
-            VdcQueryType.GetDbGroupById,
+            QueryType.GetDbGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },
@@ -293,13 +293,13 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupByIdFailure() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+        setUpEntityQueryExpectations(QueryType.GetDomainList,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
                 setUpDomains());
         setUpGetEntityExpectations(
-            VdcQueryType.GetDirectoryGroupById,
+            QueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
                 new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(NON_EXISTANT_EXTERNAL_ID) },

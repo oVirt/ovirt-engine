@@ -20,7 +20,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.resource.SystemPermissionsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -32,7 +32,7 @@ public class BackendSystemPermissionsResource extends BackendAssignedPermissions
     public BackendSystemPermissionsResource() {
         super(
             Guid.SYSTEM,
-            VdcQueryType.GetPermissionsForObject,
+            QueryType.GetPermissionsForObject,
             new GetPermissionsForObjectParameters(Guid.SYSTEM),
             BaseResource.class,
             VdcObjectType.System

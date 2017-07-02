@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetVmsAndNetworkInterfacesByNetworkIdParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -77,7 +77,7 @@ public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQue
         params.setRefresh(getIsQueryFirstTime());
 
         final NetworkVmFilter filter = getViewFilterType();
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsAndNetworkInterfacesByNetworkId,
+        Frontend.getInstance().runQuery(QueryType.GetVmsAndNetworkInterfacesByNetworkId,
                 params,
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     if (filter.equals(getViewFilterType())) {

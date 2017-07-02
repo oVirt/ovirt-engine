@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollectionResource<AffinityLabel, org.ovirt.engine.core.common.businessentities.Label>
@@ -42,7 +42,7 @@ public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollec
         IdQueryParameters parameters = new IdQueryParameters(GuidUtils.asGuid(label.getId()));
         org.ovirt.engine.core.common.businessentities.Label entity = getEntity(
                 org.ovirt.engine.core.common.businessentities.Label.class,
-                VdcQueryType.GetLabelById,
+                QueryType.GetLabelById,
                 parameters,
                 label.getId(),
                 true);
@@ -65,7 +65,7 @@ public class BackendAssignedAffinityLabelsResource extends AbstractBackendCollec
     public AffinityLabels list() {
         return mapCollection(
                 getBackendCollection(
-                        VdcQueryType.GetLabelByEntityId, new IdQueryParameters(GuidUtils.asGuid(parentId))));
+                        QueryType.GetLabelByEntityId, new IdQueryParameters(GuidUtils.asGuid(parentId))));
     }
 
     @Override

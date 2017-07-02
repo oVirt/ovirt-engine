@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendInstanceTypesResource
@@ -38,7 +38,7 @@ public class BackendInstanceTypesResource
     @Override
     public InstanceTypes list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllInstanceTypes,
+            return mapCollection(getBackendCollection(QueryType.GetAllInstanceTypes,
                     new VdcQueryParametersBase()));
         } else {
             return mapCollection(getBackendCollection(SearchType.InstanceType));
@@ -82,7 +82,7 @@ public class BackendInstanceTypesResource
 
         Response response = performCreate(ActionType.AddVmTemplate,
                 addInstanceTypeParameters,
-                new QueryIdResolver<Guid>(VdcQueryType.GetInstanceType,
+                new QueryIdResolver<Guid>(QueryType.GetInstanceType,
                         GetVmTemplateParameters.class));
 
         Template result = (Template) response.getEntity();
@@ -129,14 +129,14 @@ public class BackendInstanceTypesResource
 
     private List<VmRngDevice> getRngDevices(Guid id) {
         return getEntity(List.class,
-            VdcQueryType.GetRngDevice,
+            QueryType.GetRngDevice,
             new IdQueryParameters(id),
             "GetRngDevice", true);
     }
 
     private List<String> getConsoleDevicesForEntity(Guid id) {
         return getEntity(List.class,
-                VdcQueryType.GetConsoleDevices,
+                QueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
     }

@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.Ipv6BootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicsResourceTest
@@ -93,7 +93,7 @@ public class BackendHostNicsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
+        setUpEntityQueryExpectations(QueryType.GetVdsInterfacesByVdsId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { PARENT_GUID },
@@ -238,7 +238,7 @@ public class BackendHostNicsResourceTest
         while (times-- > 0) {
             VDS vds = new VDS();
             vds.setClusterId(GUIDS[0]);
-            setUpEntityQueryExpectations(VdcQueryType.GetVdsByVdsId,
+            setUpEntityQueryExpectations(QueryType.GetVdsByVdsId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { PARENT_GUID },
@@ -253,7 +253,7 @@ public class BackendHostNicsResourceTest
             network.setId(GUIDS[0]);
             network.setName("orcus");
             networks.add(network);
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
+            setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[0] },

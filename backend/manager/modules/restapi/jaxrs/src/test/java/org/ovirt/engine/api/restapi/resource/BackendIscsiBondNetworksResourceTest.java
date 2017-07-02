@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetworksResourceTest<BackendNetworksResource> {
@@ -38,7 +38,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
         Network network = getModel(0);
         network.setId(NETWORK_ID.toString());
 
-        setUpGetEntityExpectations(VdcQueryType.GetIscsiBondById,
+        setUpGetEntityExpectations(QueryType.GetIscsiBondById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { ISCSI_BOND_ID },
@@ -59,7 +59,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
     @Override
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetNetworksByIscsiBondId,
+            setUpEntityQueryExpectations(QueryType.GetNetworksByIscsiBondId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { ISCSI_BOND_ID },
@@ -70,7 +70,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByIscsiBondId,
+        setUpEntityQueryExpectations(QueryType.GetNetworksByIscsiBondId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { ISCSI_BOND_ID },

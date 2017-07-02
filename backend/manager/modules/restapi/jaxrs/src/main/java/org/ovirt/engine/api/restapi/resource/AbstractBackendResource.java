@@ -28,9 +28,9 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQueryable */>
@@ -106,7 +106,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     private CreationStatus getVdsmTasksStatus(VdcReturnValueBase result) {
         CreationStatus asyncStatus = null;
         VdcQueryReturnValue monitorResult =
-            runQuery(VdcQueryType.GetTasksStatusesByTasksIDs, new GetTasksStatusesByTasksIDsParameters(result.getVdsmTaskIdList()));
+            runQuery(QueryType.GetTasksStatusesByTasksIDs, new GetTasksStatusesByTasksIDsParameters(result.getVdsmTaskIdList()));
         if (monitorResult != null
             && monitorResult.getSucceeded()
             && monitorResult.getReturnValue() != null) {
@@ -124,7 +124,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
             return CreationStatus.COMPLETE;
         } else {
             IdQueryParameters params = new IdQueryParameters(jobId);
-            VdcQueryReturnValue queryResult = runQuery(VdcQueryType.GetJobByJobId, params);
+            VdcQueryReturnValue queryResult = runQuery(QueryType.GetJobByJobId, params);
             if (queryResult != null && queryResult.getSucceeded() && queryResult.getReturnValue() != null) {
                 Job job = queryResult.getReturnValue();
                 return job.getStatus()==JobExecutionStatus.STARTED ? CreationStatus.IN_PROGRESS : CreationStatus.COMPLETE;
@@ -387,7 +387,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         return host.isSetId()
                 ? asGuid(host.getId())
                : getEntity(VDS.class,
-                           VdcQueryType.GetVdsByName,
+                           QueryType.GetVdsByName,
                            new NameQueryParameters(host.getName()),
                            host.getName()).getId();
     }
@@ -422,10 +422,10 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     public class QueryIdResolver<T> extends EntityIdResolver<T> {
 
-        private final VdcQueryType query;
+        private final QueryType query;
         private final Class<? extends VdcQueryParametersBase> queryParamsClass;
 
-        public QueryIdResolver(VdcQueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
+        public QueryIdResolver(QueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
             this.query = query;
             this.queryParamsClass = queryParamsClass;
         }

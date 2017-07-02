@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -71,12 +71,12 @@ public class EditProviderModel extends ProviderModel {
     @Override
     protected void preSave() {
         if (!StringHelper.stringsEqualIgnoreCase(getUrl().getEntity(), oldUrl)) {
-            ArrayList<VdcQueryType> queryTypes = new ArrayList<>();
+            ArrayList<QueryType> queryTypes = new ArrayList<>();
             ArrayList<VdcQueryParametersBase> queryParams = new ArrayList<>();
             final Set<VdcObjectType> providedTypes = provider.getType().getProvidedTypes();
 
             if (providedTypes.contains(VdcObjectType.Network)) {
-                queryTypes.add(VdcQueryType.GetAllNetworksForProvider);
+                queryTypes.add(QueryType.GetAllNetworksForProvider);
                 queryParams.add(new IdQueryParameters(provider.getId()));
             }
 

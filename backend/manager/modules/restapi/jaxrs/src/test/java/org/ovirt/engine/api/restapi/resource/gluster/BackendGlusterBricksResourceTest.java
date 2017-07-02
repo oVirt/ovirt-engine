@@ -35,8 +35,8 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionPara
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -201,7 +201,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 true,
                 true,
                 getBrickIds(),
-                VdcQueryType.GetGlusterBrickById,
+                QueryType.GetGlusterBrickById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -210,7 +210,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
     @Test
     public void testRemove() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+        setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { volumeId },
@@ -229,7 +229,7 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
     @Test
     public void testRemoveCommit() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+        setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { volumeId },
@@ -435,11 +435,11 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String) failure);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(QueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenThrow((Exception) failure);
                 return;
             }
         }
-        when(backend.runQuery(eq(VdcQueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenReturn(
+        when(backend.runQuery(eq(QueryType.GetGlusterVolumeBricks), any(IdQueryParameters.class))).thenReturn(
                 queryResult);
     }
 
@@ -453,13 +453,13 @@ public class BackendGlusterBricksResourceTest extends AbstractBackendCollectionR
 
     private void setupEntityExpectationAdvancedDetails(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+            setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { volumeId },
                     helper.getVolumeEntity(0));
 
-            setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeAdvancedDetails,
+            setUpGetEntityExpectations(QueryType.GetGlusterVolumeAdvancedDetails,
                     GlusterVolumeAdvancedDetailsParameters.class,
                     new String[] { "ClusterId", "VolumeId", "BrickId", "DetailRequired" },
                     new Object[] { clusterId, volumeId, GUIDS[times], true },

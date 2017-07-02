@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmPoolResource
@@ -41,13 +41,13 @@ public class BackendVmPoolResource
 
     @Override
     public VmPool get() {
-        return performGet(VdcQueryType.GetVmPoolById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetVmPoolById, new IdQueryParameters(guid));
     }
 
     @Override
     public VmPool update(VmPool incoming) {
         return performUpdate(incoming,
-                             new QueryIdResolver<>(VdcQueryType.GetVmPoolById, IdQueryParameters.class),
+                             new QueryIdResolver<>(QueryType.GetVmPoolById, IdQueryParameters.class),
                              ActionType.UpdateVmPool,
                              new UpdateParametersProvider());
     }
@@ -55,7 +55,7 @@ public class BackendVmPoolResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsForObject,
+                                                             QueryType.GetPermissionsForObject,
                                                              new GetPermissionsForObjectParameters(guid),
                                                              VmPool.class,
                                                              VdcObjectType.VmPool));
@@ -80,7 +80,7 @@ public class BackendVmPoolResource
         if (templateId != null) {
             List<DiskImage> images = asCollection(DiskImage.class,
                                                   getEntity(List.class,
-                                                            VdcQueryType.GetVmTemplatesDisks,
+                                                            QueryType.GetVmTemplatesDisks,
                                                             new IdQueryParameters(templateId),
                                                             templateId.toString()));
             if (images != null && images.size() > 0) {
@@ -110,7 +110,7 @@ public class BackendVmPoolResource
             } else {
                 final VM existing = currentVmCount > 0
                                 ? getEntity(VM.class,
-                                        VdcQueryType.GetVmDataByPoolId,
+                                        QueryType.GetVmDataByPoolId,
                                         new IdQueryParameters(current.getId()),
                                         "Vms: pool=" + current.getId())
                               : null;
@@ -122,7 +122,7 @@ public class BackendVmPoolResource
 
             if (vm.getVmtGuid() != null) {
                 final VmTemplate template = getEntity(VmTemplate.class,
-                                                VdcQueryType.GetVmTemplate,
+                                                QueryType.GetVmTemplate,
                                                 new GetVmTemplateParameters(vm.getVmtGuid()),
                                                 vm.getVmtGuid().toString());
                 vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
@@ -157,7 +157,7 @@ public class BackendVmPoolResource
 
     private VmTemplate lookupTemplateByName(String name) {
         return getEntity(VmTemplate.class,
-                VdcQueryType.GetVmTemplate,
+                QueryType.GetVmTemplate,
                 new GetVmTemplateParameters(name),
                 "GetVmTemplate");
     }
@@ -167,17 +167,17 @@ public class BackendVmPoolResource
         return doAction(ActionType.AttachUserToVmFromPoolAndRun,
                         new AttachUserToVmFromPoolAndRunParameters(guid,  getCurrent().getUser().getId()),
                         action,
-                        new VmQueryIdResolver(VdcQueryType.GetVmByVmId,
+                        new VmQueryIdResolver(QueryType.GetVmByVmId,
                                               IdQueryParameters.class));
 
     }
 
     protected class VmQueryIdResolver extends EntityResolver {
 
-        private VdcQueryType query;
+        private QueryType query;
         private Class<? extends VdcQueryParametersBase> queryParamsClass;
 
-        public VmQueryIdResolver(VdcQueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
+        public VmQueryIdResolver(QueryType query, Class<? extends VdcQueryParametersBase> queryParamsClass) {
             this.query = query;
             this.queryParamsClass = queryParamsClass;
         }

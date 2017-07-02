@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -343,7 +343,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
         setName(pool.getName());
         setDescription(pool.getVmPoolDescription());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
+        Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
                 new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
@@ -386,7 +386,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             setHasDefaultHost(getvm().getDedicatedVmForVdsList().size() > 0);
                             if (getHasDefaultHost()) {
 
-                                Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
+                                Frontend.getInstance().runQuery(QueryType.Search, new SearchParameters("Host: cluster = " //$NON-NLS-1$
                                         + getvm().getClusterName() + " sortby name", SearchType.VDS), new AsyncQuery<VdcQueryReturnValue>(returnValue1 -> { //$NON-NLS-1$
                                             String defaultHost1 = "";
                                             ArrayList<VDS> hosts = returnValue1.getReturnValue();

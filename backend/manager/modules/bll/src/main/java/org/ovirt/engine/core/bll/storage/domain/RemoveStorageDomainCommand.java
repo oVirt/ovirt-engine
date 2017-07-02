@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -160,7 +160,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     protected boolean isStorageDomainAttached(StorageDomain dom) {
         List<StorageDomain> storageDomainList =
-                getBackend().runInternalQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                getBackend().runInternalQuery(QueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
                         new StorageDomainsAndStoragePoolIdQueryParameters(dom, getStoragePoolId(), getVds().getId(), false))
                         .getReturnValue();
         return !storageDomainList.isEmpty();

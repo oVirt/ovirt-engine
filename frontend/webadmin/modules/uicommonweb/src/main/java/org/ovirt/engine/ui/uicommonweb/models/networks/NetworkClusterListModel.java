@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -103,7 +103,7 @@ public class NetworkClusterListModel extends SearchableListModel<NetworkView, Pa
 
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetClustersAndNetworksByNetworkId, params, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.GetClustersAndNetworksByNetworkId, params, new SetItemsAsyncQuery());
     }
 
     @Override

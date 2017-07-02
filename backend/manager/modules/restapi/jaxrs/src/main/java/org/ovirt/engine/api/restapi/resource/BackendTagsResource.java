@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagsResource
@@ -49,11 +49,11 @@ public class BackendTagsResource
     }
 
     protected List<Tags> getTags() {
-        return getBackendCollection(VdcQueryType.GetAllTags, new VdcQueryParametersBase());
+        return getBackendCollection(QueryType.GetAllTags, new VdcQueryParametersBase());
     }
 
     protected Tags getRootTag() {
-        return getEntity(Tags.class, VdcQueryType.GetRootTag, new VdcQueryParametersBase(), "root");
+        return getEntity(Tags.class, QueryType.GetRootTag, new VdcQueryParametersBase(), "root");
     }
 
     protected org.ovirt.engine.api.model.Tags mapCollection(List<Tags> entities) {
@@ -73,7 +73,7 @@ public class BackendTagsResource
     }
 
     protected Tags lookupTagByName(String name) {
-        return getEntity(Tags.class, VdcQueryType.GetTagByTagName, new NameQueryParameters(name), name);
+        return getEntity(Tags.class, QueryType.GetTagByTagName, new NameQueryParameters(name), name);
     }
 
     protected class TagNameResolver extends EntityIdResolver<Guid> {

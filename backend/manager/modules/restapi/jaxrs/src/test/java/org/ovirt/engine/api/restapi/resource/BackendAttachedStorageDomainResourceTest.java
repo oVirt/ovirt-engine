@@ -23,9 +23,9 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAttachedStorageDomainResourceTest
@@ -221,7 +221,7 @@ public class BackendAttachedStorageDomainResourceTest
 
     private void setUpGetDomainExpectations(StorageType storageType, boolean succeed) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
+            QueryType.GetStorageDomainByIdAndStoragePoolId,
             StorageDomainAndPoolQueryParameters.class,
             new String[]{"StorageDomainId", "StoragePoolId"},
             new Object[]{STORAGE_DOMAIN_ID, DATA_CENTER_ID},
@@ -269,7 +269,7 @@ public class BackendAttachedStorageDomainResourceTest
 
     private void setUpGetConnectionExpectations() throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetStorageServerConnectionById,
+            QueryType.GetStorageServerConnectionById,
             StorageServerConnectionQueryParametersBase.class,
             new String[] { "ServerConnectionId" },
             new Object[] { STORAGE_CONNECTION_ID.toString() },

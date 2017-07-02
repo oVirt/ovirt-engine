@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionExtensionParameters;
 import org.ovirt.engine.core.common.businessentities.storage.StorageServerConnectionExtension;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendStorageServerConnectionExtensionResource
         extends AbstractBackendSubResource<StorageConnectionExtension, StorageServerConnectionExtension>
@@ -25,12 +25,12 @@ public class BackendStorageServerConnectionExtensionResource
 
     @Override
     public StorageConnectionExtension get() {
-        return performGet(VdcQueryType.GetStorageServerConnectionExtensionById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetStorageServerConnectionExtensionById, new IdQueryParameters(guid));
     }
 
     @Override
     public StorageConnectionExtension update(StorageConnectionExtension incoming) {
-        QueryIdResolver resolver = new QueryIdResolver<>(VdcQueryType.GetStorageServerConnectionExtensionById,
+        QueryIdResolver resolver = new QueryIdResolver<>(QueryType.GetStorageServerConnectionExtensionById,
                 IdQueryParameters.class);
         return performUpdate(incoming, resolver, ActionType.UpdateStorageServerConnectionExtension , new UpdateParametersProvider());
     }

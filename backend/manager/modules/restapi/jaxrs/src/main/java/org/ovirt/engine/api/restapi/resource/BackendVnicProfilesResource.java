@@ -10,8 +10,8 @@ import org.ovirt.engine.api.resource.VnicProfileResource;
 import org.ovirt.engine.api.resource.VnicProfilesResource;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVnicProfilesResource extends AbstractBackendVnicProfilesResource implements VnicProfilesResource {
 
@@ -22,7 +22,7 @@ public class BackendVnicProfilesResource extends AbstractBackendVnicProfilesReso
 
     @Override
     protected List<org.ovirt.engine.core.common.businessentities.network.VnicProfile> getVnicProfilesCollection() {
-        return getBackendCollection(VdcQueryType.GetAllVnicProfiles, new VdcQueryParametersBase());
+        return getBackendCollection(QueryType.GetAllVnicProfiles, new VdcQueryParametersBase());
     }
 
     public Response add(VnicProfile vnicProfile) {
@@ -34,7 +34,7 @@ public class BackendVnicProfilesResource extends AbstractBackendVnicProfilesReso
         validateParameters(vnicProfile, "name", "network.id");
         String networkId = vnicProfile.getNetwork().getId();
         // verify the network.id is well provided
-        getEntity(Network.class, VdcQueryType.GetNetworkById, new IdQueryParameters(asGuid(networkId)), "Network: id="
+        getEntity(Network.class, QueryType.GetNetworkById, new IdQueryParameters(asGuid(networkId)), "Network: id="
                 + networkId);
     }
 

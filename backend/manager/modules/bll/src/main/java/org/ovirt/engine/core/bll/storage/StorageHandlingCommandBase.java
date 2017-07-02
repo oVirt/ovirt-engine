@@ -59,7 +59,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -468,7 +468,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             ovfDisks = new ArrayList<>();
 
             // Get all unregistered disks.
-            List<DiskImage> disksFromStorage = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
+            List<DiskImage> disksFromStorage = getBackend().runInternalQuery(QueryType.GetUnregisteredDisks,
                     new GetUnregisteredDisksQueryParameters(storageDomainId,
                             storagePoolId)).getReturnValue();
             if (disksFromStorage == null) {

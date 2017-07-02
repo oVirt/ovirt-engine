@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -63,7 +63,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
         IdQueryParameters params =
                 new IdQueryParameters(getProfile().getId());
         startProgress();
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmsByVnicProfileId, params,
+        Frontend.getInstance().runQuery(QueryType.GetVmsByVnicProfileId, params,
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     Collection<VM> vms = returnValue.getReturnValue();
                     if (vms != null && !vms.isEmpty()) {

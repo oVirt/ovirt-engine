@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.StorageSyncSchedule;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -104,7 +104,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainDR, parameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetStorageDomainDR, parameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
             List<StorageDomainDR> resultList = returnValue.getReturnValue();
             setItems(resultList);
             populateSessionsMap(resultList);

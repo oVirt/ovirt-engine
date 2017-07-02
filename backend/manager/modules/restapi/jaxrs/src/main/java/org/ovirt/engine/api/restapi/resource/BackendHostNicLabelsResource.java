@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicLabelsResource
@@ -25,7 +25,7 @@ public class BackendHostNicLabelsResource
     }
 
     protected List<NetworkLabel> getHostNicLabels(Guid hostNicId) {
-        return getBackendCollection(VdcQueryType.GetNetworkLabelsByHostNicId, new IdQueryParameters(hostNicId));
+        return getBackendCollection(QueryType.GetNetworkLabelsByHostNicId, new IdQueryParameters(hostNicId));
     }
 
     @Override

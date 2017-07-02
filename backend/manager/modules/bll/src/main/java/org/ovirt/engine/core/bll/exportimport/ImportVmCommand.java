@@ -81,8 +81,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
@@ -425,7 +425,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     @SuppressWarnings("unchecked")
     protected List<VM> getVmsFromExportDomain() {
         VdcQueryReturnValue qRetVal = runInternalQuery(
-                VdcQueryType.GetVmsFromExportDomain,
+                QueryType.GetVmsFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(
                         getParameters().getStoragePoolId(),
                         getParameters().getSourceDomainId()));
@@ -627,7 +627,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         VdcQueryReturnValue qRetVal = runInternalQuery(
-                VdcQueryType.GetTemplatesFromExportDomain,
+                QueryType.GetTemplatesFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getParameters().getStoragePoolId(),
                         getParameters().getSourceDomainId()));
 
@@ -647,7 +647,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         boolean retValue = validate(getImportValidator().verifyDisks(imageList, imageToDestinationDomainMap));
         if (retValue && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
-            List<StorageDomain> domains = runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
+            List<StorageDomain> domains = runInternalQuery(QueryType.GetStorageDomainsByVmTemplateId,
                     new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
             Set<Guid> domainsId = domains.stream().map(StorageDomain::getId).collect(Collectors.toSet());
 

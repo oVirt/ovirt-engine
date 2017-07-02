@@ -26,10 +26,10 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class BackendResource extends BaseBackendResource {
     @Deprecated
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
-            VdcQueryReturnValue result = runQuery(VdcQueryType.Search,
+            VdcQueryReturnValue result = runQuery(QueryType.Search,
                     createSearchParameters(searchType, constraint));
             if (!result.getSucceeded()) {
                 backendFailure(result.getExceptionString());
@@ -76,7 +76,7 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    public VdcQueryReturnValue runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams) {
+    public VdcQueryReturnValue runQuery(QueryType queryType, VdcQueryParametersBase queryParams) {
         BackendLocal backend = getBackend();
         setCorrelationId(queryParams);
         queryParams.setFiltered(isFiltered());
@@ -87,12 +87,12 @@ public class BackendResource extends BaseBackendResource {
         return new SearchParameters(constraint, searchType);
     }
 
-    protected <T> T getEntity(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams, String identifier) {
+    protected <T> T getEntity(Class<T> clz, QueryType query, VdcQueryParametersBase queryParams, String identifier) {
         return getEntity(clz, query, queryParams, identifier, false);
     }
 
     public <T> T getEntity(Class<T> clz,
-                              VdcQueryType query,
+                              QueryType query,
                               VdcQueryParametersBase queryParams,
                               String identifier,
                               boolean notFoundAs404) {
@@ -100,7 +100,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     public <T> T getOptionalEntity(Class<T> clz,
-                              VdcQueryType query,
+                              QueryType query,
                               VdcQueryParametersBase queryParams,
                               String identifier,
                               boolean notFoundAs404) {
@@ -108,7 +108,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     public <T> T getEntity(Class<T> clz,
-                              VdcQueryType query,
+                              QueryType query,
                               VdcQueryParametersBase queryParams,
                               String identifier,
                               boolean notFoundAs404,
@@ -121,14 +121,14 @@ public class BackendResource extends BaseBackendResource {
     }
 
     protected <T> T doGetEntity(Class<T> clz,
-                                VdcQueryType query,
+                                QueryType query,
                                 VdcQueryParametersBase queryParams,
                                 String identifier) throws BackendFailureException {
         return doGetEntity(clz, query, queryParams, identifier, true);
     }
 
     protected <T> T doGetEntity(Class<T> clz,
-                                VdcQueryType query,
+                                QueryType query,
                                 VdcQueryParametersBase queryParams,
                                 String identifier,
                                 boolean isMandatory) throws BackendFailureException {
@@ -147,7 +147,7 @@ public class BackendResource extends BaseBackendResource {
         return castQueryResultToEntity(clz, result, identifier);
     }
 
-    protected <T> List<T> getBackendCollection(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams) {
+    protected <T> List<T> getBackendCollection(Class<T> clz, QueryType query, VdcQueryParametersBase queryParams) {
         try {
             List<T> results = asCollection(clz, new ArrayList<T>());
             VdcQueryReturnValue result = runQuery(query, queryParams);
@@ -287,7 +287,7 @@ public class BackendResource extends BaseBackendResource {
     @SuppressWarnings("unchecked")
     protected <T> T getConfigurationValueDefault(ConfigValues config) {
         VdcQueryReturnValue result = runQuery(
-            VdcQueryType.GetConfigurationValue,
+            QueryType.GetConfigurationValue,
             new GetConfigurationValueParameters(config, ConfigCommon.defaultConfigurationVersion)
         );
         if (result.getSucceeded()) {

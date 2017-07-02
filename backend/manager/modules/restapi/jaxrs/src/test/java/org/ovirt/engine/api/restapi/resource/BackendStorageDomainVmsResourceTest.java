@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmsResourceTest
@@ -80,7 +80,7 @@ public class BackendStorageDomainVmsResourceTest
     protected void setUpQueryExpectations(String query, Object failure, StorageDomainType domainType) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { STORAGE_DOMAIN_ID },
@@ -90,7 +90,7 @@ public class BackendStorageDomainVmsResourceTest
         case Data:
             break;
         case ImportExport:
-            setUpEntityQueryExpectations(VdcQueryType.GetVmsFromExportDomain,
+            setUpEntityQueryExpectations(QueryType.GetVmsFromExportDomain,
                                          GetAllFromExportDomainQueryParameters.class,
                                          new String[] { "StoragePoolId", "StorageDomainId"},
                                          new Object[] { DATA_CENTER_ID, STORAGE_DOMAIN_ID},
@@ -133,7 +133,7 @@ public class BackendStorageDomainVmsResourceTest
 
     private void setUpGetDataCenterByStorageDomainExpectations(Guid id, int times) {
         while (times-->0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId,
+            setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { id },

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public abstract class AbstractBackendVnicProfileResource
         extends AbstractBackendSubResource<VnicProfile, org.ovirt.engine.core.common.businessentities.network.VnicProfile> {
@@ -23,12 +23,12 @@ public abstract class AbstractBackendVnicProfileResource
     }
 
     protected VnicProfile get() {
-        return performGet(VdcQueryType.GetVnicProfileById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetVnicProfileById, new IdQueryParameters(guid));
     }
 
     protected AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                VdcQueryType.GetPermissionsForObject,
+                QueryType.GetPermissionsForObject,
                 new GetPermissionsForObjectParameters(guid),
                 VnicProfile.class,
                 VdcObjectType.VnicProfile));
@@ -40,7 +40,7 @@ public abstract class AbstractBackendVnicProfileResource
             String... subCollectionMembersToExclude) {
         if (model.isSetQos() && model.getQos().isSetId()) {
             QosBase qos = getEntity(QosBase.class,
-                    VdcQueryType.GetQosById,
+                    QueryType.GetQosById,
                     new IdQueryParameters(asGuid(model.getQos().getId())),
                     "qos");
             model.getQos().setDataCenter(new DataCenter());
@@ -56,7 +56,7 @@ public abstract class AbstractBackendVnicProfileResource
 
     protected org.ovirt.engine.core.common.businessentities.network.VnicProfile getVnicProfile(String id) {
         return getEntity(org.ovirt.engine.core.common.businessentities.network.VnicProfile.class,
-                VdcQueryType.GetVnicProfileById,
+                QueryType.GetVnicProfileById,
                 new IdQueryParameters(guid),
                 "VnicProfiles");
     }

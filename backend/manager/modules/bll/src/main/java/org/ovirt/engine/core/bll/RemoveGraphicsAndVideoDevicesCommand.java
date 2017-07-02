@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
@@ -47,7 +47,7 @@ public class RemoveGraphicsAndVideoDevicesCommand extends RemoveGraphicsDeviceCo
 
     private boolean noGraphicsDevicesLeft() {
         List<GraphicsDevice> devices =
-                runInternalQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(getVmBaseId())).getReturnValue();
+                runInternalQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(getVmBaseId())).getReturnValue();
         return devices.isEmpty();
     }
 

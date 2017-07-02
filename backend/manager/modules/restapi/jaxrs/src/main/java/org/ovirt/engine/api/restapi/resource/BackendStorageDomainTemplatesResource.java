@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainTemplatesResource
@@ -32,7 +32,7 @@ public class BackendStorageDomainTemplatesResource
         boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
         if (unregistered) {
             List<org.ovirt.engine.core.common.businessentities.VmTemplate> unregisteredTemplates =
-                    getBackendCollection(VdcQueryType.GetUnregisteredVmTemplates,
+                    getBackendCollection(QueryType.GetUnregisteredVmTemplates,
                             new IdQueryParameters(storageDomainId));
             List<Template> collection = new ArrayList<>();
             for (org.ovirt.engine.core.common.businessentities.VmTemplate entity : unregisteredTemplates) {
@@ -59,7 +59,7 @@ public class BackendStorageDomainTemplatesResource
             new GetAllFromExportDomainQueryParameters(getDataCenterId(storageDomainId), storageDomainId);
 
         Map<VmTemplate, List<DiskImage>> ret = getEntity(HashMap.class,
-                                                         VdcQueryType.GetTemplatesFromExportDomain,
+                                                         QueryType.GetTemplatesFromExportDomain,
                                                          params,
                                                          "Templates under storage domain id : " + storageDomainId.toString());
         return ret.keySet();

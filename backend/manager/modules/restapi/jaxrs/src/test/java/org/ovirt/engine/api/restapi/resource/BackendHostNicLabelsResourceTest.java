@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicLabelsResourceTest
@@ -39,7 +39,7 @@ public class BackendHostNicLabelsResourceTest
                 true,
                 true,
                 LABELS[0],
-                VdcQueryType.GetNetworkLabelsByHostNicId,
+                QueryType.GetNetworkLabelsByHostNicId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { nicId },
@@ -103,7 +103,7 @@ public class BackendHostNicLabelsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworkLabelsByHostNicId,
+        setUpEntityQueryExpectations(QueryType.GetNetworkLabelsByHostNicId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { nicId },

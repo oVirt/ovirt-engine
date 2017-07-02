@@ -21,9 +21,9 @@ import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -310,13 +310,13 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
     private String getVdsCertificateSubject() {
         return backend.runInternalQuery(
-                VdcQueryType.GetVdsCertificateSubjectByVmId,
+                QueryType.GetVdsCertificateSubjectByVmId,
                 new IdQueryParameters(getCachedVm().getId())).getReturnValue();
 
     }
 
     private VdcQueryReturnValue getCACertificate() {
-        return backend.runInternalQuery(VdcQueryType.GetCACertificate, new VdcQueryParametersBase());
+        return backend.runInternalQuery(QueryType.GetCACertificate, new VdcQueryParametersBase());
     }
 
     private String determineHost() {
@@ -326,7 +326,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         // if we don't have display ip, we try management network of host
         if (StringUtils.isBlank(result) || "0".equals(result)) {
             VdcQueryReturnValue returnValue = backend.runInternalQuery(
-                    VdcQueryType.GetManagementInterfaceAddressByVmId,
+                    QueryType.GetManagementInterfaceAddressByVmId,
                     new IdQueryParameters(getCachedVm().getId()));
             result = returnValue.getReturnValue();
         }
@@ -357,7 +357,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
             params.setFiltered(getParameters().isFiltered());
             params.setSessionId(getParameters().getSessionId());
             cachedVm = backend.runInternalQuery(
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                     params).getReturnValue();
         }
 

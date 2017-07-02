@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicFilterParametersResourceTest
@@ -63,7 +63,7 @@ public class BackendVmNicFilterParametersResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
+                QueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_NIC_ID },
@@ -130,7 +130,7 @@ public class BackendVmNicFilterParametersResourceTest
             true,
             true,
                 PARAMETER_ID,
-            VdcQueryType.GetVmInterfaceFilterParameterById,
+            QueryType.GetVmInterfaceFilterParameterById,
             IdQueryParameters.class,
                 new String[] { "Id"},
                 new Object[] {PARAMETER_ID},

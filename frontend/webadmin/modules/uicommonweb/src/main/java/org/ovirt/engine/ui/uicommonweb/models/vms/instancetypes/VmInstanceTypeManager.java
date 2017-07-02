@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -36,7 +36,7 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
 
     public void updateNetworkInterfacesByTemplate(VmBase vmBase) {
 
-        VdcQueryType queryType = (vmBase instanceof VmTemplate) ? VdcQueryType.GetTemplateInterfacesByTemplateId : VdcQueryType.GetVmInterfacesByVmId;
+        QueryType queryType = (vmBase instanceof VmTemplate) ? QueryType.GetTemplateInterfacesByTemplateId : QueryType.GetVmInterfacesByVmId;
 
         AsyncQuery<VdcQueryReturnValue> query = new AsyncQuery<>(returnValue -> {
             if (returnValue == null) {

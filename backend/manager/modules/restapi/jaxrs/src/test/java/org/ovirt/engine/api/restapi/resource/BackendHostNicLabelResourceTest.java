@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicLabelResourceTest
@@ -123,7 +123,7 @@ public class BackendHostNicLabelResourceTest
 
     private void setUpEntityQueryExpectations(List<? super org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> result) throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetNetworkLabelsByHostNicId,
+            QueryType.GetNetworkLabelsByHostNicId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { NIC_ID },

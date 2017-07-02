@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainDiskSnapshotsResource
@@ -25,7 +25,7 @@ public class BackendStorageDomainDiskSnapshotsResource
 
     @Override
     public DiskSnapshots list() {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllDiskSnapshotsByStorageDomainId,
+            return mapCollection(getBackendCollection(QueryType.GetAllDiskSnapshotsByStorageDomainId,
                     new IdQueryParameters(this.storageDomainId)));
     }
 

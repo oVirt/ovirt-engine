@@ -11,8 +11,8 @@ import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendJobsResource extends AbstractBackendCollectionResource<Job, org.ovirt.engine.core.common.job.Job> implements JobsResource {
@@ -23,7 +23,7 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
 
     @Override
     public Jobs list() {
-        List<org.ovirt.engine.core.common.job.Job> jobs = getBackendCollection(VdcQueryType.GetAllJobs, new VdcQueryParametersBase());
+        List<org.ovirt.engine.core.common.job.Job> jobs = getBackendCollection(QueryType.GetAllJobs, new VdcQueryParametersBase());
         return mapCollection(jobs);
     }
 
@@ -32,7 +32,7 @@ public class BackendJobsResource extends AbstractBackendCollectionResource<Job, 
         validateParameters(job, "description");
         return performCreate(ActionType.AddExternalJob,
                 new AddExternalJobParameters(job.getDescription(), job.isSetAutoCleared() ? job.isAutoCleared() : false),
-                new QueryIdResolver<Guid>(VdcQueryType.GetJobByJobId, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetJobByJobId, IdQueryParameters.class));
     }
 
     @Override

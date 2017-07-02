@@ -40,9 +40,9 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamicHostPageServlet> {
@@ -166,7 +166,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     @Test
     public void testRunQuery_GetUserBySessionId() {
         String sessionId = "sessionId"; //$NON-NLS-1$
-        VdcQueryType queryType = VdcQueryType.GetUserBySessionId;
+        QueryType queryType = QueryType.GetUserBySessionId;
         Object result = testServlet.runQuery(queryType, mockQueryParams, sessionId);
         assertEquals(result, mockUser);
         verify(mockQueryParams).setSessionId(sessionId);
@@ -177,11 +177,11 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     @Test
     public void testRunPublicQuery_GetConfigurationValue() {
         String sessionId = "sessionId"; //$NON-NLS-1$
-        VdcQueryType queryType = VdcQueryType.GetConfigurationValue;
+        QueryType queryType = QueryType.GetConfigurationValue;
         VdcQueryReturnValue returnIntValue = new VdcQueryReturnValue();
         returnIntValue.setSucceeded(true);
         returnIntValue.setReturnValue(Integer.valueOf(255));
-        when(mockBackend.runPublicQuery(eq(VdcQueryType.GetConfigurationValue),
+        when(mockBackend.runPublicQuery(eq(QueryType.GetConfigurationValue),
                 eq(mockConfigQueryParams))).thenReturn(returnIntValue);
         Object result = testServlet.runPublicQuery(queryType, mockConfigQueryParams, sessionId);
         assertThat(result, is(instanceOf(Integer.class)));
@@ -227,7 +227,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         returnValue.setReturnValue(mockUser);
 
         when(mockBackend.runQuery(
-                eq(VdcQueryType.GetUserBySessionId),
+                eq(QueryType.GetUserBySessionId),
                 isA(VdcQueryParametersBase.class)
         )).thenReturn(returnValue);
     }
@@ -238,7 +238,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         returnValue.setReturnValue("1.2.3"); //$NON-NLS-1$
 
         when(mockBackend.runPublicQuery(
-                eq(VdcQueryType.GetConfigurationValue),
+                eq(QueryType.GetConfigurationValue),
                 argThat(configValueParams(ConfigValues.ProductRPMVersion))
         )).thenReturn(returnValue);
     }

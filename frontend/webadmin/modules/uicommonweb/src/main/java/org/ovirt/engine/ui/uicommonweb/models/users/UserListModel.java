@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
@@ -352,7 +352,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.DBUser,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override

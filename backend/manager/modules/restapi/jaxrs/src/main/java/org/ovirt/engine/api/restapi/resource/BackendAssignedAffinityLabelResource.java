@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.LabelActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAssignedAffinityLabelResource extends AbstractBackendActionableResource<AffinityLabel, org.ovirt.engine.core.common.businessentities.Label>
@@ -27,12 +27,12 @@ public class BackendAssignedAffinityLabelResource extends AbstractBackendActiona
 
     @Override
     public AffinityLabel get() {
-        return addLinks(performGet(VdcQueryType.GetLabelById, new IdQueryParameters(guid)));
+        return addLinks(performGet(QueryType.GetLabelById, new IdQueryParameters(guid)));
     }
 
     @Override
     public Response remove() {
-        QueryIdResolver<Guid> labelResolver = new QueryIdResolver<>(VdcQueryType.GetLabelById, IdQueryParameters.class);
+        QueryIdResolver<Guid> labelResolver = new QueryIdResolver<>(QueryType.GetLabelById, IdQueryParameters.class);
         org.ovirt.engine.core.common.businessentities.Label entity = getEntity(labelResolver, true);
 
         BusinessEntity<Guid> parent = constructor.create();

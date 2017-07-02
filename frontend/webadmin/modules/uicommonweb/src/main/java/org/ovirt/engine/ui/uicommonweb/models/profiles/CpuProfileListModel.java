@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -48,8 +48,8 @@ public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, Cl
     }
 
     @Override
-    protected VdcQueryType getQueryType() {
-        return VdcQueryType.GetCpuProfilesByClusterId;
+    protected QueryType getQueryType() {
+        return QueryType.GetCpuProfilesByClusterId;
     }
 
     @Override

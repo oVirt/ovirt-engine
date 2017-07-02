@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -38,7 +38,7 @@ public abstract class AbstractVmProviderProxy<P extends VmProviderProperties> im
         chooseDcForCheckingIfGetNamesFromExternalProviderSupported();
 
         VdcQueryReturnValue retVal = Backend.getInstance().runInternalQuery(
-                VdcQueryType.GetVmsFromExternalProvider,
+                QueryType.GetVmsFromExternalProvider,
                 buildGetVmsFromExternalProviderQueryParameters());
         if (!retVal.getSucceeded()) {
             throw new EngineException(EngineError.PROVIDER_FAILURE, retVal.getExceptionString());

@@ -21,9 +21,9 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -267,10 +267,10 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     }
 
     private void initQuotaForStorageDomains() {
-        List<VdcQueryType> queryTypeList = new ArrayList<>();
+        List<QueryType> queryTypeList = new ArrayList<>();
         List<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
         for (StorageDomain storage : getStorage().getItems()) {
-            queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
+            queryTypeList.add(QueryType.GetAllRelevantQuotasForStorage);
             queryParamsList.add(new IdQueryParameters(storage.getId()));
         }
         storageQuotaMap = new HashMap<>();

@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -105,7 +105,7 @@ public class HostDeviceManager implements BackendService {
             return false;
         }
 
-        List<HostDevice> devices = backend.runInternalQuery(VdcQueryType.GetExtendedVmHostDevicesByVmId,
+        List<HostDevice> devices = backend.runInternalQuery(QueryType.GetExtendedVmHostDevicesByVmId,
                 new IdQueryParameters(vm.getId())).getReturnValue();
 
         for (HostDevice device : devices) {

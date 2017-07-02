@@ -16,9 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.constants.SessionConstants;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ public class SsoPostLoginFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
-    protected Object runQuery(VdcQueryType queryType, String sessionId, InitialContext ctx) {
+    protected Object runQuery(QueryType queryType, String sessionId, InitialContext ctx) {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
         queryParams.setSessionId(sessionId);
         queryParams.setFiltered(FILTER_QUERIES);
@@ -70,9 +70,9 @@ public class SsoPostLoginFilter implements Filter {
             if (StringUtils.isNotEmpty(engineSessionId)) {
                 InitialContext ctx = new InitialContext();
                 try {
-                    String ssoToken = (String) runQuery(VdcQueryType.GetEngineSessionIdToken, engineSessionId, ctx);
+                    String ssoToken = (String) runQuery(QueryType.GetEngineSessionIdToken, engineSessionId, ctx);
 
-                    Object loggedInUser = runQuery(VdcQueryType.GetUserBySessionId, engineSessionId, ctx);
+                    Object loggedInUser = runQuery(QueryType.GetUserBySessionId, engineSessionId, ctx);
                     if (loggedInUser != null) {
                         log.debug("Adding userInfo to session");
                         req.getSession(true).setAttribute(ATTR_USER_INFO,

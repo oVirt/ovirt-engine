@@ -51,8 +51,8 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDisksResourceTest
@@ -85,7 +85,7 @@ public class BackendVmDisksResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetAllDisksByVmId,
+                QueryType.GetAllDisksByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },
@@ -205,7 +205,7 @@ public class BackendVmDisksResourceTest
             null,
             null,
             null,
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -236,7 +236,7 @@ public class BackendVmDisksResourceTest
             null,
             null,
             null,
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -249,7 +249,7 @@ public class BackendVmDisksResourceTest
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetStorageDomainById,
+            QueryType.GetStorageDomainById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[2] },
@@ -265,7 +265,7 @@ public class BackendVmDisksResourceTest
             GUIDS[0],
             asList(GUIDS[3]),
             asList(new AsyncTaskStatus(asyncStatus)),
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -331,7 +331,7 @@ public class BackendVmDisksResourceTest
 
     private void setUpGetDiskExpectations() {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -343,7 +343,7 @@ public class BackendVmDisksResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
         /*
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllDisksByVmId,
+            QueryType.GetAllDisksByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },
@@ -351,7 +351,7 @@ public class BackendVmDisksResourceTest
         );
         */
         setUpEntityQueryExpectations(
-            VdcQueryType.GetStorageDomainById,
+            QueryType.GetStorageDomainById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[2] },
@@ -367,7 +367,7 @@ public class BackendVmDisksResourceTest
             GUIDS[0],
             asList(GUIDS[3]),
             asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -400,7 +400,7 @@ public class BackendVmDisksResourceTest
         int times = 2;
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetAllStorageDomains,
+                QueryType.GetAllStorageDomains,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -408,7 +408,7 @@ public class BackendVmDisksResourceTest
             );
         }
         setUpEntityQueryExpectations(
-            VdcQueryType.GetStorageDomainById,
+            QueryType.GetStorageDomainById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[2] },
@@ -424,7 +424,7 @@ public class BackendVmDisksResourceTest
             GUIDS[0],
             asList(GUIDS[3]),
             asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -461,7 +461,7 @@ public class BackendVmDisksResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetDiskExpectations();
         setUpEntityQueryExpectations(
-            VdcQueryType.GetStorageDomainById,
+            QueryType.GetStorageDomainById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[3] },
@@ -477,7 +477,7 @@ public class BackendVmDisksResourceTest
             GUIDS[0],
             asList(GUIDS[3]),
             asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -509,7 +509,7 @@ public class BackendVmDisksResourceTest
 
     private void doTestBadAddDisk(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetStorageDomainById,
+            QueryType.GetStorageDomainById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[2] },

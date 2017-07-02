@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,14 +221,14 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     }
 
     protected Cluster lookupClusterByName(String name) {
-        return getEntity(Cluster.class, VdcQueryType.GetClusterByName, new NameQueryParameters(name), "Cluster: name=" + name);
+        return getEntity(Cluster.class, QueryType.GetClusterByName, new NameQueryParameters(name), "Cluster: name=" + name);
     }
 
     protected Guid lookupStorageDomainIdByName(String name) {
         if (!isFiltered()) {
             StorageDomainStatic storageDomain =
                     getEntity(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class,
-                    VdcQueryType.GetStorageDomainByName,
+                    QueryType.GetStorageDomainByName,
                     new NameQueryParameters(name),
                     "Storage: name=" + name);
 
@@ -241,7 +241,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         else {
             List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                     getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                            VdcQueryType.GetAllStorageDomains,
+                            QueryType.GetAllStorageDomains,
                             new VdcQueryParametersBase());
             for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
                 if (storageDomain.getStorageName().equals(name)) {
@@ -265,7 +265,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     protected class SimpleIdResolver extends EntityResolver {
         private Class<? extends BaseResource> apiClass;
         private Class<? extends BusinessEntity<?>> blClass;
-        private VdcQueryType query;
+        private QueryType query;
         private Class<? extends VdcQueryParametersBase> queryParamsClass;
 
         /**
@@ -279,7 +279,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         public SimpleIdResolver(
                 Class<? extends BaseResource> apiClass,
                 Class<? extends BusinessEntity<?>> blClass,
-                VdcQueryType query,
+                QueryType query,
                 Class<? extends VdcQueryParametersBase> queryParamsClass
         ) {
             this.apiClass = apiClass;

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<Session, VM> {
 
@@ -39,11 +39,11 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
         BackendUserResource userResourceMock = mock(BackendUserResource.class);
         resource.setUserResource(userResourceMock);
         resource.setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] }, getEntity(0));
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserNameAndDomain,
+        setUpGetEntityExpectations(QueryType.GetDbUserByUserNameAndDomain,
             GetDbUserByUserNameAndDomainQueryParameters.class,
             new String[] { "UserName", "DomainName" },
             new Object[] { "admin", "internal" },

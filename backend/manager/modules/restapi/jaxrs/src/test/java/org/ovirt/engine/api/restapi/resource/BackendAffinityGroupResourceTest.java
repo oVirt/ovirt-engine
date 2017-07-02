@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -88,7 +88,7 @@ public class BackendAffinityGroupResourceTest extends AbstractBackendSubResource
 
     private void setUpGetEntityExpectations(int times, boolean found) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetAffinityGroupById,
+            setUpGetEntityExpectations(QueryType.GetAffinityGroupById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { AFFINITY_GROUP_ID },

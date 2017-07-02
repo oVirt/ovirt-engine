@@ -29,10 +29,10 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -186,19 +186,19 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                 entities.add(getEntity(i));
             }
             queryResult.setReturnValue(entities);
-            when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
+            when(backend.runQuery(eq(QueryType.Search), eqSearchParams(params))).thenReturn(
                     queryResult);
         } else {
             if (failure instanceof String) {
                 queryResult.setExceptionString((String) failure);
                 setUpL10nExpectations((String)failure);
-                when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenReturn(
+                when(backend.runQuery(eq(QueryType.Search), eqSearchParams(params))).thenReturn(
                         queryResult);
             } else if (failure instanceof Exception) {
-                when(backend.runQuery(eq(VdcQueryType.Search), eqSearchParams(params))).thenThrow((Exception) failure);
+                when(backend.runQuery(eq(QueryType.Search), eqSearchParams(params))).thenThrow((Exception) failure);
             }
         }
-        enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.Search), eqSearchParams(params)));
+        enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(QueryType.Search), eqSearchParams(params)));
     }
 
     protected void setUpCreationExpectations(ActionType task,
@@ -208,7 +208,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              boolean valid,
                                              boolean success,
                                              Object taskReturn,
-                                             VdcQueryType query,
+                                             QueryType query,
                                              Class<? extends VdcQueryParametersBase> queryClass,
                                              String[] queryNames,
                                              Object[] queryValues,
@@ -238,7 +238,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                                              Object taskReturn,
                                              ArrayList<Guid> asyncTasks,
                                              ArrayList<AsyncTaskStatus> asyncStatuses,
-                                             VdcQueryType query,
+                                             QueryType query,
                                              Class<? extends VdcQueryParametersBase> queryClass,
                                              String[] queryNames,
                                              Object[] queryValues,
@@ -262,11 +262,11 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
             VdcQueryReturnValue monitorResult = new VdcQueryReturnValue();
             monitorResult.setSucceeded(success);
             monitorResult.setReturnValue(asyncStatuses);
-            when(backend.runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+            when(backend.runQuery(eq(QueryType.GetTasksStatusesByTasksIDs),
                                     eqParams(GetTasksStatusesByTasksIDsParameters.class,
                                                   addSession(),
                                                   addSession(new Object[]{})))).thenReturn(monitorResult);
-            enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.GetTasksStatusesByTasksIDs),
+            enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(QueryType.GetTasksStatusesByTasksIDs),
                     eqParams(GetTasksStatusesByTasksIDsParameters.class,
                             addSession(),
                             addSession(new Object[]{}))));

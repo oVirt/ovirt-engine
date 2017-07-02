@@ -23,9 +23,9 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -287,7 +287,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.Cluster,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override
@@ -561,7 +561,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
     private void checkForActiveVms(ClusterModel model, final ConfirmationModel confirmModel) {
         Guid clusterId = model.getEntity().getId();
-        Frontend.getInstance().runQuery(VdcQueryType.GetNumberOfActiveVmsInClusterByClusterId,
+        Frontend.getInstance().runQuery(QueryType.GetNumberOfActiveVmsInClusterByClusterId,
                 new IdQueryParameters(clusterId), new AsyncQuery<>((AsyncCallback<VdcQueryReturnValue>) returnValue -> {
                     Integer numOfActiveVms = returnValue.getReturnValue();
                     if (numOfActiveVms != 0) {
@@ -1023,7 +1023,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
     @SuppressWarnings("unchecked")
     private void checkForNonResponsiveHosts(final ConfirmationModel confirmModel) {
         startProgress();
-        Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId,
+        Frontend.getInstance().runQuery(QueryType.GetHostsByClusterId,
                 new IdQueryParameters(getSelectedItem().getId()),
                 new AsyncQuery<>(returnValue -> {
                     List<VDS> hosts = null;

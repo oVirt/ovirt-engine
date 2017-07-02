@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -84,7 +84,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
         if (getEntity() == null) {
             return;
         }
-        super.syncSearch(VdcQueryType.GetExternalSubnetsOnProviderByNetwork, new IdQueryParameters(getEntity().getId()));
+        super.syncSearch(QueryType.GetExternalSubnetsOnProviderByNetwork, new IdQueryParameters(getEntity().getId()));
     }
 
     private void adjustActionButtonsForNetworkReadOnlyProperty(){
@@ -95,7 +95,7 @@ public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkV
             return;
         }
         Guid providerGuid = networkView.getProvidedBy().getProviderId();
-        Frontend.getInstance().runQuery(VdcQueryType.GetProviderById, new IdQueryParameters(providerGuid),
+        Frontend.getInstance().runQuery(QueryType.GetProviderById, new IdQueryParameters(providerGuid),
                 createProviderReadOnlyCallback());
     }
 

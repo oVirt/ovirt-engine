@@ -12,8 +12,8 @@ import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTest<Job, org.ovirt.engine.core.common.job.Job, BackendJobsResource> {
 
@@ -38,7 +38,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAllJobs,
+        setUpEntityQueryExpectations(QueryType.GetAllJobs,
                                     VdcQueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
@@ -77,7 +77,7 @@ public class BackendJobsResourceTest extends AbstractBackendCollectionResourceTe
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetJobByJobId,
+                                  QueryType.GetJobByJobId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },

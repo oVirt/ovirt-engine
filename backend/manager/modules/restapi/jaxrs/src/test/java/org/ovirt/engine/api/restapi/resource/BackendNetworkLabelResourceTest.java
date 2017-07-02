@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UnlabelNetworkParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworkLabelResourceTest
@@ -117,7 +117,7 @@ public class BackendNetworkLabelResourceTest
 
     private void setUpEntityQueryExpectations(List<? super org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> result) throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetNetworkLabelsByNetworkId,
+            QueryType.GetNetworkLabelsByNetworkId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { NETWORK_ID },

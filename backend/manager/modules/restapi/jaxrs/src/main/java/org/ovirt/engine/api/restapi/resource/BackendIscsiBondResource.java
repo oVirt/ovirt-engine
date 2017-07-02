@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendIscsiBondResource
     extends AbstractBackendActionableResource<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond>
@@ -22,13 +22,13 @@ public class BackendIscsiBondResource
 
     @Override
     public IscsiBond get() {
-        return performGet(VdcQueryType.GetIscsiBondById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetIscsiBondById, new IdQueryParameters(guid));
     }
 
     @Override
     public IscsiBond update(IscsiBond iscsiBond) {
         return performUpdate(iscsiBond,
-                new QueryIdResolver<>(VdcQueryType.GetIscsiBondById, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetIscsiBondById, IdQueryParameters.class),
                 ActionType.EditIscsiBond,
                 (incoming, entity) -> new EditIscsiBondParameters(
                         getMapper(modelType, org.ovirt.engine.core.common.businessentities.IscsiBond.class).map(incoming, entity)

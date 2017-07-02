@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBackendSubResourceTest<StorageConnection, StorageServerConnections, BackendIscsiBondStorageConnectionResource> {
@@ -35,7 +35,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondContainingStorageConnection());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { STORAGE_CONNECTION_ID.toString() },
@@ -65,7 +65,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondContainingStorageConnection());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { STORAGE_CONNECTION_ID.toString() },
@@ -84,7 +84,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(2, getIscsiBondContainingStorageConnection());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetStorageServerConnectionById,
+            QueryType.GetStorageServerConnectionById,
             StorageServerConnectionQueryParametersBase.class,
             new String[] { "ServerConnectionId" },
             new Object[] { STORAGE_CONNECTION_ID.toString() },
@@ -105,7 +105,7 @@ public class BackendIscsiBondStorageConnectionResourceTest extends AbstractBacke
 
     protected void setUpEntityQueryExpectations(int times, IscsiBond iscsiBond) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetIscsiBondById,
+            setUpEntityQueryExpectations(QueryType.GetIscsiBondById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { ISCSI_BOND_ID },

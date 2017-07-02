@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUnmanagedNetworksResource extends AbstractBackendCollectionResource<UnmanagedNetwork, org.ovirt.engine.core.common.businessentities.UnmanagedNetwork>
@@ -30,11 +30,11 @@ public class BackendUnmanagedNetworksResource extends AbstractBackendCollectionR
     }
 
     private void verifyIfHostExistsToHandle404StatusCode() {
-        getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(hostId), hostId.toString(), true);
+        getEntity(VDS.class, QueryType.GetVdsByVdsId, new IdQueryParameters(hostId), hostId.toString(), true);
     }
 
     private List<org.ovirt.engine.core.common.businessentities.UnmanagedNetwork> getAllUnmanagedNetworksByVdsId() {
-        return getBackendCollection(VdcQueryType.GetAllUnmanagedNetworksByHostId, new IdQueryParameters(hostId));
+        return getBackendCollection(QueryType.GetAllUnmanagedNetworksByHostId, new IdQueryParameters(hostId));
     }
 
     private UnmanagedNetworks mapCollection(List<org.ovirt.engine.core.common.businessentities.UnmanagedNetwork> unmanagedNetworks) {

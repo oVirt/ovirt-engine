@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterNetworksResource
@@ -25,7 +25,7 @@ public class BackendDataCenterNetworksResource
     protected Guid dataCenterId;
 
     public BackendDataCenterNetworksResource(String dataCenterId) {
-        super(VdcQueryType.GetNetworksByDataCenterId, ActionType.AddNetwork);
+        super(QueryType.GetNetworksByDataCenterId, ActionType.AddNetwork);
         this.dataCenterId = asGuid(dataCenterId);
     }
 
@@ -53,7 +53,7 @@ public class BackendDataCenterNetworksResource
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks() {
-        return getBackendCollection(VdcQueryType.GetNetworksByDataCenterId, getQueryParameters());
+        return getBackendCollection(QueryType.GetNetworksByDataCenterId, getQueryParameters());
     }
 
     @Override
@@ -95,7 +95,7 @@ public class BackendDataCenterNetworksResource
         String networkName = network.getDataCenter().getName();
         return getEntity(
             StoragePool.class,
-            VdcQueryType.GetStoragePoolByDatacenterName,
+            QueryType.GetStoragePoolByDatacenterName,
             new NameQueryParameters(networkName),
             "Datacenter: name=" + networkName
         ).getId();

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondStorageConnectionsResourceTest
@@ -47,7 +47,7 @@ public class BackendIscsiBondStorageConnectionsResourceTest
     public void testAddStorageConnectionToIscsiBond() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpGetEntityExpectations(VdcQueryType.GetIscsiBondById,
+        setUpGetEntityExpectations(QueryType.GetIscsiBondById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { ISCSI_BOND_ID },
@@ -67,7 +67,7 @@ public class BackendIscsiBondStorageConnectionsResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionByIscsiBondId,
+        setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionByIscsiBondId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { ISCSI_BOND_ID },

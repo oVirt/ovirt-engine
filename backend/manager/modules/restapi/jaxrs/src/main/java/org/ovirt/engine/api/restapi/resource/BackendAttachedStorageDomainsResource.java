@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAttachedStorageDomainsResource
@@ -34,7 +34,7 @@ public class BackendAttachedStorageDomainsResource
         StorageDomains storageDomains = new StorageDomains();
 
         for (org.ovirt.engine.core.common.businessentities.StorageDomain entity : getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                                                           VdcQueryType.GetStorageDomainsByStoragePoolId,
+                                                           QueryType.GetStorageDomainsByStoragePoolId,
                 new IdQueryParameters(dataCenterId))) {
             storageDomains.getStorageDomains().add(addLinks(map(entity), getLinksToExclude(entity)));
         }
@@ -77,14 +77,14 @@ public class BackendAttachedStorageDomainsResource
 
     protected Guid lookupStorageDomainIdByName(String name) {
         return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomainStatic.class,
-                VdcQueryType.GetStorageDomainByName,
+                QueryType.GetStorageDomainByName,
                 new NameQueryParameters(name),
                 "Storage: name=" + name).getId();
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain  lookupStorageDomainById(Guid storageDomainId) {
         return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                         VdcQueryType.GetStorageDomainByIdAndStoragePoolId,
+                         QueryType.GetStorageDomainByIdAndStoragePoolId,
                          new StorageDomainAndPoolQueryParameters(storageDomainId, dataCenterId),
                          storageDomainId.toString());
     }

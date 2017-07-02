@@ -13,7 +13,7 @@ import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTest {
@@ -45,7 +45,7 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
     @Test
     public void testList() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
+        setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                     IdQueryParameters.class,
                     new String[]{"Id"},
                     new Object[]{VM_ID},

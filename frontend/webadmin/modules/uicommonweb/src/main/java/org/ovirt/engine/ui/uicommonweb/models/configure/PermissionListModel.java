@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -105,7 +105,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
         tempVar.setDirectOnly(false);
         tempVar.setRefresh(getIsQueryFirstTime());
         tempVar.setAllUsersWithPermission(getAllUsersWithPermission());
-        super.syncSearch(VdcQueryType.GetPermissionsForObject, tempVar);
+        super.syncSearch(QueryType.GetPermissionsForObject, tempVar);
     }
 
     public boolean getAllUsersWithPermission() {

@@ -25,7 +25,7 @@ import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendExternalProviderCertificatesResource
         extends AbstractBackendCollectionResource<Certificate, CertificateInfo>
@@ -45,7 +45,7 @@ public class BackendExternalProviderCertificatesResource
         Provider provider = BackendExternalProviderHelper.getProvider(this, providerId);
         ProviderQueryParameters parameters = new ProviderQueryParameters();
         parameters.setProvider(provider);
-        return mapCollection(getBackendCollection(VdcQueryType.GetProviderCertificateChain, parameters));
+        return mapCollection(getBackendCollection(QueryType.GetProviderCertificateChain, parameters));
     }
 
     protected Certificates mapCollection(List<CertificateInfo> entities) {

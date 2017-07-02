@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -20,8 +20,8 @@ public class RemoveCpuQosModel extends RemoveQosModel<CpuQos> {
     }
 
     @Override
-    protected VdcQueryType getUsingEntitiesByQosIdQueryType() {
-        return VdcQueryType.GetCpuProfilesByCpuQosId;
+    protected QueryType getUsingEntitiesByQosIdQueryType() {
+        return QueryType.GetCpuProfilesByCpuQosId;
     }
 
     @Override

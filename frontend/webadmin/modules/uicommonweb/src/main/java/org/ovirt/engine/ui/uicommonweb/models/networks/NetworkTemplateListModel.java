@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -73,7 +73,7 @@ public class NetworkTemplateListModel extends SearchableListModel<NetworkView, P
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, params, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.GetVmTemplatesAndNetworkInterfacesByNetworkId, params, new SetItemsAsyncQuery());
     }
 
     private void updateActionAvailability() {

@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
@@ -83,7 +83,7 @@ public class GlusterStorageSyncCommand<T extends GlusterStorageSyncCommandParame
     protected void executeCommand() {
         // Get list of running VMs that have disks on storage domain
         List<VM> vms =
-                runInternalQuery(VdcQueryType.GetVmsByStorageDomain, new IdQueryParameters(getStorageDomain().getId()))
+                runInternalQuery(QueryType.GetVmsByStorageDomain, new IdQueryParameters(getStorageDomain().getId()))
                         .getReturnValue();
 
         // Snapshot the VMs

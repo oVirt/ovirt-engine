@@ -7,7 +7,7 @@ import org.ovirt.engine.api.resource.AssignedTagResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendGroupTagsResource extends AbstractBackendAssignedTagsResource {
     public BackendGroupTagsResource(String parentId) {
@@ -15,7 +15,7 @@ public class BackendGroupTagsResource extends AbstractBackendAssignedTagsResourc
     }
 
     public List<Tags> getCollection() {
-        return getBackendCollection(VdcQueryType.GetTagsByUserGroupId, new GetTagsByUserGroupIdParameters(parentId));
+        return getBackendCollection(QueryType.GetTagsByUserGroupId, new GetTagsByUserGroupIdParameters(parentId));
     }
 
     @Override

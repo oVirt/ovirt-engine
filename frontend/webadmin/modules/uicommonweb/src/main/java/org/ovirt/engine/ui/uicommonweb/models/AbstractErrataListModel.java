@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.HasErrata;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetErrataCountsParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -131,5 +131,5 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
         setItems(filter(unfilteredResultList));
     }
 
-    protected abstract VdcQueryType getQueryType();
+    protected abstract QueryType getQueryType();
 }

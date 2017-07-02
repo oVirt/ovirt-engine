@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicsResourceTest
@@ -49,7 +49,7 @@ public class BackendVmNicsResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmInterfacesByVmId,
+                QueryType.GetVmInterfacesByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },
@@ -140,7 +140,7 @@ public class BackendVmNicsResourceTest
 
     protected void setGetGuestAgentQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+            setUpEntityQueryExpectations(QueryType.GetVmGuestAgentInterfacesByVmId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { VM_ID },
@@ -185,7 +185,7 @@ public class BackendVmNicsResourceTest
             true,
             true,
             null,
-            VdcQueryType.GetVmInterfacesByVmId,
+            QueryType.GetVmInterfacesByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },

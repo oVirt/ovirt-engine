@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterNetworkResourceTest
@@ -38,7 +38,7 @@ public class BackendDataCenterNetworkResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
+        setUpEntityQueryExpectations(QueryType.GetNetworksByDataCenterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
@@ -62,7 +62,7 @@ public class BackendDataCenterNetworkResourceTest
     @Test
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
+        setUpEntityQueryExpectations(QueryType.GetNetworksByDataCenterId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
@@ -135,7 +135,7 @@ public class BackendDataCenterNetworkResourceTest
     @Test
     public void testRemoveNotFound() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetNetworksByDataCenterId,
+            QueryType.GetNetworksByDataCenterId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { dataCenterId },
@@ -169,7 +169,7 @@ public class BackendDataCenterNetworkResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(
-            VdcQueryType.GetNetworksByDataCenterId,
+            QueryType.GetNetworksByDataCenterId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { dataCenterId },
@@ -219,7 +219,7 @@ public class BackendDataCenterNetworkResourceTest
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
+            setUpEntityQueryExpectations(QueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { dataCenterId },

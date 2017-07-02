@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
@@ -73,7 +73,7 @@ public class ClusterVmListModel extends VmListModel<Cluster> {
     protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VM);
         tempVar.setRefresh(getIsQueryFirstTime());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override

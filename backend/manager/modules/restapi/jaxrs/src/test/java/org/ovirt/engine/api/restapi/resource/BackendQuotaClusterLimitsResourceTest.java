@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.QuotaClusterLimits;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTest {
@@ -84,7 +84,7 @@ public class BackendQuotaClusterLimitsResourceTest extends AbstractBackendBaseTe
     }
 
     private void setUpGetEntityExpectations(Quota quota) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetQuotaByQuotaId,
+        setUpGetEntityExpectations(QueryType.GetQuotaByQuotaId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { QUOTA_ID },

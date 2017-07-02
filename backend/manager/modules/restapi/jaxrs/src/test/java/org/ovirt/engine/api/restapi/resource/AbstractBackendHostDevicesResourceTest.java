@@ -8,7 +8,7 @@ import javax.ws.rs.core.UriInfo;
 import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendHostDevicesResourceTest<R extends AbstractBackendResource<HostDevice, D>, D extends org.ovirt.engine.core.common.businessentities.HostDevice>
@@ -51,7 +51,7 @@ public abstract class AbstractBackendHostDevicesResourceTest<R extends AbstractB
 
     protected void setUpGetVmHostDevicesExpectations() {
         setUpEntityQueryExpectations(
-                VdcQueryType.GetExtendedVmHostDevicesByVmId,
+                QueryType.GetExtendedVmHostDevicesByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },

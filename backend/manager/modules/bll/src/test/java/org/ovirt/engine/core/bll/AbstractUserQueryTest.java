@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
 /** An abstract test class for query classes that handles common mocking requirements */
@@ -25,7 +26,7 @@ public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q 
         when(getQueryParameters().isFiltered()).thenReturn(true);
     }
 
-    /** Verify that all queries tested in this manner were flagged as user queries in the {@link org.ovirt.engine.core.common.queries.VdcQueryType} enum */
+    /** Verify that all queries tested in this manner were flagged as user queries in the {@link QueryType} enum */
     @Test
     public void testQueryIsAUserQuery() throws IllegalArgumentException, IllegalAccessException {
         assertFalse("A query tested for filtered access should not be an admin query",

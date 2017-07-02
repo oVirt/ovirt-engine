@@ -11,8 +11,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -33,7 +33,7 @@ public class PreviewSnapshotModel extends Model {
 
     @Override
     public void initialize() {
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllVmSnapshotsFromConfigurationByVmId,
+        Frontend.getInstance().runQuery(QueryType.GetAllVmSnapshotsFromConfigurationByVmId,
                 new IdQueryParameters(vmId), new AsyncQuery<VdcQueryReturnValue>(response -> {
                     if (response != null && response.getSucceeded()) {
                         ArrayList<SnapshotModel> snapshotModels = new ArrayList<>();

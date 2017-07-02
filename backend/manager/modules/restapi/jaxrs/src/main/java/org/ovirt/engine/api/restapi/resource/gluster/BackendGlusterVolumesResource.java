@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -88,7 +88,7 @@ public class BackendGlusterVolumesResource
 
         return performCreate(ActionType.CreateGlusterVolume,
                 new CreateGlusterVolumeParameters(volumeEntity, isForce()),
-                new QueryIdResolver<Guid>(VdcQueryType.GetGlusterVolumeById, IdQueryParameters.class),
+                new QueryIdResolver<Guid>(QueryType.GetGlusterVolumeById, IdQueryParameters.class),
                 true);
     }
 

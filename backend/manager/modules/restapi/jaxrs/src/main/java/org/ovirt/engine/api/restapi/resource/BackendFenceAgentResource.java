@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent, FenceAgent> implements FenceAgentResource {
@@ -20,13 +20,13 @@ public class BackendFenceAgentResource extends AbstractBackendSubResource<Agent,
 
     @Override
     public Agent get() {
-        return performGet(VdcQueryType.GetFenceAgentById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetFenceAgentById, new IdQueryParameters(guid));
     }
 
     @Override
     public Agent update(Agent agent) {
         QueryIdResolver<Guid> agentResolver =
-                new QueryIdResolver<>(VdcQueryType.GetFenceAgentById, IdQueryParameters.class);
+                new QueryIdResolver<>(QueryType.GetFenceAgentById, IdQueryParameters.class);
         FenceAgent entity = getEntity(agentResolver, true);
         return performUpdate(agent,
                 entity,

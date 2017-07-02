@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendExternalHostProviderResource
         extends AbstractBackendExternalProviderResource<ExternalHostProvider>
@@ -43,14 +43,14 @@ public class BackendExternalHostProviderResource
 
     @Override
     public ExternalHostProvider get() {
-        return performGet(VdcQueryType.GetProviderById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetProviderById, new IdQueryParameters(guid));
     }
 
     @Override
     public ExternalHostProvider update(ExternalHostProvider incoming) {
         return performUpdate(
             incoming,
-            new QueryIdResolver<>(VdcQueryType.GetProviderById, IdQueryParameters.class),
+            new QueryIdResolver<>(QueryType.GetProviderById, IdQueryParameters.class),
             ActionType.UpdateProvider,
             new UpdateParametersProvider()
         );

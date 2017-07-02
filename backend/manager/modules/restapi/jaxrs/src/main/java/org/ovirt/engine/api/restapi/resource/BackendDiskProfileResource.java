@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendDiskProfileResource extends AbstractBackendDiskProfileResource implements DiskProfileResource {
 
@@ -25,7 +25,7 @@ public class BackendDiskProfileResource extends AbstractBackendDiskProfileResour
     @Override
     public DiskProfile update(DiskProfile resource) {
         return performUpdate(resource,
-                new QueryIdResolver<>(VdcQueryType.GetDiskProfileById, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetDiskProfileById, IdQueryParameters.class),
                 ActionType.UpdateDiskProfile,
                 new UpdateParametersProvider());
     }
@@ -33,7 +33,7 @@ public class BackendDiskProfileResource extends AbstractBackendDiskProfileResour
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                VdcQueryType.GetPermissionsForObject,
+                QueryType.GetPermissionsForObject,
                 new GetPermissionsForObjectParameters(guid),
                 DiskProfile.class,
                 VdcObjectType.DiskProfile));

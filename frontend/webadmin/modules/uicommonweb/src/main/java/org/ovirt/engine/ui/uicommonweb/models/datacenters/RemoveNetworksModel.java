@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -90,7 +90,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
             return;
         }
         // We do not have details about whether the provider is read-only, so a query to the backend must be made
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(ProviderType.EXTERNAL_NETWORK, ProviderType.OPENSTACK_NETWORK),
+        Frontend.getInstance().runQuery(QueryType.GetAllProviders, new GetAllProvidersParameters(ProviderType.EXTERNAL_NETWORK, ProviderType.OPENSTACK_NETWORK),
                 createProviderReadOnlyCallback(externalProviderIds));
     }
 

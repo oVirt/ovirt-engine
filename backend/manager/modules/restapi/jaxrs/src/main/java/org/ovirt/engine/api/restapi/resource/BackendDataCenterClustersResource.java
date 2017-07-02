@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterClustersResource extends BackendClustersResource {
@@ -27,7 +27,7 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
     }
 
     protected List<Cluster> getClusters() {
-        return getBackendCollection(VdcQueryType.GetClustersByStoragePoolId,
+        return getBackendCollection(QueryType.GetClustersByStoragePoolId,
                     new IdQueryParameters(dataCenterId));
     }
 

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -30,10 +30,10 @@ public abstract class AffinityLabelListModel<E extends BusinessEntity<Guid>> ext
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
-    private final VdcQueryType queryType;
+    private final QueryType queryType;
     private final EntityModel<Map<Guid, String>> entitiesNameMap = new EntityModel<>();
 
-    public AffinityLabelListModel(VdcQueryType queryType) {
+    public AffinityLabelListModel(QueryType queryType) {
         this.queryType = queryType;
         setTitle(ConstantsManager.getInstance().getConstants().affinityLabelsTitle());
         setHelpTag(HelpTag.affinity_groups);

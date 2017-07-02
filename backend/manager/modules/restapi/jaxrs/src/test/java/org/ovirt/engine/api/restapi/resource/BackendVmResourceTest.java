@@ -76,7 +76,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -752,7 +752,7 @@ public class BackendVmResourceTest
     @Test
     public void testReorderMacAddresses() throws Exception {
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -905,7 +905,7 @@ public class BackendVmResourceTest
         VmStatic vmStatic = mock(VmStatic.class);
         when(mockedVm.getStaticData()).thenReturn(vmStatic);
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId, IdQueryParameters.class, new String[]{"Id"}, new Object[]{GUIDS[0]}, mockedVm);
+        setUpGetEntityExpectations(QueryType.GetVmByVmId, IdQueryParameters.class, new String[]{"Id"}, new Object[]{GUIDS[0]}, mockedVm);
 
         setUriInfo(setUpActionExpectations(ActionType.CloneVm,
                 CloneVmParameters.class,
@@ -975,7 +975,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testExportWithStorageDomainName() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainByName,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[2] },
@@ -1122,7 +1122,7 @@ public class BackendVmResourceTest
 
     @Test
     public void testRemoveNonExistant() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -1138,7 +1138,7 @@ public class BackendVmResourceTest
     }
 
     private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -1217,7 +1217,7 @@ public class BackendVmResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VM entity) throws Exception {
 
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+            setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
@@ -1226,7 +1226,7 @@ public class BackendVmResourceTest
     }
 
     protected void setUpGetEntityNextRunExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmNextRunConfiguration,
+        setUpGetEntityExpectations(QueryType.GetVmNextRunConfiguration,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -1294,7 +1294,7 @@ public class BackendVmResourceTest
 
     protected void setUpGetPayloadExpectations(int index, int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+            setUpGetEntityExpectations(QueryType.GetVmPayload,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[index] },
@@ -1311,7 +1311,7 @@ public class BackendVmResourceTest
 
     protected void setUpGetNoPayloadExpectations(int index, int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+            setUpGetEntityExpectations(QueryType.GetVmPayload,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[index] },
@@ -1320,7 +1320,7 @@ public class BackendVmResourceTest
     }
 
     private void setUpGetBallooningExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+        setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -1329,7 +1329,7 @@ public class BackendVmResourceTest
 
     protected void setUpGetGraphicsExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+            setUpGetEntityExpectations(QueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
                     new String[] {},
                     new Object[] {},
@@ -1339,7 +1339,7 @@ public class BackendVmResourceTest
 
     protected void setUpGetNextRunGraphicsExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetNextRunGraphicsDevices,
+            setUpGetEntityExpectations(QueryType.GetNextRunGraphicsDevices,
                     IdQueryParameters.class,
                     new String[] {},
                     new Object[] {},
@@ -1348,7 +1348,7 @@ public class BackendVmResourceTest
     }
 
     private void setUpGetCertuficateExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
+        setUpGetEntityExpectations(QueryType.GetVdsCertificateSubjectByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0]},
@@ -1357,7 +1357,7 @@ public class BackendVmResourceTest
 
     private void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+            setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -1367,7 +1367,7 @@ public class BackendVmResourceTest
 
     private void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+            setUpGetEntityExpectations(QueryType.GetSoundDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -1377,7 +1377,7 @@ public class BackendVmResourceTest
 
     private void setUpGetVmOvfExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmOvfByVmId,
+            setUpGetEntityExpectations(QueryType.GetVmOvfByVmId,
                     GetVmOvfByVmIdParameters.class,
                     new String[] { "Id", "RequiredGeneration" },
                     new Object[] { GUIDS[idxs[i]], 0L },
@@ -1387,7 +1387,7 @@ public class BackendVmResourceTest
 
     protected void setUpGetHostByNameExpectations(int idx) throws Exception {
         VDS host = BackendHostsResourceTest.setUpEntityExpectations(spy(new VDS()), idx);
-        setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
+        setUpGetEntityExpectations(QueryType.GetVdsByName,
                 NameQueryParameters.class,
                 new String[]{"Name"},
                 new Object[]{NAMES[idx]},

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.LabelActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAffinityLabelResource extends AbstractBackendActionableResource<AffinityLabel, Label>
@@ -25,12 +25,12 @@ public class BackendAffinityLabelResource extends AbstractBackendActionableResou
 
     @Override
     public AffinityLabel get() {
-        return addLinks(performGet(VdcQueryType.GetLabelById, new IdQueryParameters(guid)));
+        return addLinks(performGet(QueryType.GetLabelById, new IdQueryParameters(guid)));
     }
 
     @Override
     public AffinityLabel update(AffinityLabel incoming) {
-        QueryIdResolver<Guid> labelResolver = new QueryIdResolver<>(VdcQueryType.GetLabelById, IdQueryParameters.class);
+        QueryIdResolver<Guid> labelResolver = new QueryIdResolver<>(QueryType.GetLabelById, IdQueryParameters.class);
         Label entity = getEntity(labelResolver, true);
         AffinityLabel label = performUpdate(incoming,
                 entity,

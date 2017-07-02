@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TransferImageStatusParameters;
 import org.ovirt.engine.core.common.businessentities.storage.ImageTransferPhase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendImageTransferResource extends
         AbstractBackendSubResource<ImageTransfer,
@@ -25,7 +25,7 @@ public class BackendImageTransferResource extends
     @Override
     public
     ImageTransfer get() {
-        return performGet(VdcQueryType.GetImageTransferById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetImageTransferById, new IdQueryParameters(guid));
     }
 
     @Override

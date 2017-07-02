@@ -10,8 +10,8 @@ import org.ovirt.engine.api.resource.CpuProfileResource;
 import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResource implements CpuProfilesResource {
 
@@ -22,7 +22,7 @@ public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResour
 
     @Override
     protected List<org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> getCpuProfilesCollection() {
-        return getBackendCollection(VdcQueryType.GetAllCpuProfiles, new VdcQueryParametersBase());
+        return getBackendCollection(QueryType.GetAllCpuProfiles, new VdcQueryParametersBase());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BackendCpuProfilesResource extends AbstractBackendCpuProfilesResour
         String clusterId = cpuProfile.getCluster().getId();
         // verify the cluster.id is well provided
         getEntity(Cluster.class,
-                VdcQueryType.GetClusterById,
+                QueryType.GetClusterById,
                 new IdQueryParameters(asGuid(clusterId)),
                 "cluster: id="
                         + clusterId);

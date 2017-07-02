@@ -19,8 +19,8 @@ import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.SsoUtils;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.queries.GetEngineSessionIdForSsoTokenQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class SsoRestApiAuthFilter implements Filter {
                     InitialContext ctx = new InitialContext();
                     try {
                         VdcQueryReturnValue queryRetVal = FiltersHelper.getBackend(ctx).runPublicQuery(
-                                VdcQueryType.GetEngineSessionIdForSsoToken,
+                                QueryType.GetEngineSessionIdForSsoToken,
                                 new GetEngineSessionIdForSsoTokenQueryParameters(token));
                         if (queryRetVal.getSucceeded() && StringUtils.isNotEmpty(queryRetVal.getReturnValue())) {
                             log.debug("SsoRestApiAuthFilter successfully authenticated using BEARER header");

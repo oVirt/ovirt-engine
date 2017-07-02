@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EndExternalStepParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendStepResourceTest
         extends AbstractBackendSubResourceTest<Step, org.ovirt.engine.core.common.job.Step, BackendStepResource> {
@@ -56,7 +56,7 @@ public class BackendStepResourceTest
     }
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetStepWithSubjectEntitiesByStepId,
+        setUpGetEntityExpectations(QueryType.GetStepWithSubjectEntitiesByStepId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

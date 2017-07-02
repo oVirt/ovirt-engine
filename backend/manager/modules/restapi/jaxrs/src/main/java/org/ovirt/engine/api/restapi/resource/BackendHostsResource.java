@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostsResource extends AbstractBackendCollectionResource<Host, VDS> implements
@@ -47,7 +47,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     private Hosts listGlusterOnly() {
         if (isFiltered()) {
-            return mapGlusterOnlyCollection(getBackendCollection(VdcQueryType.GetAllHosts,
+            return mapGlusterOnlyCollection(getBackendCollection(QueryType.GetAllHosts,
                     new VdcQueryParametersBase()));
         }
         else {
@@ -57,7 +57,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     private Hosts listAll() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllHosts,
+            return mapCollection(getBackendCollection(QueryType.GetAllHosts,
                     new VdcQueryParametersBase()));
         }
         else {
@@ -84,7 +84,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
             (Host.class, VdsOperationActionParameters.class).map(host, addParams);
         return performCreate(ActionType.AddVds,
                                addParams,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class));
+                               new QueryIdResolver<Guid>(QueryType.GetVdsByVdsId, IdQueryParameters.class));
     }
 
     @Override
@@ -124,7 +124,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     private Guid getClusterIdByName(String name) {
         return getEntity(Cluster.class,
-                VdcQueryType.GetClusterByName,
+                QueryType.GetClusterByName,
                 new NameQueryParameters(name),
                 "Cluster: name=" + name).getId();
     }

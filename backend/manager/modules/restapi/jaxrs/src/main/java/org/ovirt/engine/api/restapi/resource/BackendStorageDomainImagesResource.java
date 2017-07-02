@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -29,7 +29,7 @@ public class BackendStorageDomainImagesResource
     public Images list() {
         GetImagesListParameters getImagesListParams = new GetImagesListParameters(storageDomainId, ImageFileType.All);
         getImagesListParams.setForceRefresh(true);
-        return mapCollection(getBackendCollection(VdcQueryType.GetImagesList, getImagesListParams));
+        return mapCollection(getBackendCollection(QueryType.GetImagesList, getImagesListParams));
     }
 
     @Override

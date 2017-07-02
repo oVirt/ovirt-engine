@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmGraphicsConsolesResource
@@ -88,7 +88,7 @@ public class BackendVmGraphicsConsolesResource
     }
 
     protected VM loadEntity() {
-        return getEntity(VM.class, VdcQueryType.GetVmByVmId,
+        return getEntity(VM.class, QueryType.GetVmByVmId,
                 new IdQueryParameters(guid), guid.toString(), true);
     }
 

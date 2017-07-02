@@ -8,7 +8,7 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendAssignedVnicProfileResourceTest
         extends AbstractBackendVnicProfileResourceTest<BackendAssignedVnicProfileResource> {
@@ -50,7 +50,7 @@ public class BackendAssignedVnicProfileResourceTest
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVnicProfileById,
+            setUpEntityQueryExpectations(QueryType.GetVnicProfileById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },

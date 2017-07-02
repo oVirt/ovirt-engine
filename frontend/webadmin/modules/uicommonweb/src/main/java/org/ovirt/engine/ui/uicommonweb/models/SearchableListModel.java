@@ -11,9 +11,9 @@ import java.util.SortedSet;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
@@ -779,18 +779,18 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
     }
 
     protected void syncSearch(
-            VdcQueryType vdcQueryType,
+            QueryType queryType,
             VdcQueryParametersBase vdcQueryParametersBase,
             AsyncQuery<VdcQueryReturnValue> asyncCallback) {
         vdcQueryParametersBase.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(vdcQueryType, vdcQueryParametersBase, asyncCallback);
+        Frontend.getInstance().runQuery(queryType, vdcQueryParametersBase, asyncCallback);
 
         setIsQueryFirstTime(false);
     }
 
-    protected void syncSearch(VdcQueryType vdcQueryType, VdcQueryParametersBase vdcQueryParametersBase) {
-        syncSearch(vdcQueryType, vdcQueryParametersBase, new SetItemsAsyncQuery());
+    protected void syncSearch(QueryType queryType, VdcQueryParametersBase vdcQueryParametersBase) {
+        syncSearch(queryType, vdcQueryParametersBase, new SetItemsAsyncQuery());
     }
 
     public void stopRefresh() {

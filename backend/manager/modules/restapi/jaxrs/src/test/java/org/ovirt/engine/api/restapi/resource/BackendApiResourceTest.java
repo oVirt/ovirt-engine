@@ -34,9 +34,9 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -425,12 +425,12 @@ public class BackendApiResourceTest {
         VdcQueryReturnValue productRpmQueryResult = new VdcQueryReturnValue();
         productRpmQueryResult.setSucceeded(true);
         productRpmQueryResult.setReturnValue(SYSTEM_VERSION);
-        when(backend.runQuery(eq(VdcQueryType.GetConfigurationValue), getProductRPMVersionParams())).thenReturn(productRpmQueryResult);
+        when(backend.runQuery(eq(QueryType.GetConfigurationValue), getProductRPMVersionParams())).thenReturn(productRpmQueryResult);
 
         VdcQueryReturnValue productVersionQueryResult = new VdcQueryReturnValue();
         productVersionQueryResult.setSucceeded(true);
         productVersionQueryResult.setReturnValue(new Version(MAJOR, MINOR, BUILD, REVISION));
-        when(backend.runQuery(eq(VdcQueryType.GetProductVersion), getProductVersionParams())).thenReturn(productVersionQueryResult);
+        when(backend.runQuery(eq(QueryType.GetProductVersion), getProductVersionParams())).thenReturn(productVersionQueryResult);
     }
 
     private VdcQueryParametersBase getProductVersionParams() {
@@ -440,7 +440,7 @@ public class BackendApiResourceTest {
     protected void setUpGetSystemStatisticsExpectations() {
         VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
 
-        when(backend.runQuery(eq(VdcQueryType.GetSystemStatistics), queryParams())).thenReturn(queryResult);
+        when(backend.runQuery(eq(QueryType.GetSystemStatistics), queryParams())).thenReturn(queryResult);
 
         queryResult.setSucceeded(true);
         queryResult.setReturnValue(setUpStats());

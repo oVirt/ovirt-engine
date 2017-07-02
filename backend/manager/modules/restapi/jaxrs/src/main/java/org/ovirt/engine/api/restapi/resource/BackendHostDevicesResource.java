@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.HostDevices;
 import org.ovirt.engine.api.resource.HostDeviceResource;
 import org.ovirt.engine.api.resource.HostDevicesResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostDevicesResource
@@ -49,6 +49,6 @@ public class BackendHostDevicesResource
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.HostDevice> getCollection() {
-        return getBackendCollection(VdcQueryType.GetHostDevicesByHostId, new IdQueryParameters(hostId));
+        return getBackendCollection(QueryType.GetHostDevicesByHostId, new IdQueryParameters(hostId));
     }
 }

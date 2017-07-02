@@ -12,9 +12,9 @@ import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.gluster.AddedGlusterServersParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -59,7 +59,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
                 VdcQueryReturnValue returnValue;
                 if (getParameters().isServerKeyFingerprintRequired()) {
                     returnValue =
-                            runInternalQuery(VdcQueryType.GetServerSSHKeyFingerprint,
+                            runInternalQuery(QueryType.GetServerSSHKeyFingerprint,
                                     new ServerParameters(server.getHostnameOrIp()));
                     if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
                         fingerprint = returnValue.getReturnValue().toString();

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
@@ -34,7 +34,7 @@ public class PoolDiskListModel extends VmDiskListModelBase<VmPool> {
 
         VmPool pool = getEntity();
         if (pool != null) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
+            Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
                     new AsyncQuery<VdcQueryReturnValue>(result -> {
                         if (result != null) {
@@ -56,7 +56,7 @@ public class PoolDiskListModel extends VmDiskListModelBase<VmPool> {
             return;
         }
 
-        super.syncSearch(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(getVM().getId()));
+        super.syncSearch(QueryType.GetAllDisksByVmId, new IdQueryParameters(getVM().getId()));
     }
 
     @Override

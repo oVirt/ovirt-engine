@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.GetSignedWebsocketProxyTicketParams;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class BackendVmGraphicsConsoleResource
         ConsoleOptions consoleOptions = new ConsoleOptions(graphicsType);
         consoleOptions.setVmId(guid);
         VdcQueryReturnValue configuredOptionsReturnValue = runQuery(
-            VdcQueryType.ConfigureConsoleOptions,
+            QueryType.ConfigureConsoleOptions,
             new ConfigureConsoleOptionsParams(consoleOptions, true)
         );
         if (!configuredOptionsReturnValue.getSucceeded()) {
@@ -61,7 +61,7 @@ public class BackendVmGraphicsConsoleResource
         }
 
         return runQuery(
-            VdcQueryType.GetConsoleDescriptorFile,
+            QueryType.GetConsoleDescriptorFile,
             new ConsoleOptionsParams(configuredOptionsReturnValue.getReturnValue())
         );
     }
@@ -139,7 +139,7 @@ public class BackendVmGraphicsConsoleResource
         final GetSignedWebsocketProxyTicketParams params =
                 new GetSignedWebsocketProxyTicketParams(guid, graphicsTypeEntity);
         final VdcQueryReturnValue ticketQueryReturnValue =
-                runQuery(VdcQueryType.GetSignedWebsocketProxyTicket, params);
+                runQuery(QueryType.GetSignedWebsocketProxyTicket, params);
         if (!ticketQueryReturnValue.getSucceeded()) {
             try {
                 backendFailure(ticketQueryReturnValue.getExceptionString());

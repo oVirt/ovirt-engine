@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Weight;
 import org.ovirt.engine.api.resource.WeightResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,7 +26,7 @@ public class BackendWeightResource
 
     @Override
     public Weight get() {
-        return performGet(VdcQueryType.GetClusterPolicyById, new IdQueryParameters(parentId));
+        return performGet(QueryType.GetClusterPolicyById, new IdQueryParameters(parentId));
     }
 
     @Override

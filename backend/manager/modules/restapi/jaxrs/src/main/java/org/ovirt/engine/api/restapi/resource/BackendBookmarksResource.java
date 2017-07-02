@@ -11,8 +11,8 @@ import org.ovirt.engine.api.resource.BookmarksResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendBookmarksResource extends
@@ -25,7 +25,7 @@ public class BackendBookmarksResource extends
 
     @Override
     public Bookmarks list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllBookmarks, new VdcQueryParametersBase()));
+        return mapCollection(getBackendCollection(QueryType.GetAllBookmarks, new VdcQueryParametersBase()));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class BackendBookmarksResource extends
 
     protected org.ovirt.engine.core.common.businessentities.Bookmark lookupBookmarkByName(final String name) {
         return getEntity(org.ovirt.engine.core.common.businessentities.Bookmark.class,
-                VdcQueryType.GetBookmarkByBookmarkName, new NameQueryParameters(name), name);
+                QueryType.GetBookmarkByBookmarkName, new NameQueryParameters(name), name);
     }
 
     protected class BookmarkNameResolver extends EntityIdResolver<Guid> {

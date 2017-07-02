@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -36,7 +36,7 @@ public class BackendStorageDomainDiskResourceTest
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
@@ -51,7 +51,7 @@ public class BackendStorageDomainDiskResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { DISK_ID },

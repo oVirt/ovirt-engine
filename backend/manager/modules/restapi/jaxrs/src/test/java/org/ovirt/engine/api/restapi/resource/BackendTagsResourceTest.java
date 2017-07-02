@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagsResourceTest
@@ -54,7 +54,7 @@ public class BackendTagsResourceTest
     @Test(expected = WebFaultException.class)
     public void testListLimitResultsBadFormat() throws Exception {
         UriInfo uriInfo = setUpUriExpectationsWithMax(true);
-        setUpEntityQueryExpectations(VdcQueryType.GetAllTags,
+        setUpEntityQueryExpectations(QueryType.GetAllTags,
                                      VdcQueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
@@ -75,7 +75,7 @@ public class BackendTagsResourceTest
                                   true,
                                   true,
                                   null,
-                                  VdcQueryType.GetTagByTagName,
+                                  QueryType.GetTagByTagName,
                                   NameQueryParameters.class,
                                   new String[] { "Name" },
                                   new Object[] { NAMES[0] },
@@ -91,7 +91,7 @@ public class BackendTagsResourceTest
     public void testAddTagNamedParent() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetTagByTagName,
+        setUpEntityQueryExpectations(QueryType.GetTagByTagName,
                                      NameQueryParameters.class,
                                      new String[] { "Name" },
                                      new Object[] { NAMES[PARENT_IDX] },
@@ -104,7 +104,7 @@ public class BackendTagsResourceTest
                                   true,
                                   true,
                                   null,
-                                  VdcQueryType.GetTagByTagName,
+                                  QueryType.GetTagByTagName,
                                   NameQueryParameters.class,
                                   new String[] { "Name" },
                                   new Object[] { NAMES[0] },
@@ -134,7 +134,7 @@ public class BackendTagsResourceTest
                                   true,
                                   true,
                                   null,
-                                  VdcQueryType.GetTagByTagName,
+                                  QueryType.GetTagByTagName,
                                   NameQueryParameters.class,
                                   new String[] { "Name" },
                                   new Object[] { NAMES[0] },
@@ -188,7 +188,7 @@ public class BackendTagsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAllTags,
+        setUpEntityQueryExpectations(QueryType.GetAllTags,
                                      VdcQueryParametersBase.class,
                                      new String[] { },
                                      new Object[] { },
@@ -196,7 +196,7 @@ public class BackendTagsResourceTest
                                      failure);
 
         if (failure == null) {
-            setUpEntityQueryExpectations(VdcQueryType.GetRootTag,
+            setUpEntityQueryExpectations(QueryType.GetRootTag,
                                          VdcQueryParametersBase.class,
                                          new String[] { },
                                          new Object[] { },

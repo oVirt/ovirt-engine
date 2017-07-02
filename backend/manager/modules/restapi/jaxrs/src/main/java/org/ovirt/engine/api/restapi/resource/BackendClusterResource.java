@@ -22,8 +22,8 @@ import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationPa
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterResource<P extends BackendClustersResource>
@@ -40,13 +40,13 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public org.ovirt.engine.api.model.Cluster get() {
-        return performGet(VdcQueryType.GetClusterById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetClusterById, new IdQueryParameters(guid));
     }
 
     @Override
     public org.ovirt.engine.api.model.Cluster update(org.ovirt.engine.api.model.Cluster incoming) {
         return performUpdate(incoming,
-                             new QueryIdResolver<>(VdcQueryType.GetClusterById, IdQueryParameters.class),
+                             new QueryIdResolver<>(QueryType.GetClusterById, IdQueryParameters.class),
                              ActionType.UpdateCluster,
                              new UpdateParametersProvider());
     }
@@ -59,7 +59,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsForObject,
+                                                             QueryType.GetPermissionsForObject,
                                                              new GetPermissionsForObjectParameters(guid),
                                                              org.ovirt.engine.api.model.Cluster.class,
                                                              VdcObjectType.Cluster));
@@ -120,7 +120,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public Response resetEmulatedMachine(Action action) {
-        VdcQueryReturnValue result = runQuery(VdcQueryType.GetClusterById, new IdQueryParameters(guid));
+        VdcQueryReturnValue result = runQuery(QueryType.GetClusterById, new IdQueryParameters(guid));
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
             ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters(result.getReturnValue());
             param.setForceResetEmulatedMachine(true);

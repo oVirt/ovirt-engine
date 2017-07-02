@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplatesResourceTest
@@ -62,7 +62,7 @@ public class BackendTemplatesResourceTest
         setUriInfo(uriInfo);
         setUpHttpHeaderExpectations("Expect", "201-created");
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -84,7 +84,7 @@ public class BackendTemplatesResourceTest
                 GUIDS[0],
                 asList(GUIDS[2]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetVmTemplate,
+                QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -125,7 +125,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(0, 1);
         setUpGetRngDeviceExpectations(0);
         setUpGetBallooningExpectations(new Integer[] {0});
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
@@ -140,7 +140,7 @@ public class BackendTemplatesResourceTest
                                   GUIDS[0],
                                   asList(GUIDS[2]),
                                   asList(new AsyncTaskStatus(asyncStatus)),
-                                  VdcQueryType.GetVmTemplate,
+                                  QueryType.GetVmTemplate,
                                   GetVmTemplateParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -161,7 +161,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -220,7 +220,7 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(2, 2);
         setUpGetBallooningExpectations(2, 2);
 
-            setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+            setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[1] },
@@ -236,7 +236,7 @@ public class BackendTemplatesResourceTest
                                       GUIDS[2],
                                       asList(GUIDS[2]),
                                       asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                      VdcQueryType.GetVmTemplate,
+                                      QueryType.GetVmTemplate,
                                       GetVmTemplateParameters.class,
                                       new String[] { "Id" },
                                       new Object[] { GUIDS[2] },
@@ -256,7 +256,7 @@ public class BackendTemplatesResourceTest
 
         setUpHttpHeaderExpectations("Expect", "201-created");
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmNameForDataCenter,
+        setUpGetEntityExpectations(QueryType.GetVmByVmNameForDataCenter,
                 GetVmByVmNameForDataCenterParameters.class,
                 new String[]{"Name"},
                 new Object[]{NAMES[1]},
@@ -279,7 +279,7 @@ public class BackendTemplatesResourceTest
                                   GUIDS[0],
                                   asList(GUIDS[2]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                  VdcQueryType.GetVmTemplate,
+                                  QueryType.GetVmTemplate,
                                   GetVmTemplateParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -303,7 +303,7 @@ public class BackendTemplatesResourceTest
 
         setUpHttpHeaderExpectations("Expect", "201-created");
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmNameForDataCenter,
+        setUpGetEntityExpectations(QueryType.GetVmByVmNameForDataCenter,
                 GetVmByVmNameForDataCenterParameters.class,
                 new String[]{"Name"},
                 new Object[]{NAMES[1]},
@@ -326,7 +326,7 @@ public class BackendTemplatesResourceTest
                                   GUIDS[0],
                                   asList(GUIDS[2]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                  VdcQueryType.GetVmTemplate,
+                                  QueryType.GetVmTemplate,
                                   GetVmTemplateParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -348,7 +348,7 @@ public class BackendTemplatesResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -371,7 +371,7 @@ public class BackendTemplatesResourceTest
                 GUIDS[0],
                 asList(GUIDS[2]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetVmTemplate,
+                QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},
@@ -392,13 +392,13 @@ public class BackendTemplatesResourceTest
     public void testAddWithClusterName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
                 getClusterEntity());
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -412,7 +412,7 @@ public class BackendTemplatesResourceTest
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpGetEntityExpectations(VdcQueryType.GetClusterByName,
+        setUpGetEntityExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[2] },
@@ -427,7 +427,7 @@ public class BackendTemplatesResourceTest
                                   GUIDS[0],
                                   asList(GUIDS[2]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                  VdcQueryType.GetVmTemplate,
+                                  QueryType.GetVmTemplate,
                                   GetVmTemplateParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -463,7 +463,7 @@ public class BackendTemplatesResourceTest
 
     protected void doTestBadAdd(boolean valid, boolean success, String detail) throws Exception {
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
@@ -495,7 +495,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -513,7 +513,7 @@ public class BackendTemplatesResourceTest
                 GUIDS[0],
                 asList(GUIDS[2]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetVmTemplate,
+                QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -534,7 +534,7 @@ public class BackendTemplatesResourceTest
         setUpGetSoundcardExpectations(1);
         setUpGetBallooningExpectations(0, 0);
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+        setUpGetEntityExpectations(QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -551,7 +551,7 @@ public class BackendTemplatesResourceTest
                 GUIDS[0],
                 asList(GUIDS[2]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetVmTemplate,
+                QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -694,7 +694,7 @@ public class BackendTemplatesResourceTest
         // initialization information:
         if (failure == null) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmsInit,
+                QueryType.GetVmsInit,
                 IdsQueryParameters.class,
                 new String[]{},
                 new Object[]{},

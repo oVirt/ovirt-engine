@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -68,7 +68,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permission> {
 
         param.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsToConsumeQuotaByQuotaId, param, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetPermissionsToConsumeQuotaByQuotaId, param, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
             ArrayList<Permission> list = returnValue.getReturnValue();
             Map<Guid, Permission> map = new HashMap<>();
             for (Permission permission : list) {

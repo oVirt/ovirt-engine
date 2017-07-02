@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -68,7 +68,7 @@ public class BackendStorageDomainImageResource
         EntityResolver resolver = new SimpleIdResolver(
                 Disk.class,
                 org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class
         );
         return doAction(ActionType.ImportRepoImage, importParameters, action, resolver);
@@ -81,7 +81,7 @@ public class BackendStorageDomainImageResource
 
     @Override
     public Image get() {
-        return performGet(VdcQueryType.GetImageById, new GetImageByIdParameters(getStorageDomainId(), id));
+        return performGet(QueryType.GetImageById, new GetImageByIdParameters(getStorageDomainId(), id));
     }
 
     @Override

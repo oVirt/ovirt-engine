@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmCdromsResourceTest
@@ -63,7 +63,7 @@ public class BackendVmCdromsResourceTest
     private void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },
@@ -92,7 +92,7 @@ public class BackendVmCdromsResourceTest
     public void testAddCdRom() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },
@@ -107,7 +107,7 @@ public class BackendVmCdromsResourceTest
             true,
             true,
             null,
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },
@@ -132,7 +132,7 @@ public class BackendVmCdromsResourceTest
 
     private void doTestBadAddCdRom(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },
@@ -187,7 +187,7 @@ public class BackendVmCdromsResourceTest
     }
 
     private void setUpEntityQueryExpectations(
-            VdcQueryType query,
+            QueryType query,
             Class<? extends VdcQueryParametersBase> queryClass,
             String[] queryNames,
             Object[] queryValues,

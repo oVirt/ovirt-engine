@@ -7,8 +7,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -27,8 +27,8 @@ public class RemoveStorageQosModel extends RemoveQosModel<StorageQos> {
     }
 
     @Override
-    protected VdcQueryType getUsingEntitiesByQosIdQueryType() {
-        return VdcQueryType.GetDiskProfilesByStorageQosId;
+    protected QueryType getUsingEntitiesByQosIdQueryType() {
+        return QueryType.GetDiskProfilesByStorageQosId;
     }
 
     protected void handleSetMessageQueryResult(FrontendMultipleQueryAsyncResult result) {

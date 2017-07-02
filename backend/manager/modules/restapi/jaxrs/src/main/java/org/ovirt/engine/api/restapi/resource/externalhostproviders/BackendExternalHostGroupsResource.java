@@ -27,7 +27,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendExternalHostGroupsResource
         extends AbstractBackendCollectionResource<ExternalHostGroup, org.ovirt.engine.core.common.businessentities.ExternalHostGroup>
@@ -44,7 +44,7 @@ public class BackendExternalHostGroupsResource
         Provider provider = BackendExternalProviderHelper.getProvider(this, providerId);
         ProviderQueryParameters parameters = new ProviderQueryParameters();
         parameters.setProvider(provider);
-        return mapCollection(getBackendCollection(VdcQueryType.GetHostGroupsFromExternalProvider, parameters));
+        return mapCollection(getBackendCollection(QueryType.GetHostGroupsFromExternalProvider, parameters));
     }
 
     protected ExternalHostGroups mapCollection(

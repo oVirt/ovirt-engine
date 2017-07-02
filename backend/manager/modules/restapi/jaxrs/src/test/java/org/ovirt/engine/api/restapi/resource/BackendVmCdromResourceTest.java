@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmCdromResourceTest
@@ -230,7 +230,7 @@ public class BackendVmCdromResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },
@@ -252,7 +252,7 @@ public class BackendVmCdromResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception{
         setUpEntityQueryExpectations(
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },
@@ -281,7 +281,7 @@ public class BackendVmCdromResourceTest
 
     private void doTestBadRemove(boolean valid, boolean success, String detail) throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },
@@ -328,7 +328,7 @@ public class BackendVmCdromResourceTest
 
     private void setUpEntityQueryExpectations(VM result) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },

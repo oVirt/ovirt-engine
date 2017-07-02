@@ -26,7 +26,7 @@ import org.ovirt.engine.api.model.ExternalHost;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendExternalHostsResourceTest
         extends AbstractBackendCollectionResourceTest<
@@ -50,7 +50,7 @@ public class BackendExternalHostsResourceTest
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetHostListFromExternalProvider,
+            QueryType.GetHostListFromExternalProvider,
             GetHostListFromExternalProviderParameters.class,
             new String[] { "ProviderId" },
             new Object[] { GUIDS[0] },

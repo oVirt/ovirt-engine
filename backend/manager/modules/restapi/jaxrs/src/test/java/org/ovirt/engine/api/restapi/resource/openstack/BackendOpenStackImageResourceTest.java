@@ -30,8 +30,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendOpenStackImageResourceTest
         extends AbstractBackendSubResourceTest<OpenStackImage, RepoImage, BackendOpenStackImageResource> {
@@ -87,14 +87,14 @@ public class BackendOpenStackImageResourceTest
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllStorageDomains,
+            QueryType.GetAllStorageDomains,
             VdcQueryParametersBase.class,
             new String[] {},
             new Object[] {},
             getStorageDomains()
         );
         setUpGetEntityExpectations(
-            VdcQueryType.GetImageById,
+            QueryType.GetImageById,
             GetImageByIdParameters.class,
             new String[] { "RepoImageId" },
             new Object[] { GUIDS[1].toString() },

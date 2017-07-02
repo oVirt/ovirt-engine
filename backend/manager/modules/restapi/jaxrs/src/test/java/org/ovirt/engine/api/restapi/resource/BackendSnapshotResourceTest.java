@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotResourceTest
@@ -62,7 +62,7 @@ public class BackendSnapshotResourceTest
         when(httpHeaders.getRequestHeader(BackendResource.POPULATE)).thenReturn(populates);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
-        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
+        setUpEntityQueryExpectations(QueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_ID},
@@ -180,7 +180,7 @@ public class BackendSnapshotResourceTest
     }
 
     protected void setUpGetEntityExpectations(List<org.ovirt.engine.core.common.businessentities.Snapshot> result) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetAllVmSnapshotsByVmId,
+        setUpGetEntityExpectations(QueryType.GetAllVmSnapshotsByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { VM_ID },

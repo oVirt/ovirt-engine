@@ -18,7 +18,7 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginDataManager;
 
@@ -74,7 +74,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     }
 
     protected Integer getApplicationMode(String sessionId) {
-        return (Integer) runPublicQuery(VdcQueryType.GetConfigurationValue,
+        return (Integer) runPublicQuery(QueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigValues.ApplicationMode,
                         ConfigCommon.defaultConfigurationVersion), sessionId);
     }

@@ -61,8 +61,8 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -105,7 +105,7 @@ public class BackendVmsResourceTest
             vm.setStatisticsData(vmStatistics);
             vm.setMigrationProgressPercent(50);
             for (int i=0; i<GUIDS.length-1; i++) {
-                setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                setUpGetEntityExpectations(QueryType.GetVmByVmId,
                         IdQueryParameters.class,
                         new String[] { "Id" },
                         new Object[] { GUIDS[i] },
@@ -148,13 +148,13 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(0);
         setUpGetVmOvfExpectations(0);
         setUpGetCertuficateExpectations(1, 0);
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getClusterEntity());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -168,7 +168,7 @@ public class BackendVmsResourceTest
                 GUIDS[0],
                 asList(GUIDS[1]),
                 asList(new AsyncTaskStatus(asyncStatus)),
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},
@@ -201,17 +201,17 @@ public class BackendVmsResourceTest
         setUpGetBallooningExpectations(2, 0);
         setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations(2, 0);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
+        setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 getClusterEntity());
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},
@@ -226,7 +226,7 @@ public class BackendVmsResourceTest
                 GUIDS[0],
                 asList(GUIDS[1]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},
@@ -257,18 +257,18 @@ public class BackendVmsResourceTest
         setUpGetRngDeviceExpectations(0, 0);
         setUpGetCertuficateExpectations(2, 0);
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
+        setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
                 setUpCluster(GUIDS[1]));
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
+        setUpEntityQueryExpectations(QueryType.GetVmByVmId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
@@ -283,7 +283,7 @@ public class BackendVmsResourceTest
                                   GUIDS[0],
                                   asList(GUIDS[1]),
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                  VdcQueryType.GetVmByVmId,
+                                  QueryType.GetVmByVmId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -312,7 +312,7 @@ public class BackendVmsResourceTest
 
     private void doTestBadAddFromScratch(boolean valid, boolean success, String detail)
             throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -321,7 +321,7 @@ public class BackendVmsResourceTest
 
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(false);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -359,12 +359,12 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -376,7 +376,7 @@ public class BackendVmsResourceTest
                                   true,
                                   true,
                                   GUIDS[2],
-                                  VdcQueryType.GetVmByVmId,
+                                  QueryType.GetVmByVmId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
@@ -406,7 +406,7 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(2);
         setUpGetRngDeviceExpectations(2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
+        setUpEntityQueryExpectations(QueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
@@ -418,7 +418,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -444,12 +444,12 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -461,7 +461,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -485,12 +485,12 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(2, 1);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -508,7 +508,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -525,7 +525,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAdd() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -538,7 +538,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -551,7 +551,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAddPassTemplateByName() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Name", "DataCenterId" },
                 new Object[] { NAMES[1], GUIDS[3] },
@@ -564,7 +564,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -589,7 +589,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetVmOvfExpectations(2);
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -616,7 +616,7 @@ public class BackendVmsResourceTest
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
         model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
-        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+        setUpGetEntityExpectations(QueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[]{"VmConfiguration", "ConfigurationType"},
                 new Object[]{model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
@@ -629,7 +629,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 newId,
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { newId },
@@ -661,7 +661,7 @@ public class BackendVmsResourceTest
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
         model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
-        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+        setUpGetEntityExpectations(QueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[] { "VmConfiguration", "ConfigurationType" },
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
@@ -673,7 +673,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -704,12 +704,12 @@ public class BackendVmsResourceTest
         model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
         model.setCluster(new org.ovirt.engine.api.model.Cluster());
         model.getCluster().setName(NAMES[1]);
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
+        setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
                 setUpCluster(GUIDS[1]));
-        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+        setUpGetEntityExpectations(QueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[] { "VmConfiguration", "ConfigurationType" },
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
@@ -721,7 +721,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -750,7 +750,7 @@ public class BackendVmsResourceTest
         model.getInitialization().setConfiguration(new Configuration());
         model.getInitialization().getConfiguration().setData("asdasdasd");
         model.getInitialization().getConfiguration().setType(org.ovirt.engine.api.model.ConfigurationType.OVF);
-        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+        setUpGetEntityExpectations(QueryType.GetVmFromConfiguration,
                 GetVmFromConfigurationQueryParameters.class,
                 new String[] { "VmConfiguration", "ConfigurationType" },
                 new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
@@ -794,7 +794,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -821,7 +821,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -848,7 +848,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -882,7 +882,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[2]},
@@ -915,12 +915,12 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -937,7 +937,7 @@ public class BackendVmsResourceTest
                                   true,
                                   true,
                                   GUIDS[2],
-                                  VdcQueryType.GetVmByVmId,
+                                  QueryType.GetVmByVmId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
@@ -964,12 +964,12 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
+        setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[2] },
@@ -982,7 +982,7 @@ public class BackendVmsResourceTest
                                   true,
                                   true,
                                   GUIDS[2],
-                                  VdcQueryType.GetVmByVmId,
+                                  QueryType.GetVmByVmId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
@@ -1025,12 +1025,12 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                 getTemplateEntity(1));
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[2] },
@@ -1042,7 +1042,7 @@ public class BackendVmsResourceTest
                                   true,
                                   true,
                                   GUIDS[2],
-                                  VdcQueryType.GetVmByVmId,
+                                  QueryType.GetVmByVmId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
@@ -1082,12 +1082,12 @@ public class BackendVmsResourceTest
         setUpGetVirtioScsiExpectations(2);
         setUpGetSoundcardExpectations(1, 2);
         setUpGetRngDeviceExpectations(1, 2);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[]{"Id"},
                                      new Object[]{GUIDS[1]},
                 getTemplateEntity(1));
-                                     setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+                                     setUpEntityQueryExpectations(QueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[]{"Id"},
                                      new Object[]{GUIDS[2]},
@@ -1100,7 +1100,7 @@ public class BackendVmsResourceTest
                                   true,
                                   true,
                                   GUIDS[2],
-                                  VdcQueryType.GetVmByVmId,
+                                  QueryType.GetVmByVmId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[2] },
@@ -1187,7 +1187,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetCertuficateExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
+            setUpGetEntityExpectations(QueryType.GetVdsCertificateSubjectByVmId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[i] },
@@ -1197,7 +1197,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetCertuficateExpectations(int times, int index) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVdsCertificateSubjectByVmId,
+            setUpGetEntityExpectations(QueryType.GetVdsCertificateSubjectByVmId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
@@ -1218,7 +1218,7 @@ public class BackendVmsResourceTest
 
     private void doTestBadAdd(boolean valid, boolean success, String detail)
             throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
@@ -1226,7 +1226,7 @@ public class BackendVmsResourceTest
         setUpGetSoundcardExpectations(1);
         setUpGetRngDeviceExpectations(1);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -1274,7 +1274,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAddUploadIcon() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -1288,7 +1288,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -1304,7 +1304,7 @@ public class BackendVmsResourceTest
 
     @Test
     public void testAddUseExistingIcons() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -1317,7 +1317,7 @@ public class BackendVmsResourceTest
                 true,
                 true,
                 GUIDS[2],
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -1345,7 +1345,7 @@ public class BackendVmsResourceTest
     }
 
     private void setUpTemplateDisksExpectations(Guid templateId) {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplatesDisks,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplatesDisks,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { templateId },
@@ -1546,7 +1546,7 @@ public class BackendVmsResourceTest
     protected void setUpGetPayloadExpectations(int times) throws Exception {
         VmPayload payload = new VmPayload();
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+            setUpGetEntityExpectations(QueryType.GetVmPayload,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[i] },
@@ -1557,7 +1557,7 @@ public class BackendVmsResourceTest
     protected void setUpGetPayloadExpectations(int times, int index) throws Exception {
         VmPayload payload = new VmPayload();
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+            setUpGetEntityExpectations(QueryType.GetVmPayload,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
@@ -1567,7 +1567,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetBallooningExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+            setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[i] },
@@ -1577,7 +1577,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetBallooningExpectations(int times, int index) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+            setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
@@ -1587,7 +1587,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+            setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -1597,7 +1597,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+            setUpGetEntityExpectations(QueryType.GetSoundDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -1607,7 +1607,7 @@ public class BackendVmsResourceTest
 
     private void setUpGetVmOvfExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmOvfByVmId,
+            setUpGetEntityExpectations(QueryType.GetVmOvfByVmId,
                     GetVmOvfByVmIdParameters.class,
                     new String[] { "Id", "RequiredGeneration" },
                     new Object[] { GUIDS[idxs[i]], 0L },
@@ -1621,7 +1621,7 @@ public class BackendVmsResourceTest
         // initialization information:
         if (failure == null) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmsInit,
+                QueryType.GetVmsInit,
                 IdsQueryParameters.class,
                 new String[]{},
                 new Object[]{},
@@ -1639,7 +1639,7 @@ public class BackendVmsResourceTest
             vmDevices.put(GUIDS[i], Collections.singletonList(new GraphicsDevice(VmDeviceType.SPICE)));
         }
 
-        setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevicesMultiple,
+        setUpGetEntityExpectations(QueryType.GetGraphicsDevicesMultiple,
                 VdcQueryParametersBase.class,
                 new String[]{},
                 new Object[]{},
@@ -1648,7 +1648,7 @@ public class BackendVmsResourceTest
 
     protected void setUpGetGraphicsExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+            setUpGetEntityExpectations(QueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
                     new String[] {},
                     new Object[] {},
@@ -1667,7 +1667,7 @@ public class BackendVmsResourceTest
 
     protected void setUpGetHostByNameExpectations(int idx) throws Exception {
         VDS host = BackendHostsResourceTest.setUpEntityExpectations(spy(new VDS()), idx);
-        setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
+        setUpGetEntityExpectations(QueryType.GetVdsByName,
                 NameQueryParameters.class,
                 new String[]{"Name"},
                 new Object[]{NAMES[idx]},

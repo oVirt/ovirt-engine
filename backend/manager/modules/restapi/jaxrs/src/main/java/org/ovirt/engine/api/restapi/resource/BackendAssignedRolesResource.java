@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -34,7 +34,7 @@ public class BackendAssignedRolesResource
 
     @Override
     public Roles list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetPermissionsOnBehalfByAdElementId,
+        return mapCollection(getBackendCollection(QueryType.GetPermissionsOnBehalfByAdElementId,
                                                   new IdQueryParameters(principalId)));
     }
 

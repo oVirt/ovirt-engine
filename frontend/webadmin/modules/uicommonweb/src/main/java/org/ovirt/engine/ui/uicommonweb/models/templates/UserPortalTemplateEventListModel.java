@@ -7,7 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 
 public class UserPortalTemplateEventListModel extends TemplateEventListModel {
@@ -18,7 +18,7 @@ public class UserPortalTemplateEventListModel extends TemplateEventListModel {
             return;
         }
 
-        super.syncSearch(VdcQueryType.GetAllAuditLogsByVMTemplateId,
+        super.syncSearch(QueryType.GetAllAuditLogsByVMTemplateId,
                 new IdQueryParameters(getEntity().getId()));
 
     }

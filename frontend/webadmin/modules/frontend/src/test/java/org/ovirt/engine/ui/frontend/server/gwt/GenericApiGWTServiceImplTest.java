@@ -21,8 +21,8 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 import com.google.gwt.user.client.rpc.SerializationException;
 
@@ -64,8 +64,8 @@ public class GenericApiGWTServiceImplTest {
 
     @Test
     public void multiQueryWithOddParams() {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>(Arrays.asList(
-                VdcQueryType.Search));
+        ArrayList<QueryType> queryTypeList = new ArrayList<>(Arrays.asList(
+                QueryType.Search));
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>(Arrays.asList(
                 new VdcQueryParametersBase(),
                 new VdcQueryParametersBase()));
@@ -77,16 +77,16 @@ public class GenericApiGWTServiceImplTest {
 
     @Test
     public void multiQueryValid() {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>(Arrays.asList(
-                VdcQueryType.Search,
-                VdcQueryType.Search));
+        ArrayList<QueryType> queryTypeList = new ArrayList<>(Arrays.asList(
+                QueryType.Search,
+                QueryType.Search));
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>(Arrays.asList(
                 new VdcQueryParametersBase(),
                 new VdcQueryParametersBase()));
 
         underTest.runMultipleQueries(queryTypeList, queryParamsList);
 
-        Mockito.verify(backendLocal, Mockito.times(2)).runQuery(any(VdcQueryType.class),
+        Mockito.verify(backendLocal, Mockito.times(2)).runQuery(any(QueryType.class),
                 any(VdcQueryParametersBase.class));
     }
 

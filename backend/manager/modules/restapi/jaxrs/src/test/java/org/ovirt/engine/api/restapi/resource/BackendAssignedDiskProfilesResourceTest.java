@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendAssignedDiskProfilesResourceTest extends AbstractBackendDiskProfilesResourceTest<BackendAssignedDiskProfilesResource> {
 
     public BackendAssignedDiskProfilesResourceTest() {
         super(new BackendAssignedDiskProfilesResource(STORAGE_DOMAIN_ID.toString()),
-                VdcQueryType.GetDiskProfilesByStorageDomainId,
+                QueryType.GetDiskProfilesByStorageDomainId,
                 IdQueryParameters.class);
     }
 

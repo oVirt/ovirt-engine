@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendStorageDomainDiskSnapshotResource
         extends AbstractBackendActionableResource<DiskSnapshot, Disk>
@@ -28,7 +28,7 @@ public class BackendStorageDomainDiskSnapshotResource
 
     @Override
     public DiskSnapshot get() {
-        DiskSnapshot diskSnapshot =  performGet(VdcQueryType.GetDiskSnapshotByImageId, new IdQueryParameters(guid));
+        DiskSnapshot diskSnapshot =  performGet(QueryType.GetDiskSnapshotByImageId, new IdQueryParameters(guid));
 
         // this code generates back-link to the corresponding SD
         diskSnapshot.setStorageDomain(new StorageDomain());

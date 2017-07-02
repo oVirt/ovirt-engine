@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksResourceTest<BackendClusterNetworksResource> {
@@ -125,7 +125,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
     @Override
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworksByClusterId,
+            setUpEntityQueryExpectations(QueryType.GetAllNetworksByClusterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { CLUSTER_ID },
@@ -139,7 +139,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
         when(group.getId()).thenReturn(id);
         when(group.getStoragePoolId()).thenReturn(GUIDS[2]);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { id },
@@ -149,7 +149,7 @@ public class BackendClusterNetworksResourceTest extends AbstractBackendNetworksR
 
     protected void setUpGetNetworksByDataCenterExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
+            setUpEntityQueryExpectations(QueryType.GetAllNetworks,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { GUIDS[2] },

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.action.AddExternalEventParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendEventsResourceTest extends AbstractBackendCollectionResourceTest<Event, AuditLog, BackendEventsResource> {
 
@@ -55,7 +55,7 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
                                   true,
                                   true,
                                   LOG_IDS[0],
-                                  VdcQueryType.GetAuditLogById,
+                                  QueryType.GetAuditLogById,
                                   GetAuditLogByIdParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { LOG_IDS[0] },

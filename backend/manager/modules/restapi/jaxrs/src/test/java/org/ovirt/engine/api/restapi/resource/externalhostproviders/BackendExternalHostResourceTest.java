@@ -30,7 +30,7 @@ import org.ovirt.engine.api.model.ExternalHost;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendExternalHostResourceTest
         extends AbstractBackendSubResourceTest<
@@ -91,7 +91,7 @@ public class BackendExternalHostResourceTest
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetHostListFromExternalProvider,
+            QueryType.GetHostListFromExternalProvider,
             GetHostListFromExternalProviderParameters.class,
             new String[] { "ProviderId" },
             new Object[] { GUIDS[0] },

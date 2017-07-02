@@ -28,7 +28,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 
 public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceTest<GlusterBrick, GlusterBrickEntity, BackendGlusterBrickResource> {
@@ -169,7 +169,7 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
 
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetGlusterBrickById,
+            setUpGetEntityExpectations(QueryType.GetGlusterBrickById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { brickId },
@@ -189,18 +189,18 @@ public class BackendGlusterBrickResourceTest extends AbstractBackendSubResourceT
         // the brick entity should be returned. We are not testing for not found on that.
         //setUpGetEntityExpectations(times,false);
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetGlusterBrickById,
+            setUpGetEntityExpectations(QueryType.GetGlusterBrickById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { brickId },
                     hasBrickDetails ? getEntityWithDetails(0) : getEntity(0));
-            setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeById,
+            setUpGetEntityExpectations(QueryType.GetGlusterVolumeById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { volumeId },
                     helper.getVolumeEntity(0));
 
-            setUpGetEntityExpectations(VdcQueryType.GetGlusterVolumeAdvancedDetails,
+            setUpGetEntityExpectations(QueryType.GetGlusterVolumeAdvancedDetails,
                     GlusterVolumeAdvancedDetailsParameters.class,
                     new String[] { "ClusterId", "VolumeId", "BrickId", "DetailRequired" },
                     new Object[] { clusterId, volumeId, brickId, true },

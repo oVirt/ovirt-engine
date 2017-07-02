@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetQuotasByAdElementIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -43,7 +43,7 @@ public class UserQuotaListModel extends SearchableListModel<DbUser, Quota> {
 
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetQuotasByAdElementId,
+        Frontend.getInstance().runQuery(QueryType.GetQuotasByAdElementId,
                 parameters,
                 new SetItemsAsyncQuery());
     }

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotaClusterLimitsResource
@@ -73,7 +73,7 @@ public class BackendQuotaClusterLimitsResource
     private Quota getQuota() {
         return getEntity(
             Quota.class,
-            VdcQueryType.GetQuotaByQuotaId,
+            QueryType.GetQuotaByQuotaId,
             new IdQueryParameters(quotaId),
             quotaId.toString()
         );

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -79,7 +79,7 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable, D 
         }
     }
 
-    protected void syncSearch(VdcQueryType vdcQueryType, final Comparator<? super T> comparator) {
+    protected void syncSearch(QueryType queryType, final Comparator<? super T> comparator) {
         if (getEntity() == null) {
             return;
         }
@@ -87,7 +87,7 @@ public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable, D 
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(vdcQueryType, parameters, new SetSortedItemsAsyncQuery(comparator));
+        Frontend.getInstance().runQuery(queryType, parameters, new SetSortedItemsAsyncQuery(comparator));
     }
 
     @Override

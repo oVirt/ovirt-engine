@@ -3,9 +3,9 @@ package org.ovirt.engine.core.bll.executor;
 import javax.enterprise.inject.Alternative;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
@@ -14,9 +14,9 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 public class HystrixBackendQueryExecutor implements BackendQueryExecutor {
 
     @Override
-    public VdcQueryReturnValue execute(final QueriesCommandBase<?> query, final VdcQueryType queryType) {
+    public VdcQueryReturnValue execute(final QueriesCommandBase<?> query, final QueryType queryType) {
         String key = queryType.name();
-        if (queryType == VdcQueryType.Search) {
+        if (queryType == QueryType.Search) {
             key = key + ((SearchParameters) query.getParameters()).getSearchTypeValue().name();
         }
         final HystrixCommand.Setter setter = HystrixSettings.setter(key);

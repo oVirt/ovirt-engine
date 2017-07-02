@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterClustersResourceTest extends
@@ -34,13 +34,13 @@ public class BackendDataCenterClustersResourceTest extends
     @Test
     public void testAddClusterFallbackVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
+        setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
-        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+        setUpGetEntityExpectations(QueryType.GetManagementNetwork,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[0] },
@@ -53,7 +53,7 @@ public class BackendDataCenterClustersResourceTest extends
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetClusterById,
+                                  QueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -71,13 +71,13 @@ public class BackendDataCenterClustersResourceTest extends
     @Test
     public void testAddClusterSpecificVersion() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetStoragePoolById,
+        setUpGetEntityExpectations(QueryType.GetStoragePoolById,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
-        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+        setUpGetEntityExpectations(QueryType.GetManagementNetwork,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -90,7 +90,7 @@ public class BackendDataCenterClustersResourceTest extends
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetClusterById,
+                                  QueryType.GetClusterById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -127,7 +127,7 @@ public class BackendDataCenterClustersResourceTest extends
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetClustersByStoragePoolId,
+        setUpEntityQueryExpectations(QueryType.GetClustersByStoragePoolId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },

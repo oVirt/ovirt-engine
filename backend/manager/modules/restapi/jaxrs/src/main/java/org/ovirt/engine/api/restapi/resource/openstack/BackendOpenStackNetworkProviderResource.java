@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendOpenStackNetworkProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackNetworkProvider>
@@ -42,14 +42,14 @@ public class BackendOpenStackNetworkProviderResource
 
     @Override
     public OpenStackNetworkProvider get() {
-        return performGet(VdcQueryType.GetProviderById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetProviderById, new IdQueryParameters(guid));
     }
 
     @Override
     public OpenStackNetworkProvider update(OpenStackNetworkProvider incoming) {
         return performUpdate(
             incoming,
-            new QueryIdResolver<>(VdcQueryType.GetProviderById, IdQueryParameters.class),
+            new QueryIdResolver<>(QueryType.GetProviderById, IdQueryParameters.class),
             ActionType.UpdateProvider,
             new UpdateParametersProvider()
         );

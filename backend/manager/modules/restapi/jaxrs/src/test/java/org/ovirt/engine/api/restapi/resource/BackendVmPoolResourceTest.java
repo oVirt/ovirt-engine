@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendVmPoolResourceTest
         extends AbstractBackendSubResourceTest<VmPool, org.ovirt.engine.core.common.businessentities.VmPool, BackendVmPoolResource> {
@@ -89,7 +89,7 @@ public class BackendVmPoolResourceTest
 
     private void setUpGetVmExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+            setUpGetEntityExpectations(QueryType.GetVmByVmId,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
@@ -124,7 +124,7 @@ public class BackendVmPoolResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound, org.ovirt.engine.core.common.businessentities.VmPool entity) throws Exception {
 
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVmPoolById,
+            setUpGetEntityExpectations(QueryType.GetVmPoolById,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },

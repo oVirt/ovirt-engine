@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendOpenStackVolumeProviderResourceTest
         extends AbstractBackendSubResourceTest<OpenStackVolumeProvider, Provider, BackendOpenStackVolumeProviderResource> {
@@ -202,7 +202,7 @@ public class BackendOpenStackVolumeProviderResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(
-                VdcQueryType.GetProviderById,
+                QueryType.GetProviderById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -213,13 +213,13 @@ public class BackendOpenStackVolumeProviderResourceTest
 
     protected void setUpGetEntityExpectationsOnDoPopulate(boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-                VdcQueryType.GetStorageDomainByName,
+                QueryType.GetStorageDomainByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[0] },
                 notFound ? null : getStorageDomainStatic());
         setUpGetEntityExpectations(
-                VdcQueryType.GetStoragePoolsByStorageDomainId,
+                QueryType.GetStoragePoolsByStorageDomainId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

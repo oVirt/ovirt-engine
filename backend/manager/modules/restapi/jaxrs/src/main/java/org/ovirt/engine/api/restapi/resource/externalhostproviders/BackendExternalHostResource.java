@@ -26,8 +26,8 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExternalHostResource
@@ -49,7 +49,7 @@ public class BackendExternalHostResource
         GetHostListFromExternalProviderParameters parameters = new GetHostListFromExternalProviderParameters();
         parameters.setFilterOutExistingHosts(true);
         parameters.setProviderId(asGuid(providerId));
-        VdcQueryReturnValue result = runQuery(VdcQueryType.GetHostListFromExternalProvider, parameters);
+        VdcQueryReturnValue result = runQuery(QueryType.GetHostListFromExternalProvider, parameters);
         List<VDS> entities = result.getReturnValue();
         if (entities != null) {
             for (VDS entity : entities) {

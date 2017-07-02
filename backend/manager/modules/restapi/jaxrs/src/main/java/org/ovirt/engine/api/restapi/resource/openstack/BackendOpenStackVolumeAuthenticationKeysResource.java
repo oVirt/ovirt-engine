@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeAuthenticationKeysResource
@@ -47,7 +47,7 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
     @Override
     public OpenstackVolumeAuthenticationKeys list() {
         IdQueryParameters parameters = new IdQueryParameters(GuidUtils.asGuid(providerId));
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllLibvirtSecretsByProviderId, parameters));
+        return mapCollection(getBackendCollection(QueryType.GetAllLibvirtSecretsByProviderId, parameters));
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BackendOpenStackVolumeAuthenticationKeysResource
         return performCreate(
                 ActionType.AddLibvirtSecret,
                 new LibvirtSecretParameters(map(addProvider(authenticationKey))),
-                new QueryIdResolver<Guid>(VdcQueryType.GetLibvirtSecretById, IdQueryParameters.class)
+                new QueryIdResolver<Guid>(QueryType.GetLibvirtSecretById, IdQueryParameters.class)
         );
     }
 

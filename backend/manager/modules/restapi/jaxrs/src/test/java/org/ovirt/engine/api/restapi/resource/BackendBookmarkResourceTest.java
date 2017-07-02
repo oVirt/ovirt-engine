@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<Bookmark,
     org.ovirt.engine.core.common.businessentities.Bookmark, BackendBookmarkResource> {
@@ -181,7 +181,7 @@ public class BackendBookmarkResourceTest extends AbstractBackendSubResourceTest<
     }
 
     protected void setUpGetEntityExpectations(int index, boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetBookmarkByBookmarkId,
+        setUpGetEntityExpectations(QueryType.GetBookmarkByBookmarkId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[index] },

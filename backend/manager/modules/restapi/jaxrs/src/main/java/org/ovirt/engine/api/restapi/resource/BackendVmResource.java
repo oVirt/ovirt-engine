@@ -92,8 +92,8 @@ import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmResource
@@ -120,12 +120,12 @@ public class BackendVmResource
         Vm vm;
         if (isNextRunRequested()) {
             org.ovirt.engine.core.common.businessentities.VM entity =
-                    getEntity(org.ovirt.engine.core.common.businessentities.VM.class, VdcQueryType.GetVmNextRunConfiguration,
+                    getEntity(org.ovirt.engine.core.common.businessentities.VM.class, QueryType.GetVmNextRunConfiguration,
                             new IdQueryParameters(guid), id, true);
             vm = addLinks(populate(VmMapper.map(entity, null, false), entity));
 
         } else {
-            vm = performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
+            vm = performGet(QueryType.GetVmByVmId, new IdQueryParameters(guid));
         }
 
         if (vm != null) {
@@ -162,9 +162,9 @@ public class BackendVmResource
             incoming.setPlacementPolicy(null);
         }
 
-        VdcQueryType queryType = isNextRunRequested()
-                ? VdcQueryType.GetVmNextRunConfiguration
-                : VdcQueryType.GetVmByVmId;
+        QueryType queryType = isNextRunRequested()
+                ? QueryType.GetVmNextRunConfiguration
+                : QueryType.GetVmByVmId;
 
         Vm vm = performUpdate(
             incoming,
@@ -211,7 +211,7 @@ public class BackendVmResource
     protected Guid lookupClusterId(Vm vm) {
         return vm.getCluster().isSetId() ? asGuid(vm.getCluster().getId())
                 : getEntity(Cluster.class,
-                        VdcQueryType.GetClusterByName,
+                        QueryType.GetClusterByName,
                                                        new NameQueryParameters(vm.getCluster().getName()),
                         "Cluster: name=" + vm.getCluster().getName()).getId();
     }
@@ -258,7 +258,7 @@ public class BackendVmResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsForObject,
+                                                             QueryType.GetPermissionsForObject,
                                                              new GetPermissionsForObjectParameters(guid),
                                                              Vm.class,
                                                              VdcObjectType.VM));
@@ -276,7 +276,7 @@ public class BackendVmResource
 
     @Override
     public StatisticsResource getStatisticsResource() {
-        EntityIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
+        EntityIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(id));
         return inject(new BackendStatisticsResource<>(entityType, guid, query));
     }
@@ -336,7 +336,7 @@ public class BackendVmResource
 
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(
                 org.ovirt.engine.core.common.businessentities.VM.class,
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 new IdQueryParameters(guid), "VM: id=" + guid);
                 CloneVmParameters cloneVmParameters = new CloneVmParameters(vm, action.getVm().getName());
         cloneVmParameters.setMakeCreatorExplicitOwner(isFiltered());
@@ -350,7 +350,7 @@ public class BackendVmResource
     @Override
     public Response reorderMacAddresses(Action action) {
         getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
-                VdcQueryType.GetVmByVmId,
+                QueryType.GetVmByVmId,
                 new IdQueryParameters(guid),
                 "VM: id=" + guid,
                 true);
@@ -426,7 +426,7 @@ public class BackendVmResource
     }
 
     private RunVmOnceParams createRunVmOnceParams(Vm vm, boolean volatileRun) {
-        VM entity = getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), id, true);
+        VM entity = getEntity(entityType, QueryType.GetVmByVmId, new IdQueryParameters(guid), id, true);
         RunVmOnceParams params = map(vm, map(map(entity, new Vm()),
                 new RunVmOnceParams(guid)));
         if (vm.isSetPlacementPolicy()) {
@@ -492,7 +492,7 @@ public class BackendVmResource
 
     private GraphicsType deriveGraphicsType() {
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
-                VdcQueryType.GetVmByVmId, new IdQueryParameters(guid), "GetVmByVmId");
+                QueryType.GetVmByVmId, new IdQueryParameters(guid), "GetVmByVmId");
 
         return (vm == null)
                 ? null
@@ -618,7 +618,7 @@ public class BackendVmResource
 
     private VmTemplate lookupInstanceTypeByName(Template template) {
         return getEntity(VmTemplate.class,
-                VdcQueryType.GetInstanceType,
+                QueryType.GetInstanceType,
                 new GetVmTemplateParameters(template.getName()),
                 "GetVmTemplate");
     }
@@ -635,7 +635,7 @@ public class BackendVmResource
 
     public void setCertificateInfo(Vm model) {
         VdcQueryReturnValue result =
-            runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
+            runQuery(QueryType.GetVdsCertificateSubjectByVmId,
                     new IdQueryParameters(asGuid(model.getId())));
 
         if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
@@ -668,7 +668,7 @@ public class BackendVmResource
 
         org.ovirt.engine.core.common.businessentities.VM entity =
                 getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
-                          VdcQueryType.GetVmByVmId,
+                          QueryType.GetVmByVmId,
                           new IdQueryParameters(guid),
                           id);
         if (!entity.isHostedEngine()) {

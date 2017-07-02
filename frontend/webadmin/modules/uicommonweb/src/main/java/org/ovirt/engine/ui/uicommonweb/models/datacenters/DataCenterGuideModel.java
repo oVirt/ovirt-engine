@@ -35,9 +35,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -183,7 +183,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                     updateOptionsLocalFS();
                 }), getEntity().getId());
 
-        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getName() //$NON-NLS-1$
+        Frontend.getInstance().runQuery(QueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getName() //$NON-NLS-1$
                 + " status=maintenance or status=pendingapproval ", SearchType.VDS), //$NON-NLS-1$
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<VDS> hosts = returnValue.getReturnValue();
@@ -861,7 +861,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
             unkownStatusLuns.add(lunModel.getLunId());
         }
         Frontend.getInstance()
-                .runQuery(VdcQueryType.GetDeviceList,
+                .runQuery(QueryType.GetDeviceList,
                         new GetDeviceListQueryParameters(hostId,
                                 sanStorageModelBase.getType(),
                                 true,

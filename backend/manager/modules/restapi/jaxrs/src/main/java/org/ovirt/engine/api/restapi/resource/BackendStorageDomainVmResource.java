@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmResource
@@ -55,7 +55,7 @@ public class BackendStorageDomainVmResource
     }
 
     private Vm getFromDataDomain() {
-        return performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
+        return performGet(QueryType.GetVmByVmId, new IdQueryParameters(guid));
     }
 
     private Vm getFromExportDomain() {

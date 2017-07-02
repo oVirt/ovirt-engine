@@ -13,7 +13,7 @@ import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworkLabelsResource
@@ -33,7 +33,7 @@ public class BackendNetworkLabelsResource
     }
 
     private List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> getNetworkLabels(Guid networkId) {
-        return getBackendCollection(VdcQueryType.GetNetworkLabelsByNetworkId, new IdQueryParameters(networkId));
+        return getBackendCollection(QueryType.GetNetworkLabelsByNetworkId, new IdQueryParameters(networkId));
     }
 
     private NetworkLabels mapCollection(List<org.ovirt.engine.core.common.businessentities.network.pseudo.NetworkLabel> networkLabels) {

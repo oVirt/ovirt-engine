@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainServerConnectionsResource
@@ -34,7 +34,7 @@ public class BackendStorageDomainServerConnectionsResource
 
     protected List<StorageServerConnections> getConnections() {
         return getEntity(List.class,
-                VdcQueryType.GetStorageServerConnectionsForDomain,
+                QueryType.GetStorageServerConnectionsForDomain,
                 new IdQueryParameters(storageDomainId),
                 "storage domain: id=" + storageDomainId);
     }

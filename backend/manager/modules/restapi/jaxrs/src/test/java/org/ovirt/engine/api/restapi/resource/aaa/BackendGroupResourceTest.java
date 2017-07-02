@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendGroupResourceTest
@@ -80,7 +80,7 @@ public class BackendGroupResourceTest
 
     private void setUpGetEntityExpectations(Guid entityId, boolean returnNull) throws Exception {
         setUpGetEntityExpectations(
-                VdcQueryType.GetDbGroupById,
+                QueryType.GetDbGroupById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { entityId },
@@ -120,7 +120,7 @@ public class BackendGroupResourceTest
 
     private void setUpGetEntityExpectations(boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-             VdcQueryType.GetDbGroupById,
+             QueryType.GetDbGroupById,
              IdQueryParameters.class,
              new String[] { "Id" },
              new Object[] { GUIDS[0] },

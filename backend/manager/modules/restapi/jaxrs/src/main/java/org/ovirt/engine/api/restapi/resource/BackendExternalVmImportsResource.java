@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExternalVmImportsResource extends BackendResource implements ExternalVmImportsResource {
@@ -86,7 +86,7 @@ public class BackendExternalVmImportsResource extends BackendResource implements
             } else if (vmImport.getHost().isSetName()) {
                 String hostName = vmImport.getHost().getName();
                 VDS vds = getEntity(VDS.class,
-                        VdcQueryType.GetVdsByName,
+                        QueryType.GetVdsByName,
                         new NameQueryParameters(vmImport.getHost().getName()),
                         hostName,
                         true);
@@ -111,7 +111,7 @@ public class BackendExternalVmImportsResource extends BackendResource implements
         } else /* if (vmImport.getCluster().isSetName()) */ {
             String clusterName = vmImport.getCluster().getName();
             Cluster cluster = getEntity(Cluster.class,
-                    VdcQueryType.GetClusterByName,
+                    QueryType.GetClusterByName,
                     new NameQueryParameters(clusterName),
                     clusterName,
                     true);
@@ -125,7 +125,7 @@ public class BackendExternalVmImportsResource extends BackendResource implements
         } else /* if (vmImport.getStorageDomain().isSetName()) */ {
             String storageDomainName = vmImport.getStorageDomain().getName();
             StorageDomainStatic storageDomain = getEntity(StorageDomainStatic.class,
-                    VdcQueryType.GetStorageDomainByName,
+                    QueryType.GetStorageDomainByName,
                     new NameQueryParameters(storageDomainName),
                     storageDomainName,
                     true);

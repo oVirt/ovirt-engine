@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetVmFromOvaQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.Injector;
@@ -198,7 +198,7 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
         @Override
         protected VM loadExternalVm() {
-            List<VM> externalVms = runInternalQuery(VdcQueryType.GetVmsFromExternalProvider, buildGetVmsParameters())
+            List<VM> externalVms = runInternalQuery(QueryType.GetVmsFromExternalProvider, buildGetVmsParameters())
                     .getReturnValue();
             return (externalVms != null ? externalVms : Collections.<VM>emptyList())
                     .stream()
@@ -258,7 +258,7 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
         @Override
         protected VM loadExternalVm() {
-            return runInternalQuery(VdcQueryType.GetVmFromOva,
+            return runInternalQuery(QueryType.GetVmFromOva,
                     new GetVmFromOvaQueryParameters(getParameters().getProxyHostId(), ovaPath)).getReturnValue();
         }
     }

@@ -24,7 +24,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateCdromsResourceTest
@@ -52,7 +52,7 @@ public class BackendTemplateCdromsResourceTest
     private void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmTemplate,
+                QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { TEMPLATE_ID },

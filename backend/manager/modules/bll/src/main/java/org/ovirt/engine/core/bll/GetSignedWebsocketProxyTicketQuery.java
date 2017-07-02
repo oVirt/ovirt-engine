@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.queries.GetSignedWebsocketProxyTicketParams;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SignStringParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dao.VmDao;
 
 /**
@@ -48,7 +48,7 @@ public class GetSignedWebsocketProxyTicketQuery<P extends GetSignedWebsocketProx
         final String jsonTicket = new ObjectMapper().writeValueAsString(ticketModel);
         final String encodedTicket = URLEncoder.encode(jsonTicket, StandardCharsets.UTF_8.name());
         final String signedTicket = Backend.getInstance()
-                .runInternalQuery(VdcQueryType.SignString, new SignStringParameters(encodedTicket))
+                .runInternalQuery(QueryType.SignString, new SignStringParameters(encodedTicket))
                 .getReturnValue();
         setReturnValue(signedTicket);
     }

@@ -19,7 +19,7 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.NetworkFilter;
 import org.ovirt.engine.api.resource.NetworkFilterResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendNetworkFilterResource
     extends AbstractBackendSubResource<NetworkFilter, org.ovirt.engine.core.common.businessentities.network.NetworkFilter>
@@ -31,6 +31,6 @@ public class BackendNetworkFilterResource
 
     @Override
     public NetworkFilter get() {
-        return performGet(VdcQueryType.GetNetworkFilterById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetNetworkFilterById, new IdQueryParameters(guid));
     }
 }

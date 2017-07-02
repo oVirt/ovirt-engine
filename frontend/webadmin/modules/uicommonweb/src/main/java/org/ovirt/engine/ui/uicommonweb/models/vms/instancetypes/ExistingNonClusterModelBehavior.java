@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -43,7 +43,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(entity.getId()),
+        Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(entity.getId()),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     List<GraphicsDevice> graphicsDevices = returnValue.getReturnValue();
                     Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
@@ -62,7 +62,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
         updateConsoleDevice(entity.getId());
         initPriority(entity.getPriority());
 
-        Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()),
+        Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
         ));
 
@@ -78,7 +78,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
             }
         }), entity.getId());
 
-       Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
+       Frontend.getInstance().runQuery(QueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
                new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                    List<VmDevice> rngDevices = returnValue.getReturnValue();
                    getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());
@@ -98,7 +98,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
 
     public void doBuild() {
         buildModel(entity, (source, destination) -> {
-            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery<>(
+            Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(entity.getId()), new AsyncQuery<>(
                     (VdcQueryReturnValue returnValue) -> getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue())
             ));
 
@@ -114,7 +114,7 @@ public class ExistingNonClusterModelBehavior extends NonClusterModelBehaviorBase
                 }
             }), entity.getId());
 
-            Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
+            Frontend.getInstance().runQuery(QueryType.GetRngDevice, new IdQueryParameters(entity.getId()),
                     new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                         List<VmDevice> rngDevices = returnValue.getReturnValue();
                         getModel().getIsRngEnabled().setEntity(!rngDevices.isEmpty());

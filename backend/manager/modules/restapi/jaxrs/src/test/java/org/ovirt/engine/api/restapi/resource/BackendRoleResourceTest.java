@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
 
@@ -49,7 +49,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
 
     @Test
     public void testRemoveNonExistant() throws Exception{
-        setUpGetEntityExpectations(VdcQueryType.GetRoleById,
+        setUpGetEntityExpectations(QueryType.GetRoleById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -98,7 +98,7 @@ public class BackendRoleResourceTest extends AbstractBackendRoleResourceTest {
 
     protected void setUpGetEntityExpectations(int times) throws Exception {
         for (int i=0; i<times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetRoleById,
+            setUpGetEntityExpectations(QueryType.GetRoleById,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },

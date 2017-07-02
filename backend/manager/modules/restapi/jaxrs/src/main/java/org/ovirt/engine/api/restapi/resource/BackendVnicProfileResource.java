@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendVnicProfileResource extends AbstractBackendVnicProfileResource implements VnicProfileResource {
 
@@ -23,7 +23,7 @@ public class BackendVnicProfileResource extends AbstractBackendVnicProfileResour
     @Override
     public VnicProfile update(VnicProfile resource) {
         return performUpdate(resource,
-                new QueryIdResolver<>(VdcQueryType.GetVnicProfileById, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetVnicProfileById, IdQueryParameters.class),
                 ActionType.UpdateVnicProfile,
                 new UpdateParametersProvider());
     }

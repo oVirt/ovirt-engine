@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.hostdeploy.RegisterVdsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.PKIResources;
@@ -93,7 +93,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         VdcQueryReturnValue queryReturnValue  =  backend.runInternalQuery(
-            VdcQueryType.RegisterVds,
+            QueryType.RegisterVds,
             new RegisterVdsParameters(
                 Guid.Empty,
                 hostAddress,

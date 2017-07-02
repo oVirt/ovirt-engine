@@ -25,8 +25,8 @@ import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSnapshotsResource
@@ -42,7 +42,7 @@ public class BackendSnapshotsResource
 
     @Override
     public Snapshots list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllVmSnapshotsByVmId,
+        return mapCollection(getBackendCollection(QueryType.GetAllVmSnapshotsByVmId,
                 new IdQueryParameters(parentId)));
     }
 
@@ -125,13 +125,13 @@ public class BackendSnapshotsResource
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getVmPreview(Snapshot snapshot) {
-        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class, VdcQueryType.GetVmConfigurationBySnapshot, new IdQueryParameters(asGuid(snapshot.getId())), null);
+        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class, QueryType.GetVmConfigurationBySnapshot, new IdQueryParameters(asGuid(snapshot.getId())), null);
         return vm;
     }
 
     protected org.ovirt.engine.core.common.businessentities.Snapshot getSnapshotById(Guid id) {
         //TODO: move to 'GetSnapshotBySnapshotId' once Backend supplies it.
-        for (org.ovirt.engine.core.common.businessentities.Snapshot snapshot : getBackendCollection(VdcQueryType.GetAllVmSnapshotsByVmId,
+        for (org.ovirt.engine.core.common.businessentities.Snapshot snapshot : getBackendCollection(QueryType.GetAllVmSnapshotsByVmId,
                 new IdQueryParameters(parentId))) {
             if (snapshot.getId().equals(id)) {
                 return snapshot;
@@ -165,7 +165,7 @@ public class BackendSnapshotsResource
 
     private Snapshot populateSnapshotConfiguration (Snapshot model) {
         VdcQueryReturnValue queryReturnValue =
-                runQuery(VdcQueryType.GetSnapshotBySnapshotId,
+                runQuery(QueryType.GetSnapshotBySnapshotId,
                         new IdQueryParameters(Guid.createGuidFromString(model.getId())));
 
         if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {

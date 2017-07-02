@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public abstract class AbstractBackendCpuProfileResource
         extends AbstractBackendSubResource<CpuProfile, org.ovirt.engine.core.common.businessentities.profiles.CpuProfile> {
@@ -20,7 +20,7 @@ public abstract class AbstractBackendCpuProfileResource
     }
 
     protected CpuProfile get() {
-        return performGet(VdcQueryType.GetCpuProfileById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetCpuProfileById, new IdQueryParameters(guid));
     }
 
     @Override
@@ -29,7 +29,7 @@ public abstract class AbstractBackendCpuProfileResource
             String... subCollectionMembersToExclude) {
         if (model.isSetQos() && model.getQos().isSetId()) {
             QosBase qos = getEntity(QosBase.class,
-                    VdcQueryType.GetQosById,
+                    QueryType.GetQosById,
                     new IdQueryParameters(asGuid(model.getQos().getId())),
                     "qos");
             model.getQos().setDataCenter(new DataCenter());
@@ -41,7 +41,7 @@ public abstract class AbstractBackendCpuProfileResource
     private org.ovirt.engine.core.common.businessentities.profiles.CpuProfile getCpuProfile(String id) {
         return getEntity(
             org.ovirt.engine.core.common.businessentities.profiles.CpuProfile.class,
-            VdcQueryType.GetCpuProfileById,
+            QueryType.GetCpuProfileById,
             new IdQueryParameters(asGuidOr404(id)),
             "CpuProfiles"
         );

@@ -38,8 +38,8 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -56,7 +56,7 @@ public class BackendDiskAttachmentsResource
 
     @Override
     public DiskAttachments list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetDiskVmElementsByVmId, new IdQueryParameters(vmId)));
+        return mapCollection(getBackendCollection(QueryType.GetDiskVmElementsByVmId, new IdQueryParameters(vmId)));
     }
 
     @Override
@@ -124,7 +124,7 @@ public class BackendDiskAttachmentsResource
             VmDeviceId vmDeviceId = new VmDeviceId(diskId, vmId);
             return getEntity(
                     DiskVmElement.class,
-                    VdcQueryType.GetDiskVmElementById,
+                    QueryType.GetDiskVmElementById,
                     new VmDeviceIdQueryParameters(vmDeviceId),
                     vmDeviceId.getDeviceId().toString(),
                     true
@@ -196,7 +196,7 @@ public class BackendDiskAttachmentsResource
     private Guid getStorageDomainIdByName(String storageDomainName) {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                 getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
-                        VdcQueryType.GetAllStorageDomains,
+                        QueryType.GetAllStorageDomains,
                         new VdcQueryParametersBase());
         for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getStorageName().equals(storageDomainName)) {
@@ -211,7 +211,7 @@ public class BackendDiskAttachmentsResource
         public DiskVmElement resolve(Guid id) throws BackendFailureException {
             return getEntity(
                     DiskVmElement.class,
-                    VdcQueryType.GetDiskVmElementById,
+                    QueryType.GetDiskVmElementById,
                     new VmDeviceIdQueryParameters(new VmDeviceId(id, vmId)),
                     id.toString(),
                     true
@@ -220,7 +220,7 @@ public class BackendDiskAttachmentsResource
     }
 
     private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainById(Guid id) {
-        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, QueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
     }
 
     private DiskAttachments mapCollection(List<DiskVmElement> entities) {

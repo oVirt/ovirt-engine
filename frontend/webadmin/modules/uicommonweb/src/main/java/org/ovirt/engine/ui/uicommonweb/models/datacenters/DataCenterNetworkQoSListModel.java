@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -44,7 +44,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel<StoragePo
         }
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId,
+        Frontend.getInstance().runQuery(QueryType.GetAllNetworkQosByStoragePoolId,
                 parameters,
                 new SetItemsAsyncQuery());
     }

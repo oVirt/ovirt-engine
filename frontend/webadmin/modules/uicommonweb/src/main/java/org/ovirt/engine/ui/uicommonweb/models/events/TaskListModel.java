@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.queries.GetJobsByCorrelationIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetJobsByOffsetQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -146,7 +146,7 @@ public class TaskListModel extends SearchableListModel {
         });
         GetJobsByOffsetQueryParameters tempVar = new GetJobsByOffsetQueryParameters();
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetJobsByOffset,
+        Frontend.getInstance().runQuery(QueryType.GetJobsByOffset,
                 tempVar, asyncQuery);
 
         setIsQueryFirstTime(false);
@@ -163,7 +163,7 @@ public class TaskListModel extends SearchableListModel {
             if (guidOrCorrelationId.startsWith(WEBADMIN)) {
                 GetJobsByCorrelationIdQueryParameters parameters = new GetJobsByCorrelationIdQueryParameters();
                 parameters.setCorrelationId(guidOrCorrelationId);
-                Frontend.getInstance().runQuery(VdcQueryType.GetJobsByCorrelationId,
+                Frontend.getInstance().runQuery(QueryType.GetJobsByCorrelationId,
                         parameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                             ArrayList<Job> retTasks = returnValue.getReturnValue();
 
@@ -214,7 +214,7 @@ public class TaskListModel extends SearchableListModel {
                         }));
             } else {
                 IdQueryParameters parameters = new IdQueryParameters(new Guid(guidOrCorrelationId));
-                Frontend.getInstance().runQuery(VdcQueryType.GetJobByJobId,
+                Frontend.getInstance().runQuery(QueryType.GetJobByJobId,
                         parameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                             Job retTask = returnValue.getReturnValue();
                             if (retTask == null) {

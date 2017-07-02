@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
@@ -18,14 +18,14 @@ public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
     private Guid iscsiBondId;
 
     public BackendIscsiBondNetworksResource(String iscsiBondId) {
-        super(VdcQueryType.GetNetworksByIscsiBondId);
+        super(QueryType.GetNetworksByIscsiBondId);
         this.iscsiBondId = Guid.createGuidFromString(iscsiBondId);
     }
 
     @Override
     public Networks list() {
         return mapCollection(
-                getBackendCollection(VdcQueryType.GetNetworksByIscsiBondId, new IdQueryParameters(iscsiBondId))
+                getBackendCollection(QueryType.GetNetworksByIscsiBondId, new IdQueryParameters(iscsiBondId))
         );
     }
 
@@ -44,6 +44,6 @@ public class BackendIscsiBondNetworksResource extends BackendNetworksResource {
     }
 
     public IscsiBond getIscsiBond() {
-        return getEntity(IscsiBond.class, VdcQueryType.GetIscsiBondById, new IdQueryParameters(iscsiBondId), iscsiBondId.toString());
+        return getEntity(IscsiBond.class, QueryType.GetIscsiBondById, new IdQueryParameters(iscsiBondId), iscsiBondId.toString());
     }
 }

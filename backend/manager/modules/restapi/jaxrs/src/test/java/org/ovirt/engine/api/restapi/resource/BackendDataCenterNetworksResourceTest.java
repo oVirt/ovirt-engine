@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterNetworksResourceTest
@@ -31,7 +31,7 @@ public class BackendDataCenterNetworksResourceTest
                                   true,
                                   true,
                                   null, //GUIDS[0],
-                                  VdcQueryType.GetNetworksByDataCenterId,
+                                  QueryType.GetNetworksByDataCenterId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { DATA_CENTER_ID },
@@ -94,7 +94,7 @@ public class BackendDataCenterNetworksResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
+        setUpEntityQueryExpectations(QueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { DATA_CENTER_ID },
@@ -105,7 +105,7 @@ public class BackendDataCenterNetworksResourceTest
     @Override
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetNetworksByDataCenterId,
+            setUpEntityQueryExpectations(QueryType.GetNetworksByDataCenterId,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { DATA_CENTER_ID },

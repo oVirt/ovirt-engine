@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.core.common.businessentities.VmIcon;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon, VmIcon, BackendIconResource> {
 
@@ -59,7 +59,7 @@ public class BackendIconResourceTest extends AbstractBackendSubResourceTest<Icon
     }
 
     protected void setUpGetEntityExpectations(int index, boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmIcon,
+        setUpGetEntityExpectations(QueryType.GetVmIcon,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] { GUIDS[index] },

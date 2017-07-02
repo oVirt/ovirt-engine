@@ -28,7 +28,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendExternalHostProviderResourceTest
         extends AbstractBackendSubResourceTest<
@@ -168,7 +168,7 @@ public class BackendExternalHostProviderResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(
-                VdcQueryType.GetProviderById,
+                QueryType.GetProviderById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

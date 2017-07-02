@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondNetworkResourceTest
@@ -29,7 +29,7 @@ public class BackendIscsiBondNetworkResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(1, getIscsiBondContainingNetwork());
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworkById,
+        setUpEntityQueryExpectations(QueryType.GetNetworkById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { NETWORK_ID },
@@ -57,7 +57,7 @@ public class BackendIscsiBondNetworkResourceTest
         setUpEntityQueryExpectations(1, getIscsiBondContainingNetwork());
 
         List<org.ovirt.engine.core.common.businessentities.network.Network> entities = new ArrayList<>();
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworkById,
+        setUpEntityQueryExpectations(QueryType.GetNetworkById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { NETWORK_ID },
@@ -76,7 +76,7 @@ public class BackendIscsiBondNetworkResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(2, getIscsiBondContainingNetwork());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetNetworkById,
+            QueryType.GetNetworkById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { NETWORK_ID },
@@ -98,7 +98,7 @@ public class BackendIscsiBondNetworkResourceTest
 
     protected void setUpEntityQueryExpectations(int times, IscsiBond iscsiBond) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetIscsiBondById,
+            setUpEntityQueryExpectations(QueryType.GetIscsiBondById,
                     IdQueryParameters.class,
                     new String[]{"Id"},
                     new Object[]{ISCSI_BOND_ID},

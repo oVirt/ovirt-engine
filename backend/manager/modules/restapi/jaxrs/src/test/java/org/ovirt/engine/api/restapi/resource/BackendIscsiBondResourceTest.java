@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendIscsiBondResourceTest
     extends AbstractBackendSubResourceTest<IscsiBond, org.ovirt.engine.core.common.businessentities.IscsiBond, BackendIscsiBondResource> {
@@ -49,7 +49,7 @@ public class BackendIscsiBondResourceTest
     private void setUpGetEntityExpectations(int index, org.ovirt.engine.core.common.businessentities.IscsiBond result)
             throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetIscsiBondById,
+            QueryType.GetIscsiBondById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[index] },

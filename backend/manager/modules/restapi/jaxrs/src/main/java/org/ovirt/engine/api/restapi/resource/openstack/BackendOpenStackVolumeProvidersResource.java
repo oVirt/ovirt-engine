@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackVolumeProvidersResource
@@ -67,7 +67,7 @@ public class BackendOpenStackVolumeProvidersResource
     private List<Provider> getBackendCollection() {
         if (isFiltered()) {
             return getBackendCollection(
-                VdcQueryType.GetAllProviders,
+                QueryType.GetAllProviders,
                 new GetAllProvidersParameters(ProviderType.OPENSTACK_VOLUME)
             );
         }
@@ -99,7 +99,7 @@ public class BackendOpenStackVolumeProvidersResource
         return performCreate(
                 ActionType.AddProvider,
                 new ProviderParameters(map(provider)),
-                new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class)
+                new QueryIdResolver<Guid>(QueryType.GetProviderById, IdQueryParameters.class)
         );
     }
 
@@ -121,10 +121,10 @@ public class BackendOpenStackVolumeProvidersResource
         StoragePool pool = null;
         if (dataCenter.isSetId()) {
             Guid id = asGuid(dataCenter.getId());
-            pool = getEntity(StoragePool.class, VdcQueryType.GetStoragePoolById,
+            pool = getEntity(StoragePool.class, QueryType.GetStoragePoolById,
                     new IdQueryParameters(id), "Datacenter: id=" + dataCenter.getId());
         } else if (dataCenter.isSetName()) {
-            pool = getEntity(StoragePool.class, VdcQueryType.GetStoragePoolByDatacenterName,
+            pool = getEntity(StoragePool.class, QueryType.GetStoragePoolByDatacenterName,
                     new NameQueryParameters(dataCenter.getName()), "Datacenter: name=" + dataCenter.getName());
         }
         if (pool == null) {
@@ -134,9 +134,9 @@ public class BackendOpenStackVolumeProvidersResource
     }
 
     private StoragePool getStoragePoolIdByStorageDomainName(String storageDomainName) {
-        StorageDomainStatic storageDomain = getEntity(StorageDomainStatic.class, VdcQueryType.GetStorageDomainByName,
+        StorageDomainStatic storageDomain = getEntity(StorageDomainStatic.class, QueryType.GetStorageDomainByName,
                 new NameQueryParameters(storageDomainName), "StorageDomain: name=" + storageDomainName);
-        List<StoragePool> storagePools = getEntity(List.class, VdcQueryType.GetStoragePoolsByStorageDomainId,
+        List<StoragePool> storagePools = getEntity(List.class, QueryType.GetStoragePoolsByStorageDomainId,
                 new IdQueryParameters(storageDomain.getId()), "Datacenters");
         if (!storagePools.isEmpty()) {
             return storagePools.get(0);

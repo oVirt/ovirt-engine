@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -171,7 +171,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
 
         setHasDefaultHost(!vm.getDedicatedVmForVdsList().isEmpty());
         if (getHasDefaultHost()) {
-            Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
+            Frontend.getInstance().runQuery(QueryType.Search, new SearchParameters("Host: cluster = " + vm.getClusterName() //$NON-NLS-1$
                     + " sortby name", SearchType.VDS), new AsyncQuery<VdcQueryReturnValue>(returnValue -> { //$NON-NLS-1$
                         VM localVm = getEntity() != null ? getEntity().getVm() : null;
                         if (localVm == null) {

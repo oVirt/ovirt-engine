@@ -11,9 +11,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEli
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -106,7 +106,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
         SearchParameters volumesSearchParameters = new SearchParameters("Volumes:", SearchType.GlusterVolume, false);//$NON-NLS-1$
         volumesSearchParameters.setRefresh(true);
 
-        Frontend.getInstance().runQuery(VdcQueryType.Search, volumesSearchParameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> showAvailableVolumes(returnValue)));
+        Frontend.getInstance().runQuery(QueryType.Search, volumesSearchParameters, new AsyncQuery<VdcQueryReturnValue>(returnValue -> showAvailableVolumes(returnValue)));
     }
 
     private void showAvailableVolumes(VdcQueryReturnValue returnValue) {
@@ -124,7 +124,7 @@ public class GlusterVolumeGeoRepCreateModel extends Model{
     public void getEligibleVolumes() {
         this.startProgress(constants.fetchingDataMessage());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterGeoReplicationEligibleVolumes, new IdQueryParameters(masterVolume.getId()),
+        Frontend.getInstance().runQuery(QueryType.GetGlusterGeoReplicationEligibleVolumes, new IdQueryParameters(masterVolume.getId()),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> showAvailableVolumes(returnValue)));
     }
 

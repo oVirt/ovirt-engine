@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTagResourceTest
@@ -101,7 +101,7 @@ public class BackendTagResourceTest
 
     @Test
     public void testMoveNamedParent() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetTagByTagName,
+        setUpEntityQueryExpectations(QueryType.GetTagByTagName,
                                      NameQueryParameters.class,
                                      new String[] { "Name" },
                                      new Object[] { NAMES[PARENT_IDX] },
@@ -199,7 +199,7 @@ public class BackendTagResourceTest
 
     @Test
     public void testRemoveNonExistant() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
+        setUpGetEntityExpectations(QueryType.GetTagByTagId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -240,7 +240,7 @@ public class BackendTagResourceTest
     }
 
     private void setUpGetEntityExcpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
+        setUpGetEntityExpectations(QueryType.GetTagByTagId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -252,7 +252,7 @@ public class BackendTagResourceTest
     }
 
     protected void setUpGetEntityExpectations(int index, boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetTagByTagId,
+        setUpGetEntityExpectations(QueryType.GetTagByTagId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[index] },

@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.TemplateDiskAttachmentResource;
 import org.ovirt.engine.api.resource.TemplateDiskAttachmentsResource;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateDiskAttachmentsResource
@@ -25,7 +25,7 @@ public class BackendTemplateDiskAttachmentsResource
 
     @Override
     public DiskAttachments list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetDiskVmElementsByVmId, new IdQueryParameters(templateId)));
+        return mapCollection(getBackendCollection(QueryType.GetDiskVmElementsByVmId, new IdQueryParameters(templateId)));
     }
 
     @Override

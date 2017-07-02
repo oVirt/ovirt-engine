@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -128,7 +128,7 @@ public class BackendGroupsResource
     @Override
     public Groups list() {
         if (isFiltered()) {
-            return mapDbGroupCollection(getBackendCollection(VdcQueryType.GetAllDbGroups, new VdcQueryParametersBase(), SearchType.DBGroup));
+            return mapDbGroupCollection(getBackendCollection(QueryType.GetAllDbGroups, new VdcQueryParametersBase(), SearchType.DBGroup));
         }
         else {
             return mapDbGroupCollection(getBackendCollection(SearchType.DBGroup, getSearchPattern()));
@@ -139,7 +139,7 @@ public class BackendGroupsResource
     public Response add(Group group) {
         List<String> authzProvidersNames = getBackendCollection(
                 String.class,
-                VdcQueryType.GetDomainList,
+                QueryType.GetDomainList,
                 new VdcQueryParametersBase());
         validateParameters(group, "name");
         if (AuthzUtils.getAuthzNameFromEntityName(group.getName(), authzProvidersNames) == null) {
@@ -154,7 +154,7 @@ public class BackendGroupsResource
         }
         AddGroupParameters parameters = new AddGroupParameters();
         parameters.setGroupToAdd(new DbGroup(directoryGroup));
-        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbGroupById, IdQueryParameters.class);
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetDbGroupById, IdQueryParameters.class);
         return performCreate(ActionType.AddGroup, parameters, resolver, BaseResource.class);
     }
 
@@ -192,7 +192,7 @@ public class BackendGroupsResource
         }
         return getEntity(
                 DirectoryGroup.class,
-                VdcQueryType.GetDirectoryGroupById,
+                QueryType.GetDirectoryGroupById,
                 new DirectoryIdQueryParameters(directoryName, namespace, groupId),
                 groupId,
                 true);

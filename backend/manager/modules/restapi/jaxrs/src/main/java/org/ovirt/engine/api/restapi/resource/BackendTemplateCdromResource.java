@@ -22,7 +22,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.TemplateCdromResource;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateCdromResource
@@ -41,7 +41,7 @@ public class BackendTemplateCdromResource
         GetVmTemplateParameters parameters = new GetVmTemplateParameters(templateId);
         VmTemplate entity = getEntity(
            VmTemplate.class,
-           VdcQueryType.GetVmTemplate,
+           QueryType.GetVmTemplate,
            parameters,
            templateId.toString(),
            true

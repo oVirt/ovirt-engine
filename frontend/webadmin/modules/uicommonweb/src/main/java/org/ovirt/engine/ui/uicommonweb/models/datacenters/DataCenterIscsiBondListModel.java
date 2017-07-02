@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.RemoveIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -196,7 +196,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePoo
     protected void syncSearch() {
         IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         params.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetIscsiBondsByStoragePoolId, params, new SetItemsAsyncQuery());
+        Frontend.getInstance().runQuery(QueryType.GetIscsiBondsByStoragePoolId, params, new SetItemsAsyncQuery());
     }
 
     @Override

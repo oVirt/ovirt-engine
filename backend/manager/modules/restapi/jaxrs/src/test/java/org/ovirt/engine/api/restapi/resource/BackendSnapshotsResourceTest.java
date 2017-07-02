@@ -24,7 +24,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -104,12 +104,12 @@ public class BackendSnapshotsResourceTest
         setUpGetEntityExpectations(1);
         setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[0]);
         setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
-        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
+        setUpEntityQueryExpectations(QueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_IDS[1]},
                 resultSnapshot0);
-        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
+        setUpEntityQueryExpectations(QueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_IDS[0]},
@@ -152,7 +152,7 @@ public class BackendSnapshotsResourceTest
         org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot0 = new org.ovirt.engine.core.common.businessentities.Snapshot();
         resultSnapshot0.setVmConfiguration(ovfData);
         resultSnapshot0.setId(SNAPSHOT_IDS[0]);
-        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
+        setUpEntityQueryExpectations(QueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_IDS[0]},
@@ -166,7 +166,7 @@ public class BackendSnapshotsResourceTest
                 GUIDS[0],
                 asList(TASK_ID),
                 asList(new AsyncTaskStatus(asyncStatus)),
-                VdcQueryType.GetAllVmSnapshotsByVmId,
+                QueryType.GetAllVmSnapshotsByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },
@@ -187,7 +187,7 @@ public class BackendSnapshotsResourceTest
 
     protected void setUpGetEntityExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllVmSnapshotsByVmId,
+            setUpEntityQueryExpectations(QueryType.GetAllVmSnapshotsByVmId,
                     IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { VM_ID },
@@ -196,7 +196,7 @@ public class BackendSnapshotsResourceTest
     }
 
     protected void setUpGetSnapshotVmConfiguration(Guid snpashotId) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
+        setUpEntityQueryExpectations(QueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { snpashotId },

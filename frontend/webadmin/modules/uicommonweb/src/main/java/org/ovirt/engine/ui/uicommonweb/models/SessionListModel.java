@@ -6,8 +6,8 @@ import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -85,7 +85,7 @@ public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, Us
         SearchParameters searchParameters =
                 new SearchParameters(applySortOptions(getSearchString()), SearchType.Session, isCaseSensitiveSearch());
         searchParameters.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, searchParameters);
+        super.syncSearch(QueryType.Search, searchParameters);
     }
 
     @Override

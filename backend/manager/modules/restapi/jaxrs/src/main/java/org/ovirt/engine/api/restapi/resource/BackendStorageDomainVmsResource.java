@@ -11,7 +11,7 @@ import org.ovirt.engine.api.resource.StorageDomainVmsResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainVmsResource
@@ -28,7 +28,7 @@ public class BackendStorageDomainVmsResource
         boolean unregistered = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, UNREGISTERED_CONSTRAINT_PARAMETER, true, false);
         if (unregistered) {
             List<org.ovirt.engine.core.common.businessentities.VM> unregisteredVms =
-                    getBackendCollection(VdcQueryType.GetUnregisteredVms,
+                    getBackendCollection(QueryType.GetUnregisteredVms,
                             new IdQueryParameters(storageDomainId));
             List<Vm> collection = new ArrayList<>();
             for (org.ovirt.engine.core.common.businessentities.VM entity : unregisteredVms) {
@@ -53,7 +53,7 @@ public class BackendStorageDomainVmsResource
         GetAllFromExportDomainQueryParameters params =
             new GetAllFromExportDomainQueryParameters(getDataCenterId(storageDomainId), storageDomainId);
 
-        return getBackendCollection(VdcQueryType.GetVmsFromExportDomain, params);
+        return getBackendCollection(QueryType.GetVmsFromExportDomain, params);
     }
 
     @Override

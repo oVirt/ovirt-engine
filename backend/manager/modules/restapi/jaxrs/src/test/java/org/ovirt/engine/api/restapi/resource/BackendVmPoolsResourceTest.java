@@ -25,7 +25,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendVmPoolsResourceTest extends
         AbstractBackendCollectionResourceTest<VmPool, org.ovirt.engine.core.common.businessentities.VmPool, BackendVmPoolsResource> {
@@ -95,13 +95,13 @@ public class BackendVmPoolsResourceTest extends
     public void add() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getClusterEntity());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -109,13 +109,13 @@ public class BackendVmPoolsResourceTest extends
 
         setUpGetConsoleExpectations(1);
 
-        setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+        setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 new ArrayList<>());
 
-        setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+        setUpGetEntityExpectations(QueryType.GetSoundDevices,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -131,7 +131,7 @@ public class BackendVmPoolsResourceTest extends
              true,
              true,
              GUIDS[0],
-             VdcQueryType.GetVmPoolById,
+             QueryType.GetVmPoolById,
              IdQueryParameters.class,
              new String[] { "Id" },
              new Object[] { GUIDS[0] },
@@ -147,13 +147,13 @@ public class BackendVmPoolsResourceTest extends
     public void addWithName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterById,
+        setUpEntityQueryExpectations(QueryType.GetClusterById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getClusterEntity());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+        setUpEntityQueryExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Name", "ClusterId" },
                 new Object[] { NAMES[1], GUIDS[2] },
@@ -162,13 +162,13 @@ public class BackendVmPoolsResourceTest extends
         setUpGetConsoleExpectations(1);
         setUpGetRngDeviceExpectations(0);
 
-        setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+        setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
                 new ArrayList<>());
 
-        setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+        setUpGetEntityExpectations(QueryType.GetSoundDevices,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },
@@ -183,7 +183,7 @@ public class BackendVmPoolsResourceTest extends
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetVmPoolById,
+                QueryType.GetVmPoolById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -230,43 +230,43 @@ public class BackendVmPoolsResourceTest extends
     }
 
     private void addCommonAddExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmDataByPoolName,
+        setUpGetEntityExpectations(QueryType.GetVmDataByPoolName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[0] },
                 getVmEntity());
 
-        setUpGetEntityExpectations(VdcQueryType.GetVmPayload,
+        setUpGetEntityExpectations(QueryType.GetVmPayload,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 new VmPayload());
 
-        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+        setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 Boolean.FALSE);
 
-        setUpGetEntityExpectations(VdcQueryType.GetConsoleDevices,
+        setUpGetEntityExpectations(QueryType.GetConsoleDevices,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 new ArrayList<>());
 
-        setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+        setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 new ArrayList<>());
 
-        setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+        setUpGetEntityExpectations(QueryType.GetSoundDevices,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 new ArrayList<>());
 
-        setUpGetEntityExpectations(VdcQueryType.GetRngDevice,
+        setUpGetEntityExpectations(QueryType.GetRngDevice,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

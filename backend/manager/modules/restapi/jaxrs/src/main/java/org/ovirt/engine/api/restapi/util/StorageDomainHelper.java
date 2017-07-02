@@ -10,8 +10,8 @@ import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainHelper {
@@ -38,7 +38,7 @@ public class StorageDomainHelper {
         // Domains and immediately discarding everything but the identifiers of the Data Centers. It would be better to
         // have a query that returns only the identifiers.
         Guid id = Guid.createGuidFromString(model.getId());
-        VdcQueryReturnValue result = resource.runQuery(VdcQueryType.GetStorageDomainListById, new IdQueryParameters(id));
+        VdcQueryReturnValue result = resource.runQuery(QueryType.GetStorageDomainListById, new IdQueryParameters(id));
         if (result != null && result.getSucceeded()) {
             List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains = result.getReturnValue();
             if (CollectionUtils.isNotEmpty(storageDomains)) {

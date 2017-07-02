@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -88,7 +88,7 @@ public class StorageSnapshotListModel extends SearchableListModel<StorageDomain,
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllDiskSnapshotsByStorageDomainId, parameters,
+        Frontend.getInstance().runQuery(QueryType.GetAllDiskSnapshotsByStorageDomainId, parameters,
                 new SetSortedItemsAsyncQuery(Comparator.comparingDouble(DiskImage::getActualSize).reversed()));
     }
 

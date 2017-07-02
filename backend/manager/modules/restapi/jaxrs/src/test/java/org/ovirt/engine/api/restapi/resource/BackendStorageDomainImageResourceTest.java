@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -33,7 +33,7 @@ public class BackendStorageDomainImageResourceTest extends AbstractBackendSubRes
     @Test
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetImageById, GetImageByIdParameters.class,
+        setUpEntityQueryExpectations(QueryType.GetImageById, GetImageByIdParameters.class,
                 new String[]{"StorageDomainId", "RepoImageId"}, new Object[]{DOMAIN_ID, IMAGE_ID.toString()},
                 getEntity(1));
 
@@ -44,7 +44,7 @@ public class BackendStorageDomainImageResourceTest extends AbstractBackendSubRes
 
     @Test
     public void testImport() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolsByStorageDomainId, IdQueryParameters.class,
+        setUpEntityQueryExpectations(QueryType.GetStoragePoolsByStorageDomainId, IdQueryParameters.class,
                 new String[]{"Id"}, new Object[]{DESTINATION_DOMAIN_ID}, getStoragePoolList());
 
         setUriInfo(setUpActionExpectations(ActionType.ImportRepoImage, ImportRepoImageParameters.class,

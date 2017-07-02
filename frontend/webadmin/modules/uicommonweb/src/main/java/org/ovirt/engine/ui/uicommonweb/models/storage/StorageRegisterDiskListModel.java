@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.DiskByDiskAlias
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -77,7 +77,7 @@ public class StorageRegisterDiskListModel extends SearchableListModel<StorageDom
         }
         IdQueryParameters parameters = new IdQueryParameters(getEntity().getId());
         parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredCinderDisksByStorageDomainId, parameters,
+        Frontend.getInstance().runQuery(QueryType.GetUnregisteredCinderDisksByStorageDomainId, parameters,
                 new SetSortedItemsAsyncQuery(new DiskByDiskAliasComparator()));
     }
 

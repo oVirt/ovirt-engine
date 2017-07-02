@@ -38,7 +38,7 @@ import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.RemoveVmInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicResource
@@ -63,7 +63,7 @@ public class BackendVmNicResource
     private VmNetworkInterface lookupNic(Guid nicId) {
         List<VmNetworkInterface> nics = getBackendCollection(
             VmNetworkInterface.class,
-            VdcQueryType.GetVmInterfacesByVmId,
+            QueryType.GetVmInterfacesByVmId,
             new IdQueryParameters(vmId)
         );
         for (VmNetworkInterface nic : nics) {

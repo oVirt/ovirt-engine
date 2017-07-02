@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -185,7 +185,7 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         }
         VM vm = getEntity();
 
-        super.syncSearch(VdcQueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()));
+        super.syncSearch(QueryType.GetAllDisksByVmId, new IdQueryParameters(vm.getId()));
     }
 
     @Override

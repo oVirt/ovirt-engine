@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.restapi.types.ReportedDeviceMapper;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmReportedDevicesResource extends AbstractBackendCollectionResource<ReportedDevice, VmGuestAgentInterface> implements VmReportedDevicesResource {
@@ -48,7 +48,7 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     }
 
     protected List<VmGuestAgentInterface> getCollection() {
-        return getBackendCollection(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId));
+        return getBackendCollection(QueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId));
     }
 
     public ReportedDevice lookupReportedDevice(Guid deviceId) {

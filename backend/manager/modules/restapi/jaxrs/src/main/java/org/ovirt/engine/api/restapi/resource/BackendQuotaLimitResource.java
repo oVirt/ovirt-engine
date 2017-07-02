@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class BackendQuotaLimitResource<T extends BaseResource> extends AbstractBackendSubResource<T, Quota> {
@@ -21,7 +21,7 @@ public abstract class BackendQuotaLimitResource<T extends BaseResource> extends 
     }
 
     public T get() {
-        return performGet(VdcQueryType.GetQuotaByQuotaId, new IdQueryParameters(parentId));
+        return performGet(QueryType.GetQuotaByQuotaId, new IdQueryParameters(parentId));
     }
 
     @Override
@@ -33,7 +33,7 @@ public abstract class BackendQuotaLimitResource<T extends BaseResource> extends 
 
     public Response remove() {
         Quota entity = getEntity(Quota.class,
-                VdcQueryType.GetQuotaByQuotaId,
+                QueryType.GetQuotaByQuotaId,
                 new IdQueryParameters(parentId),
                 parentId.toString());
         updateEntityForRemove(entity, asGuid(id));

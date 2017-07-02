@@ -6,13 +6,13 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.EngineFault;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public interface IFrontendEventsHandler {
     Boolean isRaiseErrorModalPanel(ActionType action, EngineFault fault);
 
-    Boolean isRaiseErrorModalPanel(VdcQueryType queryType);
+    Boolean isRaiseErrorModalPanel(QueryType queryType);
 
     void runActionExecutionFailed(ActionType action, EngineFault fault);
 

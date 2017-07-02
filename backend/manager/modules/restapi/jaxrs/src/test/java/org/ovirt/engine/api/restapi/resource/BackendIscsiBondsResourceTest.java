@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondsResourceTest
@@ -49,7 +49,7 @@ public class BackendIscsiBondsResourceTest
                 true,
                 true,
                 getIscsiBond().getId(),
-                VdcQueryType.GetIscsiBondById,
+                QueryType.GetIscsiBondById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { ISCSI_BOND_ID },
@@ -79,7 +79,7 @@ public class BackendIscsiBondsResourceTest
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetIscsiBondsByStoragePoolId,
+        setUpEntityQueryExpectations(QueryType.GetIscsiBondsByStoragePoolId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { DATA_CENTER_ID },

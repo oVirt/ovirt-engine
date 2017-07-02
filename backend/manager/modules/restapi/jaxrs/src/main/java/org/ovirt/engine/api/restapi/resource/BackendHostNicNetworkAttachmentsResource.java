@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostNicNetworkAttachmentsResource extends AbstractBackendNetworkAttachmentsResource {
@@ -32,7 +32,7 @@ public class BackendHostNicNetworkAttachmentsResource extends AbstractBackendNet
     protected List<NetworkAttachment> getNetworkAttachments() {
         verifyHostAndNicExistence();
 
-        return getBackendCollection(VdcQueryType.GetNetworkAttachmentsByHostNicId, new IdQueryParameters(nicId));
+        return getBackendCollection(QueryType.GetNetworkAttachmentsByHostNicId, new IdQueryParameters(nicId));
     }
 
     protected void verifyHostAndNicExistence() {
@@ -42,12 +42,12 @@ public class BackendHostNicNetworkAttachmentsResource extends AbstractBackendNet
 
     private void verifyHostExistenceToHandle404StatusCode() {
         Guid hostId = getHostId();
-        getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(hostId), hostId.toString(), true);
+        getEntity(VDS.class, QueryType.GetVdsByVdsId, new IdQueryParameters(hostId), hostId.toString(), true);
     }
 
     private void verifyNicExistenceToHandle404StatusCode() {
         List<VdsNetworkInterface> hostInterfaces = getBackendCollection(VdsNetworkInterface.class,
-                        VdcQueryType.GetVdsInterfacesByVdsId,
+                        QueryType.GetVdsInterfacesByVdsId,
                         new IdQueryParameters(getHostId()));
 
         boolean found = false;

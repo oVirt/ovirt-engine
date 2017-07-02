@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -60,7 +60,7 @@ public class ProviderNetworkListModel extends SearchableListModel<Provider, Netw
             return;
         }
 
-        super.syncSearch(VdcQueryType.GetAllNetworksForProvider, new IdQueryParameters(provider.getId()));
+        super.syncSearch(QueryType.GetAllNetworksForProvider, new IdQueryParameters(provider.getId()));
     }
 
     private void discover() {

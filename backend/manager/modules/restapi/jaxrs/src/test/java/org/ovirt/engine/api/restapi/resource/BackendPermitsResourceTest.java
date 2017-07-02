@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendPermitsResourceTest extends AbstractBackendCollectionResourceTest<Permit, ActionGroup, BackendPermitsResource> {
 
@@ -60,7 +60,7 @@ public class BackendPermitsResourceTest extends AbstractBackendCollectionResourc
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetRoleActionGroupsByRoleId,
+        setUpEntityQueryExpectations(QueryType.GetRoleActionGroupsByRoleId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },

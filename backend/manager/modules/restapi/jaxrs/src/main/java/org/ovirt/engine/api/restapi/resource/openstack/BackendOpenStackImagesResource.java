@@ -27,7 +27,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackImagesResource
@@ -44,7 +44,7 @@ public class BackendOpenStackImagesResource
     public OpenStackImages list() {
         Guid storageDomainId = BackendOpenStackStorageProviderHelper.getStorageDomainId(this, providerId);
         GetImagesListParameters parameters = new GetImagesListParameters(storageDomainId, ImageFileType.All);
-        return mapCollection(getBackendCollection(VdcQueryType.GetImagesList, parameters));
+        return mapCollection(getBackendCollection(QueryType.GetImagesList, parameters));
     }
 
     protected OpenStackImages mapCollection(List<RepoImage> entities) {

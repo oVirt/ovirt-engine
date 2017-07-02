@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C extends AbstractBackendCollectionResource<R, Q>>
@@ -52,7 +52,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
                 GUIDS[0],
                 asList(GUIDS[2]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetVmTemplate,
+                QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},
@@ -137,7 +137,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     protected void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+            setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -147,7 +147,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     protected void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+            setUpGetEntityExpectations(QueryType.GetSoundDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -156,7 +156,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     }
 
     protected void setUpGetEntityExpectations(int index) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetVmTemplate,
+        setUpGetEntityExpectations(QueryType.GetVmTemplate,
                 GetVmTemplateParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[index] },
@@ -165,7 +165,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     protected void setUpGetGraphicsExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+            setUpGetEntityExpectations(QueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
                     new String[] {},
                     new Object[] {},
@@ -179,7 +179,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     protected void setUpGetBallooningExpectations(Integer... idxs) throws Exception {
         for (int i : idxs) {
-            setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+            setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
                     IdQueryParameters.class,
                     new String[]{"Id"},
                     new Object[]{GUIDS[i]},

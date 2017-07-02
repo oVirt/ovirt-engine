@@ -7,7 +7,7 @@ import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResourc
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendEngineKatelloErratumResource extends AbstractBackendSubResource<KatelloErratum, Erratum> implements KatelloErratumResource {
@@ -18,7 +18,7 @@ public class BackendEngineKatelloErratumResource extends AbstractBackendSubResou
 
     @Override
     public KatelloErratum get() {
-        return performGet(VdcQueryType.GetErratumByIdForEngine, new NameQueryParameters(hex2string(id)));
+        return performGet(QueryType.GetErratumByIdForEngine, new NameQueryParameters(hex2string(id)));
     }
 
     @Override

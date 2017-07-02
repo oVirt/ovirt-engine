@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -27,7 +27,7 @@ public class BackendAffinityGroupsResourceTest extends AbstractBackendCollection
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAffinityGroupsByClusterId,
+        setUpEntityQueryExpectations(QueryType.GetAffinityGroupsByClusterId,
                 IdQueryParameters.class,
                 new String[] {},
                 new Object[] {},
@@ -74,7 +74,7 @@ public class BackendAffinityGroupsResourceTest extends AbstractBackendCollection
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetAffinityGroupById,
+                QueryType.GetAffinityGroupById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendEventResource extends AbstractBackendActionableResource<Event, AuditLog> implements EventResource {
@@ -18,7 +18,7 @@ public class BackendEventResource extends AbstractBackendActionableResource<Even
 
     @Override
     public Event get() {
-        return performGet(VdcQueryType.GetAuditLogById, new GetAuditLogByIdParameters(asLong(id)));
+        return performGet(QueryType.GetAuditLogById, new GetAuditLogByIdParameters(asLong(id)));
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainTemplateResource
@@ -42,7 +42,7 @@ public class BackendStorageDomainTemplateResource
     }
 
     private Template getFromDataDomain() {
-        return performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+        return performGet(QueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
     }
 
     private Template getFromExportDomain() {

@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
@@ -168,7 +168,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
 
         VdcQueryParametersBase tempVar = new VdcQueryParametersBase ();
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRoles, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
+        Frontend.getInstance().runQuery(QueryType.GetAllRoles, tempVar, new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     ArrayList<Role> filteredList = new ArrayList<>();
                     for (Role item : (ArrayList<Role>) returnValue.getReturnValue()) {
                         // ignore CONSUME_QUOTA_ROLE in UI
@@ -267,7 +267,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
 
                 Role role = getSelectedItem();
                 Frontend.getInstance().runQuery(
-                        VdcQueryType.GetRoleActionGroupsByRoleId,
+                        QueryType.GetRoleActionGroupsByRoleId,
                         new IdQueryParameters(role.getId()),
                         new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                             publicAttachedActions = returnValue.getReturnValue();

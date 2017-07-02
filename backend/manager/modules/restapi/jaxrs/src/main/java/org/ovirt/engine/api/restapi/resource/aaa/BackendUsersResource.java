@@ -29,8 +29,8 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.GetDirectoryUserByPrincipalParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -144,7 +144,7 @@ public class BackendUsersResource
 
     public Users list() {
         if (isFiltered()) {
-            return mapDbUserCollection(getBackendCollection(VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase(), SearchType.DBUser));
+            return mapDbUserCollection(getBackendCollection(QueryType.GetAllDbUsers, new VdcQueryParametersBase(), SearchType.DBUser));
         }
         else {
           return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));
@@ -156,7 +156,7 @@ public class BackendUsersResource
         validateParameters(user, "userName");
         List<String> authzProvidersNames = getBackendCollection(
                 String.class,
-                VdcQueryType.GetDomainList,
+                QueryType.GetDomainList,
                 new VdcQueryParametersBase());
         if (AuthzUtils.getAuthzNameFromEntityName(user.getUserName(), authzProvidersNames) == null) {// user-name may contain the domain (e.g: oliel@xxx.yyy)
             validateParameters(user, "domain.id|name");
@@ -169,7 +169,7 @@ public class BackendUsersResource
                     .build();
         }
         AddUserParameters parameters = new AddUserParameters(new DbUser(directoryUser));
-        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetDbUserByUserId, IdQueryParameters.class);
         return performCreate(ActionType.AddUser, parameters, resolver, BaseResource.class);
     }
 
@@ -188,7 +188,7 @@ public class BackendUsersResource
         } else if (user.isSetId()) {
             result = getUserById(directoryName, namespace, user.getId());
         } else  if (user.isSetPrincipal()) {
-            result = getEntity(DirectoryUser.class, VdcQueryType.GetDirectoryUserByPrincipal, new GetDirectoryUserByPrincipalParameters(directoryName, user.getPrincipal()), user.getPrincipal());
+            result = getEntity(DirectoryUser.class, QueryType.GetDirectoryUserByPrincipal, new GetDirectoryUserByPrincipalParameters(directoryName, user.getPrincipal()), user.getPrincipal());
         } else if (user.isSetUserName()) {
                 result = getEntity(
                         DirectoryUser.class,
@@ -212,7 +212,7 @@ public class BackendUsersResource
         }
         result = getEntity(
                 DirectoryUser.class,
-                VdcQueryType.GetDirectoryUserById,
+                QueryType.GetDirectoryUserById,
                 new DirectoryIdQueryParameters(directoryName, namespace, userId),
                 userId,
                 true);

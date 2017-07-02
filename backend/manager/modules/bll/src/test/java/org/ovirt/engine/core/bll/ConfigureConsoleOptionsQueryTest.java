@@ -30,9 +30,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule.KeyValue;
@@ -143,7 +143,7 @@ public class ConfigureConsoleOptionsQueryTest extends
 
         VdcQueryReturnValue caResult = new VdcQueryReturnValue();
         caResult.setSucceeded(false);
-        doReturn(caResult).when(backend).runInternalQuery(eq(VdcQueryType.GetCACertificate), any(VdcQueryParametersBase.class));
+        doReturn(caResult).when(backend).runInternalQuery(eq(QueryType.GetCACertificate), any(VdcQueryParametersBase.class));
 
         getQuery().getQueryReturnValue().setSucceeded(true);
         getQuery().executeQueryCommand();
@@ -255,14 +255,14 @@ public class ConfigureConsoleOptionsQueryTest extends
         caCertificateReturnValue.setSucceeded(true);
         caCertificateReturnValue.setReturnValue(CA_CERTIFICATE);
         doReturn(caCertificateReturnValue).when(backend)
-                .runInternalQuery(eq(VdcQueryType.GetCACertificate), any(VdcQueryParametersBase.class));
+                .runInternalQuery(eq(QueryType.GetCACertificate), any(VdcQueryParametersBase.class));
     }
 
     void mockGetVdsCertificateSubjectByVmId() {
         VdcQueryReturnValue hostSubjectReturnValue = new VdcQueryReturnValue();
         hostSubjectReturnValue.setReturnValue(HOST_SUBJECT);
         doReturn(hostSubjectReturnValue).when(backend)
-                .runInternalQuery(eq(VdcQueryType.GetVdsCertificateSubjectByVmId), any(IdQueryParameters.class));
+                .runInternalQuery(eq(QueryType.GetVdsCertificateSubjectByVmId), any(IdQueryParameters.class));
     }
 
 }

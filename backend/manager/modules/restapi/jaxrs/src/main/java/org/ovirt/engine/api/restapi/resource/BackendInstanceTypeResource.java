@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendInstanceTypeResource
@@ -53,7 +53,7 @@ public class BackendInstanceTypeResource
 
     @Override
     public InstanceType get() {
-        InstanceType instanceType = performGet(VdcQueryType.GetInstanceType, new GetVmTemplateParameters(guid));
+        InstanceType instanceType = performGet(QueryType.GetInstanceType, new GetVmTemplateParameters(guid));
         DisplayHelper.adjustDisplayData(this, instanceType);
         return instanceType;
     }
@@ -61,7 +61,7 @@ public class BackendInstanceTypeResource
     @Override
     public InstanceType update(InstanceType incoming) {
         InstanceType instanceType = performUpdate(incoming,
-                new QueryIdResolver<>(VdcQueryType.GetInstanceType, GetVmTemplateParameters.class),
+                new QueryIdResolver<>(QueryType.GetInstanceType, GetVmTemplateParameters.class),
                 ActionType.UpdateVmTemplate,
                 new UpdateParametersProvider());
 
@@ -115,7 +115,7 @@ public class BackendInstanceTypeResource
 
     private void setRngDevice(InstanceType model) {
         List<VmRngDevice> rngDevices = getEntity(List.class,
-            VdcQueryType.GetRngDevice,
+            QueryType.GetRngDevice,
             new IdQueryParameters(Guid.createGuidFromString(model.getId())),
             "GetRngDevice", true);
 
@@ -126,7 +126,7 @@ public class BackendInstanceTypeResource
 
     private List<String> getConsoleDevicesForEntity(Guid id) {
         return getEntity(List.class,
-                VdcQueryType.GetConsoleDevices,
+                QueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
     }

@@ -56,8 +56,8 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -177,7 +177,7 @@ public class BackendHostResourceTest
         String clusterName = "Default";
         setUpGetEntityExpectations(3);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
+        setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { clusterName },
@@ -384,12 +384,12 @@ public class BackendHostResourceTest
         VdcQueryReturnValue queryResult = new VdcQueryReturnValue();
         queryResult.setSucceeded(true);
 
-        when(backend.runQuery(eq(VdcQueryType.DiscoverSendTargets),
+        when(backend.runQuery(eq(QueryType.DiscoverSendTargets),
                                 eqParams(DiscoverSendTargetsQueryParameters.class,
                                               addSession("VdsId", "Connection.Connection", "Connection.Port", "Connection.UserName", "Connection.Password"),
                                               addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)
                                               ))).thenReturn(queryResult);
-        enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(VdcQueryType.DiscoverSendTargets),
+        enqueueInteraction(() -> verify(backend, atLeastOnce()).runQuery(eq(QueryType.DiscoverSendTargets),
                 eqParams(DiscoverSendTargetsQueryParameters.class,
                         addSession("VdsId", "Connection.Connection", "Connection.Port", "Connection.UserName", "Connection.Password"),
                         addSession(GUIDS[0], ISCSI_SERVER_ADDRESS, ISCSI_PORT_STRING, ISCSI_USER_NAME, ISCSI_USER_PASS)
@@ -527,7 +527,7 @@ public class BackendHostResourceTest
         VDSReturnValue retVal = new VDSReturnValue();
         retVal.setSucceeded(true);
         retVal.setReturnValue(new FenceOperationResult(FenceOperationResult.Status.SUCCESS, PowerStatus.ON));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
+        setUpEntityQueryExpectations(QueryType.GetVdsFenceStatus,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -548,7 +548,7 @@ public class BackendHostResourceTest
                         FenceOperationResult.Status.ERROR,
                         PowerStatus.UNKNOWN,
                         "some_error"));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
+        setUpEntityQueryExpectations(QueryType.GetVdsFenceStatus,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -719,7 +719,7 @@ public class BackendHostResourceTest
 
     protected void setUpGetEntityExpectations(int times, boolean notFound, VDS entity) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
+            setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
@@ -733,7 +733,7 @@ public class BackendHostResourceTest
 
     private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
+            setUpGetEntityExpectations(QueryType.GetVdsByVdsId,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },

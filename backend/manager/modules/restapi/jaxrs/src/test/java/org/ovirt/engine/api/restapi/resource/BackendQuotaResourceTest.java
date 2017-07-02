@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quota, org.ovirt.engine.core.common.businessentities.Quota, BackendQuotaResource> {
@@ -54,7 +54,7 @@ public class BackendQuotaResourceTest extends AbstractBackendSubResourceTest<Quo
     }
 
     private void setUpGetEntityExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetQuotaByQuotaId,
+        setUpGetEntityExpectations(QueryType.GetQuotaByQuotaId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { QUOTA_ID },

@@ -20,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -91,7 +91,7 @@ public abstract class InstanceTypeManager {
     public void updateAll() {
         final Guid selectedInstanceTypeId = getSelectedInstanceTypeId();
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllInstanceTypes, new VdcQueryParametersBase(),
+        Frontend.getInstance().runQuery(QueryType.GetAllInstanceTypes, new VdcQueryParametersBase(),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     if (returnValue == null || !returnValue.getSucceeded()) {
                         return;
@@ -295,7 +295,7 @@ public abstract class InstanceTypeManager {
             getModel().getIsSoundcardEnabled().setEntity(returnValue);
             activate();
 
-            Frontend.getInstance().runQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()),
+            Frontend.getInstance().runQuery(QueryType.GetConsoleDevices, new IdQueryParameters(vmBase.getId()),
                     new AsyncQuery<VdcQueryReturnValue>(r -> {
                         deactivate();
                         List<String> consoleDevices = r.getReturnValue();
@@ -359,7 +359,7 @@ public abstract class InstanceTypeManager {
 
     protected void updateBalloon(final VmBase vmBase, final boolean continueWithNext) {
         if (model.getMemoryBalloonDeviceEnabled().getIsChangable() && model.getMemoryBalloonDeviceEnabled().getIsAvailable()) {
-            Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()),
+            Frontend.getInstance().runQuery(QueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()),
                     new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                         deactivate();
                         getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) returnValue.getReturnValue());
@@ -378,7 +378,7 @@ public abstract class InstanceTypeManager {
     protected void updateRngDevice(final VmBase vmBase) {
         if (model.getIsRngEnabled().getIsChangable() && model.getIsRngEnabled().getIsAvailable()) {
             if (!isNextRunConfigurationExists()) {
-                Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()),
+                Frontend.getInstance().runQuery(QueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()),
                         new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                             deactivate();
                             List<VmDevice> rngDevices = returnValue.getReturnValue();
@@ -454,7 +454,7 @@ public abstract class InstanceTypeManager {
         }
 
         // graphics
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()),
+        Frontend.getInstance().runQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()),
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     deactivate();
 

@@ -26,7 +26,7 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendExternalHostsResource
         extends AbstractBackendCollectionResource<ExternalHost, VDS>
@@ -43,7 +43,7 @@ public class BackendExternalHostsResource
         GetHostListFromExternalProviderParameters parameters = new GetHostListFromExternalProviderParameters();
         parameters.setFilterOutExistingHosts(true);
         parameters.setProviderId(asGuid(providerId));
-        return mapCollection(getBackendCollection(VdcQueryType.GetHostListFromExternalProvider, parameters));
+        return mapCollection(getBackendCollection(QueryType.GetHostListFromExternalProvider, parameters));
     }
 
     protected ExternalHosts mapCollection(List<VDS> entities) {

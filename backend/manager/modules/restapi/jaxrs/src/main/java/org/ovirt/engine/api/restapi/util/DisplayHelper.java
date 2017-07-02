@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DisplayHelper {
@@ -53,7 +53,7 @@ public class DisplayHelper {
     public static List<GraphicsDevice> getGraphicsDevicesForEntity(BackendResource backendResource, Guid id,
                                                                    boolean nextRun) {
         List<GraphicsDevice> graphicsDevices = backendResource.getEntity(List.class,
-                nextRun ? VdcQueryType.GetNextRunGraphicsDevices : VdcQueryType.GetGraphicsDevices,
+                nextRun ? QueryType.GetNextRunGraphicsDevices : QueryType.GetGraphicsDevices,
                 new IdQueryParameters(id),
                 id.toString(), true);
 
@@ -63,7 +63,7 @@ public class DisplayHelper {
     public static Map<Guid, List<GraphicsDevice>> getGraphicsDevicesForMultipleEntities(
             BackendResource backendResource, List<Guid> vmIds) {
         Map<Guid, List<GraphicsDevice>> graphicsDevices = backendResource.getEntity(Map.class,
-                VdcQueryType.GetGraphicsDevicesMultiple,
+                QueryType.GetGraphicsDevicesMultiple,
                 new IdsQueryParameters(vmIds),
                 "GetGraphicsDevicesMultiple", true);
         return graphicsDevices;

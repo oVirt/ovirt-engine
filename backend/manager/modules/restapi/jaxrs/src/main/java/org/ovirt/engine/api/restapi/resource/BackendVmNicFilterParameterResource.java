@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.action.RemoveVmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmNicFilterParameterResource
@@ -71,7 +71,7 @@ public class BackendVmNicFilterParameterResource
     private VmNicFilterParameter lookupParameter(Guid parameterId) {
         List<VmNicFilterParameter> parameters = getBackendCollection(
             VmNicFilterParameter.class,
-            VdcQueryType.GetVmInterfaceFilterParameterById,
+            QueryType.GetVmInterfaceFilterParameterById,
             new IdQueryParameters(guid)
         );
         for (VmNicFilterParameter parameter : parameters) {

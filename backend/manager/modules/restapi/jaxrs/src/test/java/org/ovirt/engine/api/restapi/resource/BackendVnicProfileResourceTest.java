@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendVnicProfileResourceTest
         extends AbstractBackendVnicProfileResourceTest<BackendVnicProfileResource> {
@@ -123,7 +123,7 @@ public class BackendVnicProfileResourceTest
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVnicProfileById,
+            setUpEntityQueryExpectations(QueryType.GetVnicProfileById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },

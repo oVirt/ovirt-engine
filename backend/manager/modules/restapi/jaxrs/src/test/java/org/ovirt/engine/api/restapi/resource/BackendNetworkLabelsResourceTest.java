@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.NetworkLabel;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LabelNetworkParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworkLabelsResourceTest
@@ -38,7 +38,7 @@ public class BackendNetworkLabelsResourceTest
                 true,
                 true,
                 LABELS[0],
-                VdcQueryType.GetNetworkLabelsByNetworkId,
+                QueryType.GetNetworkLabelsByNetworkId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] {NETWORK_ID},
@@ -103,7 +103,7 @@ public class BackendNetworkLabelsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworkLabelsByNetworkId,
+        setUpEntityQueryExpectations(QueryType.GetNetworkLabelsByNetworkId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] {NETWORK_ID},

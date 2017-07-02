@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.action.AddExternalEventParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendEventsResource
     extends AbstractBackendCollectionResource<Event, AuditLog>
@@ -53,7 +53,7 @@ public class BackendEventsResource
 
     private List<AuditLog> getBackendCollection() {
         if (isFiltered()) {
-            return getBackendCollection(VdcQueryType.GetAllEventMessages, new VdcQueryParametersBase());
+            return getBackendCollection(QueryType.GetAllEventMessages, new VdcQueryParametersBase());
         } else {
             return getBackendCollection(SearchType.AuditLog);
         }
@@ -64,7 +64,7 @@ public class BackendEventsResource
         validateParameters(event, "origin", "severity", "customId", "description");
         return performCreate(ActionType.AddExternalEvent,
                 getParameters(event),
-                new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
+                new QueryIdResolver<Long>(QueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
     }
 
     private AddExternalEventParameters getParameters(Event event) {

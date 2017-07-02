@@ -46,9 +46,9 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -136,7 +136,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         verify(backend, times(1)).runInternalQuery(
-                eq(VdcQueryType.GetExistingStorageDomainList),
+                eq(QueryType.GetExistingStorageDomainList),
                 any(VdcQueryParametersBase.class));
         verify(cmd, times(0)).executeCommand();
     }
@@ -153,7 +153,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
                 cmd,
                 EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
         verify(backend, times(1)).runInternalQuery(
-                eq(VdcQueryType.GetExistingStorageDomainList),
+                eq(QueryType.GetExistingStorageDomainList),
                 any(VdcQueryParametersBase.class));
         verify(cmd, times(0)).executeCommand();
     }
@@ -303,7 +303,7 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
 
         doReturn(createQueryReturnValueWith(domains))
                 .when(backend).runInternalQuery(
-                eq(VdcQueryType.GetExistingStorageDomainList),
+                eq(QueryType.GetExistingStorageDomainList),
                 any(VdcQueryParametersBase.class));
 
         return sd;

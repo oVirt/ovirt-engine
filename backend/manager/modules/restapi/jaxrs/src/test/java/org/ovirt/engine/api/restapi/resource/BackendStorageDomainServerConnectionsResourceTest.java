@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageDomainServerConnectionsResource> {
     protected static final StorageType[] STORAGE_TYPES_MAPPED = {
@@ -79,7 +79,7 @@ public class BackendStorageDomainServerConnectionsResourceTest extends AbstractB
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageServerConnectionsForDomain,
+        setUpEntityQueryExpectations(QueryType.GetStorageServerConnectionsForDomain,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},

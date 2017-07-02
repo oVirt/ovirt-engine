@@ -29,9 +29,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
 
@@ -155,7 +155,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     private String getSsoToken(final String engineSessionId) {
-        return (String) runQuery(VdcQueryType.GetEngineSessionIdToken, new VdcQueryParametersBase(), engineSessionId);
+        return (String) runQuery(QueryType.GetEngineSessionIdToken, new VdcQueryParametersBase(), engineSessionId);
     }
 
     protected Boolean getDisplayUncaughtUIExceptions() {
@@ -233,7 +233,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * <p>
      * Returns {@code null} otherwise.
      */
-    protected Object runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
+    protected Object runQuery(QueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
         initQueryParams(queryParams, sessionId);
         VdcQueryReturnValue result = backend.runQuery(queryType, queryParams);
         return result != null && result.getSucceeded() ? result.getReturnValue() : null;
@@ -245,7 +245,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * <p>
      * Returns {@code null} otherwise.
      */
-    protected Object runPublicQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
+    protected Object runPublicQuery(QueryType queryType, VdcQueryParametersBase queryParams, String sessionId) {
         initQueryParams(queryParams, sessionId);
         VdcQueryReturnValue result = backend.runPublicQuery(queryType, queryParams);
         return result != null && result.getSucceeded() ? result.getReturnValue() : null;
@@ -260,7 +260,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     protected DbUser getLoggedInUser(String sessionId) {
-        return (DbUser) runQuery(VdcQueryType.GetUserBySessionId, new VdcQueryParametersBase(), sessionId);
+        return (DbUser) runQuery(QueryType.GetUserBySessionId, new VdcQueryParametersBase(), sessionId);
     }
 
     protected ObjectNode getUserInfoObject(DbUser loggedInUser, String ssoToken) {
@@ -306,7 +306,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     }
 
     protected String getEngineRpmVersion(String sessionId) {
-        return (String) runPublicQuery(VdcQueryType.GetConfigurationValue,
+        return (String) runPublicQuery(QueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigValues.ProductRPMVersion,
                         ConfigCommon.defaultConfigurationVersion), sessionId);
     }

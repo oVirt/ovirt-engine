@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -132,7 +132,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.Quota,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override
@@ -491,7 +491,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         });
 
         IdQueryParameters quotaParameters = new IdQueryParameters(outer_quota.getId());
-        Frontend.getInstance().runQuery(VdcQueryType.GetQuotaByQuotaId,
+        Frontend.getInstance().runQuery(QueryType.GetQuotaByQuotaId,
                 quotaParameters,
                 asyncQuery);
 

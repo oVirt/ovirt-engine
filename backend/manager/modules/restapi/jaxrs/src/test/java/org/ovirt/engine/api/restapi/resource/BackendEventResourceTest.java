@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.queries.GetAuditLogByIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendEventResourceTest extends AbstractBackendSubResourceTest<Event, AuditLog, BackendEventResource> {
     private static final long[] LOG_IDS = { 1 };
@@ -40,7 +40,7 @@ public class BackendEventResourceTest extends AbstractBackendSubResourceTest<Eve
 
     private void setUpGetEntityExpectations() throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetAuditLogById,
+            QueryType.GetAuditLogById,
             GetAuditLogByIdParameters.class,
             new String[] { "Id" },
             new Object[] { LOG_IDS[0] },

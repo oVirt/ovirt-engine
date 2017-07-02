@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendAssignedCpuProfilesResourceTest extends AbstractBackendCpuProfilesResourceTest<BackendAssignedCpuProfilesResource> {
 
     public BackendAssignedCpuProfilesResourceTest() {
         super(new BackendAssignedCpuProfilesResource(CLUSTER_ID.toString()),
-                VdcQueryType.GetCpuProfilesByClusterId,
+                QueryType.GetCpuProfilesByClusterId,
                 IdQueryParameters.class);
     }
 

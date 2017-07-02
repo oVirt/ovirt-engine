@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -213,7 +213,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         addVmParams.setSoundDeviceEnabled(deviceExists(VmDeviceGeneralType.SOUND));
         addVmParams.setVirtioScsiEnabled(deviceExists(VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
 
-        List<VmWatchdog> watchdogs = runInternalQuery(VdcQueryType.GetWatchdog,
+        List<VmWatchdog> watchdogs = runInternalQuery(QueryType.GetWatchdog,
                 new IdQueryParameters(getVmTemplateId())).getReturnValue();
         if (!watchdogs.isEmpty()) {
             addVmParams.setWatchdog(watchdogs.get(0));

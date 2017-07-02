@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 /**
  * This resource corresponds to an user that has been added to the engine and
@@ -44,7 +44,7 @@ public class BackendUserResource
 
     @Override
     public User get() {
-        return performGet(VdcQueryType.GetDbUserByUserId, new IdQueryParameters(guid), BaseResource.class);
+        return performGet(QueryType.GetDbUserByUserId, new IdQueryParameters(guid), BaseResource.class);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class BackendUserResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsOnBehalfByAdElementId,
+                                                             QueryType.GetPermissionsOnBehalfByAdElementId,
                                                              new IdQueryParameters(guid),
                                                              User.class));
     }

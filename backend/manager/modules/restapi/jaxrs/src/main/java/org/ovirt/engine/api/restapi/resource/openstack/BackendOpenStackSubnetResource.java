@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExternalSubnetParameters;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.queries.GetExternalSubnetsOnProviderByExternalNetworkQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackSubnetResource
@@ -58,7 +58,7 @@ public class BackendOpenStackSubnetResource
         parameters.setProviderId(asGuid(providerId));
         parameters.setNetworkId(networkId);
         List<ExternalSubnet> subnets = getBackendCollection(ExternalSubnet.class,
-                VdcQueryType.GetExternalSubnetsOnProviderByExternalNetwork, parameters);
+                QueryType.GetExternalSubnetsOnProviderByExternalNetwork, parameters);
         if (subnets != null) {
             for (ExternalSubnet subnet : subnets) {
                 if (Objects.equals(subnet.getId(), id)) {

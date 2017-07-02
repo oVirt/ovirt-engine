@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendDiskProfilesResource
@@ -52,7 +52,7 @@ public abstract class AbstractBackendDiskProfilesResource
         if (!qosMap.isEmpty()) {
             List<StorageQos> list = getBackendCollection(
                     StorageQos.class,
-                    VdcQueryType.GetAllQosByType,
+                    QueryType.GetAllQosByType,
                     new QosQueryParameterBase(null, QosType.STORAGE));
             for (StorageQos storageQos : list) {
                 Qos qos = qosMap.get(storageQos.getId());
@@ -71,7 +71,7 @@ public abstract class AbstractBackendDiskProfilesResource
                 new DiskProfileParameters(map);
         return performCreate(ActionType.AddDiskProfile,
                 parameters,
-                new QueryIdResolver<Guid>(VdcQueryType.GetDiskProfileById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetDiskProfileById, IdQueryParameters.class));
     }
 
     protected abstract void validateParameters(DiskProfile diskProfile);

@@ -51,9 +51,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -1642,7 +1642,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VDS,
                 isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override
@@ -1823,7 +1823,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 return;
             }
 
-            Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId,
+            Frontend.getInstance().runQuery(QueryType.GetPermissionsByAdElementId,
                     new IdQueryParameters(dbUser.getId()),
                     new AsyncQuery<VdcQueryReturnValue>(response -> {
                         if (response == null || !response.getSucceeded()) {

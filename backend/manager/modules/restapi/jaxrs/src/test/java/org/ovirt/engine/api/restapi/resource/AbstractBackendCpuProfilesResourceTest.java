@@ -20,20 +20,20 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractBackendCpuProfilesResource>
         extends AbstractBackendCollectionResourceTest<CpuProfile, org.ovirt.engine.core.common.businessentities.profiles.CpuProfile, C> {
 
     protected static final Guid CLUSTER_ID = GUIDS[1];
-    private final VdcQueryType listQueryType;
+    private final QueryType listQueryType;
     private final Class<? extends VdcQueryParametersBase> listQueryParamsClass;
 
     public AbstractBackendCpuProfilesResourceTest(C collection,
-            VdcQueryType listQueryType,
+            QueryType listQueryType,
             Class<? extends VdcQueryParametersBase> queryParamsClass) {
         super(collection, null, "");
         this.listQueryType = listQueryType;
@@ -51,7 +51,7 @@ public abstract class AbstractBackendCpuProfilesResourceTest<C extends AbstractB
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetCpuProfileById,
+                QueryType.GetCpuProfileById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { Guid.Empty },

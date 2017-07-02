@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateResource
@@ -49,7 +49,7 @@ public class BackendTemplateResource
 
     @Override
     public Template get() {
-        Template template = performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+        Template template = performGet(QueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
         if (template != null) {
             DisplayHelper.adjustDisplayData(this, template);
         }
@@ -67,7 +67,7 @@ public class BackendTemplateResource
         validateIconParams(incoming);
         Template result = performUpdate(
             incoming,
-            new QueryIdResolver<>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
+            new QueryIdResolver<>(QueryType.GetVmTemplate, GetVmTemplateParameters.class),
             ActionType.UpdateVmTemplate,
             new UpdateParametersProvider()
         );
@@ -125,7 +125,7 @@ public class BackendTemplateResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                VdcQueryType.GetPermissionsForObject,
+                QueryType.GetPermissionsForObject,
                 new GetPermissionsForObjectParameters(guid),
                 Template.class,
                 VdcObjectType.VmTemplate));
@@ -194,7 +194,7 @@ public class BackendTemplateResource
 
     private void setRngDevice(Template model) {
         List<VmRngDevice> rngDevices = getEntity(List.class,
-                VdcQueryType.GetRngDevice,
+                QueryType.GetRngDevice,
                 new IdQueryParameters(Guid.createGuidFromString(model.getId())),
                 "GetRngDevice", true);
 
@@ -215,7 +215,7 @@ public class BackendTemplateResource
 
     private List<String> getConsoleDevicesForEntity(Guid id) {
         return getEntity(List.class,
-                VdcQueryType.GetConsoleDevices,
+                QueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
     }

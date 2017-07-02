@@ -6,7 +6,7 @@ import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmApplicationsResource
@@ -21,7 +21,7 @@ public class BackendVmApplicationsResource
 
     @Override
     public Applications list() {
-        VM vm = getEntity(entityType, VdcQueryType.GetVmByVmId, new IdQueryParameters(vmId), vmId.toString(), true);
+        VM vm = getEntity(entityType, QueryType.GetVmByVmId, new IdQueryParameters(vmId), vmId.toString(), true);
         Applications applications = new Applications();
         String appList = vm.getAppList();
         if (appList != null) {

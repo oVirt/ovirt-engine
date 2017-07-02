@@ -12,9 +12,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUserVmsByUserIdAndGroupsParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -239,7 +239,7 @@ public class ResourcesModel extends SearchableListModel {
             VdcQueryParametersBase parameters =
                     new VdcQueryParametersBase();
             parameters.setRefresh(getIsQueryFirstTime());
-            Frontend.getInstance().runQuery(VdcQueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<VdcQueryReturnValue>(
+            Frontend.getInstance().runQuery(QueryType.GetQuotasConsumptionForCurrentUser, parameters, new AsyncQuery<VdcQueryReturnValue>(
                     retVal -> {
                         Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = (HashMap<Guid, QuotaUsagePerUser>) retVal.getReturnValue();
 
@@ -285,7 +285,7 @@ public class ResourcesModel extends SearchableListModel {
                 new GetUserVmsByUserIdAndGroupsParameters();
         getUserVmsByUserIdAndGroupsParameters.setIncludeDiskData(true);
         getUserVmsByUserIdAndGroupsParameters.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetUserVmsByUserIdAndGroups, getUserVmsByUserIdAndGroupsParameters, asyncQuery);
+        Frontend.getInstance().runQuery(QueryType.GetUserVmsByUserIdAndGroups, getUserVmsByUserIdAndGroupsParameters, asyncQuery);
     }
 
     // Temporarily converter

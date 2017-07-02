@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -73,7 +73,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
 
         super.syncSearch();
 
-        super.syncSearch(VdcQueryType.GetEventSubscribersBySubscriberIdGrouped,
+        super.syncSearch(QueryType.GetEventSubscribersBySubscriberIdGrouped,
                 new IdQueryParameters(getEntity().getId()));
     }
 

@@ -9,9 +9,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<P extends StorageDomainsAndStoragePoolIdQueryParameters> extends GetStorageDomainsWithAttachedStoragePoolGuidQuery<P> {
     public GetFileStorageDomainsWithAttachedStoragePoolGuidQuery(P parameters, EngineContext engineContext) {
@@ -46,7 +46,7 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Sto
     }
 
     protected VdcQueryReturnValue getExistingStorageDomainList(StorageServerConnections storageServerConnection) {
-        VdcQueryReturnValue returnValue = backend.runInternalQuery(VdcQueryType.GetExistingStorageDomainList,
+        VdcQueryReturnValue returnValue = backend.runInternalQuery(QueryType.GetExistingStorageDomainList,
                 new GetExistingStorageDomainListParameters(
                         getVdsId(),
                         storageServerConnection.getStorageType(),

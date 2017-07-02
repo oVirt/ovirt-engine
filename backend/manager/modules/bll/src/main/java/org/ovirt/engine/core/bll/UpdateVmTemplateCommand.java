@@ -41,7 +41,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.CompatibilityVersionUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -567,7 +567,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     private List<GraphicsDevice> getGraphicsDevices() {
         if (cachedGraphics == null) {
             cachedGraphics = getBackend()
-                    .runInternalQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(getVmTemplateId())).getReturnValue();
+                    .runInternalQuery(QueryType.GetGraphicsDevices, new IdQueryParameters(getVmTemplateId())).getReturnValue();
         }
         return cachedGraphics;
     }

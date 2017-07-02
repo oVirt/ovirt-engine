@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterHelper {
@@ -28,7 +28,7 @@ public class BackendDataCenterHelper {
         // Retrieve the data centers for the storage domain:
         List<StoragePool> dataCenters = resource.getBackendCollection(
             StoragePool.class,
-            VdcQueryType.GetStoragePoolsByStorageDomainId,
+            QueryType.GetStoragePoolsByStorageDomainId,
             new IdQueryParameters(storageDomainId)
         );
 

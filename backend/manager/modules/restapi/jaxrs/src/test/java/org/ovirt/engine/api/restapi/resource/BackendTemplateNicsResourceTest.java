@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateNicsResourceTest
@@ -48,7 +48,7 @@ public class BackendTemplateNicsResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetTemplateInterfacesByTemplateId,
+                QueryType.GetTemplateInterfacesByTemplateId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { VM_ID },
@@ -148,7 +148,7 @@ public class BackendTemplateNicsResourceTest
             true,
             true,
             null,
-            VdcQueryType.GetTemplateInterfacesByTemplateId,
+            QueryType.GetTemplateInterfacesByTemplateId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { VM_ID },

@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -52,7 +52,7 @@ public class BackendDiskAttachmentResource
 
     @Override
     public DiskAttachment get() {
-        return performGet(VdcQueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), vmId)));
+        return performGet(QueryType.GetDiskVmElementById, new VmDeviceIdQueryParameters(new VmDeviceId(Guid.createGuidFromString(diskId), vmId)));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class BackendDiskAttachmentResource
         public DiskVmElement lookupEntity(Guid id) throws BackendFailureException {
             return getEntity(
                     DiskVmElement.class,
-                    VdcQueryType.GetDiskVmElementById,
+                    QueryType.GetDiskVmElementById,
                     new VmDeviceIdQueryParameters(new VmDeviceId(id, vmId)),
                     id.toString(),
                     false);
@@ -103,7 +103,7 @@ public class BackendDiskAttachmentResource
             dve.getId().setVmId(vmId);
 
             // Disk has to be sent along with the attachment data to the update command
-            Disk disk = runQuery(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(Guid.createGuidFromString(diskId))).getReturnValue();
+            Disk disk = runQuery(QueryType.GetDiskByDiskId, new IdQueryParameters(Guid.createGuidFromString(diskId))).getReturnValue();
 
             // If a <disk> was specified inside the attachment data we can update its properties too
             if (incoming.isSetDisk()) {

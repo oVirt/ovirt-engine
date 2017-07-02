@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendIscsiBondNetworkResource extends BackendNetworkResource {
 
@@ -37,7 +37,7 @@ public class BackendIscsiBondNetworkResource extends BackendNetworkResource {
 
     private org.ovirt.engine.core.common.businessentities.network.Network getNetwork() {
         return getEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
-                VdcQueryType.GetNetworkById, new IdQueryParameters(guid), guid.toString());
+                QueryType.GetNetworkById, new IdQueryParameters(guid), guid.toString());
     }
 
     @Override

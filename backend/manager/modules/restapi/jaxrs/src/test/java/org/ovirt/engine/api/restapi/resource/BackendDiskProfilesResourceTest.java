@@ -5,13 +5,13 @@ import java.util.List;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDiskProfilesResourceTest extends AbstractBackendDiskProfilesResourceTest<BackendDiskProfilesResource> {
 
     public BackendDiskProfilesResourceTest() {
-        super(new BackendDiskProfilesResource(), VdcQueryType.GetAllDiskProfiles, VdcQueryParametersBase.class);
+        super(new BackendDiskProfilesResource(), QueryType.GetAllDiskProfiles, VdcQueryParametersBase.class);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BackendDiskProfilesResourceTest extends AbstractBackendDiskProfiles
 
     @Override
     protected void setUpStorageDomainQueryExpectations() {
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { STORAGE_DOMAIN_ID },

@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendDisksResourceTest extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendDisksResource> {
 
@@ -59,12 +59,12 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     public void testAdd() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+        setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[]{ "Id" },
                 new Object[]{ GUIDS[0] },
                 getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -79,7 +79,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 GUIDS[0],
                 asList(GUIDS[3]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {GUIDS[0]},
@@ -95,12 +95,12 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
     public void testAddIdentifyStorageDomainByName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
+        setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[]{ "Id" },
                 new Object[]{ GUIDS[0] },
                 getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+        setUpEntityQueryExpectations(QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
@@ -108,7 +108,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         Disk model = getModel();
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
-        setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
+        setUpEntityQueryExpectations(QueryType.GetAllStorageDomains,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -122,7 +122,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
                 GUIDS[0],
                 asList(GUIDS[3]),
                 asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {GUIDS[0]},

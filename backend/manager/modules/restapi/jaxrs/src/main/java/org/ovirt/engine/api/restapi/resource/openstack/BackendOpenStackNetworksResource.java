@@ -27,8 +27,8 @@ import org.ovirt.engine.api.resource.openstack.OpenstackNetworksResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendOpenStackNetworksResource
@@ -50,7 +50,7 @@ public class BackendOpenStackNetworksResource
     private Map<Network, Set<Guid>> getBackendCollection() {
         try {
             IdQueryParameters parameters = new IdQueryParameters(asGuid(providerId));
-            VdcQueryReturnValue result = runQuery(VdcQueryType.GetAllExternalNetworksOnProvider, parameters);
+            VdcQueryReturnValue result = runQuery(QueryType.GetAllExternalNetworksOnProvider, parameters);
             if (!result.getSucceeded()) {
                 backendFailure(result.getExceptionString());
             }

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworksResourceTest
@@ -43,7 +43,7 @@ public class BackendNetworksResourceTest
                                   true,
                                   true,
                                   null, //GUIDS[0],
-                                  VdcQueryType.GetAllNetworks,
+                                  QueryType.GetAllNetworks,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { Guid.Empty },
@@ -62,7 +62,7 @@ public class BackendNetworksResourceTest
     public void testAddNetworkWithNamedDataCenter() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetStoragePoolByDatacenterName,
+        setUpEntityQueryExpectations(QueryType.GetStoragePoolByDatacenterName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
@@ -75,7 +75,7 @@ public class BackendNetworksResourceTest
                                   true,
                                   true,
                                   null, //GUIDS[0],
-                                  VdcQueryType.GetAllNetworks,
+                                  QueryType.GetAllNetworks,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { Guid.Empty },
@@ -147,7 +147,7 @@ public class BackendNetworksResourceTest
 
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
+            setUpEntityQueryExpectations(QueryType.GetAllNetworks,
                                          IdQueryParameters.class,
                                          new String[] { "Id" },
                                          new Object[] { Guid.Empty },

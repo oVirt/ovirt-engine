@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendRoleResource
@@ -31,7 +31,7 @@ public class BackendRoleResource
 
     @Override
     public Role get() {
-        return performGet(VdcQueryType.GetRoleById,
+        return performGet(QueryType.GetRoleById,
                 new IdQueryParameters(guid));
     }
 
@@ -52,7 +52,7 @@ public class BackendRoleResource
     @Override
     public Role update(Role role) {
         return performUpdate(role,
-                new QueryIdResolver<>(VdcQueryType.GetRoleById, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetRoleById, IdQueryParameters.class),
                 ActionType.UpdateRole,
                 new UpdateParametersProvider());
     }

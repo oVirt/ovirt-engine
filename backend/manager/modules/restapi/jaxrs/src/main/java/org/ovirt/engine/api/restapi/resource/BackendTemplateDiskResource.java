@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateDiskResource
@@ -38,7 +38,7 @@ public class BackendTemplateDiskResource
     public Disk get() {
         List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = getBackendCollection(
             org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-            VdcQueryType.GetVmTemplatesDisks,
+            QueryType.GetVmTemplatesDisks,
             new IdQueryParameters(templateId)
         );
         for (org.ovirt.engine.core.common.businessentities.storage.Disk entity : entities) {
@@ -77,7 +77,7 @@ public class BackendTemplateDiskResource
     }
 
     protected Disk getDisk() {
-        return performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
+        return performGet(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
 
     @Override

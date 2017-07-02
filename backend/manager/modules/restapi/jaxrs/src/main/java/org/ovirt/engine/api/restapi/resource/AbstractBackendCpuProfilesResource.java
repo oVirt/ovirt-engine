@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendCpuProfilesResource
@@ -51,7 +51,7 @@ public abstract class AbstractBackendCpuProfilesResource
         if (!qosMap.isEmpty()) {
             List<CpuQos> list = getBackendCollection(
                     CpuQos.class,
-                    VdcQueryType.GetAllQosByType,
+                    QueryType.GetAllQosByType,
                     new QosQueryParameterBase(null, QosType.CPU));
             for (CpuQos cpuQos : list) {
                 Qos qos = qosMap.get(cpuQos.getId());
@@ -72,7 +72,7 @@ public abstract class AbstractBackendCpuProfilesResource
         parameters.setAddPermissions(true);
         return performCreate(ActionType.AddCpuProfile,
                 parameters,
-                new QueryIdResolver<Guid>(VdcQueryType.GetCpuProfileById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetCpuProfileById, IdQueryParameters.class));
     }
 
     protected abstract void validateParameters(CpuProfile cpuProfile);

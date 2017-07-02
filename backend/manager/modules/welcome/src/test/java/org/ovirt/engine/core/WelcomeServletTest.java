@@ -27,9 +27,9 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
@@ -64,7 +64,7 @@ public class WelcomeServletTest {
 
     final List<String> localeKeys = createLocaleKeys();
 
-    private void mockBackendQuery(VdcQueryType queryType, Object returnValue) {
+    private void mockBackendQuery(QueryType queryType, Object returnValue) {
         VdcQueryReturnValue queryReturnValue = new VdcQueryReturnValue();
         queryReturnValue.setReturnValue(returnValue);
         when(mockBackend.runPublicQuery(eq(queryType), any(VdcQueryParametersBase.class))).thenReturn(queryReturnValue);
@@ -75,7 +75,7 @@ public class WelcomeServletTest {
         doReturn("http://localhost:8080/ovirt-engine/sso/credentials-change.html").when(testServlet).getCredentialsChangeUrl(any());
         testServlet.setBackend(mockBackend);
         testServlet.init(mockBrandingManager, "/ovirt-engine");
-        mockBackendQuery(VdcQueryType.GetConfigurationValue, "oVirtVersion");
+        mockBackendQuery(QueryType.GetConfigurationValue, "oVirtVersion");
         when(mockBrandingManager.getWelcomeSections(any(Locale.class))).thenReturn("Welcome Section HTML");
     }
 

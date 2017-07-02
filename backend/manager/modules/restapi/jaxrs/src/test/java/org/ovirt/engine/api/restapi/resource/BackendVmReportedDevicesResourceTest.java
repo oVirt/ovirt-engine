@@ -8,7 +8,7 @@ import org.ovirt.engine.api.model.Ip;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollectionResourceTest<ReportedDevice, VmGuestAgentInterface, BackendVmReportedDevicesResource> {
@@ -44,7 +44,7 @@ public class BackendVmReportedDevicesResourceTest extends AbstractBackendCollect
 
     @Override
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+        setUpEntityQueryExpectations(QueryType.GetVmGuestAgentInterfacesByVmId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { PARENT_ID },

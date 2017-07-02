@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendPermissionResourceTest
         extends AbstractBackendSubResourceTest<
@@ -28,7 +28,7 @@ public class BackendPermissionResourceTest
         super(new BackendPermissionResource(GUIDS[0].toString(),
                                             GUIDS[1],
                                             new BackendAssignedPermissionsResource(GUIDS[0],
-                                                                                   VdcQueryType.GetPermissionsForObject,
+                                                                                   QueryType.GetPermissionsForObject,
                                                                                    new GetPermissionsForObjectParameters(GUIDS[0]),
                                                                                    Cluster.class,
                                                                                    VdcObjectType.Cluster),
@@ -68,7 +68,7 @@ public class BackendPermissionResourceTest
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetAllDbUsers,
+        setUpEntityQueryExpectations(QueryType.GetAllDbUsers,
                 VdcQueryParametersBase.class,
                 new String[] { "Refresh", "Filtered" },
                 new Object[] { false, false },
@@ -83,7 +83,7 @@ public class BackendPermissionResourceTest
     public void testRemove() throws Exception {
         setUpGetEntityExpectations(2);
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllDbUsers,
+            QueryType.GetAllDbUsers,
             VdcQueryParametersBase.class,
             new String[] { "Refresh", "Filtered" },
             new Object[] { false, false },
@@ -105,7 +105,7 @@ public class BackendPermissionResourceTest
     @Test
     public void testRemoveCantDo() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllDbUsers,
+            QueryType.GetAllDbUsers,
             VdcQueryParametersBase.class,
             new String[] {},
             new Object[] {},
@@ -117,7 +117,7 @@ public class BackendPermissionResourceTest
     @Test
     public void testRemoveFailed() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetAllDbUsers,
+            QueryType.GetAllDbUsers,
             VdcQueryParametersBase.class,
             new String[] {},
             new Object[] {},
@@ -167,7 +167,7 @@ public class BackendPermissionResourceTest
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         for (int i = 0; i < times; i++) {
             setUpGetEntityExpectations(
-                VdcQueryType.GetPermissionById,
+                QueryType.GetPermissionById,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{GUIDS[0]},

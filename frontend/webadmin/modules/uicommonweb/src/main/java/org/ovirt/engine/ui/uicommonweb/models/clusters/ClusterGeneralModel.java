@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -226,7 +226,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
         );
 
         Frontend.getInstance().runQuery(
-                VdcQueryType.IsDisplayAddressConsistentInCluster,
+                QueryType.IsDisplayAddressConsistentInCluster,
                 new IdQueryParameters(cluster.getId()),
                 query
                 );

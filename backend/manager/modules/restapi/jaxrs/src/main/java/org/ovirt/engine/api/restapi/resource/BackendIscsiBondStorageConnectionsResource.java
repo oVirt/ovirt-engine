@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendIscsiBondStorageConnectionsResource extends BackendStorageServerConnectionsResource {
@@ -28,7 +28,7 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
     @Override
     public StorageConnections list() {
         return mapCollection(
-                getBackendCollection(VdcQueryType.GetStorageServerConnectionByIscsiBondId, new IdQueryParameters(iscsiBondId))
+                getBackendCollection(QueryType.GetStorageServerConnectionByIscsiBondId, new IdQueryParameters(iscsiBondId))
         );
     }
 
@@ -47,7 +47,7 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
     }
 
     protected IscsiBond getIscsiBond() {
-        return getEntity(IscsiBond.class, VdcQueryType.GetIscsiBondById, new IdQueryParameters(iscsiBondId), iscsiBondId.toString());
+        return getEntity(IscsiBond.class, QueryType.GetIscsiBondById, new IdQueryParameters(iscsiBondId), iscsiBondId.toString());
     }
 
     private StorageConnections mapCollection(List<StorageServerConnections> entities) {

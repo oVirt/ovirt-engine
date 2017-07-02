@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
@@ -192,7 +192,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         }
     }
 
-    protected void showWarningOnExistingEntities(final ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
+    protected void showWarningOnExistingEntities(final ExportVmModel model, final QueryType getVmOrTemplateQuery) {
         Guid storageDomainId = model.getStorage().getSelectedItem().getId();
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(
                 storagePools -> postShowWarningOnExistingVms(model, storagePools, getVmOrTemplateQuery)), storageDomainId);
@@ -200,7 +200,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
     private void postShowWarningOnExistingVms(final ExportVmModel exportModel,
             List<StoragePool> storagePools,
-            VdcQueryType getVmOrTemplateQuery) {
+            QueryType getVmOrTemplateQuery) {
         StoragePool storagePool = storagePools.size() > 0 ? storagePools.get(0) : null;
 
         if (storagePool != null) {
@@ -439,7 +439,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
 
     protected abstract String thereIsNoExportDomainBackupEntityAttachExportDomainToVmsDcMsg();
 
-    protected abstract VdcQueryType getEntityExportDomain();
+    protected abstract QueryType getEntityExportDomain();
 
     protected abstract void sendWarningForNonExportableDisks(T entity);
 

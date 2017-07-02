@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -15,7 +15,7 @@ public class UserPortalAdElementListModel extends AdElementListModel {
 
     @Override
     protected void findUsers(String searchString, AsyncQuery query) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllDbUsers, getParameters(), query);
+        Frontend.getInstance().runQuery(QueryType.GetAllDbUsers, getParameters(), query);
     }
 
     private VdcQueryParametersBase getParameters() {
@@ -46,6 +46,6 @@ public class UserPortalAdElementListModel extends AdElementListModel {
 
     @Override
     protected void findGroups(String searchString, AsyncQuery query) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllDbGroups, getParameters(), query);
+        Frontend.getInstance().runQuery(QueryType.GetAllDbGroups, getParameters(), query);
     }
 }

@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
 
-public enum VdcQueryType implements Serializable {
+public enum QueryType implements Serializable {
     // VM queries
     IsVmWithSameNameExist(VdcQueryAuthType.User),
     GetVmByVmId(VdcQueryAuthType.User),
@@ -506,11 +506,11 @@ public enum VdcQueryType implements Serializable {
 
     private VdcQueryAuthType authType;
 
-    private VdcQueryType() {
+    private QueryType() {
         authType = VdcQueryAuthType.Admin;
     }
 
-    private VdcQueryType(VdcQueryAuthType authType) {
+    private QueryType(VdcQueryAuthType authType) {
         this.authType = authType;
     }
 
@@ -518,7 +518,7 @@ public enum VdcQueryType implements Serializable {
         return this.ordinal();
     }
 
-    public static VdcQueryType forValue(int value) {
+    public static QueryType forValue(int value) {
         return values()[value];
     }
 

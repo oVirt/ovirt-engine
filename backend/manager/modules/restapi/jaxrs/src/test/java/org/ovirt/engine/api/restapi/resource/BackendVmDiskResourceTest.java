@@ -53,8 +53,8 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VmDeviceIdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -76,7 +76,7 @@ public class BackendVmDiskResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -121,7 +121,7 @@ public class BackendVmDiskResourceTest
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -367,7 +367,7 @@ public class BackendVmDiskResourceTest
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { DISK_ID },
@@ -382,7 +382,7 @@ public class BackendVmDiskResourceTest
         dve.setBoot(false);
 
         setUpGetEntityExpectations(
-                VdcQueryType.GetDiskVmElementById,
+                QueryType.GetDiskVmElementById,
                 VmDeviceIdQueryParameters.class,
                 new String[] { "Id"},
                 new Object[] { new VmDeviceId(DISK_ID, VM_ID)},
@@ -397,7 +397,7 @@ public class BackendVmDiskResourceTest
     protected void setUpGetEntityExpectations(int times, org.ovirt.engine.core.common.businessentities.storage.Disk entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(
-                VdcQueryType.GetDiskByDiskId,
+                QueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { DISK_ID },
@@ -409,7 +409,7 @@ public class BackendVmDiskResourceTest
     @Test
     public void testMoveBySdId() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },
@@ -442,7 +442,7 @@ public class BackendVmDiskResourceTest
         if (isFiltered) {
             setUpFilteredQueryExpectations();
             setUpEntityQueryExpectations(
-                VdcQueryType.GetAllStorageDomains,
+                QueryType.GetAllStorageDomains,
                 VdcQueryParametersBase.class,
                 new String[] {},
                 new Object[] {},
@@ -451,7 +451,7 @@ public class BackendVmDiskResourceTest
         }
         else {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetStorageDomainByName,
+                QueryType.GetStorageDomainByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[2] },
@@ -460,7 +460,7 @@ public class BackendVmDiskResourceTest
         }
 
         setUpEntityQueryExpectations(
-            VdcQueryType.GetDiskByDiskId,
+            QueryType.GetDiskByDiskId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { DISK_ID },

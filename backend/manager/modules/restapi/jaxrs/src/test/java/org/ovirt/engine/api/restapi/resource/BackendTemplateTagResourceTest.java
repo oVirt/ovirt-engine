@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByTemplateIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateTagResourceTest
@@ -88,7 +88,7 @@ public class BackendTemplateTagResourceTest
 
     private void setUpGetTagsExpectations(boolean succeed) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetTagsByTemplateId,
+            QueryType.GetTagsByTemplateId,
             GetTagsByTemplateIdParameters.class,
             new String[] { "TemplateId" },
             new Object[] { TEMPLATE_ID.toString() },

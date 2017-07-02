@@ -12,9 +12,9 @@ import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -43,7 +43,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
     @Override
     public abstract String getTitle();
 
-    protected abstract VdcQueryType getUsingEntitiesByQosIdQueryType();
+    protected abstract QueryType getUsingEntitiesByQosIdQueryType();
 
     protected abstract String getRemoveQosMessage(int size);
 
@@ -55,7 +55,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
 
     private void setMessage() {
         ArrayList<VdcQueryParametersBase> parameters = new ArrayList<>();
-        ArrayList<VdcQueryType> queryTypes = new ArrayList<>();
+        ArrayList<QueryType> queryTypes = new ArrayList<>();
         for (T qos : sourceListModel.getSelectedItems()) {
             VdcQueryParametersBase parameter = new IdQueryParameters(qos.getId());
             parameters.add(parameter);

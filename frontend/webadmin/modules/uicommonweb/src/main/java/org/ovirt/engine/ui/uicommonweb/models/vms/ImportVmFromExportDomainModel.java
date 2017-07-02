@@ -27,9 +27,9 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -117,11 +117,11 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     }
 
     private void initQuotaForStorageDomains() {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
+        ArrayList<QueryType> queryTypeList = new ArrayList<>();
         ArrayList<VdcQueryParametersBase> queryParamsList =
                 new ArrayList<>();
         for (StorageDomain storage : filteredStorageDomains) {
-            queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
+            queryTypeList.add(QueryType.GetAllRelevantQuotasForStorage);
             queryParamsList.add(new IdQueryParameters(storage.getId()));
         }
         storageQuotaMap = new HashMap<>();
@@ -199,10 +199,10 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
             }
         }
         if (!templateDiskMap.isEmpty()) {
-            ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
+            ArrayList<QueryType> queryTypeList = new ArrayList<>();
             final ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
             for (Guid templateId : templateDiskMap.keySet()) {
-                queryTypeList.add(VdcQueryType.GetVmTemplatesDisks);
+                queryTypeList.add(QueryType.GetVmTemplatesDisks);
                 queryParamsList.add(new IdQueryParameters(templateId));
             }
             Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {
@@ -266,7 +266,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     protected void getTemplatesFromExportDomain() {
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters(storagePool.getId(), (Guid) getEntity());
-        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar,
+        Frontend.getInstance().runQuery(QueryType.GetTemplatesFromExportDomain, tempVar,
                 new AsyncQuery<VdcQueryReturnValue>(returnValue -> {
                     Map<VmTemplate, List<DiskImage>> dictionary = (HashMap<VmTemplate, List<DiskImage>>) returnValue.getReturnValue();
                     Map<Guid, Guid> tempMap = new HashMap<>();

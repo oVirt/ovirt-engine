@@ -5,13 +5,13 @@ import java.util.List;
 import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendVnicProfilesResourceTest extends AbstractBackendVnicProfilesResourceTest<BackendVnicProfilesResource> {
 
     public BackendVnicProfilesResourceTest() {
-        super(new BackendVnicProfilesResource(), VdcQueryType.GetAllVnicProfiles, VdcQueryParametersBase.class);
+        super(new BackendVnicProfilesResource(), QueryType.GetAllVnicProfiles, VdcQueryParametersBase.class);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BackendVnicProfilesResourceTest extends AbstractBackendVnicProfiles
 
     @Override
     protected void setUpNetworkQueryExpectations() {
-        setUpEntityQueryExpectations(VdcQueryType.GetNetworkById,
+        setUpEntityQueryExpectations(QueryType.GetNetworkById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { NETWORK_ID },

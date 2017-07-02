@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EndExternalJobParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendJobResourceTest
         extends AbstractBackendSubResourceTest<Job, org.ovirt.engine.core.common.job.Job, BackendJobResource> {
@@ -67,7 +67,7 @@ public class BackendJobResourceTest
     }
 
     protected void setUpGetEntityExpectations(boolean notFound) throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.GetJobByJobId,
+        setUpGetEntityExpectations(QueryType.GetJobByJobId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

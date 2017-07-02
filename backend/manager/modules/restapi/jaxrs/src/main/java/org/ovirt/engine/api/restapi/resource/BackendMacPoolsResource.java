@@ -11,8 +11,8 @@ import org.ovirt.engine.api.resource.MacPoolsResource;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendMacPoolsResource
@@ -25,7 +25,7 @@ public class BackendMacPoolsResource
 
     @Override
     public MacPools list() {
-        return mapCollection(getBackendCollection(VdcQueryType.GetAllMacPools, new VdcQueryParametersBase()));
+        return mapCollection(getBackendCollection(QueryType.GetAllMacPools, new VdcQueryParametersBase()));
     }
 
     private MacPools mapCollection(List<org.ovirt.engine.core.common.businessentities.MacPool> entities) {
@@ -43,7 +43,7 @@ public class BackendMacPoolsResource
         final org.ovirt.engine.core.common.businessentities.MacPool entity = map(macPool);
         return performCreate(ActionType.AddMacPool,
                 new MacPoolParameters(entity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetMacPoolById, IdQueryParameters.class));
+                new QueryIdResolver<Guid>(QueryType.GetMacPoolById, IdQueryParameters.class));
     }
 
     @Override

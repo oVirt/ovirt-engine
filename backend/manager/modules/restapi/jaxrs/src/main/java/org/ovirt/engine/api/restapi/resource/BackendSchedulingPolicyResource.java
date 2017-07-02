@@ -10,7 +10,7 @@ import org.ovirt.engine.api.resource.WeightsResource;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,17 +28,17 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
 
     @Override
     public SchedulingPolicy get() {
-        return performGet(VdcQueryType.GetClusterPolicyById, new IdQueryParameters(guid));
+        return performGet(QueryType.GetClusterPolicyById, new IdQueryParameters(guid));
     }
 
     protected ClusterPolicy getSchedulingPolicy() {
-        return getEntity(new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById, IdQueryParameters.class), false);
+        return getEntity(new QueryIdResolver<>(QueryType.GetClusterPolicyById, IdQueryParameters.class), false);
     }
 
     @Override
     public SchedulingPolicy update(SchedulingPolicy incoming) {
         return performUpdate(incoming,
-                new QueryIdResolver<>(VdcQueryType.GetClusterPolicyById, IdQueryParameters.class),
+                new QueryIdResolver<>(QueryType.GetClusterPolicyById, IdQueryParameters.class),
                 ActionType.EditClusterPolicy,
                 new UpdateParametersProvider());
     }
@@ -73,7 +73,7 @@ public class BackendSchedulingPolicyResource extends AbstractBackendSubResource<
 
             performAction =
                     performAction(ActionType.RemoveClusterPolicy, new ClusterPolicyCRUDParameters(asGuid(id),
-                            new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById,
+                            new QueryIdResolver<Guid>(QueryType.GetClusterPolicyById,
                                     IdQueryParameters.class).lookupEntity(asGuid(id))));
         } catch (BackendFailureException e) {
             log.error("Failed performing action", e);

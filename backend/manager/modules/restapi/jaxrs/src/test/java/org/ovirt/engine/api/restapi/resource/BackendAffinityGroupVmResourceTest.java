@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Vm;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.scheduling.parameters.AffinityGroupCRUDParameters;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -37,7 +37,7 @@ public class BackendAffinityGroupVmResourceTest
 
     private void setUpGetGroupExpectations() throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetAffinityGroupById,
+            QueryType.GetAffinityGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },

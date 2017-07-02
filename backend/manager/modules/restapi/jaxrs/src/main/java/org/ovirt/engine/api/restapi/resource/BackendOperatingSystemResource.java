@@ -22,7 +22,7 @@ import org.ovirt.engine.api.restapi.util.IconHelper;
 import org.ovirt.engine.core.common.businessentities.VmIconDefault;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmIconDefaultParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -49,7 +49,7 @@ public class BackendOperatingSystemResource
             model.setDescription(name);
         }
         final VmIconDefault vmIconDefault = getEntity(VmIconDefault.class,
-                VdcQueryType.GetVmIconDefault,
+                QueryType.GetVmIconDefault,
                 new GetVmIconDefaultParameters(key),
                 "VmIconDefault");
         if (vmIconDefault != null) {

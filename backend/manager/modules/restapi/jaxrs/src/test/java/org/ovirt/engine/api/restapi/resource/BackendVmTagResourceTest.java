@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmTagResourceTest extends AbstractBackendSubResourceTest<Tag, Tags, BackendVmTagResource> {
@@ -88,7 +88,7 @@ public class BackendVmTagResourceTest extends AbstractBackendSubResourceTest<Tag
 
     private void setUpGetTagsExpectations(boolean succeed) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetTagsByVmId,
+            QueryType.GetTagsByVmId,
             GetTagsByVmIdParameters.class,
             new String[] { "VmId" },
             new Object[] { VM_ID.toString() },

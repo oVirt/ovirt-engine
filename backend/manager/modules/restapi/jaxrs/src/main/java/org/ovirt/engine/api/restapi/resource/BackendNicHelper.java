@@ -30,7 +30,7 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -60,7 +60,7 @@ public class BackendNicHelper {
     private static List<VmGuestAgentInterface> getDevicesCollection(BackendResource resource, Guid vmId) {
         return resource.getBackendCollection(
             VmGuestAgentInterface.class,
-            VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+            QueryType.GetVmGuestAgentInterfacesByVmId,
             new IdQueryParameters(vmId)
         );
     }

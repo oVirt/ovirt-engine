@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendAssignedCpuProfileResourceTest
         extends AbstractBackendSubResourceTest<CpuProfile, org.ovirt.engine.core.common.businessentities.profiles.CpuProfile, BackendAssignedCpuProfileResource> {
@@ -81,7 +81,7 @@ public class BackendAssignedCpuProfileResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetCpuProfileById,
+            QueryType.GetCpuProfileById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },
@@ -130,7 +130,7 @@ public class BackendAssignedCpuProfileResourceTest
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetCpuProfileById,
+            setUpEntityQueryExpectations(QueryType.GetCpuProfileById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },

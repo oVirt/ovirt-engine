@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public class BackendInstanceTypeResourceTest
@@ -105,7 +105,7 @@ public class BackendInstanceTypeResourceTest
 
     protected void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+            setUpGetEntityExpectations(QueryType.GetVirtioScsiControllers,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -115,7 +115,7 @@ public class BackendInstanceTypeResourceTest
 
     protected void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+            setUpGetEntityExpectations(QueryType.GetSoundDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -204,7 +204,7 @@ public class BackendInstanceTypeResourceTest
 
     protected void setUpGetGraphicsExpectations(int times) throws Exception {
         for (int i = 0; i < times; i++) {
-            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+            setUpGetEntityExpectations(QueryType.GetGraphicsDevices,
                     IdQueryParameters.class,
                     new String[]{"Id"},
                     new Object[]{GUIDS[i]},
@@ -213,7 +213,7 @@ public class BackendInstanceTypeResourceTest
     }
 
     protected void setUpGetBallooningExpectations() throws Exception {
-        setUpGetEntityExpectations(VdcQueryType.IsBalloonEnabled,
+        setUpGetEntityExpectations(QueryType.IsBalloonEnabled,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -252,7 +252,7 @@ public class BackendInstanceTypeResourceTest
 
     private void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetInstanceType,
+            setUpGetEntityExpectations(QueryType.GetInstanceType,
                     GetVmTemplateParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[0] },

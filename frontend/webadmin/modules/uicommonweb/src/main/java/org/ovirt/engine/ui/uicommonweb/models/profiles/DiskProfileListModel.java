@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -48,8 +48,8 @@ public class DiskProfileListModel extends ProfileListModel<DiskProfile, StorageQ
     }
 
     @Override
-    protected VdcQueryType getQueryType() {
-        return VdcQueryType.GetDiskProfilesByStorageDomainId;
+    protected QueryType getQueryType() {
+        return QueryType.GetDiskProfilesByStorageDomainId;
     }
 
     @Override

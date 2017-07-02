@@ -14,9 +14,9 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -35,7 +35,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     // get correct return value type
     private final VdcQueryReturnValue returnValue;
-    private final VdcQueryType queryType;
+    private final QueryType queryType;
     private DbUser user;
     private final P parameters;
     private boolean isInternalExecution = false;
@@ -74,13 +74,13 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         user = initUser();
     }
 
-    private VdcQueryType initQueryType() {
+    private QueryType initQueryType() {
         try {
             String name = getClass().getSimpleName();
             name = name.substring(0, name.length() - QuerySuffix.length());
-            return VdcQueryType.valueOf(name);
+            return QueryType.valueOf(name);
         } catch (Exception e) {
-            return VdcQueryType.Unknown;
+            return QueryType.Unknown;
         }
     }
 
@@ -226,7 +226,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return getSessionDataContainer().getEngineSessionSeqId(engineContext.getSessionId());
     }
 
-    protected VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
+    protected VdcQueryReturnValue runInternalQuery(QueryType actionType, VdcQueryParametersBase parameters) {
         //All internal queries should have refresh set to false, since the decision to refresh the session should
         //be up to the client. All internal queries will not refresh the session.
         parameters.setRefresh(false);

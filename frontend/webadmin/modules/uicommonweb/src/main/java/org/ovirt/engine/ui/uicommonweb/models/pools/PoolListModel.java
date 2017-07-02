@@ -17,9 +17,9 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -142,7 +142,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
     protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.VmPools, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
-        super.syncSearch(VdcQueryType.Search, tempVar);
+        super.syncSearch(QueryType.Search, tempVar);
     }
 
     @Override
@@ -185,7 +185,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
 
         final PoolListModel poolListModel = this;
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
+        Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                 new IdQueryParameters(pool.getVmPoolId()),
                 new AsyncQuery<VdcQueryReturnValue>(result -> {
                     final VM vm = result.getReturnValue();

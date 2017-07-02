@@ -60,8 +60,8 @@ import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
@@ -485,7 +485,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         boolean retVal = true;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getVm()
                 .getStoragePoolId(), getParameters().getStorageDomainId());
-        VdcQueryReturnValue qretVal = runInternalQuery(VdcQueryType.GetVmsFromExportDomain,
+        VdcQueryReturnValue qretVal = runInternalQuery(QueryType.GetVmsFromExportDomain,
                 tempVar);
 
         if (qretVal.getSucceeded()) {
@@ -514,7 +514,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
         boolean retVal = false;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
                 storageDomainId);
-        VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(VdcQueryType.GetTemplatesFromExportDomain,
+        VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(QueryType.GetTemplatesFromExportDomain,
                 tempVar, engineContext);
 
         if (qretVal.getSucceeded()) {

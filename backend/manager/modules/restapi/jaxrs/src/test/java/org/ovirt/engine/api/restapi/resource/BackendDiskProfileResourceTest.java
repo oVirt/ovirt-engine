@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 
 public class BackendDiskProfileResourceTest
         extends AbstractBackendSubResourceTest<DiskProfile, org.ovirt.engine.core.common.businessentities.profiles.DiskProfile, BackendDiskProfileResource> {
@@ -149,7 +149,7 @@ public class BackendDiskProfileResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetDiskProfileById,
+            QueryType.GetDiskProfileById,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { GUIDS[0] },
@@ -198,7 +198,7 @@ public class BackendDiskProfileResourceTest
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetDiskProfileById,
+            setUpEntityQueryExpectations(QueryType.GetDiskProfileById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },

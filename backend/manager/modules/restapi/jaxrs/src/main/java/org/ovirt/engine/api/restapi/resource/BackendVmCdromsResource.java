@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmCdromsResource
@@ -72,7 +72,7 @@ public class BackendVmCdromsResource
     private VM getVm() {
         return getEntity(
             VM.class,
-            VdcQueryType.GetVmByVmId,
+            QueryType.GetVmByVmId,
             new IdQueryParameters(vmId),
             vmId.toString(),
             true

@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateDisksResourceTest
@@ -58,7 +58,7 @@ public class BackendTemplateDisksResourceTest
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
         while (times-- > 0) {
             setUpEntityQueryExpectations(
-                VdcQueryType.GetVmTemplatesDisks,
+                QueryType.GetVmTemplatesDisks,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { TEMPLATE_ID },

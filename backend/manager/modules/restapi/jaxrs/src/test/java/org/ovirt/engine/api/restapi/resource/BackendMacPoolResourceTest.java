@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendMacPoolResourceTest
@@ -148,7 +148,7 @@ public class BackendMacPoolResourceTest
 
     @Test
     public void testRemoveNonExistant() throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetMacPoolById,
+        setUpEntityQueryExpectations(QueryType.GetMacPoolById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { MAC_POOL_ID },
@@ -191,7 +191,7 @@ public class BackendMacPoolResourceTest
 
     protected void setUpEntityQueryExpectations(int times, int index, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetMacPoolById,
+            setUpEntityQueryExpectations(QueryType.GetMacPoolById,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[index] },
@@ -222,7 +222,7 @@ public class BackendMacPoolResourceTest
     }
 
     protected void setUpEntityQueryExpectations(boolean notFound) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetMacPoolById,
+        setUpEntityQueryExpectations(QueryType.GetMacPoolById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },

@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.labels.list;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterAffinityLabelListModel extends AffinityLabelListModel<Cluster> {
 
     public ClusterAffinityLabelListModel() {
-        super(VdcQueryType.GetAllLabels);
+        super(QueryType.GetAllLabels);
     }
 
     @Override

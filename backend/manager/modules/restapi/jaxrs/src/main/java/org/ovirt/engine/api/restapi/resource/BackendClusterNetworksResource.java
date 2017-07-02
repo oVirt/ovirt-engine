@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworksResource
@@ -24,7 +24,7 @@ public class BackendClusterNetworksResource
     private String clusterId;
 
     public BackendClusterNetworksResource(String clusterId) {
-        super(VdcQueryType.GetAllNetworksByClusterId, ActionType.AttachNetworkToCluster);
+        super(QueryType.GetAllNetworksByClusterId, ActionType.AttachNetworkToCluster);
         this.clusterId = clusterId;
     }
 
@@ -108,7 +108,7 @@ public class BackendClusterNetworksResource
 
     protected Cluster getCluster() {
         return getEntity(Cluster.class,
-                         VdcQueryType.GetClusterById,
+                         QueryType.GetClusterById,
                          new IdQueryParameters(asGuid(clusterId)),
                          clusterId);
     }
@@ -121,6 +121,6 @@ public class BackendClusterNetworksResource
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks() {
         Guid dataCenterId = getCluster().getStoragePoolId();
         IdQueryParameters params = new IdQueryParameters(dataCenterId);
-        return getBackendCollection(VdcQueryType.GetAllNetworks, params);
+        return getBackendCollection(QueryType.GetAllNetworks, params);
     }
 }

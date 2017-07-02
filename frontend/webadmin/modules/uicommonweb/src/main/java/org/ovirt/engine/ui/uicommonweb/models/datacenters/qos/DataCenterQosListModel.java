@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -57,7 +57,7 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
         }
         IdQueryParameters parameters = new QosQueryParameterBase(getEntity().getId(), getQosType());
         parameters.setRefresh(getIsQueryFirstTime());
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
+        Frontend.getInstance().runQuery(QueryType.GetAllQosByStoragePoolIdAndType,
                 parameters,
                 new SetItemsAsyncQuery());
     }

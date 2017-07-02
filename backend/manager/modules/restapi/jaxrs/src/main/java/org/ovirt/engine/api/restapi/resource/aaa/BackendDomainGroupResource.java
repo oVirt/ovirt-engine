@@ -10,7 +10,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -48,7 +48,7 @@ public class BackendDomainGroupResource
         }
         String directory = parent.getDirectory().getName();
         DirectoryIdQueryParameters parameters = new DirectoryIdQueryParameters(directory, directoryId);
-        return performGet(VdcQueryType.GetDirectoryGroupById, parameters, BaseResource.class);
+        return performGet(QueryType.GetDirectoryGroupById, parameters, BaseResource.class);
     }
 
     // We need to override this method because the native identifier of this

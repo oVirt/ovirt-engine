@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -24,7 +24,7 @@ public class PoolInterfaceListModel extends SearchableListModel<VmPool, VmNetwor
 
         VmPool pool = getEntity();
         if (pool != null) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetVmDataByPoolId,
+            Frontend.getInstance().runQuery(QueryType.GetVmDataByPoolId,
                     new IdQueryParameters(pool.getVmPoolId()),
                     new AsyncQuery<VdcQueryReturnValue>(result -> {
                         if (result != null) {
@@ -32,7 +32,7 @@ public class PoolInterfaceListModel extends SearchableListModel<VmPool, VmNetwor
                             if (vm == null) {
                                 return;
                             }
-                            syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
+                            syncSearch(QueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
                         }
                     }));
         }

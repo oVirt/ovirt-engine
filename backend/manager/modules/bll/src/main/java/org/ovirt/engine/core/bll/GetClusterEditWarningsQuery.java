@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ClusterEditParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -47,7 +47,7 @@ public class GetClusterEditWarningsQuery<P extends ClusterEditParameters> extend
 
     @Override
     protected void executeQueryCommand() {
-        final Cluster oldCluster = backend.runQuery(VdcQueryType.GetClusterById, getParameters()).getReturnValue();
+        final Cluster oldCluster = backend.runQuery(QueryType.GetClusterById, getParameters()).getReturnValue();
         Cluster newCluster = getParameters().getNewCluster();
 
         List<ClusterEditWarnings.Warning> hostWarnings = getProblematicEntities(oldCluster, newCluster, hostCheckers,

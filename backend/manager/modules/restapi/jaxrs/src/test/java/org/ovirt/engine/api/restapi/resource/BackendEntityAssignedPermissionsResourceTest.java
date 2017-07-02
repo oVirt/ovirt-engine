@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendEntityAssignedPermissionsResourceTest
@@ -34,7 +34,7 @@ public class BackendEntityAssignedPermissionsResourceTest
     protected BackendEntityAssignedPermissionsResourceTest(Guid targetId, Class<? extends BaseResource> targetType) {
         super(
             targetId,
-            VdcQueryType.GetPermissionsForObject,
+            QueryType.GetPermissionsForObject,
             new GetPermissionsForObjectParameters(GUIDS[1]),
             targetType,
             "User.Id",
@@ -77,7 +77,7 @@ public class BackendEntityAssignedPermissionsResourceTest
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetPermissionById,
+                                  QueryType.GetPermissionById,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -98,7 +98,7 @@ public class BackendEntityAssignedPermissionsResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
 
-        setUpGetEntityExpectations(VdcQueryType.GetDbUserByUserId,
+        setUpGetEntityExpectations(QueryType.GetDbUserByUserId,
                                     IdQueryParameters.class,
                                     new String[] {"Id"},
                                     new Object[] {GUIDS[1]},

@@ -9,7 +9,7 @@ import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
@@ -27,7 +27,7 @@ public abstract class AbstractBackendAsyncStatusResource<R extends BaseResource>
 
     protected R query() {
         // this query never fails, reporting unknown tasks as a success
-        return performGet(VdcQueryType.GetTasksStatusesByTasksIDs,
+        return performGet(QueryType.GetTasksStatusesByTasksIDs,
                           new GetTasksStatusesByTasksIDsParameters(ids));
     }
 

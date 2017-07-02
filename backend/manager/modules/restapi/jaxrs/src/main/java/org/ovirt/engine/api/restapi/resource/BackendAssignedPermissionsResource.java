@@ -26,9 +26,9 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendAssignedPermissionsResource
@@ -36,20 +36,20 @@ public class BackendAssignedPermissionsResource
         implements AssignedPermissionsResource {
 
     private Guid targetId;
-    private VdcQueryType queryType;
+    private QueryType queryType;
     private VdcQueryParametersBase queryParams;
     private Class<? extends BaseResource> suggestedParentType;
     private VdcObjectType objectType;
 
     public BackendAssignedPermissionsResource(Guid targetId,
-                                              VdcQueryType queryType,
+                                              QueryType queryType,
                                               VdcQueryParametersBase queryParams,
                                               Class<? extends BaseResource> suggestedParentType) {
         this(targetId, queryType, queryParams, suggestedParentType, null);
     }
 
     public BackendAssignedPermissionsResource(Guid targetId,
-                                              VdcQueryType queryType,
+                                              QueryType queryType,
                                               VdcQueryParametersBase queryParams,
                                               Class<? extends BaseResource> suggestedParentType,
                                               VdcObjectType objectType) {
@@ -68,7 +68,7 @@ public class BackendAssignedPermissionsResource
         List<org.ovirt.engine.core.common.businessentities.Permission> directPermissions =
                 getBackendCollection(queryType, queryParams);
         permissions.addAll(directPermissions);
-        if (queryType.equals(VdcQueryType.GetPermissionsForObject)) {
+        if (queryType.equals(QueryType.GetPermissionsForObject)) {
             permissions.addAll(getInheritedPermissions());
         }
         return mapCollection(permissions);
@@ -107,7 +107,7 @@ public class BackendAssignedPermissionsResource
                            ? new String[] {"role.id|name", "dataCenter|cluster|host|storageDomain|vm|vmPool|template.id"}
                            : new String[] {"role.id|name", "user|group.id"});
         PermissionsOperationsParameters parameters = getParameters(permission);
-        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetPermissionById, IdQueryParameters.class);
+        QueryIdResolver<Guid> resolver = new QueryIdResolver<>(QueryType.GetPermissionById, IdQueryParameters.class);
         return performCreate(ActionType.AddPermission, parameters, resolver);
     }
 
@@ -129,14 +129,14 @@ public class BackendAssignedPermissionsResource
     private void castEveryonePermissionsToUser(org.ovirt.engine.core.common.businessentities.Permission entity) {
         if (entity.getAdElementId() != null &&
             entity.getAdElementId().equals(Guid.EVERYONE) &&
-            queryType.equals(VdcQueryType.GetPermissionsByAdElementId)) {
+            queryType.equals(QueryType.GetPermissionsByAdElementId)) {
             entity.setAdElementId(this.targetId);
         }
     }
 
     public DbUser getUserById(Guid userId) {
         IdQueryParameters queryParameters = new IdQueryParameters(userId);
-        VdcQueryReturnValue userQueryResponse = runQuery(VdcQueryType.GetDbUserByUserId, queryParameters);
+        VdcQueryReturnValue userQueryResponse = runQuery(QueryType.GetDbUserByUserId, queryParameters);
 
         DbUser returnValue = null;
         if (userQueryResponse != null && userQueryResponse.getSucceeded()) {
@@ -157,7 +157,7 @@ public class BackendAssignedPermissionsResource
     private List<DbUser> lookupUsers() {
         VdcQueryParametersBase queryParams = new VdcQueryParametersBase();
         queryParams.setFiltered(isFiltered());
-        return getBackendCollection(DbUser.class, VdcQueryType.GetAllDbUsers, queryParams);
+        return getBackendCollection(DbUser.class, QueryType.GetAllDbUsers, queryParams);
     }
 
     /**

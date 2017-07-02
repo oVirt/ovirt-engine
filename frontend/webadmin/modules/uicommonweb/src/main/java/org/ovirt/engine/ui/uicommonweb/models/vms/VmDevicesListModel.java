@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -72,7 +72,7 @@ public class VmDevicesListModel<E extends VM>
                             setItems(frontendDevices);
                         }
             }) {};
-            super.syncSearch(VdcQueryType.GetVmDevicesForVm, new IdQueryParameters(vm.getId()), asyncQuery);
+            super.syncSearch(QueryType.GetVmDevicesForVm, new IdQueryParameters(vm.getId()), asyncQuery);
         }
     }
 

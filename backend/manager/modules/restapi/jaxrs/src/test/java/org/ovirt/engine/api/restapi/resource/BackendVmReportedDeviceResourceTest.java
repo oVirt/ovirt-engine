@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmReportedDeviceResourceTest
@@ -47,7 +47,7 @@ public class BackendVmReportedDeviceResourceTest
 
     protected void setUpEntityQueryExpectations(int times) throws Exception {
         while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetVmGuestAgentInterfacesByVmId,
+            setUpEntityQueryExpectations(QueryType.GetVmGuestAgentInterfacesByVmId,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { VM_ID },

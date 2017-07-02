@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.action.RemoveAuditLogByIdParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
@@ -175,7 +175,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         params.setMaxCount(getSearchPageSize());
         params.setRefresh(false);
 
-        Frontend.getInstance().runQuery(VdcQueryType.Search, params, query);
+        Frontend.getInstance().runQuery(QueryType.Search, params, query);
     }
 
     private void details() {

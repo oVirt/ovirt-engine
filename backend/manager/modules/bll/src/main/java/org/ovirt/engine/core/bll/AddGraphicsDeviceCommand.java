@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 
@@ -44,7 +44,7 @@ public class AddGraphicsDeviceCommand extends AbstractGraphicsDeviceCommand<Grap
             return false;
         }
 
-        VdcQueryReturnValue res = runInternalQuery(VdcQueryType.GetGraphicsDevices,
+        VdcQueryReturnValue res = runInternalQuery(QueryType.GetGraphicsDevices,
                 new IdQueryParameters(getVmBaseId()));
         if (res.getSucceeded()) {
             prevDevices = res.getReturnValue();

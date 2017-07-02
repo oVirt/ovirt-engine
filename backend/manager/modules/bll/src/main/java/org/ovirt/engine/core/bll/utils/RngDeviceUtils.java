@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -41,7 +41,7 @@ public class RngDeviceUtils {
         }
         final List<VmRngDevice> rngDevices =
                 backend.runInternalQuery(
-                        VdcQueryType.GetRngDevice, new IdQueryParameters(vmBaseId), commandContext.getEngineContext())
+                        QueryType.GetRngDevice, new IdQueryParameters(vmBaseId), commandContext.getEngineContext())
                         .getReturnValue();
         if (rngDevices.isEmpty()) {
             return Optional.empty();

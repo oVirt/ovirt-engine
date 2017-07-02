@@ -23,7 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class BackendHostsResourceTest
@@ -65,7 +65,7 @@ public class BackendHostsResourceTest
     public void testAddHost() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
+        setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { "Default" },
@@ -78,7 +78,7 @@ public class BackendHostsResourceTest
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetVdsByVdsId,
+                                  QueryType.GetVdsByVdsId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -96,7 +96,7 @@ public class BackendHostsResourceTest
     public void testAddHostClusterByName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
 
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
+        setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
@@ -109,7 +109,7 @@ public class BackendHostsResourceTest
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetVdsByVdsId,
+                                  QueryType.GetVdsByVdsId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -135,7 +135,7 @@ public class BackendHostsResourceTest
                                   true,
                                   true,
                                   GUIDS[0],
-                                  VdcQueryType.GetVdsByVdsId,
+                                  QueryType.GetVdsByVdsId,
                                   IdQueryParameters.class,
                                   new String[] { "Id" },
                                   new Object[] { GUIDS[0] },
@@ -175,7 +175,7 @@ public class BackendHostsResourceTest
     }
 
     private void doTestBadAddHost(boolean valid, boolean success, String detail) throws Exception {
-        setUpEntityQueryExpectations(VdcQueryType.GetClusterByName,
+        setUpEntityQueryExpectations(QueryType.GetClusterByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { "Default" },

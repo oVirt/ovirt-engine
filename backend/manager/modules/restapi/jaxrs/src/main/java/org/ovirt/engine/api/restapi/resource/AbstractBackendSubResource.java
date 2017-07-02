@@ -8,8 +8,8 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* extends IVdcQueryable */> extends
@@ -26,11 +26,11 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
         this.guid = asGuidOr404(id);
     }
 
-    protected R performGet(VdcQueryType query, VdcQueryParametersBase params) {
+    protected R performGet(QueryType query, VdcQueryParametersBase params) {
         return performGet(query, params, null);
     }
 
-    protected R performGet(VdcQueryType query, VdcQueryParametersBase params, Class<? extends BaseResource> suggestedParentType) {
+    protected R performGet(QueryType query, VdcQueryParametersBase params, Class<? extends BaseResource> suggestedParentType) {
         Q entity = getEntity(entityType, query, params, id, true);
         return addLinks(populate(map(entity, null), entity), suggestedParentType);
     }

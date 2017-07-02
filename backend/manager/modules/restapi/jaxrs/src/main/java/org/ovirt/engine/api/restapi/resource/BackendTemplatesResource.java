@@ -43,9 +43,9 @@ import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplatesResource
@@ -62,7 +62,7 @@ public class BackendTemplatesResource
     @Override
     public Templates list() {
         if (isFiltered()) {
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllVmTemplates,
+            return mapCollection(getBackendCollection(QueryType.GetAllVmTemplates,
                     new VdcQueryParametersBase(), SearchType.VmTemplate));
         } else {
             return mapCollection(getBackendCollection(SearchType.VmTemplate));
@@ -139,7 +139,7 @@ public class BackendTemplatesResource
         Response response = performCreate(
             ActionType.AddVmTemplate,
             params,
-            new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class)
+            new QueryIdResolver<Guid>(QueryType.GetVmTemplate, GetVmTemplateParameters.class)
         );
 
         Template result = (Template) response.getEntity();
@@ -170,7 +170,7 @@ public class BackendTemplatesResource
     }
 
     private Cluster lookupCluster(Guid id) {
-        return getEntity(Cluster.class, VdcQueryType.GetClusterById, new IdQueryParameters(id), "GetClusterById");
+        return getEntity(Cluster.class, QueryType.GetClusterById, new IdQueryParameters(id), "GetClusterById");
     }
 
     protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(Vm vm, Guid vmId, Guid storageDomainId,
@@ -216,7 +216,7 @@ public class BackendTemplatesResource
     private Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> queryVmDisksMap(Guid vmId) {
         List<org.ovirt.engine.core.common.businessentities.storage.Disk> vmDisks = getBackendCollection(
             org.ovirt.engine.core.common.businessentities.storage.Disk.class,
-            VdcQueryType.GetAllDisksByVmId,
+            QueryType.GetAllDisksByVmId,
             new IdQueryParameters(vmId)
         );
         return Entities.businessEntitiesById(vmDisks);
@@ -232,7 +232,7 @@ public class BackendTemplatesResource
             IdsQueryParameters params = new IdsQueryParameters();
             List<Guid> ids = entities.stream().map(VmTemplate::getId).collect(Collectors.toList());
             params.setId(ids);
-            VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
+            VdcQueryReturnValue queryReturnValue = runQuery(QueryType.GetVmsInit, params);
             if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
                 List<VmInit> vmInits = queryReturnValue.getReturnValue();
                 Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
@@ -260,7 +260,7 @@ public class BackendTemplatesResource
         org.ovirt.engine.core.common.businessentities.VM vm;
         if (template.getVm().isSetId()) {
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
-                           VdcQueryType.GetVmByVmId,
+                           QueryType.GetVmByVmId,
                            new IdQueryParameters(asGuid(template.getVm().getId())),
                            template.getVm().getId());
         } else {
@@ -272,7 +272,7 @@ public class BackendTemplatesResource
                     new GetVmByVmNameForDataCenterParameters(dataCenterId, template.getVm().getName());
             params.setFiltered(isFiltered());
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
-                           VdcQueryType.GetVmByVmNameForDataCenter,
+                           QueryType.GetVmByVmNameForDataCenter,
                     params,
                            template.getVm().getName());
         }
@@ -285,7 +285,7 @@ public class BackendTemplatesResource
 
     protected Guid getClusterId(Template template) {
         return getEntity(Cluster.class,
-                VdcQueryType.GetClusterByName,
+                QueryType.GetClusterByName,
                 new NameQueryParameters(template.getCluster().getName()),
                 "Cluster: name=" + template.getCluster().getName()).getId();
     }
@@ -311,14 +311,14 @@ public class BackendTemplatesResource
 
     private List<VmRngDevice> getRngDevices(Guid id) {
         return getEntity(List.class,
-            VdcQueryType.GetRngDevice,
+            QueryType.GetRngDevice,
             new IdQueryParameters(id),
             "GetRngDevice", true);
     }
 
     private List<String> getConsoleDevicesForEntity(Guid id) {
         return getEntity(List.class,
-                VdcQueryType.GetConsoleDevices,
+                QueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
     }

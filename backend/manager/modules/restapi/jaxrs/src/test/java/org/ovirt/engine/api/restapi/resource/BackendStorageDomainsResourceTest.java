@@ -31,8 +31,8 @@ import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParamete
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageDomainsResourceTest
         extends AbstractBackendCollectionResourceTest<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain, BackendStorageDomainsResource> {
@@ -80,17 +80,17 @@ public class BackendStorageDomainsResourceTest
         Host host = new Host();
         host.setId(GUIDS[0].toString());
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[POSIX_IDX].toString() },
                 setUpPosixStorageServerConnection(POSIX_IDX));
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[POSIX_IDX].toString() },
                 setUpPosixStorageServerConnection(POSIX_IDX));
-        setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
+        setUpGetEntityExpectations(QueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
                 new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
@@ -103,7 +103,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 true,
                 GUIDS[POSIX_IDX],
-                VdcQueryType.GetStorageDomainById,
+                QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[POSIX_IDX] },
@@ -149,7 +149,7 @@ public class BackendStorageDomainsResourceTest
         Host host = new Host();
         host.setName(NAMES[0]);
 
-        setUpGetEntityExpectations(VdcQueryType.GetVdsStaticByName,
+        setUpGetEntityExpectations(QueryType.GetVdsStaticByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
                 new Object[] { NAMES[0] },
@@ -174,13 +174,13 @@ public class BackendStorageDomainsResourceTest
                 true,
                 GUIDS[idx].toString()));
 
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[idx].toString() },
                 setUpStorageServerConnection(idx));
 
-        setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
+        setUpGetEntityExpectations(QueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
                 new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[idx], TYPES_MAPPED[idx],
@@ -195,7 +195,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 true,
                 GUIDS[idx],
-                VdcQueryType.GetStorageDomainById,
+                QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[idx] },
@@ -220,7 +220,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 GUIDS[LOCAL_IDX].toString()));
 
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[LOCAL_IDX].toString() },
@@ -233,7 +233,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 true,
                 GUIDS[LOCAL_IDX],
-                VdcQueryType.GetStorageDomainById,
+                QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[LOCAL_IDX] },
@@ -266,13 +266,13 @@ public class BackendStorageDomainsResourceTest
                 true,
                 GUIDS[POSIX_IDX].toString()));
 
-        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+        setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                 StorageServerConnectionQueryParametersBase.class,
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[POSIX_IDX].toString() },
                 setUpPosixStorageServerConnection(POSIX_IDX));
 
-        setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
+        setUpGetEntityExpectations(QueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
                 new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
@@ -285,7 +285,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 true,
                 GUIDS[POSIX_IDX],
-                VdcQueryType.GetStorageDomainById,
+                QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[POSIX_IDX] },
@@ -316,13 +316,13 @@ public class BackendStorageDomainsResourceTest
                 true,
                 GUIDS[0].toString()));
 
-        setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
+        setUpGetEntityExpectations(QueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
                 new String[] { "Id", "StorageType" },
                 new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI },
                 "this return value isn't used");
 
-        setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
+        setUpGetEntityExpectations(QueryType.GetLunsByVgId,
                 GetLunsByVgIdParameters.class,
                 new String[] { "VgId" },
                 new Object[] { GUIDS[GUIDS.length - 1].toString() },
@@ -335,7 +335,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetStorageDomainById,
+                QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -359,14 +359,14 @@ public class BackendStorageDomainsResourceTest
             lun.setTarget(null);
         }
         setUriInfo(setUpBasicUriExpectations());
-        setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
+        setUpGetEntityExpectations(QueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
                 new String[] { "Id", "StorageType" },
                 new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI },
                 "this return value isn't used");
 
         List<LUNs> luns = setUpLuns();
-        setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
+        setUpGetEntityExpectations(QueryType.GetLunsByVgId,
                 GetLunsByVgIdParameters.class,
                 new String[] { "VgId" },
                 new Object[] { GUIDS[GUIDS.length - 1].toString() },
@@ -379,7 +379,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 true,
                 GUIDS[0],
-                VdcQueryType.GetStorageDomainById,
+                QueryType.GetStorageDomainById,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -430,7 +430,7 @@ public class BackendStorageDomainsResourceTest
                 true,
                 true, null);
 
-        setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
+        setUpGetEntityExpectations(QueryType.GetExistingStorageDomainList,
                 GetExistingStorageDomainListParameters.class,
                 new String[] { "Id", "StorageType", "StorageDomainType", "Path" },
                 new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[0], TYPES_MAPPED[0], ADDRESSES[0] + ":" + PATHS[0] },
@@ -526,7 +526,7 @@ public class BackendStorageDomainsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         if (failure == null) {
             for (int i = 0; i < NAMES.length; i++) {
-                setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+                setUpGetEntityExpectations(QueryType.GetStorageServerConnectionById,
                         StorageServerConnectionQueryParametersBase.class,
                         new String[] { "ServerConnectionId" },
                         new Object[] { GUIDS[i].toString() }, setUpStorageServerConnection(i));

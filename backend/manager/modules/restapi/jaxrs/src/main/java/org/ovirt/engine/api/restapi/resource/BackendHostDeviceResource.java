@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.resource.HostDeviceResource;
 import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.queries.HostDeviceParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendHostDeviceResource
@@ -39,6 +39,6 @@ public class BackendHostDeviceResource
 
     @Override
     public HostDevice get() {
-        return performGet(VdcQueryType.GetHostDeviceByHostIdAndDeviceName, new HostDeviceParameters(parent.getHostId(), deviceName));
+        return performGet(QueryType.GetHostDeviceByHostIdAndDeviceName, new HostDeviceParameters(parent.getHostId(), deviceName));
     }
 }

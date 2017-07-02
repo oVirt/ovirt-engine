@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDataCenterClusterResourceTest
@@ -70,7 +70,7 @@ public class BackendDataCenterClusterResourceTest
     @Test
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetClustersByStoragePoolId,
+        setUpEntityQueryExpectations(QueryType.GetClustersByStoragePoolId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
@@ -87,7 +87,7 @@ public class BackendDataCenterClusterResourceTest
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUpEntityQueryExpectations(VdcQueryType.GetClustersByStoragePoolId,
+        setUpEntityQueryExpectations(QueryType.GetClustersByStoragePoolId,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { dataCenterId },
@@ -143,7 +143,7 @@ public class BackendDataCenterClusterResourceTest
         final Network mockNetwork = mock(Network.class);
         when(mockNetwork.getId()).thenReturn(MANAGEMENT_NETWORK_ID);
 
-        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+        setUpGetEntityExpectations(QueryType.GetManagementNetwork,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
@@ -202,7 +202,7 @@ public class BackendDataCenterClusterResourceTest
     @Test
     public void testRemove() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetClustersByStoragePoolId,
+            QueryType.GetClustersByStoragePoolId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { dataCenterId },
@@ -225,7 +225,7 @@ public class BackendDataCenterClusterResourceTest
     @Test
     public void testRemoveNonExistant() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetClustersByStoragePoolId,
+            QueryType.GetClustersByStoragePoolId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { dataCenterId },
@@ -245,7 +245,7 @@ public class BackendDataCenterClusterResourceTest
     @Test
     public void testRemoveCantDo() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetClustersByStoragePoolId,
+            QueryType.GetClustersByStoragePoolId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { dataCenterId },
@@ -258,7 +258,7 @@ public class BackendDataCenterClusterResourceTest
     @Test
     public void testRemoveFailed() throws Exception {
         setUpEntityQueryExpectations(
-            VdcQueryType.GetClustersByStoragePoolId,
+            QueryType.GetClustersByStoragePoolId,
             IdQueryParameters.class,
             new String[] { "Id" },
             new Object[] { dataCenterId },
@@ -294,7 +294,7 @@ public class BackendDataCenterClusterResourceTest
 
     protected void setUpGetEntityExpectations(int times, boolean notFound) throws Exception {
         while (times-- > 0) {
-            setUpGetEntityExpectations(VdcQueryType.GetClusterById,
+            setUpGetEntityExpectations(QueryType.GetClusterById,
                                        IdQueryParameters.class,
                                        new String[] { "Id" },
                                        new Object[] { GUIDS[0] },
