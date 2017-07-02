@@ -747,7 +747,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                         new GetDeviceListQueryParameters(hostId,
                                 sanStorageModelBase.getType(),
                                 true,
-                                unkownStatusLuns),
+                                unkownStatusLuns,
+                                false),
                         new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
                             public void onSuccess(VdcQueryReturnValue response) {

@@ -934,7 +934,8 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                         new GetDeviceListQueryParameters(hostId,
                                 sanStorageModelBase.getType(),
                                 true,
-                                unkownStatusLuns),
+                                unkownStatusLuns,
+                                false),
                         new AsyncQuery<>(new AsyncCallback<VdcQueryReturnValue>() {
                             @Override
                             public void onSuccess(VdcQueryReturnValue response) {

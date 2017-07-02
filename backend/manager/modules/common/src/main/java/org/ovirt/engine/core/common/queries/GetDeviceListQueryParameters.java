@@ -10,6 +10,7 @@ public class GetDeviceListQueryParameters extends IdQueryParameters {
     private StorageType privateStorageType;
     private boolean checkStatus;
     private List<String> lunIds;
+    private boolean validateHostStatus;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -35,14 +36,27 @@ public class GetDeviceListQueryParameters extends IdQueryParameters {
         this.lunIds = lunIds;
     }
 
-    public GetDeviceListQueryParameters(Guid vdsId, StorageType storageType, boolean checkStatus, List<String> lunIds) {
+    public GetDeviceListQueryParameters(Guid vdsId,
+            StorageType storageType,
+            boolean checkStatus,
+            List<String> lunIds,
+            boolean validateHostStatus) {
         super(vdsId);
         setStorageType(storageType);
         setCheckStatus(checkStatus);
         setLunIds(lunIds);
+        setValidateHostStatus(validateHostStatus);
+    }
+
+    public void setValidateHostStatus(boolean validateHostStatus) {
+        this.validateHostStatus = validateHostStatus;
+    }
+
+    public boolean isValidateHostStatus() {
+        return validateHostStatus;
     }
 
     public GetDeviceListQueryParameters() {
-        this(null, StorageType.UNKNOWN, false, null);
+        this(null, StorageType.UNKNOWN, false, null, false);
     }
 }

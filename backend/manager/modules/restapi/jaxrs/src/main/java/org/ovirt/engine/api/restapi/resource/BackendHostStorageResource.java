@@ -59,8 +59,9 @@ public class BackendHostStorageResource
 
     protected List<LUNs> getLogicalUnits() {
         boolean reportStatus = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, REPORT_STATUS, true, true);
-        return getBackendCollection(VdcQueryType.GetDeviceList,
-                new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN, reportStatus, null));
+        GetDeviceListQueryParameters params =
+                new GetDeviceListQueryParameters(asGuid(hostId), StorageType.UNKNOWN, reportStatus, null, true);
+        return getBackendCollection(VdcQueryType.GetDeviceList, params);
     }
 
     protected HostStorage map(org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
