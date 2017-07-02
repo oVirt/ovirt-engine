@@ -20,7 +20,6 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterValidatorBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
@@ -75,9 +74,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
@@ -87,8 +84,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     @Inject
     private AuditLogDirector auditLogDirector;
 
-    @Inject
-    private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
     @Inject
     private SupportedHostFeatureDao hostFeatureDao;
     @Inject
@@ -118,10 +113,6 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
     private StoragePoolDao storagePoolDao;
     @Inject
     private GlusterVolumeDao glusterVolumeDao;
-    @Inject
-    private NetworkDao networkDao;
-    @Inject
-    private InterfaceDao interfaceDao;
     @Inject
     private VmDao vmDao;
 
