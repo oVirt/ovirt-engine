@@ -45,7 +45,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
     protected Class<Q> entityType;
     protected String[] subCollections;
 
-    public static enum PollingType {
+    public enum PollingType {
         VDSM_TASKS, JOB;
     }
 
