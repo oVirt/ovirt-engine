@@ -44,10 +44,10 @@ public class IscsiBondModel extends Model {
     private UICommand cancelCommand;
 
     public IscsiBondModel() {
-        setName(new EntityModel<String>());
-        setDescription(new EntityModel<String>());
-        setNetworks(new ListModel<Network>());
-        setStorageTargets(new ListModel<StorageServerConnections>());
+        setName(new EntityModel<>());
+        setDescription(new EntityModel<>());
+        setNetworks(new ListModel<>());
+        setStorageTargets(new ListModel<>());
         createSaveButon();
     }
 
