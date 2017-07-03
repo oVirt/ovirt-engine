@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -43,6 +42,7 @@ import org.ovirt.engine.core.di.InjectorRule;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.DumpXmlsVDSCommand;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmDevicesMonitoringTest {
@@ -131,25 +131,25 @@ public class VmDevicesMonitoringTest {
         }
     }
 
-    private Map<String, Object> getFullList(Guid vmId, Map<String, Object>... deviceInfos) {
+    private Map<String, Object> getDumpXmls(Guid vmId, Map<String, Object>... deviceInfos) {
         Map<String, Object> vmInfo = new HashMap<>();
         vmInfo.put("vmId", vmId.toString());
         vmInfo.put("devices", deviceInfos);
         return vmInfo;
     }
 
-    private void initFullList(Map<String, Object>... deviceInfos) {
+    private void initDumpXmls(Map<String, Object>... deviceInfos) {
         VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setReturnValue(new Map[] { getFullList(VM_ID, deviceInfos) });
+        returnValue.setReturnValue(new Map[] { getDumpXmls(VM_ID, deviceInfos) });
         returnValue.setSucceeded(true);
-        doReturn(returnValue).when(resourceManager).runVdsCommand(eq(VDSCommandType.FullList),
-                any(FullListVDSCommandParameters.class));
+        doReturn(returnValue).when(resourceManager).runVdsCommand(eq(VDSCommandType.DumpXmls),
+                any(DumpXmlsVDSCommand.Params.class));
     }
 
     @Test
     public void testIgnoreOutdatedHash() {
         initDevices();
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(3L);
 
@@ -157,7 +157,7 @@ public class VmDevicesMonitoringTest {
         change.updateVm(VM_ID, NEW_HASH);
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -167,7 +167,7 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testHashNotChanged() {
         initDevices();
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -175,7 +175,7 @@ public class VmDevicesMonitoringTest {
         change.updateVm(VM_ID, INITIAL_HASH);
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -190,7 +190,7 @@ public class VmDevicesMonitoringTest {
                 getVmDevice(VIDEO_DEVICE_ID, VM_ID, VmDeviceGeneralType.VIDEO, "cirrus", true),
                 getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true)
         );
-        initFullList(
+        initDumpXmls(
                 getDeviceInfo(null, "balloon", "memballoon", null),
                 getDeviceInfo(null, "controller", "virtio-serial", SERIAL_DEVICE_ADDRESS),
                 getDeviceInfo(VIDEO_DEVICE_ID, "video", "cirrus", VIDEO_DEVICE_ADDRESS),
@@ -234,10 +234,10 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testUpdateVmFromFullList() {
         initDevices();
-        initFullList();
+        initDumpXmls();
 
         VmDevicesMonitoring.Change change = vmDevicesMonitoring.createChange(VDS_ID, 1L);
-        Map<String, Object> vmInfo = getFullList(VM_ID,
+        Map<String, Object> vmInfo = getDumpXmls(VM_ID,
                 getDeviceInfo(null, "balloon", "memballoon", null),
                 getDeviceInfo(null, "controller", "virtio-serial", SERIAL_DEVICE_ADDRESS),
                 getDeviceInfo(VIDEO_DEVICE_ID, "video", "cirrus", VIDEO_DEVICE_ADDRESS),
@@ -275,7 +275,7 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testAddDevice() {
         initDevices();
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -283,7 +283,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true));
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, times(1)).saveAll(any());
@@ -295,7 +295,7 @@ public class VmDevicesMonitoringTest {
         VmDevice device = getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true);
 
         initDevices(device);
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -303,7 +303,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(device);
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, times(1)).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -315,7 +315,7 @@ public class VmDevicesMonitoringTest {
         initDevices(
                 getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true)
         );
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -323,7 +323,7 @@ public class VmDevicesMonitoringTest {
         change.removeDevice(new VmDeviceId(CDROM_DEVICE_ID, VM_ID));
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, times(1)).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -333,7 +333,7 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testAddAndUpdateDevice() {
         initDevices();
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -348,7 +348,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(device);
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, times(1)).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, times(1)).saveAll(any());
@@ -358,7 +358,7 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testIgnoreOutdatedUpdateDevice() {
         initDevices();
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -373,7 +373,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(device);
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, times(1)).saveAll(any());
@@ -385,7 +385,7 @@ public class VmDevicesMonitoringTest {
         initDevices(
                 getVmDevice(CDROM_DEVICE_ID, VM_ID, VmDeviceGeneralType.DISK, "cdrom", true)
         );
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(2L);
 
@@ -393,7 +393,7 @@ public class VmDevicesMonitoringTest {
         change.removeDevice(new VmDeviceId(CDROM_DEVICE_ID, VM_ID));
         change.flush();
 
-        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, never()).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, never()).removeAll(any());
         verify(vmDeviceDao, never()).saveAll(any());
@@ -403,7 +403,7 @@ public class VmDevicesMonitoringTest {
     @Test
     public void testFullListErasesIndividualUpdateDevice() {
         initDevices();
-        initFullList();
+        initDumpXmls();
 
         vmDevicesMonitoring.initDevicesStatuses(1L);
 
@@ -426,7 +426,7 @@ public class VmDevicesMonitoringTest {
         change.updateDevice(controller);
         change.flush();
 
-        verify(resourceManager, times(1)).runVdsCommand(eq(VDSCommandType.FullList), any());
+        verify(resourceManager, times(1)).runVdsCommand(eq(VDSCommandType.DumpXmls), any());
         verify(vmDeviceDao, never()).updateAllInBatch(any());
         verify(vmDeviceDao, times(1)).removeAll(any());
         verify(vmDeviceDao, times(2)).saveAll(any());
