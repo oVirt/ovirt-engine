@@ -1,11 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddIscsiBondParameters;
@@ -64,15 +63,11 @@ public class IscsiBondModel extends Model {
 
     private void initializeNetworkList() {
         AsyncDataProvider.getInstance().getAllDataCenterNetworks(new AsyncQuery<>(networks -> {
-            List<Network> selected = new ArrayList<>();
             Set<Guid> iscsiBonded = isBondExist() ?
                     new HashSet<>(getIscsiBond().getNetworkIds()) : Collections.emptySet();
 
-            for (Network network : networks) {
-                if (iscsiBonded.contains(network.getId())) {
-                    selected.add(network);
-                }
-            }
+            List<Network> selected =
+                    networks.stream().filter(n -> iscsiBonded.contains(n.getId())).collect(Collectors.toList());
 
             getNetworks().setItems(networks);
             getNetworks().setSelectedItems(selected);
@@ -81,15 +76,11 @@ public class IscsiBondModel extends Model {
 
     private void initializeStorageTargetsList() {
         AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(conns -> {
-            ArrayList<StorageServerConnections> selected = new ArrayList<>();
             Set<String> iscsiBonded = isBondExist() ?
                     new HashSet<>(getIscsiBond().getStorageConnectionIds()) : Collections.emptySet();
 
-            for (StorageServerConnections conn : conns) {
-                if (iscsiBonded.contains(conn.getId())) {
-                    selected.add(conn);
-                }
-            }
+            List<StorageServerConnections> selected =
+                    conns.stream().filter(c -> iscsiBonded.contains(c.getId())).collect(Collectors.toList());
 
             getStorageTargets().setItems(conns);
             getStorageTargets().setSelectedItems(selected);
@@ -154,23 +145,12 @@ public class IscsiBondModel extends Model {
     }
 
     private List<Guid> getSelectedNetworks() {
-        List<Guid> selectedNetworks = new LinkedList<>();
-
-        for (Network model : getNetworks().getSelectedItems()) {
-            selectedNetworks.add(model.getId());
-        }
-
-        return selectedNetworks;
+        return getNetworks().getSelectedItems().stream().map(Network::getId).collect(Collectors.toList());
     }
 
     private List<String> getSelectedConnections() {
-        List<String> selectedConnections = new ArrayList<>();
-
-        for (StorageServerConnections conn : getStorageTargets().getSelectedItems()) {
-            selectedConnections.add(conn.getId());
-        }
-
-        return selectedConnections;
+        return getStorageTargets()
+                .getSelectedItems().stream().map(StorageServerConnections::getId).collect(Collectors.toList());
     }
 
     private boolean validate() {
