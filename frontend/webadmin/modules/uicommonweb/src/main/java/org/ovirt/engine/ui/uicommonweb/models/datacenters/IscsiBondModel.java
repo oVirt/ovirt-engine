@@ -66,7 +66,7 @@ public class IscsiBondModel extends Model {
         AsyncDataProvider.getInstance().getAllDataCenterNetworks(new AsyncQuery<>(networks -> {
             List<Network> selected = new ArrayList<>();
             Set<Guid> iscsiBonded = isBondExist() ?
-                    new HashSet<>(getIscsiBond().getNetworkIds()) : Collections.<Guid>emptySet();
+                    new HashSet<>(getIscsiBond().getNetworkIds()) : Collections.emptySet();
 
             for (Network network : networks) {
                 if (iscsiBonded.contains(network.getId())) {
@@ -83,7 +83,7 @@ public class IscsiBondModel extends Model {
         AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery<>(conns -> {
             ArrayList<StorageServerConnections> selected = new ArrayList<>();
             Set<String> iscsiBonded = isBondExist() ?
-                    new HashSet<>(getIscsiBond().getStorageConnectionIds()) : Collections.<String>emptySet();
+                    new HashSet<>(getIscsiBond().getStorageConnectionIds()) : Collections.emptySet();
 
             for (StorageServerConnections conn : conns) {
                 if (iscsiBonded.contains(conn.getId())) {
