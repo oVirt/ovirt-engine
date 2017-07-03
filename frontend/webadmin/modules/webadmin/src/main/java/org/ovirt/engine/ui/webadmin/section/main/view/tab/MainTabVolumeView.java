@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -211,39 +211,66 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             }
         }));
 
-        addDividerToKebab();
-        addMenuItemToKebab(
-                getTable().addMenuListItem(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startVolumeProfiling()) {
+        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeProfilingActions = new ArrayList<>();
+
+        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startVolumeProfiling()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStartVolumeProfilingCommand();
             }
-        }));
-        addMenuItemToKebab(
-                getTable().addMenuListItem(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.volumeProfileDetails()) {
+        });
+        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.volumeProfileDetails()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getShowVolumeProfileDetailsCommand();
             }
-        }));
-        addMenuItemToKebab(
-                getTable().addMenuListItem(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopVolumeProfiling()) {
+        });
+        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopVolumeProfiling()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopVolumeProfilingCommand();
             }
-        }));
-        addDividerToKebab();
+        });
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeProfilingAction(),
+                volumeProfilingActions
+            ),
+            new DropdownActionButton<GlusterVolumeEntity>(volumeProfilingActions,
+                    new DropdownActionButton.SelectedItemsProvider<GlusterVolumeEntity>() {
+                @Override
+                public List<GlusterVolumeEntity> getSelectedItems() {
+                    return getMainModel().getSelectedItems();
+                }
+            })
+        ));
 
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainTabTitle(),
-                getVolumeSnapshotMenu(),
-                CommandLocation.ContextAndToolBar)));
+        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeSnapshotActions = getVolumeSnapshotMenu();
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainTabTitle(),
+                volumeSnapshotActions
+            ),
+            new DropdownActionButton<GlusterVolumeEntity>(volumeSnapshotActions,
+                    new DropdownActionButton.SelectedItemsProvider<GlusterVolumeEntity>() {
+                @Override
+                public List<GlusterVolumeEntity> getSelectedItems() {
+                    return getMainModel().getSelectedItems();
+                }
+            })
+        ));
 
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainTabTitle(),
-                getGeoRepCreateMenu(constants),
-                CommandLocation.ContextAndToolBar)));
+        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeGeoRepActions = getGeoRepCreateMenu(constants);
+        addButtonToActionGroup(
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainTabTitle(),
+                volumeGeoRepActions
+            ),
+            new DropdownActionButton<GlusterVolumeEntity>(volumeGeoRepActions,
+                    new DropdownActionButton.SelectedItemsProvider<GlusterVolumeEntity>() {
+                @Override
+                public List<GlusterVolumeEntity> getSelectedItems() {
+                    return getMainModel().getSelectedItems();
+                }
+            })
+        ));
     }
 
     private List<ActionButtonDefinition<GlusterVolumeEntity>> getGeoRepCreateMenu(ApplicationConstants constants) {
