@@ -333,6 +333,7 @@ select fn_db_add_config_value_for_versions_up_to('DiscardAfterDeleteSupported', 
 select fn_db_add_config_value_for_versions_up_to('QcowCompatSupported', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('ReduceDeviceFromStorageDomain', 'false', '4.0');
 select fn_db_add_config_value_for_versions_up_to('VmLeasesSupported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('DomainXML', 'false', '4.1');
 select fn_db_add_config_value('IPTablesConfigSiteCustom','','general');
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
