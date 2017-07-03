@@ -192,13 +192,13 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         };
 
         applicationsTable.addColumn(nameColumn, constants.installedAppsVm());
-        applicationsTable.setRowData(new ArrayList<String>());
+        applicationsTable.setRowData(new ArrayList<>());
 
         getDetailModel().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if (getDetailModel().getAppListModel().getItems() != null) {
                 applicationsTable.setRowData(new ArrayList<>(getDetailModel().getAppListModel().getItems()));
             } else {
-                applicationsTable.setRowData(new ArrayList<String>());
+                applicationsTable.setRowData(new ArrayList<>());
             }
         });
     }
