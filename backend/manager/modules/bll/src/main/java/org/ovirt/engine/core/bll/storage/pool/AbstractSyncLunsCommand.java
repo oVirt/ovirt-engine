@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 
@@ -28,6 +29,12 @@ public abstract class AbstractSyncLunsCommand<T extends SyncLunsParameters> exte
     protected boolean validateStoragePool() {
         return checkStoragePool() &&
                 checkStoragePoolStatus(StoragePoolStatus.Up);
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addValidationMessage(EngineMessage.VAR__ACTION__SYNC);
     }
 
     protected List<LUNs> getDeviceList() {

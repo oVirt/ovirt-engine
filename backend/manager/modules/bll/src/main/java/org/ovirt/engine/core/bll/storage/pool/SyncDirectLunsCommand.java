@@ -107,7 +107,6 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addValidationMessage(EngineMessage.VAR__ACTION__SYNC);
         addValidationMessage(EngineMessage.VAR__TYPE__DISK);
     }
 

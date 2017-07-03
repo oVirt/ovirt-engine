@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SyncDirectLunsParameters;
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -25,6 +26,12 @@ public class SyncAllUsedLunsCommand<T extends SyncLunsParameters> extends Abstra
         syncDirectLunsAttachedToVmsInPool(deviceList);
 
         setSucceeded(true);
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addValidationMessage(EngineMessage.VAR__TYPE__LUNS);
     }
 
     private void syncStorageDomainsLuns(List<LUNs> deviceList) {

@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainPara
 import org.ovirt.engine.core.common.action.SyncLunsParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
@@ -39,6 +40,12 @@ public abstract class AbstractSyncStorageDomainsLunsCommand<T extends SyncLunsPa
         }
 
         setSucceeded(true);
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addValidationMessage(EngineMessage.VAR__TYPE__STORAGE__DOMAIN);
     }
 
     /**

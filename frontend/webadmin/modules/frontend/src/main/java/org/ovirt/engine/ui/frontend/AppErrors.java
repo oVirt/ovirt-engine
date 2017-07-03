@@ -565,6 +565,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__TYPE__DISK();
 
+    String VAR__TYPE__LUNS();
+
     String VAR__TYPE__BOOKMARK();
 
     String VAR__TYPE__VM_TICKET();
