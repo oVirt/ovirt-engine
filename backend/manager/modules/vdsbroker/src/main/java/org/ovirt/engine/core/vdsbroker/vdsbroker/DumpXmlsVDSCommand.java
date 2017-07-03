@@ -38,7 +38,7 @@ public class DumpXmlsVDSCommand<P extends DumpXmlsVDSCommand.Params> extends Vds
 
     private Map<String, Object> extractDevices(Guid vmId, String domxml) {
         try {
-            return converter.convert(vmId, domxml);
+            return converter.convert(vmId, getVds().getId(), domxml);
         } catch (Exception ex) {
             log.error("Failed during parsing devices of VM {} ({}) error is: {}", resourceManager.getVmManager(vmId).getName(), vmId, ex);
             log.error("Exception:", ex);

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.libvirt;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,10 +12,12 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
@@ -31,6 +34,8 @@ public class VmDevicesConverter {
     @Inject
     private VmDeviceDao vmDeviceDao;
     @Inject
+    private HostDeviceDao hostDeviceDao;
+    @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -44,19 +49,19 @@ public class VmDevicesConverter {
     private static final String DEVICES_START_ELEMENT = "<devices>";
     private static final String DEVICES_END_ELEMENT = "</devices>";
 
-    public Map<String, Object> convert(Guid vmId, String xml) throws Exception {
+    public Map<String, Object> convert(Guid vmId, Guid hostId, String xml) throws Exception {
         String devicesXml = xml.substring(
                 xml.indexOf(DEVICES_START_ELEMENT),
                 xml.indexOf(DEVICES_END_ELEMENT) + DEVICES_END_ELEMENT.length());
         XmlDocument document = new XmlDocument(devicesXml);
         Map<String, Object> result = new HashMap<>();
         result.put(VdsProperties.vm_guid, vmId.toString());
-        result.put(VdsProperties.Devices, parseDevices(vmId, document));
+        result.put(VdsProperties.Devices, parseDevices(vmId, hostId, document));
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object>[] parseDevices(Guid vmId, XmlDocument document) throws Exception {
+    private Map<String, Object>[] parseDevices(Guid vmId, Guid hostId, XmlDocument document) throws Exception {
         List<VmDevice> devices = vmDeviceDao.getVmDeviceByVmId(vmId);
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -73,7 +78,7 @@ public class VmDevicesConverter {
         result.addAll(parseDisks(document, devices, vmId));
         result.addAll(parseRedirs(document, devices));
         result.addAll(parseMemories(document, devices));
-        result.addAll(parseHostDevices(document, devices));
+        result.addAll(parseHostDevices(document, devices, hostId));
         return result.stream()
                 .filter(map -> !map.isEmpty())
                 .toArray(Map[]::new);
@@ -209,9 +214,48 @@ public class VmDevicesConverter {
         return result;
     }
 
-    private List<Map<String, Object>> parseHostDevices(XmlDocument document, List<VmDevice> devices) {
-        // TODO
-        return Collections.emptyList();
+    private List<Map<String, Object>> parseHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId) {
+        List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.HOSTDEV);
+        if (dbDevices.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Map<Map<String, String>, HostDevice> addressToHostDevice = hostDeviceDao.getHostDevicesByHostId(hostId)
+                .stream()
+                .filter(dev -> !dev.getAddress().isEmpty())
+                .collect(Collectors.toMap(HostDevice::getAddress, device -> device));
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (XmlNode node : document.selectNodes("//*/hostdev")) {
+            Map<String, String> hostAddress = parseHostAddress(node);
+            if (hostAddress == null) {
+                continue;
+            }
+            HostDevice hostDevice = addressToHostDevice.get(hostAddress);
+
+            Map<String, Object> dev = new HashMap<>();
+            dev.put(VdsProperties.Type, VmDeviceGeneralType.HOSTDEV.getValue());
+            dev.put(VdsProperties.Address, parseAddress(node));
+            dev.put(VdsProperties.Alias, parseAlias(node));
+            dev.put(VdsProperties.Device, hostDevice.getDeviceName());
+
+            VmDevice dbDev = dbDevices.stream()
+                    .filter(d -> d.getDevice().equals(hostDevice.getDeviceName()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (dbDev == null) {
+                log.warn("VM host device '{}' does not exist in the database, thus ignored",
+                        hostDevice.getDeviceName());
+                continue;
+            }
+
+            dev.put(VdsProperties.DeviceId, dbDev.getId().getDeviceId().toString());
+            dev.put(VdsProperties.SpecParams, dbDev.getSpecParams());
+
+            result.add(dev);
+        }
+        return result;
     }
 
     private List<Map<String, Object>> parseRedirs(XmlDocument document, List<VmDevice> devices) {
@@ -465,6 +509,30 @@ public class VmDevicesConverter {
             return attr.getValue();
         }
         return "";
+    }
+
+    private Map<String, String> parseHostAddress(XmlNode node) {
+        XmlNode sourceNode = node.selectSingleNode("source");
+        if (sourceNode == null) {
+            return null;
+        }
+
+        XmlNode addressNode = sourceNode.selectSingleNode("address");
+        if (addressNode == null) {
+            return null;
+        }
+
+        Map<String, String> address = new HashMap<>();
+        Arrays.asList("domain", "slot", "bus", "function", "device", "host", "target", "lun").forEach(key -> {
+            XmlAttribute attribute = addressNode.attributes.get(key);
+            if (attribute != null) {
+                String valStr = attribute.getValue();
+                boolean hex = valStr.startsWith("0x");
+                int val = Integer.parseInt(hex ? valStr.substring(2) : valStr, hex ? 16 : 10);
+                address.put(key, String.valueOf(val));
+            }
+        });
+        return address;
     }
 
     private String parseMacAddress(XmlNode node) {

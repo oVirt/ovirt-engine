@@ -28,6 +28,8 @@ public class VmHostDevice extends VmDevice {
         setId(device.getId());
         setDevice(device.getDevice());
         setSpecParams(device.getSpecParams());
+        setAddress(device.getAddress());
+        setAlias(device.getAlias());
     }
 
     public VmHostDevice(Guid vmId, HostDevice device) {
