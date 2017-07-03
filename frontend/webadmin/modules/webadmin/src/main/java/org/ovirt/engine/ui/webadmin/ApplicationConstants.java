@@ -466,6 +466,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String hostPopupHostAddressLabel();
 
+    String hostPopupHostAddressLabelHelpMessage();
+
     String hostPopupHostFingerprintLabel();
 
     String hostPopupUsernameLabel();

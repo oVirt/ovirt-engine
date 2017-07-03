@@ -186,6 +186,11 @@
         .monospace {
             font-family: "Courier New", Courier, monospace;
         }
+
+        .controlLabelWithInfoIcon {
+            padding-top: 5px;
+            padding-right: 5px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="915px" height="715px">
@@ -248,7 +253,12 @@
                                     <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row>
-                                    <ge:StringEntityModelTextBoxEditor ui:field="hostAddressEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
+                                    <b:Column size="SM_6">
+                                        <g:Label ui:field="hostAddressLabel"
+                                                 addStyleNames="{style.inline} {style.floatLeft} {style.controlLabelWithInfoIcon}"/>
+                                        <d:InfoIcon ui:field="hostAddressInfoIcon" addStyleNames="{style.infoIcon}"/>
+                                    </b:Column>
+                                    <ge:StringEntityModelTextBoxOnlyEditor ui:field="hostAddressEditor" usePatternFly="true" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row>
                                     <ge:IntegerEntityModelTextBoxEditor ui:field="authSshPortEditor" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>

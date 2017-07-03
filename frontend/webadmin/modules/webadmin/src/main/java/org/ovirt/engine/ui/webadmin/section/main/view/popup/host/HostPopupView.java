@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -38,6 +39,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
@@ -179,7 +181,15 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @UiField
     @Path(value = "host.entity")
     @WithElementId("host")
-    StringEntityModelTextBoxEditor hostAddressEditor;
+    StringEntityModelTextBoxOnlyEditor hostAddressEditor;
+
+    @UiField(provided = true)
+    @Ignore
+    InfoIcon hostAddressInfoIcon;
+
+    @UiField
+    @Ignore
+    Label hostAddressLabel;
 
     @UiField
     @Path(value = "authSshPort.entity")
@@ -467,6 +477,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                 new InfoIcon(templates.italicText(constants.provisionedHostInfo()));
         discoveredHostInfoIcon =
                 new InfoIcon(templates.italicText(constants.discoveredHostInfoIcon()));
+        hostAddressInfoIcon =
+                new InfoIcon(templates.italicText(constants.hostPopupHostAddressLabelHelpMessage()));
     }
 
     private void addStyles() {
@@ -580,7 +592,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         nameEditor.setLabel(constants.hostPopupNameLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         commentEditor.setLabel(constants.commentLabel());
-        hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
+        hostAddressLabel.setText(constants.hostPopupHostAddressLabel());
         authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         rootPasswordLabel.setText(constants.hostPopupAuthLabelForExternalHost());
@@ -659,17 +671,19 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         object.getExternalHostProviderEnabled().getEntityChangedEvent().addListener((ev, sender, args) -> {
             boolean showForemanProviders = object.getExternalHostProviderEnabled().getEntity();
             boolean doProvisioning = object.externalProvisionEnabled();
+            boolean isProvisioned = showForemanProviders && doProvisioning;
 
             providersEditor.setVisible(showForemanProviders);
 
             // showing or hiding radio buttons
-            provisionedHostSection.setVisible(showForemanProviders && doProvisioning);
-            discoveredHostSection.setVisible(showForemanProviders && doProvisioning);
+            provisionedHostSection.setVisible(isProvisioned);
+            discoveredHostSection.setVisible(isProvisioned);
 
             // disabling ip and name textbox when using provisioned hosts
-            hostAddressEditor.setEnabled(!(showForemanProviders && doProvisioning));
+            hostAddressEditor.setEnabled(!isProvisioned);
+            hostAddressLabel.setStyleName(OvirtCss.LABEL_DISABLED, isProvisioned);
 
-            if (showForemanProviders && doProvisioning) {
+            if (isProvisioned) {
                 object.updateHosts();
                 object.getIsDiscoveredHosts().setEntity(true);
             } else {
