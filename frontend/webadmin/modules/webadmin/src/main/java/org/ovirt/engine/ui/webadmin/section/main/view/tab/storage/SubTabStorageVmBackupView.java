@@ -28,7 +28,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AbstractDataProvider;
@@ -183,7 +182,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
             @Override
             protected void onRangeChanged(HasData<String> display) {
             }
-        }, GWT.<Resources> create(SubTableResources.class));
+        }, GWT.create(SubTableResources.class));
 
         AbstractTextColumn<String> nameColumn = new AbstractTextColumn<String>() {
             @Override
