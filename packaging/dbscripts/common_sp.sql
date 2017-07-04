@@ -929,24 +929,30 @@ LANGUAGE plpgsql;
 
     -- Creates an index on an existing table, if there is no WHERE condition, the last argument should be empty ('')
     -- Example : Table T with columns a,b and c
-    -- fn_db_create_index('T_INDEX', 'T', 'a,b', ''); ==> Creates an index named T_INDEX on table T (a,b)
+    -- fn_db_create_index('T_INDEX', 'T', 'a,b', '', true); ==> Creates a unique index named T_INDEX on table T (a,b)
     CREATE
         OR replace FUNCTION fn_db_create_index (
         v_index_name VARCHAR(128),
         v_table_name VARCHAR(128),
         v_column_names TEXT,
-        v_where_predicate TEXT
+        v_where_predicate TEXT,
+        v_unique boolean
         )
     RETURNS void AS $PROCEDURE$
 
     DECLARE v_sql TEXT;
+            unique_modifier varchar(6);
 
     BEGIN
-        v_sql := 'DROP INDEX ' || ' IF EXISTS ' || v_index_name || '; CREATE INDEX ' || v_index_name || ' ON ' || v_table_name || '(' || v_column_names || ')';
+        unique_modifier = CASE WHEN v_unique THEN 'UNIQUE'
+        ELSE ''
+        END;
+
+        v_sql := 'DROP INDEX ' || ' IF EXISTS ' || v_index_name || '; CREATE ' || unique_modifier || ' INDEX ' || v_index_name || ' ON ' || v_table_name || '(' || v_column_names || ')';
 
         IF v_where_predicate = '' THEN v_sql := v_sql || ';';ELSE
             v_sql := v_sql || ' WHERE ' || v_where_predicate || ';';
-    END IF;
+        END IF;
 
     EXECUTE v_sql;
 END;$PROCEDURE$

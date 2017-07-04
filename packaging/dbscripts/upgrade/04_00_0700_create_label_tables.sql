@@ -13,6 +13,6 @@ CREATE TABLE labels_map (
     vds_id UUID REFERENCES vds_static (vds_id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-SELECT fn_db_create_index('idx_labels_map_label_id', 'labels_map', 'label_id', '');
-SELECT fn_db_create_index('idx_labels_map_vm_id', 'labels_map', 'vm_id', '');
-SELECT fn_db_create_index('idx_labels_map_vds_id', 'labels_map', 'vds_id', '');
+SELECT fn_db_create_index('idx_labels_map_label_id', 'labels_map', 'label_id', '', false);
+SELECT fn_db_create_index('idx_labels_map_vm_id', 'labels_map', 'vm_id', '', false);
+SELECT fn_db_create_index('idx_labels_map_vds_id', 'labels_map', 'vds_id', '', false);
