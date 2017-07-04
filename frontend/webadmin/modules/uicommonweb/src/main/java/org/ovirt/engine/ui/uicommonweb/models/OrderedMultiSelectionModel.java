@@ -15,7 +15,7 @@ import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 /**
  * Selection model that allows multiple items to be selected, while preserving selection order.
  *
- * @param T Table row data type.
+ * @param <T> Table row data type.
  * @see com.google.gwt.view.client.MultiSelectionModel
  */
 public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {

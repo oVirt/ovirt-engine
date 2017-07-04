@@ -21,7 +21,7 @@ import com.google.inject.Provider;
  *
  * TODO rename BaseModelProvider
  *
- * @param M model type being provided
+ * @param <M> model type being provided
  */
 public abstract class TabModelProvider<M extends HasEntity> implements ModelProvider<M>, ModelBoundPopupResolver<M>, HasHandlers {
 
