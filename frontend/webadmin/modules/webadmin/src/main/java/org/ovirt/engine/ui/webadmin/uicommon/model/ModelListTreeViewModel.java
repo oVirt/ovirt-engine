@@ -249,13 +249,13 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
             // root node
             return new DefaultNodeInfo<>(asyncTreeDataProvider,
                     compositeCell, selectionModel,
-                    DefaultSelectionEventManager.<M> createCheckboxManager(),
+                    DefaultSelectionEventManager.createCheckboxManager(),
                     null);
         } else {
             // child nodes
             return new DefaultNodeInfo<>(new ListDataProvider<>(model.getChildren()),
                     compositeCell, selectionModel,
-                    DefaultSelectionEventManager.<M> createCheckboxManager(),
+                    DefaultSelectionEventManager.createCheckboxManager(),
                     null);
         }
     }
