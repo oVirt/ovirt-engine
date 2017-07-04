@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.cinder.Cinder;
@@ -172,7 +173,7 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
     @Override
     public CinderProviderValidator getProviderValidator() {
         if (providerValidator == null) {
-            providerValidator = new CinderProviderValidator(provider);
+            providerValidator = Injector.injectMembers(new CinderProviderValidator(provider));
         }
         return providerValidator;
     }

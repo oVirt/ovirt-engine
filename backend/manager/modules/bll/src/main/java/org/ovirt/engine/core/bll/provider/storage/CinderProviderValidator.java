@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.provider.storage;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
@@ -15,11 +17,16 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
 public class CinderProviderValidator extends ProviderValidator {
+
+    @Inject
+    private StoragePoolDao storagePoolDao;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     StorageDomain CinderStorageDomain;
 
@@ -58,7 +65,7 @@ public class CinderProviderValidator extends ProviderValidator {
 
     private StorageDomain getStorageDomain() {
         if (CinderStorageDomain == null) {
-            List<StorageDomain> providerStorageList = getStorageDomainDao().getAllByConnectionId(provider.getId());
+            List<StorageDomain> providerStorageList = storageDomainDao.getAllByConnectionId(provider.getId());
             if (!providerStorageList.isEmpty()) {
                 CinderStorageDomain = providerStorageList.get(0);
             }
@@ -85,15 +92,7 @@ public class CinderProviderValidator extends ProviderValidator {
     private StoragePool getStoragePool() {
         Guid storagePoolId =
                 ((OpenStackVolumeProviderProperties) provider.getAdditionalProperties()).getStoragePoolId();
-        return getStoragePoolDao().get(storagePoolId);
-    }
-
-    protected StoragePoolDao getStoragePoolDao() {
-        return DbFacade.getInstance().getStoragePoolDao();
-    }
-
-    protected StorageDomainDao getStorageDomainDao() {
-        return DbFacade.getInstance().getStorageDomainDao();
+        return storagePoolDao.get(storagePoolId);
     }
 
     public ValidationResult isCinderAlreadyExists() {
