@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.di.Injector;
 
 import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.glance.Glance;
@@ -285,7 +286,7 @@ public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProvide
     @Override
     public GlanceProviderValidator getProviderValidator() {
         if (providerValidator == null) {
-            providerValidator = new GlanceProviderValidator(provider);
+            providerValidator = Injector.injectMembers(new GlanceProviderValidator(provider));
         }
         return providerValidator;
     }
