@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
@@ -99,17 +100,19 @@ public final class CommandsFactory {
             return Injector.injectMembers(command);
         }
         catch (InvocationTargetException ex) {
-            log.error("Error in invocating CTOR of command '{}' with parameters '{}': {}",
-                    action.name(), parameters, ex.getMessage());
-            log.debug("Exception", ex);
-            return null;
-        }
-        catch (Exception ex) {
-            log.error("An exception has occurred while trying to create a command object for command '{}' with parameters '{}': {}",
+            logException(ex,
+                    "Error in invocating CTOR of command '{}' with parameters '{}': {}",
                     action.name(),
                     parameters,
                     ex.getMessage());
-            log.debug("Exception", ex);
+            return null;
+        }
+        catch (Exception ex) {
+            logException(ex,
+                    "An exception has occurred while trying to create a command object for command '{}' with parameters '{}': {}",
+                    action.name(),
+                    parameters,
+                    ex.getMessage());
             return null;
         }
     }
@@ -129,11 +132,11 @@ public final class CommandsFactory {
             CommandBase<?> cmd = (CommandBase<?>) constructor.newInstance(commandId);
             return Injector.injectMembers(cmd);
         } catch (Exception e) {
-            log.error("CommandsFactory : Failed to get type information using reflection for Class  '{}', Command Id '{}': {}",
+            logException(e,
+                    "CommandsFactory : Failed to get type information using reflection for Class  '{}', Command Id '{}': {}",
                     className,
                     commandId,
                     e.getMessage());
-            log.error("Exception", e);
             return null;
         }
     }
@@ -147,8 +150,10 @@ public final class CommandsFactory {
                             .newInstance(parameters, engineContext);
             return Injector.injectMembers(result);
         } catch (Exception e) {
-            log.error("Command Factory: Failed to create command '{}' using reflection: {}", type, e.getMessage());
-            log.error("Exception", e);
+            logException(e,
+                    "Command Factory: Failed to create command '{}' using reflection: {}",
+                    type,
+                    e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -214,5 +219,16 @@ public final class CommandsFactory {
         }
 
         return constructor;
+    }
+
+    private static void logException(Throwable ex, String message, Object... arguments) {
+        log.error(message, arguments);
+        Throwable rootCause = ExceptionUtils.getRootCause(ex);
+        if(rootCause != null){
+            log.error("Exception", rootCause);
+            log.debug("Exception", ex);
+        }else{
+            log.error("Exception", ex);
+        }
     }
 }
