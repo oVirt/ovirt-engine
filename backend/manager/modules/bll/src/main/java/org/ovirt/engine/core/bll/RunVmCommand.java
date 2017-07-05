@@ -61,6 +61,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.config.Config;
@@ -83,6 +85,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
@@ -137,6 +141,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private VmDynamicDao vmDynamicDao;
     @Inject
     private ProviderProxyFactory providerProxyFactory;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     @Inject
     private NetworkHelper networkHelper;
@@ -1009,6 +1017,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
 
+        if (checkDisksInBackupStorage()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
+        }
+
         boolean isWindowsOs = osRepository.isWindows(getVm().getVmOsId());
 
         boolean isCloudInitEnabled = (!getVm().isInitialized() && getVm().getVmInit() != null && !isWindowsOs) ||
@@ -1083,6 +1095,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             default:
                 throw new RuntimeException("Unknown enum constant " + rngValidationResult);
         }
+
+    }
+
+    protected boolean checkDisksInBackupStorage() {
+        return getVm().getDiskMap()
+                .values()
+                .stream()
+                .map(disk -> (DiskImage) disk)
+                .anyMatch(vmDisk -> vmDisk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                        storageDomainStaticDao.get(vmDisk.getStorageIds().get(0)).isBackup());
 
     }
 

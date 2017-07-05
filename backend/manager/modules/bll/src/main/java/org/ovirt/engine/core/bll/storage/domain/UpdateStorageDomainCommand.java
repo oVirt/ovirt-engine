@@ -69,6 +69,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         props.remove("discardAfterDelete");
         props.remove("warningLowSpaceIndicator");
         props.remove("criticalSpaceActionBlocker");
+        props.remove("backup");
         if (!props.isEmpty()) {
             log.warn("There was an attempt to update the following fields although they are not allowed to be updated: {}",
                     StringUtils.join(props, ","));

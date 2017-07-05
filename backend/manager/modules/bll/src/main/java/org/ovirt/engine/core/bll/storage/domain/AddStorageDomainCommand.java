@@ -197,8 +197,12 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
-        ensureStorageFormatInitialized();
         StorageDomainValidator sdValidator = getStorageDomainValidator();
+        if (!validate(sdValidator.isNotIsoOrExportForBackup())) {
+            return false;
+        }
+
+        ensureStorageFormatInitialized();
         if (!validate(sdValidator.isStorageFormatCompatibleWithDomain())) {
             return false;
         }

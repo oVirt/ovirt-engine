@@ -304,6 +304,19 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
                         Guid.newGuid(), Guid.newGuid(), Guid.newGuid())));
     }
 
+    @Test
+    public void validateDiskInBackupDomainForUpVM() {
+        createParameters();
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
+        StorageDomain destStorageDomain = initStorageDomain(dstStorageId);
+        destStorageDomain.setStatus(StorageDomainStatus.Active);
+        destStorageDomain.setStorageType(StorageType.NFS);
+        destStorageDomain.setBackup(true);
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
+    }
+
     /** Initialize Entities */
 
     private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId) {

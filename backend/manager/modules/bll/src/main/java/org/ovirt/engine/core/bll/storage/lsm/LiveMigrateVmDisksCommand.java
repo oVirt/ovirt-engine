@@ -423,7 +423,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     private boolean validateDestStorage(StorageDomain destDomain) {
         StorageDomainValidator validator = new StorageDomainValidator(destDomain);
-        return validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination());
+        return validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination())
+                && validate(validator.isNotBackupDomain());
     }
 
     protected boolean validateDestDomainsSpaceRequirements() {

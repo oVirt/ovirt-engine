@@ -66,6 +66,20 @@ public class StorageDomainValidatorTest {
     }
 
     @Test
+    public void testIsBackupDomain() {
+        domain.setBackup(false);
+        assertThat("Backup domain is not backup, should be valid.", validator.isNotBackupDomain(), isValid());
+    }
+
+    @Test
+    public void testInvalidIsBackupDomain() {
+        domain.setBackup(true);
+        assertThat("Backup domain is backup, should be invalid.",
+                validator.isNotBackupDomain(),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE));
+    }
+
+    @Test
     public void testIsDomainExistAndActiveDomainNotUp() {
         domain.setStatus(StorageDomainStatus.Inactive);
         assertThat("Wrong failure for inactive domain",

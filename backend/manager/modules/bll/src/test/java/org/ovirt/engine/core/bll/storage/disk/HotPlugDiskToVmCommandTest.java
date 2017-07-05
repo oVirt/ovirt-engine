@@ -194,6 +194,18 @@ public class HotPlugDiskToVmCommandTest extends BaseCommandTest {
                 EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
     }
 
+    @Test
+    public void validateBackupStorageDomain() {
+        mockVmStatusUp();
+        mockInterfaceList();
+        createVirtIODisk();
+        initStorageDomain();
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE))
+                .when(storageDomainValidator).isNotBackupDomain();
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
+    }
+
     private void initStorageDomain() {
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setId(storageDomainId);

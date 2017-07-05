@@ -47,6 +47,21 @@ public class StorageDomainValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult isNotBackupDomain() {
+        if (storageDomain.isBackup()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult isNotIsoOrExportForBackup() {
+        if (storageDomain.getStorageDomainType().isIsoOrImportExportDomain()
+                && storageDomain.getStorageStaticData().isBackup()) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_DOES_NOT_SUPPORT_BACKUP);
+        }
+        return ValidationResult.VALID;
+    }
+
     public ValidationResult isDomainExistAndActive() {
         ValidationResult domainExistValidation = isDomainExist();
         if (!ValidationResult.VALID.equals(domainExistValidation)) {

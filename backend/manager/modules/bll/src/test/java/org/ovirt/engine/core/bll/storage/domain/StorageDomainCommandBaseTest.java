@@ -181,6 +181,12 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     }
 
     @Test
+    public void shouldNotElectBackupStorageDomain() {
+        prepareStorageDomainForElection(StorageDomainStatus.Active, HE_STORAGE_DOMAIN_NAME, true);
+        assertNull(cmd.electNewMaster());
+    }
+
+    @Test
     public void shouldElectActiveSharedDataDomain() {
         final StorageDomain domain =
                 prepareSharedStorageDomainForElection(StorageDomainStatus.Active);

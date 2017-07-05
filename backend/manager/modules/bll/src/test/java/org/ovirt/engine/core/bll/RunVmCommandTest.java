@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -15,6 +17,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,6 +43,8 @@ import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -60,6 +65,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndVmIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -100,6 +106,9 @@ public class RunVmCommandTest extends BaseCommandTest {
 
     @Mock
     private SnapshotsValidator snapshotsValidator;
+
+    @Mock
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     @Spy
     @InjectMocks
@@ -331,6 +340,7 @@ public class RunVmCommandTest extends BaseCommandTest {
         command.setStoragePool(new StoragePool());
         doReturn(true).when(command).checkRngDeviceClusterCompatibility();
         doReturn(true).when(command).checkPayload(any(VmPayload.class));
+        doReturn(false).when(command).checkDisksInBackupStorage();
         command.setCluster(new Cluster());
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
@@ -519,4 +529,57 @@ public class RunVmCommandTest extends BaseCommandTest {
         assertEquals(AuditLogType.USER_INITIATED_RUN_VM, command.getAuditLogTypeValue());
     }
 
+    private StorageDomainStatic backupStorageDomain(boolean isBackup) {
+        StorageDomain mockStorage = new StorageDomain();
+        mockStorage.setBackup(isBackup);
+        return mockStorage.getStorageStaticData();
+    }
+
+    private Guid initDiskImage(VM vm) {
+        DiskImage image = new DiskImage();
+        Guid storageDomainId = Guid.newGuid();
+        image.setId(Guid.newGuid());
+        image.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomainId)));
+        vm.getDiskMap().put(image.getId(), image);
+        return storageDomainId;
+    }
+
+    @Test
+    public void testFailForCheckDisksNotInBackupStorage() {
+        final VM vm = new VM();
+        command.setVm(vm);
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+        command.setCluster(new Cluster());
+        Guid storageDomainId = initDiskImage(vm);
+        when(storageDomainStaticDao.get(storageDomainId)).thenReturn(backupStorageDomain(true));
+        assertTrue("checkDisksNotInBackupStorage() fails to run because one or more disk is in backup domain",
+                command.checkDisksInBackupStorage());
+    }
+
+    @Test
+    public void testSuccceedForCheckDisksNotInBackupStorage() {
+        final VM vm = new VM();
+        command.setVm(vm);
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+        command.setCluster(new Cluster());
+        Guid storageDomainId = initDiskImage(vm);
+        when(storageDomainStaticDao.get(storageDomainId)).thenReturn(backupStorageDomain(false));
+        assertFalse(
+                "checkDisksNotInBackupStorage() succeed to run since there are no disks which are on a backup storage domain",
+                command.checkDisksInBackupStorage());
+    }
+
+    @Test
+    public void testFailWithMultipleDisksWhichOneInBackupStorage() {
+        final VM vm = new VM();
+        command.setVm(vm);
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+        command.setCluster(new Cluster());
+        Guid storageDomainId1 = initDiskImage(vm);
+        when(storageDomainStaticDao.get(storageDomainId1)).thenReturn(backupStorageDomain(false));
+        Guid storageDomainId2 = initDiskImage(vm);
+        when(storageDomainStaticDao.get(storageDomainId2)).thenReturn(backupStorageDomain(true));
+        assertTrue("checkDisksNotInBackupStorage() fails to run because one or more disk is in backup domain",
+                command.checkDisksInBackupStorage());
+    }
 }

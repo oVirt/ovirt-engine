@@ -157,6 +157,18 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     }
 
     @Test
+    public void validateDiskInBackupDomainForDownVM() {
+        initializeCommand(new DiskImage(), VmEntityType.VM);
+        initSrcStorageDomain();
+        StorageDomain destDomain = new StorageDomain();
+        destDomain.setStorageType(StorageType.NFS);
+        destDomain.setStatus(StorageDomainStatus.Active);
+        destDomain.setBackup(true);
+        doReturn(destDomain).when(command).getStorageDomain();
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
+    }
+
+    @Test
     public void validateDiskIsOvfStore() {
         testMoveOrCopyForContentTypeFails(DiskContentType.OVF_STORE);
     }

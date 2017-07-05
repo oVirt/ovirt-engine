@@ -209,4 +209,20 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
         ValidateTestUtils.runAndAssertValidateFailure
                 (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
     }
+
+    @Test
+    public void validateFailsUnsupportedIsoBackupDomain() {
+        sd.setStorageDomainType(StorageDomainType.ISO);
+        sd.setBackup(true);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_DOES_NOT_SUPPORT_BACKUP);
+    }
+
+    @Test
+    public void validateFailsUnsupportedImportExportBackupDomain() {
+        sd.setStorageDomainType(StorageDomainType.ImportExport);
+        sd.setBackup(true);
+        ValidateTestUtils.runAndAssertValidateFailure(cmd,
+                EngineMessage.ACTION_TYPE_FAILED_DOMAIN_TYPE_DOES_NOT_SUPPORT_BACKUP);
+    }
 }
