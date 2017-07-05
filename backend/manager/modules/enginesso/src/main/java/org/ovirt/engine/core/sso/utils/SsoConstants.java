@@ -90,6 +90,7 @@ public class SsoConstants {
     public static final String JSON_USER_ID = "user_id";
 
     public static final String ERROR = "error";
+    public static final String ERROR_CODE = "error_code";
     public static final String ERROR_DESCRIPTION = "error_description";
     public static final String ERR_CODE_INVALID_GRANT = "invalid_grant";
     public static final String ERR_CODE_UNSUPPORTED_GRANT_TYPE = "unsupported_grant_type";
@@ -129,6 +130,9 @@ public class SsoConstants {
 
     public static final String AUTHZ_SEARCH_SCOPE = "ovirt-ext=token-info:authz-search";
     public static final String OPENID_SCOPE = "openid";
+    public static final String OVIRT_APP_API_SCOPE = "ovirt-app-api";
+    public static final String OVIRT_APP_ADMIN_SCOPE = "ovirt-app-admin";
+    public static final String OVIRT_APP_PORTAL_SCOPE = "ovirt-app-portal";
     public static final String PASSWORD_ACCESS_SCOPE = "ovirt-ext=token:password-access";
     public static final String PUBLIC_AUTHZ_SEARCH_SCOPE = "ovirt-ext=token-info:public-authz-search";
     public static final String VALIDATE_SCOPE = "ovirt-ext=token-info:validate";

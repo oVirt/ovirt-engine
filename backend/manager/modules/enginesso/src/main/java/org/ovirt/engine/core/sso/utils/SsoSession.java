@@ -46,6 +46,7 @@ public class SsoSession implements Serializable, Cloneable {
     private String sessionIdToken;
     private String openIdDisplay;
     private boolean openIdScope;
+    private boolean restApiScope;
     private String openIdNonce;
     private String openIdPrompt;
     private Date authTime;
@@ -151,6 +152,7 @@ public class SsoSession implements Serializable, Cloneable {
         if (scopeAsList == null  && !SsoUtils.strippedScopeAsList(SsoUtils.scopeAsList(scope)).isEmpty()) {
             this.scope = scope;
             this.scopeAsList = SsoUtils.scopeAsList(scope);
+            restApiScope = SsoUtils.isRestApiScope(scopeAsList);
         }
     }
 
@@ -309,6 +311,10 @@ public class SsoSession implements Serializable, Cloneable {
 
     public boolean isOpenIdScope() {
         return openIdScope;
+    }
+
+    public boolean isRestApiScope() {
+        return restApiScope;
     }
 
     public void setOpenIdScope(boolean openIdScope) {

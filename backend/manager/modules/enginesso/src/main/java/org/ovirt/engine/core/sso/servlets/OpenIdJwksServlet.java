@@ -22,7 +22,7 @@ public class OpenIdJwksServlet extends HttpServlet {
         try {
             SsoUtils.sendJsonData(response, OpenIdUtils.getJson(buildResponse()));
         } catch(Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
 

@@ -63,9 +63,9 @@ public class OAuthRevokeServlet extends HttpServlet {
             }
             SsoUtils.sendJsonData(response, new HashMap<>());
         } catch (OAuthException ex) {
-            SsoUtils.sendJsonDataWithMessage(response, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, ex);
         } catch (Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
 }

@@ -37,7 +37,7 @@ public class OpenIdAuthorizeServlet extends OAuthAuthorizeServlet {
             if (ex instanceof OAuthException &&
                     ((OAuthException) ex).getCode().equals(SsoConstants.ERR_CODE_INVALID_REQUEST) &&
                     ex.getMessage().equals(SsoConstants.ERR_REDIRECT_URI_NOTREG_MSG)) {
-                SsoUtils.sendJsonDataWithMessage(response, (OAuthException) ex);
+                SsoUtils.sendJsonDataWithMessage(request, response, (OAuthException) ex);
             } else {
                 SsoUtils.redirectToErrorPage(request, response, ex);
             }

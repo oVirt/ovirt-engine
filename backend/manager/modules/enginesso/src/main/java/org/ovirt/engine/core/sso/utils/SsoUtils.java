@@ -576,17 +576,21 @@ public class SsoUtils {
     }
 
     public static void sendJsonDataWithMessage(
+            HttpServletRequest request,
             HttpServletResponse response,
             String errorCode,
             Exception ex) throws IOException {
-        sendJsonDataWithMessage(response, new OAuthException(errorCode, ex.getMessage(), ex));
+        sendJsonDataWithMessage(request, response, new OAuthException(errorCode, ex.getMessage(), ex));
     }
 
-    public static void sendJsonDataWithMessage(HttpServletResponse response, OAuthException ex) throws IOException {
-        sendJsonDataWithMessage(response, ex, false);
+    public static void sendJsonDataWithMessage(HttpServletRequest request,
+            HttpServletResponse response,
+            OAuthException ex) throws IOException {
+        sendJsonDataWithMessage(request, response, ex, false);
     }
 
     public static void sendJsonDataWithMessage(
+            HttpServletRequest request,
             HttpServletResponse response,
             OAuthException ex,
             boolean isValidateRequest) throws IOException {
@@ -598,9 +602,31 @@ public class SsoUtils {
         log.debug("Exception", ex);
         response.setStatus(HttpStatus.SC_BAD_REQUEST);
         Map<String, Object> errorData = new HashMap<>();
-        errorData.put(SsoConstants.ERROR, ex.getCode());
-        errorData.put(SsoConstants.ERROR_DESCRIPTION, ex.getMessage());
+
+        if (isRestApiScope(request)) {
+            errorData.put(SsoConstants.ERROR_CODE, ex.getCode());
+            errorData.put(SsoConstants.ERROR, ex.getMessage());
+        } else {
+            errorData.put(SsoConstants.ERROR, ex.getCode());
+            errorData.put(SsoConstants.ERROR_DESCRIPTION, ex.getMessage());
+        }
         sendJsonData(response, errorData);
+    }
+
+    private static boolean isRestApiScope(HttpServletRequest request) {
+        boolean restApiScope;
+        try {
+            restApiScope = SsoUtils.getSsoSession(request).isRestApiScope();
+        } catch (OAuthException ex) {
+            restApiScope = false;
+        }
+        return restApiScope || isRestApiScope(SsoUtils.scopeAsList(SsoUtils.getScopeRequestParameter(request, "")));
+    }
+
+    public static boolean isRestApiScope(List<String> scopes) {
+        return scopes.contains(SsoConstants.OVIRT_APP_API_SCOPE) &&
+                !scopes.contains(SsoConstants.OVIRT_APP_ADMIN_SCOPE) &&
+                !scopes.contains(SsoConstants.OVIRT_APP_PORTAL_SCOPE);
     }
 
     public static void sendJsonData(HttpServletResponse response, Map<String, Object> payload) throws IOException {

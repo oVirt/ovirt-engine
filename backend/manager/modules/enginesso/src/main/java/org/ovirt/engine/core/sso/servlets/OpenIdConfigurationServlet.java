@@ -45,7 +45,7 @@ public class OpenIdConfigurationServlet extends HttpServlet {
         try {
             SsoUtils.sendJsonData(response, OpenIdUtils.getJson(buildResponse(request)));
         } catch(Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
 

@@ -30,11 +30,11 @@ public class OpenIdTokenServlet extends OAuthTokenServlet {
                     SsoUtils.getRequestParameters(request));
             handleRequest(request, response);
         } catch(OAuthException ex) {
-            SsoUtils.sendJsonDataWithMessage(response, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, ex);
         } catch(AuthenticationException ex) {
-            SsoUtils.sendJsonDataWithMessage(response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_ACCESS_DENIED, ex);
         } catch(Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
 
     }

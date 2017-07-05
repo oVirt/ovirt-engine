@@ -88,9 +88,9 @@ public class OAuthTokenInfoServlet extends HttpServlet {
                         buildResponse(request, clientIdAndSecret[0], scope));
             }
         } catch(OAuthException ex) {
-            SsoUtils.sendJsonDataWithMessage(response, ex, isValidateRequest);
+            SsoUtils.sendJsonDataWithMessage(request, response, ex, isValidateRequest);
         } catch(Exception ex) {
-            SsoUtils.sendJsonDataWithMessage(response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
+            SsoUtils.sendJsonDataWithMessage(request, response, SsoConstants.ERR_CODE_SERVER_ERROR, ex);
         }
     }
 
