@@ -110,6 +110,9 @@
                                     <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" label="{constants.wipeAfterDelete}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
                                 </b:Row>
                                 <b:Row>
+                                  <ge:EntityModelCheckBoxEditor ui:field="backup" label="{constants.backup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
+                                </b:Row>
+                                <b:Row>
                                     <ge:EntityModelCheckBoxEditor ui:field="discardAfterDeleteEditor" label="{constants.discardAfterDelete}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6"/>
                                 </b:Row>
                                 <b:Row>

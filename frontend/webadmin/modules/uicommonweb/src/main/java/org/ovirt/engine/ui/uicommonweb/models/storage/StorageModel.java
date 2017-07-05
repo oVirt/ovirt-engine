@@ -243,6 +243,16 @@ public class StorageModel extends Model {
         this.discardAfterDelete = discardAfterDelete;
     }
 
+    private EntityModel<Boolean> backup;
+
+    public EntityModel<Boolean> getBackup() {
+        return backup;
+    }
+
+    public void setBackup(EntityModel<Boolean> backup) {
+        this.backup = backup;
+    }
+
     public StorageModel(StorageModelBehavior behavior) {
         this.behavior = behavior;
         this.behavior.setModel(this);
@@ -272,6 +282,8 @@ public class StorageModel extends Model {
         setWipeAfterDelete(new EntityModel<>(false));
         setDiscardAfterDelete(new EntityModel<>(false));
         getDiscardAfterDelete().getEntityChangedEvent().addListener(this);
+        setBackup(new EntityModel<>(false));
+        getBackup().setIsAvailable(false);
 
         localFSPath = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.RhevhLocalFSPath);
     }
@@ -336,6 +348,7 @@ public class StorageModel extends Model {
         }
         updateWipeAfterDelete();
         updateDiscardAfterDelete();
+        updateBackup();
     }
 
     protected void storageItemsChanged() {
@@ -598,6 +611,22 @@ public class StorageModel extends Model {
         }
     }
 
+    private void updateBackup() {
+        if (getCurrentStorageItem().getRole() == StorageDomainType.ISO
+                || getCurrentStorageItem().getRole() == StorageDomainType.ImportExport) {
+                    getBackup().setIsAvailable(false);
+                    getBackup().setEntity(false);
+                    return;
+        }
+        boolean backupSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                ConfigValues.BackupSupported,
+                getDataCenter().getSelectedItem().getCompatibilityVersion().toString());
+
+        getBackup().setIsAvailable(backupSupported);
+        getBackup().setEntity(isNewStorage() ? false : getStorage().isBackup());
+
+    }
+
     public boolean validate() {
         validateListItems(getHost());
         validateListItems(getAvailableStorageDomainTypeItems());
@@ -627,7 +656,8 @@ public class StorageModel extends Model {
                 && getComment().getIsValid()
                 && getWarningLowSpaceIndicator().getIsValid()
                 && getCriticalSpaceActionBlocker().getIsValid()
-                && getDiscardAfterDelete().getIsValid();
+                && getDiscardAfterDelete().getIsValid()
+                && getBackup().getIsValid();
     }
 
     private void validateDiscardAfterDelete() {

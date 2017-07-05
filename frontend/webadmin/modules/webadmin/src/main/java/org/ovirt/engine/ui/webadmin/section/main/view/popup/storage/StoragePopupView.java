@@ -132,6 +132,11 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     EntityModelCheckBoxEditor wipeAfterDeleteEditor;
 
     @UiField (provided = true)
+    @Path(value = "backup.entity")
+    @WithElementId("backup")
+    EntityModelCheckBoxEditor backup;
+
+    @UiField (provided = true)
     @Path(value = "discardAfterDelete.entity")
     @WithElementId("discardAfterDelete")
     EntityModelCheckBoxEditor discardAfterDeleteEditor;
@@ -202,6 +207,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
         activateDomainEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        backup = new EntityModelCheckBoxEditor(Align.RIGHT);
         discardAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 

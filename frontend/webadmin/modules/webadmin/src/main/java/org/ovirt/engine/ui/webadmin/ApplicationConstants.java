@@ -3337,6 +3337,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String administration();
 
+    String backup();
+
     String activeTags();
 
     String deactivateTag();

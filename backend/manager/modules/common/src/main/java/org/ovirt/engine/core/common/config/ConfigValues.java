@@ -1514,6 +1514,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     ExternalNetworkProviderTimeout,
 
+    @TypeConverterAttribute(Boolean.class)
+    BackupSupported,
+
     /**
      * Timeout in seconds for establishment of connections with external network providers. This
      * should be quite small, a few seconds at most, as it the TCP handshake with

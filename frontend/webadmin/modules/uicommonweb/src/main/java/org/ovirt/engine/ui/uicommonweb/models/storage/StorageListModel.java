@@ -1010,6 +1010,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         storageDomainStatic.setDiscardAfterDelete(model.getDiscardAfterDelete().getEntity());
         storageDomainStatic.setWarningLowSpaceIndicator(model.getWarningLowSpaceIndicator().getEntity());
         storageDomainStatic.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker().getEntity());
+        storageDomainStatic.setBackup(model.getBackup().getEntity());
     }
 
     private void savePosixStorage(TaskContext context) {
