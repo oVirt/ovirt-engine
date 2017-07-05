@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.google.gwt.storage.client.Storage;
 import com.google.gwt.user.client.Cookies;
-import com.google.inject.Inject;
 
 /**
  * Default implementation of {@link ClientStorage} interface.
@@ -13,17 +12,15 @@ import com.google.inject.Inject;
  */
 public class ClientStorageImpl implements ClientStorage {
 
+    static final String CLIENT_STORAGE_KEY_PREFIX = "ENGINE_WebAdmin_"; //$NON-NLS-1$
+
     // Fifty years, in milliseconds
     private static final long PERSISTENT_COOKIE_EXPIRATION = 50L * 365L * 24L * 60L * 60L * 1000L;
 
     private static Storage localStorage;
     private static Storage sessionStorage;
 
-    private final String keyPrefix;
-
-    @Inject
-    public ClientStorageImpl(@ClientStorageKeyPrefix String keyPrefix) {
-        this.keyPrefix = keyPrefix;
+    public ClientStorageImpl() {
         initStorage();
     }
 
@@ -33,7 +30,7 @@ public class ClientStorageImpl implements ClientStorage {
     }
 
     String getPrefixedKey(String key) {
-        return keyPrefix + "_" + key; //$NON-NLS-1$
+        return CLIENT_STORAGE_KEY_PREFIX + key;
     }
 
     @Override
