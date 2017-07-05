@@ -54,6 +54,11 @@ public class AddFenceAgentCommand<T extends FenceAgentCommandParameterBase> exte
                 .contains(getParameters().getAgent().getType())) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED);
         }
+
+        if (!validatePMAgentPort()) {
+            return failValidation(EngineMessage.VDS_ILLEGAL_PM_AGENT_PORT_VALUE);
+        }
+
         return super.validate();
     }
 
