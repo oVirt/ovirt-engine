@@ -10,14 +10,12 @@ import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterStorageDevicesPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDeviceStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -98,23 +96,6 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         };
         fsTypeColumn.makeSortable();
         getTable().addColumn(fsTypeColumn, constants.fileSystemType(), "170px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDevice>(constants.createBrick()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getCreateBrickCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDevice>(constants.syncStorageDevices()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSyncStorageDevicesCommand();
-            }
-        }));
-
     }
 
     public String formatSize(double size) {

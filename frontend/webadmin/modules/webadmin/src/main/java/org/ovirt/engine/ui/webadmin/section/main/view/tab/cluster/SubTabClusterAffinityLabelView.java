@@ -6,12 +6,10 @@ import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.ClusterAffinityLabelListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityLabelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinityLabelsView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
@@ -25,19 +23,6 @@ public class SubTabClusterAffinityLabelView extends AbstractSubTabAffinityLabels
     @Inject
     public SubTabClusterAffinityLabelView(SearchableDetailModelProvider<Label, ClusterListModel<Void>, ClusterAffinityLabelListModel> modelProvider) {
         super(modelProvider);
-    }
-
-    @Override
-    protected void initTable() {
-        super.initTable();
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Label>(constants.affinityLabelsSubTabDeleteButton()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
     }
 
     @Override

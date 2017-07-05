@@ -35,17 +35,6 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     boolean isVisible(List<T> selectedItems);
 
     /**
-     * Indicates if this button is in the cascade menu or not.
-     */
-    boolean isCascaded();
-
-    /**
-     * Set if this button is cascaded or not.
-     * @param cascade true if cascaded, false otherwise.
-     */
-    void setCascaded(boolean cascade);
-
-    /**
      * Get the Css name of the icon.
      * @return The HasCssName class of the icon.
      */

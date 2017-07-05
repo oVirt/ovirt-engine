@@ -1,13 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table;
 
-import org.gwtbootstrap3.client.ui.AnchorListItem;
-import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ActionButton;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.SimpleActionButton;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
@@ -19,14 +14,14 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
-import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
-    interface WidgetUiBinder extends UiBinder<Widget, SimpleActionTable<?>> {
+    interface WidgetUiBinder extends UiBinder<FlowPanel, SimpleActionTable<?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
@@ -91,8 +86,8 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         });
     }
 
-    public IsWidget getOuterWidget() {
-        return getWidget();
+    public FlowPanel getOuterWidget() {
+        return (FlowPanel) getWidget();
     }
 
     @Override
@@ -114,24 +109,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public void showItemsCount() {
-    }
-
-    @Override
-    protected ActionButton createNewActionButton(ActionButtonDefinition<T> buttonDef) {
-        SimpleActionButton result = new SimpleActionButton();
-        if (buttonDef.getIcon() instanceof IconType) {
-            result.setIcon((IconType) buttonDef.getIcon());
-        }
-        return result;
-    }
-
-    @Override
-    protected void updateMenuItem(AnchorListItem item, ActionButtonDefinition<T> buttonDef) {
-        super.updateMenuItem(item, buttonDef);
-
-        if (buttonDef.isSubTitledAction()) {
-            item.addStyleName(style.subTitledButton());
-        }
     }
 
     public void setTableOverhead(Widget widget) {

@@ -7,13 +7,11 @@ import org.ovirt.engine.core.searchbackend.SessionConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabSessionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -109,14 +107,6 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<User
                 };
         sessionLastActiveColumn.makeSortable(Comparator.comparing(UserSession::getSessionLastActiveTime));
         getTable().addColumn(sessionLastActiveColumn, constants.sessionLastActiveTime(), "200px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getTerminateCommand();
-            }
-        }));
     }
 
     interface ViewIdHandler extends ElementIdHandler<MainTabSessionView> {

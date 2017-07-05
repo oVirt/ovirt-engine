@@ -70,6 +70,12 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplat
                 @Override
                 public void activateDetailModel() {
                 }
+
+                @Override
+                public TemplateListModel getMainModel() {
+                    // Not used, here to satisfy interface contract.
+                    return null;
+                }
             };
         generalView = new ImportTemplateGeneralSubTabView(modelProvider);
     }

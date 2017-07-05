@@ -42,7 +42,8 @@ public class SubTabUserGeneralPresenter
     public SubTabUserGeneralPresenter(EventBus eventBus, SubTabUserGeneralView view, ProxyDef proxy,
             PlaceManager placeManager, UserMainTabSelectedItems selectedItems,
             DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 UserSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

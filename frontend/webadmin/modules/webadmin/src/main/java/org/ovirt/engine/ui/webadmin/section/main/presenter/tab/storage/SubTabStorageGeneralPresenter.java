@@ -42,7 +42,8 @@ public class SubTabStorageGeneralPresenter
     public SubTabStorageGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
             DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

@@ -44,7 +44,8 @@ public class SubTabTemplatePermissionPresenter
             PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, TemplateListModel,
             PermissionListModel<VmTemplate>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 TemplateSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkPermissionPresenter;
@@ -24,8 +25,9 @@ public class SubTabNetworkPermissionView extends AbstractSubTabPermissionsView<N
     @Inject
     public SubTabNetworkPermissionView(SearchableDetailModelProvider<Permission, NetworkListModel,
             PermissionListModel<NetworkView>> modelProvider, EventBus eventBus,
+            PermissionActionPanelPresenterWidget<NetworkListModel, PermissionListModel<NetworkView>> actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+        super(modelProvider, eventBus, clientStorage, actionPanel);
         getTable().enableColumnResizing();
     }
 

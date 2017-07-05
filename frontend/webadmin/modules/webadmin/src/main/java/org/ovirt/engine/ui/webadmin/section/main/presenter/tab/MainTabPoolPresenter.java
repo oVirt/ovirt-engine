@@ -59,8 +59,9 @@ public class MainTabPoolPresenter extends AbstractMainTabWithDetailsPresenter<Vm
     public MainTabPoolPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VmPool, PoolListModel> modelProvider,
             SearchPanelPresenterWidget<VmPool, PoolListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<VmPool, PoolListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<VmPool, PoolListModel> breadCrumbs,
+            PoolActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

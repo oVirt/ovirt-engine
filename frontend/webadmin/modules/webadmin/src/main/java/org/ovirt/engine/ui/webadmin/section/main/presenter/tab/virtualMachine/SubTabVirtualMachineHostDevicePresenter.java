@@ -43,7 +43,8 @@ public class SubTabVirtualMachineHostDevicePresenter
     public SubTabVirtualMachineHostDevicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

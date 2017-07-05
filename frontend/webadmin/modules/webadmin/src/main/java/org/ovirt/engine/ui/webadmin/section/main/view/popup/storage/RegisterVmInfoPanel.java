@@ -80,6 +80,12 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM, RegisterVmD
                 @Override
                 public void activateDetailModel() {
                 }
+
+                @Override
+                public ImportVmModel getMainModel() {
+                    // Not used, here to satisfy interface contract.
+                    return null;
+                }
             };
         generalView = new ImportVmGeneralSubTabView(modelProvider);
     }

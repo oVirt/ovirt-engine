@@ -64,8 +64,9 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
             PlaceManager placeManager,
             MainModelProvider<NetworkView, NetworkListModel> modelProvider,
             SearchPanelPresenterWidget<NetworkView, NetworkListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs,
+            NetworkActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

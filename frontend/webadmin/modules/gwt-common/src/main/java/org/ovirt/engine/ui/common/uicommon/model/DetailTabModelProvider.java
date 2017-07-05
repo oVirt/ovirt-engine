@@ -24,7 +24,8 @@ public class DetailTabModelProvider<M extends ListWithDetailsModel, D extends En
         super(eventBus, defaultConfirmPopupProvider);
     }
 
-    protected M getMainModel() {
+    @Override
+    public M getMainModel() {
         return mainModelProvider.get();
     }
 

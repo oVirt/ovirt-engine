@@ -96,38 +96,6 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
 
         getTable().addColumn(new VolumeActivityColumn<GlusterBrickEntity>(getActivityCell()),
                 constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.addBricksBrick()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getAddBricksCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.removeBricksBrick()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveBricksCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.replaceBrickBrick()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getReplaceBrickCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.advancedDetailsBrick()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getBrickAdvancedDetailsCommand();
-            }
-        }));
     }
 
     private VolumeActivityCompositeCell<GlusterTaskSupport> getActivityCell() {

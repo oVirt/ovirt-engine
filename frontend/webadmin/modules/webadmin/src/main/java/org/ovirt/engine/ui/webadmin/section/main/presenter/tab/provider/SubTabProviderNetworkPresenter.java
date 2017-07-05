@@ -44,8 +44,9 @@ public class SubTabProviderNetworkPresenter
     @Inject
     public SubTabProviderNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ProviderMainTabSelectedItems selectedItems,
+            ProviderNetworkActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 ProviderSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

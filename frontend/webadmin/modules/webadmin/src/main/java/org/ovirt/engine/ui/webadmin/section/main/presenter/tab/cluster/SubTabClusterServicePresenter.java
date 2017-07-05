@@ -42,7 +42,8 @@ public class SubTabClusterServicePresenter
     public SubTabClusterServicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             ClusterMainTabSelectedItems selectedItems, PlaceManager placeManager,
             DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

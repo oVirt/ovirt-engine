@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
@@ -17,7 +16,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -123,14 +121,6 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
             }
         };
         getTable().addColumn(loggedInUserColumn, constants.loggedInUserVm(), "200px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.detachVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDetachCommand();
-            }
-        }));
     }
 
 }

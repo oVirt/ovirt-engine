@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
+import org.ovirt.engine.ui.common.widget.action.VmInterfaceActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -31,9 +32,9 @@ public class SubTabVirtualMachineNetworkInterfaceView extends
     @Inject
     public SubTabVirtualMachineNetworkInterfaceView(
             SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider,
-            EventBus eventBus,
+            EventBus eventBus, VmInterfaceActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage) {
+        super(new VmInterfaceListModelTable(modelProvider, eventBus, actionPanel, clientStorage) {
             @Override
             public void initTable() {
                 super.initTable();

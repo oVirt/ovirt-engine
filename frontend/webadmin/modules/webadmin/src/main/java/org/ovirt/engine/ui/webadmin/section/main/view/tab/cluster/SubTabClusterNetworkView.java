@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -22,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkStatusColumn;
 
@@ -108,30 +106,6 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<Cluster, N
         };
         descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.descriptionNetwork(), "400px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.addNetworkNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getNewNetworkCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.assignDetatchNetworksNework()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getManageCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<Network>(constants.setAsDisplayNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSetAsDisplayCommand();
-            }
-        }));
     }
 
     private SafeHtml thisOrEmptyImage(boolean useFollowingImage, SafeHtml givenImage) {

@@ -42,8 +42,9 @@ public class SubTabNetworkExternalSubnetPresenter
     @Inject
     public SubTabNetworkExternalSubnetPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
+            NetworkExternalSubnetActionPanelPresenterWidget<NetworkListModel, NetworkExternalSubnetListModel> actionPanel,
             SearchableDetailModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

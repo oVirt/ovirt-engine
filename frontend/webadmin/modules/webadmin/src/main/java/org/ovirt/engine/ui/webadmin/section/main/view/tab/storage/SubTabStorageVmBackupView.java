@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmTemplateNameRenderer;
@@ -23,7 +22,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -157,22 +155,6 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         };
         exportDateColumn.makeSortable(Comparator.comparing(VM::getExportDate));
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "95px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRestoreCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
 
         getTable().showRefreshButton();
     }

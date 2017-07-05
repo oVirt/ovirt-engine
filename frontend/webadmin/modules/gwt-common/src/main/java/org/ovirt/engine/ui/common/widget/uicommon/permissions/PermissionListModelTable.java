@@ -7,13 +7,12 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRenderedTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -24,8 +23,8 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
 
     public PermissionListModelTable(
             SearchableTableModelProvider<Permission, P> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+            EventBus eventBus, PermissionActionPanelPresenterWidget<?, P> actionPanel, ClientStorage clientStorage) {
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
     }
 
     @Override
@@ -38,9 +37,6 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         addNameSpaceColumn();
         addRoleColumn();
         addCreationDateColum();
-        // add buttons
-        addAddPermissionsButton();
-        addRemovePermissionsButton();
     }
 
     private void addTypeColumn() {
@@ -102,25 +98,5 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         };
         getTable().addColumn(creationDateColumn, constants.permissionsCreationDate(), "300px"); //$NON-NLS-1$
         creationDateColumn.makeSortable();
-    }
-
-    private void addAddPermissionsButton() {
-        addButtonToActionGroup(
-        getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.addPermission()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getAddCommand();
-            }
-        }));
-    }
-
-    private void addRemovePermissionsButton() {
-        addButtonToActionGroup(
-            getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.removePermission()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
     }
 }

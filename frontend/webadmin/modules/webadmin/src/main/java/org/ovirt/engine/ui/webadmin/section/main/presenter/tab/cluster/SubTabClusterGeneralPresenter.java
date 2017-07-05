@@ -62,7 +62,8 @@ public class SubTabClusterGeneralPresenter
     public SubTabClusterGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             ClusterMainTabSelectedItems selectedItems,
             PlaceManager placeManager, DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

@@ -32,8 +32,6 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     // Indicates whether this action button has a title action
     private final boolean subTitledAction;
 
-    private boolean isCascaded = false;
-
     public AbstractButtonDefinition(EventBus eventBus, String title,
             CommandLocation commandLocation, boolean subTitledAction) {
         this.eventBus = eventBus;
@@ -79,16 +77,6 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     @Override
     public boolean isVisible(List<T> selectedItems) {
         return true;
-    }
-
-    @Override
-    public boolean isCascaded() {
-        return isCascaded;
-    }
-
-    @Override
-    public void setCascaded(final boolean value) {
-        isCascaded = value;
     }
 
     @Override

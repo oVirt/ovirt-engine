@@ -51,8 +51,9 @@ public class MainTabSessionPresenter extends AbstractMainTabWithDetailsPresenter
             PlaceManager placeManager,
             MainModelProvider<UserSession, SessionListModel> modelProvider,
             SearchPanelPresenterWidget<UserSession, SessionListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<UserSession, SessionListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<UserSession, SessionListModel> breadCrumbs,
+            SessionActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)

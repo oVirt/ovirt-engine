@@ -8,13 +8,11 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -98,28 +96,6 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         };
         descColumn.makeSortable(PoolConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.editPool()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.removePool()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
     }
 
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -14,12 +15,14 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.HostDeviceColumnH
 
 import com.google.gwt.event.shared.EventBus;
 
-public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase<?>> extends AbstractModelBoundTableWidget<HostDeviceView, M> {
+public abstract class HostDeviceModelBaseTable<M extends HostDeviceListModelBase<?>>
+    extends AbstractModelBoundTableWidget<HostDeviceView, M> {
 
     protected static final ApplicationConstants constants = AssetProvider.getConstants();
 
-    public HostDeviceModelBaseTable(SearchableTableModelProvider<HostDeviceView, M> modelProvider, EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+    public HostDeviceModelBaseTable(SearchableTableModelProvider<HostDeviceView, M> modelProvider, EventBus eventBus,
+            ActionPanelPresenterWidget<HostDeviceView, M> actionPanel, ClientStorage clientStorage) {
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
     }
 
     @Override

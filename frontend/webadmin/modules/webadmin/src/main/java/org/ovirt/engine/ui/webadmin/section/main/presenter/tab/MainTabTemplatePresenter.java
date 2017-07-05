@@ -59,8 +59,9 @@ public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresente
     public MainTabTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VmTemplate, TemplateListModel> modelProvider,
             SearchPanelPresenterWidget<VmTemplate, TemplateListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<VmTemplate, TemplateListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<VmTemplate, TemplateListModel> breadCrumbs,
+            TemplateActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

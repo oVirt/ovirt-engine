@@ -5,12 +5,11 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.CpuQosActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 
@@ -20,8 +19,9 @@ public class CpuQosListModelTable extends AbstractModelBoundTableWidget<CpuQos, 
 
     public CpuQosListModelTable(SearchableDetailModelProvider<CpuQos,
             DataCenterListModel, DataCenterCpuQosListModel> modelProvider, EventBus eventBus,
+            CpuQosActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
         initTable();
     }
 
@@ -56,30 +56,6 @@ public class CpuQosListModelTable extends AbstractModelBoundTableWidget<CpuQos, 
         };
         cpuLimitColumn.makeSortable();
         getTable().addColumn(cpuLimitColumn, constants.cpuQosCpuLimit(), "105px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.newCpuQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.editCpuQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.removeQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
     }
 
     @Override

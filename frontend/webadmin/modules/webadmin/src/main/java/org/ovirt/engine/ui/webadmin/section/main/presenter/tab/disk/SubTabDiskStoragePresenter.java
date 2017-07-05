@@ -43,7 +43,8 @@ public class SubTabDiskStoragePresenter
     public SubTabDiskStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 DiskSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

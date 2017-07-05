@@ -44,7 +44,8 @@ public class SubTabVnicProfileTemplatePresenter
             PlaceManager placeManager, VnicProfileMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VmTemplate, VnicProfileListModel,
                 VnicProfileTemplateListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

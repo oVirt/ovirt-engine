@@ -667,7 +667,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         this.multiSelectionDisabled = multiSelectionDisabled;
     }
 
-    @Override
     public List<T> getSelectedItems() {
         return selectionModel.getSelectedList();
     }

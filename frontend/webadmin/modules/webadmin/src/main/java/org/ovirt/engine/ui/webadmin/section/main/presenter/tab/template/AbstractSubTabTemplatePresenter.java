@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
@@ -21,8 +22,9 @@ public abstract class AbstractSubTabTemplatePresenter<D extends HasEntity<?>,
 
     public AbstractSubTabTemplatePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<TemplateListModel, D> modelProvider, TemplateMainTabSelectedItems selectedItems,
+            DetailActionPanelPresenterWidget<?, TemplateListModel, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, slot);
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override

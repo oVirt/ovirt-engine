@@ -9,14 +9,12 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractGroupNameColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -75,14 +73,5 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
         };
         inheritedColumn.makeSortable();
         getTable().addColumn(inheritedColumn, constants.inheritedPermission(), "560px");  //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
     }
-
 }

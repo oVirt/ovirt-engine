@@ -6,14 +6,12 @@ import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.AffinityGroupListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDetailsModel, T extends AffinityGroupListModel<?>> extends AbstractSubTabTableView<I, AffinityGroup, M, T> {
 
@@ -94,30 +92,6 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         };
         hostMembersColumn.makeSortable();
         getTable().addColumn(hostMembersColumn, constants.hostMembersAffinityGroup(), "500px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.newAffinityGroupLabel()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.editAffinityGroupLabel()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEditCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<AffinityGroup>(constants.removeAffinityGroupLabel()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
     }
 
     protected List<String> getVmNames(AffinityGroup group) {

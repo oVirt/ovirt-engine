@@ -59,7 +59,8 @@ public class SubTabHostErrataPresenter
     public SubTabHostErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,  HostMainTabSelectedItems selectedItems,
             DetailTabModelProvider<HostListModel<Void>, HostErrataCountModel> errataCountModelProvider) {
-        super(eventBus, view, proxy, placeManager, errataCountModelProvider, selectedItems,
+        // No action panel on errata view, can pass null.
+        super(eventBus, view, proxy, placeManager, errataCountModelProvider, selectedItems, null,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
 
         errataCountModel = getModelProvider().getModel();

@@ -59,8 +59,9 @@ public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter
     public MainTabClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Cluster, ClusterListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<Cluster, ClusterListModel<Void>> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<Cluster, ClusterListModel<Void>> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<Cluster, ClusterListModel<Void>> breadCrumbs,
+            ClusterActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

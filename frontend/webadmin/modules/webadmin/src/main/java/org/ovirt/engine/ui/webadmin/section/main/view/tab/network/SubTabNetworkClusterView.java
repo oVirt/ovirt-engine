@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -24,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkClusterStatusColumn;
 
@@ -145,14 +143,6 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         };
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionCluster(), "400px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<Cluster, NetworkCluster>>(constants.assignUnassignNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getManageCommand();
-            }
-        }));
     }
 
     private SafeHtml thisOrEmptyImage(boolean useFollowingImage, SafeHtml givenImage) {

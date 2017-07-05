@@ -18,7 +18,8 @@ public class VmAppListModelTable extends AbstractModelBoundTableWidget<String, V
     public VmAppListModelTable(
             SearchableTableModelProvider<String, VmAppListModel<VM>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        // No action panel for vm app list model table, passing null.
+        super(modelProvider, eventBus, null, clientStorage, false);
     }
 
     @Override

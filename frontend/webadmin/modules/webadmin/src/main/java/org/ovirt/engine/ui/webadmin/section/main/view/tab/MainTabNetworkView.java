@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -21,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.MultiImageColumnHelper;
 
@@ -174,35 +172,6 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         };
         providerColumn.makeSortable(NetworkConditionFieldAutoCompleter.PROVIDER_NAME);
         getTable().ensureColumnVisible(providerColumn, constants.providerNetwork(), virtMode, "200px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getImportCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.editNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.removeNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
     }
 
     @Override

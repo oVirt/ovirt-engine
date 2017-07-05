@@ -43,7 +43,8 @@ public class SubTabVnicProfileVmPresenter
     public SubTabVnicProfileVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VnicProfileMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

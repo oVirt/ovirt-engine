@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.AffinityGroupActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -42,8 +43,9 @@ public class SubTabVirtualMachineAffinityGroupPresenter
     @Inject
     public SubTabVirtualMachineAffinityGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            AffinityGroupActionPanelPresenterWidget<VmListModel<Void>, VmAffinityGroupListModel> actionPanel,
             SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

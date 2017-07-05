@@ -154,6 +154,12 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
                     @Override
                     public void activateDetailModel() {
                     }
+
+                    @Override
+                    public TemplateListModel getMainModel() {
+                        // Not used, here to satisfy interface contract.
+                        return null;
+                    }
                 };
         generalView = new ImportTemplateGeneralSubTabView(modelProvider);
         generalPanel.add(generalView);

@@ -42,8 +42,9 @@ public class SubTabProviderSecretPresenter
     @Inject
     public SubTabProviderSecretPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ProviderMainTabSelectedItems selectedItems,
+            ProviderSecretActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 ProviderSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

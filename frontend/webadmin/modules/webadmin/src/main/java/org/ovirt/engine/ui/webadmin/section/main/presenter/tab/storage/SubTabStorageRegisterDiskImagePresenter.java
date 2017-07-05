@@ -42,8 +42,9 @@ public class SubTabStorageRegisterDiskImagePresenter
     @Inject
     public SubTabStorageRegisterDiskImagePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            StorageRegisterDiskImageActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<Disk, StorageListModel, StorageRegisterDiskImageListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

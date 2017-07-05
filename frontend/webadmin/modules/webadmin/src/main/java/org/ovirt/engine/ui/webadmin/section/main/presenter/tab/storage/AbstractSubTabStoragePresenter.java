@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -21,8 +22,9 @@ public abstract class AbstractSubTabStoragePresenter<D extends HasEntity<?>,
 
     public AbstractSubTabStoragePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<StorageListModel, D> modelProvider, StorageMainTabSelectedItems selectedItems,
+            DetailActionPanelPresenterWidget<?, StorageListModel, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, slot);
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override

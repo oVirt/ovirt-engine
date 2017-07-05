@@ -59,8 +59,9 @@ public class MainTabVolumePresenter extends AbstractMainTabWithDetailsPresenter<
     public MainTabVolumePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider,
             SearchPanelPresenterWidget<GlusterVolumeEntity, VolumeListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<GlusterVolumeEntity, VolumeListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<GlusterVolumeEntity, VolumeListModel> breadCrumbs,
+            VolumeActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

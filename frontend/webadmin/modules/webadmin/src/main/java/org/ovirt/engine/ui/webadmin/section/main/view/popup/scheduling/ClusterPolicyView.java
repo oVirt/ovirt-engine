@@ -5,17 +5,14 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -37,7 +34,6 @@ public class ClusterPolicyView extends Composite {
     @UiField
     SimplePanel clusterPolicyTabContent;
 
-    private PatternflyActionPanel policyActionPanel;
     private SimpleActionTable<ClusterPolicy> table;
     private FlowPanel container = new FlowPanel();
 
@@ -57,7 +53,7 @@ public class ClusterPolicyView extends Composite {
     @Inject
     public ClusterPolicyView(ClusterPolicyModelProvider clusterPolicyModelProvider,
             ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus, ClientStorage clientStorage, ClusterPolicyActionPanelPresenterWidget actionPanel) {
         this.clusterPolicyModelProvider = clusterPolicyModelProvider;
         this.clusterPolicyClusterModelProvider = clusterPolicyClusterModelProvider;
         this.eventBus = eventBus;
@@ -67,7 +63,7 @@ public class ClusterPolicyView extends Composite {
 
         initSplitLayoutPanel();
 
-        initClusterPolicyTable();
+        initClusterPolicyTable(actionPanel);
         initClustersTable();
     }
 
@@ -86,8 +82,7 @@ public class ClusterPolicyView extends Composite {
         splitLayoutPanel.add(container);
     }
 
-    private void initClusterPolicyTable() {
-        policyActionPanel = new PatternflyActionPanel();
+    private void initClusterPolicyTable(ClusterPolicyActionPanelPresenterWidget policyActionPanel) {
         table = new SimpleActionTable<>(clusterPolicyModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
@@ -117,46 +112,6 @@ public class ClusterPolicyView extends Composite {
             }
         };
         table.addColumn(descColumn, constants.clusterPolicyDescriptionLabel(), "300px"); //$NON-NLS-1$
-
-        policyActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.newClusterPolicy()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return clusterPolicyModelProvider.getModel().getNewCommand();
-            }
-        }));
-
-        policyActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.editClusterPolicy()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return clusterPolicyModelProvider.getModel().getEditCommand();
-            }
-        }));
-
-        policyActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.copyClusterPolicy()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return clusterPolicyModelProvider.getModel().getCloneCommand();
-            }
-        }));
-
-        policyActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.removeClusterPolicy()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return clusterPolicyModelProvider.getModel().getRemoveCommand();
-            }
-        }));
-
-        policyActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<ClusterPolicy>(constants.managePolicyUnits()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return clusterPolicyModelProvider.getModel().getManagePolicyUnitCommand();
-            }
-        }));
 
         container.add(policyActionPanel);
         container.add(table);

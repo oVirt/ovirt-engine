@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.AbstractTabPresenter;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.UpdateMainContentLayout.ContentDisplayType;
@@ -30,8 +31,9 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
     protected final MainModelProvider<T, M> modelProvider;
 
     public AbstractMainTabPresenter(EventBus eventBus, V view, P proxy,
-            PlaceManager placeManager, MainModelProvider<T, M> modelProvider) {
-        super(eventBus, view, proxy, MainTabPanelPresenter.TYPE_SetTabContent);
+            PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
+            ActionPanelPresenterWidget<T, M> actionPanel) {
+        super(eventBus, view, proxy, actionPanel, MainTabPanelPresenter.TYPE_SetTabContent);
         this.placeManager = placeManager;
         this.modelProvider = modelProvider;
     }

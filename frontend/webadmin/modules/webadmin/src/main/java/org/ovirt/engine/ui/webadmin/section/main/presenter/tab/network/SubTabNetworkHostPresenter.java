@@ -44,8 +44,9 @@ public class SubTabNetworkHostPresenter
     @Inject
     public SubTabNetworkHostPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
+            NetworkHostActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

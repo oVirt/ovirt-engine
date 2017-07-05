@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -11,9 +10,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.VdsConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
-import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
@@ -22,7 +18,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -30,8 +25,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostAdditionalStatusColumn;
@@ -250,249 +243,6 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             };
             getTable().addColumn(spmColumn, constants.spmPriorityHost(), "100px"); //$NON-NLS-1$
         }
-
-        //
-        // Buttons/menu items
-        // Create/Edit/Remove Host operations
-        //
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.editHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.removeHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-
-        // Management operations drop down
-        List<ActionButtonDefinition<VDS>> managementSubActions = new LinkedList<>();
-        // Maintenance button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.maintenanceHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getMaintenanceCommand();
-            }
-        });
-        // Activate button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.activateHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getActivateCommand();
-            }
-        });
-        // Refresh capabilities button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.refreshHostCapabilities()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRefreshCapabilitiesCommand();
-            }
-        });
-        // Confirm Host Rebooted button
-        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            addMenuItemToKebab(
-            getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.confirmRebootedHost(),
-                CommandLocation.OnlyFromContext) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getMainModel().getManualFenceCommand();
-                }
-            }));
-        }
-        // Power management drop down
-        List<ActionButtonDefinition<VDS>> pmSubActions = new LinkedList<>();
-
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRestartCommand();
-            }
-        });
-
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.startHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStartCommand();
-            }
-        });
-
-        pmSubActions.add(new WebAdminButtonDefinition<VDS>(constants.stopHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStopCommand();
-            }
-        });
-        // Remote management via SSH drop down
-        List<ActionButtonDefinition<VDS>> sshSubActions = new LinkedList<>();
-
-        sshSubActions.add(new WebAdminButtonDefinition<VDS>(constants.restartHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getSshRestartCommand();
-            }
-        });
-        sshSubActions.add(new WebAdminButtonDefinition<VDS>(constants.stopHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getSshStopCommand();
-            }
-        });
-
-        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            managementSubActions.add(
-                new WebAdminMenuBarButtonDefinition<>(
-                    constants.pmHost(),
-                    pmSubActions
-                )
-            );
-            managementSubActions.add(
-                new WebAdminMenuBarButtonDefinition<>(
-                    constants.sshManagement(),
-                    sshSubActions
-                )
-            );
-        }
-        // Select as SPM button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.selectHostAsSPM()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getSelectAsSpmCommand();
-            }
-        });
-        // Configure local storage button
-        managementSubActions.add(new WebAdminButtonDefinition<VDS>(constants.configureLocalStorageHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getConfigureLocalStorageCommand();
-            }
-        });
-
-        // Add management menu bar
-        addButtonToActionGroup(
-        getTable().addActionButton(
-            new WebAdminMenuBarButtonDefinition<>(
-                constants.management(),
-                managementSubActions
-            ),
-            new DropdownActionButton<>(managementSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
-                @Override
-                public List<VDS> getSelectedItems() {
-                    return getMainModel().getSelectedItems();
-                }
-            })
-        ));
-
-        // Installation operations drop down
-        List<ActionButtonDefinition<VDS>> moreSubActions = new LinkedList<>();
-        // Reinstall button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.reinstallHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getInstallCommand();
-            }
-        });
-        // Enroll certificate button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.enrollCertificate()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEnrollCertificateCommand();
-            }
-        });
-        // Check for upgrade button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.checkForHostUpgrade()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getCheckForUpgradeCommand();
-            }
-        });
-        // Upgrade button
-        moreSubActions.add(new WebAdminButtonDefinition<VDS>(constants.upgradeHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getUpgradeCommand();
-            }
-        });
-        addButtonToActionGroup(
-        getTable().addActionButton(
-            new WebAdminMenuBarButtonDefinition<>(
-                constants.installation(),
-                moreSubActions
-            ),
-            new DropdownActionButton<>(moreSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
-                @Override
-                public List<VDS> getSelectedItems() {
-                    return getMainModel().getSelectedItems();
-                }
-            })
-        ));
-
-        // Host Console (link to Cockpit)
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.hostConsole()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getHostConsoleCommand();
-            }
-        }));
-
-        // Assign tags
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.assignTagsHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getAssignTagsCommand();
-            }
-        }));
-
-        // NUMA support
-        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            addMenuItemToKebab(
-            getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.numaSupport()) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getMainModel().getNumaSupportCommand();
-                }
-            }));
-        }
-
-        // Approve
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.approveHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getApproveCommand();
-            }
-        }));
-
-        // HA global maintenance
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.enableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEnableGlobalHaMaintenanceCommand();
-            }
-        }));
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<VDS>(constants.disableGlobalHaMaintenanceVm(), CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getDisableGlobalHaMaintenanceCommand();
-            }
-        }));
-
     }
 
     @Override

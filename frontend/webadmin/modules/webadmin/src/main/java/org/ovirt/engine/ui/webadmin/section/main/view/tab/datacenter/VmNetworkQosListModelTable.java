@@ -5,12 +5,11 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterNetworkQosActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 
@@ -20,8 +19,9 @@ public class VmNetworkQosListModelTable extends AbstractModelBoundTableWidget<Ne
 
     public VmNetworkQosListModelTable(SearchableDetailModelProvider<NetworkQoS,
             DataCenterListModel, DataCenterNetworkQoSListModel> modelProvider, EventBus eventBus,
+            DataCenterNetworkQosActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
         initTable();
     }
 
@@ -97,29 +97,5 @@ public class VmNetworkQosListModelTable extends AbstractModelBoundTableWidget<Ne
         };
         outBurstColumn.makeSortable();
         getTable().addColumn(outBurstColumn, constants.networkQoSOutboundBurst(), "100px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<NetworkQoS>(constants.newNetworkQoS()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<NetworkQoS>(constants.editNetworkQoS()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<NetworkQoS>(constants.removeNetworkQoS()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
     }
 }

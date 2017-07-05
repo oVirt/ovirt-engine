@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
@@ -43,8 +44,9 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     public BaseVmDiskListModelTable(
             SearchableTableModelProvider<Disk, T> modelProvider,
             EventBus eventBus,
+            ActionPanelPresenterWidget<Disk, T> actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
 
         disksViewRadioGroup = new DisksViewRadioGroup();
     }

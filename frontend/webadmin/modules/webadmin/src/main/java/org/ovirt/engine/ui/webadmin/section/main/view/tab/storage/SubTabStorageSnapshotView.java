@@ -5,14 +5,12 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageSnapshotListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -63,13 +61,5 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
         getTable().ensureColumnVisible(
                 DisksViewColumns.getDiskSnapshotIDColumn(null), constants.diskSnapshotIDDisk(),
                 true, "260px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
     }
 }

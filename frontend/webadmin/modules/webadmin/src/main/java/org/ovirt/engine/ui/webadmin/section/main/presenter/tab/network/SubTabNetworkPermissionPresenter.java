@@ -44,7 +44,8 @@ public class SubTabNetworkPermissionPresenter
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, NetworkListModel,
             PermissionListModel<NetworkView>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

@@ -45,7 +45,8 @@ public class SubTabClusterCpuProfilePresenter
     public SubTabClusterCpuProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses CpuProfilesListModelTable gets action panel from elsewhere, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

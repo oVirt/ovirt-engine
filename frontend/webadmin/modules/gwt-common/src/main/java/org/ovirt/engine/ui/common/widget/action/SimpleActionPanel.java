@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.common.widget.action;
 
-import java.util.List;
-
-import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 
 import com.google.gwt.core.client.GWT;
@@ -31,19 +28,4 @@ public class SimpleActionPanel<T> extends AbstractActionPanel<T> {
     void handleRefreshButtonClick(ClickEvent event) {
         getDataProvider().getModel().getForceRefreshCommand().execute();
     }
-
-    @Override
-    public List<T> getSelectedItems() {
-        return getDataProvider().getModel().getSelectionModel().getSelectedObjects();
-    }
-
-    @Override
-    protected ActionButton createNewActionButton(ActionButtonDefinition<T> buttonDef) {
-        SimpleActionButton result = new SimpleActionButton();
-        if (buttonDef.getIcon() instanceof IconType) {
-            result.setIcon((IconType) buttonDef.getIcon());
-        }
-        return result;
-    }
-
 }

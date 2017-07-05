@@ -42,8 +42,9 @@ public class SubTabQuotaUserPresenter
     @Inject
     public SubTabQuotaUserPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, QuotaMainTabSelectedItems selectedItems,
+            QuotaUserActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 QuotaSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

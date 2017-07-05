@@ -65,8 +65,9 @@ public class MainTabVirtualMachinePresenter
     public MainTabVirtualMachinePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VM, VmListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<VM, VmListModel<Void>> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<VM, VmListModel<Void>> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<VM, VmListModel<Void>> breadCrumbs,
+            VirtualMachineActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

@@ -43,7 +43,8 @@ public class SubTabClusterVmPresenter
     public SubTabClusterVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View doesn't have action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

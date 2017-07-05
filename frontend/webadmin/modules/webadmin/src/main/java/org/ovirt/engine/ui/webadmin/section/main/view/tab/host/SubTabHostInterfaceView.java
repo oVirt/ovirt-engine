@@ -6,12 +6,11 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -19,7 +18,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
 
 import com.google.gwt.core.client.GWT;
@@ -28,6 +26,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostInterfaceListModel>
@@ -50,7 +49,6 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     @WithElementId
     final SimpleActionTable<HostInterfaceLineModel> table;
 
-    private final PatternflyActionPanel pfActionPanel;
     private final FlowPanel contentPanel;
     HostInterfaceForm hostInterfaceForm = null;
 
@@ -58,16 +56,15 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> modelProvider,
+    public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>,
+            HostInterfaceListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(modelProvider);
-        pfActionPanel = new PatternflyActionPanel();
         table = new SimpleActionTable<>(modelProvider, getTableResources(), eventBus, clientStorage);
         initTable();
 
         contentPanel = new FlowPanel();
-        contentPanel.add(pfActionPanel);
         contentPanel.add(table);
         contentPanel.add(new Label(constants.emptyInterface()));
         initWidget(contentPanel);
@@ -76,6 +73,15 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     @Override
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
+    }
+
+    @Override
+    public void setInSlot(Object slot, IsWidget content) {
+        if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
+            contentPanel.insert(content, 0);
+        } else {
+            super.setInSlot(slot, content);
+        }
     }
 
     Resources getTableResources() {
@@ -105,30 +111,6 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts()), "100px"); //$NON-NLS-1$
-
-        pfActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.setupHostNetworksInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSetupNetworksCommand();
-            }
-        }));
-
-        pfActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.saveNetConfigInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSaveNetworkConfigCommand();
-            }
-        }));
-
-        pfActionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<HostInterfaceLineModel>(constants.syncAllHostNetworks()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSyncAllHostNetworksCommand();
-            }
-        }));
 
         // The table items are in the form, so the table itself will never have items, so don't display the 'empty
         // message'

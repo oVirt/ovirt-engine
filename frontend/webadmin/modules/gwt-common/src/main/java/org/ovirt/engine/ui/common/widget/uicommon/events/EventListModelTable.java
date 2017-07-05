@@ -29,7 +29,8 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
     public EventListModelTable(
             SearchableTableModelProvider<AuditLog, T> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        // No action panel for events, so passing null.
+        super(modelProvider, eventBus, null, clientStorage, false);
     }
 
     @Override

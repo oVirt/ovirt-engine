@@ -42,8 +42,9 @@ public class SubTabClusterHostPresenter
     @Inject
     public SubTabClusterHostPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+            ClusterHostActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

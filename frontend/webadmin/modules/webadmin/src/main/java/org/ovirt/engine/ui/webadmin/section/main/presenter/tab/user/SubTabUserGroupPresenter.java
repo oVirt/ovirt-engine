@@ -43,7 +43,8 @@ public class SubTabUserGroupPresenter
     public SubTabUserGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, UserMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View doesn't have an actionPanel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 UserSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

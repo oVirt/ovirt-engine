@@ -42,8 +42,9 @@ public class SubTabVolumeParameterPresenter
     @Inject
     public SubTabVolumeParameterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
+            VolumeParameterActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

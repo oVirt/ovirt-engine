@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -13,24 +12,18 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ColumnResizeTableLineChartProgressBar;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListModel<Void>, HostVmListModel>
         implements SubTabHostVmPresenter.ViewDef {
@@ -39,7 +32,6 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -167,82 +159,6 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         uptimeColumn.makeSortable();
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "110px"); //$NON-NLS-1$
-
-        // add action buttons
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
-                IconType.MOON_O) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getPauseCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
-                IconType.STOP) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getShutdownCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(),
-                IconType.POWER_OFF) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getStopCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
-                IconType.DESKTOP) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getConsoleConnectCommand();
-            }
-
-            @Override
-            public SafeHtml getTooltip() {
-                return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
-            }
-
-        }));
-
-        // TODO: separator
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getMigrateCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getCancelMigrateCommand();
-            }
-        }));
     }
 
     abstract class ResourceConsumptionComparator implements Comparator<VM> {

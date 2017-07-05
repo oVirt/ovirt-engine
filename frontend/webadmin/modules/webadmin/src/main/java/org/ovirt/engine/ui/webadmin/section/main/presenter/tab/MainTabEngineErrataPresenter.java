@@ -67,7 +67,8 @@ public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPres
     public MainTabEngineErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Erratum, EngineErrataListModel> modelErrata,
             OvirtBreadCrumbsPresenterWidget<Erratum, EngineErrataListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelErrata, null, breadCrumbs);
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelErrata, null, breadCrumbs, null);
     }
 
     @Override

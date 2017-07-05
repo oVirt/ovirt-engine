@@ -9,14 +9,12 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterSwiftPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
@@ -62,30 +60,6 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
             };
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusGlusterSwift(), "250px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterServerService>(constants.startGlusterSwiftInHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getStartSwiftCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterServerService>(constants.stopGlusterSwiftInHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getStopSwiftCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterServerService>(constants.restartGlusterSwiftInHost()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRestartSwiftCommand();
-            }
-        }));
     }
 
 }

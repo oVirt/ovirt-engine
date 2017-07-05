@@ -12,14 +12,12 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserEventNotifierListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserEventNotifierPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
@@ -53,14 +51,6 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
         };
         eventNameColumn.makeSortable(Comparator.comparing(EventSubscriber::getEventUpName, new LexoNumericComparator()));
         getTable().addColumn(eventNameColumn, constants.eventNameEventNotifier());
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<EventSubscriber>(constants.manageEventsEventNotifier()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getManageEventsCommand();
-            }
-        }));
     }
 
 }

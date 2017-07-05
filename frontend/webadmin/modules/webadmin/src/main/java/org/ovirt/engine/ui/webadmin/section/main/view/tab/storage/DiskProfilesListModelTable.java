@@ -5,17 +5,17 @@ import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.DiskProfileActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DiskProfilePermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -43,8 +43,10 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
     public DiskProfilesListModelTable(SearchableTableModelProvider<DiskProfile, DiskProfileListModel> modelProvider,
             DiskProfilePermissionModelProvider diskProfilePermissionModelProvider,
             EventBus eventBus,
+            PermissionActionPanelPresenterWidget<DiskProfileListModel, PermissionListModel<DiskProfile>> permissionActionPanel,
+            DiskProfileActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
         this.diskProfilePermissionModelProvider = diskProfilePermissionModelProvider;
         // Create disk profile table
         tableContainer.add(getContainer());
@@ -52,7 +54,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
         // Create permission panel
         permissionListModelTable =
                 new PermissionWithInheritedPermissionListModelTable<>(diskProfilePermissionModelProvider,
-                        eventBus,
+                        eventBus, permissionActionPanel,
                         clientStorage);
         permissionListModelTable.initTable();
         tableContainer.add(permissionListModelTable);
@@ -102,28 +104,6 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
         };
         getTable().addColumn(qosColumn, constants.qosName(), "200px"); //$NON-NLS-1$
         qosColumn.makeSortable();
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.newProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.editProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.removeProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
 
         // Add selection listener
         getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updatePermissionPanel());

@@ -64,7 +64,7 @@ public class Kebab extends ButtonGroup {
         return button;
     }
 
-    public void addActionButton(ActionButton actionButton) {
+    public void addMenuItem(ActionButton actionButton) {
         kebabMenu.add(actionButton);
     }
 

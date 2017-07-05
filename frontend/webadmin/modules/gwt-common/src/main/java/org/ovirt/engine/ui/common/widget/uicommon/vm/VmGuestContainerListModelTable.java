@@ -19,7 +19,8 @@ public class VmGuestContainerListModelTable extends AbstractModelBoundTableWidge
     public VmGuestContainerListModelTable(
             SearchableTableModelProvider<GuestContainer, VmGuestContainerListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        // No action panel for vm guest container list model table, passing null.
+        super(modelProvider, eventBus, null, clientStorage, false);
     }
 
     @Override

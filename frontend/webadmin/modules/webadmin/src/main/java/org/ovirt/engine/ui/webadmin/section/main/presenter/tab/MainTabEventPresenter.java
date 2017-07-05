@@ -61,7 +61,8 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
             PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<AuditLog, EventListModel<Void>> searchPanelPresenterWidget,
             OvirtBreadCrumbsPresenterWidget<AuditLog, EventListModel<Void>> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+        // Events view has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, null);
     }
 
     @Override

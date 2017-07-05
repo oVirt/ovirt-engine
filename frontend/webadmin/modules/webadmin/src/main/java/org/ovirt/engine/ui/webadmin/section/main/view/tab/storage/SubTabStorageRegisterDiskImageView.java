@@ -5,14 +5,12 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskImageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterDiskImagePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -59,14 +57,6 @@ public class SubTabStorageRegisterDiskImageView extends AbstractSubTabTableView<
 
         getTable().ensureColumnVisible(
                 DisksViewColumns.getDescriptionColumn(null), constants.descriptionDisk(), true, "200px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.registerDiskImage()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRegisterCommand();
-            }
-        }));
 
         getTable().showRefreshButton();
     }

@@ -42,8 +42,9 @@ public class SubTabHostVmPresenter
     @Inject
     public SubTabHostVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            HostVmActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

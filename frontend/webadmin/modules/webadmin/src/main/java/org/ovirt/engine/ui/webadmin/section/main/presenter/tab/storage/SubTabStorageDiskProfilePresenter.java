@@ -45,7 +45,8 @@ public class SubTabStorageDiskProfilePresenter
     public SubTabStorageDiskProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<DiskProfile, StorageListModel, DiskProfileListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // The view uses a DiskProfilesListModelTable which gets its action panel from somewhere else, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

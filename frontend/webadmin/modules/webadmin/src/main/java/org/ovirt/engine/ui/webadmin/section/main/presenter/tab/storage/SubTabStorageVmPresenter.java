@@ -43,7 +43,8 @@ public class SubTabStorageVmPresenter
     public SubTabStorageVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

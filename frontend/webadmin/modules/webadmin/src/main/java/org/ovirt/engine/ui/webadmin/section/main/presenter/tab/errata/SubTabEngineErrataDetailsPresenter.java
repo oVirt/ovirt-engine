@@ -49,7 +49,8 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
     public SubTabEngineErrataDetailsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ErrataMainTabSelectedItems selectedItems,
             DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ErrataSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

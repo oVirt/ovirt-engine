@@ -9,10 +9,10 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
@@ -20,13 +20,16 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetw
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.CpuQosActionPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterNetworkQosActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQosPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.HostNetworkQosActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 
 public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool,
         StorageQos, DataCenterListModel, DataCenterStorageQosListModel>
@@ -54,22 +57,21 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
             DataCenterListModel, DataCenterStorageQosListModel> modelProvider, SearchableDetailModelProvider<NetworkQoS,
             DataCenterListModel, DataCenterNetworkQoSListModel> vmNetworkModelProvider, SearchableDetailModelProvider<HostNetworkQos,
             DataCenterListModel, DataCenterHostNetworkQosListModel> hostNetworkModelProvider, SearchableDetailModelProvider<CpuQos,
-            DataCenterListModel, DataCenterCpuQosListModel> cpuModelProvider, EventBus eventBus,
-            ClientStorage clientStorage) {
+            DataCenterListModel, DataCenterCpuQosListModel> cpuModelProvider, CpuQosActionPanelPresenterWidget cpuQosActionPanel,
+            DataCenterNetworkQosActionPanelPresenterWidget vmNetworkQosActionPanel,
+            HostNetworkQosActionPanelPresenterWidget hostQosActionPanel,
+            EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider);
         this.vmNetworkModelProvider = vmNetworkModelProvider;
         this.hostNetworkModelProvider = hostNetworkModelProvider;
         this.cpuModelProvider = cpuModelProvider;
         initTable();
         initWidget(getTableContainer());
-        vmNetworkTable = new VmNetworkQosListModelTable(vmNetworkModelProvider, eventBus, clientStorage);
-        hostNetworkTable = new HostNetworkQosListModelTable(hostNetworkModelProvider, eventBus, clientStorage);
-        cpuTable = new CpuQosListModelTable(cpuModelProvider, eventBus, clientStorage);
+        vmNetworkTable = new VmNetworkQosListModelTable(vmNetworkModelProvider, eventBus, vmNetworkQosActionPanel, clientStorage);
+        hostNetworkTable = new HostNetworkQosListModelTable(hostNetworkModelProvider, eventBus, hostQosActionPanel, clientStorage);
+        cpuTable = new CpuQosListModelTable(cpuModelProvider, eventBus, cpuQosActionPanel, clientStorage);
         if (getTableContainer() instanceof FlowPanel) {
             FlowPanel container = (FlowPanel) getTableContainer();
-            PageHeader storageHeader = new PageHeader();
-            storageHeader.setText(constants.dataCenterStorageQosSubTabLabel());
-            container.insert(storageHeader, 0);
             PageHeader vmNetworkHeader = new PageHeader();
             vmNetworkHeader.setText(constants.dataCenterNetworkQoSSubTabLabel());
             container.add(vmNetworkHeader);
@@ -88,6 +90,19 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
     @Override
     protected void generateIds() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
+    }
+
+    @Override
+    public void setInSlot(Object slot, IsWidget content) {
+        super.setInSlot(slot, content);
+        if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
+            if (getTableContainer() instanceof FlowPanel) {
+                FlowPanel container = (FlowPanel) getTableContainer();
+                PageHeader storageHeader = new PageHeader();
+                storageHeader.setText(constants.dataCenterStorageQosSubTabLabel());
+                container.insert(storageHeader, 0);
+            }
+        }
     }
 
     void initTable() {
@@ -170,30 +185,6 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
         };
         writeIopsColumn.makeSortable();
         getTable().addColumn(writeIopsColumn, constants.storageQosIopsWrite(), "105px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.newQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.editQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEditCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.removeQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
     }
 
     @Override

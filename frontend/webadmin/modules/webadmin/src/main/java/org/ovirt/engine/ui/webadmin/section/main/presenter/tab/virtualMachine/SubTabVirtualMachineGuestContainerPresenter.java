@@ -43,7 +43,8 @@ public class SubTabVirtualMachineGuestContainerPresenter
     public SubTabVirtualMachineGuestContainerPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, SearchableDetailModelProvider<GuestContainer, VmListModel<Void>,
             VmGuestContainerListModel> modelProvider, VirtualMachineMainTabSelectedItems selectedItems) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action buttons, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

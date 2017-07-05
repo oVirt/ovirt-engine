@@ -51,7 +51,8 @@ public class SubTabVirtualMachineVmDevicePresenter
             PlaceManager placeManager,
             SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider,
             VirtualMachineMainTabSelectedItems selectedItems) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

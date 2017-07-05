@@ -44,7 +44,8 @@ public class SubTabVolumePermissionPresenter
             PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, VolumeListModel,
             PermissionListModel<GlusterVolumeEntity>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

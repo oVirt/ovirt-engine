@@ -6,14 +6,12 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -65,35 +63,6 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
                 };
         domainStatusColumn.makeSortable();
         getTable().addColumn(domainStatusColumn, constants.domainStatusInDcStorageDc(), "300px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachStorageDc()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getAttachCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.detachStorageDc()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDetachCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.activateStorageDc()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getActivateCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.maintenanceStorageDc()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getMaintenanceCommand();
-            }
-        }));
     }
 
 }

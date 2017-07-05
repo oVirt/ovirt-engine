@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
+import org.ovirt.engine.ui.common.widget.action.VmDiskActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmDiskListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -24,8 +25,9 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidg
     @Inject
     public SubTabVirtualMachineVirtualDiskView(
             SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> modelProvider,
+            VmDiskActionPanelPresenterWidget actionPanel,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, true));
+        super(new VmDiskListModelTable(modelProvider, eventBus, actionPanel, clientStorage, true));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

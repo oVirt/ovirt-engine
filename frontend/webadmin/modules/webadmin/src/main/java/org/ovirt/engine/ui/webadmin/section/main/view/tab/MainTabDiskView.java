@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -10,16 +7,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
-import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -30,8 +23,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -82,7 +73,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTableColumns();
-        initTableButtons();
         initTableOverhead();
         initWidget(getTable());
     }
@@ -233,106 +223,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         disksViewRadioGroup = new DisksViewRadioGroup();
         disksViewRadioGroup.setClickHandler(clickHandler);
         getTable().setTableOverhead(disksViewRadioGroup);
-    }
-
-    void initTableButtons() {
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.newDisk()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.moveDisk()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getMoveCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.copyDisk()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getCopyCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.getDiskAlignment(),
-                CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getScanAlignmentCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.exportDisk()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getExportCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<Disk>(constants.assignQuota()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getChangeQuotaCommand();
-            }
-        }));
-
-        // Upload operations drop down
-        List<ActionButtonDefinition<Disk>> uploadActions = new LinkedList<>();
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageStart()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getUploadCommand();
-            }
-        });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageCancel()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getCancelUploadCommand();
-            }
-        });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImagePause()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getPauseUploadCommand();
-            }
-        });
-        uploadActions.add(new WebAdminButtonDefinition<Disk>(constants.uploadImageResume()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getResumeUploadCommand();
-            }
-        });
-        addButtonToActionGroup(
-        getTable().addActionButton(
-            new WebAdminMenuBarButtonDefinition<>(
-                    constants.uploadImage(),
-                uploadActions
-            ),
-            new DropdownActionButton<Disk>(uploadActions, new DropdownActionButton.SelectedItemsProvider<Disk>() {
-                @Override
-                public List<Disk> getSelectedItems() {
-                    return getMainModel().getSelectedItems();
-                }
-            })
-        ));
     }
 
     void searchByDiskViewType(Object diskViewType) {

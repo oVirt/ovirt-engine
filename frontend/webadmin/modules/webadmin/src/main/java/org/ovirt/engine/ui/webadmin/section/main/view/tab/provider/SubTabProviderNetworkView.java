@@ -8,14 +8,12 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -73,14 +71,6 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         };
         dcColumn.makeSortable();
         getTable().addColumn(dcColumn, constants.dataCenterProviderNetwork(), "200px"); //$NON-NLS-1$
-
-        this.addButtonToActionGroup(
-            getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getDetailModel().getDiscoverCommand();
-                }
-        }));
     }
 
     @Override

@@ -43,7 +43,8 @@ public class SubTabTemplateInterfacePresenter
     public SubTabTemplateInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses TemplateInterfaceListModelTable and gets action panel from somewhere else passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 TemplateSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

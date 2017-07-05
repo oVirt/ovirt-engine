@@ -2,16 +2,13 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.VmInterfaceActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListView;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItemCreator;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 
 import com.google.gwt.core.client.GWT;
@@ -28,8 +25,6 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-
     @UiField
     FlowPanel interfaceTableContainer;
 
@@ -38,11 +33,11 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
 
     public VmInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, VmInterfaceListModel> modelProvider,
-            EventBus eventBus,
+            EventBus eventBus, VmInterfaceActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
 
-        interfaceTableContainer.add(this.actionPanel);
+        interfaceTableContainer.add(actionPanel.getView());
 
         interfaceListView.setCreator(this);
         interfaceListView.setModel(modelProvider.getModel());
@@ -56,32 +51,6 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
 
     @Override
     public void initTable() {
-        addButtonToActionGroup(
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.newInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.editInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.removeInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
     }
 
     @Override

@@ -42,7 +42,8 @@ public class SubTabNetworkGeneralPresenter
     public SubTabNetworkGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
             DetailModelProvider<NetworkListModel, NetworkGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.AffinityLabelsActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -42,8 +43,9 @@ public class SubTabHostAffinityLabelPresenter
     @Inject
     public SubTabHostAffinityLabelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            AffinityLabelsActionPanelPresenterWidget<HostListModel<Void>, HostAffinityLabelListModel> actionPanel,
             SearchableDetailModelProvider<Label, HostListModel<Void>, HostAffinityLabelListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

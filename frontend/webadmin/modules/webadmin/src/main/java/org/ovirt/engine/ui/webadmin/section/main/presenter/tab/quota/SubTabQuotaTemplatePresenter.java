@@ -43,7 +43,8 @@ public class SubTabQuotaTemplatePresenter
     public SubTabQuotaTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, QuotaMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VmTemplate, QuotaListModel, QuotaTemplateListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 QuotaSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

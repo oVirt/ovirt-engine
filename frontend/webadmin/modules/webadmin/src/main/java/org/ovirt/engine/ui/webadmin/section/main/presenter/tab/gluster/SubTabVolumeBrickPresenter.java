@@ -42,8 +42,9 @@ public class SubTabVolumeBrickPresenter
     @Inject
     public SubTabVolumeBrickPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
+            VolumeBrickActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

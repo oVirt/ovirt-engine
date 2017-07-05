@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
@@ -25,8 +26,9 @@ public class SubTabVolumePermissionView extends AbstractSubTabPermissionsView<Gl
     @Inject
     public SubTabVolumePermissionView(SearchableDetailModelProvider<Permission, VolumeListModel,
             PermissionListModel<GlusterVolumeEntity>> modelProvider, EventBus eventBus,
+            PermissionActionPanelPresenterWidget<VolumeListModel, PermissionListModel<GlusterVolumeEntity>> actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+        super(modelProvider, eventBus, clientStorage, actionPanel);
     }
 
     @Override

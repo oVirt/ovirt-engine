@@ -28,7 +28,8 @@ public class SearchableDetailTabModelProvider<T, M extends ListWithDetailsModel,
         super(eventBus, defaultConfirmPopupProvider);
     }
 
-    protected M getMainModel() {
+    @Override
+    public M getMainModel() {
         return mainModelProvider.get();
     }
 

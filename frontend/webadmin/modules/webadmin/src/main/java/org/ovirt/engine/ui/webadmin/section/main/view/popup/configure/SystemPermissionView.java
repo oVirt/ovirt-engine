@@ -4,15 +4,12 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -32,8 +29,6 @@ public class SystemPermissionView extends Composite {
     @UiField
     FlowPanel tabContent;
 
-    private PatternflyActionPanel actionPanel;
-
     private SimpleActionTable<Permission> table;
 
     private final SystemPermissionModelProvider modelProvider;
@@ -45,7 +40,7 @@ public class SystemPermissionView extends Composite {
 
     @Inject
     public SystemPermissionView(SystemPermissionModelProvider modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus, SystemPermissionActionPanelPresenterWidget actionPanel, ClientStorage clientStorage) {
         super();
         this.modelProvider = modelProvider;
         this.eventBus = eventBus;
@@ -54,14 +49,13 @@ public class SystemPermissionView extends Composite {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
 
-        initTable();
+        initTable(actionPanel);
     }
 
     private void localize() {
     }
 
-    private void initTable() {
-        actionPanel = new PatternflyActionPanel();
+    private void initTable(SystemPermissionActionPanelPresenterWidget actionPanel) {
         tabContent.add(actionPanel);
         table = new SimpleActionTable<>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
@@ -101,22 +95,6 @@ public class SystemPermissionView extends Composite {
             }
         };
         table.addColumn(roleColumn, constants.rolePermission());
-
-        actionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<Permission>(constants.addPermission()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return modelProvider.getModel().getAddCommand();
-            }
-        }));
-
-        actionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return modelProvider.getModel().getRemoveCommand();
-            }
-        }));
 
         table.getSelectionModel().addSelectionChangeHandler(event -> modelProvider.setSelectedItems(table.getSelectionModel().getSelectedList()));
     }

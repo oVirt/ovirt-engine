@@ -43,7 +43,8 @@ public class SubTabHostDevicePresenter
     public SubTabHostDevicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // No action buttons, pass null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

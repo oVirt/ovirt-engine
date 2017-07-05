@@ -44,7 +44,8 @@ public class SubTabDataCenterPermissionPresenter
             PlaceManager placeManager, DataCenterMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, DataCenterListModel,
             PermissionListModel<StoragePool>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

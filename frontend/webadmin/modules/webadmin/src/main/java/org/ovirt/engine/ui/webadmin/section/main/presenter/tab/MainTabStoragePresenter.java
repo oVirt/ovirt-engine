@@ -59,8 +59,9 @@ public class MainTabStoragePresenter extends AbstractMainTabWithDetailsPresenter
     public MainTabStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<StorageDomain, StorageListModel> dataProvider,
             SearchPanelPresenterWidget<StorageDomain, StorageListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<StorageDomain, StorageListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, dataProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<StorageDomain, StorageListModel> breadCrumbs,
+            StorageActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, dataProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

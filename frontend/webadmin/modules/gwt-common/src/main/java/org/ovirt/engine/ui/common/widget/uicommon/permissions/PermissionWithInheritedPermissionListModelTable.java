@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -17,8 +18,8 @@ public class PermissionWithInheritedPermissionListModelTable<P extends Permissio
 
     public PermissionWithInheritedPermissionListModelTable(
             SearchableTableModelProvider<Permission, P> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+            EventBus eventBus, PermissionActionPanelPresenterWidget<?, P> actionPanel, ClientStorage clientStorage) {
+        super(modelProvider, eventBus, actionPanel, clientStorage);
     }
 
     @Override

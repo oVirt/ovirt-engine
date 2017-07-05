@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -29,7 +28,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 
@@ -258,14 +256,6 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         initTableOverhead();
         handleRadioButtonClick(null);
         initSorting();
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VdsNetworkInterface, VDS>>(constants.setupHostNetworksInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSetupNetworksCommand();
-            }
-        }));
     }
 
     private void initSorting() {

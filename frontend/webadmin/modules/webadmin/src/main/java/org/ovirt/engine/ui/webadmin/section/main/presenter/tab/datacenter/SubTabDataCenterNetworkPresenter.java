@@ -42,8 +42,9 @@ public class SubTabDataCenterNetworkPresenter
     @Inject
     public SubTabDataCenterNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, DataCenterMainTabSelectedItems selectedItems,
+            DataCenterNetworkActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

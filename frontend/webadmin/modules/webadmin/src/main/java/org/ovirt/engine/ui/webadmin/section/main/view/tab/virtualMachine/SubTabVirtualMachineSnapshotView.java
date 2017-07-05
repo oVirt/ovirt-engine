@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
+import org.ovirt.engine.ui.common.widget.action.SnapshotActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
@@ -16,7 +17,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetView<VM, Snapshot, VmListModel<Void>, VmSnapshotListModel> implements SubTabVirtualMachineSnapshotPresenter.ViewDef {
+public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetView<VM, Snapshot, VmListModel<Void>,
+    VmSnapshotListModel> implements SubTabVirtualMachineSnapshotPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineSnapshotView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -24,11 +26,13 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetV
 
     @SuppressWarnings("unchecked")
     @Inject
-    public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider,
-            EventBus eventBus,
+    public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel<Void>,
+                VmSnapshotListModel> modelProvider,
+            EventBus eventBus, SnapshotActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
         super(new VmSnapshotListModelTable<>(
-                (DataBoundTabModelProvider<Snapshot, VmSnapshotListModel>) modelProvider, eventBus, clientStorage));
+                (DataBoundTabModelProvider<Snapshot, VmSnapshotListModel>) modelProvider, eventBus, actionPanel,
+                clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getModelBoundTableWidget());

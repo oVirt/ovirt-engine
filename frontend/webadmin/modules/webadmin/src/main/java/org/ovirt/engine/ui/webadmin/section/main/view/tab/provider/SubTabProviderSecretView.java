@@ -12,14 +12,12 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderSecretListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderSecretPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
@@ -84,28 +82,5 @@ public class SubTabProviderSecretView extends AbstractSubTabTableView<Provider, 
         };
         creationDateColumn.makeSortable();
         getTable().addColumn(creationDateColumn, constants.creationDateLibvirtSecret(), "200px"); //$NON-NLS-1$
-
-        this.addButtonToActionGroup(
-            getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.newLibvirtSecret()) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getDetailModel().getNewCommand();
-                }
-        }));
-        this.addButtonToActionGroup(
-            getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.editLibvirtSecret()) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getDetailModel().getEditCommand();
-                }
-        }));
-        this.addButtonToActionGroup(
-            getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.removeLibvirtSecret()) {
-                @Override
-                protected UICommand resolveCommand() {
-                    return getDetailModel().getRemoveCommand();
-                }
-        }));
     }
-
 }

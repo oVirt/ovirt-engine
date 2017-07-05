@@ -6,13 +6,11 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -130,28 +128,5 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
         };
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionVnicProfile(), "400px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newVnicProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.editVnicProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.removeVnicProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-
     }
 }

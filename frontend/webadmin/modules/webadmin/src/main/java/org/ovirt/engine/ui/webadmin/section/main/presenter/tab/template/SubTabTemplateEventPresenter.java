@@ -43,7 +43,8 @@ public class SubTabTemplateEventPresenter
     public SubTabTemplateEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, TemplateListModel, TemplateEventListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no actionPanel, passing null
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 TemplateSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

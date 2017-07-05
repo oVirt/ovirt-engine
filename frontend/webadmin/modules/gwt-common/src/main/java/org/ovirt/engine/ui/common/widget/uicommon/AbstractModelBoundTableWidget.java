@@ -6,11 +6,10 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.SubTableHeaderlessResources;
 import org.ovirt.engine.ui.common.SubTableResources;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ActionButton;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -42,17 +41,18 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
     private final SimpleActionTable<T> table;
     private final FlowPanel wrappedWidget;
     private HandlerRegistration registration;
-    protected PatternflyActionPanel actionPanel;
 
     public AbstractModelBoundTableWidget(SearchableTableModelProvider<T, M> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, boolean useMainTableResources) {
+            EventBus eventBus, ActionPanelPresenterWidget<T, M> actionPanel, ClientStorage clientStorage,
+            boolean useMainTableResources) {
         this.modelProvider = modelProvider;
         this.eventBus = eventBus;
         this.useMainTableResources = useMainTableResources;
         this.table = createActionTable(eventBus, clientStorage);
-        this.actionPanel = createActionPanel();
         this.wrappedWidget = new FlowPanel();
-        wrappedWidget.add(actionPanel);
+        if (actionPanel != null) {
+            wrappedWidget.add(actionPanel);
+        }
         wrappedWidget.add(table);
         initWidget(getWrappedWidget());
         OrderedMultiSelectionModel<T> tableSelectionModel = getTable() != null ? getTable().getSelectionModel() : null;
@@ -90,10 +90,6 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
                 }
             }
         };
-    }
-
-    protected PatternflyActionPanel createActionPanel() {
-        return new PatternflyActionPanel();
     }
 
     /**
@@ -134,18 +130,6 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
 
     public SimpleActionTable<T> getTable() {
         return table;
-    }
-
-    public void addButtonToActionGroup(ActionButton button) {
-        actionPanel.addButtonToActionGroup(button);
-    }
-
-    public void addMenuItemToKebab(ActionButton menuItem) {
-        actionPanel.addMenuItemToKebab(menuItem);
-    }
-
-    public void addDividerToKebab() {
-        actionPanel.addDividerToKebab();
     }
 
     protected SearchableTableModelProvider<T, M> getModelProvider() {

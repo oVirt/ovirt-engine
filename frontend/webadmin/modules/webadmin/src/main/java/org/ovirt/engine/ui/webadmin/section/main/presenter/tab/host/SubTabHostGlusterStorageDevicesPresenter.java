@@ -42,8 +42,9 @@ public class SubTabHostGlusterStorageDevicesPresenter
     @Inject
     public SubTabHostGlusterStorageDevicesPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            HostGlusterActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

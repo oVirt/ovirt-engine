@@ -42,7 +42,8 @@ public class SubTabProviderGeneralPresenter
     public SubTabProviderGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, ProviderMainTabSelectedItems selectedItems,
             DetailModelProvider<ProviderListModel, ProviderGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // No action panel pass null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ProviderSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

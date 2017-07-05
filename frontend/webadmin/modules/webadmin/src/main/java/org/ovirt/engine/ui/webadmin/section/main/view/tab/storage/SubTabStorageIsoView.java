@@ -8,14 +8,12 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -71,14 +69,6 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         };
         sizeColumn.makeSortable();
         getTable().addColumn(sizeColumn, constants.actualSizeTemplate(), "100px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<RepoImage>(constants.importImage()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getImportImagesCommand();
-            }
-        }));
 
         getTable().showRefreshButton();
     }

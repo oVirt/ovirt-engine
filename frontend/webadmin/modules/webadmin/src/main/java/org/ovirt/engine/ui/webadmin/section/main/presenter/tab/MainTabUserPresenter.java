@@ -61,8 +61,9 @@ public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<Db
     public MainTabUserPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<DbUser, UserListModel> modelProvider,
             SearchPanelPresenterWidget<DbUser, UserListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<DbUser, UserListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<DbUser, UserListModel> breadCrumbs,
+            UserActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

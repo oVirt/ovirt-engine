@@ -1,24 +1,19 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.searchbackend.StoragePoolFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
@@ -111,54 +106,5 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         };
         descColumn.makeSortable(StoragePoolFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descColumn, constants.descriptionDc(), "300px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.editDC()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.removeDC()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<StoragePool>(constants.forceRemoveDC()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getForceRemoveCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminImageButtonDefinition<StoragePool>(constants.guideMeDc(),
-                IconType.SUPPORT, true) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getGuideCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<StoragePool>(constants.reinitializeDC(), CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRecoveryStorageCommand();
-            }
-        }));
     }
-
 }

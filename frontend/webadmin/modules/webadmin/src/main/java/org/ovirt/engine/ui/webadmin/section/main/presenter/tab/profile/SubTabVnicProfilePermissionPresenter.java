@@ -44,7 +44,8 @@ public class SubTabVnicProfilePermissionPresenter
             PlaceManager placeManager, VnicProfileMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, VnicProfileListModel,
             PermissionListModel<VnicProfileView>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

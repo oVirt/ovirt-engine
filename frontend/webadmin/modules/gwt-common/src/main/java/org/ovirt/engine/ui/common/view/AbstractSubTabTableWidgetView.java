@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.widget.action.ActionButton;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -42,18 +41,6 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
 
     protected AbstractModelBoundTableWidget<T, D> getModelBoundTableWidget() {
         return modelBoundTableWidget;
-    }
-
-    public void addButtonToActionGroup(ActionButton button) {
-        modelBoundTableWidget.addButtonToActionGroup(button);
-    }
-
-    public void addMenuItemToKebab(ActionButton menuItem) {
-        modelBoundTableWidget.addMenuItemToKebab(menuItem);
-    }
-
-    public void addDividerToKebab() {
-        modelBoundTableWidget.addDividerToKebab();
     }
 
     @Override

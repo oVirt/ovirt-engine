@@ -10,14 +10,12 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.AffinityLabelListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 public abstract class AbstractSubTabAffinityLabelsView<I, M extends ListWithDetailsModel, T extends AffinityLabelListModel<?>> extends AbstractSubTabTableView<I, Label, M, T> {
 
@@ -80,23 +78,6 @@ public abstract class AbstractSubTabAffinityLabelsView<I, M extends ListWithDeta
         };
         hostMembersColumn.makeSortable();
         getTable().addColumn(hostMembersColumn, constants.affinityLabelsHostsColumnLabel(), "500px"); //$NON-NLS-1$
-
-        // Action Buttons
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Label>(constants.affinityLabelsSubTabNewButton()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Label>(constants.affinityLabelsSubTabEditButton()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEditCommand();
-            }
-        }));
     }
 
     protected List<String> getVmNames(Label label) {

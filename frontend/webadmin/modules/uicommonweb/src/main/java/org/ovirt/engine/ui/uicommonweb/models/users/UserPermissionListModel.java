@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
@@ -16,28 +18,19 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
-public class UserPermissionListModel extends SearchableListModel<DbUser, Permission> {
+import com.google.inject.Provider;
 
-    private UICommand privateRemoveCommand;
+public class UserPermissionListModel extends PermissionListModel<DbUser> {
 
-    public UICommand getRemoveCommand() {
-        return privateRemoveCommand;
-    }
-
-    private void setRemoveCommand(UICommand value) {
-        privateRemoveCommand = value;
-    }
-
-    public UserPermissionListModel() {
+    @Inject
+    public UserPermissionListModel(Provider<AdElementListModel> adElementListModelProvider) {
+        super(adElementListModelProvider);
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
         setHelpTag(HelpTag.permissions);
         setHashName("permissions"); // $//$NON-NLS-1$
-
-        setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
     }
@@ -153,6 +146,9 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
 
         getRemoveCommand().setIsExecutionAllowed(!isInherited && (getSelectedItem() != null
                 || (getSelectedItems() != null && getSelectedItems().size() > 0)));
+        // User Permission uses the same action panel as all the permission models, but you can't
+        // add, so we need to hide the add button.
+        getAddCommand().setIsAvailable(false);
     }
 
     @Override

@@ -10,13 +10,12 @@ import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.CpuProfilesActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CpuProfilePermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -53,8 +52,9 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
     public CpuProfilesListModelTable(SearchableTableModelProvider<CpuProfile, CpuProfileListModel> modelProvider,
             CpuProfilePermissionModelProvider cpuProfilePermissionModelProvider,
             EventBus eventBus,
+            CpuProfilesActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
         this.cpuProfilePermissionModelProvider = cpuProfilePermissionModelProvider;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         // Create cpu profile table
@@ -63,7 +63,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         // Create permission panel
         permissionListModelTable =
                 new PermissionWithInheritedPermissionListModelTable<>(cpuProfilePermissionModelProvider,
-                        eventBus,
+                        eventBus, null,
                         clientStorage);
         permissionListModelTable.initTable();
         permissionContainer = new SimplePanel();
@@ -114,28 +114,6 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         };
         getTable().addColumn(qosColumn, constants.cpuQosName(), "200px"); //$NON-NLS-1$
         qosColumn.makeSortable();
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<CpuProfile>(constants.newProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<CpuProfile>(constants.editProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<CpuProfile>(constants.removeProfile()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
 
         // Add selection listener
         getModel().getSelectedItemChangedEvent().addListener((ev, sender, args) -> updatePermissionPanel());

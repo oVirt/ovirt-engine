@@ -23,7 +23,8 @@ public class VmDevicesListModelTable extends AbstractModelBoundTableWidget<VmDev
     public VmDevicesListModelTable(
             SearchableTableModelProvider<VmDeviceFeEntity, VmDevicesListModel<VM>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        // No action panel for vm devices list model table, passing null.
+        super(modelProvider, eventBus, null, clientStorage, false);
     }
 
     @Override

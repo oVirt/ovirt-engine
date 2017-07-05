@@ -43,7 +43,8 @@ public class SubTabDiskTemplatePresenter
     public SubTabDiskTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // No action panel on disk template view, can pass null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 DiskSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

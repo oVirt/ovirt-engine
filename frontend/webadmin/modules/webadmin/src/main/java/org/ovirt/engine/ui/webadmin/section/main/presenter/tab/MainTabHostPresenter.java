@@ -65,8 +65,9 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
     public MainTabHostPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VDS, HostListModel<Void>> modelProvider,
             SearchPanelPresenterWidget<VDS, HostListModel<Void>> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<VDS, HostListModel<Void>> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<VDS, HostListModel<Void>> breadCrumbs,
+            HostActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

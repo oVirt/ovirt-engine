@@ -6,12 +6,10 @@ import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionListModelTable;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -19,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
@@ -34,7 +31,6 @@ public class SharedMacPoolView extends Composite {
     private final SharedMacPoolModelProvider sharedMacPoolModelProvider;
 
     private final FlowPanel container = new FlowPanel();
-    private final PatternflyActionPanel actionPanel = new PatternflyActionPanel();
     private final SimpleActionTable<MacPool> macPoolTable;
     private final PermissionListModelTable<PermissionListModel<MacPool>> authorizationTable;
 
@@ -53,7 +49,8 @@ public class SharedMacPoolView extends Composite {
             final EventBus eventBus,
             final ClientStorage clientStorage,
             final MainTableHeaderlessResources headerlessResources,
-            final MainTableResources tableResources) {
+            final MainTableResources tableResources,
+            SharedMacPoolActionPanelPresenterWidget actionPanel) {
 
         this.sharedMacPoolModelProvider = sharedMacPoolModelProvider;
         this.permissionModelProvider = permissionModelProvider;
@@ -66,7 +63,7 @@ public class SharedMacPoolView extends Composite {
         macPoolTable = createMacPoolTable();
         container.add(actionPanel);
         container.add(macPoolTable);
-        authorizationTable = new PermissionListModelTable<>(permissionModelProvider, eventBus, clientStorage);
+        authorizationTable = new PermissionListModelTable<>(permissionModelProvider, eventBus, null, clientStorage);
         authorizationTable.initTable();
 
         authorizationTable.getTable().getSelectionModel().addSelectionChangeHandler(event ->
@@ -123,33 +120,6 @@ public class SharedMacPoolView extends Composite {
                 return macPool.getDescription();
             }
         }, constants.configureMacPoolDescriptionColumn(), "300px"); //$NON-NLS-1$
-
-        actionPanel.addButtonToActionGroup(
-        macPoolTable.addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolAddButton()) {
-
-            @Override
-            protected UICommand resolveCommand() {
-                return sharedMacPoolModelProvider.getModel().getNewCommand();
-            }
-        }));
-
-        actionPanel.addButtonToActionGroup(
-        macPoolTable.addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolEditButton()) {
-
-            @Override
-            protected UICommand resolveCommand() {
-                return sharedMacPoolModelProvider.getModel().getEditCommand();
-            }
-        }));
-        actionPanel.addButtonToActionGroup(
-        macPoolTable.addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolRemoveButton()) {
-
-            @Override
-            protected UICommand resolveCommand() {
-                return sharedMacPoolModelProvider.getModel().getRemoveCommand();
-            }
-        }));
-
 
         macPoolTable.getSelectionModel().addSelectionChangeHandler(event -> {
             final List<MacPool> selectedItems = macPoolTable.getSelectedItems();

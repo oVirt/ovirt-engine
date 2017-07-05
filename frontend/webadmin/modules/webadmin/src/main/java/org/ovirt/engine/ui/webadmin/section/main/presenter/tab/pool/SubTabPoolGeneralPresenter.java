@@ -42,7 +42,8 @@ public class SubTabPoolGeneralPresenter
     public SubTabPoolGeneralPresenter(EventBus eventBus, SubTabPoolGeneralView view, ProxyDef proxy,
             PlaceManager placeManager, PoolMainTabSelectedItems selectedItems,
             DetailModelProvider<PoolListModel, PoolGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 PoolSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

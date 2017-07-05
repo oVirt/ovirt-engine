@@ -42,7 +42,8 @@ public class SubTabVolumeGeneralPresenter
     public SubTabVolumeGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
             DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // General has no action panel
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

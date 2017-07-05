@@ -10,8 +10,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.action.DropdownActionButton;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -23,7 +21,6 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivitySeperatorCell;
@@ -168,161 +165,6 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         snapshotCountColumn.makeSortable();
         getTable().addColumn(snapshotCountColumn, constants.noOfSnapshotsLabel(), "100px"); //$NON-NLS-1$
 
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewVolumeCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.removeVolume()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveVolumeCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startVolume()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStartCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopVolume()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStopCommand();
-            }
-        }));
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.rebalanceVolume()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStartRebalanceCommand();
-            }
-        }));
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.optimizeForVirtStore()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getOptimizeForVirtStoreCommand();
-            }
-        }));
-
-        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeProfilingActions = new ArrayList<>();
-
-        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.startVolumeProfiling()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStartVolumeProfilingCommand();
-            }
-        });
-        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.volumeProfileDetails()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getShowVolumeProfileDetailsCommand();
-            }
-        });
-        volumeProfilingActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.stopVolumeProfiling()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getStopVolumeProfilingCommand();
-            }
-        });
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeProfilingAction(),
-                volumeProfilingActions
-            ),
-            new DropdownActionButton<GlusterVolumeEntity>(volumeProfilingActions,
-                    new DropdownActionButton.SelectedItemsProvider<GlusterVolumeEntity>() {
-                @Override
-                public List<GlusterVolumeEntity> getSelectedItems() {
-                    return getMainModel().getSelectedItems();
-                }
-            })
-        ));
-
-        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeSnapshotActions = getVolumeSnapshotMenu();
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainTabTitle(),
-                volumeSnapshotActions
-            ),
-            new DropdownActionButton<GlusterVolumeEntity>(volumeSnapshotActions,
-                    new DropdownActionButton.SelectedItemsProvider<GlusterVolumeEntity>() {
-                @Override
-                public List<GlusterVolumeEntity> getSelectedItems() {
-                    return getMainModel().getSelectedItems();
-                }
-            })
-        ));
-
-        List<ActionButtonDefinition<GlusterVolumeEntity>> volumeGeoRepActions = getGeoRepCreateMenu(constants);
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainTabTitle(),
-                volumeGeoRepActions
-            ),
-            new DropdownActionButton<GlusterVolumeEntity>(volumeGeoRepActions,
-                    new DropdownActionButton.SelectedItemsProvider<GlusterVolumeEntity>() {
-                @Override
-                public List<GlusterVolumeEntity> getSelectedItems() {
-                    return getMainModel().getSelectedItems();
-                }
-            })
-        ));
-    }
-
-    private List<ActionButtonDefinition<GlusterVolumeEntity>> getGeoRepCreateMenu(ApplicationConstants constants) {
-        List<ActionButtonDefinition<GlusterVolumeEntity>> geoRepMenu = new ArrayList<>();
-        WebAdminButtonDefinition<GlusterVolumeEntity> geoRepButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newGeoRepSession()) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return getMainModel().getNewGeoRepSessionCommand();
-                    }
-                };
-        geoRepMenu.add(geoRepButton);
-        return geoRepMenu;
-    }
-
-    private List<ActionButtonDefinition<GlusterVolumeEntity>> getVolumeSnapshotMenu() {
-        List<ActionButtonDefinition<GlusterVolumeEntity>> snapshotMenu = new ArrayList<>();
-
-        WebAdminButtonDefinition<GlusterVolumeEntity> newSnapshotButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolumeSnapshot()) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return getMainModel().getCreateSnapshotCommand();
-                    }
-                };
-        snapshotMenu.add(newSnapshotButton);
-        WebAdminButtonDefinition<GlusterVolumeEntity> editSnapshotScheduleButton =
-                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.editVolumeSnapshotSchedule()) {
-                    @Override
-                    protected UICommand resolveCommand() {
-                        return getMainModel().getEditSnapshotScheduleCommand();
-                    }
-                };
-        snapshotMenu.add(editSnapshotScheduleButton);
-
-        WebAdminButtonDefinition<GlusterVolumeEntity> configureClusterSnapshotOptionsButton = new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.configureClusterSnapshotOptions()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getConfigureClusterSnapshotOptionsCommand();
-            }
-        };
-        WebAdminButtonDefinition<GlusterVolumeEntity> configureVolumeSnapshotOptionsButton = new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.configureVolumeSnapshotOptions()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getConfigureVolumeSnapshotOptionsCommand();
-            }
-        };
-
-        snapshotMenu.add(configureClusterSnapshotOptionsButton);
-        snapshotMenu.add(configureVolumeSnapshotOptionsButton);
-
-        return snapshotMenu;
     }
 
     private MenuCell<GlusterTaskSupport> getRebalanceActivityMenu() {

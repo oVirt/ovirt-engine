@@ -59,8 +59,9 @@ public class MainTabQuotaPresenter extends AbstractMainTabWithDetailsPresenter<Q
     public MainTabQuotaPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Quota, QuotaListModel> modelProvider,
             SearchPanelPresenterWidget<Quota, QuotaListModel> searchPanelPresenterWidget,
-            QuotaBreadCrumbsPresenterWidget breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            QuotaBreadCrumbsPresenterWidget breadCrumbs,
+            QuotaActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

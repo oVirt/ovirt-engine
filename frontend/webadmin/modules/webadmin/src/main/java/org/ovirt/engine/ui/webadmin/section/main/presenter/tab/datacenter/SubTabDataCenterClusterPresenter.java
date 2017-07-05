@@ -43,7 +43,8 @@ public class SubTabDataCenterClusterPresenter
     public SubTabDataCenterClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, DataCenterMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

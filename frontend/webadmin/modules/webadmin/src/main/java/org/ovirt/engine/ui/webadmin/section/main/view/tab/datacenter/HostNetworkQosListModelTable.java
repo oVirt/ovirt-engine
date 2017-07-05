@@ -5,12 +5,11 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.HostNetworkQosActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 
@@ -21,8 +20,9 @@ public class HostNetworkQosListModelTable extends AbstractModelBoundTableWidget<
 
     public HostNetworkQosListModelTable(SearchableDetailModelProvider<HostNetworkQos,
             DataCenterListModel, DataCenterHostNetworkQosListModel> modelProvider, EventBus eventBus,
+            HostNetworkQosActionPanelPresenterWidget actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
         initTable();
     }
 
@@ -78,29 +78,5 @@ public class HostNetworkQosListModelTable extends AbstractModelBoundTableWidget<
         };
         outAverageRealtimeColumn.makeSortable();
         getTable().addColumn(outAverageRealtimeColumn, constants.hostNetworkQosTabOutAverageRealtime(), "105px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<HostNetworkQos>(constants.newQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<HostNetworkQos>(constants.editQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<HostNetworkQos>(constants.removeQos()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
     }
 }

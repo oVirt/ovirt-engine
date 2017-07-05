@@ -43,7 +43,8 @@ public class SubTabStorageEventPresenter
     public SubTabStorageEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

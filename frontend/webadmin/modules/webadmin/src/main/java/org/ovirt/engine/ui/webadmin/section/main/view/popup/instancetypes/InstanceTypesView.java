@@ -5,17 +5,14 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes.InstanceTypeGeneralModelForm;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -38,7 +35,6 @@ public class InstanceTypesView extends Composite {
     SimplePanel instanceTypesTabContent;
 
     FlowPanel container = new FlowPanel();
-    PatternflyActionPanel actionPanel;
     private SimpleActionTable<InstanceType> table;
 
     private InstanceTypeGeneralModelForm detailTable;
@@ -56,7 +52,8 @@ public class InstanceTypesView extends Composite {
     @Inject
     public InstanceTypesView(InstanceTypeModelProvider instanceTypeModelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider) {
+            DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider,
+            InstanceTypesActionPanelPresenterWidget actionPanel) {
         this.instanceTypeModelProvider = instanceTypeModelProvider;
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;
@@ -65,7 +62,7 @@ public class InstanceTypesView extends Composite {
 
         initSplitLayoutPanel();
 
-        initMainTable();
+        initMainTable(actionPanel);
         initSubtabTable();
     }
 
@@ -84,8 +81,7 @@ public class InstanceTypesView extends Composite {
         splitLayoutPanel.add(container);
     }
 
-    private void initMainTable() {
-        actionPanel = new PatternflyActionPanel();
+    private void initMainTable(InstanceTypesActionPanelPresenterWidget actionPanel) {
         table = new SimpleActionTable<>(instanceTypeModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
@@ -96,30 +92,6 @@ public class InstanceTypesView extends Composite {
             }
         };
         table.addColumn(nameColumn, constants.instanceTypeName(), "100px"); //$NON-NLS-1$
-
-        actionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.newInstanceType()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return instanceTypeModelProvider.getModel().getNewInstanceTypeCommand();
-            }
-        }));
-
-        actionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.editInstanceType()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return instanceTypeModelProvider.getModel().getEditInstanceTypeCommand();
-            }
-        }));
-
-        actionPanel.addButtonToActionGroup(
-        table.addActionButton(new WebAdminButtonDefinition<InstanceType>(constants.removeInstanceType()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return instanceTypeModelProvider.getModel().getDeleteInstanceTypeCommand();
-            }
-        }));
 
         container.add(actionPanel);
         container.add(table);

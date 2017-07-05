@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.CpuProfilesActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterCpuProfilePresenter;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CpuProfilePermissionModelProvider;
 
@@ -25,11 +26,13 @@ public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<C
     @Inject
     public SubTabClusterCpuProfileView(SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider,
             CpuProfilePermissionModelProvider permissionModelProvider,
+            CpuProfilesActionPanelPresenterWidget actionPanel,
             EventBus eventBus,
             ClientStorage clientStorage) {
         super(new CpuProfilesListModelTable(modelProvider,
                 permissionModelProvider,
                 eventBus,
+                actionPanel,
                 clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();

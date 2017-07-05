@@ -1,23 +1,18 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.ClusterConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ClusterAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
@@ -34,7 +29,6 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Clus
     }
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
-
 
     @Inject
     public MainTabClusterView(MainModelProvider<Cluster, ClusterListModel<Void>> modelProvider) {
@@ -133,48 +127,5 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<Clus
         };
 
         getTable().addColumn(vmCountColumn, constants.vmCount(), "150px"); //$NON-NLS-1$
-
-        //
-        // Add buttons
-        //
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<Cluster>(constants.newCluster()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewCommand();
-            }
-        }));
-        addButtonToActionGroup(
-                getTable().addActionButton(new WebAdminButtonDefinition<Cluster>(constants.editCluster()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addMenuItemToKebab(
-                getTable().addMenuListItem(new WebAdminButtonDefinition<Cluster>(constants.removeCluster()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-                getTable().addMenuListItem(new WebAdminImageButtonDefinition<Cluster>(constants.guideMeCluster(),
-                IconType.SUPPORT, true) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getGuideCommand();
-            }
-        }));
-
-        addMenuItemToKebab(
-                getTable().addMenuListItem(new WebAdminButtonDefinition<Cluster>(constants.resetClusterEmulatedMachine(),
-                CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getResetEmulatedMachineCommand();
-            }
-        }));
     }
 }

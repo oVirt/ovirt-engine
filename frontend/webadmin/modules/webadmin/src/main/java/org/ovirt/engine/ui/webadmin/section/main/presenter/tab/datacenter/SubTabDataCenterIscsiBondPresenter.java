@@ -42,8 +42,9 @@ public class SubTabDataCenterIscsiBondPresenter
     @Inject
     public SubTabDataCenterIscsiBondPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
         PlaceManager placeManager, DataCenterMainTabSelectedItems selectedItems,
+        DataCenterIscsiBondActionPanelPresenterWidget actionPanel,
         SearchableDetailModelProvider<IscsiBond, DataCenterListModel, DataCenterIscsiBondListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

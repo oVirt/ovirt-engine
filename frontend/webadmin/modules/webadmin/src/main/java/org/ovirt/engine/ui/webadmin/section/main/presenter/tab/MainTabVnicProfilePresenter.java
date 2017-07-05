@@ -57,8 +57,9 @@ public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPrese
     @Inject
     public MainTabVnicProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<VnicProfileView, VnicProfileListModel> modelProvider,
-            OvirtBreadCrumbsPresenterWidget<VnicProfileView, VnicProfileListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, null, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<VnicProfileView, VnicProfileListModel> breadCrumbs,
+            VnicProfileActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, null, breadCrumbs, actionPanel);
     }
 
     @Override

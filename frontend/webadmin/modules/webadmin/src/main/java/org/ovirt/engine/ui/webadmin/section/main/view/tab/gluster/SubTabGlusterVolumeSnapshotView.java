@@ -5,14 +5,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlusterVolumeSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterVolumeSnapshotStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -76,45 +74,5 @@ public class SubTabGlusterVolumeSnapshotView extends AbstractSubTabTableView<Glu
                 };
         creationTimeColumn.makeSortable();
         getTable().addColumn(creationTimeColumn, constants.volumeSnapshotCreationTime(), "400px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.restoreVolumeSnapshot()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRestoreSnapshotCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.deleteVolumeSnapshot()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDeleteSnapshotCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.deleteAllVolumeSnapshots()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDeleteAllSnapshotsCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.activateVolumeSnapshot()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getActivateSnapshotCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeSnapshotEntity>(constants.deactivateVolumeSnapshot()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDeactivateSnapshotCommand();
-            }
-        }));
     }
 }

@@ -44,7 +44,8 @@ public class SubTabDiskPermissionPresenter
             PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, DiskListModel,
             PermissionListModel<Disk>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 DiskSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

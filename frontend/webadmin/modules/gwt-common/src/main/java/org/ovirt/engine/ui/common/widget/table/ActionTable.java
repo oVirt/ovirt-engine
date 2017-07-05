@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table;
 
-import org.ovirt.engine.ui.common.widget.action.ActionPanel;
 import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
 
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
@@ -11,7 +10,7 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
  * @param <T>
  *            Table row data type.
  */
-public interface ActionTable<T> extends ActionPanel<T> {
+public interface ActionTable<T> {
 
     /**
      * Returns the selection model used by this table.

@@ -17,6 +17,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.gwtplatform.mvp.client.View;
+import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
@@ -49,6 +50,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     private static final Logger logger = Logger.getLogger(AbstractSubTabPresenter.class.getName());
 
+    @ContentSlot
+    public static final Type<RevealContentHandler<?>> TYPE_SetActionPanel = new Type<>();
+
     private final PlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
     private final AbstractMainTabSelectedItems<T> selectedMainItems;
@@ -62,14 +66,14 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     public AbstractSubTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
             AbstractMainTabSelectedItems<T> selectedMainItems,
+            ActionPanelPresenterWidget<?, M> actionPanelPresenterWidget,
             Type<RevealContentHandler<?>> slot) {
-        super(eventBus, view, proxy, slot);
+        super(eventBus, view, proxy, actionPanelPresenterWidget, slot);
         this.placeManager = placeManager;
         this.modelProvider = modelProvider;
         this.selectedMainItems = selectedMainItems;
     }
 
-    @Override
     protected ActionTable<?> getTable() {
         return getView().getTable();
     }
@@ -88,6 +92,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         initializeHandlers();
         getSelectedMainItems().registerListener(this);
         itemChanged(getSelectedMainItems().getSelectedItem());
+        setInSlot(TYPE_SetActionPanel, getActionPanelPresenterWidget());
     }
 
     @Override
@@ -176,7 +181,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     }
 
     /**
-     * Deselects any items currently selected in the table. Does nothing if the sub tab view has no table widget
+     * De-selects any items currently selected in the table. Does nothing if the sub tab view has no table widget
      * associated.
      */
     protected void clearSelection() {

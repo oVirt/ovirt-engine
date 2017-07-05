@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColu
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
@@ -24,7 +23,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -228,15 +226,6 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         initTableOverhead();
         handleRadioButtonClick(null);
         initSorting();
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<PairQueryable<VmNetworkInterface, VM>>(constants.removeInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
-
     }
 
     private void initSorting() {

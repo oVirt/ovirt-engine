@@ -27,7 +27,8 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
     public PoolInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, T> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        // No action buttons for pool interface list model table, passing null.
+        super(modelProvider, eventBus, null, clientStorage, false);
     }
 
     @Override

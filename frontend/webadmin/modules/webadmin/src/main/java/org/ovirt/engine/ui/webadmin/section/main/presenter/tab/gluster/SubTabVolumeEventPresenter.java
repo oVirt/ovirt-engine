@@ -43,7 +43,8 @@ public class SubTabVolumeEventPresenter
     public SubTabVolumeEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no actionPanel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

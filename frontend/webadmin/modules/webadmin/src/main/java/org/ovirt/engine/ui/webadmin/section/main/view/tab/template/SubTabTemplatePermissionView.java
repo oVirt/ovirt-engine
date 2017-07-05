@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplatePermissionPresenter;
@@ -24,8 +25,9 @@ public class SubTabTemplatePermissionView extends AbstractSubTabPermissionsView<
     @Inject
     public SubTabTemplatePermissionView(SearchableDetailModelProvider<Permission, TemplateListModel,
             PermissionListModel<VmTemplate>> modelProvider, EventBus eventBus,
+            PermissionActionPanelPresenterWidget<TemplateListModel, PermissionListModel<VmTemplate>> actionPanel,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+        super(modelProvider, eventBus, clientStorage, actionPanel);
     }
 
     @Override

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.DetailActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
@@ -21,8 +22,9 @@ public abstract class AbstractSubTabClusterPresenter <D extends HasEntity<?>,
 
     public AbstractSubTabClusterPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
             DetailModelProvider<ClusterListModel<Void>, D> modelProvider, ClusterMainTabSelectedItems selectedItems,
-            Type<RevealContentHandler<?>> slot) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, slot);
+            DetailActionPanelPresenterWidget<?, ClusterListModel<Void>, D> actionPanel,
+           Type<RevealContentHandler<?>> slot) {
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override

@@ -29,7 +29,8 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
     public TemplateDiskListModelTable(
             SearchableTableModelProvider<DiskImage, T> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+        // No action panel on template disk list model table, passing null.
+        super(modelProvider, eventBus, null, clientStorage, false);
     }
 
     @Override

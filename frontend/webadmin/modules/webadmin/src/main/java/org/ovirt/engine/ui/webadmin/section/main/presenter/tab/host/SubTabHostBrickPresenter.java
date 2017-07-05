@@ -43,7 +43,8 @@ public class SubTabHostBrickPresenter
     public SubTabHostBrickPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

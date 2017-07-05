@@ -44,7 +44,8 @@ public class SubTabHostHookPresenter
     public SubTabHostHookPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no actionPanel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

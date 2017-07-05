@@ -60,8 +60,9 @@ public class MainTabProviderPresenter extends AbstractMainTabWithDetailsPresente
     public MainTabProviderPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Provider, ProviderListModel> modelProvider,
             SearchPanelPresenterWidget<Provider, ProviderListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<Provider, ProviderListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<Provider, ProviderListModel> breadCrumbs,
+            ProviderActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

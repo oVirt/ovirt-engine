@@ -42,8 +42,9 @@ public class SubTabStorageIsoPresenter
     @Inject
     public SubTabStorageIsoPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            StorageIsoActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

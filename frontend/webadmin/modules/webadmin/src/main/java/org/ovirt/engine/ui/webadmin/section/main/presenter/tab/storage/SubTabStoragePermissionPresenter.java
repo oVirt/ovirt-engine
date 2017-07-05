@@ -44,7 +44,8 @@ public class SubTabStoragePermissionPresenter
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, StorageListModel,
             PermissionListModel<StorageDomain>> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

@@ -7,14 +7,12 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaDcStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -64,35 +62,6 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<StoragePo
         };
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.descriptionQuota(), "400px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getCreateCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.editQuota()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.copyQuota()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getCloneCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<Quota>(constants.removeQuota()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        }));
     }
 
 }

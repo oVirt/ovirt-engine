@@ -6,14 +6,13 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
+import org.ovirt.engine.ui.common.widget.action.TemplateInterfaceActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -24,8 +23,8 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
 
     public TemplateInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, TemplateInterfaceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage, false);
+            EventBus eventBus, TemplateInterfaceActionPanelPresenterWidget actionPanel, ClientStorage clientStorage) {
+        super(modelProvider, eventBus, actionPanel, clientStorage, false);
     }
 
     @Override
@@ -90,33 +89,6 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
             }
         };
         getTable().addColumn(typeColumn, constants.typeInterface(), "100px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.newInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.editInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditCommand();
-            }
-        }));
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
-                constants.removeInterface()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getRemoveCommand();
-            }
-        }));
     }
 
 }

@@ -42,9 +42,10 @@ public class SubTabStorageRegisterTemplatePresenter
     @Inject
     public SubTabStorageRegisterTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            StorageRegisterTemplateActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VmTemplate, StorageListModel,
                 StorageRegisterTemplateListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

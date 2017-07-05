@@ -12,13 +12,11 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -126,36 +124,6 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         };
         descriptionColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.descriptionTemplate(), "150px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.editTemplate()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.removeTemplate()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-        // TODO: separator
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.exportTemplate()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getExportCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.createVmFromTemplate()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getCreateVmFromTemplateCommand();
-            }
-        }));
     }
 
 }

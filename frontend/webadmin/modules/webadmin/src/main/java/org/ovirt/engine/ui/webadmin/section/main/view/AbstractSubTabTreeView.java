@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
@@ -16,11 +16,13 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -39,8 +41,6 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     @UiField
     protected SimplePanel actionPanelContainer;
 
-    protected SubTabTreeActionPanel actionPanel;
-
     public EntityModelCellTable<ListModel> table;
 
     protected E tree;
@@ -57,10 +57,20 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
         headerTableContainer.add(table);
         treeContainer.add(tree);
         treeContainer.addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
+    }
 
-        actionPanel = createActionPanel(modelProvider);
-        if (actionPanel != null) {
-            actionPanelContainer.add(pfActionPanel);
+    @Override
+    public void setInSlot(Object slot, IsWidget content) {
+        if (slot == MainContentPresenter.TYPE_SetMainTabPanelContent) {
+            actionPanelContainer.add(content);
+        } else if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
+            if (content != null) {
+                actionPanelContainer.add(content);
+            } else {
+                actionPanelContainer.clear();
+            }
+        } else {
+            super.setInSlot(slot, content);
         }
     }
 
@@ -101,10 +111,6 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     protected abstract void initHeader();
 
     protected abstract E getTree();
-
-    protected SubTabTreeActionPanel createActionPanel(SearchableDetailModelProvider modelProvider) {
-        return new SubTabTreeActionPanel<>(modelProvider);
-    }
 
     @Override
     protected boolean useTableWidgetForContent() {

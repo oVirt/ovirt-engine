@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailPermissionActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -42,8 +43,9 @@ public class SubTabUserPermissionPresenter
     @Inject
     public SubTabUserPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, UserMainTabSelectedItems selectedItems,
+            DetailPermissionActionPanelPresenterWidget<UserListModel, UserPermissionListModel> actionPanel,
             SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 UserSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

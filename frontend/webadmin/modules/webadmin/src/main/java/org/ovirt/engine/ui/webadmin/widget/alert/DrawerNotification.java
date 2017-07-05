@@ -69,7 +69,7 @@ public class DrawerNotification extends Div {
     }
 
     public void addActionButton(ActionButton actionButton) {
-        notificationKebab.addActionButton(actionButton);
+        notificationKebab.addMenuItem(actionButton);
         notificationKebab.setVisible(notificationKebab.getWidgetCount() > 0);
     }
 }

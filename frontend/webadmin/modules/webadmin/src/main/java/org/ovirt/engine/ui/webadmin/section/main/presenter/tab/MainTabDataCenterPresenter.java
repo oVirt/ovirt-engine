@@ -60,8 +60,9 @@ public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresen
     public MainTabDataCenterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<StoragePool, DataCenterListModel> modelProvider,
             SearchPanelPresenterWidget<StoragePool, DataCenterListModel> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<StoragePool, DataCenterListModel> breadCrumbs) {
-        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs);
+            OvirtBreadCrumbsPresenterWidget<StoragePool, DataCenterListModel> breadCrumbs,
+            DataCenterActionPanelPresenterWidget actionPanel) {
+        super(eventBus, view, proxy, placeManager, modelProvider, searchPanelPresenterWidget, breadCrumbs, actionPanel);
     }
 
     @Override

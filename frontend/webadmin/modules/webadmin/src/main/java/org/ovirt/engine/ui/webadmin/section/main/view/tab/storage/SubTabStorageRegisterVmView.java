@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -18,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -116,13 +114,5 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
             }
         };
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "200px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getImportCommand();
-            }
-        }));
     }
 }

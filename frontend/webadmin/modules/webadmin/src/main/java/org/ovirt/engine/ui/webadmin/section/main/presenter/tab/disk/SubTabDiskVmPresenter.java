@@ -43,7 +43,8 @@ public class SubTabDiskVmPresenter
     public SubTabDiskVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        // View doesn't have an actionPanel, passing null.
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 DiskSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

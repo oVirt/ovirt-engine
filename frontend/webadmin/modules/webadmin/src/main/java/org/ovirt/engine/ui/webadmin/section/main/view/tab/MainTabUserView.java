@@ -9,13 +9,11 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.users.UserTypeChangeHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.users.UsersTypeRadioGroup;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UserStatusColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -140,28 +138,6 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             }
         };
         getTable().addColumn(emailColumn, constants.emailUser());
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<DbUser>(constants.addUser()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getAddCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<DbUser>(constants.removeUser()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<DbUser>(constants.assignTagsUser()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getAssignTagsCommand();
-            }
-        }));
     }
 
     @Override

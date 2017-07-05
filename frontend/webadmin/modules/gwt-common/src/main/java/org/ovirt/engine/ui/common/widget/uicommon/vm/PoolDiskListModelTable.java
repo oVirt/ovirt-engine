@@ -13,6 +13,7 @@ public class PoolDiskListModelTable extends BaseVmDiskListModelTable<PoolDiskLis
             SearchableTableModelProvider<Disk, PoolDiskListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+        // Pool disk list model has no action buttons, unlike VmDiskListModel.
+        super(modelProvider, eventBus, null, clientStorage);
     }
 }

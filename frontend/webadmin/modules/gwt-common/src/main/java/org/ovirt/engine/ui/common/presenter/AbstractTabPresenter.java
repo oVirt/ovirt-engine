@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.table.ActionTable;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
@@ -26,10 +25,16 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public abstract class AbstractTabPresenter<V extends View, P extends TabContentProxyPlace<?>> extends Presenter<V, P> {
 
     private PluginActionButtonHandler actionButtonPluginHandler;
+    private final ActionPanelPresenterWidget<?, ?> actionPanel;
 
-    public AbstractTabPresenter(EventBus eventBus, V view, P proxy,
+    public AbstractTabPresenter(EventBus eventBus, V view, P proxy, ActionPanelPresenterWidget<?, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, slot);
+        this.actionPanel = actionPanel;
+    }
+
+    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+        return actionPanel;
     }
 
     @Override
@@ -50,16 +55,12 @@ public abstract class AbstractTabPresenter<V extends View, P extends TabContentP
     }
 
     private void addPluginActionButtons(List<ActionButtonDefinition<?>> pluginActionButtonList) {
-        if (getTable() != null) {
+        if (getActionPanelPresenterWidget() != null) {
             for(ActionButtonDefinition<?> buttonDef: pluginActionButtonList) {
-                getTable().addActionButton((ActionButtonDefinition) buttonDef);
+                getActionPanelPresenterWidget().addActionButton((ActionButtonDefinition) buttonDef);
             }
         }
     }
-    /**
-     * Returns the table widget provided by view or {@code null} if this widget isn't available.
-     */
-    protected abstract ActionTable<?> getTable();
 
     @Inject
     public void setActionButtonPluginHandler(PluginActionButtonHandler actionButtonPluginHandler) {

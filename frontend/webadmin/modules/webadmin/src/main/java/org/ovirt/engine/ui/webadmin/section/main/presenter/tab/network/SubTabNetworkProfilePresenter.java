@@ -42,8 +42,9 @@ public class SubTabNetworkProfilePresenter
     @Inject
     public SubTabNetworkProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
+            NetworkProfileActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
 }

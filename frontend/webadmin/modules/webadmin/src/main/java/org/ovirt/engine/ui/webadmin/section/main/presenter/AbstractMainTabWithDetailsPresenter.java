@@ -5,6 +5,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
@@ -54,7 +55,11 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetBreadCrumbs = new Type<>();
 
+    @ContentSlot
+    public static final Type<RevealContentHandler<?>> TYPE_SetActionPanel = new Type<>();
+
     private final SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget;
+
     private final OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget;
 
     @Inject
@@ -63,14 +68,14 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     public AbstractMainTabWithDetailsPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
             SearchPanelPresenterWidget<T, M> searchPanelPresenterWidget,
-            OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+            OvirtBreadCrumbsPresenterWidget<T, M> breadCrumbsPresenterWidget,
+            ActionPanelPresenterWidget<T, M> actionPanelPresenterWidget) {
+        super(eventBus, view, proxy, placeManager, modelProvider, actionPanelPresenterWidget);
         this.searchPanelPresenterWidget = searchPanelPresenterWidget;
         this.breadCrumbsPresenterWidget = breadCrumbsPresenterWidget;
         this.breadCrumbsPresenterWidget.hideSelectedName();
     }
 
-    @Override
     protected ActionTable<T> getTable() {
         return getView().getTable();
     }
@@ -101,6 +106,12 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         if (searchString != null) {
             // Someone set search string before we were instantiated, update the search string.
             applySearchString(searchString);
+        }
+        if (hasSearchPanelPresenterWidget()) {
+            setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
+        }
+        if (hasActionPanelPresenterWidget()) {
+            setInSlot(TYPE_SetActionPanel, getActionPanelPresenterWidget());
         }
     }
 
@@ -183,6 +194,14 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
 
     public OvirtBreadCrumbsPresenterWidget<T, M> getBreadCrumbs() {
         return breadCrumbsPresenterWidget;
+    }
+
+    public boolean hasSearchPanelPresenterWidget() {
+        return getSearchPanelPresenterWidget() != null;
+    }
+
+    public boolean hasActionPanelPresenterWidget() {
+        return getActionPanelPresenterWidget() != null;
     }
 
     protected void setTags(List<TagModel> tags) {

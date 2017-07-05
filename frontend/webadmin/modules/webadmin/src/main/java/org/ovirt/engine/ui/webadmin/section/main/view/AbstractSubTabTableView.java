@@ -6,12 +6,11 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.common.widget.action.ActionButton;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
@@ -34,16 +33,13 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     @WithElementId
     public final SimpleActionTable<T> table;
 
-    protected PatternflyActionPanel pfActionPanel;
+    private IsWidget actionPanel;
 
-    private final FlowPanel container;
+    private final FlowPanel container = new FlowPanel();
 
     public AbstractSubTabTableView(SearchableDetailModelProvider<T, M, D> modelProvider) {
         this.modelProvider = modelProvider;
-        this.container = new FlowPanel();
         this.table = createActionTable();
-        this.pfActionPanel = createActionPanel();
-        container.add(pfActionPanel);
         container.add(table);
         generateIds();
     }
@@ -59,8 +55,20 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         };
     }
 
-    protected PatternflyActionPanel createActionPanel() {
-        return new PatternflyActionPanel();
+    @Override
+    public void setInSlot(Object slot, IsWidget content) {
+        if (slot == MainContentPresenter.TYPE_SetMainTabPanelContent) {
+            container.insert(content, 0);
+        } else if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
+            if (content != null) {
+                container.insert(content, 0);
+                this.actionPanel = content;
+            } else if (this.actionPanel != null) {
+                container.remove(this.actionPanel);
+            }
+        } else {
+            super.setInSlot(slot, content);
+        }
     }
 
     /**
@@ -103,16 +111,4 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     }
 
     protected abstract void generateIds();
-
-    public void addButtonToActionGroup(ActionButton button) {
-        pfActionPanel.addButtonToActionGroup(button);
-    }
-
-    public void addMenuItemToKebab(ActionButton menuItem) {
-        pfActionPanel.addMenuItemToKebab(menuItem);
-    }
-
-    public void addDividerToKebab() {
-        pfActionPanel.addDividerToKebab();
-    }
 }

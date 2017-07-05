@@ -61,7 +61,8 @@ public class SubTabVirtualMachineErrataPresenter
     public SubTabVirtualMachineErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
             DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> errataCountModelProvider) {
-        super(eventBus, view, proxy, placeManager, errataCountModelProvider, selectedItems,
+        // View has no action panel, passing null.
+        super(eventBus, view, proxy, placeManager, errataCountModelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
         errataCountModel = errataCountModelProvider.getModel();
     }

@@ -11,7 +11,9 @@ public class HostDeviceModelTable extends HostDeviceModelBaseTable<HostDeviceLis
 
     public HostDeviceModelTable(
             SearchableTableModelProvider<HostDeviceView, HostDeviceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
-        super(modelProvider, eventBus, clientStorage);
+            EventBus eventBus,
+            ClientStorage clientStorage) {
+        // No action panel for HostDeviceModelTable.
+        super(modelProvider, eventBus, null, clientStorage);
     }
 }

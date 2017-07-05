@@ -12,10 +12,9 @@ import org.gwtbootstrap3.client.ui.html.Paragraph;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.gwtbootstrap3.client.ui.html.UnorderedList;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
-import org.ovirt.engine.ui.common.widget.action.ActionButton;
-import org.ovirt.engine.ui.common.widget.action.PatternflyActionPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
@@ -24,10 +23,12 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHandler;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.gwtplatform.mvp.client.PresenterWidget;
 
 /**
  * Base class for table-based main tab views that work with {@link ListWithDetailsModel}.
@@ -46,16 +47,23 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
 
     private Column breadCrumbsColumn;
 
+    private final FlowPanel actionSearchPanel = new FlowPanel();
+
     private Row resultRow;
     private UnorderedList resultList;
-    private PatternflyActionPanel actionPanel;
 
-    private boolean tableInitialized = false;
+    private IsWidget searchPanel;
+    private ActionPanelPresenterWidget<T, M> actionPanel;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     public AbstractMainTabWithDetailsTableView(MainModelProvider<T, M> modelProvider) {
         super(modelProvider);
+        SimpleActionTable<T> table = getTable();
+        FlowPanel tableContainer = table.getOuterWidget();
+        addBreadCrumbs(tableContainer);
+        addActionSearchPanel(tableContainer);
+        table.addStyleName(OBRAND_MAIN_TAB);
     }
 
     @Override
@@ -64,27 +72,33 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
     }
 
     @Override
-    public SimpleActionTable<T> getTable() {
-        SimpleActionTable<T> result = super.getTable();
-        if (!tableInitialized && result.getOuterWidget() instanceof FlowPanel) {
-            FlowPanel tableContainer = (FlowPanel) result.getOuterWidget();
-            addBreadCrumbs(tableContainer);
-            addActionPanel(tableContainer);
-            result.addStyleName(OBRAND_MAIN_TAB);
-            addResultPanel();
-            tableInitialized = true;
-        }
-        return result;
-    }
-
-    @Override
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == AbstractMainTabWithDetailsPresenter.TYPE_SetSearchPanel) {
             if (content != null) {
-                actionPanel.setSearchPanel(content);
-                actionPanel.setVisible(true);
+                if (actionPanel == null) {
+                    searchPanel = content;
+                } else {
+                    actionPanel.setSearchPanel((PresenterWidget<?>) content);
+                }
             } else {
-                actionPanel.setVisible(false);
+                searchPanel = null;
+                if (actionPanel != null) {
+                    actionPanel.setSearchPanel(null);
+                }
+            }
+        } else if (slot == AbstractMainTabWithDetailsPresenter.TYPE_SetActionPanel) {
+            if (content != null) {
+                actionSearchPanel.add(content);
+                this.actionPanel = (ActionPanelPresenterWidget<T, M>) content;
+                if (searchPanel != null) {
+                    actionPanel.setSearchPanel((PresenterWidget<?>) searchPanel);
+                }
+                addResultPanel(actionPanel);
+            } else {
+                actionSearchPanel.clear();
+                this.actionPanel = null;
+                resultRow.clear();
+                resultRow = null;
             }
         } else if (slot == AbstractMainTabWithDetailsPresenter.TYPE_SetBreadCrumbs) {
             breadCrumbsColumn.clear();
@@ -108,24 +122,24 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
         container.insert(breadCrumbsRow, 0);
     }
 
-    private void addActionPanel(FlowPanel container) {
-        actionPanel = new PatternflyActionPanel();
-        container.insert(actionPanel, 1);
+    private void addActionSearchPanel(FlowPanel container) {
+        container.insert(actionSearchPanel, 1);
     }
 
-    private void addResultPanel() {
+    private void addResultPanel(ActionPanelPresenterWidget<T, M> actionPanel) {
         resultRow = new Row();
         resultRow.addStyleName(PatternflyConstants.PF_TOOLBAR_RESULTS);
 
-        Column resultColumn = new Column(ColumnSize.SM_12);
+        FlowPanel resultColumn = new FlowPanel();
         resultRow.add(resultColumn);
 
         resultColumn.add(new Paragraph(constants.activeTags() + ":")); // $NON-NLS-1$
         resultList = new UnorderedList();
         resultList.addStyleName(Styles.LIST_INLINE);
+        resultList.getElement().getStyle().setPaddingLeft(10, Unit.PX);
         resultColumn.add(resultList);
         resultRow.setVisible(false);
-        actionPanel.addResult(resultRow);
+        actionPanel.setFilterResultPanel(resultRow);
     }
 
     public void setActiveTags(List<TagModel> tags) {
@@ -154,17 +168,5 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
             resultList.add(tagItem);
         }
         resultRow.setVisible(!tags.isEmpty());
-    }
-
-    protected void addButtonToActionGroup(ActionButton button) {
-        actionPanel.addButtonToActionGroup(button);
-    }
-
-    protected void addMenuItemToKebab(ActionButton menuItem) {
-        actionPanel.addMenuItemToKebab(menuItem);
-    }
-
-    protected void addDividerToKebab() {
-        actionPanel.addDividerToKebab();
     }
 }

@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
+import org.ovirt.engine.ui.common.widget.action.PermissionActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -16,9 +17,9 @@ public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetails
     @Inject
     public AbstractSubTabPermissionsView(
             SearchableDetailModelProvider<Permission, M, PermissionListModel<I>> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage) {
+            EventBus eventBus, ClientStorage clientStorage, PermissionActionPanelPresenterWidget<M, PermissionListModel<I>> actionPanel) {
         super(new PermissionWithInheritedPermissionListModelTable<>(
-                modelProvider, eventBus, clientStorage));
+                modelProvider, eventBus, actionPanel, clientStorage));
         generateIds();
         initTable();
         initWidget(getModelBoundTableWidget());

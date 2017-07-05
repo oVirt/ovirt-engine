@@ -7,19 +7,16 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.searchbackend.StorageDomainFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractStorageSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainAdditionalStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
@@ -145,59 +142,6 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         descriptionColumn.makeSortable(StorageDomainFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "200px"); //$NON-NLS-1$
-
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewDomainCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.importDomainStorage()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getImportDomainCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.editStorage()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getEditCommand();
-            }
-        }));
-        addButtonToActionGroup(
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.removeStorage()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getRemoveCommand();
-            }
-        }));
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<StorageDomain>(constants.updateOvfsForStorage(),
-                CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getUpdateOvfsCommand();
-            }
-        }));
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<StorageDomain>(constants.destroyStorage(),
-                CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getDestroyCommand();
-            }
-        }));
-        addMenuItemToKebab(
-        getTable().addMenuListItem(new WebAdminButtonDefinition<StorageDomain>(constants.scanDisksStorage(),
-                CommandLocation.OnlyFromContext) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getScanDisksCommand();
-            }
-        }));
     }
 
 }
