@@ -519,9 +519,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }));
     }
 
-    /**
-     * By default admin query is fired, UserPortal overrides it to fire user query
-     */
     protected void getHostListByCluster(Cluster cluster, AsyncQuery<List<VDS>> query) {
         AsyncDataProvider.getInstance().getHostListByCluster(query, cluster.getName());
     }
