@@ -121,12 +121,16 @@ public class DiskValidator {
     }
 
     public ValidationResult isDiskAttachedToAnyVm() {
-        List<VM> vms = getVmDao().getVmsListForDisk(disk.getId(), true);
-        if (!vms.isEmpty()) {
+        String vmNames = getVmDao()
+                .getVmsListForDisk(disk.getId(), true)
+                .stream()
+                .map(VM::getName)
+                .collect(Collectors.joining(","));
+
+        if (!vmNames.isEmpty()) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS,
                     ReplacementUtils.createSetVariableString(DISK_NAME_VARIABLE, disk.getDiskAlias()),
-                    ReplacementUtils.createSetVariableString(VM_LIST,
-                            vms.stream().map(VM::getName).collect(Collectors.joining(","))));
+                    ReplacementUtils.createSetVariableString(VM_LIST, vmNames));
 
         }
         return ValidationResult.VALID;
