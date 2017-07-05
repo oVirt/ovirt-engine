@@ -26,6 +26,10 @@ public enum StorageFormatType {
         return value;
     }
 
+    public static StorageFormatType getLatest() {
+        return values()[values().length - 1];
+    }
+
     public static StorageFormatType forValue(String value) {
         return mappings.get(value);
     }

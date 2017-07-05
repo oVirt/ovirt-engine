@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -201,15 +199,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
-        if (!Guid.isNullOrEmpty(getParameters().getStoragePoolId()) && getTargetStoragePool() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
-        }
-
         ensureStorageFormatInitialized();
-        StorageDomainToPoolRelationValidator storageDomainToPoolRelationValidator = getAttachDomainValidator();
         StorageDomainValidator sdValidator = getStorageDomainValidator();
-        if (!validate(storageDomainToPoolRelationValidator.isStorageDomainFormatCorrectForDC()) ||
-                !validate(sdValidator.isStorageFormatCompatibleWithDomain())) {
+        if (!validate(sdValidator.isStorageFormatCompatibleWithDomain())) {
             return false;
         }
 
@@ -225,23 +217,11 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StorageDomain sd = getStorageDomain();
         if (sd.getStorageFormat() == null) {
             if (sd.getStorageDomainType().isDataDomain()) {
-                StoragePool sp = getTargetStoragePool();
-                if (sp != null) {
-                    sd.setStorageFormat(VersionStorageFormatUtil.getForVersion(sp.getCompatibilityVersion()));
-                }
+                sd.setStorageFormat(StorageFormatType.getLatest());
             } else {
                 sd.setStorageFormat(StorageFormatType.V1);
             }
         }
-    }
-
-    private StoragePool getTargetStoragePool() {
-        StoragePool targetStoragePool = getStoragePool();
-
-        if (targetStoragePool == null) {
-            targetStoragePool = storagePoolDao.get(getVds().getStoragePoolId());
-        }
-        return targetStoragePool;
     }
 
     protected String getStorageArgs() {
@@ -266,10 +246,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
         addValidationMessage(EngineMessage.VAR__ACTION__ADD);
-    }
-
-    public StorageDomainToPoolRelationValidator getAttachDomainValidator() {
-        return new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getTargetStoragePool());
     }
 
     public StorageDomainValidator getStorageDomainValidator() {

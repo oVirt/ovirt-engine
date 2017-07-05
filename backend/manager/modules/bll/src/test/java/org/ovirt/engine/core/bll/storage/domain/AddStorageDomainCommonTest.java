@@ -144,15 +144,6 @@ public class AddStorageDomainCommonTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateFailsPoolSpecifiedDoesNotExist() {
-        cmd.getParameters().setStoragePoolId(spId);
-        when(spDao.get(spId)).thenReturn(null);
-        ValidateTestUtils.runAndAssertValidateFailure
-                (cmd, EngineMessage.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
-    }
-
-
-    @Test
     public void validateFailsBlockIso() {
         sd.setStorageDomainType(StorageDomainType.ISO);
         sd.setStorageType(StorageType.FCP);
