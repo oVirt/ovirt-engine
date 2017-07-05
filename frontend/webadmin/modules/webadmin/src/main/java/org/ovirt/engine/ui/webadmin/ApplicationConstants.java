@@ -3310,5 +3310,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String eventsAndAlerts();
 
     String help();
+
+    String storageDomainsMenuLabel();
 }
 

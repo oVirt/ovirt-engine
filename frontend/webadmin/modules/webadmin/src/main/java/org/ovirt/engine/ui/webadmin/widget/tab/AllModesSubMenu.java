@@ -28,7 +28,7 @@ public enum AllModesSubMenu implements SecondaryMenuItem {
             WebAdminApplicationPlaces.networkMainTabPlace),
     VNIC_PROFILE(AssetProvider.getConstants().vnicProfilesMainTabLabel(), 1, AllModesMenuLayout.NETWORK,
             WebAdminApplicationPlaces.vnicProfileMainTabPlace),
-    STORAGE(AssetProvider.getConstants().diskProfileStorageDomainLabel(), 0, AllModesMenuLayout.STORAGE,
+    STORAGE(AssetProvider.getConstants().storageDomainsMenuLabel(), 0, AllModesMenuLayout.STORAGE,
             WebAdminApplicationPlaces.storageMainTabPlace),
     DISKS(AssetProvider.getConstants().diskMainTabLabel(), 1, AllModesMenuLayout.STORAGE,
             WebAdminApplicationPlaces.diskMainTabPlace),
