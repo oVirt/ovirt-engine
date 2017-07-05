@@ -81,7 +81,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;

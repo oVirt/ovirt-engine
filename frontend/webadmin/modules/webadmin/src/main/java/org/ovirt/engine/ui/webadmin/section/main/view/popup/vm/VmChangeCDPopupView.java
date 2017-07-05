@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundWidgetPopupView;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmChangeCDPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AttachCdModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
