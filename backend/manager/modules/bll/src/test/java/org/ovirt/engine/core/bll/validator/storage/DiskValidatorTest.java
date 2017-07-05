@@ -199,25 +199,37 @@ public class DiskValidatorTest {
     }
 
     @Test
-    public void testDiskAttachedToAnyVM() {
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.emptyList());
-        assertThat(validator.isDiskAttachedToAnyVm(), isValid());
+    public void testDiskAttachedToAnyNonDownVM() {
+        assertThat(validator.isDiskAttachedToAnyNonDownVm(), isValid());
     }
 
     @Test
-    public void testDiskAttachedToAnyVMFails() {
+    public void testDiskAttachedToAnyNonDownVMAllDown() {
         VM vm1 = createVM();
         VM vm2 = createVM();
         vm1.setName("Vm1");
         vm2.setName("Vm2");
         List<VM> vmList = Arrays.asList(vm1, vm2);
 
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
+        when(vmDao.getVmsListForDisk(any(), anyBoolean())).thenReturn(vmList);
+        assertThat(validator.isDiskAttachedToAnyNonDownVm(), isValid());
+    }
+
+    @Test
+    public void testDiskAttachedToAnyNonDownVMNotAllDown() {
+        VM vm1 = createVM();
+        VM vm2 = createVM();
+        vm1.setName("Vm1");
+        vm2.setName("Vm2");
+        vm1.setStatus(VMStatus.Paused);
+        List<VM> vmList = Arrays.asList(vm1, vm2);
+
+        when(vmDao.getVmsListForDisk(any(), anyBoolean())).thenReturn(vmList);
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
-                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "Vm1,Vm2")};
+                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "Vm1")};
 
-        assertThat(validator.isDiskAttachedToAnyVm(),
+        assertThat(validator.isDiskAttachedToAnyNonDownVm(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, expectedReplacements));
     }
 

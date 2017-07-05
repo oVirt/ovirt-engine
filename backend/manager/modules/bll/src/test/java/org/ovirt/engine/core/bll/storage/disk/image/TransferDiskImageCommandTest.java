@@ -66,7 +66,7 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
         // Set validators return
         doReturn(ValidationResult.VALID)
                 .when(diskValidator)
-                .isDiskAttachedToAnyVm();
+                .isDiskAttachedToAnyNonDownVm();
         doReturn(ValidationResult.VALID)
                 .when(diskValidator)
                 .isDiskExists();
@@ -106,7 +106,7 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
         initializeSuppliedImage();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, ""))
                 .when(diskValidator)
-                .isDiskAttachedToAnyVm();
+                .isDiskAttachedToAnyNonDownVm();
 
         getCommand().validate();
         ValidateTestUtils.assertValidationMessages(
