@@ -171,7 +171,9 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
 
         // Add image upload click handler and label updater
         imageFileUploadButton.addClickHandler(event -> imageFileUpload.getElement().<InputElement>cast().click());
-        imageFileUpload.addChangeHandler(event -> imageFileUploadLabel.setText(imageFileUpload.getFilename()));
+        imageFileUpload.addChangeHandler(event -> imageFileUploadLabel.setText(
+                imageFileUpload.getFilename().replaceFirst(
+                        "^C:\\\\fakepath\\\\", ""))); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void handleImageUploadBrowserSupport(final UploadImageModel model) {
