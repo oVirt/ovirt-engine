@@ -184,7 +184,7 @@ public class DiskValidatorTest {
     @Test
     public void testDiskAttachedToVMValid() {
         VM vm = createVM();
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getVmsListForDisk(any(), anyBoolean())).thenReturn(Collections.singletonList(vm));
         assertThat(validator.isDiskAttachedToVm(vm), isValid());
     }
 
@@ -207,7 +207,7 @@ public class DiskValidatorTest {
         vm2.setName("Vm2");
         List<VM> vmList = Arrays.asList(vm1, vm2);
 
-        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
+        when(vmDao.getVmsListForDisk(any(), anyBoolean())).thenReturn(vmList);
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
                 ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "Vm1,Vm2")};
