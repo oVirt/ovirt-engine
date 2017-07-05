@@ -56,7 +56,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
         updateStorageDomainDynamicFromIrs();
 
         // Add relevant LUNs to DB
-        List<LUNs> luns = getLUNsFromVgInfo(getStorageDomain().getStorage());
+        List<LUNs> luns = getLUNsFromVgInfo();
         saveLUNsInDB(luns);
         updateMetadataDevices();
         setSucceeded(true);
@@ -76,7 +76,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
-        List<LUNs> lunsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());
+        List<LUNs> lunsOnStorage = getLUNsFromVgInfo();
         if (lunsOnStorage.isEmpty()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO);
         }
@@ -111,19 +111,19 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     @Override
     protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
         return validate(storageDomainValidator.isDiscardAfterDeleteLegalForNewBlockStorageDomain(
-                getLUNsFromVgInfo(getStorageDomain().getStorage())));
+                getLUNsFromVgInfo()));
     }
 
-    protected List<LUNs> getLUNsFromVgInfo(String vgId) {
+    protected List<LUNs> getLUNsFromVgInfo() {
         List<LUNs> luns = new ArrayList<>();
         VDSReturnValue returnValue;
 
         try {
             returnValue = runVdsCommand(VDSCommandType.GetVGInfo,
-                    new GetVGInfoVDSCommandParameters(getParameters().getVdsId(), vgId));
+                    new GetVGInfoVDSCommandParameters(getParameters().getVdsId(), getStorageDomain().getStorage()));
         } catch (RuntimeException e) {
             log.error("Could not get info for VG ID '{}': {}",
-                    vgId, e.getMessage());
+                    getStorageDomain().getStorage(), e.getMessage());
             log.debug("Exception", e);
             return luns;
         }

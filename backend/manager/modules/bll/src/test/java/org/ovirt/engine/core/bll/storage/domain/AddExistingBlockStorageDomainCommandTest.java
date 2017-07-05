@@ -55,14 +55,14 @@ public class AddExistingBlockStorageDomainCommandTest extends BaseCommandTest {
 
     @Test
     public void testAddExistingBlockDomainSuccessfully() {
-        doReturn(getLUNs()).when(command).getLUNsFromVgInfo(parameters.getStorageDomain().getStorage());
+        doReturn(getLUNs()).when(command).getLUNsFromVgInfo();
         command.executeCommand();
         assertTrue(command.getReturnValue().getSucceeded());
     }
 
     @Test
     public void testAddExistingBlockDomainWhenVgInfoReturnsEmptyLunList() {
-        doReturn(Collections.emptyList()).when(command).getLUNsFromVgInfo(parameters.getStorageDomain().getStorage());
+        doReturn(Collections.emptyList()).when(command).getLUNsFromVgInfo();
         assertFalse("Could not connect to Storage Domain", command.canAddDomain());
         assertTrue("Import block Storage Domain should have failed due to empty Lun list returned from VGInfo ",
                 command.getReturnValue()
