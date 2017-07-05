@@ -110,19 +110,19 @@ public class DiskValidatorTest {
         return domain;
     }
 
-    private VmDevice createVmDeviceForDisk(VM vm, Disk disk, Guid snapshotId, boolean isPlugged) {
+    private VmDevice createVmDeviceForDisk(VM vm, Disk disk) {
         VmDevice device = new VmDevice();
         device.setId(new VmDeviceId(vm.getId(), disk.getId()));
-        device.setSnapshotId(snapshotId);
-        device.setPlugged(isPlugged);
+        device.setSnapshotId(null);
+        device.setPlugged(true);
         return device;
     }
 
     public List<Pair<VM, VmDevice>> prepareForCheckingIfDiskPluggedToVmsThatAreNotDown() {
         VM vm1 = createVM();
         VM vm2 = createVM();
-        VmDevice device1 = createVmDeviceForDisk(vm1, disk, null, true);
-        VmDevice device2 = createVmDeviceForDisk(vm1, disk, null, true);
+        VmDevice device1 = createVmDeviceForDisk(vm1, disk);
+        VmDevice device2 = createVmDeviceForDisk(vm1, disk);
         List<Pair<VM, VmDevice>> vmsInfo = new LinkedList<>();
         vmsInfo.add(new Pair<>(vm1, device1));
         vmsInfo.add(new Pair<>(vm2, device2));
