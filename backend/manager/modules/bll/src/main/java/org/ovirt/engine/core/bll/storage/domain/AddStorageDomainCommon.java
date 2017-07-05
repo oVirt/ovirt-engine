@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -68,23 +67,5 @@ public class AddStorageDomainCommon<T extends StorageDomainManagementParameter> 
         return storageServerConnectionDao
                 .get(getStorageDomain().getStorage())
                 .getConnection();
-    }
-
-    @Override
-    protected boolean getDefaultDiscardAfterDelete() {
-        return false;
-    }
-
-    @Override
-    protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
-        /*
-        Discard after delete is only relevant for block storage domains.
-        Therefore, if it is enabled for a non block storage domain, the validation should fail.
-         */
-        if (getStorageDomain().getDiscardAfterDelete()) {
-            return failValidation(
-                    EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_SUPPORTED_ONLY_BY_BLOCK_DOMAINS);
-        }
-        return true;
     }
 }

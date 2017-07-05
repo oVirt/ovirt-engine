@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
@@ -105,6 +106,12 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         return null;
+    }
+
+    @Override
+    protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
+        return validate(storageDomainValidator.isDiscardAfterDeleteLegalForNewBlockStorageDomain(
+                getLUNsFromVgInfo(getStorageDomain().getStorage())));
     }
 
     protected List<LUNs> getLUNsFromVgInfo(String vgId) {

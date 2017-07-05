@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
@@ -280,7 +282,24 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         }
     }
 
-    protected abstract boolean getDefaultDiscardAfterDelete();
+    private boolean getDefaultDiscardAfterDelete() {
+        if (getStorageDomain().getStorageType().isBlockDomain()) {
+            Version compatibilityVersion = VersionStorageFormatUtil.getEarliestVersionSupported(
+                    getStorageDomain().getStorageFormat());
+            return FeatureSupported.discardAfterDeleteSupported(compatibilityVersion);
+        }
+        return false;
+    }
 
-    protected abstract boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator);
+    protected boolean validateDiscardAfterDeleteLegal(StorageDomainValidator storageDomainValidator) {
+        /*
+        Discard after delete is only relevant for block storage domains that should override this method.
+        If it is enabled for a non block storage domain, the validation should fail.
+         */
+        if (getStorageDomain().getDiscardAfterDelete()) {
+            return failValidation(
+                    EngineMessage.ACTION_TYPE_FAILED_DISCARD_AFTER_DELETE_SUPPORTED_ONLY_BY_BLOCK_DOMAINS);
+        }
+        return true;
+    }
 }
