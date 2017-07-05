@@ -52,6 +52,9 @@ public class StorageDomainMapper {
         if (model.isSetCriticalSpaceActionBlocker()) {
             entity.setCriticalSpaceActionBlocker(model.getCriticalSpaceActionBlocker());
         }
+        if (model.isSetBackup()) {
+            entity.setBackup(model.isBackup());
+        }
         return entity;
     }
 
@@ -156,6 +159,7 @@ public class StorageDomainMapper {
         model.setDiscardAfterDelete(entity.getDiscardAfterDelete());
         model.setSupportsDiscard(entity.getSupportsDiscard());
         model.setSupportsDiscardZeroesData(entity.getSupportsDiscardZeroesData());
+        model.setBackup(entity.isBackup());
         return model;
     }
 
