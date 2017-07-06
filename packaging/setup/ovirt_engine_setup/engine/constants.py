@@ -349,8 +349,10 @@ class Defaults(object):
     DEFAULT_DB_DUMPER = 'pg_custom'
     DEFAULT_DB_RESTORE_JOBS = 2
     DEFAULT_DB_FILTER = None
-    DEFAULT_PKI_RENEWAL_DOC_URL = \
-        'http://www.ovirt.org/OVirt_3.5.4_Release_Notes#PKI'
+    DEFAULT_PKI_RENEWAL_DOC_URL = (
+        'https://www.ovirt.org/'
+        'develop/release-management/features/infra/pki-renew/'
+    )
 
     DEFAULT_ADDITIONAL_PACKAGES = (
         'ovirt-host-deploy'

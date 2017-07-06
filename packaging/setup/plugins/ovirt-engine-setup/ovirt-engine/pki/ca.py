@@ -287,11 +287,30 @@ class Plugin(plugin.PluginBase):
             )
         )
 
+    SAN_extension_name = 'subjectAltName'
+
+    def _has_SAN(self, x509):
+        res = False
+        try:
+            ext = x509.get_ext(self.SAN_extension_name)
+            res = True
+            self.logger.debug(
+                '%s: %s',
+                self.SAN_extension_name,
+                ext.get_value()
+            )
+        except LookupError:
+            self.logger.debug('%s is missing', self.SAN_extension_name)
+        return res
+
     def _ok_to_renew_cert(self, pkcs12, name, extract):
         res = False
         if os.path.exists(pkcs12):
             x509 = self._extractPKCS12Certificate(pkcs12)
-            if x509 and self._expired(x509):
+            if x509 and (
+                self._expired(x509) or
+                not self._has_SAN(x509)
+            ):
                 if not extract:
                     res = True
                 else:
@@ -505,8 +524,10 @@ class Plugin(plugin.PluginBase):
                     name='OVESETUP_RENEW_PKI',
                     note=_(
                         'One or more of the certificates should be renewed, '
-                        'because they expire soon or include an invalid '
-                        'expiry date, which is rejected by recent browsers.\n'
+                        'because they expire soon, or include an invalid '
+                        'expiry date, or do not include the subjectAltName '
+                        'extension, which can cause them to be rejected by '
+                        'recent browsers.\n'
                         'If you choose "No", you will be asked again the next '
                         'time you run Setup.\n'
                         'See {url} for more details.\n'
