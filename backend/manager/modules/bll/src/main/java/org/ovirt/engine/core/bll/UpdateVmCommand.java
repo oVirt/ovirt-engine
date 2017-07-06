@@ -26,7 +26,6 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfDataUpdater;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.InClusterUpgradeValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -98,7 +97,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.LabelDao;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.VmNumaNodeDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -127,8 +125,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     @Inject
     private InClusterUpgradeValidator clusterUpgradeValidator;
     @Inject
-    private RngDeviceUtils rngDeviceUtils;
-    @Inject
     private OvfDataUpdater ovfDataUpdater;
     @Inject
     private VmNumaNodeDao vmNumaNodeDao;
@@ -144,8 +140,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private ProviderDao providerDao;
     @Inject
     private DiskVmElementDao diskVmElementDao;
-    @Inject
-    private SnapshotDao snapshotDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
     @Inject
