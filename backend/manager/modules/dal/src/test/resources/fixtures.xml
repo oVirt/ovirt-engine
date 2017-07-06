@@ -1949,6 +1949,7 @@
     <table name="network">
         <column>id</column>
         <column>name</column>
+        <column>vdsm_name</column>
         <column>description</column>
         <column>type</column>
         <column>addr</column>
@@ -1965,6 +1966,7 @@
         <column>qos_id</column>
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>engine</value>
             <value>engine</value>
             <value>Management Network</value>
             <null />
@@ -1984,6 +1986,7 @@
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
             <value>engine2</value>
+            <value>engine2</value>
             <value>Management Network</value>
             <null />
             <null />
@@ -2001,6 +2004,7 @@
         </row>
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
+            <value>engine3</value>
             <value>engine3</value>
             <value>Management Network</value>
             <null />
@@ -2020,6 +2024,7 @@
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607200</value>
             <value>external</value>
+            <value>external</value>
             <value>Some external network</value>
             <null />
             <null />
@@ -2037,6 +2042,7 @@
         </row>
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607201</value>
+            <value>external</value>
             <value>external</value>
             <value>Some external network</value>
             <null />
@@ -2056,6 +2062,7 @@
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
             <value>engine4</value>
+            <value>engine4</value>
             <value>Management Network</value>
             <null />
             <null />
@@ -2073,6 +2080,7 @@
         </row>
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-1234567890ab</value>
+            <value>management</value>
             <value>management</value>
             <value>The Management Network</value>
             <null />

@@ -12,10 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -36,6 +38,8 @@ import org.slf4j.LoggerFactory;
 
 public final class NetworkUtils {
     private static final Logger log = LoggerFactory.getLogger(NetworkUtils.class);
+    private static final Pattern VALID_VDS_NAME_PATTERN = Pattern.compile(
+            String.format("^[0-9a-zA-Z_-]{1,%d}$", BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH));
     public static Integer getDefaultMtu() {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
@@ -232,6 +236,17 @@ public final class NetworkUtils {
         ipConfiguration.setIpV6Addresses(ipV6Addresses);
 
         return ipConfiguration;
+    }
+
+    public static void setNetworkVdsmName(Network network) {
+        String networkName = network.getName();
+        if (VALID_VDS_NAME_PATTERN.matcher(networkName).matches()) {
+            network.setVdsmName(networkName);
+        } else {
+            network.setVdsmName("on" + network.getId().toString()
+                    .replaceAll("[^a-zA-Z0-9]+", "")
+                    .substring(0, BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH - 2));
+        }
     }
 
     public static <E extends VmNetworkInterface> Map<Guid, List<E>> vmInterfacesByVmId(List<E> vnics) {

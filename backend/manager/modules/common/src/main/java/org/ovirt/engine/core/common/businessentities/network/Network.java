@@ -26,10 +26,9 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
 
     private Guid id;
 
-    @Pattern(regexp = "^[-_a-zA-Z0-9]{1,15}$", message = "NETWORK_ILEGAL_NETWORK_NAME", groups = { CreateEntity.class,
-            UpdateEntity.class })
-    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
     private String name;
+
+    private String vdsmName;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
@@ -77,13 +76,14 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
         vmNetwork = true;
     }
 
-    public Network(String addr, String description, Guid id, String name, String subnet, String gateway, Integer type,
-            Integer vlan_id, boolean stp, int mtu, boolean vmNetwork) {
+    public Network(String addr, String description, Guid id, String name, String vdsmName, String subnet, String gateway,
+            Integer type, Integer vlan_id, boolean stp, int mtu, boolean vmNetwork) {
         this();
         this.addr = addr;
         this.description = description;
         this.id = id;
         this.name = name;
+        this.vdsmName = vdsmName;
         this.subnet = subnet;
         this.gateway = gateway;
         this.type = type;
@@ -138,6 +138,14 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
 
     public void setName(String value) {
         this.name = value;
+    }
+
+    public String getVdsmName() {
+        return this.vdsmName;
+    }
+
+    public void setVdsmName(String vdsmName) {
+        this.vdsmName = vdsmName;
     }
 
     public String getSubnet() {
@@ -223,6 +231,7 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
                 .append("id", getId())
                 .append("description", getDescription())
                 .append("comment", getComment())
+                .append("vdsmName", getVdsmName())
                 .append("subnet", getSubnet())
                 .append("gateway", getGateway())
                 .append("type", getType())
@@ -248,6 +257,7 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
                 gateway,
                 id,
                 name,
+                vdsmName,
                 dataCenterId,
                 stp,
                 subnet,
@@ -277,6 +287,7 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
                 && Objects.equals(gateway, other.gateway)
                 && Objects.equals(id, other.id)
                 && Objects.equals(name, other.name)
+                && Objects.equals(vdsmName, other.vdsmName)
                 && Objects.equals(dataCenterId, other.dataCenterId)
                 && stp == other.stp
                 && Objects.equals(subnet, other.subnet)

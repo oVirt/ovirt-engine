@@ -9,7 +9,8 @@ CREATE OR REPLACE FUNCTION Insertnetwork (
     v_description VARCHAR(4000),
     v_free_text_comment TEXT,
     v_id UUID,
-    v_name VARCHAR(50),
+    v_name VARCHAR(256),
+    v_vdsm_name VARCHAR(15),
     v_subnet VARCHAR(20),
     v_gateway VARCHAR(20),
     v_type INT,
@@ -31,6 +32,7 @@ BEGIN
         free_text_comment,
         id,
         name,
+        vdsm_name,
         subnet,
         gateway,
         type,
@@ -50,6 +52,7 @@ BEGIN
         v_free_text_comment,
         v_id,
         v_name,
+        v_vdsm_name,
         v_subnet,
         v_gateway,
         v_type,
@@ -71,7 +74,8 @@ CREATE OR REPLACE FUNCTION Updatenetwork (
     v_description VARCHAR(4000),
     v_free_text_comment TEXT,
     v_id UUID,
-    v_name VARCHAR(50),
+    v_name VARCHAR(256),
+    v_vdsm_name VARCHAR(15),
     v_subnet VARCHAR(20),
     v_gateway VARCHAR(20),
     v_type INT,
@@ -94,6 +98,7 @@ BEGIN
         description = v_description,
         free_text_comment = v_free_text_comment,
         name = v_name,
+        vdsm_name = v_vdsm_name,
         subnet = v_subnet,
         gateway = v_gateway,
         type = v_type,
@@ -178,7 +183,7 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetnetworkByName (v_networkName VARCHAR(50))
+CREATE OR REPLACE FUNCTION GetnetworkByName (v_networkName VARCHAR(256))
 RETURNS SETOF network STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
@@ -190,7 +195,7 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkByNameAndDataCenter (
-    v_name VARCHAR(50),
+    v_name VARCHAR(256),
     v_storage_pool_id UUID
     )
 RETURNS SETOF network STABLE AS $PROCEDURE$
@@ -205,7 +210,7 @@ END;$PROCEDURE$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetNetworkByNameAndCluster (
-    v_name VARCHAR(50),
+    v_name VARCHAR(256),
     v_cluster_id UUID
     )
 RETURNS SETOF network STABLE AS $PROCEDURE$
@@ -267,7 +272,8 @@ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
 CREATE TYPE networkViewClusterType AS (
         id uuid,
-        name VARCHAR(50),
+        name VARCHAR(256),
+        vdsm_name VARCHAR(15),
         description VARCHAR(4000),
         free_text_comment TEXT,
         type INT,
@@ -304,6 +310,7 @@ BEGIN
 
     SELECT DISTINCT network.id,
         network.name,
+        network.vdsm_name,
         network.description,
         network.free_text_comment,
         network.type,

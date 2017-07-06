@@ -2688,6 +2688,7 @@ CREATE OR REPLACE VIEW network_view AS
 
 SELECT network.id AS id,
     network.name AS name,
+    network.vdsm_name AS vdsm_name,
     network.description AS description,
     network.free_text_comment AS free_text_comment,
     network.type AS type,

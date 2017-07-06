@@ -84,7 +84,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
                 qosMapper.serialize(hostNetwork.getQos());
             }
 
-            networks.put(hostNetwork.getNetworkName(), attributes);
+            networks.put(hostNetwork.getVdsmName(), attributes);
         }
 
         for (String net : getParameters().getRemovedNetworks()) {

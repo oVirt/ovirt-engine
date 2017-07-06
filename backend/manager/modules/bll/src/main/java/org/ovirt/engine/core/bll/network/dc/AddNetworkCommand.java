@@ -28,6 +28,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
@@ -47,6 +48,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     @Override
     protected void executeCommand() {
         getNetwork().setId(Guid.newGuid());
+        NetworkUtils.setNetworkVdsmName(getNetwork());
 
         TransactionSupport.executeInNewTransaction(() -> {
             networkDao.save(getNetwork());

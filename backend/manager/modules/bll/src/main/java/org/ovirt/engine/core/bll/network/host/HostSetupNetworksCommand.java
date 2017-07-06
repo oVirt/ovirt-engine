@@ -545,7 +545,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
             for (NetworkAttachment removedAttachment : removedNetworkAttachments) {
                 if (!networkIdToAttachment.containsKey(removedAttachment.getNetworkId())) {
-                    removedNetworks.add(existingNetworkRelatedToAttachment(removedAttachment).getName());
+                    removedNetworks.add(existingNetworkRelatedToAttachment(removedAttachment).getVdsmName());
                 }
             }
         }
