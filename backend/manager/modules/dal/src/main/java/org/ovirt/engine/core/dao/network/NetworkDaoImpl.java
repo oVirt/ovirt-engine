@@ -215,6 +215,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
                 .addValue("free_text_comment", network.getComment())
                 .addValue("id", network.getId())
                 .addValue("name", network.getName())
+                .addValue("vdsm_name", network.getVdsmName())
                 .addValue("subnet", network.getSubnet())
                 .addValue("gateway", network.getGateway())
                 .addValue("type", network.getType())
@@ -282,6 +283,7 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
             T entity = createNetworkEntity();
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
+            entity.setVdsmName(rs.getString("vdsm_name"));
             entity.setDescription(rs.getString("description"));
             entity.setComment(rs.getString("free_text_comment"));
             entity.setType((Integer) rs.getObject("type"));

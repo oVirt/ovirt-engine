@@ -156,30 +156,30 @@
   <qos id="de956031-6be2-43d6-bb90-5191c9253319" qos_type="4" name="host_network_qos_b" storage_pool_id="386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" out_average_linkshare="1200" out_average_upperlimit="2400" out_average_realtime="500"/>
   <qos id="de956031-6be2-43d6-bb90-5191c9253320" qos_type="4" name="host_network_qos_c" storage_pool_id="386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" out_average_linkshare="700" out_average_upperlimit="1400" out_average_realtime="500"/>
 
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607188" name="engine" description="Management Network" stp="0"
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607188" name="engine" vdsm_name="engine" description="Management Network" stp="0"
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
            qos_id="de956031-6be2-43d6-bb90-5191c9253318"
            dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607189" name="engine2" description="Management Network" stp="0"
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607189" name="engine2" vdsm_name="engine2" description="Management Network" stp="0"
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="1500" vm_network="true" label="lbl1"
            dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607190" name="engine3" description="Management Network" stp="0"
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607190" name="engine3" vdsm_name="engine3" description="Management Network" stp="0"
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="9000" vm_network="true" label="lbl1"
            dns_resolver_configuration_id="d1083ae5-df27-44dc-a3b1-a818844db9e4"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607200" name="external" description="Some external network" stp="0"
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607200" name="external" vdsm_name="external" description="Some external network" stp="0"
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
            provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111"
            provider_network_external_id="52d5c1c6-cb15-4832-b2a4-023770607200"
            dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607201" name="external" description="Some external network" stp="0"
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607201" name="external" vdsm_name="external" description="Some external network" stp="0"
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105e" mtu="0" vm_network="true"
            provider_network_provider_id="1115c1c6-cb15-4832-b2a4-023770607111"
            provider_network_external_id="52d5c1c6-cb15-4832-b2a4-023770607200"
            dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-023770607191" name="engine4" description="Management Network" stp="0"
+  <network id="58d5c1c6-cb15-4832-b2a4-023770607191" name="engine4" vdsm_name="engine4" description="Management Network" stp="0"
            storage_pool_id="386bffd1-e7ed-4b08-bce9-d7df10f8c9a0" mtu="1500" vm_network="true" label="lbl2"
            dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
-  <network id="58d5c1c6-cb15-4832-b2a4-1234567890ab" name="management" description="The Management Network" stp="0"
+  <network id="58d5c1c6-cb15-4832-b2a4-1234567890ab" name="management" vdsm_name="management" description="The Management Network" stp="0"
            storage_pool_id="6d849ebf-755f-4552-ad09-9a090cda105d" mtu="0" vm_network="true"
            dns_resolver_configuration_id="6de58dc3-171d-426d-99fc-295c25c091d3"/>
 

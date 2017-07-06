@@ -34,6 +34,10 @@ public class HostNetwork {
         return network.getName();
     }
 
+    public String getVdsmName() {
+        return network.getVdsmName();
+    }
+
     public String getNicName() {
         return networkAttachment.getNicName();
     }
@@ -192,6 +196,7 @@ public class HostNetwork {
                 .append("defaultRoute", isDefaultRoute())
                 .append("bonding", isBonding())
                 .append("networkName", getNetworkName())
+                .append("vdsmName", getVdsmName())
                 .append("nicName", getNicName())
                 .append("vlan", getVlan())
                 .append("mtu", getMtu())

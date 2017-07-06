@@ -43,7 +43,7 @@ public class HostSetupNetworksVDSCommand<T extends HostSetupNetworksVdsCommandPa
         Map<String, Object> networks = new HashMap<>();
 
         for (HostNetwork hostNetwork : getParameters().getNetworks()) {
-            networks.put(hostNetwork.getNetworkName(), createNetworkAttributes(hostNetwork));
+            networks.put(hostNetwork.getVdsmName(), createNetworkAttributes(hostNetwork));
         }
 
         for (String net : getParameters().getRemovedNetworks()) {

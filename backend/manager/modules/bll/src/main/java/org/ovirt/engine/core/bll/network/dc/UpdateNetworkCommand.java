@@ -73,6 +73,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
+        NetworkUtils.setNetworkVdsmName(getNetwork());
         TransactionSupport.executeInNewTransaction(() -> {
             networkDao.update(getNetwork());
 

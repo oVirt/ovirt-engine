@@ -893,12 +893,12 @@ public class VdsBrokerObjectsBuilder {
         return ret;
     }
 
-    public static void updateVDSDynamicData(VDS vds, Map<String, Object> struct) {
+    public static void updateVDSDynamicData(VDS vds, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
         vds.setSupportedClusterLevels(assignStringValueFromArray(struct, VdsProperties.supported_cluster_levels));
 
         setDnsResolverConfigurationData(vds, struct);
 
-        updateNetworkData(vds, struct);
+        updateNetworkData(vds, vdsmNameMap, struct);
         updateNumaNodesData(vds, struct);
 
         vds.setCpuThreads(assignIntValue(struct, VdsProperties.cpuThreads));
@@ -1757,7 +1757,7 @@ public class VdsBrokerObjectsBuilder {
      * @param struct
      *            A nested map contains network interfaces data
      */
-    public static void updateNetworkData(VDS vds, Map<String, Object> struct) {
+    public static void updateNetworkData(VDS vds, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
         List<VdsNetworkInterface> oldInterfaces =
                 DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();
@@ -1768,7 +1768,7 @@ public class VdsBrokerObjectsBuilder {
 
         addHostBondDevices(vds, struct);
 
-        addHostNetworksAndUpdateInterfaces(vds, struct);
+        addHostNetworksAndUpdateInterfaces(vds, vdsmNameMap, struct);
 
         // set bonding options
         setBondingOptions(vds, oldInterfaces);
@@ -1793,7 +1793,7 @@ public class VdsBrokerObjectsBuilder {
         return activeIface;
     }
 
-    private static void addHostNetworksAndUpdateInterfaces(VDS host, Map<String, Object> struct) {
+    private static void addHostNetworksAndUpdateInterfaces(VDS host, Map<String, String> vdsmNameMap, Map<String, Object> struct) {
 
         Map<String, Map<String, Object>> bridges =
                 (Map<String, Map<String, Object>>) struct.get(VdsProperties.NETWORK_BRIDGES);
@@ -1809,7 +1809,10 @@ public class VdsBrokerObjectsBuilder {
             host.getNetworkNames().clear();
             for (Entry<String, Map<String, Object>> entry : networks.entrySet()) {
                 Map<String, Object> networkProperties = entry.getValue();
-                String networkName = entry.getKey();
+
+                String vdsmName = entry.getKey();
+                String networkName = vdsmNameMap.containsKey(vdsmName) ? vdsmNameMap.get(vdsmName) : vdsmName;
+
                 if (networkProperties != null) {
                     String interfaceName = (String) networkProperties.get(VdsProperties.INTERFACE);
                     Map<String, Object> bridgeProperties = (bridges == null) ? null : bridges.get(interfaceName);

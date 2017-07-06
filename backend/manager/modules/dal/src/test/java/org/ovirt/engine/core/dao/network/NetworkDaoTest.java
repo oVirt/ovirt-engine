@@ -43,6 +43,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
 
         new_net = new Network();
         new_net.setName("newnet1");
+        new_net.setVdsmName("newnet1");
         new_net.setDescription("New network");
         new_net.setDataCenterId(datacenter);
     }
