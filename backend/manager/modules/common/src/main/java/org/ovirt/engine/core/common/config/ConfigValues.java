@@ -2002,7 +2002,7 @@ public enum ConfigValues {
     VmLeasesSupported(ClientAccessLevel.User),
 
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
+    @DefaultValueAttribute("false")
     DomainXML,
 
     @TypeConverterAttribute(Boolean.class)
