@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -70,7 +69,7 @@ public class EditProviderModel extends ProviderModel {
 
     @Override
     protected void preSave() {
-        if (!StringHelper.stringsEqualIgnoreCase(getUrl().getEntity(), oldUrl)) {
+        if (!stringsEqualIgnoreCase(getUrl().getEntity(), oldUrl)) {
             ArrayList<QueryType> queryTypes = new ArrayList<>();
             ArrayList<QueryParametersBase> queryParams = new ArrayList<>();
             final Set<VdcObjectType> providedTypes = provider.getType().getProvidedTypes();
@@ -94,6 +93,14 @@ public class EditProviderModel extends ProviderModel {
             }
         }
         actualSave();
+    }
+
+    private static boolean stringsEqualIgnoreCase(String s1, String s2) {
+        if (s1 == null && s2 == null) {
+            return true;
+        } else {
+            return s1 != null && s1.equalsIgnoreCase(s2);
+        }
     }
 
     private void showConfirmation() {

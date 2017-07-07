@@ -129,12 +129,4 @@ public final class StringHelper {
 
         return trim(s, chars);
     }
-
-    public static boolean stringsEqualIgnoreCase(String s1, String s2) {
-        if (s1 == null && s2 == null) {
-            return true;
-        } else {
-            return s1 != null && s1.equalsIgnoreCase(s2);
-        }
-    }
 }
