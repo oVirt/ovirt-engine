@@ -161,8 +161,7 @@ public final class StringHelper {
         }
         StringBuilder sb = new StringBuilder(s.length() * 2);
         sb.append("\\Q");
-        slashEIndex = 0;
-        int current = 0;
+       int current = 0;
         while ((slashEIndex = s.indexOf("\\E", current)) != -1) {
             sb.append(s.substring(current, slashEIndex));
             current = slashEIndex + 2;
