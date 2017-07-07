@@ -7,9 +7,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -89,6 +93,8 @@ public class LibvirtVmXmlBuilder {
     /** Timeout for the boot menu, in milliseconds */
     public static final int BOOT_MENU_TIMEOUT = 10000;
     private static final int LIBVIRT_PORT_AUTOSELECT = -1;
+    private static final Set<String> SPICE_CHANNEL_NAMES = new HashSet<>(Arrays.asList(
+            "main", "display", "inputs", "cursor", "playback", "record", "smartcard", "usbredir"));
 
     @Inject
     private VmDeviceDao vmDeviceDao;
@@ -1150,12 +1156,12 @@ public class LibvirtVmXmlBuilder {
 
             if ((boolean) Config.getValue(ConfigValues.SSLEnabled)) {
                 String channels = Config.getValue(ConfigValues.SpiceSecureChannels, vm.getCompatibilityVersion().toString());
-                for (String channel : channels.split(",")) {
+                adjustSpiceSecureChannels(channels.split(",")).forEach(channel -> {
                     writer.writeStartElement("channel");
                     writer.writeAttributeString("name", channel);
                     writer.writeAttributeString("mode", "secure");
                     writer.writeEndElement();
-                }
+                });
             }
 
             break;
@@ -1186,6 +1192,22 @@ public class LibvirtVmXmlBuilder {
         }
 
         writer.writeEndElement();
+    }
+
+    protected static Stream<String> adjustSpiceSecureChannels(String[] spiceSecureChannels) {
+        return Arrays.stream(spiceSecureChannels)
+                .map(channel -> {
+                    if (SPICE_CHANNEL_NAMES.contains(channel)) {
+                        return channel;
+                    }
+                    String legacyChannel;
+                    if (channel.startsWith("s") && SPICE_CHANNEL_NAMES.contains(legacyChannel = channel.substring(1))) {
+                        return legacyChannel;
+                    }
+                    log.warn("Unsupported spice channel name {}, ignoring", channel);
+                    return null;
+                })
+                .filter(Objects::nonNull);
     }
 
     private void writeController(VmDevice device) {
