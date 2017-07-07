@@ -343,6 +343,40 @@ public class ADSyntaxChecker implements ISyntaxChecker {
 
     private static StringBuilder replaceAll(StringBuilder builder, String oldText, String newText) {
         String t = builder.toString();
-        return new StringBuilder(t.replaceAll(StringHelper.quote(oldText), newText));
+        return new StringBuilder(t.replaceAll(quote(oldText), newText));
+    }
+
+    /**
+     * Returns a literal pattern <code>String</code> for the specified <code>String</code>.
+     *
+     * <p>
+     * This method produces a <code>String</code> that can be used to create a <code>Pattern</code> that would match the
+     * string <code>s</code> as if it were a literal pattern.
+     * </p>
+     * Metacharacters or escape sequences in the input sequence will be given no special meaning.
+     *
+     * Copied from Pattern.java code for GWT compatibility.
+     *
+     * @param s
+     *            The string to be literalized
+     * @return A literal string replacement
+     * @since 1.5
+     */
+    private static String quote(String s) {
+        int slashEIndex = s.indexOf("\\E");
+        if (slashEIndex == -1) {
+            return "\\Q" + s + "\\E";
+        }
+        StringBuilder sb = new StringBuilder(s.length() * 2);
+        sb.append("\\Q");
+        int current = 0;
+        while ((slashEIndex = s.indexOf("\\E", current)) != -1) {
+            sb.append(s.substring(current, slashEIndex));
+            current = slashEIndex + 2;
+            sb.append("\\E\\\\E\\Q");
+        }
+        sb.append(s.substring(current, s.length()));
+        sb.append("\\E");
+        return sb.toString();
     }
 }
