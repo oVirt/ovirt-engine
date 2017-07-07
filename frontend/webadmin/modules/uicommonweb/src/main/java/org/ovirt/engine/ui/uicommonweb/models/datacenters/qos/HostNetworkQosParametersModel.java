@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class HostNetworkQosParametersModel extends QosParametersModel<HostNetworkQos> {
 
@@ -54,9 +53,22 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
 
     @Override
     public void flush(HostNetworkQos qos) {
-        qos.setOutAverageLinkshare(StringUtils.parseInteger(getOutAverageLinkshare().getEntity()));
-        qos.setOutAverageUpperlimit(StringUtils.parseInteger(getOutAverageUpperlimit().getEntity()));
-        qos.setOutAverageRealtime(StringUtils.parseInteger(getOutAverageRealtime().getEntity()));
+        qos.setOutAverageLinkshare(parseInteger(getOutAverageLinkshare().getEntity()));
+        qos.setOutAverageUpperlimit(parseInteger(getOutAverageUpperlimit().getEntity()));
+        qos.setOutAverageRealtime(parseInteger(getOutAverageRealtime().getEntity()));
+    }
+
+    /**
+     * Returns the equivalent Integer representation of a String, if possible.
+     *
+     * @param str
+     *            The String to try to parse.
+     * @return null if the String is null or empty, its Integer value otherwise.
+     * @throws NumberFormatException
+     *             if the String cannot be parsed as an Integer.
+     */
+    private Integer parseInteger(String str) {
+        return str == null || str.isEmpty() ? null : Integer.parseInt(str);
     }
 
     protected Collection<IValidation> getOutLinkshareValidations() {

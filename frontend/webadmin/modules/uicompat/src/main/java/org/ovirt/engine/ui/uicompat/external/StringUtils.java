@@ -89,18 +89,4 @@ public class StringUtils {
         }
         return builder.toString();
     }
-
-    /**
-     * Returns the equivalent Integer representation of a String, if possible.
-     *
-     * @param str
-     *            The String to try to parse.
-     * @return null if the String is null or empty, its Integer value otherwise.
-     * @throws NumberFormatException
-     *             if the String cannot be parsed as an Integer.
-     */
-    public static Integer parseInteger(String str) {
-        return str == null || str.isEmpty() ? null : Integer.parseInt(str);
-    }
-
 }
