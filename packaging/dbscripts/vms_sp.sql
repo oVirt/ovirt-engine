@@ -707,7 +707,8 @@ CREATE OR REPLACE FUNCTION InsertVmStatic (
     v_console_disconnect_action VARCHAR(64),
     v_custom_compatibility_version VARCHAR(40),
     v_migration_policy_id UUID,
-    v_lease_sd_id UUID)
+    v_lease_sd_id UUID,
+    v_lease_info VARCHAR(1000))
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -788,7 +789,8 @@ INSERT INTO vm_static(description,
                       console_disconnect_action,
                       custom_compatibility_version,
                       migration_policy_id,
-                      lease_sd_id)
+                      lease_sd_id,
+                      lease_info)
     VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -861,7 +863,8 @@ INSERT INTO vm_static(description,
            v_console_disconnect_action,
            v_custom_compatibility_version,
            v_migration_policy_id,
-           v_lease_sd_id);
+           v_lease_sd_id,
+           v_lease_info);
 
     -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
     DELETE
@@ -1060,7 +1063,8 @@ v_provider_id UUID,
 v_console_disconnect_action VARCHAR(64),
 v_custom_compatibility_version VARCHAR(40),
 v_migration_policy_id UUID,
-v_lease_sd_id UUID)
+v_lease_sd_id UUID,
+v_lease_info VARCHAR(1000))
 
 RETURNS VOID
 
@@ -1140,7 +1144,8 @@ BEGIN
      console_disconnect_action = v_console_disconnect_action,
      custom_compatibility_version=v_custom_compatibility_version,
      migration_policy_id = v_migration_policy_id,
-     lease_sd_id = v_lease_sd_id
+     lease_sd_id = v_lease_sd_id,
+     lease_info = v_lease_info
      WHERE vm_guid = v_vm_guid
          AND entity_type = 'VM';
 
@@ -1223,6 +1228,22 @@ BEGIN
       UPDATE vm_static
       SET original_template_name = v_original_template_name
       WHERE original_template_id = v_original_template_id;
+END; $procedure$
+
+
+
+
+
+LANGUAGE plpgsql;
+Create or replace FUNCTION UpdateVmLeaseInfo(
+v_vm_guid UUID,
+v_lease_info VARCHAR(1000))
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE vm_static
+      SET lease_info = v_lease_info
+      WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 

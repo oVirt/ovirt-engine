@@ -17,6 +17,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VmLeaseTaskInfoReturn;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VolumeListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.LeaseInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
@@ -669,6 +670,20 @@ public class JsonRpcIIrsServer implements IIrsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new VmLeaseTaskInfoReturn(response);
+    }
+
+    @Override
+    public LeaseInfoReturn getVmLeaseInfo(String leaseUUID, String sdUUID) {
+        HashMap<String, Object> leaseDict = new HashMap<>();
+        leaseDict.put("lease_id", leaseUUID);
+        leaseDict.put("sd_id", sdUUID);
+
+        JsonRpcRequest request =
+                new RequestBuilder("Lease.info")
+                        .withParameter("lease", leaseDict)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new LeaseInfoReturn(response);
     }
 
 }

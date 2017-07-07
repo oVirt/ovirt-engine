@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.vdsbroker.vdsbroker.LeaseInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturn;
 
@@ -110,4 +111,6 @@ public interface IIrsServer {
     VmLeaseTaskInfoReturn addVmLease(String leaseUUID, String sdUUID);
 
     VmLeaseTaskInfoReturn removeVmLease(String leaseUUID, String sdUUID);
+
+    LeaseInfoReturn getVmLeaseInfo(String leaseUUID, String sdUUID);
 }

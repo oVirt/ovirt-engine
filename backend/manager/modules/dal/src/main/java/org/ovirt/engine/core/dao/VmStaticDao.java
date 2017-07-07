@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -141,4 +142,6 @@ public interface VmStaticDao extends GenericDao<VmStatic, Guid> {
      * @return the list of static vms
      */
     List<VmStatic> getAllRunningForVds(Guid vds);
+
+    void updateVmLeaseInfo(Guid vmId, Map<String, String> leaseInfo);
 }

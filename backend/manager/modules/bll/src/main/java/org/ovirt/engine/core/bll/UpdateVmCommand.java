@@ -304,6 +304,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return true;
         }
 
+        getVm().getStaticData().setLeaseInfo(null);
         if (getVm().isNotRunning()) {
             if (!addVmLease(newVmStatic.getLeaseStorageDomainId(), newVmStatic.getId())) {
                 return false;

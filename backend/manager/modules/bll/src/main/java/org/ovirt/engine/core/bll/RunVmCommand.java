@@ -1001,6 +1001,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
+        if (!validate(runVmValidator.validateVmLease())) {
+            return false;
+        }
+
         if (!checkRngDeviceClusterCompatibility()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }

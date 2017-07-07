@@ -2802,5 +2802,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String CLUSTER_CANNOT_UPDATE_CLUSTER_FAILED_TO_UPDATE_VMS();
 
     String BAD_IPV4_OR_IPV6_ADDRESS_FORMAT();
+
+    String ACTION_TYPE_FAILED_INVALID_VM_LEASE();
 }
 

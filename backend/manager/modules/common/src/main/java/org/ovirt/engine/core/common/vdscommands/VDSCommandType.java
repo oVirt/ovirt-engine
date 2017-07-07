@@ -233,6 +233,7 @@ public enum VDSCommandType {
     Thaw("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     AddVmLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RemoveVmLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetVmLeaseInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotPlugLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotUnplugLease("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 
