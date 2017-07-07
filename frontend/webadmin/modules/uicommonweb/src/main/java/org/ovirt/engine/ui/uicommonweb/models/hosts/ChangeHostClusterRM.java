@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicompat.Enlistment;
@@ -42,7 +42,7 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
                     parameters,
                     result -> {
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                        ActionReturnValue returnValue = result.getReturnValue();
 
                         context.changeVDSClusterReturnValue = returnValue;
                         prepare2();
@@ -56,7 +56,7 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
     public void prepare2() {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
-        VdcReturnValueBase returnValue = context.changeVDSClusterReturnValue;
+        ActionReturnValue returnValue = context.changeVDSClusterReturnValue;
 
         context.enlistment = null;
 
@@ -83,6 +83,6 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
     public static final class Context {
 
         public Enlistment enlistment;
-        public VdcReturnValueBase changeVDSClusterReturnValue;
+        public ActionReturnValue changeVDSClusterReturnValue;
     }
 }

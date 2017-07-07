@@ -15,11 +15,11 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalUrlParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromOvaParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -106,7 +106,7 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
             return true;
         }
 
-        public VdcReturnValueBase performImport() {
+        public ActionReturnValue performImport() {
             VM vm = loadExternalVm();
             vm.setName(getVmName());
 

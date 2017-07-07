@@ -18,13 +18,13 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachUserToVmFromPoolAndRunParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -158,11 +158,11 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
     protected void executeCommand() {
         initPoolUser();
 
-        VdcReturnValueBase vdcReturnValue = attachUserToVm();
+        ActionReturnValue actionReturnValue = attachUserToVm();
 
-        if (!vdcReturnValue.getSucceeded()) {
+        if (!actionReturnValue.getSucceeded()) {
             log.info("Failed to give user '{}' permission to Vm '{}'", getAdUserId(), getVmId());
-            setActionReturnValue(vdcReturnValue);
+            setActionReturnValue(actionReturnValue);
             return;
         } else {
             log.info("Succeeded giving user '{}' permission to Vm '{}'", getAdUserId(), getVmId());
@@ -170,9 +170,9 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
 
         if (!isVmPrestarted()) {
             // Only when using a VM that is not prestarted we need to run the VM
-            vdcReturnValue = runVm();
+            actionReturnValue = runVm();
 
-            setSucceeded(vdcReturnValue.getSucceeded());
+            setSucceeded(actionReturnValue.getSucceeded());
             getReturnValue().getVdsmTaskIdList().addAll(getReturnValue().getInternalVdsmTaskIdList());
         } else {
             // No need to start, just return it
@@ -182,7 +182,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         setActionReturnValue(getVmId());
     }
 
-    private VdcReturnValueBase attachUserToVm() {
+    private ActionReturnValue attachUserToVm() {
         Permission perm = new Permission(getAdUserId(),
                 PredefinedRoles.ENGINE_USER.getId(),
                 getVmId(),
@@ -213,7 +213,7 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         return ctx;
     }
 
-    private VdcReturnValueBase runVm() {
+    private ActionReturnValue runVm() {
         RunVmParams runVmParams = new RunVmParams(getVmId());
         runVmParams.setSessionId(getParameters().getSessionId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
@@ -222,12 +222,12 @@ public class AttachUserToVmFromPoolAndRunCommand<T extends AttachUserToVmFromPoo
         runVmParams.setEndProcedure(EndProcedure.COMMAND_MANAGED);
         runVmParams.setRunAsStateless(!getVmPool().isStateful());
         ExecutionContext runVmContext = createRunVmContext();
-        VdcReturnValueBase vdcReturnValue = runInternalAction(ActionType.RunVm,
+        ActionReturnValue actionReturnValue = runInternalAction(ActionType.RunVm,
                 runVmParams,
                 cloneContext().withExecutionContext(runVmContext).withCompensationContext(null));
 
-        getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-        return vdcReturnValue;
+        getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
+        return actionReturnValue;
     }
 
     private RunVmParams getChildRunVmParameters() {

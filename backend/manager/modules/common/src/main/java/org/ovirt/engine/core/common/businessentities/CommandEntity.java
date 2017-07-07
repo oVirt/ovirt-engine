@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.utils.PersistedCommandContext;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -24,7 +24,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private PersistedCommandContext commandContext;
     private ActionType commandType;
     private ActionParametersBase commandParameters;
-    private VdcReturnValueBase returnValue;
+    private ActionReturnValue returnValue;
     private Date createdAt;
     private CommandStatus commandStatus;
     private boolean callbackEnabled;
@@ -161,7 +161,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    ActionParametersBase params,
                                                    CommandStatus status,
                                                    boolean callbackEnabled,
-                                                   VdcReturnValueBase returnValue,
+                                                   ActionReturnValue returnValue,
                                                    Map<String, Serializable> data) {
         CommandEntity entity = new CommandEntity();
         entity.setEngineSessionSeqId(engineSessionSeqId);
@@ -181,11 +181,11 @@ public class CommandEntity implements BusinessEntity<Guid> {
         return entity;
     }
 
-    public VdcReturnValueBase getReturnValue() {
+    public ActionReturnValue getReturnValue() {
         return returnValue;
     }
 
-    public void setReturnValue(VdcReturnValueBase returnValue) {
+    public void setReturnValue(ActionReturnValue returnValue) {
         this.returnValue = returnValue;
     }
 

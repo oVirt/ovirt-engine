@@ -32,6 +32,7 @@ import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -39,7 +40,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.RunVmParams.RunVmFlow;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -468,18 +468,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 getVm().getName(), getVm().getId());
         CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
-        VdcReturnValueBase vdcReturnValue = runInternalAction(ActionType.CreateAllSnapshotsFromVm,
+        ActionReturnValue actionReturnValue = runInternalAction(ActionType.CreateAllSnapshotsFromVm,
                 createAllSnapshotsFromVmParameters,
                 createContextForStatelessSnapshotCreation());
 
         // setting lock to null in order not to release lock twice
         setLock(null);
-        setSucceeded(vdcReturnValue.getSucceeded());
-        if (!vdcReturnValue.getSucceeded()) {
-            if (areDisksLocked(vdcReturnValue)) {
+        setSucceeded(actionReturnValue.getSucceeded());
+        if (!actionReturnValue.getSucceeded()) {
+            if (areDisksLocked(actionReturnValue)) {
                 throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
             }
-            getReturnValue().setFault(vdcReturnValue.getFault());
+            getReturnValue().setFault(actionReturnValue.getFault());
             log.error("Failed to create stateless snapshot for VM '{}' ({})",
                     getVm().getName(), getVm().getId());
         }
@@ -511,8 +511,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return parameters;
     }
 
-    private boolean areDisksLocked(VdcReturnValueBase vdcReturnValue) {
-        return vdcReturnValue.getValidationMessages().contains(
+    private boolean areDisksLocked(ActionReturnValue actionReturnValue) {
+        return actionReturnValue.getValidationMessages().contains(
                 EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.name());
     }
 
@@ -1166,11 +1166,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endWithFailure() {
         if (shouldEndSnapshotCreation()) {
-            VdcReturnValueBase vdcReturnValue = getBackend().endAction(ActionType.CreateAllSnapshotsFromVm,
+            ActionReturnValue actionReturnValue = getBackend().endAction(ActionType.CreateAllSnapshotsFromVm,
                     getParameters().getImagesParameters().get(0), cloneContext().withoutExecutionContext()
                             .withoutLock());
 
-            setSucceeded(vdcReturnValue.getSucceeded());
+            setSucceeded(actionReturnValue.getSucceeded());
             // we are not running the VM, of course,
             // since we couldn't create a snapshot.
         }

@@ -33,9 +33,9 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator.NetworkConfiguratorException;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
@@ -232,8 +232,8 @@ public class NetworkConfiguratorTest {
         return null;
     }
 
-    private VdcReturnValueBase createReturnValue(boolean succeed) {
-        final VdcReturnValueBase setupNetsReturnValue = new VdcReturnValueBase();
+    private ActionReturnValue createReturnValue(boolean succeed) {
+        final ActionReturnValue setupNetsReturnValue = new ActionReturnValue();
         setupNetsReturnValue.setSucceeded(succeed);
         return setupNetsReturnValue;
     }

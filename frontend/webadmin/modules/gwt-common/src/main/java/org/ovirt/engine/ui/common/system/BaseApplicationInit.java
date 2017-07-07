@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.system;
 
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.DisplayUncaughtUIExceptions;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
@@ -128,7 +128,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
     @Override
     public void onLogout() {
-        AsyncQuery<VdcReturnValueBase> query = new AsyncQuery<>(returnValue -> {
+        AsyncQuery<ActionReturnValue> query = new AsyncQuery<>(returnValue -> {
             // Redirect to SSO Logout after the user has logged out successfully on backend.
             Window.Location.assign(GWT.getModuleBaseURL() + "sso/logout"); //$NON-NLS-1$
         });

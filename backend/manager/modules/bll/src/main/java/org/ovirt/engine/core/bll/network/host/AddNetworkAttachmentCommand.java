@@ -7,10 +7,10 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.NetworkAttachmentParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -67,7 +67,7 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
         Guid networkId = networkAttachment.getNetworkId();
         Guid nicId = networkAttachment.getNicId();
 
-        VdcReturnValueBase returnValue = runInternalAction(ActionType.HostSetupNetworks, params);
+        ActionReturnValue returnValue = runInternalAction(ActionType.HostSetupNetworks, params);
 
         if (returnValue.getSucceeded()) {
 

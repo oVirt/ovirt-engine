@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -184,8 +184,8 @@ public class VmBackupModel extends ManageBackupModel<VM> {
 
                     getWindow().stopProgress();
                     cancel();
-                    ArrayList<VdcReturnValueBase> retVals =
-                            (ArrayList<VdcReturnValueBase>) result
+                    ArrayList<ActionReturnValue> retVals =
+                            (ArrayList<ActionReturnValue>) result
                                     .getReturnValue();
                     if (retVals != null
                             && getSelectedItems().size() == retVals

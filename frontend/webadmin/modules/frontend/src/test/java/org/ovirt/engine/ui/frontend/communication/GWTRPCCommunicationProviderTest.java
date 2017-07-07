@@ -17,8 +17,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -50,9 +50,9 @@ public class GWTRPCCommunicationProviderTest {
     XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
 
     @Captor
-    ArgumentCaptor<AsyncCallback<VdcReturnValueBase>> actionCallback;
+    ArgumentCaptor<AsyncCallback<ActionReturnValue>> actionCallback;
     @Captor
-    ArgumentCaptor<AsyncCallback<List<VdcReturnValueBase>>> actionCallbackList;
+    ArgumentCaptor<AsyncCallback<List<ActionReturnValue>>> actionCallbackList;
     @Captor
     ArgumentCaptor<AsyncCallback<QueryReturnValue>> queryCallback;
     @Captor
@@ -73,15 +73,15 @@ public class GWTRPCCommunicationProviderTest {
     @Test
     public void testTransmitOperationAction_success() {
         ActionParametersBase testParameters = new ActionParametersBase();
-        final VdcReturnValueBase testResult = new VdcReturnValueBase();
+        final ActionReturnValue testResult = new ActionReturnValue();
         final List<VdcOperation<ActionType, ActionParametersBase>> operationList = new ArrayList<>();
         final VdcOperation<ActionType, ActionParametersBase> testOperation =
                 new VdcOperation<>(ActionType.AddDisk, testParameters,
-                new VdcOperationCallback<VdcOperation<ActionType, ActionParametersBase>, VdcReturnValueBase>() {
+                new VdcOperationCallback<VdcOperation<ActionType, ActionParametersBase>, ActionReturnValue>() {
 
             @Override
             public void onSuccess(VdcOperation<ActionType, ActionParametersBase> operation,
-                    VdcReturnValueBase result) {
+                    ActionReturnValue result) {
                 assertEquals("Test results should match", testResult, result); //$NON-NLS-1$
                 assertEquals("Operations should match", operationList.get(0), operation); //$NON-NLS-1$
             }
@@ -104,11 +104,11 @@ public class GWTRPCCommunicationProviderTest {
         final Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
         final VdcOperation<ActionType, ActionParametersBase> testOperation =
                 new VdcOperation<>(ActionType.AddDisk, testParameters,
-                new VdcOperationCallback<VdcOperation<ActionType, ActionParametersBase>, VdcReturnValueBase>() {
+                new VdcOperationCallback<VdcOperation<ActionType, ActionParametersBase>, ActionReturnValue>() {
 
             @Override
             public void onSuccess(VdcOperation<ActionType, ActionParametersBase> operation,
-                    VdcReturnValueBase result) {
+                    ActionReturnValue result) {
                 fail("Should not get here"); //$NON-NLS-1$
             }
 
@@ -195,8 +195,8 @@ public class GWTRPCCommunicationProviderTest {
         testOperationList.add(testOperation1);
         List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
         allOperationList.add(testOperation1);
-        VdcReturnValueBase testResult1 = new VdcReturnValueBase();
-        List<VdcReturnValueBase> allResults = new ArrayList<>();
+        ActionReturnValue testResult1 = new ActionReturnValue();
+        List<ActionReturnValue> allResults = new ArrayList<>();
         allResults.add(testResult1);
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
         assertEquals("Result should have one results", 1, result.size()); //$NON-NLS-1$
@@ -213,9 +213,9 @@ public class GWTRPCCommunicationProviderTest {
         List<VdcOperation<?, ?>> allOperationList = new ArrayList<>();
         allOperationList.add(testOperation1);
         allOperationList.add(testOperation2);
-        VdcReturnValueBase testResult1 = new VdcReturnValueBase();
-        VdcReturnValueBase testResult2 = new VdcReturnValueBase();
-        List<VdcReturnValueBase> allResults = new ArrayList<>();
+        ActionReturnValue testResult1 = new ActionReturnValue();
+        ActionReturnValue testResult2 = new ActionReturnValue();
+        List<ActionReturnValue> allResults = new ArrayList<>();
         allResults.add(testResult1);
         allResults.add(testResult2);
         List<?> result = testProvider.getOperationResult(testOperationList, allOperationList, allResults);
@@ -225,7 +225,7 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_oneAction_success() {
-        final VdcReturnValueBase testResult = new VdcReturnValueBase();
+        final ActionReturnValue testResult = new ActionReturnValue();
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         ActionParametersBase testParameters = new ActionParametersBase();
         VdcOperation<ActionType, ActionParametersBase> testOperation1 =
@@ -253,7 +253,7 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_twoItems_success() {
-        final VdcReturnValueBase testResult = new VdcReturnValueBase();
+        final ActionReturnValue testResult = new ActionReturnValue();
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         ActionParametersBase testParameters = new ActionParametersBase();
         VdcOperation<ActionType, ActionParametersBase> testOperation1 =
@@ -261,14 +261,14 @@ public class GWTRPCCommunicationProviderTest {
         VdcOperation<ActionType, ActionParametersBase> testOperation2 =
                 new VdcOperation<>(ActionType.ActivateVds, testParameters, mockOperationCallbackList1);
         List<ActionParametersBase> testParameterList = createActionParameterList(testParameters, 2);
-        List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 2);
+        List<ActionReturnValue> testResultList = createActionResultList(testResult, 2);
         testList.add(testOperation1);
         testList.add(testOperation2);
         testProvider.transmitOperationList(testList);
         verify(mockService).runMultipleActions(eq(ActionType.ActivateVds),
                 (ArrayList<ActionParametersBase>) eq(testParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
-        actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
+        actionCallbackList.getValue().onSuccess((ArrayList<ActionReturnValue>) testResultList);
         verify(mockOperationCallbackList1).onSuccess(eq(testList), eq(testResultList));
     }
 
@@ -294,7 +294,7 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_threeItems_twoActionTypes_success() {
-        final VdcReturnValueBase testResult = new VdcReturnValueBase();
+        final ActionReturnValue testResult = new ActionReturnValue();
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         List<VdcOperation<?, ?>> activateVdsList = new ArrayList<>();
         ActionParametersBase testParameters = new ActionParametersBase();
@@ -310,15 +310,15 @@ public class GWTRPCCommunicationProviderTest {
         activateVdsList.add(testOperation1);
         activateVdsList.add(testOperation2);
         List<ActionParametersBase> activateVdsParameterList = createActionParameterList(testParameters, 2);
-        List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 3);
-        List<VdcReturnValueBase> activateVdsResultList = createActionResultList(testResult, 2);
+        List<ActionReturnValue> testResultList = createActionResultList(testResult, 3);
+        List<ActionReturnValue> activateVdsResultList = createActionResultList(testResult, 2);
         testProvider.transmitOperationList(testList);
         verify(mockService).runMultipleActions(eq(ActionType.ActivateVds),
                 (ArrayList<ActionParametersBase>) eq(activateVdsParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
         verify(mockService).runAction(eq(ActionType.ActivateStorageDomain), eq(testParameters),
                 actionCallback.capture());
-        actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
+        actionCallbackList.getValue().onSuccess((ArrayList<ActionReturnValue>) testResultList);
         actionCallback.getValue().onSuccess(testResult);
         verify(mockOperationCallbackList1).onSuccess(eq(activateVdsList), eq(activateVdsResultList));
         verify(mockOperationCallbackSingle2).onSuccess(testOperation3, testResultList.get(2));
@@ -326,7 +326,7 @@ public class GWTRPCCommunicationProviderTest {
 
     @Test
     public void testTransmitOperationList_threeItems_twoActionTypes_one_success_one_failure() {
-        final VdcReturnValueBase testResult = new VdcReturnValueBase();
+        final ActionReturnValue testResult = new ActionReturnValue();
         List<VdcOperation<?, ?>> testList = new ArrayList<>();
         List<VdcOperation<?, ?>> activateVdsList = new ArrayList<>();
         ActionParametersBase testParameters = new ActionParametersBase();
@@ -342,15 +342,15 @@ public class GWTRPCCommunicationProviderTest {
         activateVdsList.add(testOperation1);
         activateVdsList.add(testOperation2);
         List<ActionParametersBase> activateVdsParameterList = createActionParameterList(testParameters, 2);
-        List<VdcReturnValueBase> testResultList = createActionResultList(testResult, 3);
-        List<VdcReturnValueBase> activateVdsResultList = createActionResultList(testResult, 2);
+        List<ActionReturnValue> testResultList = createActionResultList(testResult, 3);
+        List<ActionReturnValue> activateVdsResultList = createActionResultList(testResult, 2);
         testProvider.transmitOperationList(testList);
         verify(mockService).runMultipleActions(eq(ActionType.ActivateVds),
                 (ArrayList<ActionParametersBase>) eq(activateVdsParameterList), eq(false), eq(true),
                 actionCallbackList.capture());
         verify(mockService).runAction(eq(ActionType.ActivateStorageDomain), eq(testParameters),
                 actionCallback.capture());
-        actionCallbackList.getValue().onSuccess((ArrayList<VdcReturnValueBase>) testResultList);
+        actionCallbackList.getValue().onSuccess((ArrayList<ActionReturnValue>) testResultList);
         Exception testException = new Exception("This is an exception"); //$NON-NLS-1$
         actionCallback.getValue().onFailure(testException);
         verify(mockOperationCallbackList1).onSuccess(eq(activateVdsList), eq(activateVdsResultList));
@@ -454,7 +454,7 @@ public class GWTRPCCommunicationProviderTest {
         QueryReturnValue testQueryResult = new QueryReturnValue();
         queryCallback.getValue().onSuccess(testQueryResult);
         verify(mockOperationCallbackSingle1).onSuccess(testOperation1, testQueryResult);
-        VdcReturnValueBase testActionResult = new VdcReturnValueBase();
+        ActionReturnValue testActionResult = new ActionReturnValue();
         verify(mockService).runAction(eq(ActionType.ActivateVds), eq(testActionParameters),
                 actionCallback.capture());
         actionCallback.getValue().onSuccess(testActionResult);
@@ -550,8 +550,8 @@ public class GWTRPCCommunicationProviderTest {
         return result;
     }
 
-    private List<VdcReturnValueBase> createActionResultList(final VdcReturnValueBase resultValue, final int count) {
-        List<VdcReturnValueBase> result = new ArrayList<>();
+    private List<ActionReturnValue> createActionResultList(final ActionReturnValue resultValue, final int count) {
+        List<ActionReturnValue> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             result.add(resultValue);
         }

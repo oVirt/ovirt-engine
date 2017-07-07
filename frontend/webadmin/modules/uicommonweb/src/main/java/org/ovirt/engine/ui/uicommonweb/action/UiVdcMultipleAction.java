@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -81,7 +81,7 @@ public class UiVdcMultipleAction extends UiAction {
         return result -> {
             boolean hasError = false;
 
-            for (VdcReturnValueBase singleResult : result.getReturnValue()) {
+            for (ActionReturnValue singleResult : result.getReturnValue()) {
                 if (!singleResult.isValid() || (waitForResult && !singleResult.getSucceeded())) {
                     hasError = true;
                     getActionFlowState().addFailure(actionType, singleResult);

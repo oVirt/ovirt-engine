@@ -12,9 +12,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.filters.FiltersHelper;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateUserSessionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.crypto.EnvelopeEncryptDecrypt;
@@ -40,7 +40,7 @@ public class SsoUtils {
         }
         try {
             ctx = new InitialContext();
-            VdcReturnValueBase queryRetVal = FiltersHelper.getBackend(ctx).runAction(ActionType.CreateUserSession,
+            ActionReturnValue queryRetVal = FiltersHelper.getBackend(ctx).runAction(ActionType.CreateUserSession,
                     new CreateUserSessionParameters(
                             (String) jsonResponse.get(SessionConstants.SSO_TOKEN_KEY),
                             (String) jsonResponse.get(SessionConstants.SSO_SCOPE_KEY),

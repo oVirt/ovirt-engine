@@ -37,11 +37,11 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -550,7 +550,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setStoragePoolId(getStorageDomain().getStoragePoolId());
         setVmSnapshotIdForDisk(parameters);
-        VdcReturnValueBase tmpRetValue =
+        ActionReturnValue tmpRetValue =
                 runInternalActionWithTasksContext(ActionType.AddImageFromScratch,
                         parameters,
                         getLock());
@@ -582,7 +582,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private void createDiskBasedOnCinder() {
         // ToDo: upon using CoCo infra in this commnad, move this logic.
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                 ActionType.AddCinderDisk,
                 buildAddCinderDiskParameters(),
                 cloneContextAndDetachFromParent());
@@ -749,7 +749,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         if (Boolean.TRUE.equals(getParameters().getPlugDiskToVm()) && getVm() != null &&  getVm().getStatus() != VMStatus.Down)    {
             VmDiskOperationParameterBase params = new VmDiskOperationParameterBase(new DiskVmElement(getParameters().getDiskInfo().getId(), getVmId()));
             params.setShouldBeLogged(false);
-            VdcReturnValueBase returnValue = runInternalAction(ActionType.HotPlugDiskToVm, params);
+            ActionReturnValue returnValue = runInternalAction(ActionType.HotPlugDiskToVm, params);
             if (!returnValue.getSucceeded()) {
                 auditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
             }

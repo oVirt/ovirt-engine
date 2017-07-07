@@ -16,8 +16,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -66,7 +66,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
 
-        doReturn(createSuccessVdcReturnValue()).when(getQuery()).
+        doReturn(createSuccessActionReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
@@ -102,7 +102,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
         doReturn(luns).when(lunDao).getAll();
 
-        doReturn(createSuccessVdcReturnValue()).when(getQuery()).
+        doReturn(createSuccessActionReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
@@ -130,7 +130,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
 
-        doReturn(createSuccessVdcReturnValue()).when(getQuery()).
+        doReturn(createSuccessActionReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
@@ -229,8 +229,8 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         return Collections.singletonList(storageDomain);
     }
 
-    private static VdcReturnValueBase createSuccessVdcReturnValue() {
-        VdcReturnValueBase returnValue = new VdcReturnValueBase();
+    private static ActionReturnValue createSuccessActionReturnValue() {
+        ActionReturnValue returnValue = new ActionReturnValue();
         returnValue.setSucceeded(true);
 
         return returnValue;

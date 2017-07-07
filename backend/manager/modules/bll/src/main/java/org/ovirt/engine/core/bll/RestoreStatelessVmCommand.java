@@ -9,13 +9,13 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
@@ -49,7 +49,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
 
     @Override
     protected void executeCommand() {
-        VdcReturnValueBase result =
+        ActionReturnValue result =
                 runInternalActionWithTasksContext(
                         ActionType.UpdateVmVersion,
                         buildUpdateVmVersionParameters());
@@ -99,7 +99,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
                 statelessDiskSnapshots.stream().map(DiskImage::getId).collect(Collectors.toSet());
         for (DiskImage activeDiskSnapshot : activeDiskSnapshots) {
             if (!disksWithStatelessSnapshot.contains(activeDiskSnapshot.getId())) {
-                VdcReturnValueBase returnValue = runInternalAction (
+                ActionReturnValue returnValue = runInternalAction (
                         ActionType.DetachDiskFromVm,
                         buildDetachDetachVmDiskParameters(activeDiskSnapshot));
 

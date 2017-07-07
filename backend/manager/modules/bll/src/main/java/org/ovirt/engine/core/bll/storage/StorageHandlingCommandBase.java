@@ -29,10 +29,10 @@ import org.ovirt.engine.core.bll.storage.pool.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
@@ -561,17 +561,17 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 DiskImage ovfDisk = ovfDiskAndSize.getFirst();
                 if (ovfDisk != null) {
                     try {
-                        VdcReturnValueBase vdcReturnValue = runInternalAction(ActionType.RetrieveImageData,
+                        ActionReturnValue actionReturnValueReturnValue = runInternalAction(ActionType.RetrieveImageData,
                                 new RetrieveImageDataParameters(getParameters().getStoragePoolId(),
                                         storageDomainId,
                                         ovfDisk.getId(),
                                         ovfDisk.getImage().getId(),
                                         ovfDiskAndSize.getSecond()), cloneContextAndDetachFromParent());
 
-                        getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-                        if (vdcReturnValue.getSucceeded()) {
+                        getReturnValue().getVdsmTaskIdList().addAll(actionReturnValueReturnValue.getInternalVdsmTaskIdList());
+                        if (actionReturnValueReturnValue.getSucceeded()) {
                             List<OvfEntityData> returnedMap =
-                                    OvfUtils.getOvfEntities(vdcReturnValue.getActionReturnValue(),
+                                    OvfUtils.getOvfEntities(actionReturnValueReturnValue.getActionReturnValue(),
                                             unregisteredDisks,
                                             storageDomainId);
                             return returnedMap;

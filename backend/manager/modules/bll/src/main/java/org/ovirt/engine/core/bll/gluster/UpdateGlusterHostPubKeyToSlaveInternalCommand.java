@@ -76,7 +76,7 @@ public class UpdateGlusterHostPubKeyToSlaveInternalCommand extends GlusterComman
         if (!writePubKeysReturnValue.getSucceeded()) {
             String errorMsg = writePubKeysReturnValue.getVdsError().getMessage();
             writePubKeysReturnValue.getVdsError().setMessage(errorMsg + " : " + vdsDao.get(getParameters().getId()).getName());
-            propagateFailure(convertToVdcReturnValueBase(writePubKeysReturnValue));
+            propagateFailure(convertToActionReturnValue(writePubKeysReturnValue));
             return;
         }
     }

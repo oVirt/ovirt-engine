@@ -14,7 +14,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.mockito.Mock;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction.ActionFlowState;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
@@ -38,7 +38,7 @@ public abstract class UiActionBaseTest {
 
     protected void assertErrors(ActionFlowState flowState, int expectedNumOfErrors) {
         int numOfErrors = 0;
-        for (List<VdcReturnValueBase> values : flowState.getFailedActionsMap().values()) {
+        for (List<ActionReturnValue> values : flowState.getFailedActionsMap().values()) {
             numOfErrors += values.size();
         }
         assertEquals(expectedNumOfErrors, numOfErrors);

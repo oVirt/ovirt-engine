@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -180,7 +180,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runAction((ActionType) operation.getOperation(),
-                        (ActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
+                        (ActionParametersBase) operation.getParameter(), new AsyncCallback<ActionReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         //Clear out the token, and let the retry mechanism try again.
@@ -189,7 +189,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     }
 
                     @Override
-                    public void onSuccess(final VdcReturnValueBase result) {
+                    public void onSuccess(final ActionReturnValue result) {
                         operation.getCallback().onSuccess(operation, result);
                     }
                 });
@@ -371,7 +371,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
             @Override
             public void serviceFound(GenericApiGWTServiceAsync service) {
                 service.runMultipleActions(actionType, (ArrayList<ActionParametersBase>) parameters,
-                        runOnlyIfAllValidationPass, waitForResults, new AsyncCallback<List<VdcReturnValueBase>>() {
+                        runOnlyIfAllValidationPass, waitForResults, new AsyncCallback<List<ActionReturnValue>>() {
 
                     @Override
                     public void onFailure(final Throwable exception) {
@@ -381,12 +381,12 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                     }
 
                     @Override
-                    public void onSuccess(final List<VdcReturnValueBase> result) {
+                    public void onSuccess(final List<ActionReturnValue> result) {
                         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
                                 getCallbackMap(operations);
                         for (Map.Entry<VdcOperationCallback<?, ?>,
                                 List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
-                            List<VdcReturnValueBase> actionResult = (List<VdcReturnValueBase>)
+                            List<ActionReturnValue> actionResult = (List<ActionReturnValue>)
                                     getOperationResult(callbackEntry.getValue(), allActionOperations, result);
                             if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
                                 ((VdcOperationCallbackList) callbackEntry.getKey())
@@ -475,7 +475,7 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     public void logout(final UserCallback callback) {
         //Remove the rpc token when logging out.
         xsrfRequestBuilder.setXsrfToken(null);
-        VdcReturnValueBase retVal = new VdcReturnValueBase();
+        ActionReturnValue retVal = new ActionReturnValue();
         retVal.setSucceeded(true);
         callback.onSuccess(retVal);
     }

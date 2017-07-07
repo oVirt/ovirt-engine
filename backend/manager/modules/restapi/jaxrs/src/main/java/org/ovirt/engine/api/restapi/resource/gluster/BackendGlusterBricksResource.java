@@ -21,8 +21,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.BackendActionResource;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -115,7 +115,7 @@ public class BackendGlusterBricksResource
     }
 
     @SuppressWarnings("unchecked")
-    protected GlusterBricks resolveCreatedList(VdcReturnValueBase result, EntityIdResolver<Guid> entityResolver) {
+    protected GlusterBricks resolveCreatedList(ActionReturnValue result, EntityIdResolver<Guid> entityResolver) {
         try {
             GlusterBricks bricks = new GlusterBricks();
             for (Guid id : (List<Guid>) result.getActionReturnValue()) {
@@ -135,7 +135,7 @@ public class BackendGlusterBricksResource
     protected Response performCreationMultiple(ActionType task,
             ActionParametersBase taskParams,
             EntityIdResolver<Guid> entityResolver) {
-        VdcReturnValueBase createResult;
+        ActionReturnValue createResult;
         try {
             createResult = doAction(task, taskParams);
         } catch (Exception e) {

@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -140,7 +140,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         if (getVm().getVmPoolId() != null) {
             getParameters().setVmPoolId(getVm().getVmPoolId());
 
-            VdcReturnValueBase result = runInternalActionWithTasksContext(
+            ActionReturnValue result = runInternalActionWithTasksContext(
                     ActionType.RemoveVmFromPool,
                     buildRemoveVmFromPoolParameters(),
                     getLock());
@@ -153,7 +153,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             }
         }
 
-        VdcReturnValueBase result = runInternalActionWithTasksContext(
+        ActionReturnValue result = runInternalActionWithTasksContext(
                 ActionType.RemoveVm,
                 buildRemoveVmParameters(),
                 getLock());

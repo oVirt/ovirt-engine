@@ -41,9 +41,9 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -484,7 +484,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         newDisk.setDiskAlias("New Disk Alias");
         command.getParameters().setDiskInfo(newDisk);
         initializeCommand();
-        VdcReturnValueBase ret = new VdcReturnValueBase();
+        ActionReturnValue ret = new ActionReturnValue();
         ret.setSucceeded(false);
         ArrayList<String> msgList = new ArrayList<>();
         msgList.add(EngineMessage.ACTION_TYPE_FAILED_AMEND_NOT_SUPPORTED_BY_DC_VERSION.toString());
@@ -603,7 +603,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(sd);
         StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
         doReturn(sdValidator).when(command).getStorageDomainValidator(any(DiskImage.class));
-        VdcReturnValueBase ret = new VdcReturnValueBase();
+        ActionReturnValue ret = new ActionReturnValue();
         ret.setSucceeded(true);
         when(backend.runInternalAction(eq(ActionType.AmendImageGroupVolumes), any(StorageDomainParametersBase.class), any(CommandContext.class))).thenReturn(ret);
         command.init();

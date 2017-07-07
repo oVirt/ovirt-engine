@@ -9,11 +9,11 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -82,7 +82,7 @@ public class HostedEngineImporter {
         if (!Config.<Boolean>getValue(ConfigValues.AutoImportHostedEngine)) {
             return;
         }
-        VdcReturnValueBase heVmImported;
+        ActionReturnValue heVmImported;
         // get the special sd of hosted engine
         Guid storageDomainId = vm.getImages().get(0).getStorageIds().get(0);
         StorageDomain sd = getHEStorageDomain(vm, storagePool, storageDomainId);
@@ -125,7 +125,7 @@ public class HostedEngineImporter {
                 parameters).getSucceeded();
     }
 
-    private VdcReturnValueBase importHEVM(VM vm, StorageDomain sd) {
+    private ActionReturnValue importHEVM(VM vm, StorageDomain sd) {
         return backend.runInternalAction(
                 ActionType.ImportVm,
                 createImportParams(vm, sd));

@@ -21,10 +21,10 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddInternalJobParameters;
 import org.ovirt.engine.core.common.action.AddStepParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -166,7 +166,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private Guid addAsyncTaskStep(Cluster cluster, GlusterAsyncTask task, StepEnum step, Guid execStepId) {
-        VdcReturnValueBase result;
+        ActionReturnValue result;
         result = backendInternal.runInternalAction(ActionType.AddInternalStep,
                 new AddStepParameters(execStepId, glusterTaskUtils.getTaskMessage(cluster, step, task), step));
 
@@ -179,7 +179,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private Guid addExecutingStep(Guid jobId) {
-        VdcReturnValueBase result;
+        ActionReturnValue result;
         result = backendInternal.runInternalAction(ActionType.AddInternalStep,
                 new AddStepParameters(jobId, ExecutionMessageDirector.resolveStepMessage(StepEnum.EXECUTING, null), StepEnum.EXECUTING));
         if (!result.getSucceeded()) {
@@ -192,7 +192,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
 
     private Guid addJob(Cluster cluster, GlusterAsyncTask task, ActionType actionType, final GlusterVolumeEntity vol) {
 
-        VdcReturnValueBase result = backendInternal.runInternalAction(ActionType.AddInternalJob,
+        ActionReturnValue result = backendInternal.runInternalAction(ActionType.AddInternalJob,
                 new AddInternalJobParameters(ExecutionMessageDirector.resolveJobMessage(actionType, glusterTaskUtils.getMessageMap(cluster, task)),
                         actionType, true, VdcObjectType.GlusterVolume, vol.getId()) );
         if (!result.getSucceeded()) {

@@ -18,12 +18,12 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -94,7 +94,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                 p.setRevertDbOperationScope(ImageDbOperationScope.NONE);
                 p.setShouldLockImageOnRevert(false);
                 p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
-                VdcReturnValueBase vdcRetValue =
+                ActionReturnValue vdcRetValue =
                         runInternalActionWithTasksContext(ActionType.CopyImageGroup, p);
 
                 if (!vdcRetValue.getSucceeded()) {

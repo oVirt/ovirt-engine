@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -1086,17 +1086,17 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         IFrontendActionAsyncCallback callback1 = result -> {
 
             StorageListModel storageListModel = (StorageListModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-            storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            storageListModel.storageDomain.setStorage((String) actionReturnValue.getActionReturnValue());
+            storageListModel.connection.setId((String) actionReturnValue.getActionReturnValue());
 
         };
 
         IFrontendActionAsyncCallback callback2 = result -> {
 
             StorageListModel storageListModel = (StorageListModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            storageListModel.storageId = actionReturnValue.getActionReturnValue();
 
             // Attach storage to data center as necessary.
             StorageModel storageModel = (StorageModel) storageListModel.getWindow();
@@ -1250,16 +1250,16 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         IFrontendActionAsyncCallback callback1 = result -> {
 
             StorageListModel storageListModel = (StorageListModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-            storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            storageListModel.storageDomain.setStorage((String) actionReturnValue.getActionReturnValue());
+            storageListModel.connection.setId((String) actionReturnValue.getActionReturnValue());
 
         };
         IFrontendActionAsyncCallback callback2 = result -> {
 
             StorageListModel storageListModel = (StorageListModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            storageListModel.storageId = actionReturnValue.getActionReturnValue();
 
         };
         IFrontendActionAsyncCallback callback3 = result -> {
@@ -1317,7 +1317,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
                         StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                            ActionReturnValue returnValue = result.getReturnValue();
                             Guid storageId = returnValue.getActionReturnValue();
                             storageListModel.attachStorageToDataCenter(storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
                         }
@@ -1400,9 +1400,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             StorageListModel storageListModel = (StorageListModel) result.getState();
             storageListModel.removeConnection = true;
 
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-            storageListModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            storageListModel.storageDomain.setStorage((String) actionReturnValue.getActionReturnValue());
+            storageListModel.connection.setId((String) actionReturnValue.getActionReturnValue());
 
         };
         IFrontendActionAsyncCallback callback2 = result -> {
@@ -1558,7 +1558,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             parametersList.add(parameters);
 
             callbacks.add(result -> {
-                VdcReturnValueBase returnValue = result.getReturnValue();
+                ActionReturnValue returnValue = result.getReturnValue();
                 boolean success = returnValue != null && returnValue.getSucceeded();
 
                 if (success) {
@@ -1590,7 +1590,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                     result -> {
 
                         StorageListModel storageListModel = (StorageListModel) result.getState();
-                        VdcReturnValueBase returnVal = result.getReturnValue();
+                        ActionReturnValue returnVal = result.getReturnValue();
                         boolean success = returnVal != null && returnVal.getSucceeded();
                         if (success) {
                             storageListModel.fileConnection = null;
@@ -1649,7 +1649,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         Frontend.getInstance().runAction(ActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                 result -> {
                     StorageListModel storageListModel = (StorageListModel) result.getState();
-                    VdcReturnValueBase returnVal = result.getReturnValue();
+                    ActionReturnValue returnVal = result.getReturnValue();
                     boolean success = returnVal != null && returnVal.getSucceeded();
                     if (success) {
                         storageListModel.fileConnection.setId((String) returnVal.getActionReturnValue());
@@ -1712,7 +1712,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             Object[] array = (Object[]) result.getState();
             StorageListModel storageListModel = (StorageListModel) array[0];
             StorageDomain sdToAdd1 = (StorageDomain) array[1];
-            VdcReturnValueBase returnVal = result.getReturnValue();
+            ActionReturnValue returnVal = result.getReturnValue();
 
             boolean success = returnVal != null && returnVal.getSucceeded();
             if (success) {
@@ -1738,7 +1738,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             new StorageServerConnectionParametersBase(fileConnection, hostId, false),
                 result -> {
 
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    ActionReturnValue returnValue = result.getReturnValue();
                     boolean success = returnValue != null && returnValue.getSucceeded();
                     if (success) {
                         fileConnection = null;

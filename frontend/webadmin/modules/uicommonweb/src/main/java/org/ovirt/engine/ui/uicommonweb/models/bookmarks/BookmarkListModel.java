@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.BookmarksOperationParameters;
 import org.ovirt.engine.core.common.action.BookmarksParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -262,7 +262,7 @@ public class BookmarkListModel extends SearchableListModel {
                 this);
     }
 
-    public void postOnSave(VdcReturnValueBase returnValue) {
+    public void postOnSave(ActionReturnValue returnValue) {
         getWindow().stopProgress();
 
         if (returnValue != null && returnValue.getSucceeded()) {

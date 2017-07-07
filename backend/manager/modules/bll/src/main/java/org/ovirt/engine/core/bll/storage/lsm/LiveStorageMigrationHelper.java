@@ -5,9 +5,9 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -34,7 +34,7 @@ public class LiveStorageMigrationHelper {
         removeImageParams.setParentCommand(ActionType.RemoveImage);
         removeImageParams.setDbOperationScope(ImageDbOperationScope.NONE);
         removeImageParams.setShouldLockImage(false);
-        VdcReturnValueBase returnValue = cmd.runInternalActionWithTasksContext(
+        ActionReturnValue returnValue = cmd.runInternalActionWithTasksContext(
                 ActionType.RemoveImage,
                 removeImageParams);
         if (returnValue.getSucceeded()) {

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 public class GlusterMultipleActionsRunner extends PrevalidatingMultipleActionsRunner {
 
@@ -16,7 +16,7 @@ public class GlusterMultipleActionsRunner extends PrevalidatingMultipleActionsRu
     }
 
     @Override
-    protected VdcReturnValueBase runValidateOnly(final int currentValidateId, final int totalSize) {
+    protected ActionReturnValue runValidateOnly(final int currentValidateId, final int totalSize) {
         try {
             return super.runValidateOnly(currentValidateId, totalSize);
         } finally {

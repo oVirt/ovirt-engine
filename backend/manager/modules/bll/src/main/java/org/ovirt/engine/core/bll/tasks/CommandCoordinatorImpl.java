@@ -17,8 +17,8 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -88,7 +88,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
      * would like the execute the command with no delay
      */
     @Override
-    public Future<VdcReturnValueBase> executeAsyncCommand(ActionType actionType,
+    public Future<ActionReturnValue> executeAsyncCommand(ActionType actionType,
                                                           ActionParametersBase parameters,
                                                           CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
@@ -336,7 +336,7 @@ public class CommandCoordinatorImpl implements CommandCoordinator {
     }
 
     @Override
-    public VdcReturnValueBase endAction(SPMTask task) {
+    public ActionReturnValue endAction(SPMTask task) {
         return coCoAsyncTaskHelper.endAction(task);
     }
 

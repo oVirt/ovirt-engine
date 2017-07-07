@@ -14,12 +14,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
 import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -71,7 +71,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             removeDiskParam.setParentParameters(getParameters());
             removeDiskParam.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
-            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveCinderDisk,
                     removeDiskParam,
                     cloneContextAndDetachFromParent());
@@ -89,7 +89,7 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
             removeDiskVolumeParam.setParentParameters(getParameters());
             removeDiskVolumeParam.setEndProcedure(EndProcedure.COMMAND_MANAGED);
 
-            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveCinderDiskVolume,
                     removeDiskVolumeParam,
                     cloneContextAndDetachFromParent());
@@ -122,8 +122,8 @@ public class RestoreAllCinderSnapshotsCommand<T extends RestoreAllCinderSnapshot
         return params;
     }
 
-    private VdcReturnValueBase restoreCinderDisk(CinderDisk cinderDisk, ImagesContainterParametersBase params) {
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+    private ActionReturnValue restoreCinderDisk(CinderDisk cinderDisk, ImagesContainterParametersBase params) {
+        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RestoreFromCinderSnapshot,
                 params,
                 cloneContextAndDetachFromParent());

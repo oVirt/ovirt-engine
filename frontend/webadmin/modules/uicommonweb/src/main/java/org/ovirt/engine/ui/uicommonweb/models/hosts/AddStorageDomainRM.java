@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -51,7 +51,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         parameters.setCorrelationId(getCorrelationId());
         Frontend.getInstance().runAction(ActionType.ActivateVds, parameters,
                 result -> {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    ActionReturnValue returnValue = result.getReturnValue();
                     context.activateVdsReturnValue = returnValue;
                     prepare2();
                 });
@@ -60,7 +60,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
     private void prepare2() {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
-        VdcReturnValueBase returnValue = context.activateVdsReturnValue;
+        ActionReturnValue returnValue = context.activateVdsReturnValue;
 
         if (returnValue == null || !returnValue.getSucceeded()) {
 
@@ -132,7 +132,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
                     parameters,
                     result -> {
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                        ActionReturnValue returnValue = result.getReturnValue();
 
                         context.addStorageServerConnectionReturnValue = returnValue;
                         prepare5();
@@ -146,7 +146,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
         HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
-        VdcReturnValueBase returnValue = context.addStorageServerConnectionReturnValue;
+        ActionReturnValue returnValue = context.addStorageServerConnectionReturnValue;
 
         if (returnValue == null || !returnValue.getSucceeded()) {
 
@@ -168,7 +168,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             Frontend.getInstance().runAction(ActionType.AddLocalStorageDomain, parameters,
                     result -> {
 
-                        VdcReturnValueBase returnValue1 = result.getReturnValue();
+                        ActionReturnValue returnValue1 = result.getReturnValue();
 
                         context.addLocalStorageDomainReturnValue = returnValue1;
                         prepare6();
@@ -178,7 +178,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
     private void prepare6() {
 
-        VdcReturnValueBase returnValue = context.addLocalStorageDomainReturnValue;
+        ActionReturnValue returnValue = context.addLocalStorageDomainReturnValue;
 
         if (returnValue == null || !returnValue.getSucceeded()) {
             StorageServerConnectionParametersBase parameter =
@@ -188,7 +188,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
                     parameter,
                     result -> {
 
-                        VdcReturnValueBase returnValue1 = result.getReturnValue();
+                        ActionReturnValue returnValue1 = result.getReturnValue();
 
                         context.removeStorageServerConnectionReturnValue = returnValue1;
                         prepare7();
@@ -201,7 +201,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
     private void prepare7() {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
-        VdcReturnValueBase returnValue = context.removeStorageServerConnectionReturnValue;
+        ActionReturnValue returnValue = context.removeStorageServerConnectionReturnValue;
 
         context.enlistment = null;
 
@@ -231,10 +231,10 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
         public Enlistment enlistment;
         public VDS host;
         StorageServerConnections connection;
-        public VdcReturnValueBase activateVdsReturnValue;
-        public VdcReturnValueBase addStorageServerConnectionReturnValue;
-        public VdcReturnValueBase addLocalStorageDomainReturnValue;
-        public VdcReturnValueBase removeStorageServerConnectionReturnValue;
+        public ActionReturnValue activateVdsReturnValue;
+        public ActionReturnValue addStorageServerConnectionReturnValue;
+        public ActionReturnValue addLocalStorageDomainReturnValue;
+        public ActionReturnValue removeStorageServerConnectionReturnValue;
         public int waitTries;
     }
 }

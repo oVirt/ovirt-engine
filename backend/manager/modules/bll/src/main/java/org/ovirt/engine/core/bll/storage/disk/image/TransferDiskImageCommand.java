@@ -18,10 +18,10 @@ import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -54,7 +54,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     @Override
     protected boolean validateCreateImage() {
-        VdcReturnValueBase returnValue = CommandHelper.validate(ActionType.AddDisk, getAddDiskParameters(),
+        ActionReturnValue returnValue = CommandHelper.validate(ActionType.AddDisk, getAddDiskParameters(),
                 getContext().clone());
         getReturnValue().setValidationMessages(returnValue.getValidationMessages());
         return returnValue.isValid();

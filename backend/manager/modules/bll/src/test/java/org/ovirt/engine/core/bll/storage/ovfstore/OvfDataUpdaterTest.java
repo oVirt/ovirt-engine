@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,7 +56,7 @@ public class OvfDataUpdaterTest {
 
     private void mockAnswers() {
         doAnswer(invocation -> {
-            VdcReturnValueBase returnValueBase = new VdcReturnValueBase();
+            ActionReturnValue returnValueBase = new ActionReturnValue();
             Map<Guid, Boolean> domains = new HashMap<>();
             Set<Guid> domainIds = new HashSet<>();
             domainIds.add(Guid.newGuid());

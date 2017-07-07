@@ -12,10 +12,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 
 @InternalCommandAttribute
@@ -30,13 +30,13 @@ public class RemoveAllCinderSnapshotDisksCommand<T extends RemoveAllVmCinderDisk
     protected void executeVmCommand() {
         List<CinderDisk> cinderDisks = getParameters().getCinderDisks();
         for (final CinderDisk cinderDisk : cinderDisks) {
-            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveCinderSnapshotDisk,
                     getCinderDiskSnapshotParameter(cinderDisk),
                     cloneContextAndDetachFromParent());
             try {
-                VdcReturnValueBase vdcReturnValueBase = future.get();
-                if (!vdcReturnValueBase.getSucceeded()) {
+                ActionReturnValue actionReturnValue = future.get();
+                if (!actionReturnValue.getSucceeded()) {
                     log.error("Error removing snapshot for Cinder disk '{}'", cinderDisk.getDiskAlias());
                 }
             } catch (InterruptedException | ExecutionException e) {

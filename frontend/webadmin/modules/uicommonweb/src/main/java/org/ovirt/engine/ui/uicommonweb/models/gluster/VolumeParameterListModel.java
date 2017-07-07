@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.ResetGlusterVolumeOptionsParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -170,7 +170,7 @@ public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeE
                 }, this);
     }
 
-    public void postOnSetParameter(VdcReturnValueBase returnValue) {
+    public void postOnSetParameter(ActionReturnValue returnValue) {
         VolumeParameterModel model = (VolumeParameterModel) getWindow();
 
         model.stopProgress();

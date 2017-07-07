@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.QosParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -86,7 +86,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
         final QosParametersBase<T> parameters = getParameters();
         parameters.setQos(getQos());
         Frontend.getInstance().runAction(getAction(), parameters, result -> {
-            VdcReturnValueBase retVal = result.getReturnValue();
+            ActionReturnValue retVal = result.getReturnValue();
             boolean succeeded = false;
             if (retVal != null && retVal.getSucceeded()) {
                 succeeded = true;

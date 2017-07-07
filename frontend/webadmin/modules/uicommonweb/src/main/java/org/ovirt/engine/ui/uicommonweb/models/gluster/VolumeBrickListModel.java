@@ -6,8 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeReplaceBrickActionParameters;
@@ -497,7 +497,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
         setConfirmWindow(null);
     }
 
-    public void postOnAddBricks(VdcReturnValueBase returnValue) {
+    public void postOnAddBricks(ActionReturnValue returnValue) {
         VolumeBrickModel model = (VolumeBrickModel) getWindow();
 
         model.stopProgress();

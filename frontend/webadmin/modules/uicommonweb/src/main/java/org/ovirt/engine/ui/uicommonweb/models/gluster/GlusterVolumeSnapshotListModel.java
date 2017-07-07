@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
@@ -546,7 +546,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterV
                 this);
     }
 
-    public void postSnapshotAction(VdcReturnValueBase returnValue) {
+    public void postSnapshotAction(ActionReturnValue returnValue) {
         if (returnValue != null && returnValue.getSucceeded()) {
             setWindow(null);
         }

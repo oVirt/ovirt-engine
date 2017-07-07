@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -239,7 +239,7 @@ public class BaseImportNetworksModel extends Model {
             params.setVnicProfileRequired(false);
             multipleActionParameters.add(params);
             callbacks.add(result -> {
-                VdcReturnValueBase returnValue = result.getReturnValue();
+                ActionReturnValue returnValue = result.getReturnValue();
                 if (returnValue != null && returnValue.getSucceeded()) {
                     network.setId((Guid) returnValue.getActionReturnValue());
 

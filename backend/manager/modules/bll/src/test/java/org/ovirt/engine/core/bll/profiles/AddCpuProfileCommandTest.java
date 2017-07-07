@@ -18,8 +18,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
@@ -75,7 +75,7 @@ public class AddCpuProfileCommandTest extends BaseCommandTest{
 
     @Test
     public void getAuditLogTypeValueTest() {
-        VdcReturnValueBase returnValueBase = new VdcReturnValueBase();
+        ActionReturnValue returnValueBase = new ActionReturnValue();
 
         returnValueBase.setSucceeded(true);
         addCpuProfileCommand.setReturnValue(returnValueBase);

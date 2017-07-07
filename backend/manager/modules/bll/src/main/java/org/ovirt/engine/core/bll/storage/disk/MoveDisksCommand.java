@@ -17,12 +17,12 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -44,7 +44,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     @Inject
     private VmDao vmDao;
 
-    private List<VdcReturnValueBase> vdcReturnValues = new ArrayList<>();
+    private List<ActionReturnValue> actionReturnValues = new ArrayList<>();
     private List<MoveDiskParameters> moveDiskParametersList = new ArrayList<>();
     private List<LiveMigrateVmDisksParameters> liveMigrateVmDisksParametersList = new ArrayList<>();
     private Map<Guid, DiskImage> diskMap = new HashMap<>();
@@ -70,12 +70,12 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         updateParameters();
 
         if (!moveDiskParametersList.isEmpty()) {
-            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.MoveOrCopyDisk,
+            actionReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.MoveOrCopyDisk,
                     getParametersList(moveDiskParametersList), false));
         }
 
         if (!liveMigrateVmDisksParametersList.isEmpty()) {
-            vdcReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.LiveMigrateVmDisks,
+            actionReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.LiveMigrateVmDisks,
                     getParametersList(liveMigrateVmDisksParametersList), false));
         }
 
@@ -84,9 +84,9 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
     }
 
     private void handleChildReturnValue() {
-        for (VdcReturnValueBase vdcReturnValue : vdcReturnValues) {
-            getReturnValue().getValidationMessages().addAll(vdcReturnValue.getValidationMessages());
-            getReturnValue().setValid(getReturnValue().isValid() && vdcReturnValue.isValid());
+        for (ActionReturnValue actionReturnValueReturnValue : actionReturnValues) {
+            getReturnValue().getValidationMessages().addAll(actionReturnValueReturnValue.getValidationMessages());
+            getReturnValue().setValid(getReturnValue().isValid() && actionReturnValueReturnValue.isValid());
         }
     }
 

@@ -8,9 +8,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -286,7 +286,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setSelectedLunWarning(constants.emptyString());
     }
 
-    private void postLogin( VdcReturnValueBase returnValue, SanStorageModelBase sanStorageModel) {
+    private void postLogin( ActionReturnValue returnValue, SanStorageModelBase sanStorageModel) {
         SanTargetModel sanTargetModel = sanStorageModel.targetsToConnect.remove(0);
         boolean success = returnValue != null && returnValue.getSucceeded();
 

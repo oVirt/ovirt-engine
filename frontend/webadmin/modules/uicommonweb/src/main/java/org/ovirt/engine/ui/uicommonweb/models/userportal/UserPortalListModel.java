@@ -7,13 +7,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -1032,7 +1032,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel implements 
                     new IFrontendActionAsyncCallback() {
                         @Override
                         public void executed(FrontendActionAsyncResult result) {
-                            VdcReturnValueBase returnValueBase = result.getReturnValue();
+                            ActionReturnValue returnValueBase = result.getReturnValue();
                             if (returnValueBase != null && returnValueBase.getSucceeded()) {
                                 VmManagementParametersBase param = getUpdateVmParameters(applyCpuChangesLater);
                                 Frontend.getInstance()

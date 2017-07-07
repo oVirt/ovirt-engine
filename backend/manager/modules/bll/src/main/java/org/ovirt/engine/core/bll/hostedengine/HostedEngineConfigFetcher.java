@@ -19,8 +19,8 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -134,7 +134,7 @@ public class HostedEngineConfigFetcher {
     private byte[] downloadDisk(Guid spId, Guid sdId, DiskImage diskImage) {
         long downloadSize = Config.<Integer>getValue(ConfigValues.HostedEngineConfigDiskSizeInBytes);
         log.info("Found the HE configuration disk. Downloading the content in size of {} bytes", downloadSize);
-        VdcReturnValueBase returnValue = backend.runInternalAction(ActionType.RetrieveImageData,
+        ActionReturnValue returnValue = backend.runInternalAction(ActionType.RetrieveImageData,
                 new RetrieveImageDataParameters(spId,
                         sdId,
                         diskImage.getId(),

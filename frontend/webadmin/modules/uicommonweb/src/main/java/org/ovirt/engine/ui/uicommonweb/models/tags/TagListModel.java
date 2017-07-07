@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -387,7 +387,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
                 result -> {
 
                     TagListModel tagListModel = (TagListModel) result.getState();
-                    VdcReturnValueBase returnVal = result.getReturnValue();
+                    ActionReturnValue returnVal = result.getReturnValue();
                     boolean success = returnVal != null && returnVal.getSucceeded();
                     if (success) {
                         tagListModel.getSearchCommand().execute();
@@ -470,7 +470,7 @@ public class TagListModel extends SearchableListModel<Void, TagModel> {
                 this);
     }
 
-    public void postOnSave(VdcReturnValueBase returnValue) {
+    public void postOnSave(ActionReturnValue returnValue) {
         TagModel model = (TagModel) getWindow();
 
         model.stopProgress();

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -27,7 +27,7 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
         StorageServerConnections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
                 storageDomain.getStorage());
         if (connection != null) {
-            VdcReturnValueBase returnValue = Backend
+            ActionReturnValue returnValue = Backend
                     .getInstance()
                     .runInternalAction(ActionType.forValue(type),
                             new StorageServerConnectionParametersBase(connection, vdsId, false));

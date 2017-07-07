@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AdditionalFeature;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -844,7 +844,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         }
     }
 
-    public void postOnSaveInternal(VdcReturnValueBase returnValue) {
+    public void postOnSaveInternal(ActionReturnValue returnValue) {
         ClusterModel model = (ClusterModel) getWindow();
 
         model.stopProgress();
@@ -860,7 +860,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         }
     }
 
-    public void postOnSaveInternalWithImport(VdcReturnValueBase returnValue) {
+    public void postOnSaveInternalWithImport(ActionReturnValue returnValue) {
         MultipleHostsModel hostsModel = (MultipleHostsModel) getWindow();
         if (returnValue != null && returnValue.getSucceeded()) {
             hostsModel.getClusterModel().setClusterId((Guid) returnValue.getActionReturnValue());
@@ -903,7 +903,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 result -> {
                     hostsModel.stopProgress();
                     boolean isAllValidatePassed = true;
-                    for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
+                    for (ActionReturnValue returnValueBase : result.getReturnValue()) {
                         isAllValidatePassed = returnValueBase.isValid();
                         if (!isAllValidatePassed) {
                             break;

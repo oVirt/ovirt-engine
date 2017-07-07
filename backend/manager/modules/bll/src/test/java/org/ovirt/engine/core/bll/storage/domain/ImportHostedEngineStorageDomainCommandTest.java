@@ -32,9 +32,9 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -272,8 +272,8 @@ public class ImportHostedEngineStorageDomainCommandTest extends BaseCommandTest 
         when(cmd.getContext()).thenReturn(new CommandContext(new EngineContext()));
     }
 
-    private VdcReturnValueBase successfulReturnValue() {
-        VdcReturnValueBase value = new VdcReturnValueBase();
+    private ActionReturnValue successfulReturnValue() {
+        ActionReturnValue value = new ActionReturnValue();
         value.setSucceeded(true);
         return value;
     }

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
@@ -349,7 +349,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
                 result -> {
 
                     List<MoveHostData> hosts = ((MoveHost) getWindow()).getSelectedHosts();
-                    List<VdcReturnValueBase> retVals = result.getReturnValue();
+                    List<ActionReturnValue> retVals = result.getReturnValue();
                     final List<ActionParametersBase> activateVdsParameterList = new ArrayList<>();
                     if (retVals != null && hosts.size() == retVals.size()) {
                         int i = 0;
@@ -580,7 +580,7 @@ public class ClusterGuideModel extends GuideModel<Cluster> {
     }
 
 
-    public void postOnAddHost(VdcReturnValueBase returnValue) {
+    public void postOnAddHost(ActionReturnValue returnValue) {
         HostModel model = (HostModel) getWindow();
 
         model.stopProgress();

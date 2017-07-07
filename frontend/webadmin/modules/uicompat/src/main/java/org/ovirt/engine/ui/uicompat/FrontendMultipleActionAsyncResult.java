@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicompat;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 public final class FrontendMultipleActionAsyncResult {
     private ActionType privateActionType;
@@ -19,11 +19,11 @@ public final class FrontendMultipleActionAsyncResult {
     public void setParameters(java.util.List<ActionParametersBase> value) {
         privateParameters = value;
     }
-    private java.util.List<VdcReturnValueBase> privateReturnValue;
-    public java.util.List<VdcReturnValueBase> getReturnValue() {
+    private java.util.List<ActionReturnValue> privateReturnValue;
+    public java.util.List<ActionReturnValue> getReturnValue() {
         return privateReturnValue;
     }
-    private void setReturnValues(java.util.List<VdcReturnValueBase> value) {
+    private void setReturnValues(java.util.List<ActionReturnValue> value) {
         privateReturnValue = value;
     }
     private Object privateState;
@@ -34,13 +34,13 @@ public final class FrontendMultipleActionAsyncResult {
         privateState = value;
     }
 
-    public FrontendMultipleActionAsyncResult(ActionType actionType, java.util.List<ActionParametersBase> parameters, java.util.List<VdcReturnValueBase> returnValue) {
+    public FrontendMultipleActionAsyncResult(ActionType actionType, java.util.List<ActionParametersBase> parameters, java.util.List<ActionReturnValue> returnValue) {
         setActionType(actionType);
         setParameters(parameters);
         setReturnValues(returnValue);
     }
 
-    public FrontendMultipleActionAsyncResult(ActionType actionType, java.util.List<ActionParametersBase> parameters, java.util.List<VdcReturnValueBase> returnValue, Object state) {
+    public FrontendMultipleActionAsyncResult(ActionType actionType, java.util.List<ActionParametersBase> parameters, java.util.List<ActionReturnValue> returnValue, Object state) {
         this(actionType, parameters, returnValue);
         setState(state);
     }

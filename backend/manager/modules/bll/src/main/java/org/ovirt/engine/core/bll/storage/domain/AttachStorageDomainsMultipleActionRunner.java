@@ -12,10 +12,10 @@ import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +35,7 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
     private BackendInternal backend;
 
     @Override
-    public List<VdcReturnValueBase> execute() {
+    public List<ActionReturnValue> execute() {
         Iterator<?> iterator = getParameters() == null ? null : getParameters().iterator();
         Object parameter = iterator != null && iterator.hasNext() ? iterator.next() : null;
 

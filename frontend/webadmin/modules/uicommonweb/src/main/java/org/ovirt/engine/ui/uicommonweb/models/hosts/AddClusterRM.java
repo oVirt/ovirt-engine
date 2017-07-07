@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ClusterOperationParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -100,7 +100,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 Frontend.getInstance().runAction(ActionType.AddCluster, parameters,
                         result -> {
 
-                            VdcReturnValueBase returnValue = result.getReturnValue();
+                            ActionReturnValue returnValue = result.getReturnValue();
 
                             context.addClusterReturnValue = returnValue;
                             prepare3();
@@ -119,7 +119,7 @@ public class AddClusterRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        VdcReturnValueBase returnValue = context.addClusterReturnValue;
+        ActionReturnValue returnValue = context.addClusterReturnValue;
 
         context.enlistment = null;
 
@@ -151,6 +151,6 @@ public class AddClusterRM extends IEnlistmentNotification {
 
         public Enlistment enlistment;
         public Cluster clusterFoundByName;
-        public VdcReturnValueBase addClusterReturnValue;
+        public ActionReturnValue addClusterReturnValue;
     }
 }

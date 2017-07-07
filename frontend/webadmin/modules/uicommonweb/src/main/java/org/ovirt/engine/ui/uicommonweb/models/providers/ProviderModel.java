@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
@@ -544,7 +544,7 @@ public class ProviderModel extends Model {
         Frontend.getInstance().runAction(ActionType.TestProviderConnectivity,
                 new ProviderParameters(provider),
                 result -> {
-                    VdcReturnValueBase res = result.getReturnValue();
+                    ActionReturnValue res = result.getReturnValue();
                     // If the connection failed on SSL issues, we try to fetch the provider
                     // certificate chain, and import it to the engine
                     stopProgress();
@@ -611,7 +611,7 @@ public class ProviderModel extends Model {
         }
     }
 
-    private void setTestResultValue(VdcReturnValueBase result) {
+    private void setTestResultValue(ActionReturnValue result) {
         String errorMessage = EMPTY_ERROR_MESSAGE;
         if (result == null) {
             errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();

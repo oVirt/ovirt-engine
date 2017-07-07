@@ -28,11 +28,11 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -324,7 +324,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
      */
     private void removeCinderDisks(List<CinderDisk> cinderDisks) {
         RemoveAllVmCinderDisksParameters removeParam = new RemoveAllVmCinderDisksParameters(getVmTemplateId(), cinderDisks);
-        Future<VdcReturnValueBase> future =
+        Future<ActionReturnValue> future =
                 CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveAllVmCinderDisks,
                         withRootCommandInfo(removeParam),
                         cloneContextAndDetachFromParent());
@@ -358,17 +358,17 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         getParameters().setEntityInfo(getParameters().getEntityInfo());
         getParameters().setParentCommand(getActionType());
         getParameters().setParentParameters(getParameters());
-        VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
+        ActionReturnValue actionReturnValue = runInternalActionWithTasksContext(
                 ActionType.RemoveAllVmTemplateImageTemplates,
                 getParameters());
 
-        if (!vdcReturnValue.getSucceeded()) {
+        if (!actionReturnValue.getSucceeded()) {
             setSucceeded(false);
-            getReturnValue().setFault(vdcReturnValue.getFault());
+            getReturnValue().setFault(actionReturnValue.getFault());
             return false;
         }
 
-        getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+        getReturnValue().getVdsmTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
         return true;
     }
 

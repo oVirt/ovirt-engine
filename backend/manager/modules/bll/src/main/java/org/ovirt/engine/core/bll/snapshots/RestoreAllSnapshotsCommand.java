@@ -40,6 +40,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -48,7 +49,6 @@ import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.RestoreAllCinderSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -149,7 +149,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 }
                 ImagesContainterParametersBase params = new RestoreFromSnapshotParameters(image.getImageId(),
                         getVmId(), getSnapshot(), removedSnapshot.getId());
-                VdcReturnValueBase returnValue = runAsyncTask(ActionType.RestoreFromSnapshot, params);
+                ActionReturnValue returnValue = runAsyncTask(ActionType.RestoreFromSnapshot, params);
                 // Save the first fault
                 if (succeeded && !returnValue.getSucceeded()) {
                     succeeded = false;
@@ -190,7 +190,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                                             List<CinderDisk> cinderDisksToRemove,
                                             List<CinderDisk> cinderVolumesToRemove,
                                             Guid removedSnapshotId) {
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RestoreAllCinderSnapshots,
                         buildCinderChildCommandParameters(cinderDisksToRestore,
                                 cinderDisksToRemove,
@@ -198,9 +198,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                                 removedSnapshotId),
                 cloneContextAndDetachFromParent());
         try {
-            VdcReturnValueBase vdcReturnValueBase = future.get();
-            if (!vdcReturnValueBase.getSucceeded()) {
-                getReturnValue().setFault(vdcReturnValueBase.getFault());
+            ActionReturnValue actionReturnValue = future.get();
+            if (!actionReturnValue.getSucceeded()) {
+                getReturnValue().setFault(actionReturnValue.getFault());
                 log.error("Error while restoring Cinder snapshot");
                 return false;
             }
@@ -296,7 +296,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     }
 
     protected void deleteOrphanedImages(List<CinderDisk> cinderDisksToRemove) {
-        VdcReturnValueBase returnValue;
+        ActionReturnValue returnValue;
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
         Set<Guid> deletedDisksIds = new HashSet<>();
         for (DiskImage image : diskImageDao.getImagesWithNoDisk(getVm().getId())) {
@@ -358,7 +358,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 cinderVolumesToRemove.add((CinderDisk) diskImagesFromPreviewSnap.get(0));
                 continue;
             }
-            VdcReturnValueBase retValue = runAsyncTask(ActionType.RemoveImage,
+            ActionReturnValue retValue = runAsyncTask(ActionType.RemoveImage,
                     new RemoveImageParameters(diskImage.getImageId()));
 
             if (retValue.getSucceeded()) {
@@ -384,8 +384,8 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
      *            The command parameters.
      * @return The return value from the task.
      */
-    private VdcReturnValueBase runAsyncTask(ActionType taskType, ImagesContainterParametersBase params) {
-        VdcReturnValueBase returnValue;
+    private ActionReturnValue runAsyncTask(ActionType taskType, ImagesContainterParametersBase params) {
+        ActionReturnValue returnValue;
         params.setEntityInfo(getParameters().getEntityInfo());
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -378,7 +378,7 @@ public abstract class VmInterfaceModel extends Model {
         Frontend.getInstance().runAction(getActionType(),
                 createVdcActionParameters(nic),
                 result -> {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    ActionReturnValue returnValue = result.getReturnValue();
                     stopProgress();
 
                     if (returnValue != null && returnValue.getSucceeded()) {

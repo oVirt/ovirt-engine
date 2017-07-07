@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.executor;
 import javax.enterprise.inject.Alternative;
 
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
@@ -12,12 +12,12 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 public class HystrixBackendActionExecutor implements BackendActionExecutor {
 
     @Override
-    public VdcReturnValueBase execute(final CommandBase<?> command) {
+    public ActionReturnValue execute(final CommandBase<?> command) {
         final HystrixCommand.Setter setter = HystrixSettings.setter(command.getActionType().name());
-        final HystrixCommand<VdcReturnValueBase> hystrixCommand = new HystrixCommand(setter) {
+        final HystrixCommand<ActionReturnValue> hystrixCommand = new HystrixCommand(setter) {
             @Override
-            protected VdcReturnValueBase run() throws Exception {
-                final VdcReturnValueBase returnValue = command.executeAction();
+            protected ActionReturnValue run() throws Exception {
+                final ActionReturnValue returnValue = command.executeAction();
                 if (returnValue.getSucceeded()) {
                     return returnValue;
                 }
@@ -38,13 +38,13 @@ public class HystrixBackendActionExecutor implements BackendActionExecutor {
 
     private static class ActionFailedException extends Exception {
 
-        private VdcReturnValueBase returnValue;
+        private ActionReturnValue returnValue;
 
-        public ActionFailedException(VdcReturnValueBase returnValue) {
+        public ActionFailedException(ActionReturnValue returnValue) {
             this.returnValue = returnValue;
         }
 
-        public VdcReturnValueBase getReturnValue() {
+        public ActionReturnValue getReturnValue() {
             return returnValue;
         }
     }

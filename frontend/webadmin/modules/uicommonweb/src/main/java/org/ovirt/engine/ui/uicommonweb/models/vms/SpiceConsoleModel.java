@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -207,7 +207,7 @@ public class SpiceConsoleModel extends ConsoleModel {
 
             Frontend.getInstance().runAction(ActionType.VmLogon, new VmOperationParameterBase(getEntity().getId()),
                     result -> {
-                        final VdcReturnValueBase logonCommandReturnValue = result.getReturnValue();
+                        final ActionReturnValue logonCommandReturnValue = result.getReturnValue();
                         boolean isLogonSucceeded = logonCommandReturnValue != null && logonCommandReturnValue.getSucceeded();
                         if (isLogonSucceeded) {
                             invokeClient();

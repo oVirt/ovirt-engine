@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
@@ -21,7 +21,7 @@ public class CorrelationIdValidationTest {
     public void validCorrelationId() {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId("VALID_CORRELATION_ID");
-        VdcReturnValueBase result = ExecutionHandler.evaluateCorrelationId(parameters);
+        ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
         assertNull("Correlation id is valid", result);
     }
 
@@ -29,7 +29,7 @@ public class CorrelationIdValidationTest {
     public void invalidCorrelationId() {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId("INVALID_CORRELATION_@#$%@#");
-        VdcReturnValueBase result = ExecutionHandler.evaluateCorrelationId(parameters);
+        ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
         assertNotNull("Correlation id is invalid", result);
         assertFalse("Correlation id is invalid", result.getSucceeded());
     }
@@ -38,7 +38,7 @@ public class CorrelationIdValidationTest {
     public void correlationIdMaxSize() {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId(StringUtils.leftPad("", BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, "A"));
-        VdcReturnValueBase result = ExecutionHandler.evaluateCorrelationId(parameters);
+        ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
         assertNull("Correlation id is size is at max permitted length", result);
     }
 
@@ -46,7 +46,7 @@ public class CorrelationIdValidationTest {
     public void correlationIdTooLong() {
         ActionParametersBase parameters = new ActionParametersBase();
         parameters.setCorrelationId(StringUtils.leftPad("", BusinessEntitiesDefinitions.CORRELATION_ID_SIZE + 1, "A"));
-        VdcReturnValueBase result = ExecutionHandler.evaluateCorrelationId(parameters);
+        ActionReturnValue result = ExecutionHandler.evaluateCorrelationId(parameters);
         assertNotNull("Correlation id exceeds max size", result);
         assertFalse("Correlation id exceeds max size", result.getSucceeded());
     }

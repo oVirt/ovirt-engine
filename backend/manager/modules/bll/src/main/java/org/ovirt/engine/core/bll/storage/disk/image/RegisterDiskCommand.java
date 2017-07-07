@@ -19,11 +19,11 @@ import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RegisterCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -151,7 +151,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 getReturnValue().setActionReturnValue(newDiskImage.getId());
                 getReturnValue().setSucceeded(true);
             } else if (getDiskImage().getDiskStorageType() == DiskStorageType.CINDER) {
-                VdcReturnValueBase returnValue = runInternalAction(ActionType.RegisterCinderDisk, new RegisterCinderDiskParameters(
+                ActionReturnValue returnValue = runInternalAction(ActionType.RegisterCinderDisk, new RegisterCinderDiskParameters(
                         (CinderDisk) getDiskImage(), getParameters().getStorageDomainId()));
                 setReturnValue(returnValue);
             }

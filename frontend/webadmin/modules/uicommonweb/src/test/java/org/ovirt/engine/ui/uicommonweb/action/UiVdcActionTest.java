@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction.ActionFlowState;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -104,7 +104,7 @@ public class UiVdcActionTest extends AsyncUiActionTest<IFrontendActionAsyncCallb
 
         for (IFrontendActionAsyncCallback callback : callbacks) {
             assertNotAllDone(flowState);
-            VdcReturnValueBase result = new VdcReturnValueBase();
+            ActionReturnValue result = new ActionReturnValue();
             result.setValid(true);
             result.setSucceeded(success);
             callback.executed(new FrontendActionAsyncResult(ACTION_TYPE, null, result));

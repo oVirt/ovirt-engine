@@ -21,9 +21,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -94,11 +94,11 @@ public class AttachStorageDomainToPoolCommandTest extends BaseCommandTest {
         when(storageDomainDao.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(new StorageDomain());
         when(storageDomainStaticDao.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
         doReturn(pool.getId()).when(cmd).getStoragePoolIdFromVds();
-        VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
-        vdcReturnValue.setSucceeded(true);
+        ActionReturnValue actionReturnValue = new ActionReturnValue();
+        actionReturnValue.setSucceeded(true);
         when(backendInternal.runInternalAction(any(ActionType.class),
                 any(ActionParametersBase.class),
-                any(CommandContext.class))).thenReturn(vdcReturnValue);
+                any(CommandContext.class))).thenReturn(actionReturnValue);
         StorageDomainStatic storageDomain = new StorageDomainStatic();
         storageDomain.setId(Guid.newGuid());
         storageDomain.setStorageDomainType(StorageDomainType.ImportExport);

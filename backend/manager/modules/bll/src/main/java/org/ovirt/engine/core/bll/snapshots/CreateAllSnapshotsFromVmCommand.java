@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
@@ -58,7 +59,6 @@ import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -334,13 +334,13 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 CreateCinderSnapshotParameters params = buildChildCommandParameters(disk);
                 params.setQuotaId(disk.getQuotaId());
 
-                Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                         ActionType.CreateCinderSnapshot,
                         params,
                         cloneContext().withoutCompensationContext().withoutLock());
                 try {
-                    VdcReturnValueBase vdcReturnValueBase = future.get();
-                    if (!vdcReturnValueBase.getSucceeded()) {
+                    ActionReturnValue actionReturnValue = future.get();
+                    if (!actionReturnValue.getSucceeded()) {
                         log.error("Error creating snapshot for Cinder disk '{}'", disk.getDiskAlias());
                         throw new EngineException(EngineError.CINDER_ERROR, "Failed to create snapshot!");
                     }
@@ -350,15 +350,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 }
                 continue;
             }
-            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
+            ActionReturnValue actionReturnValue = Backend.getInstance().runInternalAction(
                     ActionType.CreateSnapshot,
                     buildCreateSnapshotParameters(disk),
                     ExecutionHandler.createDefaultContextForTasks(getContext()));
 
-            if (vdcReturnValue.getSucceeded()) {
-                getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+            if (actionReturnValue.getSucceeded()) {
+                getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
             } else {
-                throw new EngineException(vdcReturnValue.getFault().getError(),
+                throw new EngineException(actionReturnValue.getFault().getError(),
                         "Failed to create snapshot!");
             }
         }
@@ -461,7 +461,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void removeMemoryVolumesOfSnapshot(Snapshot snapshot) {
-        VdcReturnValueBase retVal = runInternalAction(
+        ActionReturnValue retVal = runInternalAction(
                 ActionType.RemoveMemoryVolumes,
                 new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()), cloneContextAndDetachFromParent());
 

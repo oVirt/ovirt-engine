@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -1176,7 +1176,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         Frontend.getInstance().runAction(ActionType.AddVmTemplate, addVmTemplateParameters,
                 result -> {
                     getWindow().stopProgress();
-                    VdcReturnValueBase returnValueBase = result.getReturnValue();
+                    ActionReturnValue returnValueBase = result.getReturnValue();
                     if (returnValueBase != null && returnValueBase.getSucceeded()) {
                         cancel();
                     }
@@ -1713,7 +1713,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                     result -> {
 
                         final VmListModel<Void> vmListModel = (VmListModel<Void>) result.getState();
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
+                        ActionReturnValue returnValueBase = result.getReturnValue();
                         if (returnValueBase != null && returnValueBase.getSucceeded()) {
                             VM vm = vmListModel.getcurrentVm();
                             VmManagementParametersBase updateVmParams = vmListModel.getUpdateVmParameters(applyCpuChangesLater);
@@ -2118,7 +2118,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
                         model.onRestoreVms(
                                 result -> {
                                     boolean isAllValidatePassed = true;
-                                    for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
+                                    for (ActionReturnValue returnValueBase : result.getReturnValue()) {
                                         if (!returnValueBase.isValid()) {
                                             isAllValidatePassed = false;
                                             break;

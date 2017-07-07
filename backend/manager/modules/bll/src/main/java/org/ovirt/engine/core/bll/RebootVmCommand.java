@@ -4,9 +4,9 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -40,7 +40,8 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     @Override
     protected void perform() {
         if (isColdReboot()) {
-            VdcReturnValueBase returnValue = runInternalAction(ActionType.ShutdownVm, new ShutdownVmParameters(getVmId(), false));
+            ActionReturnValue
+                    returnValue = runInternalAction(ActionType.ShutdownVm, new ShutdownVmParameters(getVmId(), false));
             setReturnValue(returnValue);
             setSucceeded(returnValue.getSucceeded());
             if (getSucceeded()) {

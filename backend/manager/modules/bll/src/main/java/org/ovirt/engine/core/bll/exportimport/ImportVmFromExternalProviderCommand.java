@@ -28,12 +28,12 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -304,16 +304,16 @@ implements QuotaStorageDependent {
         dve.setBoot(isBoot);
         diskParameters.setDiskVmElement(dve);
 
-        VdcReturnValueBase vdcReturnValueBase =
+        ActionReturnValue actionReturnValue =
                 runInternalActionWithTasksContext(ActionType.AddDisk, diskParameters);
 
-        if (!vdcReturnValueBase.getSucceeded()) {
-            throw new EngineException(vdcReturnValueBase.getFault().getError(),
+        if (!actionReturnValue.getSucceeded()) {
+            throw new EngineException(actionReturnValue.getFault().getError(),
                     "Failed to create disk!");
         }
 
-        getTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
-        return vdcReturnValueBase.getActionReturnValue();
+        getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
+        return actionReturnValue.getActionReturnValue();
     }
 
     private void checkImageTarget() {

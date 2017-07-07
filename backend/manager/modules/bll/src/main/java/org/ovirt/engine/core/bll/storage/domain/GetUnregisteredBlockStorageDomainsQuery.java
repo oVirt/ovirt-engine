@@ -12,9 +12,9 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -84,7 +84,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<StorageServerConnections> connectedTargets = new ArrayList<>();
 
         for (StorageServerConnections storageConnection : getParameters().getStorageServerConnections()) {
-            VdcReturnValueBase returnValue = executeConnectStorageToVds(
+            ActionReturnValue returnValue = executeConnectStorageToVds(
                         new StorageServerConnectionParametersBase(storageConnection, getParameters().getVdsId(), false));
 
             if (returnValue.getSucceeded()) {
@@ -273,7 +273,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
 
     /* Execute wrappers (for testing/mocking necessities) */
 
-    protected VdcReturnValueBase executeConnectStorageToVds(StorageServerConnectionParametersBase parameters) {
+    protected ActionReturnValue executeConnectStorageToVds(StorageServerConnectionParametersBase parameters) {
         return backend.runInternalAction(ActionType.ConnectStorageToVds, parameters);
     }
 

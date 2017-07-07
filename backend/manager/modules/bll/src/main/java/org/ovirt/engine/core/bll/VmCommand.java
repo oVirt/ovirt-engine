@@ -21,9 +21,9 @@ import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -213,14 +213,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         setSucceeded(true);
     }
 
-    protected List<VdcReturnValueBase> endActionOnDisks() {
-        List<VdcReturnValueBase> returnValues = new ArrayList<>();
+    protected List<ActionReturnValue> endActionOnDisks() {
+        List<ActionReturnValue> returnValues = new ArrayList<>();
         for (ActionParametersBase p : getParametersForChildCommand()) {
             if (overrideChildCommandSuccess()) {
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
 
-            VdcReturnValueBase returnValue = getBackend().endAction(
+            ActionReturnValue returnValue = getBackend().endAction(
                     p.getCommandType() == ActionType.Unknown ? getChildActionType() : p.getCommandType(),
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
@@ -277,7 +277,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
         removeMemoryDumpDiskParameters.setShouldBeLogged(false);
         removeMemoryDumpDiskParameters.setSuppressContentTypeCheck(true);
-        VdcReturnValueBase retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
+        ActionReturnValue retVal = runInternalAction(ActionType.RemoveDisk, removeMemoryDumpDiskParameters);
         if (!retVal.getSucceeded()) {
             return false;
         }

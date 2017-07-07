@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VersionQueryParameters;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -270,7 +270,7 @@ public abstract class VnicProfileModel extends Model {
         Frontend.getInstance().runAction(getActionType(),
                 getActionParameters(),
                 result -> {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    ActionReturnValue returnValue = result.getReturnValue();
                     stopProgress();
 
                     if (returnValue != null && returnValue.getSucceeded()) {

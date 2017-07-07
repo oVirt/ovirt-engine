@@ -15,10 +15,10 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -125,7 +125,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             tempVar2.setEntityInfo(getParameters().getEntityInfo());
             tempVar2.setForceDelete(true);
             tempVar2.setParentParameters(getParameters());
-            VdcReturnValueBase vdcRetValue =
+            ActionReturnValue vdcRetValue =
                     runInternalActionWithTasksContext(ActionType.RemoveAllVmImages,
                             tempVar2);
             if (vdcRetValue.getSucceeded()) {

@@ -45,11 +45,11 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -736,7 +736,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             List<Guid> guids = GuidUtils.getGuidListFromString(memoryVolumes);
 
             // copy the memory dump image
-            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
+            ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                     ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerId, guids.get(0), guids.get(2), guids.get(3)));
@@ -800,7 +800,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
+            ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                     ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(disk, containerID));
             if (!vdcRetValue.getSucceeded()) {
@@ -1175,7 +1175,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void removeMemoryVolumes(String memoryVolume, Guid vmId) {
-        VdcReturnValueBase retVal = runInternalAction(
+        ActionReturnValue retVal = runInternalAction(
                 ActionType.RemoveMemoryVolumes,
                 new RemoveMemoryVolumesParameters(memoryVolume, vmId), cloneContextAndDetachFromParent());
 

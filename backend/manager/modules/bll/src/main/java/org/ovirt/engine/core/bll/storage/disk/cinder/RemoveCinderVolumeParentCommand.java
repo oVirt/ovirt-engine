@@ -12,10 +12,10 @@ import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.disk.image.RemoveImageCommand;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -55,7 +55,7 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
      *            - The index to fetch the child command parameters.
      * @return - The future command at the ChildCommandsParameters[removedChildCommandParametersIndex].
      */
-    protected Future<VdcReturnValueBase> getFutureRemoveCinderDiskVolume(Guid storageId,
+    protected Future<ActionReturnValue> getFutureRemoveCinderDiskVolume(Guid storageId,
             int removedChildCommandParametersIndex) {
         return CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveCinderDiskVolume,
                 getParameters().getChildCommandsParameters().get(removedChildCommandParametersIndex),
@@ -65,10 +65,10 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
     public boolean removeCinderVolume(int removedVolumeIndex, Guid storageId) {
         RemoveCinderDiskVolumeParameters param = getParameters().getChildCommandsParameters().get(removedVolumeIndex);
         try {
-            VdcReturnValueBase vdcReturnValueBase =
+            ActionReturnValue actionReturnValue =
                     getFutureRemoveCinderDiskVolume(storageId, removedVolumeIndex).get();
-            if (vdcReturnValueBase == null || !vdcReturnValueBase.getSucceeded()) {
-                handleExecutionFailure(param.getRemovedVolume(), vdcReturnValueBase);
+            if (actionReturnValue == null || !actionReturnValue.getSucceeded()) {
+                handleExecutionFailure(param.getRemovedVolume(), actionReturnValue);
                 return false;
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -98,9 +98,9 @@ public class RemoveCinderVolumeParentCommand<T extends RemoveCinderDiskParameter
         return childParam;
     }
 
-    protected void handleExecutionFailure(CinderDisk disk, VdcReturnValueBase vdcReturnValueBase) {
+    protected void handleExecutionFailure(CinderDisk disk, ActionReturnValue actionReturnValue) {
         log.error("Failed to remove cider volume id '{}' for disk id '{}'.", disk.getImageId(), disk.getId());
-        EngineFault fault = vdcReturnValueBase == null ? new EngineFault() : vdcReturnValueBase.getFault();
+        EngineFault fault = actionReturnValue == null ? new EngineFault() : actionReturnValue.getFault();
         getReturnValue().setFault(fault);
     }
 

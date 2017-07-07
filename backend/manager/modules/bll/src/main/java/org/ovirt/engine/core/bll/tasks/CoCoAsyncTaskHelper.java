@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -327,7 +327,7 @@ public class CoCoAsyncTaskHelper {
         return cmdEntity;
     }
 
-    public VdcReturnValueBase endAction(SPMTask task) {
+    public ActionReturnValue endAction(SPMTask task) {
         AsyncTask dbAsyncTask = task.getParameters().getDbAsyncTask();
         ActionType actionType = getEndActionType(dbAsyncTask);
         ActionParametersBase parameters = dbAsyncTask.getActionParameters();

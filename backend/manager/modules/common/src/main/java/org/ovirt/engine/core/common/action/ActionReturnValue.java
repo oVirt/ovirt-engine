@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
  * object itself to carry any additional data.
  * </p>
  */
-public final class VdcReturnValueBase implements Serializable {
+public final class ActionReturnValue implements Serializable {
     private static final long serialVersionUID = 9194321065754359119L;
 
     private boolean valid;
@@ -44,7 +44,7 @@ public final class VdcReturnValueBase implements Serializable {
     private String correlationId;
     private Guid jobId;
 
-    public VdcReturnValueBase() {
+    public ActionReturnValue() {
         validationMessages = new ArrayList<>();
         description = "";
         taskPlaceHolderIdList = new ArrayList<>();

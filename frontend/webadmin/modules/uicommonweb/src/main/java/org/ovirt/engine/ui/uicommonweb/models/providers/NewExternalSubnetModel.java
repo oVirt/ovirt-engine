@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -76,7 +76,7 @@ public class NewExternalSubnetModel extends Model {
                 new AddExternalSubnetParameters(getSubnetModel().getSubnet(),
                         providedBy.getProviderId(), providedBy.getExternalId()),
                 result -> {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    ActionReturnValue returnValue = result.getReturnValue();
                     stopProgress();
 
                     if (returnValue != null && returnValue.getSucceeded()) {

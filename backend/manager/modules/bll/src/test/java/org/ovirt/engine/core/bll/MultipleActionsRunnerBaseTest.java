@@ -15,9 +15,9 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
@@ -33,15 +33,15 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
 
     protected static class TestCommand extends CommandBase {
 
-        private VdcReturnValueBase validationResult;
+        private ActionReturnValue validationResult;
 
-        public TestCommand(VdcReturnValueBase validationResult) {
+        public TestCommand(ActionReturnValue validationResult) {
             super(new DiskProfileParameters(), commandContext);
             this.validationResult = validationResult;
         }
 
         @Override
-        public VdcReturnValueBase executeAction() {
+        public ActionReturnValue executeAction() {
             setReturnValue(validationResult);
             return validationResult;
         }
@@ -58,7 +58,7 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
         }
 
         @Override
-        public VdcReturnValueBase validateOnly() {
+        public ActionReturnValue validateOnly() {
             setReturnValue(validationResult);
             return validationResult;
         }
@@ -77,7 +77,7 @@ public class MultipleActionsRunnerBaseTest extends BaseCommandTest {
     }
 
     protected TestCommand createCommand(boolean validationSucceeds, boolean executionSucceeds) {
-        VdcReturnValueBase returnValueBase = new VdcReturnValueBase();
+        ActionReturnValue returnValueBase = new ActionReturnValue();
         returnValueBase.setValid(validationSucceeds);
         returnValueBase.setSucceeded(executionSucceeds);
         TestCommand command = new TestCommand(returnValueBase);

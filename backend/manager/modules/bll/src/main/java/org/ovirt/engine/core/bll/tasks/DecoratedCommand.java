@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.tasks;
 
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 
 public class DecoratedCommand<T extends ActionParametersBase> implements Command<T> {
 
@@ -13,7 +13,7 @@ public class DecoratedCommand<T extends ActionParametersBase> implements Command
     }
 
     @Override
-    public VdcReturnValueBase endAction() {
+    public ActionReturnValue endAction() {
         return innerCommand.endAction();
     }
 

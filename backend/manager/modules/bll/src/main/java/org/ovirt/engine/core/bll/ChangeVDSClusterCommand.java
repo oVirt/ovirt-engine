@@ -15,11 +15,11 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.PersistentHostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -231,7 +231,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             VdsActionParameters addVdsSpmIdParams = new VdsActionParameters(getVdsIdRef());
             addVdsSpmIdParams.setSessionId(getParameters().getSessionId());
             addVdsSpmIdParams.setCompensationEnabled(true);
-            VdcReturnValueBase addVdsSpmIdReturn =
+            ActionReturnValue addVdsSpmIdReturn =
                     runInternalAction(ActionType.AddVdsSpmId,
                             addVdsSpmIdParams, cloneContext().withoutLock().withoutExecutionContext());
             if (!addVdsSpmIdReturn.getSucceeded()) {

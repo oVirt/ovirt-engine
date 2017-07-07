@@ -19,8 +19,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 
@@ -45,11 +45,11 @@ public class OperationProcessorTest {
     @Mock
     VdcOperationCallback<VdcOperation<?, ?>, Object> mockCallback3;
     @Mock
-    VdcOperationCallbackList<VdcOperation<?, ?>, List<VdcReturnValueBase>> mockCallbackList1;
+    VdcOperationCallbackList<VdcOperation<?, ?>, List<ActionReturnValue>> mockCallbackList1;
     @Mock
-    VdcOperationCallbackList<VdcOperation<?, ?>, List<VdcReturnValueBase>> mockCallbackList2;
+    VdcOperationCallbackList<VdcOperation<?, ?>, List<ActionReturnValue>> mockCallbackList2;
     @Mock
-    VdcOperationCallbackList<VdcOperation<?, ?>, List<VdcReturnValueBase>> mockCallbackList3;
+    VdcOperationCallbackList<VdcOperation<?, ?>, List<ActionReturnValue>> mockCallbackList3;
     @Mock
     Scheduler mockScheduler;
 
@@ -179,10 +179,10 @@ public class OperationProcessorTest {
                 .getCallback().equals(mockCallback1));
         assertFalse("The callbacks should not match", operationListCaptor.getValue().get(1)  //$NON-NLS-1$
                 .getCallback().equals(mockCallback2));
-        List<VdcReturnValueBase> resultList1 = new ArrayList<>();
-        List<VdcReturnValueBase> resultList2 = new ArrayList<>();
-        VdcReturnValueBase result1 = new VdcReturnValueBase();
-        VdcReturnValueBase result2 = new VdcReturnValueBase();
+        List<ActionReturnValue> resultList1 = new ArrayList<>();
+        List<ActionReturnValue> resultList2 = new ArrayList<>();
+        ActionReturnValue result1 = new ActionReturnValue();
+        ActionReturnValue result2 = new ActionReturnValue();
         resultList1.add(result1);
         resultList2.add(result2);
         operationListCaptor.getValue().get(0).getCallback().onSuccess(operationListCaptor.getValue().get(0),
@@ -208,7 +208,7 @@ public class OperationProcessorTest {
                 .get(0).getCallback().equals(mockCallback1));
         assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
                 .get(1).getCallback().equals(mockCallback2));
-        VdcReturnValueBase result1 = new VdcReturnValueBase();
+        ActionReturnValue result1 = new ActionReturnValue();
         operationListCaptor.getValue().get(0).getCallback().onSuccess(operationListCaptor.getValue().get(0), result1);
         verify(mockCallback1).onSuccess(testOperation1, result1);
         verify(mockCallback2, never()).onSuccess(eq(testOperation2), any());
@@ -231,9 +231,9 @@ public class OperationProcessorTest {
                 .get(0).getCallback().equals(mockCallback1));
         assertFalse("The callbacks should not match", operationListCaptor.getValue() //$NON-NLS-1$
                 .get(1).getCallback().equals(mockCallback2));
-        List<VdcReturnValueBase> resultList = new ArrayList<>();
-        VdcReturnValueBase result1 = new VdcReturnValueBase();
-        VdcReturnValueBase result2 = new VdcReturnValueBase();
+        List<ActionReturnValue> resultList = new ArrayList<>();
+        ActionReturnValue result1 = new ActionReturnValue();
+        ActionReturnValue result2 = new ActionReturnValue();
         resultList.add(result1);
         resultList.add(result2);
         operationListCaptor.getValue().get(0).getCallback().onSuccess(operationListCaptor.getValue().get(0), result1);
@@ -313,10 +313,10 @@ public class OperationProcessorTest {
                 operationListCaptor.getValue().get(1).getCallback().equals(mockCallbackList2));
         // There should be only be two items in the list.
         assertEquals("There should be two items", 2, operationListCaptor.getValue().size()); //$NON-NLS-1$
-        List<VdcReturnValueBase> resultList1 = new ArrayList<>();
-        List<VdcReturnValueBase> resultList2 = new ArrayList<>();
-        VdcReturnValueBase result1 = new VdcReturnValueBase();
-        VdcReturnValueBase result2 = new VdcReturnValueBase();
+        List<ActionReturnValue> resultList1 = new ArrayList<>();
+        List<ActionReturnValue> resultList2 = new ArrayList<>();
+        ActionReturnValue result1 = new ActionReturnValue();
+        ActionReturnValue result2 = new ActionReturnValue();
         resultList1.add(result1);
         resultList2.add(result2);
         List<VdcOperation> captured1List = new ArrayList<>();

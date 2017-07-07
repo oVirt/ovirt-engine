@@ -20,8 +20,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.HasCorrelationId;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
@@ -766,11 +766,11 @@ public class ExecutionHandler {
      *
      * @param parameters
      *            The parameters input of the command
-     * @return A {@code null} object emphasis correlation-ID is valid or {@code VdcReturnValueBase} contains the
+     * @return A {@code null} object emphasis correlation-ID is valid or {@code ActionReturnValue} contains the
      *         correlation-ID violation message
      */
-    public static VdcReturnValueBase evaluateCorrelationId(HasCorrelationId parameters) {
-        VdcReturnValueBase returnValue = null;
+    public static ActionReturnValue evaluateCorrelationId(HasCorrelationId parameters) {
+        ActionReturnValue returnValue = null;
         String correlationId = parameters.getCorrelationId();
         if (StringUtils.isEmpty(correlationId)) {
             correlationId = CorrelationIdTracker.getCorrelationId();
@@ -781,7 +781,7 @@ public class ExecutionHandler {
         } else {
             List<String> messages = ValidationUtils.validateInputs(validationGroups, parameters);
             if (!messages.isEmpty()) {
-                VdcReturnValueBase returnErrorValue = new VdcReturnValueBase();
+                ActionReturnValue returnErrorValue = new ActionReturnValue();
                 returnErrorValue.setValid(false);
                 returnErrorValue.getValidationMessages().addAll(messages);
                 return returnErrorValue;

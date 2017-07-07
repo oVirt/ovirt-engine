@@ -15,7 +15,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.BackendUtils;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -39,9 +39,9 @@ public class CommandExecutor {
         this.commandsRepository = commandsRepository;
     }
 
-    public Future<VdcReturnValueBase> executeAsyncCommand(final CommandBase<?> command,
+    public Future<ActionReturnValue> executeAsyncCommand(final CommandBase<?> command,
                                                           final CommandContext cmdContext) {
-        Future<VdcReturnValueBase> retVal;
+        Future<ActionReturnValue> retVal;
         try {
             retVal = executor.submit(() -> executeCommand(command, cmdContext));
         } catch (RejectedExecutionException ex) {
@@ -53,14 +53,14 @@ public class CommandExecutor {
         return retVal;
     }
 
-    private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
-        VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command,
+    private ActionReturnValue executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
+        ActionReturnValue result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command,
                 cmdContext != null ? cmdContext.getExecutionContext() : null);
         updateCommandResult(command.getCommandId(), result);
         return result;
     }
 
-    private void updateCommandResult(final Guid commandId, final VdcReturnValueBase result) {
+    private void updateCommandResult(final Guid commandId, final ActionReturnValue result) {
         CommandEntity cmdEntity = commandsRepository.getCommandEntity(commandId);
         cmdEntity.setReturnValue(result);
         if (!result.isValid()) {
@@ -69,12 +69,12 @@ public class CommandExecutor {
         commandsRepository.persistCommand(cmdEntity);
     }
 
-    static class RejectedExecutionFuture implements Future<VdcReturnValueBase> {
+    static class RejectedExecutionFuture implements Future<ActionReturnValue> {
 
-        VdcReturnValueBase retValue;
+        ActionReturnValue retValue;
 
         RejectedExecutionFuture() {
-            retValue = new VdcReturnValueBase();
+            retValue = new ActionReturnValue();
             retValue.setSucceeded(false);
             EngineFault fault = new EngineFault();
             fault.setError(EngineError.ResourceException);
@@ -100,12 +100,12 @@ public class CommandExecutor {
         }
 
         @Override
-        public VdcReturnValueBase get() throws InterruptedException, ExecutionException {
+        public ActionReturnValue get() throws InterruptedException, ExecutionException {
             return retValue;
         }
 
         @Override
-        public VdcReturnValueBase get(long timeout, TimeUnit unit)
+        public ActionReturnValue get(long timeout, TimeUnit unit)
                 throws InterruptedException, ExecutionException, TimeoutException {
             return retValue;
         }

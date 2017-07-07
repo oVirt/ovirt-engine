@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
@@ -127,7 +127,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
     private void endCommandAction() {
         CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
-        VdcReturnValueBase vdcReturnValue = null;
+        ActionReturnValue actionReturnValue = null;
         ExecutionContext context = null;
         boolean endActionRuntimeException = false;
 
@@ -151,7 +151,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     dbAsyncTask.getActionParameters().getCommandType());
 
             try {
-                vdcReturnValue = coco.endAction(this);
+                actionReturnValue = coco.endAction(this);
             } catch (EngineException ex) {
                 log.error("{}: {}", getErrorMessage(), ex.getMessage());
                 log.debug("Exception", ex);
@@ -174,7 +174,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 handleEndActionRuntimeException(entityInfo, dbAsyncTask);
             } else {
                 boolean isTaskGroupSuccess = dbAsyncTask.getActionParameters().getTaskGroupSuccess();
-                handleEndActionResult(entityInfo, vdcReturnValue, context, isTaskGroupSuccess);
+                handleEndActionResult(entityInfo, actionReturnValue, context, isTaskGroupSuccess);
             }
         }
     }
@@ -207,7 +207,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         }
     }
 
-    private void handleEndActionResult(CommandMultiAsyncTasks commandInfo, VdcReturnValueBase vdcReturnValue,
+    private void handleEndActionResult(CommandMultiAsyncTasks commandInfo, ActionReturnValue actionReturnValue,
             ExecutionContext context,
             boolean isTaskGroupSuccess) {
         try {
@@ -216,7 +216,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                             + " completed, handling the result.",
                     actionType);
 
-                if (vdcReturnValue == null || (!vdcReturnValue.getSucceeded() && vdcReturnValue.getEndActionTryAgain())) {
+                if (actionReturnValue == null || (!actionReturnValue.getSucceeded() && actionReturnValue.getEndActionTryAgain())) {
                     log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
                                     + " '{}' hasn't succeeded, not clearing tasks, will attempt again next polling.",
                         actionType);
@@ -228,7 +228,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
                                     + " '{}' {}succeeded, clearing tasks.",
                         actionType,
-                        vdcReturnValue.getSucceeded() ? "" : "hasn't ");
+                        actionReturnValue.getSucceeded() ? "" : "hasn't ");
 
                     commandInfo.clearTasks();
 

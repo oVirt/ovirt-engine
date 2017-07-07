@@ -14,12 +14,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -205,7 +205,7 @@ public class ImportHostedEngineStorageDomainCommand<T extends StorageDomainManag
         List<BaseDisk> disks = baseDiskDao.getDisksByAlias(StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS);
         if (disks != null && !disks.isEmpty()) {
             BaseDisk heDirectLun = disks.get(0);
-            VdcReturnValueBase removeDisk = getBackend().runInternalAction(
+            ActionReturnValue removeDisk = getBackend().runInternalAction(
                     ActionType.RemoveDisk,
                     new RemoveDiskParameters(heDirectLun.getId()));
             if (!removeDisk.getSucceeded()) {

@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -598,7 +598,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         false);
     }
 
-    private void setErrorMessage(VdcReturnValueBase result, GlusterVolumeGeoRepActionConfirmationModel cModel) {
+    private void setErrorMessage(ActionReturnValue result, GlusterVolumeGeoRepActionConfirmationModel cModel) {
         String errorMessage = ""; //$NON-NLS-1$
         if (result == null) {
             errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();

@@ -15,9 +15,9 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -229,7 +229,7 @@ public class NetworkConfigurator {
     }
 
     private void configureManagementNetwork(HostSetupNetworksParameters parameters) {
-        VdcReturnValueBase retVal =
+        ActionReturnValue retVal =
                 getBackend().runInternalAction(ActionType.HostSetupNetworks,
                         parameters,
                         cloneContextAndDetachFromParent());

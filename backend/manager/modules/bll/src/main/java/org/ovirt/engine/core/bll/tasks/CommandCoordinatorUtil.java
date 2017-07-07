@@ -15,8 +15,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -398,7 +398,7 @@ public class CommandCoordinatorUtil {
      * @param cmdContext The command context for the command
      * @return The future object for the command submitted to the thread pool
      */
-    public static Future<VdcReturnValueBase> executeAsyncCommand(ActionType actionType,
+    public static Future<ActionReturnValue> executeAsyncCommand(ActionType actionType,
                                                                  ActionParametersBase parameters,
                                                                  CommandContext cmdContext) {
         return coco.executeAsyncCommand(actionType, parameters, cmdContext);
@@ -427,7 +427,7 @@ public class CommandCoordinatorUtil {
      * @param cmdId The id of the command
      * @return The return value for the command
      */
-    public static VdcReturnValueBase getCommandReturnValue(Guid cmdId) {
+    public static ActionReturnValue getCommandReturnValue(Guid cmdId) {
         CommandEntity cmdEnity = coco.getCommandEntity(cmdId);
         return cmdEnity == null ? null : cmdEnity.getReturnValue();
     }

@@ -30,10 +30,10 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -233,7 +233,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
 
         for (int i = 0; i < getParameters().getVmsCount(); i++) {
             String currentVmName = generateUniqueVmName();
-            VdcReturnValueBase returnValue =
+            ActionReturnValue returnValue =
                     runInternalAction(ActionType.AddVm,
                             buildAddVmParameters(currentVmName),
                             createAddVmStepContext(currentVmName));

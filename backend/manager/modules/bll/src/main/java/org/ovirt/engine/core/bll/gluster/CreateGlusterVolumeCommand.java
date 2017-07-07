@@ -11,10 +11,10 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -242,7 +242,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             // make sure that volume id is set
             option.setVolumeId(volume.getId());
 
-            VdcReturnValueBase setOptionReturnValue =
+            ActionReturnValue setOptionReturnValue =
                     runInternalAction(
                             ActionType.SetGlusterVolumeOption,
                             new GlusterVolumeOptionParameters(option),

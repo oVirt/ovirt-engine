@@ -3,12 +3,12 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.slf4j.Logger;
 
 public interface MultipleActionsRunner {
-    List<VdcReturnValueBase> execute();
+    List<ActionReturnValue> execute();
 
     void setIsRunOnlyIfAllValidatePass(boolean isRunOnlyIfAllValidationPass);
 

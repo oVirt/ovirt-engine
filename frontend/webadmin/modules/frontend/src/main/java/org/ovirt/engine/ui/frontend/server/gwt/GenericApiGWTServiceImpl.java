@@ -14,8 +14,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -139,13 +139,13 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
     }
 
     @Override
-    public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
+    public List<ActionReturnValue> runMultipleActions(ActionType actionType,
             ArrayList<ActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass) {
         return runMultipleActions(actionType, multipleParams, isRunOnlyIfAllValidationPass, false);
     }
 
     @Override
-    public List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
+    public List<ActionReturnValue> runMultipleActions(ActionType actionType,
             ArrayList<ActionParametersBase> multipleParams, boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult) {
         log.debug("Server: RunMultipleAction invoked! [amount of actions: {}]", multipleParams.size()); //$NON-NLS-1$
 
@@ -157,14 +157,14 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
             }
         }
 
-        List<VdcReturnValueBase> returnValues =
+        List<ActionReturnValue> returnValues =
                 getBackend().runMultipleActions(actionType, multipleParams, isRunOnlyIfAllValidationPass, isWaitForResult);
 
         return returnValues;
     }
 
     @Override
-    public VdcReturnValueBase runAction(ActionType actionType,
+    public ActionReturnValue runAction(ActionType actionType,
             ActionParametersBase params) {
         log.debug("Server: RunAction invoked!"); //$NON-NLS-1$
         debugAction(actionType, params);

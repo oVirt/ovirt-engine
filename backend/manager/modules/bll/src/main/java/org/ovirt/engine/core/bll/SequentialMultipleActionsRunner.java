@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class SequentialMultipleActionsRunner implements MultipleActionsRunner {
     private final List<ActionParametersBase> parameters;
     private final CommandContext commandContext;
     private final boolean isInternal;
-    private final ArrayList<VdcReturnValueBase> returnValues = new ArrayList<>();
+    private final ArrayList<ActionReturnValue> returnValues = new ArrayList<>();
 
     @Inject
     private SessionDataContainer sessionDataContainer;
@@ -49,7 +49,7 @@ public class SequentialMultipleActionsRunner implements MultipleActionsRunner {
     }
 
     @Override
-    public ArrayList<VdcReturnValueBase> execute() {
+    public ArrayList<ActionReturnValue> execute() {
         for (ActionParametersBase parameter : parameters) {
             if(!isInternal) {
                 logExecution(log, sessionDataContainer, parameter.getSessionId(), String.format("command %s", actionType));

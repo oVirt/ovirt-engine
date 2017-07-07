@@ -20,7 +20,7 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.rsdl.ServiceTree;
 import org.ovirt.engine.api.rsdl.ServiceTreeNode;
 import org.ovirt.engine.api.utils.LinkCreator;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.job.Job;
@@ -75,11 +75,11 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
         return getMapper(modelType, entityType).map(model, template);
     }
 
-    protected CreationStatus awaitCompletion(VdcReturnValueBase result) {
+    protected CreationStatus awaitCompletion(ActionReturnValue result) {
         return awaitCompletion(result, PollingType.VDSM_TASKS);
     }
 
-    protected CreationStatus awaitCompletion(VdcReturnValueBase result, PollingType pollingType) {
+    protected CreationStatus awaitCompletion(ActionReturnValue result, PollingType pollingType) {
         CreationStatus status = null;
         while (incomplete(status = getAsynchronousStatus(result, pollingType))) {
             delay(MONITOR_DELAY);
@@ -87,11 +87,11 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
         return status;
     }
 
-    protected CreationStatus getAsynchronousStatus(VdcReturnValueBase result) {
+    protected CreationStatus getAsynchronousStatus(ActionReturnValue result) {
         return getVdsmTasksStatus(result);
     }
 
-    protected CreationStatus getAsynchronousStatus(VdcReturnValueBase result, PollingType pollingType) {
+    protected CreationStatus getAsynchronousStatus(ActionReturnValue result, PollingType pollingType) {
         CreationStatus asyncStatus = null;
         if (pollingType==PollingType.JOB) {
             asyncStatus = getJobIdStatus(result);
@@ -103,7 +103,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
         return asyncStatus;
     }
 
-    private CreationStatus getVdsmTasksStatus(VdcReturnValueBase result) {
+    private CreationStatus getVdsmTasksStatus(ActionReturnValue result) {
         CreationStatus asyncStatus = null;
         QueryReturnValue monitorResult =
             runQuery(QueryType.GetTasksStatusesByTasksIDs, new GetTasksStatusesByTasksIDsParameters(result.getVdsmTaskIdList()));
@@ -118,7 +118,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q>
         return asyncStatus;
     }
 
-    private CreationStatus getJobIdStatus(VdcReturnValueBase result) {
+    private CreationStatus getJobIdStatus(ActionReturnValue result) {
         Guid jobId = result.getJobId();
         if (jobId == null || jobId.equals(Guid.Empty)) {
             return CreationStatus.COMPLETE;

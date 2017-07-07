@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.TerminateSessionsForTokenParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class SsoCallbackServlet extends HttpServlet {
     }
 
     private void handleLogout(String accessToken, HttpServletResponse response) {
-        VdcReturnValueBase returnValue = backend.runInternalAction(ActionType.TerminateSessionsForToken,
+        ActionReturnValue returnValue = backend.runInternalAction(ActionType.TerminateSessionsForToken,
                 new TerminateSessionsForTokenParameters(accessToken));
 
         if (returnValue.getSucceeded()) {

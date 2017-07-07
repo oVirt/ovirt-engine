@@ -3,14 +3,14 @@ package org.ovirt.engine.core.common.interfaces;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 
 public interface BackendLocal {
-    VdcReturnValueBase runAction(ActionType actionType, ActionParametersBase parameters);
+    ActionReturnValue runAction(ActionType actionType, ActionParametersBase parameters);
 
     VDSBrokerFrontend getResourceManager();
 
@@ -20,15 +20,15 @@ public interface BackendLocal {
 
     ErrorTranslator getVdsErrorsTranslator();
 
-    List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
+    List<ActionReturnValue> runMultipleActions(ActionType actionType,
             List<ActionParametersBase> parameters,
             boolean isRunOnlyIfAllValidationPass, boolean waitForResult);
 
-    List<VdcReturnValueBase> runMultipleActions(ActionType actionType,
+    List<ActionReturnValue> runMultipleActions(ActionType actionType,
             List<ActionParametersBase> parameters,
             boolean isRunOnlyIfAllValidationPass);
 
     QueryReturnValue runPublicQuery(QueryType actionType, QueryParametersBase parameters);
 
-    VdcReturnValueBase logoff(ActionParametersBase parameters);
+    ActionReturnValue logoff(ActionParametersBase parameters);
 }

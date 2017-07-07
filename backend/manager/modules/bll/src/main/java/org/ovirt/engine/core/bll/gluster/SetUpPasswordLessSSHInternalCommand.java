@@ -11,8 +11,8 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.SetUpPasswordLessSSHParameters;
 import org.ovirt.engine.core.common.action.gluster.UpdateGlusterHostPubKeyToSlaveParameters;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -47,10 +47,10 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
         }
     }
 
-    private List<VdcReturnValueBase> updatePubKeysToRemoteHosts(final List<String> pubKeys,
+    private List<ActionReturnValue> updatePubKeysToRemoteHosts(final List<String> pubKeys,
             Set<Guid> remoteServersSet,
             final String userName) {
-        List<Callable<VdcReturnValueBase>> slaveWritePubKeyList = new ArrayList<>();
+        List<Callable<ActionReturnValue>> slaveWritePubKeyList = new ArrayList<>();
         for (final Guid currentRemoteHostId : remoteServersSet) {
             slaveWritePubKeyList.add(() -> {
                 String currentHostNameToLog = getCustomValue(GlusterConstants.VDS_NAME);
@@ -61,7 +61,7 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
                                 pubKeys, userName));
             });
         }
-        List<VdcReturnValueBase> returnStatuses = ThreadPoolUtil.invokeAll(slaveWritePubKeyList);
+        List<ActionReturnValue> returnStatuses = ThreadPoolUtil.invokeAll(slaveWritePubKeyList);
         return returnStatuses;
     }
 
@@ -72,8 +72,8 @@ public class SetUpPasswordLessSSHInternalCommand extends GlusterCommandBase<SetU
         boolean canProceed = pubKeys != null && pubKeys.size() > 0;
         if (canProceed) {
             List<String> errors = new ArrayList<>();
-            List<VdcReturnValueBase> updateKeyReturnValues = updatePubKeysToRemoteHosts(pubKeys, getParameters().getDestinationHostIds(), getParameters().getUserName());
-            for(VdcReturnValueBase currentReturnValue : updateKeyReturnValues) {
+            List<ActionReturnValue> updateKeyReturnValues = updatePubKeysToRemoteHosts(pubKeys, getParameters().getDestinationHostIds(), getParameters().getUserName());
+            for(ActionReturnValue currentReturnValue : updateKeyReturnValues) {
                 if (!currentReturnValue.getSucceeded()) {
                     errors.addAll(currentReturnValue.getExecuteFailedMessages());
                 }

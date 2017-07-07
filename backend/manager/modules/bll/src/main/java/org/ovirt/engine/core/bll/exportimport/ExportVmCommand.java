@@ -35,12 +35,12 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -372,7 +372,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
 
             // copy the memory dump image
-            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
+            ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                     ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
                             containerID, guids.get(0), guids.get(2), guids.get(3)));
@@ -436,7 +436,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
     @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
+            ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                     ActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForDisk(containerID, disk));
             if (!vdcRetValue.getSucceeded()) {

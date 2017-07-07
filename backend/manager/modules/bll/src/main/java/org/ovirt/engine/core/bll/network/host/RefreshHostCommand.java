@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll.network.host;
 
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 
 public class RefreshHostCommand extends VdsCommand<VdsActionParameters> {
@@ -19,7 +19,7 @@ public class RefreshHostCommand extends VdsCommand<VdsActionParameters> {
         parameters.setLockProperties(
                 LockProperties.create(LockProperties.Scope.Execution).withWait(isInternalExecution()));
 
-        VdcReturnValueBase returnValue = runInternalAction(ActionType.RefreshHostCapabilities, parameters);
+        ActionReturnValue returnValue = runInternalAction(ActionType.RefreshHostCapabilities, parameters);
         if (!returnValue.getSucceeded()) {
             return;
         }

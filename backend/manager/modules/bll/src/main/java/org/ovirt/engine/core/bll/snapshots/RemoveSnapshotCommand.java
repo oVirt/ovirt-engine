@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -42,7 +43,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -192,7 +192,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         if (useTaskManager) {
             CommandCoordinatorUtil.executeAsyncCommand(ActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
         } else {
-            VdcReturnValueBase ret = runInternalAction(ActionType.RemoveMemoryVolumes, parameters);
+            ActionReturnValue ret = runInternalAction(ActionType.RemoveMemoryVolumes, parameters);
             if (!ret.getSucceeded()) {
                 log.error("Cannot remove memory volumes for snapshot '{}'", snapshot.getId());
             }
@@ -224,9 +224,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             } else {
                 RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskParameters(
                         source, dest, getSnapshotActionType());
-                VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
+                ActionReturnValue actionReturnValueturnValue = runInternalActionWithTasksContext(
                         getSnapshotActionType(), parameters);
-                getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+                getTaskIdList().addAll(actionReturnValueturnValue.getInternalVdsmTaskIdList());
             }
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<>();
@@ -243,11 +243,11 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     private void handleCinderSnapshotDisks(List<CinderDisk> cinderDisks) {
         for (CinderDisk cinderDisk : cinderDisks) {
-            VdcReturnValueBase vdcReturnValueBase = runInternalAction(
+            ActionReturnValue actionReturnValue = runInternalAction(
                     ActionType.RemoveCinderSnapshotDisk,
                     buildRemoveCinderSnapshotDiskParameters(cinderDisk),
                     cloneContextAndDetachFromParent());
-            if (!vdcReturnValueBase.getSucceeded()) {
+            if (!actionReturnValue.getSucceeded()) {
                 log.error("Error removing snapshots for Cinder disk");
             }
         }

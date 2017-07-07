@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LibvirtSecretParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -62,7 +62,7 @@ public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
         flush();
         Frontend.getInstance().runAction(actionType, new LibvirtSecretParameters(getEntity()),
                 result -> {
-                    VdcReturnValueBase res = result.getReturnValue();
+                    ActionReturnValue res = result.getReturnValue();
                     if (res.getSucceeded()) {
                         getCancelCommand().execute();
                     }

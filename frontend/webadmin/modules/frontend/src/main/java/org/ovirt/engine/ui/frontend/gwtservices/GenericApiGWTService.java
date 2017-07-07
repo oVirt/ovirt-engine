@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -20,7 +20,7 @@ public interface GenericApiGWTService extends XsrfProtectedService {
     QueryReturnValue runQuery(QueryType search,
             QueryParametersBase searchParameters);
 
-    VdcReturnValueBase runAction(ActionType actionType,
+    ActionReturnValue runAction(ActionType actionType,
             ActionParametersBase params);
 
     @NoXsrfProtect QueryReturnValue runPublicQuery(QueryType queryType,
@@ -30,12 +30,12 @@ public interface GenericApiGWTService extends XsrfProtectedService {
             ArrayList<QueryType> queryTypeList,
             ArrayList<QueryParametersBase> paramsList);
 
-    List<VdcReturnValueBase> runMultipleActions(
+    List<ActionReturnValue> runMultipleActions(
             ActionType actionType,
             ArrayList<ActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllValidationPass);
 
-    List<VdcReturnValueBase> runMultipleActions(
+    List<ActionReturnValue> runMultipleActions(
             ActionType actionType,
             ArrayList<ActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult);

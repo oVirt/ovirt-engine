@@ -49,6 +49,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters.Phase;
@@ -59,7 +60,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SealVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -382,7 +382,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
      *         of the template that were created
      */
     protected Map<Guid, Guid> addAllTemplateDisks() {
-        VdcReturnValueBase returnValue = runInternalAction(
+        ActionReturnValue returnValue = runInternalAction(
                 getAddAllTemplateDisksActionType(),
                 buildCreateAllTemplateDisksParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
@@ -484,7 +484,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void assignLegalAndShared(boolean legalAndShared) {
-        VdcReturnValueBase returnValue = runInternalAction(ActionType.UpdateAllTemplateDisks,
+        ActionReturnValue returnValue = runInternalAction(ActionType.UpdateAllTemplateDisks,
                 buildUpdateAllTemplateDisksParameters(legalAndShared),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
 
@@ -504,7 +504,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void sealVmTemplate() {
-        VdcReturnValueBase returnValue = runInternalAction(ActionType.SealVmTemplate,
+        ActionReturnValue returnValue = runInternalAction(ActionType.SealVmTemplate,
                 buildSealVmTemplateParameters(),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));
 

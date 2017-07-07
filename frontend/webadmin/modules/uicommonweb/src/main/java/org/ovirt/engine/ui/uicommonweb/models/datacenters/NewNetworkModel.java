@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -142,7 +142,7 @@ public class NewNetworkModel extends NetworkModel {
         return result -> postAddNetworkOnProvider(result.getReturnValue());
     }
 
-    private void postAddNetwork(VdcReturnValueBase retVal) {
+    private void postAddNetwork(ActionReturnValue retVal) {
         if (isActionSucceeded(retVal)) {
             postSaveAction((Guid) retVal.getActionReturnValue(), null);
         } else {
@@ -150,7 +150,7 @@ public class NewNetworkModel extends NetworkModel {
         }
     }
 
-    private void postAddNetworkOnProvider(VdcReturnValueBase retVal) {
+    private void postAddNetworkOnProvider(ActionReturnValue retVal) {
         if (isActionSucceeded(retVal)) {
             Network network = (Network) retVal.getActionReturnValue();
             postSaveAction(network.getId(), network.getProvidedBy());
@@ -159,7 +159,7 @@ public class NewNetworkModel extends NetworkModel {
         }
     }
 
-    private boolean isActionSucceeded(VdcReturnValueBase retVal) {
+    private boolean isActionSucceeded(ActionReturnValue retVal) {
         return retVal != null && retVal.getSucceeded();
     }
 

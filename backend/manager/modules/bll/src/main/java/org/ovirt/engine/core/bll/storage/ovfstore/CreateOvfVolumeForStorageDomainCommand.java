@@ -14,10 +14,10 @@ import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
@@ -63,16 +63,16 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         diskParameters.setParentParameters(getParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
         diskParameters.setSkipDomainCheck(getParameters().isSkipDomainChecks());
-        VdcReturnValueBase vdcReturnValueBase =
+        ActionReturnValue actionReturnValue =
                 runInternalActionWithTasksContext(ActionType.AddDisk, diskParameters);
-        Guid createdId = vdcReturnValueBase.getActionReturnValue();
+        Guid createdId = actionReturnValue.getActionReturnValue();
 
         if (createdId != null) {
             setActionReturnValue(createdId);
             addStorageDomainOvfInfoToDb(createdId);
         }
 
-        setSucceeded(vdcReturnValueBase.getSucceeded());
+        setSucceeded(actionReturnValue.getSucceeded());
     }
 
     private boolean shouldOvfStoreBeShareable() {

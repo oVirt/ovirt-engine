@@ -16,8 +16,8 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.api.restapi.util.QueryHelper;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Queryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -141,7 +141,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             Class<? extends BaseResource> suggestedParentType) {
 
         // create (overridable)
-        VdcReturnValueBase createResult = doCreateEntity(task, taskParams);
+        ActionReturnValue createResult = doCreateEntity(task, taskParams);
 
         // fetch + map
         return fetchCreatedEntity(entityResolver, block, suggestedParentType, createResult);
@@ -165,13 +165,13 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return expectations.contains(BLOCKING_EXPECTATION);
     }
 
-    protected void handleAsynchrony(VdcReturnValueBase result, R model) {
+    protected void handleAsynchrony(ActionReturnValue result, R model) {
         model.setCreationStatus(getAsynchronousStatus(result).value());
         linkSubResource(model, CREATION_STATUS_REL, asString(result.getVdsmTaskIdList()));
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> Q resolveCreated(VdcReturnValueBase result, IResolver<T, Q> entityResolver) {
+    protected <T> Q resolveCreated(ActionReturnValue result, IResolver<T, Q> entityResolver) {
         try {
             return entityResolver.resolve(result.getActionReturnValue());
         } catch (Exception e) {
@@ -193,7 +193,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     private <T> Response fetchCreatedEntity(IResolver<T, Q> entityResolver,
             boolean block,
             Class<? extends BaseResource> suggestedParentType,
-            VdcReturnValueBase createResult) {
+            ActionReturnValue createResult) {
         Q created = resolveCreated(createResult, entityResolver);
         R model = mapEntity(suggestedParentType, created);
         Response response = null;
@@ -224,8 +224,8 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return response;
     }
 
-    protected VdcReturnValueBase doCreateEntity(ActionType task, ActionParametersBase taskParams) {
-        VdcReturnValueBase createResult;
+    protected ActionReturnValue doCreateEntity(ActionType task, ActionParametersBase taskParams) {
+        ActionReturnValue createResult;
         try {
             createResult = doAction(task, taskParams);
         } catch (Exception e) {

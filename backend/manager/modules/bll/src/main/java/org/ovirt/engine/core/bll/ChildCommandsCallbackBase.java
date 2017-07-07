@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -117,7 +117,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
     private void endAction(CommandBase<?> commandBase, boolean succeeded) {
         if (shouldExecuteEndMethod(commandBase)) {
             commandBase.getReturnValue().setSucceeded(false);
-            VdcReturnValueBase returnVal = commandBase.endAction();
+            ActionReturnValue returnVal = commandBase.endAction();
 
             if (!returnVal.getSucceeded()) {
                 if (shouldRepeatEndMethodsOnFail(returnVal)) {
@@ -173,7 +173,7 @@ public abstract class ChildCommandsCallbackBase implements CommandCallback {
         return shouldRepeatEndMethodsOnFail(CommandCoordinatorUtil.getCommandEntity(cmdId).getReturnValue());
     }
 
-    private boolean shouldRepeatEndMethodsOnFail(VdcReturnValueBase returnValue) {
+    private boolean shouldRepeatEndMethodsOnFail(ActionReturnValue returnValue) {
         return returnValue.getEndActionTryAgain();
     }
 }

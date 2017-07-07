@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -28,7 +28,7 @@ public class UnitVmModelNetworkAsyncCallback implements IFrontendActionAsyncCall
 
     @Override
     public void executed(FrontendActionAsyncResult result) {
-        VdcReturnValueBase returnValue = result.getReturnValue();
+        ActionReturnValue returnValue = result.getReturnValue();
         if (returnValue != null && returnValue.getSucceeded()) {
             networkCreatingManager.updateVnics((idToUpdate == null) ? (Guid) returnValue.getActionReturnValue()
                     : idToUpdate, unitVmModel.getNicsWithLogicalNetworks().getItems(), unitVmModel);

@@ -12,10 +12,10 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.UpdateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.UpdateVolumeCommandParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -47,7 +47,7 @@ public class UpdateAllTemplateDisksCommand<T extends UpdateAllTemplateDisksParam
     }
 
     private void updateDiskImage(DiskImage diskImage) {
-        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
+        ActionReturnValue returnValue = runInternalActionWithTasksContext(
                 ActionType.UpdateVolume,
                 buildUpdateVolumeCommandParameters(diskImage));
 

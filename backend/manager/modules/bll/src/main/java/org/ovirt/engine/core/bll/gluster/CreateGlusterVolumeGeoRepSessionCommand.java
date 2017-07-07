@@ -10,8 +10,8 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.SetUpMountBrokerParameters;
 import org.ovirt.engine.core.common.action.gluster.SetUpPasswordLessSSHParameters;
@@ -122,7 +122,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         Set<Guid> remoteServerIds = getServerIds(remoteServersSet);
         Guid slaveHostId = getParameters().getSlaveHostId();
         if (!rootSession) {
-            VdcReturnValueBase completeMountBrokerSetupOnSlaveInternalAction =
+            ActionReturnValue completeMountBrokerSetupOnSlaveInternalAction =
                     getBackend().runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
                             new SetUpMountBrokerParameters(vdsDao.get(slaveHostId).getClusterId(),
                                     new HashSet<>(Collections.singletonList(getParameters().getSlaveHostId())),
@@ -134,7 +134,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
             if (succeeded) {
                 auditLogDirector.log(this, AuditLogType.GLUSTER_SETUP_GEOREP_MOUNT_BROKER);
                 if (!remoteServerIds.isEmpty()) {
-                    VdcReturnValueBase mountBrokerPartialSetupInternalAction =
+                    ActionReturnValue mountBrokerPartialSetupInternalAction =
                             getBackend().runInternalAction(ActionType.SetupGlusterGeoRepMountBrokerInternal,
                                     new SetUpMountBrokerParameters(vdsDao.get(slaveHostId).getClusterId(),
                                             remoteServerIds,
@@ -151,7 +151,7 @@ public class CreateGlusterVolumeGeoRepSessionCommand extends GlusterVolumeComman
         }
         if (succeeded) {
             remoteServerIds.add(slaveHostId);
-            VdcReturnValueBase setUpPasswordLessSSHinternalAction =
+            ActionReturnValue setUpPasswordLessSSHinternalAction =
                     runInternalAction(ActionType.SetUpPasswordLessSSHInternal,
                             new SetUpPasswordLessSSHParameters(upServer.getClusterId(),
                                     remoteServerIds,

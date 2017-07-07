@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -50,7 +50,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runMultipleActionFailed(ActionType action, List<VdcReturnValueBase> returnValues) {
+    public void runMultipleActionFailed(ActionType action, List<ActionReturnValue> returnValues) {
         List<ActionType> actions = new ArrayList<>();
         for (int i = 0; i < returnValues.size(); i++) {
             actions.add(action);
@@ -60,12 +60,12 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runMultipleActionsFailed(Map<ActionType, List<VdcReturnValueBase>> failedActionsMap,
+    public void runMultipleActionsFailed(Map<ActionType, List<ActionReturnValue>> failedActionsMap,
             MessageFormatter messageFormatter) {
         List<ActionType> actions = new ArrayList<>();
-        List<VdcReturnValueBase> returnValues = new ArrayList<>();
+        List<ActionReturnValue> returnValues = new ArrayList<>();
 
-        for (Entry<ActionType, List<VdcReturnValueBase>> entry : failedActionsMap.entrySet()) {
+        for (Entry<ActionType, List<ActionReturnValue>> entry : failedActionsMap.entrySet()) {
             for (int i = 0; i < entry.getValue().size(); ++i) {
                 actions.add(entry.getKey());
             }
@@ -76,18 +76,18 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
     }
 
     @Override
-    public void runMultipleActionsFailed(List<ActionType> actions, List<VdcReturnValueBase> returnValues) {
+    public void runMultipleActionsFailed(List<ActionType> actions, List<ActionReturnValue> returnValues) {
         runMultipleActionsFailed(actions, returnValues, innerMessage -> messages.uiCommonRunActionFailed(innerMessage));
     }
 
     public void runMultipleActionsFailed(List<ActionType> actions,
-            List<VdcReturnValueBase> returnValues,
+            List<ActionReturnValue> returnValues,
             MessageFormatter messageFormatter) {
 
         List<Message> errors = new ArrayList<>();
 
         int actionNum = 0;
-        for (VdcReturnValueBase v : returnValues) {
+        for (ActionReturnValue v : returnValues) {
             if (isRaiseErrorModalPanel(actions.get(actionNum++), v.getFault())) {
                 String description =
                         (v.getDescription() != null && !"".equals(v.getDescription().trim())) || returnValues.size() == 1 ? v.getDescription() : ConstantsManager.getInstance().getConstants().action() + " " + actionNum; //$NON-NLS-1$ //$NON-NLS-2$

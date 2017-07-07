@@ -8,9 +8,9 @@ import org.ovirt.engine.api.model.GraphicsConsoles;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.TemplateGraphicsConsolesResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -45,7 +45,7 @@ public class BackendTemplateGraphicsConsolesResource
     public Response add(GraphicsConsole console) {
         GraphicsDevice device = getMapper(GraphicsConsole.class, GraphicsDevice.class).map(console, null);
         device.setVmId(guid);
-        VdcReturnValueBase res = doCreateEntity(ActionType.AddGraphicsAndVideoDevices, createAddGraphicsDeviceParams(device));
+        ActionReturnValue res = doCreateEntity(ActionType.AddGraphicsAndVideoDevices, createAddGraphicsDeviceParams(device));
 
         if (res != null && res.getSucceeded()) {
             return BackendGraphicsConsoleHelper.find(console, this::list);

@@ -9,13 +9,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.ActionUtils;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -534,13 +534,13 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         model.initialize();
     }
 
-    public void postOnNew(List<VdcReturnValueBase> returnValues) {
+    public void postOnNew(List<ActionReturnValue> returnValues) {
 
         SnapshotModel model = (SnapshotModel) getWindow();
 
         model.stopProgress();
 
-        if (returnValues != null && returnValues.stream().allMatch(VdcReturnValueBase::isValid)) {
+        if (returnValues != null && returnValues.stream().allMatch(ActionReturnValue::isValid)) {
             cancel();
         }
     }
@@ -655,7 +655,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
                     VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) result.getState();
                     vmSnapshotListModel.getWindow().stopProgress();
-                    VdcReturnValueBase returnValueBase = result.getReturnValue();
+                    ActionReturnValue returnValueBase = result.getReturnValue();
                     if (returnValueBase != null && returnValueBase.getSucceeded()) {
                         vmSnapshotListModel.cancel();
                     }
@@ -760,7 +760,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
                     VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) result.getState();
                     vmSnapshotListModel.getWindow().stopProgress();
-                    VdcReturnValueBase returnValueBase = result.getReturnValue();
+                    ActionReturnValue returnValueBase = result.getReturnValue();
                     if (returnValueBase != null && returnValueBase.getSucceeded()) {
                         vmSnapshotListModel.cancel();
                         vmSnapshotListModel.updateActionAvailability();

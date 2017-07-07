@@ -9,9 +9,9 @@ import java.util.Objects;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.branding.BrandingManager;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -289,7 +289,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         parameters.setSessionId(getEngineContext().getSessionId());
         parameters.setParametersCurrentUser(getUser());
 
-        VdcReturnValueBase result = backend.runAction(ActionType.SetVmTicket, parameters);
+        ActionReturnValue result = backend.runAction(ActionType.SetVmTicket, parameters);
 
         if (!result.getSucceeded()) {
             throw new TicketGenerationException(result);
@@ -297,7 +297,7 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         return result.getActionReturnValue();
     }
 
-    private void handleTicketGenerationError(VdcReturnValueBase commandResult) {
+    private void handleTicketGenerationError(ActionReturnValue commandResult) {
         getQueryReturnValue().setSucceeded(false);
         if (commandResult.getValidationMessages().contains(
                 EngineMessage.USER_CANNOT_FORCE_RECONNECT_TO_VM.name())) {
@@ -366,13 +366,13 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
 
     private static class TicketGenerationException extends RuntimeException {
 
-        private final VdcReturnValueBase commandResult;
+        private final ActionReturnValue commandResult;
 
-        public TicketGenerationException(VdcReturnValueBase commandResult) {
+        public TicketGenerationException(ActionReturnValue commandResult) {
             this.commandResult = commandResult;
         }
 
-        public VdcReturnValueBase getCommandResult() {
+        public ActionReturnValue getCommandResult() {
             return commandResult;
         }
     }

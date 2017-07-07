@@ -47,10 +47,10 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.CommandExecutionReason;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -123,7 +123,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     protected static final String SYSTEM_USER_NAME = "SYSTEM";
     private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
     private T parameters;
-    private VdcReturnValueBase returnValue;
+    private ActionReturnValue returnValue;
     private CommandActionState actionState = CommandActionState.EXECUTE;
     private ActionType actionType;
     private final List<Class<?>> validationGroups = new ArrayList<>();
@@ -274,14 +274,14 @@ public abstract class CommandBase<T extends ActionParametersBase>
      *            context for the rollback
      * @return result of the command execution
      */
-    protected VdcReturnValueBase attemptRollback(ActionType commandType,
+    protected ActionReturnValue attemptRollback(ActionType commandType,
             ActionParametersBase params, CommandContext context) {
         if (canPerformRollbackUsingCommand(commandType, params)) {
             params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             return getBackend().runInternalAction(commandType, params, context);
         }
-        return new VdcReturnValueBase();
+        return new ActionReturnValue();
     }
 
     protected BackendInternal getBackend() {
@@ -299,7 +299,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
      *            context for the rollback
      * @return result of the command execution
      */
-    protected VdcReturnValueBase checkAndPerformRollbackUsingCommand(ActionType commandType,
+    protected ActionReturnValue checkAndPerformRollbackUsingCommand(ActionType commandType,
             ActionParametersBase params, CommandContext context) {
         return attemptRollback(commandType, params, context);
     }
@@ -369,11 +369,11 @@ public abstract class CommandBase<T extends ActionParametersBase>
      * be avoided.
      * <p>
      * The violated condition messages are stored by {@link #addValidationMessage(EngineMessage)} and can be reviewed
-     * in {@link VdcReturnValueBase#getValidationMessages()} retrieved by {@link #getReturnValue()}
+     * in {@link ActionReturnValue#getValidationMessages()} retrieved by {@link #getReturnValue()}
      *
-     * @return VdcReturnValueBase A container object for the operation result.
+     * @return ActionReturnValue A container object for the operation result.
      */
-    public VdcReturnValueBase validateOnly() {
+    public ActionReturnValue validateOnly() {
         setActionMessageParameters();
         getReturnValue().setValid(internalValidate());
         String tempVar = getDescription();
@@ -381,7 +381,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
         return returnValue;
     }
 
-    public VdcReturnValueBase executeAction() {
+    public ActionReturnValue executeAction() {
         getSessionDataContainer().updateSessionLastActiveTime(getParameters().getSessionId());
         determineExecutionReason();
         actionState = CommandActionState.EXECUTE;
@@ -560,7 +560,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     @Override
-    public VdcReturnValueBase endAction() {
+    public ActionReturnValue endAction() {
         boolean shouldEndAction = handleCommandExecutionEnded();
         if (shouldEndAction) {
             handleStepsOnEnd();
@@ -1189,7 +1189,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
      * be avoided.
      * <p>
      * The violated condition messages are stored by {@link #addValidationMessage(EngineMessage)} and can be reviewed
-     * in {@link VdcReturnValueBase#getValidationMessages()} retrieved by {@link #getReturnValue()}
+     * in {@link ActionReturnValue#getValidationMessages()} retrieved by {@link #getReturnValue()}
      *
      * @return {@code true} if the command can be executed, else {@code false}
      *
@@ -1506,8 +1506,8 @@ public abstract class CommandBase<T extends ActionParametersBase>
     /**
      * calls execute action the child command.
      */
-    protected VdcReturnValueBase runCommand(CommandBase<?> command) {
-        VdcReturnValueBase returnValue = command.executeAction();
+    protected ActionReturnValue runCommand(CommandBase<?> command) {
+        ActionReturnValue returnValue = command.executeAction();
         returnValue.setCorrelationId(command.getParameters().getCorrelationId());
         returnValue.setJobId(command.getJobId());
         return returnValue;
@@ -1551,14 +1551,14 @@ public abstract class CommandBase<T extends ActionParametersBase>
         return parameters;
     }
 
-    public VdcReturnValueBase getReturnValue() {
+    public ActionReturnValue getReturnValue() {
         if (returnValue == null) {
-            returnValue = new VdcReturnValueBase();
+            returnValue = new ActionReturnValue();
         }
         return returnValue;
     }
 
-    public void setReturnValue(VdcReturnValueBase returnValue) {
+    public void setReturnValue(ActionReturnValue returnValue) {
         this.returnValue = returnValue;
     }
 
@@ -2299,7 +2299,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
      * @param internalReturnValue
      *            the return value of the internal command
      */
-    protected void propagateFailure(VdcReturnValueBase internalReturnValue) {
+    protected void propagateFailure(ActionReturnValue internalReturnValue) {
         getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
         getReturnValue().setFault(internalReturnValue.getFault());
         getReturnValue().getValidationMessages().addAll(internalReturnValue.getValidationMessages());
@@ -2310,8 +2310,8 @@ public abstract class CommandBase<T extends ActionParametersBase>
         getReturnValue().getExecuteFailedMessages().add(internalReturnValue.getExceptionString());
     }
 
-    protected VdcReturnValueBase convertToVdcReturnValueBase(final VDSReturnValue vdsReturnValue) {
-        VdcReturnValueBase returnValue = new VdcReturnValueBase();
+    protected ActionReturnValue convertToActionReturnValue(final VDSReturnValue vdsReturnValue) {
+        ActionReturnValue returnValue = new ActionReturnValue();
         returnValue.setSucceeded(false);
         returnValue.setActionReturnValue(vdsReturnValue.getReturnValue());
         String message = vdsReturnValue.getVdsError().getMessage();
@@ -2459,11 +2459,11 @@ public abstract class CommandBase<T extends ActionParametersBase>
         return null;
     }
 
-    protected VdcReturnValueBase runInternalAction(ActionType actionType, ActionParametersBase parameters) {
+    protected ActionReturnValue runInternalAction(ActionType actionType, ActionParametersBase parameters) {
         return getBackend().runInternalAction(actionType, parameters, context.clone());
     }
 
-    protected VdcReturnValueBase runInternalAction(ActionType actionType,
+    protected ActionReturnValue runInternalAction(ActionType actionType,
             ActionParametersBase parameters,
             CommandContext internalCommandContext) {
         return getBackend().runInternalAction(actionType,
@@ -2471,12 +2471,12 @@ public abstract class CommandBase<T extends ActionParametersBase>
                 internalCommandContext);
     }
 
-    protected List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
+    protected List<ActionReturnValue> runInternalMultipleActions(ActionType actionType,
             List<ActionParametersBase> parameters) {
         return getBackend().runInternalMultipleActions(actionType, parameters, context.clone());
     }
 
-    protected List<VdcReturnValueBase> runInternalMultipleActions(ActionType actionType,
+    protected List<ActionReturnValue> runInternalMultipleActions(ActionType actionType,
             List<ActionParametersBase> parameters,
             ExecutionContext executionContext) {
         return getBackend().runInternalMultipleActions(actionType,
@@ -2484,12 +2484,12 @@ public abstract class CommandBase<T extends ActionParametersBase>
                 context.clone().withExecutionContext(executionContext));
     }
 
-    public VdcReturnValueBase runInternalActionWithTasksContext(ActionType actionType,
+    public ActionReturnValue runInternalActionWithTasksContext(ActionType actionType,
             ActionParametersBase parameters) {
         return runInternalActionWithTasksContext(actionType, parameters, null);
     }
 
-    protected VdcReturnValueBase runInternalActionWithTasksContext(ActionType actionType,
+    protected ActionReturnValue runInternalActionWithTasksContext(ActionType actionType,
             ActionParametersBase parameters, EngineLock lock) {
         return runInternalAction(
                 actionType,

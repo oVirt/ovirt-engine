@@ -18,8 +18,8 @@ import org.ovirt.engine.api.restapi.invocation.CurrentManager;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.utils.LinkCreator;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -42,7 +42,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     protected Response doAction(final ActionType task, final ActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType, EntityResolver entityResolver) {
         awaitGrace(action);
         try {
-            VdcReturnValueBase actionResult = doAction(task, params);
+            ActionReturnValue actionResult = doAction(task, params);
             if (actionResult.getHasAsyncTasks()) {
                 if (expectBlocking(action)) {
                     CreationStatus status = awaitCompletion(actionResult, pollingType);
@@ -63,7 +63,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         }
     }
 
-    protected Object resolveCreated(VdcReturnValueBase result, EntityResolver entityResolver, Class<? extends BaseResource> suggestedParentType) {
+    protected Object resolveCreated(ActionReturnValue result, EntityResolver entityResolver, Class<? extends BaseResource> suggestedParentType) {
         try {
             return entityResolver.resolve(result.getActionReturnValue());
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     protected Response doAction(final ActionType task, final ActionParametersBase params, final Action action, AbstractBackendResource.PollingType pollingType) {
         awaitGrace(action);
         try {
-            VdcReturnValueBase actionResult = doAction(task, params);
+            ActionReturnValue actionResult = doAction(task, params);
             if (actionResult.getJobId() != null) {
                 setJobLink(action, actionResult);
             }
@@ -183,7 +183,7 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         return Response.ok().entity(action).build();
     }
 
-    protected Response actionAsync(VdcReturnValueBase actionResult, Action action) {
+    protected Response actionAsync(ActionReturnValue actionResult, Action action) {
         action.setAsync(true);
 
         String ids = asString(actionResult.getVdsmTaskIdList());

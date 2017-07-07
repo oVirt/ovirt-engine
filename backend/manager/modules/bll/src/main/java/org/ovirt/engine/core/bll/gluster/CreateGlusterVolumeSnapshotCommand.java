@@ -10,8 +10,8 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -94,7 +94,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                 if (!(session.getStatus() == GeoRepSessionStatus.CREATED
                         || session.getStatus() == GeoRepSessionStatus.PAUSED
                         || session.getStatus() == GeoRepSessionStatus.STOPPED)) {
-                    VdcReturnValueBase sessionPauseRetVal = null;
+                    ActionReturnValue sessionPauseRetVal = null;
                     try (EngineLock lock = acquireEngineLock(slaveVolume.getId(), LockingGroup.GLUSTER_SNAPSHOT)) {
                         sessionPauseRetVal =
                                 runInternalAction(ActionType.PauseGlusterVolumeGeoRepSession,
@@ -182,7 +182,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         for (GlusterGeoRepSession session : enginePausedSessions) {
             if (session.getStatus() == GeoRepSessionStatus.PAUSED) {
                 try (EngineLock lock = acquireGeoRepSessionLock(session.getId())) {
-                    VdcReturnValueBase sessionResumeRetVal =
+                    ActionReturnValue sessionResumeRetVal =
                             runInternalAction(ActionType.ResumeGeoRepSession,
                                     new GlusterVolumeGeoRepSessionParameters(volume.getId(), session.getId()));
                     if (!sessionResumeRetVal.getSucceeded()) {

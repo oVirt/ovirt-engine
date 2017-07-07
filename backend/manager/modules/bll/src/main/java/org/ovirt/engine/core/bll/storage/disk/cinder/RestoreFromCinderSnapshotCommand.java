@@ -11,9 +11,9 @@ import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveCinderDiskVolumeParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.compat.Guid;
@@ -54,10 +54,10 @@ public class RestoreFromCinderSnapshotCommand<T extends RemoveCinderDiskParamete
     protected boolean removeCinderVolume(Guid storageId, int removedVolumeIndex) {
         RemoveCinderDiskVolumeParameters param = getParameters().getChildCommandsParameters().get(removedVolumeIndex);
         try {
-            VdcReturnValueBase vdcReturnValueBase =
+            ActionReturnValue actionReturnValue =
                     getFutureRemoveCinderDiskVolume(storageId, removedVolumeIndex).get();
-            if (vdcReturnValueBase == null || !vdcReturnValueBase.getSucceeded()) {
-                handleExecutionFailure(param.getRemovedVolume(), vdcReturnValueBase);
+            if (actionReturnValue == null || !actionReturnValue.getSucceeded()) {
+                handleExecutionFailure(param.getRemovedVolume(), actionReturnValue);
                 return false;
             }
         } catch (InterruptedException | ExecutionException e) {

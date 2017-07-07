@@ -2,12 +2,12 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Objects;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ClusterParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -114,7 +114,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        VdcReturnValueBase returnValue = context.addDataCenterReturnValue;
+        ActionReturnValue returnValue = context.addDataCenterReturnValue;
 
         context.enlistment = null;
 
@@ -221,7 +221,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                     new ChangeVDSClusterParameters(enlistmentContext.getOldClusterId(), host.getId()),
                     result -> {
 
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                        ActionReturnValue returnValue = result.getReturnValue();
 
                         context.changeVDSClusterReturnValue = returnValue;
                         rollback4();
@@ -237,7 +237,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        VdcReturnValueBase returnValue = context.changeVDSClusterReturnValue;
+        ActionReturnValue returnValue = context.changeVDSClusterReturnValue;
 
         if (returnValue != null && returnValue.getSucceeded()) {
 
@@ -278,7 +278,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         public StoragePool dataCenterFoundByName;
         public StoragePool dataCenterFoundById;
         public VDS hostFoundById;
-        public VdcReturnValueBase addDataCenterReturnValue;
-        public VdcReturnValueBase changeVDSClusterReturnValue;
+        public ActionReturnValue addDataCenterReturnValue;
+        public ActionReturnValue changeVDSClusterReturnValue;
     }
 }

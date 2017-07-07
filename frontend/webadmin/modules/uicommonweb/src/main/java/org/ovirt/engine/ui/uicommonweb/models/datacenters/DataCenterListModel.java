@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -672,7 +672,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         }
     }
 
-    public void postOnSaveInternal(VdcReturnValueBase returnValue) {
+    public void postOnSaveInternal(ActionReturnValue returnValue) {
         DataCenterModel model = (DataCenterModel) getWindow();
 
         model.stopProgress();

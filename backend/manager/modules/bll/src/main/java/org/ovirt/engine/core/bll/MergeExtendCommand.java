@@ -10,11 +10,11 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.RefreshVolumeParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -89,7 +89,7 @@ public class MergeExtendCommand<T extends MergeParameters>
         parameters.setParentCommand(ActionType.MergeExtend);
         parameters.setParentParameters(getParameters());
 
-        VdcReturnValueBase returnValue = runInternalAction(ActionType.RefreshVolume, parameters);
+        ActionReturnValue returnValue = runInternalAction(ActionType.RefreshVolume, parameters);
         setSucceeded(returnValue.getSucceeded());
         if (!getSucceeded()) {
             log.error("Error refreshing volume {} on host {}, VMs using the volume"

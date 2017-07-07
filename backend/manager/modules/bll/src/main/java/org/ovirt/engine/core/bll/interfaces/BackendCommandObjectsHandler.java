@@ -4,8 +4,8 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 /**
  * Interface for direct operations on {@link CommandBase} objects The reason for introducing this interface is that it
@@ -29,6 +29,6 @@ public interface BackendCommandObjectsHandler {
      * Executes the instance of the action. This should be used by parent/root commands in order to execute child
      * commands that place holders were created for them.
      */
-    VdcReturnValueBase runAction(CommandBase<?> action, ExecutionContext executionContext);
+    ActionReturnValue runAction(CommandBase<?> action, ExecutionContext executionContext);
 
 }

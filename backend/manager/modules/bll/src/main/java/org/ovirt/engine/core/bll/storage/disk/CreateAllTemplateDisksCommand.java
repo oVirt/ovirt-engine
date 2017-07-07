@@ -23,11 +23,11 @@ import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateAllTemplateDisksParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineException;
@@ -93,7 +93,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
         Map<Guid, Guid> diskImageMap = new HashMap<>();
         for (CinderDisk cinderDisk : cinderDisks) {
             ImagesContainterParametersBase params = buildCloneCinderDiskCommandParameters(cinderDisk);
-            VdcReturnValueBase returnValue =
+            ActionReturnValue returnValue =
                     runInternalAction(ActionType.CloneSingleCinderDisk,
                             params,
                             cloneContext().withoutExecutionContext().withoutLock());
@@ -128,7 +128,7 @@ public class CreateAllTemplateDisksCommand<T extends CreateAllTemplateDisksParam
     private void addVmTemplateImage(DiskImage diskImage, Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         // The return value of this action is the 'copyImage' task GUID:
         Guid targetDiskId = getParameters().getTargetDiskIds()[targetDiskIdIndex++];
-        VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(
+        ActionReturnValue returnValue = Backend.getInstance().runInternalAction(
                 ActionType.CreateImageTemplate,
                 buildCreateImageTemplateCommandParameters(diskImage, targetDiskId),
                 ExecutionHandler.createDefaultContextForTasks(getContext()));

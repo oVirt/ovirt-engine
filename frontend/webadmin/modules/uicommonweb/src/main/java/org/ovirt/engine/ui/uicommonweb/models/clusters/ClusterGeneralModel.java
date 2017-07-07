@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -462,7 +462,7 @@ public class ClusterGeneralModel extends EntityModel<Cluster> {
                 result -> {
                     hostsModel.stopProgress();
                     boolean isAllValidatePassed = true;
-                    for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
+                    for (ActionReturnValue returnValueBase : result.getReturnValue()) {
                         isAllValidatePassed = isAllValidatePassed && returnValueBase.isValid();
                         if (!isAllValidatePassed) {
                             break;

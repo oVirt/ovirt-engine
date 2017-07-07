@@ -15,11 +15,11 @@ import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -121,7 +121,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     private void addDisk(DiskImage disk) {
-        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
+        ActionReturnValue returnValue = runInternalActionWithTasksContext(
                 ActionType.AddDisk,
                 buildAddDiskParameters(disk));
 
@@ -236,7 +236,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return;
         }
 
-        List<VdcReturnValueBase> addDiskReturnValues = endActionOnDisks();
+        List<ActionReturnValue> addDiskReturnValues = endActionOnDisks();
         DiskImage dumpDisk = getMemoryDumpDisk(addDiskReturnValues);
         DiskImage metadataDisk = getMemoryMetadataDisk(addDiskReturnValues);
 
@@ -257,8 +257,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         setSucceeded(true);
     }
 
-    private DiskImage getMemoryDumpDisk(List<VdcReturnValueBase> returnValues) {
-        for (VdcReturnValueBase returnValue : returnValues) {
+    private DiskImage getMemoryDumpDisk(List<ActionReturnValue> returnValues) {
+        for (ActionReturnValue returnValue : returnValues) {
             DiskImage disk = returnValue.getActionReturnValue();
             if (disk.getSize() != MemoryUtils.METADATA_SIZE_IN_BYTES) {
                 return disk;
@@ -268,8 +268,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         return null;
     }
 
-    private DiskImage getMemoryMetadataDisk(List<VdcReturnValueBase> returnValues) {
-        for (VdcReturnValueBase returnValue : returnValues) {
+    private DiskImage getMemoryMetadataDisk(List<ActionReturnValue> returnValues) {
+        for (ActionReturnValue returnValue : returnValues) {
             DiskImage disk = returnValue.getActionReturnValue();
             if (disk.getSize() == MemoryUtils.METADATA_SIZE_IN_BYTES) {
                 return disk;

@@ -20,9 +20,9 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.GlusterEventFactory;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
@@ -556,7 +556,7 @@ public class GlusterSyncJob extends GlusterJob {
         if (cluster.isGlusterCliBasedSchedulingOn()
                 && Config.<String> getValue(ConfigValues.GlusterMetaVolumeName).equalsIgnoreCase(volume.getName())) {
 
-            VdcReturnValueBase returnValue =
+            ActionReturnValue returnValue =
                     backend.runInternalAction(ActionType.DisableGlusterCliSnapshotScheduleInternal,
                             new GlusterVolumeActionParameters(volume.getId(), false),
                             ExecutionHandler.createInternalJobContext());

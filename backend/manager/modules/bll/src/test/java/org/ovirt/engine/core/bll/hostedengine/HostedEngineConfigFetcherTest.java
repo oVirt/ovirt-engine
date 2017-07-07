@@ -37,8 +37,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.verification.VerificationMode;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -167,7 +167,7 @@ public class HostedEngineConfigFetcherTest {
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
         mockVdcCommand(ActionType.RetrieveImageData,
-                successfulVdcReturnValue(null));
+                successfulActionReturnValue(null));
         // when
         Map<String, String> config = fetchConfig();
         // then
@@ -185,7 +185,7 @@ public class HostedEngineConfigFetcherTest {
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
         mockVdcCommand(ActionType.RetrieveImageData,
-                successfulVdcReturnValue(new byte[10]));
+                successfulActionReturnValue(new byte[10]));
         // when
         Map<String, String> config = fetchConfig();
         // then
@@ -198,7 +198,7 @@ public class HostedEngineConfigFetcherTest {
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
         mockVdcCommand(ActionType.RetrieveImageData,
-                successfulVdcReturnValue(load("not-a-valid-hosted-engine-config-tar.tar")));
+                successfulActionReturnValue(load("not-a-valid-hosted-engine-config-tar.tar")));
         // when
         Map<String, String> config = fetchConfig();
         // then
@@ -212,7 +212,7 @@ public class HostedEngineConfigFetcherTest {
         givenListOfImagesAndVolumes();
         givenTheWantedDiskImage();
         mockVdcCommand(ActionType.RetrieveImageData,
-                successfulVdcReturnValue(load("hosted-engine-config.tar")));
+                successfulActionReturnValue(load("hosted-engine-config.tar")));
         // when
         Map<String, String> config = fetchConfig();
         // then
@@ -237,7 +237,7 @@ public class HostedEngineConfigFetcherTest {
                 .when(resourceManager).runVdsCommand(eq(cmdType), any(VDSParametersBase.class));
     }
 
-    private void mockVdcCommand(ActionType actionType, VdcReturnValueBase returnValue) {
+    private void mockVdcCommand(ActionType actionType, ActionReturnValue returnValue) {
         doReturn(returnValue)
                 .when(backend).runInternalAction(eq(actionType), any(ActionParametersBase.class));
     }
@@ -246,7 +246,7 @@ public class HostedEngineConfigFetcherTest {
         return verify(resourceManager, times).runVdsCommand(eq(vdsmCmd), any());
     }
 
-    private VdcReturnValueBase verifyCalled(ActionType actionType, VerificationMode times) {
+    private ActionReturnValue verifyCalled(ActionType actionType, VerificationMode times) {
         return verify(backend, times).runInternalAction(eq(actionType), any(ActionParametersBase.class));
     }
 
@@ -264,8 +264,8 @@ public class HostedEngineConfigFetcherTest {
         return vdsReturnValue;
     }
 
-    private VdcReturnValueBase successfulVdcReturnValue(Object value) {
-        VdcReturnValueBase returnValue = new VdcReturnValueBase();
+    private ActionReturnValue successfulActionReturnValue(Object value) {
+        ActionReturnValue returnValue = new ActionReturnValue();
         returnValue.setSucceeded(true);
         returnValue.setActionReturnValue(value);
         return returnValue;

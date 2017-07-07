@@ -46,8 +46,8 @@ import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -496,7 +496,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
             String baseUri,
             boolean replay,
             String errorMessage) {
-        VdcReturnValueBase result = new VdcReturnValueBase();
+        ActionReturnValue result = new ActionReturnValue();
         result.setValid(valid);
         if (valid) {
             result.setSucceeded(success);
@@ -645,7 +645,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     private void setAsyncTaskStatusExpectations(ArrayList<Guid> asyncTasks,
             ArrayList<AsyncTaskStatus> asyncStatuses,
             QueryReturnValue monitorResult,
-            VdcReturnValueBase result) {
+            ActionReturnValue result) {
         if (asyncTasks != null) {
             result.setVdsmTaskIdList(asyncTasks);
             monitorResult.setReturnValue(asyncStatuses);
@@ -659,7 +659,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     private void setJobStatusExpectations(Guid jobId,
             JobExecutionStatus jobStatus,
             QueryReturnValue monitorResult,
-            VdcReturnValueBase result) {
+            ActionReturnValue result) {
         result.setJobId(jobId);
         if (jobId != null) {
             Job jobMock = mock(org.ovirt.engine.core.common.job.Job.class);

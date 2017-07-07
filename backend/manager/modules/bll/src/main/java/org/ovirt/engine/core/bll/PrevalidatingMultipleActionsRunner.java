@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.slf4j.Logger;
@@ -62,14 +62,14 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
     }
 
     @Override
-    public List<VdcReturnValueBase> execute() {
+    public List<ActionReturnValue> execute() {
         // sanity - don't do anything if no parameters passed
         if (parameters == null || parameters.isEmpty()) {
             log.info("{} of type '{}' invoked with no actions", this.getClass().getSimpleName(), actionType);
             return new ArrayList<>();
         }
 
-        List<VdcReturnValueBase> returnValues = new ArrayList<>();
+        List<ActionReturnValue> returnValues = new ArrayList<>();
         try {
             initCommandsAndReturnValues(returnValues);
 
@@ -81,8 +81,8 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         return returnValues;
     }
 
-    private void initCommandsAndReturnValues(List<VdcReturnValueBase> returnValues) {
-        VdcReturnValueBase returnValue;
+    private void initCommandsAndReturnValues(List<ActionReturnValue> returnValues) {
+        ActionReturnValue returnValue;
         for (ActionParametersBase parameter : getParameters()) {
             parameter.setMultipleAction(true);
             returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
@@ -95,7 +95,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         }
     }
 
-    private void invokeCommands(List<VdcReturnValueBase> returnValues) {
+    private void invokeCommands(List<ActionReturnValue> returnValues) {
         if (canRunActions(returnValues)) {
             if (isWaitForResult) {
                 invokeSyncCommands();
@@ -107,7 +107,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         }
     }
 
-    private boolean canRunActions(List<VdcReturnValueBase> returnValues) {
+    private boolean canRunActions(List<ActionReturnValue> returnValues) {
         if (getCommands().size() == 1) {
             CorrelationIdTracker.setCorrelationId(getCommands().get(0).getCorrelationId());
             returnValues.add(getCommands().get(0).validateOnly());
@@ -116,7 +116,7 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         }
 
         if (isRunOnlyIfAllValidationPass) {
-            for (VdcReturnValueBase value : returnValues) {
+            for (ActionReturnValue value : returnValues) {
                 if (!value.isValid()) {
                     return false;
                 }
@@ -134,12 +134,12 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
      * the same time the number of threads is managed by java
      */
     private void checkValidatesAsynchronously(
-            List<VdcReturnValueBase> returnValues) {
+            List<ActionReturnValue> returnValues) {
         for (int i = 0; i < getCommands().size(); i += CONCURRENT_ACTIONS) {
             int handleSize = Math.min(CONCURRENT_ACTIONS, getCommands().size() - i);
 
             int fixedSize = i + handleSize;
-            List<Callable<VdcReturnValueBase>> validateTasks = new ArrayList<>();
+            List<Callable<ActionReturnValue>> validateTasks = new ArrayList<>();
             for (int j = i; j < fixedSize; j++) {
                 validateTasks.add(buildValidateAsynchronously(j, fixedSize));
             }
@@ -147,12 +147,12 @@ public class PrevalidatingMultipleActionsRunner implements MultipleActionsRunner
         }
     }
 
-    private Callable<VdcReturnValueBase> buildValidateAsynchronously(
+    private Callable<ActionReturnValue> buildValidateAsynchronously(
             final int currentValidateId, final int totalSize) {
         return () -> runValidateOnly(currentValidateId, totalSize);
     }
 
-    protected VdcReturnValueBase runValidateOnly(final int currentValidateId, final int totalSize) {
+    protected ActionReturnValue runValidateOnly(final int currentValidateId, final int totalSize) {
         CommandBase<?> command = getCommands().get(currentValidateId);
         String actionType = command.getActionType().toString();
         CorrelationIdTracker.setCorrelationId(command.getCorrelationId());

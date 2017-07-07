@@ -36,13 +36,13 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateCinderSnapshotParameters;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -233,16 +233,16 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                             cinderDisks.add((CinderDisk)image);
                             continue;
                         }
-                        VdcReturnValueBase vdcReturnValue =
+                        ActionReturnValue actionReturnValue =
                                 runInternalActionWithTasksContext(ActionType.TryBackToSnapshot,
                                         buildTryBackToSnapshotParameters(newActiveSnapshotId, image));
 
-                        if (vdcReturnValue.getSucceeded()) {
-                            getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-                        } else if (vdcReturnValue.getFault() != null) {
+                        if (actionReturnValue.getSucceeded()) {
+                            getTaskIdList().addAll(actionReturnValue.getInternalVdsmTaskIdList());
+                        } else if (actionReturnValue.getFault() != null) {
                             // if we have a fault, forward it to the user
-                            throw new EngineException(vdcReturnValue.getFault().getError(),
-                                    vdcReturnValue.getFault().getMessage());
+                            throw new EngineException(actionReturnValue.getFault().getError(),
+                                    actionReturnValue.getFault().getMessage());
                         } else {
                             log.error("Cannot create snapshot");
                             throw new EngineException(EngineError.IRS_IMAGE_STATUS_ILLEGAL);
@@ -311,7 +311,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
             context = ExecutionHandler.createInternalJobContext(updateVmLock);
         }
 
-        VdcReturnValueBase result = runInternalAction(
+        ActionReturnValue result = runInternalAction(
                 ActionType.UpdateVm,
                 updateParams,
                 context);
@@ -332,13 +332,13 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     protected boolean tryBackAllCinderDisks( List<CinderDisk> cinderDisks, Guid newSnapshotId) {
         for (CinderDisk disk : cinderDisks) {
             ImagesContainterParametersBase params = buildCinderChildCommandParameters(disk, newSnapshotId);
-            VdcReturnValueBase vdcReturnValueBase = runInternalAction(
+            ActionReturnValue actionReturnValue = runInternalAction(
                     ActionType.TryBackToCinderSnapshot,
                     params,
                     cloneContextAndDetachFromParent());
-            if (!vdcReturnValueBase.getSucceeded()) {
+            if (!actionReturnValue.getSucceeded()) {
                 log.error("Error cloning Cinder disk for preview. '{}': {}", disk.getDiskAlias());
-                getReturnValue().setFault(vdcReturnValueBase.getFault());
+                getReturnValue().setFault(actionReturnValue.getFault());
                 return false;
             }
         }

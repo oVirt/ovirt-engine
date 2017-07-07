@@ -14,12 +14,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
@@ -90,10 +90,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         // Upon recovery or after invoking a new child command, our map may be missing an entry
         syncChildCommandList(getParameters());
         Guid currentChildId = getCurrentChildId(getParameters());
-        VdcReturnValueBase vdcReturnValue = null;
+        ActionReturnValue actionReturnValue = null;
 
         if (currentChildId != null) {
-            vdcReturnValue = CommandCoordinatorUtil.getCommandReturnValue(currentChildId);
+            actionReturnValue = CommandCoordinatorUtil.getCommandReturnValue(currentChildId);
             getParameters().setCommandStep(getParameters().getNextCommandStep());
         }
 
@@ -115,8 +115,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.DESTROY_IMAGE);
             break;
         case DESTROY_IMAGE:
-            if (vdcReturnValue != null) {
-                getParameters().setMergeStatusReturnValue(vdcReturnValue.getActionReturnValue());
+            if (actionReturnValue != null) {
+                getParameters().setMergeStatusReturnValue(actionReturnValue.getActionReturnValue());
             } else if (getParameters().getMergeStatusReturnValue() == null) {
                 // If the images were already merged, just add the orphaned image
                 getParameters().setMergeStatusReturnValue(synthesizeMergeStatusReturnValue());

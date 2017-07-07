@@ -29,9 +29,9 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
@@ -159,7 +159,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             VdsActionParameters tempVar = new VdsActionParameters(getVdsIdRef());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);
-            VdcReturnValueBase addVdsSpmIdReturn =
+            ActionReturnValue addVdsSpmIdReturn =
                     runInternalAction(ActionType.AddVdsSpmId,
                             tempVar,
                             cloneContext().withoutLock().withoutExecutionContext());
@@ -245,7 +245,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 vds.getId(),
                 vds.getVdsType().name(),
                 vdsName);
-        VdcReturnValueBase result =
+        ActionReturnValue result =
                 TransactionSupport.executeInNewTransaction(() -> runInternalAction(ActionType.RemoveVds,
                         new RemoveVdsParameters(oVirtId)));
 

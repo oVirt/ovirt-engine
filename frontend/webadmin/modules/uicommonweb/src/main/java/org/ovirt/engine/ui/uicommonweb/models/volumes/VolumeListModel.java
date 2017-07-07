@@ -5,8 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
@@ -1124,7 +1124,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         }, this);
     }
 
-    public void postOnCreateVolume(VdcReturnValueBase returnValue, GlusterVolumeEntity volume) {
+    public void postOnCreateVolume(ActionReturnValue returnValue, GlusterVolumeEntity volume) {
         VolumeModel model = (VolumeModel) getWindow();
 
         model.stopProgress();

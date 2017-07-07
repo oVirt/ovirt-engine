@@ -36,6 +36,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -43,7 +44,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -386,13 +386,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         if (cinderDisks.isEmpty()) {
             return;
         }
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                 ActionType.RemoveAllCinderSnapshotDisks,
                 buildRemoveCinderSnapshotDiskParameters(cinderDisks),
                 cloneContextAndDetachFromParent());
         try {
-            VdcReturnValueBase vdcReturnValueBase = future.get();
-            if (!vdcReturnValueBase.getSucceeded()) {
+            ActionReturnValue actionReturnValue = future.get();
+            if (!actionReturnValue.getSucceeded()) {
                 log.error("Error removing snapshots for Cinder disks");
                 endWithFailure();
                 getParameters().setTaskGroupSuccess(false);

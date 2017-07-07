@@ -9,11 +9,11 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -238,7 +238,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // Try to add the user with the external id:
         if (dbUser.getDomain() != null && dbUser.getExternalId() != null) {
             AddUserParameters parameters = new AddUserParameters(dbUser);
-            VdcReturnValueBase result = runInternalAction(ActionType.AddUser, parameters, cloneContextAndDetachFromParent());
+            ActionReturnValue result = runInternalAction(ActionType.AddUser, parameters, cloneContextAndDetachFromParent());
             if (result.getSucceeded()) {
                 Guid id = result.getActionReturnValue();
                 if (id != null) {
@@ -255,7 +255,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         // Try to add the user with the external id:
         if (groupToAdd.getDomain() != null && groupToAdd.getExternalId() != null) {
             AddGroupParameters parameters = new AddGroupParameters(groupToAdd);
-            VdcReturnValueBase result = runInternalAction(ActionType.AddGroup, parameters, cloneContextAndDetachFromParent());
+            ActionReturnValue
+                    result = runInternalAction(ActionType.AddGroup, parameters, cloneContextAndDetachFromParent());
             if (result.getSucceeded()) {
                 Guid id = result.getActionReturnValue();
                 if (id != null) {

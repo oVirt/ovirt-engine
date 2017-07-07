@@ -12,10 +12,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.ConnectAllHostsToLunCommand.ConnectAllHostsToLunResult;
 import org.ovirt.engine.core.bll.storage.utils.BlockStorageDiscardFunctionalityHelper;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -111,7 +111,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             return false;
         }
 
-        final VdcReturnValueBase returnValue = connectAllHostsToLun();
+        final ActionReturnValue returnValue = connectAllHostsToLun();
         if (!returnValue.getSucceeded()) {
             addValidationMessage(EngineMessage.ERROR_CANNOT_EXTEND_CONNECTION_FAILED);
 
@@ -136,7 +136,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
         return true;
     }
 
-    protected VdcReturnValueBase connectAllHostsToLun() {
+    protected ActionReturnValue connectAllHostsToLun() {
         return runInternalAction(
                 ActionType.ConnectAllHostsToLun,
                 new ExtendSANStorageDomainParameters(getParameters().getStorageDomainId(),

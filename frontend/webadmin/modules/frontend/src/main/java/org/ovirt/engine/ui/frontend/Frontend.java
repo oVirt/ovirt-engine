@@ -11,8 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -434,10 +434,10 @@ public class Frontend implements HasHandlers {
             final boolean showErrorDialog) {
         VdcOperation<ActionType, ActionParametersBase> operation = new VdcOperation<>(
                 actionType, parameters, new VdcOperationCallback<VdcOperation<ActionType,
-                ActionParametersBase>, VdcReturnValueBase>() {
+                ActionParametersBase>, ActionReturnValue>() {
             @Override
             public void onSuccess(final VdcOperation<ActionType, ActionParametersBase> operation,
-                    final VdcReturnValueBase result) {
+                    final ActionReturnValue result) {
                 logger.finer("Frontend: sucessfully executed runAction, determining result!"); //$NON-NLS-1$
                 handleActionResult(actionType, parameters, result,
                         callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, showErrorDialog);
@@ -548,17 +548,17 @@ public class Frontend implements HasHandlers {
             final Object state,
             final boolean showErrorDialog,
             final boolean waitForResult) {
-        VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>, List<VdcReturnValueBase>>
+        VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>, List<ActionReturnValue>>
         multiCallback = new VdcOperationCallbackList<VdcOperation<ActionType, ActionParametersBase>,
-        List<VdcReturnValueBase>>() {
+        List<ActionReturnValue>>() {
             @Override
             public void onSuccess(final List<VdcOperation<ActionType, ActionParametersBase>> operationList,
-                    final List<VdcReturnValueBase> resultObject) {
+                    final List<ActionReturnValue> resultObject) {
                 logger.finer("Frontend: successfully executed runMultipleAction, determining result!"); //$NON-NLS-1$
 
-                ArrayList<VdcReturnValueBase> failed = new ArrayList<>();
+                ArrayList<ActionReturnValue> failed = new ArrayList<>();
 
-                for (VdcReturnValueBase v : resultObject) {
+                for (ActionReturnValue v : resultObject) {
                     if (!v.isValid()) {
                         failed.add(v);
                     }
@@ -609,7 +609,7 @@ public class Frontend implements HasHandlers {
             }
             scheduler.scheduleDeferred(() -> {
                 if (callback != null) {
-                    List<VdcReturnValueBase> emptyResult = new ArrayList<>();
+                    List<ActionReturnValue> emptyResult = new ArrayList<>();
                     callback.executed(new FrontendMultipleActionAsyncResult(actionType,
                             parameters, emptyResult, state));
                 }
@@ -759,7 +759,7 @@ public class Frontend implements HasHandlers {
                 state,
                 aggregateErrors,
                 aggregateErrors ? new ArrayList<ActionType>() : null,
-                aggregateErrors ? new ArrayList<VdcReturnValueBase>() : null);
+                aggregateErrors ? new ArrayList<ActionReturnValue>() : null);
     }
 
     private void runMultipleActions(final List<ActionType> actionTypes,
@@ -769,7 +769,7 @@ public class Frontend implements HasHandlers {
             final Object state,
             final boolean aggregateErrors,
             final List<ActionType> failedActions,
-            final List<VdcReturnValueBase> failedReturnValues) {
+            final List<ActionReturnValue> failedReturnValues) {
         if (actionTypes.isEmpty() || parameters.isEmpty() || callbacks.isEmpty()) {
             if (aggregateErrors && failedReturnValues != null && !failedReturnValues.isEmpty()) {
                 getEventsHandler().runMultipleActionsFailed(failedActions, failedReturnValues);
@@ -779,7 +779,7 @@ public class Frontend implements HasHandlers {
 
         runAction(actionTypes.get(0), parameters.get(0),
                 result -> {
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    ActionReturnValue returnValue = result.getReturnValue();
                     boolean success = returnValue != null && returnValue.getSucceeded();
                     if (success || failureCallback == null) {
                         IFrontendActionAsyncCallback callback = callbacks.get(0);
@@ -811,12 +811,12 @@ public class Frontend implements HasHandlers {
      * Log off the currently logged in user.
      * @param callback The callback to call when the user is logged off.
      */
-    public void logoffAsync(final AsyncQuery<VdcReturnValueBase> callback) {
+    public void logoffAsync(final AsyncQuery<ActionReturnValue> callback) {
         logger.finer("Frontend: Invoking async logoff."); //$NON-NLS-1$
 
-        getOperationManager().logoutUser(new UserCallback<VdcReturnValueBase>() {
+        getOperationManager().logoutUser(new UserCallback<ActionReturnValue>() {
             @Override
-            public void onSuccess(final VdcReturnValueBase result) {
+            public void onSuccess(final ActionReturnValue result) {
                 logger.finer("Succesful returned result from logoff."); //$NON-NLS-1$
                 callback.getAsyncCallback().onSuccess(result);
             }
@@ -885,7 +885,7 @@ public class Frontend implements HasHandlers {
      * @param showErrorDialog Should we show an error dialog?
      */
     void handleActionResult(final ActionType actionType, final ActionParametersBase parameters,
-            final VdcReturnValueBase result, final IFrontendActionAsyncCallback callback,
+            final ActionReturnValue result, final IFrontendActionAsyncCallback callback,
             final Object state, final boolean showErrorDialog) {
         logger.log(Level.FINER, "Retrieved action result from RunAction."); //$NON-NLS-1$
 
@@ -1017,10 +1017,10 @@ public class Frontend implements HasHandlers {
 
     /**
      * Translate application errors and store the translated messages back in return values.
-     * @param errors A list of {@code VdcReturnValueBase}s.
+     * @param errors A list of {@code ActionReturnValue}s.
      */
-    private void translateErrors(final Collection<VdcReturnValueBase> errors) {
-        for (VdcReturnValueBase retVal : errors) {
+    private void translateErrors(final Collection<ActionReturnValue> errors) {
+        for (ActionReturnValue retVal : errors) {
             if (!retVal.isValid()) {
                 retVal.setValidationMessages((ArrayList<String>) translateError(retVal));
             } else if (!retVal.getSucceeded()) {
@@ -1032,10 +1032,10 @@ public class Frontend implements HasHandlers {
 
     /**
      * Translate a single application error and store the translated message back in the return value object.
-     * @param error The {@code VdcReturnValueBase} error object.
+     * @param error The {@code ActionReturnValue} error object.
      * @return A {@code List} of translated messages.
      */
-    private List<String> translateError(final VdcReturnValueBase error) {
+    private List<String> translateError(final ActionReturnValue error) {
         return getAppErrorsTranslator().translateErrorText(error.getValidationMessages());
     }
 
@@ -1119,9 +1119,9 @@ public class Frontend implements HasHandlers {
     /**
      * Translate and show popup for the actions errors
      */
-    public void runMultipleActionsFailed(Map<ActionType, List<VdcReturnValueBase>> failedActionsMap, MessageFormatter messageFormatter) {
-        Collection<VdcReturnValueBase> failedResults = new ArrayList<>();
-        for (List<VdcReturnValueBase> actionTypeResults : failedActionsMap.values()) {
+    public void runMultipleActionsFailed(Map<ActionType, List<ActionReturnValue>> failedActionsMap, MessageFormatter messageFormatter) {
+        Collection<ActionReturnValue> failedResults = new ArrayList<>();
+        for (List<ActionReturnValue> actionTypeResults : failedActionsMap.values()) {
             failedResults.addAll(actionTypeResults);
         }
         translateErrors(failedResults);

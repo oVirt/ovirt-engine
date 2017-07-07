@@ -5,9 +5,9 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -93,7 +93,7 @@ public abstract class VmTemplateManagementCommand<T extends VmTemplateManagement
                 getParameters().getRngDevice().setVmId(templateId);
             }
 
-            VdcReturnValueBase rngCommandResult = null;
+            ActionReturnValue rngCommandResult = null;
             if (rngDevs.isEmpty()) {
                 if (getParameters().getRngDevice() != null) {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);

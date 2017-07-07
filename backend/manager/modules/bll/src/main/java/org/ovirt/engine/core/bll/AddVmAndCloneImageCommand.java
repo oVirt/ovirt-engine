@@ -25,10 +25,10 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -106,7 +106,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 diskImage.getId(),
                 diskImage.getImageId(), parentCommandType);
         parameters.setRevertDbOperationScope(ImageDbOperationScope.IMAGE);
-        VdcReturnValueBase result = executeChildCopyingCommand(parameters);
+        ActionReturnValue result = executeChildCopyingCommand(parameters);
         handleCopyResult(diskImage, newDiskImage, result);
     }
 
@@ -216,7 +216,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
      * @param result
      *            result of execution of child command
      */
-    private void handleCopyResult(DiskImage srcDiskImage, DiskImage copiedDiskImage, VdcReturnValueBase result) {
+    private void handleCopyResult(DiskImage srcDiskImage, DiskImage copiedDiskImage, ActionReturnValue result) {
         // If a copy cannot be made, abort
         if (!result.getSucceeded()) {
             throw new EngineException(EngineError.VolumeCreationError);
@@ -232,7 +232,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
      * @param parameters
      *            parameters for copy
      */
-    protected VdcReturnValueBase executeChildCopyingCommand(ActionParametersBase parameters) {
+    protected ActionReturnValue executeChildCopyingCommand(ActionParametersBase parameters) {
         return runInternalActionWithTasksContext(getChildActionType(), parameters);
     }
 

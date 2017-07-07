@@ -18,9 +18,9 @@ import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.HasCorrelationId;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RunAsyncActionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -180,7 +180,7 @@ public class BackendResource extends BaseBackendResource {
             if (isAsync() || expectNonBlocking()) {
                 return performNonBlockingAction(task, params, action);
             } else {
-                VdcReturnValueBase actionResult = doAction(task, params);
+                ActionReturnValue actionResult = doAction(task, params);
                 if (action == null) {
                     action = new Action();
                 }
@@ -198,7 +198,7 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected void setJobLink(final Action action, VdcReturnValueBase actionResult) {
+    protected void setJobLink(final Action action, ActionReturnValue actionResult) {
         Job job = new Job();
         job.setId(actionResult.getJobId().toString());
         LinkHelper.addLinks(job, null, false);
@@ -243,12 +243,12 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected VdcReturnValueBase doAction(ActionType task,
+    protected ActionReturnValue doAction(ActionType task,
                                           ActionParametersBase params) throws BackendFailureException {
         BackendLocal backend = getBackend();
         setJobOrStepId(params);
         setCorrelationId(params);
-        VdcReturnValueBase result = backend.runAction(task, sessionize(params));
+        ActionReturnValue result = backend.runAction(task, sessionize(params));
         if (result != null && !result.isValid()) {
             backendFailure(result.getValidationMessages());
         } else if (result != null && !result.getSucceeded()) {

@@ -48,6 +48,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
@@ -57,7 +58,6 @@ import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -1065,7 +1065,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (rngDev != null) {
             rngDev.setVmId(getVmId());
             RngDeviceParameters params = new RngDeviceParameters(rngDev, true);
-            VdcReturnValueBase result = runInternalAction(ActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
+            ActionReturnValue
+                    result = runInternalAction(ActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
             if (!result.getSucceeded()) {
                 log.error("Couldn't add RNG device for new VM.");
                 throw new IllegalArgumentException("Couldn't add RNG device for new VM.");
@@ -1177,7 +1178,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         VmNumaNodeOperationParameters params = new VmNumaNodeOperationParameters(getParameters().getVm(), numaNodes);
 
-        VdcReturnValueBase returnValueBase = getBackend().runInternalAction(ActionType.AddVmNumaNodes, params);
+        ActionReturnValue returnValueBase = getBackend().runInternalAction(ActionType.AddVmNumaNodes, params);
         if (!returnValueBase.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
         }
@@ -1252,7 +1253,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             List<DiskImage> diskImages = DisksFilter.filterImageDisks(templateDisks, ONLY_NOT_SHAREABLE,
                     ONLY_ACTIVE);
             for (DiskImage image : diskImages) {
-                VdcReturnValueBase result = runInternalActionWithTasksContext(
+                ActionReturnValue result = runInternalActionWithTasksContext(
                         getDiskCreationCommandType(),
                         buildDiskCreationParameters(image));
 
@@ -1309,16 +1310,16 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         Map<Guid, Guid> diskImageMap = new HashMap<>();
         for (CinderDisk cinderDisk : cinderDisks) {
             ImagesContainterParametersBase params = buildCloneCinderDiskCommandParameters(cinderDisk);
-            VdcReturnValueBase vdcReturnValueBase = runInternalAction(
+            ActionReturnValue actionReturnValue = runInternalAction(
                     ActionType.CloneSingleCinderDisk,
                     params,
                     cloneContext().withoutExecutionContext().withoutLock());
-            if (!vdcReturnValueBase.getSucceeded()) {
+            if (!actionReturnValue.getSucceeded()) {
                 log.error("Error cloning Cinder disk '{}': {}", cinderDisk.getDiskAlias());
-                getReturnValue().setFault(vdcReturnValueBase.getFault());
+                getReturnValue().setFault(actionReturnValue.getFault());
                 return;
             }
-            Guid imageId = vdcReturnValueBase.getActionReturnValue();
+            Guid imageId = actionReturnValue.getActionReturnValue();
 
             diskImageMap.put(cinderDisk.getId(), imageId);
         }
@@ -1340,7 +1341,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private void addVmToPool() {
         AddVmToPoolParameters parameters = new AddVmToPoolParameters(getParameters().getPoolId(), getVmId());
         parameters.setShouldBeLogged(false);
-        VdcReturnValueBase result = runInternalActionWithTasksContext(
+        ActionReturnValue result = runInternalActionWithTasksContext(
                 ActionType.AddVmToPool,
                 parameters);
         setSucceeded(result.getSucceeded());

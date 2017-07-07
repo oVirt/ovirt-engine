@@ -29,13 +29,13 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters.OvfUpdateStep;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
@@ -336,9 +336,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             uploadStreamParameters.setParentCommand(getActionType());
             uploadStreamParameters.setParentParameters(getParameters());
             uploadStreamParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-            VdcReturnValueBase vdcReturnValueBase =
+            ActionReturnValue actionReturnValue =
                     runInternalActionWithTasksContext(ActionType.UploadStream, uploadStreamParameters);
-            if (vdcReturnValueBase.getSucceeded()) {
+            if (actionReturnValue.getSucceeded()) {
                 storageDomainOvfInfo.setStatus(StorageDomainOvfInfoStatus.UPDATED);
                 storageDomainOvfInfo.setStoredOvfIds(vmAndTemplatesIds);
                 storageDomainOvfInfo.setLastUpdated(updateDate);

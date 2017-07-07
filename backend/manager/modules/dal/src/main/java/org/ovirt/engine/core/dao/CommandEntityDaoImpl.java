@@ -12,8 +12,8 @@ import javax.inject.Singleton;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.utils.PersistedCommandContext;
@@ -104,7 +104,7 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
                 .addValue("data", SerializationFactory.getSerializer().serialize(entity.getData()));
     }
 
-    private String serializeReturnValue(VdcReturnValueBase retVal) {
+    private String serializeReturnValue(ActionReturnValue retVal) {
         return SerializationFactory.getSerializer().serialize(retVal);
     }
 
@@ -113,12 +113,12 @@ public class CommandEntityDaoImpl extends DefaultGenericDao<CommandEntity, Guid>
     }
 
     @SuppressWarnings("unchecked")
-    private static VdcReturnValueBase deserializeReturnValue(String payload, String className) {
+    private static ActionReturnValue deserializeReturnValue(String payload, String className) {
         if (className == null) {
             return null;
         }
         Class<Serializable> retValueClass = (Class<Serializable>) ReflectionUtils.getClassFor(className);
-        return (VdcReturnValueBase) SerializationFactory.getDeserializer().deserialize(payload,
+        return (ActionReturnValue) SerializationFactory.getDeserializer().deserialize(payload,
                 retValueClass);
     }
 

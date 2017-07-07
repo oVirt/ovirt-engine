@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.frontend;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -16,11 +16,11 @@ public interface IFrontendEventsHandler {
 
     void runActionExecutionFailed(ActionType action, EngineFault fault);
 
-    void runMultipleActionFailed(ActionType action, List<VdcReturnValueBase> returnValues);
+    void runMultipleActionFailed(ActionType action, List<ActionReturnValue> returnValues);
 
-    void runMultipleActionsFailed(Map<ActionType, List<VdcReturnValueBase>> failedActionsMap, MessageFormatter messageFormatter);
+    void runMultipleActionsFailed(Map<ActionType, List<ActionReturnValue>> failedActionsMap, MessageFormatter messageFormatter);
 
-    void runMultipleActionsFailed(List<ActionType> actions, List<VdcReturnValueBase> returnValues);
+    void runMultipleActionsFailed(List<ActionType> actions, List<ActionReturnValue> returnValues);
 
     void runQueryFailed(List<QueryReturnValue> returnValue);
 

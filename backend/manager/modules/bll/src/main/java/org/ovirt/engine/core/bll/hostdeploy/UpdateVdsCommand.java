@@ -19,8 +19,8 @@ import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.hostdeploy.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -184,15 +184,15 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         hostedEngineHelper.createVdsDeployParams(getVdsId(),
                                 getParameters().getHostedEngineDeployConfiguration().getDeployAction()));
             }
-            List<VdcReturnValueBase> resultList = runInternalMultipleActions(
+            List<ActionReturnValue> resultList = runInternalMultipleActions(
                     actionType, new ArrayList<>(Arrays.asList(tempVar)));
 
             // Since Host status is set to "Installing", failure of InstallVdsCommand will hang the Host to in that
             // status, therefore needed to fail the command to revert the status.
             if (!resultList.isEmpty()) {
-                VdcReturnValueBase vdcReturnValueBase = resultList.get(0);
-                if (vdcReturnValueBase != null && !vdcReturnValueBase.isValid()) {
-                    List<String> validationMessages = vdcReturnValueBase.getValidationMessages();
+                ActionReturnValue actionReturnValue = resultList.get(0);
+                if (actionReturnValue != null && !actionReturnValue.isValid()) {
+                    List<String> validationMessages = actionReturnValue.getValidationMessages();
                     if (!validationMessages.isEmpty()) {
                         // add can do action messages to return value so error messages
                         // are returned back to the client

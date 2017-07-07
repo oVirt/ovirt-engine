@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.GraphicsParameters;
 import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
@@ -42,7 +43,6 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmLeaseParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
@@ -353,7 +353,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      */
     private void updateVmTemplateVersion() {
         if (getVm().getStatus() == VMStatus.Down) {
-            VdcReturnValueBase result =
+            ActionReturnValue result =
                     runInternalActionWithTasksContext(
                             ActionType.UpdateVmVersion,
                             new UpdateVmVersionParameters(getVmId(),
@@ -383,7 +383,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         List<VmRngDevice> rngDevs = query.getReturnValue();
 
-        VdcReturnValueBase rngCommandResult = null;
+        ActionReturnValue rngCommandResult = null;
         if (rngDevs.isEmpty()) {
             if (getParameters().getRngDevice() != null) {
                 RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
@@ -433,7 +433,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     new HotSetNumberOfCpusParameters(
                             newVmStatic,
                             currentSockets < newNumOfSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
-            VdcReturnValueBase setNumberOfCpusResult =
+            ActionReturnValue setNumberOfCpusResult =
                     runInternalAction(
                             ActionType.HotSetNumberOfCpus,
                             params, cloneContextAndDetachFromParent());
@@ -527,7 +527,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         0,
                         newAmountOfMemoryMb - currentMemoryMb);
 
-        VdcReturnValueBase setAmountOfMemoryResult =
+        ActionReturnValue setAmountOfMemoryResult =
                 runInternalAction(
                         ActionType.HotSetAmountOfMemory,
                         params, cloneContextAndDetachFromParent());
@@ -543,7 +543,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
      * add audit log msg for failed hot set in case error was in CDA
      * otherwise internal command will audit log the result
      */
-    private void logHotSetActionEvent(VdcReturnValueBase setActionResult, AuditLogType logType) {
+    private void logHotSetActionEvent(ActionReturnValue setActionResult, AuditLogType logType) {
         if (!setActionResult.isValid()) {
             AuditLogable logable = new AuditLogableImpl();
             logable.setVmId(getVmId());
@@ -697,7 +697,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     }
 
-    private void addLogMessages(VdcReturnValueBase returnValueBase) {
+    private void addLogMessages(ActionReturnValue returnValueBase) {
         if (!returnValueBase.getSucceeded()) {
             auditLogDirector.log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
         }

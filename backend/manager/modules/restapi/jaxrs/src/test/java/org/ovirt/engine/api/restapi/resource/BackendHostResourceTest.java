@@ -31,6 +31,7 @@ import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -39,7 +40,6 @@ import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
@@ -155,7 +155,7 @@ public class BackendHostResourceTest
                 new Object[] { GUIDS[1],  GUIDS[0]},
                 true,
                 true,
-                new VdcReturnValueBase(),
+                new ActionReturnValue(),
                 false));
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
@@ -189,7 +189,7 @@ public class BackendHostResourceTest
                 new Object[] { GUIDS[1], GUIDS[0] },
                 true,
                 true,
-                new VdcReturnValueBase(),
+                new ActionReturnValue(),
                 false));
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVds,
@@ -316,7 +316,7 @@ public class BackendHostResourceTest
                                            new Object[] { GUIDS[0],  GUIDS[0]},
                                            true,
                                            true,
-                                           new VdcReturnValueBase(),
+                                           new ActionReturnValue(),
                                            false));
 
         setUriInfo(setUpActionExpectations(ActionType.UpdateVds,

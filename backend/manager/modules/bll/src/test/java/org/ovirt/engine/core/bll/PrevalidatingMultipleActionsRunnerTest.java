@@ -13,9 +13,9 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 
 public class PrevalidatingMultipleActionsRunnerTest extends MultipleActionsRunnerBaseTest{
 
@@ -81,7 +81,7 @@ public class PrevalidatingMultipleActionsRunnerTest extends MultipleActionsRunne
     public void shouldCollectReturnValuesOfCommands() {
         setUpFactory(successfulCommand(), failingValidationCommand(), failingExecutionCommand());
         runner.setIsRunOnlyIfAllValidatePass(false);
-        List<VdcReturnValueBase> returnValues = runner.execute();
+        List<ActionReturnValue> returnValues = runner.execute();
         assertThat(returnValues).hasSize(3);
         // Command succeeds
         assertThat(returnValues.get(0).isValid()).isTrue();

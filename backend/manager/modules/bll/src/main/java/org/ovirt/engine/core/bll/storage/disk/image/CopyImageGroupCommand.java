@@ -13,11 +13,11 @@ import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CopyImageGroupWithDataCommandParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -347,7 +347,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             }
             removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, getDestinationImageId()));
             // Setting the image as the monitored entity, so there will not be dependency
-            VdcReturnValueBase returnValue =
+            ActionReturnValue returnValue =
                     checkAndPerformRollbackUsingCommand(ActionType.RemoveImage, removeImageParams, null);
             if (returnValue.getSucceeded()) {
                 // Starting to monitor the the tasks - RemoveImage is an internal command

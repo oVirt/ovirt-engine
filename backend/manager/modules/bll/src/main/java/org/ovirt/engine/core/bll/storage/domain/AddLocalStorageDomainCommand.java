@@ -4,10 +4,10 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -82,7 +82,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
     protected void executeCommand() {
         super.executeCommand();
         if (getSucceeded()) {
-            VdcReturnValueBase returnValue = Backend.getInstance()
+            ActionReturnValue returnValue = Backend.getInstance()
                     .runInternalAction(
                             ActionType.AttachStorageDomainToPool,
                             new AttachStorageDomainToPoolParameters(getStorageDomain().getId(), getStoragePool().getId()));

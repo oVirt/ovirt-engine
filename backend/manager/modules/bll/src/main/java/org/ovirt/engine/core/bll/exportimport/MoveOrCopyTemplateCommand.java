@@ -19,10 +19,10 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -89,7 +89,7 @@ public abstract class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> 
             @Override
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
-                    VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
+                    ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                             ActionType.CopyImageGroup,
                             buildModeOrCopyImageGroupParameters(containerID, disk));
 

@@ -14,6 +14,7 @@ import java.util.Set;
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.SetHaMaintenanceParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
@@ -928,7 +928,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                             HostListModel<Void> localModel = (HostListModel<Void>) array[0];
                             UpdateVdsActionParameters localParameters = (UpdateVdsActionParameters) array[1];
                             boolean localApproveInitiated = (Boolean) array[2];
-                            VdcReturnValueBase localReturnValue = result.getReturnValue();
+                            ActionReturnValue localReturnValue = result.getReturnValue();
                             if (localReturnValue != null && localReturnValue.getSucceeded()) {
                                 localModel.postOnSaveInternalChangeCluster(localParameters, localApproveInitiated);
                             }
@@ -956,7 +956,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 }, new Object[] { this, approveInitiated });
     }
 
-    public void postOnSaveInternal(VdcReturnValueBase returnValue, boolean approveInitiated) {
+    public void postOnSaveInternal(ActionReturnValue returnValue, boolean approveInitiated) {
         HostModel model = (HostModel) getWindow();
 
         model.stopProgress();
@@ -1283,7 +1283,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                 ActionType.InstallVds,
                 param,
                 result -> {
-                    VdcReturnValueBase returnValue1 = result.getReturnValue();
+                    ActionReturnValue returnValue1 = result.getReturnValue();
                     if (returnValue1 != null && returnValue1.getSucceeded()) {
                         cancel();
                     }

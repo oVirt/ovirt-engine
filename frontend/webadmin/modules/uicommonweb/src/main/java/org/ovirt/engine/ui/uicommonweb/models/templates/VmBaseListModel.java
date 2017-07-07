@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -381,7 +381,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
                     getWindow().stopProgress();
-                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    ActionReturnValue returnValue = result.getReturnValue();
                     if (returnValue != null && returnValue.getSucceeded()) {
                         setWindow(null);
                         updateActionsAvailability();

@@ -31,11 +31,11 @@ import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidato
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -319,7 +319,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             return;
         }
         MoveOrCopyImageGroupParameters p = prepareChildParameters();
-        VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
+        ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
                 getImagesActionType(),
                 p);
         if (!vdcRetValue.getSucceeded()) {

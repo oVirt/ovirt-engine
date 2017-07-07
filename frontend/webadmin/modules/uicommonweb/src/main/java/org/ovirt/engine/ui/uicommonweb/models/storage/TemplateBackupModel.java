@@ -11,9 +11,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -282,7 +282,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
                     TemplateBackupModel templateBackupModel = (TemplateBackupModel) result.getState();
                     templateBackupModel.getWindow().stopProgress();
                     templateBackupModel.cancel();
-                    List<VdcReturnValueBase> retVals = result.getReturnValue();
+                    List<ActionReturnValue> retVals = result.getReturnValue();
                     if (retVals != null && templateBackupModel.getSelectedItems().size() == retVals.size()) {
 
                         StringBuilder importedTemplates = new StringBuilder();

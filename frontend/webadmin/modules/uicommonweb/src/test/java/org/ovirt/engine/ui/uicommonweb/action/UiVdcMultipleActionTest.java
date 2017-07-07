@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.ui.uicommonweb.action.UiAction.ActionFlowState;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -142,7 +142,7 @@ public class UiVdcMultipleActionTest extends AsyncUiActionTest<IFrontendMultiple
 
         for (IFrontendMultipleActionAsyncCallback callback : callbacks) {
             assertNotAllDone(flowState);
-            VdcReturnValueBase result = new VdcReturnValueBase();
+            ActionReturnValue result = new ActionReturnValue();
             result.setValid(waitForResult || success);
             result.setSucceeded(waitForResult && success);
             callback.executed(new FrontendMultipleActionAsyncResult(ACTION_TYPE,

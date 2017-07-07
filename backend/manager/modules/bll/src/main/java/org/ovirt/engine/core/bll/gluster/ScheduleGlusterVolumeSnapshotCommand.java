@@ -6,8 +6,8 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -58,7 +58,7 @@ public class ScheduleGlusterVolumeSnapshotCommand extends ScheduleGlusterVolumeS
                 glusterVolumeDao.getByName(getClusterId(), Config.getValue(ConfigValues.GlusterMetaVolumeName));
         Cluster cluster = getCluster();
         if (metaVolume != null && cluster.isGlusterCliBasedSchedulingOn()) {
-            VdcReturnValueBase returnValue =
+            ActionReturnValue returnValue =
                     runInternalAction(ActionType.DisableGlusterCliSnapshotScheduleInternal,
                             new GlusterVolumeActionParameters(getGlusterVolumeId(), true));
             if (!returnValue.getSucceeded()) {

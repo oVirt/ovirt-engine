@@ -13,10 +13,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.RefreshVolumeParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -166,7 +166,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         parameters.setParentCommand(getActionType());
         parameters.setParentParameters(getParameters());
 
-        VdcReturnValueBase returnValue =
+        ActionReturnValue returnValue =
                 runInternalAction(ActionType.RefreshVolume,
                         parameters,
                         cloneContextAndDetachFromParent());

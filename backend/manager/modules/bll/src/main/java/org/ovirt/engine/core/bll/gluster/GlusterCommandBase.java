@@ -20,7 +20,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -150,7 +150,7 @@ public abstract class GlusterCommandBase<T extends ActionParametersBase> extends
         getReturnValue().getFault().setError(null);
     }
 
-    protected boolean evaluateReturnValue(AuditLogType auditLogType, VdcReturnValueBase returnValue) {
+    protected boolean evaluateReturnValue(AuditLogType auditLogType, ActionReturnValue returnValue) {
         boolean succeeded = returnValue.isValid();
         if (!succeeded) {
             handleVdsErrors(auditLogType, returnValue.getValidationMessages());

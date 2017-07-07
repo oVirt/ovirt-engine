@@ -21,10 +21,10 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CpuProfileParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.MacPool;
@@ -114,7 +114,7 @@ public class AddClusterCommandTest extends BaseCommandTest {
     }
 
     private void mockBackend() {
-        when(backend.runAction(any(ActionType.class), any(CpuProfileParameters.class))).thenReturn(new VdcReturnValueBase());
+        when(backend.runAction(any(ActionType.class), any(CpuProfileParameters.class))).thenReturn(new ActionReturnValue());
     }
 
     @Test

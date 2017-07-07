@@ -8,10 +8,10 @@ import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.domain.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -125,7 +125,7 @@ public class RecoveryStoragePoolCommand extends StorageDomainCommandBase<Reconst
                         storagePoolIsoMapDao.save(domainPoolMap);
 
                         getParameters().setVdsId(getVds().getId());
-                        VdcReturnValueBase returnVal = runInternalAction(
+                        ActionReturnValue returnVal = runInternalAction(
                                 ActionType.ReconstructMasterDomain, getParameters(), cloneContextAndDetachFromParent());
 
                         boolean reconstructVerbExecuted = (returnVal.getActionReturnValue() != null) ?

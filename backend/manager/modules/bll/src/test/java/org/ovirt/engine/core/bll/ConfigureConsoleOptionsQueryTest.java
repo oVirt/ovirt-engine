@@ -19,9 +19,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -122,7 +122,7 @@ public class ConfigureConsoleOptionsQueryTest extends
         mockGetCaCertificate();
         doReturn(mockVm(GraphicsType.VNC)).when(getQuery()).getCachedVm();
 
-        VdcReturnValueBase result = new VdcReturnValueBase();
+        ActionReturnValue result = new ActionReturnValue();
         result.setSucceeded(true);
         result.setActionReturnValue("nbusr123");
         doReturn(result).when(backend).runAction(eq(ActionType.SetVmTicket), any(SetVmTicketParameters.class));

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageSyncScheduleParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
@@ -236,7 +236,7 @@ public class StorageDRListModel extends SearchableListModel<StorageDomain, Stora
         model.getCommands().add(cancelCommand);
     }
 
-    public void postSaveAction(VdcReturnValueBase returnValue) {
+    public void postSaveAction(ActionReturnValue returnValue) {
         if (returnValue != null && returnValue.getSucceeded()) {
             setWindow(null);
         }

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -52,7 +52,7 @@ public class HostUpgradeCheckConfirmationModel extends ConfirmationModel {
 
     private void invokeCheckForHostUpgrade(VdsActionParameters params) {
         Frontend.getInstance().runAction(ActionType.HostUpgradeCheck, params, result -> {
-            VdcReturnValueBase returnValue = result.getReturnValue();
+            ActionReturnValue returnValue = result.getReturnValue();
             if (returnValue != null && returnValue.getSucceeded()) {
                 getCancelCommand().execute();
             }

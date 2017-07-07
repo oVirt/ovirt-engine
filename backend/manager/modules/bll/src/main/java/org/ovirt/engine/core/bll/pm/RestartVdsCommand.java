@@ -20,12 +20,12 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.PreviousHostedEngineHost;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
@@ -109,7 +109,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
      */
     @Override
     protected void executeCommand() {
-        VdcReturnValueBase returnValue = new VdcReturnValueBase();
+        ActionReturnValue returnValue = new ActionReturnValue();
         final Guid vdsId = getVdsId();
         final String sessionId = getParameters().getSessionId();
 
@@ -158,7 +158,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         runInternalAction(ActionType.FenceVdsManualy, fenceVdsManuallyParams, getContext());
     }
 
-    private VdcReturnValueBase executeVdsFenceAction(final Guid vdsId,
+    private ActionReturnValue executeVdsFenceAction(final Guid vdsId,
                         String sessionId,
                         ActionType action) {
         FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId);
@@ -197,7 +197,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
      * Determines according to the return status from the Ovirt command whether the fence-operation has been skipped due
      * to policy.
      */
-    protected boolean wasSkippedDueToPolicy(VdcReturnValueBase result) {
+    protected boolean wasSkippedDueToPolicy(ActionReturnValue result) {
         boolean skipped = false;
         if (result.getActionReturnValue() instanceof FenceOperationResult) {
             FenceOperationResult fenceResult = result.getActionReturnValue();

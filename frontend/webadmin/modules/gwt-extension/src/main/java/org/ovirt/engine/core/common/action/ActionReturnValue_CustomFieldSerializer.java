@@ -7,10 +7,10 @@ import com.google.gwt.user.client.rpc.SerializationException;
 import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 
-public class VdcReturnValueBase_CustomFieldSerializer {
+public class ActionReturnValue_CustomFieldSerializer {
 
     public static void deserialize(SerializationStreamReader streamReader,
-            VdcReturnValueBase instance) throws SerializationException {
+            ActionReturnValue instance) throws SerializationException {
         instance.setValid(streamReader.readBoolean());
         java.util.ArrayList<String> validationMessages = (java.util.ArrayList<String>) streamReader.readObject();
         instance.setValidationMessages(validationMessages);
@@ -28,14 +28,14 @@ public class VdcReturnValueBase_CustomFieldSerializer {
         instance.setFault((EngineFault) streamReader.readObject());
     }
 
-    public static VdcReturnValueBase instantiate(
+    public static ActionReturnValue instantiate(
             SerializationStreamReader streamReader)
             throws SerializationException {
-        return new VdcReturnValueBase();
+        return new ActionReturnValue();
     }
 
     public static void serialize(SerializationStreamWriter streamWriter,
-            VdcReturnValueBase instance) throws SerializationException {
+            ActionReturnValue instance) throws SerializationException {
         streamWriter.writeBoolean(instance.isValid());
         streamWriter.writeObject(instance.getValidationMessages());
         streamWriter.writeObject(instance.getExecuteFailedMessages());

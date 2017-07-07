@@ -14,8 +14,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionConfigParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -53,12 +53,12 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
     protected void executeCommand() {
         if (getSession().getStatus() != GeoRepSessionStatus.ACTIVE) {
             // Start geo-replication
-            Future<VdcReturnValueBase> geoRepCmd =
+            Future<ActionReturnValue> geoRepCmd =
                     CommandCoordinatorUtil.executeAsyncCommand(ActionType.StartGlusterVolumeGeoRep,
                             new GlusterVolumeGeoRepSessionParameters(getSession().getMasterVolumeId(),
                                     getSession().getId()),
                             cloneContext());
-            VdcReturnValueBase result;
+            ActionReturnValue result;
             try {
                 result = geoRepCmd.get();
                 if (!result.getSucceeded()) {
@@ -77,7 +77,7 @@ public class GlusterStorageGeoRepSyncInternalCommand<T extends GlusterVolumeGeoR
                         getSession().getId(),
                         GlusterConstants.GEOREP_CHECKPOINT_OPTION,
                         GlusterConstants.GEOREP_CHECKPOINT_VALUE);
-        VdcReturnValueBase result = runInternalAction(ActionType.SetGeoRepConfig, configParams);
+        ActionReturnValue result = runInternalAction(ActionType.SetGeoRepConfig, configParams);
         if (!result.getSucceeded()) {
             propagateFailure(result);
             return;

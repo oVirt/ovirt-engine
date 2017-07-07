@@ -34,6 +34,7 @@ import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -166,7 +166,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     private void removeMemoryVolumes() {
         Set<String> memoryStates = MemoryUtils.getMemoryVolumesFromSnapshots(snapshotDao.getAll(getVmId()));
         for (String memoryState : memoryStates) {
-            VdcReturnValueBase retVal = runInternalAction(
+            ActionReturnValue retVal = runInternalAction(
                     ActionType.RemoveMemoryVolumes,
                     buildRemoveMemoryVolumesParameters(memoryState, getVmId()),
                     cloneContextAndDetachFromParent());
@@ -289,8 +289,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         return true;
     }
 
-    protected VdcReturnValueBase removeVmImages(List<DiskImage> images) {
-        VdcReturnValueBase vdcRetValue =
+    protected ActionReturnValue removeVmImages(List<DiskImage> images) {
+        ActionReturnValue vdcRetValue =
                 runInternalActionWithTasksContext(ActionType.RemoveAllVmImages,
                         buildRemoveAllVmImagesParameters(images));
 
@@ -357,7 +357,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
             RemoveAllVmCinderDisksParameters param = new RemoveAllVmCinderDisksParameters(getVmId(), cinderDisks);
             param.setEndProcedure(EndProcedure.COMMAND_MANAGED);
-            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+            Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                     ActionType.RemoveAllVmCinderDisks,
                     withRootCommandInfo(param),
                     cloneContextAndDetachFromParent());

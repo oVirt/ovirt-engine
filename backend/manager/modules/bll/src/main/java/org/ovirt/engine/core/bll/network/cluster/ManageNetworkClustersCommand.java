@@ -23,11 +23,11 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AttachNetworkToClusterParameter;
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -139,7 +139,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
             List<? extends ActionParametersBase> parameters) {
 
         for (ActionParametersBase param : parameters) {
-            final VdcReturnValueBase executionResult = runInternalAction(actionType, param);
+            final ActionReturnValue executionResult = runInternalAction(actionType, param);
             if (!executionResult.getSucceeded()) {
                 TransactionSupport.setRollbackOnly();
                 propagateFailure(executionResult);

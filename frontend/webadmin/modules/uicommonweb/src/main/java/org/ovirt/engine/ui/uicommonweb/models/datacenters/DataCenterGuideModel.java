@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
@@ -652,8 +652,8 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
             DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
             dataCenterGuideModel.removeConnection = true;
 
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            dataCenterGuideModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            dataCenterGuideModel.storageDomain.setStorage((String) actionReturnValue.getActionReturnValue());
 
         };
         IFrontendActionAsyncCallback callback2 = result -> {
@@ -770,15 +770,15 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
         IFrontendActionAsyncCallback callback1 = result -> {
 
             DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            dataCenterGuideModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            dataCenterGuideModel.storageDomain.setStorage((String) actionReturnValue.getActionReturnValue());
 
         };
         IFrontendActionAsyncCallback callback2 = result -> {
 
             DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            dataCenterGuideModel.storageId = vdcReturnValueBase.getActionReturnValue();
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            dataCenterGuideModel.storageId = actionReturnValue.getActionReturnValue();
 
         };
         IFrontendActionAsyncCallback callback3 = result -> {
@@ -921,7 +921,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                     StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
                     StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                     if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                        VdcReturnValueBase returnValue = result.getReturnValue();
+                        ActionReturnValue returnValue = result.getReturnValue();
                         Guid storageId = returnValue.getActionReturnValue();
                         dataCenterGuideModel.attachStorageToDataCenter(storageId, dataCenter.getId());
                     }
@@ -1127,7 +1127,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                 }, this);
     }
 
-    public void postOnAddCluster(VdcReturnValueBase returnValue) {
+    public void postOnAddCluster(ActionReturnValue returnValue) {
         ClusterModel model = (ClusterModel) getWindow();
 
         model.stopProgress();
@@ -1206,7 +1206,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
                         final DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                         List<MoveHostData> hosts =
                                 ((MoveHost) dataCenterGuideModel.getWindow()).getSelectedHosts();
-                        List<VdcReturnValueBase> retVals = result.getReturnValue();
+                        List<ActionReturnValue> retVals = result.getReturnValue();
                         final List<ActionParametersBase> activateVdsParameterList = new ArrayList<>();
                         if (retVals != null && hosts.size() == retVals.size()) {
                             int i = 0;
@@ -1408,16 +1408,16 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
 
         IFrontendActionAsyncCallback callback1 = result -> {
             DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            dataCenterGuideModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
-            dataCenterGuideModel.connection.setId((String) vdcReturnValueBase.getActionReturnValue());
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            dataCenterGuideModel.storageDomain.setStorage((String) actionReturnValue.getActionReturnValue());
+            dataCenterGuideModel.connection.setId((String) actionReturnValue.getActionReturnValue());
 
         };
 
         IFrontendActionAsyncCallback callback2 = result -> {
             DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
-            VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-            dataCenterGuideModel.storageId = vdcReturnValueBase.getActionReturnValue();
+            ActionReturnValue actionReturnValue = result.getReturnValue();
+            dataCenterGuideModel.storageId = actionReturnValue.getActionReturnValue();
 
             // Attach storage to data center as necessary.
             StorageModel storageModel = (StorageModel) dataCenterGuideModel.getWindow();
@@ -1443,7 +1443,7 @@ public class DataCenterGuideModel extends GuideModel<StoragePool> implements ITa
     }
 
 
-    public void postOnAddHost(VdcReturnValueBase returnValue) {
+    public void postOnAddHost(ActionReturnValue returnValue) {
         HostModel model = (HostModel) getWindow();
 
         model.stopProgress();

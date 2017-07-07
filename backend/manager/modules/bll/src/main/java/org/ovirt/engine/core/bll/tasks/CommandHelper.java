@@ -6,13 +6,13 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.compat.CommandStatus;
 
 public class CommandHelper {
 
-    public static VdcReturnValueBase validate(ActionType actionType,
+    public static ActionReturnValue validate(ActionType actionType,
                                                  ActionParametersBase parameters,
                                                  CommandContext commandContext) {
         return CommandsFactory.createCommand(actionType, parameters, commandContext).validateOnly();

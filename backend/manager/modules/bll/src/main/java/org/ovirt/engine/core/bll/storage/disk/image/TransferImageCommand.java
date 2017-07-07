@@ -12,8 +12,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -198,7 +198,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                 return;
         }
 
-        VdcReturnValueBase addDiskRetVal = CommandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
+        ActionReturnValue addDiskRetVal = CommandCoordinatorUtil.getCommandReturnValue(context.childCmdId);
         if (addDiskRetVal == null || !addDiskRetVal.getSucceeded()) {
             log.error("Failed to add {} (command status was success, but return value was failed)"
                     + " for image transfer command '{}'", getImageType(), getCommandId());

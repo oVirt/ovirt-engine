@@ -10,9 +10,9 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.EventSubscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -254,7 +254,7 @@ public class UserEventNotifierListModel extends SearchableListModel<DbUser, Even
 
         @Override
         public void executed(FrontendActionAsyncResult result) {
-            VdcReturnValueBase returnValue = result.getReturnValue();
+            ActionReturnValue returnValue = result.getReturnValue();
             if (returnValue != null && returnValue.getSucceeded()) {
                 sucessCount++;
                 // we wait until all subscribed events have been removed and then

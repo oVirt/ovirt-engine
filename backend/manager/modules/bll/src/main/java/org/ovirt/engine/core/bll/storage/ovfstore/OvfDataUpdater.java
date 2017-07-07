@@ -10,10 +10,10 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -53,7 +53,7 @@ public class OvfDataUpdater implements BackendService {
                 new ProcessOvfUpdateForStorageDomainCommandParameters(storagePoolId, domainId));
     }
 
-    protected VdcReturnValueBase performOvfUpdateForStoragePool(Guid storagePoolId) {
+    protected ActionReturnValue performOvfUpdateForStoragePool(Guid storagePoolId) {
         StoragePoolParametersBase parameters = new StoragePoolParametersBase(storagePoolId);
         return backend.runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
@@ -68,7 +68,7 @@ public class OvfDataUpdater implements BackendService {
     public void updateOvfData(List<StoragePool> storagePools) {
         log.info("Attempting to update VMs/Templates Ovf.");
         for (StoragePool pool : storagePools) {
-            VdcReturnValueBase returnValueBase = performOvfUpdateForStoragePool(pool.getId());
+            ActionReturnValue returnValueBase = performOvfUpdateForStoragePool(pool.getId());
             if (!returnValueBase.getSucceeded()) {
                 log.error("Exception while trying to update or remove VMs/Templates ovf in Data Center '{}'.", pool.getName());
             }

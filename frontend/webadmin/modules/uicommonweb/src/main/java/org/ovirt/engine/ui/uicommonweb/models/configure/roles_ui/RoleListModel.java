@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ActionGroupsToRoleParameter;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.RoleWithActionGroupsParameters;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -416,7 +416,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
             }
         }
 
-        VdcReturnValueBase returnValue;
+        ActionReturnValue returnValue;
 
         model.startProgress();
 
@@ -445,7 +445,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                     result -> {
 
                         RoleListModel roleListModel = (RoleListModel) result.getState();
-                        VdcReturnValueBase retVal = result.getReturnValue();
+                        ActionReturnValue retVal = result.getReturnValue();
                         if (retVal != null && retVal.getSucceeded()) {
                             if (roleListModel.detachActionGroup.size() > 0) {
                                 ActionGroupsToRoleParameter tempVar2 = new ActionGroupsToRoleParameter();
@@ -470,7 +470,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         }
     }
 
-    public void postOnSaveNew(VdcReturnValueBase returnValue) {
+    public void postOnSaveNew(ActionReturnValue returnValue) {
         RoleModel model = (RoleModel) getWindow();
 
         model.stopProgress();

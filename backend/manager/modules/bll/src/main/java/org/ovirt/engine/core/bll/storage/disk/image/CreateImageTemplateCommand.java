@@ -9,10 +9,10 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.domain.PostDeleteActionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -186,7 +186,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         p.setEntityInfo(new EntityInfo(VdcObjectType.Disk, destImageId));
         p.setParentParameters(p);
         p.setParentCommand(ActionType.RemoveImage);
-        VdcReturnValueBase returnValue =
+        ActionReturnValue returnValue =
                 checkAndPerformRollbackUsingCommand(ActionType.RemoveImage, p, null);
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());

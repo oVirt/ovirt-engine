@@ -21,9 +21,9 @@ import org.codehaus.jackson.map.type.TypeFactory;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LoginOnBehalfParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -96,7 +96,7 @@ public class VMConsoleProxyServlet extends HttpServlet {
         }
 
         if (userGuid != null) {
-            VdcReturnValueBase loginResult = backend.runInternalAction(ActionType.LoginOnBehalf,
+            ActionReturnValue loginResult = backend.runInternalAction(ActionType.LoginOnBehalf,
                     new LoginOnBehalfParameters(userGuid));
             if (!loginResult.getSucceeded()) {
                 throw new RuntimeException("Unable to create session using LoginOnBehalf");

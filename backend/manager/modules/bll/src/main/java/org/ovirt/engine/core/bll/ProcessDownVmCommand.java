@@ -13,10 +13,10 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.host.NetworkDeviceHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -232,7 +232,7 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
                 // override creation date because the value in the config is the creation date of the config, not the vm
                 getVm().setVmCreationDate(originalCreationDate);
 
-                VdcReturnValueBase result = runInternalAction(ActionType.UpdateVm, createUpdateVmParameters(),
+                ActionReturnValue result = runInternalAction(ActionType.UpdateVm, createUpdateVmParameters(),
                         ExecutionHandler.createInternalJobContext(updateVmLock));
                 if (result.getActionReturnValue() != null && result.getActionReturnValue()
                         .equals(ActionType.UpdateVmVersion)) { // Template-version changed

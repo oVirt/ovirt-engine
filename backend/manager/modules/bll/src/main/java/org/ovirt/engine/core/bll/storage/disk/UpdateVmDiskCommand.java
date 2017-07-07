@@ -38,12 +38,12 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -604,7 +604,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private void extendDiskImageSize() {
         lockImageInDb();
 
-        VdcReturnValueBase ret = runInternalActionWithTasksContext(
+        ActionReturnValue ret = runInternalActionWithTasksContext(
                 ActionType.ExtendImageSize,
                 createExtendImageSizeParameters());
 
@@ -617,7 +617,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     }
 
     protected void amendDiskImage() {
-        VdcReturnValueBase ret = runInternalActionWithTasksContext(ActionType.AmendImageGroupVolumes,
+        ActionReturnValue ret = runInternalActionWithTasksContext(ActionType.AmendImageGroupVolumes,
                 amendImageGroupVolumesCommandParameters());
 
         if (!ret.getSucceeded()) {
@@ -630,7 +630,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
     private void extendCinderDiskSize() {
         lockImageInDb();
         CinderDisk newCinderDisk = (CinderDisk) getNewDisk();
-        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+        Future<ActionReturnValue> future = CommandCoordinatorUtil.executeAsyncCommand(
                 ActionType.ExtendCinderDisk,
                 buildExtendCinderDiskParameters(newCinderDisk),
                 cloneContextAndDetachFromParent());
@@ -660,7 +660,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
             return;
         }
 
-        VdcReturnValueBase ret = getBackend().endAction(ActionType.ExtendImageSize,
+        ActionReturnValue ret = getBackend().endAction(ActionType.ExtendImageSize,
                 createExtendImageSizeParameters(),
                 getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
@@ -982,7 +982,7 @@ public class UpdateVmDiskCommand<T extends VmDiskOperationParameterBase> extends
         return params;
     }
 
-    private void propagateInternalCommandFailure(VdcReturnValueBase internalReturnValue) {
+    private void propagateInternalCommandFailure(ActionReturnValue internalReturnValue) {
         getReturnValue().getExecuteFailedMessages().clear();
         getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
         getReturnValue().setFault(internalReturnValue.getFault());

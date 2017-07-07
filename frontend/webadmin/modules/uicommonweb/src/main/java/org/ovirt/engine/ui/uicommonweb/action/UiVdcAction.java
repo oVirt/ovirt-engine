@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.action;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -73,7 +73,7 @@ public class UiVdcAction extends UiAction {
 
     private IFrontendActionAsyncCallback createCallback() {
         return result -> {
-            VdcReturnValueBase returnValue = result.getReturnValue();
+            ActionReturnValue returnValue = result.getReturnValue();
             if (returnValue == null || !returnValue.getSucceeded()) {
                 if (!showErrorDialogOnFirstFailure && returnValue != null) {
                     getActionFlowState().addFailure(actionType, returnValue);

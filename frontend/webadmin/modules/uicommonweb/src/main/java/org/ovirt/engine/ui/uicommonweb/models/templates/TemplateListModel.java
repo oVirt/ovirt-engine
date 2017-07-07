@@ -8,10 +8,10 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.ActionUtils;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateManagementParameters;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -679,7 +679,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
-    public void postUpdateVmTemplate(VdcReturnValueBase returnValue) {
+    public void postUpdateVmTemplate(ActionReturnValue returnValue) {
         UnitVmModel model = (UnitVmModel) getWindow();
 
         model.stopProgress();

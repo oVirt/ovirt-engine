@@ -18,9 +18,9 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.PowerManagementHelper.AgentsIterator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
@@ -245,7 +245,8 @@ public class PmHealthCheckManager implements BackendService {
                     new RestartVdsCommand<>(new
                             FenceVdsActionParameters(host.getId()), null);
             if (new HostFenceActionExecutor(host).isHostPoweredOff()) {
-                VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(ActionType.RestartVds, restartVdsCommand.getParameters());
+                ActionReturnValue
+                        retValue = Backend.getInstance().runInternalAction(ActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {
                     log.info("Host '{}' was started successfully by PM Health Check Manager",
                             host.getName());

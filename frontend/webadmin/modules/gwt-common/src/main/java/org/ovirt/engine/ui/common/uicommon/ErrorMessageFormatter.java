@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -75,10 +75,10 @@ public class ErrorMessageFormatter {
         return templates.unsignedList(itemBuilder.toSafeHtml());
     }
 
-    public static String formatReturnValues(List<VdcReturnValueBase> values) {
+    public static String formatReturnValues(List<ActionReturnValue> values) {
         StringBuilder msg = new StringBuilder();
 
-        for (VdcReturnValueBase val : values) {
+        for (ActionReturnValue val : values) {
             msg.append(val.getFault().getMessage());
         }
 

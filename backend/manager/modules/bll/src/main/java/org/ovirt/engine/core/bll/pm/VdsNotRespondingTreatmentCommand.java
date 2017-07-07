@@ -17,12 +17,12 @@ import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -144,10 +144,10 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
 
         boolean shouldBeFenced = getVds().shouldVdsBeFenced();
-        VdcReturnValueBase restartVdsResult = null;
+        ActionReturnValue restartVdsResult = null;
         if (shouldBeFenced) {
             getParameters().setParentCommand(ActionType.VdsNotRespondingTreatment);
-            VdcReturnValueBase retVal;
+            ActionReturnValue retVal;
 
             retVal = runInternalAction(ActionType.SshSoftFencing,
                     getParameters(),

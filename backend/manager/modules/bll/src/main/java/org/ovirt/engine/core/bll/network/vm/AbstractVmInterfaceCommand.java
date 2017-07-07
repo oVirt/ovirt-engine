@@ -10,11 +10,11 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.MacAddressValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -49,7 +49,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         ActivateDeactivateVmNicParameters parameters = new ActivateDeactivateVmNicParameters(nic, plugAction, newNic);
         parameters.setVmId(getParameters().getVmId());
 
-        VdcReturnValueBase returnValue =
+        ActionReturnValue returnValue =
                 runInternalAction(ActionType.ActivateDeactivateVmNic, parameters, cloneContextAndDetachFromParent());
         if (!returnValue.getSucceeded()) {
             propagateFailure(returnValue);
