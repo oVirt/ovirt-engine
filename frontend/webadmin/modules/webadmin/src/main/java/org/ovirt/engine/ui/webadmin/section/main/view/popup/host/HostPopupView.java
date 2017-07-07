@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.gwtbootstrap3.client.ui.Button;
@@ -810,27 +809,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         });
 
-        affinityLabelSelectionWidget.getListWidget().init(object.getLabelList());
-
-        object.getLabelList().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (object.getLabelList().getSelectedItems() == null) {
-                    object.getLabelList().setSelectedItems(new ArrayList<org.ovirt.engine.core.common.businessentities.Label>());
-                }
-
-                affinityLabelSelectionWidget.getListWidget().refreshItems();
-            }
-        });
-
-        object.getLabelList().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (object.getLabelList().getSelectedItems() != null) {
-                    affinityLabelSelectionWidget.getListWidget().refreshItems();
-                }
-            }
-        });
+        affinityLabelSelectionWidget.init(object.getLabelList());
     }
 
     private void showDiscoveredHostsWidgets(boolean enabled) {

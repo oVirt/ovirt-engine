@@ -1697,40 +1697,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getCustomCompatibilityVersion().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateUrandomLabel(object);
-            }
-        });
-
-        object.getIsHeadlessModeEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isHeadlessEnabled = object.getIsHeadlessModeEnabled().getEntity();
-                ssoMethodLabel.setEnabled(!isHeadlessEnabled);
-                monitorsLabel.setEnabled(!isHeadlessEnabled);
-                spiceProxyEnabledCheckboxWithInfoIcon.setEnabled(!isHeadlessEnabled);
-            }
-        });
-
-        object.getLabelList().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (object.getLabelList().getSelectedItems() == null) {
-                    object.getLabelList().setSelectedItems(new ArrayList<org.ovirt.engine.core.common.businessentities.Label>());
-                }
-
-                affinityLabelSelectionWidget.getListWidget().refreshItems();
-            }
-        });
-
-        object.getLabelList().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (object.getLabelList().getSelectedItems() != null) {
-                    affinityLabelSelectionWidget.getListWidget().refreshItems();
-                }
-            }
-        });
+        affinityLabelSelectionWidget.init(object.getLabelList());
     }
 
     private void updateUrandomLabel(UnitVmModel model) {
