@@ -52,6 +52,10 @@ public abstract class AbstractItemSelectionWidget<T> extends Composite implement
 
     protected abstract ListModelTypeAheadListBoxEditor<T> createFilterListEditor();
 
+    public ListModelTypeAheadListBoxEditor<T> getFilterListEditor() {
+        return filterListEditor;
+    }
+
     protected String typeAheadNameTemplateNullSafe(String name) {
         if (StringUtils.isNotEmpty(name)) {
             return templates.typeAheadName(name).asString();

@@ -1634,19 +1634,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             spiceProxyEnabledCheckboxWithInfoIcon.setEnabled(!isHeadlessEnabled);
         });
 
-        object.getLabelList().getItemsChangedEvent().addListener((ev, sender, args) -> {
-            if (object.getLabelList().getSelectedItems() == null) {
-                object.getLabelList().setSelectedItems(new ArrayList<>());
-            }
-
-            affinityLabelSelectionWidget.getListWidget().refreshItems();
-        });
-
-        object.getLabelList().getSelectedItemsChangedEvent().addListener((ev, sender, args) -> {
-            if (object.getLabelList().getSelectedItems() != null) {
-                affinityLabelSelectionWidget.getListWidget().refreshItems();
-            }
-        });
+        affinityLabelSelectionWidget.init(object.getLabelList());
     }
 
     private void updateUrandomLabel(UnitVmModel model) {

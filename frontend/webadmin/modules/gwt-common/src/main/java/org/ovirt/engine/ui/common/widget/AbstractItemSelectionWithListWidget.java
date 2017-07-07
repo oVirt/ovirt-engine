@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget;
 
+import org.gwtbootstrap3.client.ui.Button;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -49,5 +50,9 @@ public abstract class AbstractItemSelectionWithListWidget<T> extends Composite i
 
     public AbstractItemSelectionWidget<T> getSelectionWidget() {
         return selectionWidget;
+    }
+
+    public Button getAddSelectedItemButton() {
+        return (Button) selectionWidget.getAddSelectedItemButton();
     }
 }
