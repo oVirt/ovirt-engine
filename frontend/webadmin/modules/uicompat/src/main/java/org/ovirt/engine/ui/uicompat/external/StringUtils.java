@@ -92,17 +92,6 @@ public class StringUtils {
     }
 
     /**
-     * Returns the String form of an object.
-     *
-     * @param obj
-     *            The object to turn into a String.
-     * @return null if the object is null, obj.toString() otherwise.
-     */
-    public static String render(Object obj) {
-        return obj == null ? null : obj.toString();
-    }
-
-    /**
      * Returns the equivalent BigDecimal representation of a String, if possible.
      *
      * @param str

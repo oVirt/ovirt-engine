@@ -35,9 +35,20 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
             qos = new HostNetworkQos();
         }
 
-        getOutAverageLinkshare().setEntity(StringUtils.render(qos.getOutAverageLinkshare()));
-        getOutAverageUpperlimit().setEntity(StringUtils.render(qos.getOutAverageUpperlimit()));
-        getOutAverageRealtime().setEntity(StringUtils.render(qos.getOutAverageRealtime()));
+        getOutAverageLinkshare().setEntity(render(qos.getOutAverageLinkshare()));
+        getOutAverageUpperlimit().setEntity(render(qos.getOutAverageUpperlimit()));
+        getOutAverageRealtime().setEntity(render(qos.getOutAverageRealtime()));
+    }
+
+    /**
+     * Returns the String form of an object.
+     *
+     * @param obj
+     *            The object to turn into a String.
+     * @return null if the object is null, obj.toString() otherwise.
+     */
+    private String render(Object obj) {
+        return obj == null ? null : obj.toString();
     }
 
     @Override
