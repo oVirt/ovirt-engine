@@ -454,7 +454,7 @@ public class FrontendActionTest {
         ActionParametersBase testParameters = new ActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setValid(true);
-        returnValue.setIsSyncronious(true);
+        returnValue.setIsSynchronous(true);
         returnValue.setSucceeded(false); // Yes this is the default, but to make sure.
         EngineFault testFault = new EngineFault();
         returnValue.setFault(testFault);

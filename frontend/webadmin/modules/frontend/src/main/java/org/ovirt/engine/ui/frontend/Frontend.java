@@ -898,7 +898,7 @@ public class Frontend implements HasHandlers {
             String message = result.getExecuteFailedMessages().size() > 1 ?
                     translateExecuteFailedMessages(result.getExecuteFailedMessages()) : translateEngineFault(fault);
             fault.setMessage(message);
-            if (showErrorDialog && result.getIsSyncronious() && getEventsHandler() != null) {
+            if (showErrorDialog && result.getIsSynchronous() && getEventsHandler() != null) {
                 getEventsHandler().runActionExecutionFailed(actionType, fault);
             }
         }

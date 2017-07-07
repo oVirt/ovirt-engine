@@ -1443,7 +1443,7 @@ public abstract class CommandBase<T extends ActionParametersBase>
     protected final void execute() {
         setCommandStatus(CommandStatus.ACTIVE);
         getReturnValue().setValid(true);
-        getReturnValue().setIsSyncronious(true);
+        getReturnValue().setIsSynchronous(true);
 
         if (shouldPersistCommand()) {
             persistCommandIfNeeded();

@@ -22,7 +22,7 @@ public final class VdcReturnValueBase implements Serializable {
     private boolean valid;
     private ArrayList<String> validationMessages;
     private boolean succeeded;
-    private boolean isSyncronious;
+    private boolean isSynchronous;
     private Object returnValue;
     private String description;
     /**
@@ -116,12 +116,12 @@ public final class VdcReturnValueBase implements Serializable {
         description = value;
     }
 
-    public boolean getIsSyncronious() {
-        return isSyncronious;
+    public boolean getIsSynchronous() {
+        return isSynchronous;
     }
 
-    public void setIsSyncronious(boolean value) {
-        isSyncronious = value;
+    public void setIsSynchronous(boolean value) {
+        isSynchronous = value;
     }
 
     public ArrayList<Guid> getVdsmTaskIdList() {
