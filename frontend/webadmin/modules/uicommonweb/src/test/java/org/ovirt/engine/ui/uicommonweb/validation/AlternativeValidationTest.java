@@ -14,28 +14,28 @@ import org.junit.Test;
 public class AlternativeValidationTest {
     @Test
     public void testAlteringPatternsWithMultipleFailingPatterns() throws Exception {
-        List<IValidation> validations = Arrays.<IValidation>asList(new RegexValidation("^$", ""), new RegexValidation("^b$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        List<IValidation> validations = Arrays.asList(new RegexValidation("^$", ""), new RegexValidation("^b$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
         doTest(validations, false);
     }
 
     @Test
     public void testAlteringPatternsWithMultiplePatternsSecondValid() throws Exception {
-        List<IValidation> validations = Arrays.<IValidation>asList(new RegexValidation("^$", ""), new RegexValidation("^a.*$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        List<IValidation> validations = Arrays.asList(new RegexValidation("^$", ""), new RegexValidation("^a.*$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
         doTest(validations, true);
     }
 
     @Test
     public void testAlteringPatternsWithMultiplePatternsFirstValid() throws Exception {
-        List<IValidation> validations = Arrays.<IValidation>asList(new RegexValidation("^a.*$", ""), new RegexValidation("^$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+        List<IValidation> validations = Arrays.asList(new RegexValidation("^a.*$", ""), new RegexValidation("^$", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
         doTest(validations, true);
     }
 
     @Test
     public void testAlteringValidationWithNoValidation() throws Exception {
-        doTest(Collections.<IValidation> emptyList(), true);
+        doTest(Collections.emptyList(), true);
     }
 
     private void doTest(List<IValidation> validations, boolean expectedToSucceed) {
