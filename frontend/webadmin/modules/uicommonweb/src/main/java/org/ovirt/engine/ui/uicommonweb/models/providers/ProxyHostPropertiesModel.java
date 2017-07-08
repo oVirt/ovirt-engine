@@ -13,7 +13,7 @@ public abstract class ProxyHostPropertiesModel extends Model {
     private Guid lastProxyHostId;
 
     public void disableProxyHost() {
-        getProxyHost().setItems(Collections.<VDS>singleton(null));
+        getProxyHost().setItems(Collections.singleton(null));
         getProxyHost().setIsChangeable(false);
     }
 
