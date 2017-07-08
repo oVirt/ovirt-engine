@@ -35,5 +35,5 @@ public abstract class ProxyHostPropertiesModel extends Model {
 
     public ListModel<VDS> getProxyHost() {
         return new ListModel<>();
-    };
+    }
 }
