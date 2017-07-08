@@ -5,16 +5,18 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
     <b:Container fluid="true">
-        <b:PageHeader text="Bookmarks" />
+        <b:PageHeader text="{constants.bookmarksMainSection}" />
         <b:FormGroup>
             <b:Row>
                 <b:Column size="SM_1" offset="SM_11">
-                    <b:Button text="close" ui:field="closeButton" addStyleNames="pull-right" />
+                    <b:Button text="{constants.closeText}" ui:field="closeButton" addStyleNames="pull-right" />
                 </b:Column>
                 <b:Column size="SM_10" ui:field="emptyBookmarksColumn">
                     <g:HTMLPanel>
-                        <H1>No bookmarks found</H1>
+                        <h1><ui:text from="{constants.bookmarkOverlayNoBookmarksFound}"/></h1>
                     </g:HTMLPanel>
                 </b:Column>
             </b:Row>

@@ -700,6 +700,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String bookmarkPopupSearchStringLabel();
 
+    String bookmarkOverlayNoBookmarksFound();
+
+    String tagsOverlayNoTagsFound();
+
     String tagPopupNameLabel();
 
     String tagPopupDescriptionLabel();
@@ -2002,6 +2006,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String hostsPopupApply();
 
     String hostsPopupFingerprint();
+
+    String addTag();
 
     String newTag();
 
@@ -3312,5 +3318,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String help();
 
     String storageDomainsMenuLabel();
+
+    String tasksOverlayNoTasksFound();
 }
 

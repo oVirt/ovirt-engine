@@ -16,7 +16,7 @@
                 </b:Column>
                 <b:Column size="SM_10" ui:field="emptyTasksColumn">
                     <g:HTMLPanel>
-                        <H1>No tasks found</H1>
+                        <h1><ui:text from="{constants.tasksOverlayNoTasksFound}"/></h1>
                     </g:HTMLPanel>
                 </b:Column>
             </b:Row>

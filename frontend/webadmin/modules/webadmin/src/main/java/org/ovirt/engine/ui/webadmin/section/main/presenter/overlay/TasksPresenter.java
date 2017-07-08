@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification;
 import org.ovirt.engine.ui.common.widget.uicommon.tasks.ToastNotification.NotificationStatus;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -79,20 +80,7 @@ public class TasksPresenter extends AbstractOverlayPresenter<TasksPresenter.View
     }
 
     public static String getPrefixText(JobExecutionStatus status) {
-        switch (status) {
-        case ABORTED:
-            return "Aborted: "; // $NON-NLS-1$
-        case FAILED:
-            return "Failed: "; // $NON-NLS-1$
-        case FINISHED:
-            return "Finished: "; // $NON-NLS-1$
-        case STARTED:
-            return "Started: "; // $NON-NLS-1$
-        case UNKNOWN:
-            return "Unknown: "; // $NON-NLS-1$
-        default:
-            return "Unknown: "; // $NON-NLS-1$
-        }
+        return EnumTranslator.getInstance().translate(status);
     }
 
     protected NotificationStatus getNotificationStatus(JobExecutionStatus status) {

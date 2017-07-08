@@ -5,18 +5,20 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+
     <b:Container fluid="true">
-        <b:PageHeader text="Tags" />
+        <b:PageHeader text="{constants.tagsMainSection}" />
         <b:Row>
             <b:Column size="SM_1" offset="SM_11">
                 <b:ButtonGroup addStyleNames="pull-right">
-                    <b:Button text="Add" ui:field="addTagButton" />
-                    <b:Button text="close" ui:field="closeButton" />
+                    <b:Button text="{constants.addTag}" ui:field="addTagButton" />
+                    <b:Button text="{constants.closeText}" ui:field="closeButton" />
                 </b:ButtonGroup>
             </b:Column>
             <b:Column size="SM_10" ui:field="emptyTagsColumn">
                 <g:HTMLPanel>
-                    <H1>No tags found</H1>
+                    <h1><ui:text from="{constants.tagsOverlayNoTagsFound}"/></h1>
                 </g:HTMLPanel>
             </b:Column>
         </b:Row>
