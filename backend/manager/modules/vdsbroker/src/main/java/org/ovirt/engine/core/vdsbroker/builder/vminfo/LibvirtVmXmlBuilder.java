@@ -1667,8 +1667,8 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
             writer.writeEndElement();
         }
+        writer.writeStartElement("bandwidth");
         if (device.getSpecParams().containsKey("inbound") || device.getSpecParams().containsKey("outbound")) {
-            writer.writeStartElement("bandwidth");
             Map<String, Object> map = new HashMap<>();
             vmInfoBuildUtils.addProfileDataToNic(map, vm, device, nic);
             @SuppressWarnings("unchecked")
@@ -1689,8 +1689,8 @@ public class LibvirtVmXmlBuilder {
                 writer.writeAttributeString("peak", outboundMap.get("peak"));
                 writer.writeEndElement();
             }
-            writer.writeEndElement();
         }
+        writer.writeEndElement();
 
         writer.writeEndElement();
     }
