@@ -59,6 +59,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -106,6 +107,8 @@ public class LibvirtVmXmlBuilder {
     private NetworkDao networkDao;
     @Inject
     private HostDeviceDao hostDeviceDao;
+    @Inject
+    private VmNicFilterParameterDao vmNicFilterParameterDao;
 
     private OsRepository osRepository;
     private String serialConsolePath;
@@ -1658,6 +1661,12 @@ public class LibvirtVmXmlBuilder {
         if (networkFilter != null) {
             writer.writeStartElement("filterref");
             writer.writeAttributeString("filter", networkFilter.getName());
+            vmNicFilterParameterDao.getAllForVmNic(nic.getId()).forEach(parameter -> {
+                writer.writeStartElement("parameter");
+                writer.writeAttributeString("name", parameter.getName());
+                writer.writeAttributeString("value", parameter.getValue());
+                writer.writeEndElement();
+            });
             writer.writeEndElement();
         }
         if (properties.containsKey("sndbuf")) {
