@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.config.Config;
@@ -115,7 +116,7 @@ public class CustomPropertiesUtils {
                     break;
                 }
 
-                if (!StringHelper.defaultString(e.getValue()).matches(VALUE_REGEX)) {
+                if (!Objects.toString(e.getValue(), "").matches(VALUE_REGEX)) {
                     // syntax error in property value
                     error = true;
                     break;
@@ -326,7 +327,7 @@ public class CustomPropertiesUtils {
             for (Map.Entry<String, String> e : properties.entrySet()) {
                 sb.append(e.getKey());
                 sb.append(KEY_VALUE_DELIMETER);
-                sb.append(StringHelper.defaultString(e.getValue()));
+                sb.append(Objects.toString(e.getValue(), ""));
                 sb.append(PROPERTIES_DELIMETER);
             }
             // remove last PROPERTIES_DELIMETER

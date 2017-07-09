@@ -172,12 +172,4 @@ public final class StringHelper {
         sb.append("\\E");
         return sb.toString();
     }
-
-    /**
-     * Replaces a null String with "", otherwise returns the original String.
-     */
-    public static String defaultString(String s) {
-        return s == null ? "" : s;
-    }
-
 }

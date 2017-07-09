@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -166,7 +167,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         Set<String> userdefinedPropertiesKeys = userdefinedProperties.get(version).keySet();
         for (Entry<String, String> propertiesEntry : propertiesEntries) {
             String propertyKey = propertiesEntry.getKey();
-            String propertyValue = StringHelper.defaultString(propertiesEntry.getValue());
+            String propertyValue = Objects.toString(propertiesEntry.getValue(), "");
             if (predefinedPropertiesKeys.contains(propertyKey)) {
                 predefinedPropertiesMap.put(propertyKey, propertyValue);
             }
