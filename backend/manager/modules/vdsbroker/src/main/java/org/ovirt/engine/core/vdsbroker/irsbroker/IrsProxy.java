@@ -1175,8 +1175,7 @@ public class IrsProxy {
                             handleMonitoredDomainsForHost(vdsId,
                                     vdsName,
                                     data,
-                                    monitoredDomains,
-                                    storagePool);
+                                    monitoredDomains);
                 }
 
                 Set<Guid> domainsInMaintenance = Collections.emptySet();
@@ -1231,7 +1230,7 @@ public class IrsProxy {
      * the host reporting is problematic for.
      */
     private Map<Guid, DomainMonitoringResult> handleMonitoredDomainsForHost(final Guid vdsId, final String vdsName,
-            final ArrayList<VDSDomainsData> data, Collection<Guid> monitoredDomains, StoragePool storagePool) {
+            final ArrayList<VDSDomainsData> data, Collection<Guid> monitoredDomains) {
         Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = new HashMap<>();
         // build a list of all domains in pool
         // which are in status Active or Unknown
