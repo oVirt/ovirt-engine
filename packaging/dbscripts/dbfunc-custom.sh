@@ -8,10 +8,10 @@ DBFUNC_CUSTOM_CLEAN_TASKS=
 
 dbfunc_common_hook_init_insert_data() {
         # generate new UUIDs for default DC & Cluster
-	local spid="00000002-0002-0002-0002-00000000021c"
+	local spid="58cfb470-02f3-03d7-0386-0000000003bc"
 	local gen_spid=$(dbfunc_get_psql_result "select uuid_generate_v1();")
 
-	local clusterid="00000001-0001-0001-0001-0000000000d6"
+	local clusterid="58cfb470-03b9-01d0-03b9-0000000001e7"
 	local gen_clusterid=$(dbfunc_get_psql_result "select uuid_generate_v1();")
 
 	# Replace static UUIDs with generated ones
