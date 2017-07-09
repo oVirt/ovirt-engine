@@ -68,8 +68,6 @@ public interface IVdsEventListener {
      */
     void updateSchedulingStats(VDS vds); // BLL
 
-    void syncLunsInfoForBlockStorageDomain(final Guid storageDomainId, final Guid vdsId);
-
     void syncStorageDomainsLuns(Guid vdsId, Collection<Guid> storageDomainsToSync);
 
     /**

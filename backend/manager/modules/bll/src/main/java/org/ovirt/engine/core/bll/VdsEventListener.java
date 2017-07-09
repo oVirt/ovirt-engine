@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
-import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.action.SyncStorageDomainsLunsParameters;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmSlaPolicyParameters;
@@ -267,18 +266,6 @@ public class VdsEventListener implements IVdsEventListener {
 
         HostDeviceManager hostDeviceManager = Injector.get(HostDeviceManager.class);
         hostDeviceManager.refreshHostIfAnyVmHasHostDevices(vmIds, hostId);
-    }
-
-    /**
-     * Synchronize LUN details comprising the storage domain with the DB
-     */
-    @Override
-    public void syncLunsInfoForBlockStorageDomain(final Guid storageDomainId, final Guid vdsId) {
-        ThreadPoolUtil.execute(() -> {
-            SyncLunsInfoForBlockStorageDomainParameters parameters = new SyncLunsInfoForBlockStorageDomainParameters(
-                    storageDomainId, vdsId);
-            backend.runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters);
-        });
     }
 
     /**

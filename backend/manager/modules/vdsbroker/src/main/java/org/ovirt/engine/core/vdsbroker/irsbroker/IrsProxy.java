@@ -1258,6 +1258,7 @@ public class IrsProxy {
             }
         }
 
+        Collection<Guid> storageDomainsToSync = new LinkedList<>();
         // build a list of domains that the host
         // reports as in problem (code!=0) or (code==0
         // && lastChecl >
@@ -1286,11 +1287,15 @@ public class IrsProxy {
                 map.setStatus(StorageDomainStatus.Active);
                 storagePoolIsoMapDao.update(map);
 
-                // For block domains, synchronize LUN details comprising the storage domain with the DB
                 if (storageDomain.getStorageType().isBlockDomain()) {
-                    getEventListener().syncLunsInfoForBlockStorageDomain(storageDomain.getId(), vdsId);
+                    storageDomainsToSync.add(storageDomain.getId());
                 }
             }
+        }
+
+        // For block domains, synchronize LUN details comprising the storage domain with the DB
+        if (!storageDomainsToSync.isEmpty()) {
+            getEventListener().syncStorageDomainsLuns(vdsId, storageDomainsToSync);
         }
 
         return domainsProblematicReportInfo;
