@@ -974,7 +974,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setEnableGlusterService(new EntityModel<Boolean>());
         setAdditionalClusterFeatures(new ListModel<List<AdditionalFeature>>());
         List<List<AdditionalFeature>> additionalFeatures = new ArrayList<>();
-        additionalFeatures.add(Collections.<AdditionalFeature> emptyList());
+        additionalFeatures.add(Collections.emptyList());
         getAdditionalClusterFeatures().setItems(additionalFeatures, null);
         setSpiceProxyEnabled(new EntityModel<Boolean>());
         getSpiceProxyEnabled().setEntity(false);
@@ -1769,8 +1769,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     updateAddtionClusterFeatureList(features, featuresEnabled);
                 }), getEntity().getId());
             } else {
-                updateAddtionClusterFeatureList(features,
-                        Collections.<AdditionalFeature> emptySet());
+                updateAddtionClusterFeatureList(features, Collections.emptySet());
             }
         }), version, category);
     }
@@ -1933,7 +1932,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         // to be attached to.
         final StoragePool selectedDataCenter = getDataCenter().getSelectedItem();
         if (selectedDataCenter == null) {
-            getManagementNetwork().setItems(Collections.<Network>emptyList());
+            getManagementNetwork().setItems(Collections.emptyList());
             return;
         }
         if (selectedDataCenter.isLocal()) {
