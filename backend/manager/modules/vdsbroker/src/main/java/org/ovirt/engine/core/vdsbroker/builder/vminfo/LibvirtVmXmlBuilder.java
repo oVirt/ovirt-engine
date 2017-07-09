@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
@@ -109,6 +111,8 @@ public class LibvirtVmXmlBuilder {
     private HostDeviceDao hostDeviceDao;
     @Inject
     private VmNicFilterParameterDao vmNicFilterParameterDao;
+    @Inject
+    private StorageDomainStaticDao storageDomainStaticDao;
 
     private OsRepository osRepository;
     private String serialConsolePath;
@@ -1247,10 +1251,13 @@ public class LibvirtVmXmlBuilder {
         // </disk>
         writer.writeStartElement("disk");
 
-        writeGeneralDiskAttributes(device, disk, dve);
+        StorageType storageDomainType = disk.getDiskStorageType() == DiskStorageType.IMAGE ?
+                storageDomainStaticDao.get(((DiskImage) disk).getStorageIds().get(0)).getStorageType() : null;
+
+        writeGeneralDiskAttributes(device, disk, dve, storageDomainType);
         writeDiskTarget(dve, index);
-        writeDiskSource(disk);
-        writeDiskDriver(device, disk, dve);
+        writeDiskSource(disk, storageDomainType);
+        writeDiskDriver(device, disk, dve, storageDomainType);
         writeDeviceAliasAndAddress(device);
         writeBootOrder(device.getBootOrder());
 
@@ -1306,7 +1313,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve) {
+    private void writeDiskDriver(VmDevice device, Disk disk, DiskVmElement dve, StorageType storageDomainType) {
         writer.writeStartElement("driver");
         writer.writeAttributeString("name", "qemu");
         if (FeatureSupported.passDiscardSupported(vm.getCompatibilityVersion()) && dve.isPassDiscard()) {
@@ -1319,7 +1326,7 @@ public class LibvirtVmXmlBuilder {
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            writer.writeAttributeString("io", "threads");
+            writer.writeAttributeString("io", storageDomainType.isBlockDomain() ? "native" : "threads");
             writer.writeAttributeString("type", diskImage.getVolumeFormat() == VolumeFormat.COW ? "qcow2" : "raw");
             writer.writeAttributeString("error_policy", disk.getPropagateErrors() == PropagateErrors.On ? "enospace" : "stop");
             break;
@@ -1360,18 +1367,27 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeDiskSource(Disk disk) {
+    private void writeDiskSource(Disk disk, StorageType storageDomainType) {
         writer.writeStartElement("source");
         switch (disk.getDiskStorageType()) {
         case IMAGE:
             DiskImage diskImage = (DiskImage) disk;
-            writer.writeAttributeString(
-                    "file",
-                    String.format("/rhev/data-center/%s/%s/images/%s/%s",
-                            diskImage.getStoragePoolId(),
-                            diskImage.getStorageIds().get(0),
-                            diskImage.getId(),
-                            diskImage.getImageId()));
+            if (storageDomainType.isBlockDomain()) {
+                writer.writeAttributeString(
+                        "dev",
+                        String.format("/rhev/data-center/mnt/blockSD/%s/images/%s/%s",
+                                diskImage.getStorageIds().get(0),
+                                diskImage.getId(),
+                                diskImage.getImageId()));
+            } else { // file
+                writer.writeAttributeString(
+                        "file",
+                        String.format("/rhev/data-center/%s/%s/images/%s/%s",
+                                diskImage.getStoragePoolId(),
+                                diskImage.getStorageIds().get(0),
+                                diskImage.getId(),
+                                diskImage.getImageId()));
+            }
             break;
 
         case LUN:
@@ -1432,12 +1448,12 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
-    private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve) {
+    private void writeGeneralDiskAttributes(VmDevice device, Disk disk, DiskVmElement dve, StorageType storageDomainType) {
         writer.writeAttributeString("snapshot", "no");
 
         switch (disk.getDiskStorageType()) {
         case IMAGE:
-            writer.writeAttributeString("type", "file"); // TODO type of storage domain
+            writer.writeAttributeString("type", storageDomainType.isBlockDomain() ? "block" : "file");
             break;
         case LUN:
             writer.writeAttributeString("type", "block");
