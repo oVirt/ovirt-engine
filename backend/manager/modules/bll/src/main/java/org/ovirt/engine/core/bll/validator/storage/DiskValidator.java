@@ -127,6 +127,7 @@ public class DiskValidator {
                 .filter(p -> p.getFirst().getStatus() != VMStatus.Down)
                 .filter(p -> p.getSecond().isPlugged())
                 .map(p -> p.getFirst().getName())
+                .sorted()
                 .collect(Collectors.joining(","));
 
         if (!vmNames.isEmpty()) {
