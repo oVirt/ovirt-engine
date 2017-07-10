@@ -1068,7 +1068,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("redirdev");
         writer.writeAttributeString("type", "spicevmc");
         writer.writeAttributeString("bus", "usb");
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
         writer.writeEndElement();
     }
 
@@ -1111,7 +1111,7 @@ public class LibvirtVmXmlBuilder {
     private void writeSound(VmDevice device) {
         writer.writeStartElement("sound");
         writer.writeAttributeString("model", device.getDevice());
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
         writer.writeEndElement();
     }
 
@@ -1231,7 +1231,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("ports", device.getSpecParams().get("ports").toString());
         }
         // TODO: master??
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
         writer.writeEndElement();
     }
 
@@ -1259,7 +1259,7 @@ public class LibvirtVmXmlBuilder {
         writeDiskTarget(dve, index);
         writeDiskSource(disk, storageDomainType);
         writeDiskDriver(device, disk, dve, storageDomainType);
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
         writeBootOrder(device.getBootOrder());
 
         if (disk.getDiskStorageType() != DiskStorageType.LUN) {
@@ -1512,7 +1512,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeElement("readonly");
 
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
 
         writer.writeEndElement();
     }
@@ -1580,7 +1580,7 @@ public class LibvirtVmXmlBuilder {
             writer.writeElement("readonly");
 
             if (nonPayload != null) {
-                writeDeviceAliasAndAddress(nonPayload);
+                writeAddress(nonPayload);
                 writeBootOrder(nonPayload.getBootOrder());
             }
 
@@ -1666,7 +1666,7 @@ public class LibvirtVmXmlBuilder {
             break;
         }
 
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
 
         writeBootOrder(device.getBootOrder());
 
@@ -1727,7 +1727,7 @@ public class LibvirtVmXmlBuilder {
         // </memballoon>
         writer.writeStartElement("membaloon");
         writer.writeAttributeString("model", device.getSpecParams().get(VdsProperties.Model).toString());
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
         writer.writeEndElement();
     }
 
@@ -1738,7 +1738,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeStartElement("smartcard");
         writer.writeAttributeString("mode", device.getSpecParams().get("mode").toString());
         writer.writeAttributeString("type", device.getSpecParams().get("type").toString());
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
         writer.writeEndElement();
     }
 
@@ -1751,7 +1751,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeAttributeString("model", model != null ? model.toString() : "i6300esb");
         Object action = device.getSpecParams().get(VdsProperties.action);
         writer.writeAttributeString("action", action != null ? action.toString() : "none");
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
         writer.writeEndElement();
     }
 
@@ -1772,7 +1772,7 @@ public class LibvirtVmXmlBuilder {
         }
         writer.writeEndElement();
 
-        writeDeviceAliasAndAddress(device);
+        writeAddress(device);
 
         writer.writeEndElement();
     }
@@ -1781,17 +1781,6 @@ public class LibvirtVmXmlBuilder {
         if (order > 0) {
             writer.writeStartElement("boot");
             writer.writeAttributeString("order", String.valueOf(order));
-            writer.writeEndElement();
-        }
-    }
-
-    private void writeDeviceAliasAndAddress(VmDevice device) {
-        writeAddress(device);
-
-        String alias = device.getAlias();
-        if (StringUtils.isNotEmpty(alias)) {
-            writer.writeStartElement("alias");
-            writer.writeAttributeString("name", alias);
             writer.writeEndElement();
         }
     }
