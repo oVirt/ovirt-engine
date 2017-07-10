@@ -787,6 +787,10 @@ public class LibvirtVmXmlBuilder {
 
         for (Disk disk : vmInfoBuildUtils.getSortedDisks(vm)) {
             VmDevice device = deviceIdToDevice.get(new VmDeviceId(disk.getId(), vm.getId()));
+            if (device == null) {
+                // This may happen to memory disks that do not have a corresponding device
+                continue;
+            }
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
             DiskInterface diskInterface = dve.getDiskInterface();
             int index = 0;
