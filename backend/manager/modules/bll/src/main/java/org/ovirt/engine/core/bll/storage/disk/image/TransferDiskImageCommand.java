@@ -69,7 +69,7 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
         StorageDomainValidator storageDomainValidator = getStorageDomainValidator(
                 storageDomainDao.getForStoragePool(diskImage.getStorageIds().get(0), diskImage.getStoragePoolId()));
         return validate(diskValidator.isDiskExists())
-                && validate(diskValidator.isDiskAttachedToAnyNonDownVm())
+                && validate(diskValidator.isDiskAPluggedToAnyNonDownVm())
                 && validate(diskImagesValidator.diskImagesNotIllegal())
                 && validate(diskImagesValidator.diskImagesNotLocked())
                 && validate(storageDomainValidator.isDomainExistAndActive());

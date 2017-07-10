@@ -133,12 +133,13 @@ public class DiskValidator {
                 when(vms.stream().noneMatch(vm1 -> vm1.getId().equals(vm.getId())));
     }
 
-    public ValidationResult isDiskAttachedToAnyNonDownVm() {
+    public ValidationResult isDiskAPluggedToAnyNonDownVm() {
         String vmNames = getVmDao()
-                .getVmsListForDisk(disk.getId(), true)
+                .getVmsWithPlugInfo(disk.getId())
                 .stream()
-                .filter(vm -> vm.getStatus() != VMStatus.Down)
-                .map(VM::getName)
+                .filter(p -> p.getFirst().getStatus() != VMStatus.Down)
+                .filter(p -> p.getSecond().getIsPlugged())
+                .map(p -> p.getFirst().getName())
                 .collect(Collectors.joining(","));
 
         if (!vmNames.isEmpty()) {
