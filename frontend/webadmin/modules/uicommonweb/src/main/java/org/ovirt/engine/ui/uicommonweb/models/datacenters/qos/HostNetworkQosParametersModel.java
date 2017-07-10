@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -48,7 +49,7 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
      * @return null if the object is null, obj.toString() otherwise.
      */
     private String render(Object obj) {
-        return obj == null ? null : obj.toString();
+        return Objects.toString(obj, null);
     }
 
     @Override
