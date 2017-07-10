@@ -15,6 +15,6 @@ public class LinuxMountPointValidation extends BaseI18NValidation {
     }
 
     private String path() {
-        return "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)"; //$NON-NLS-1$
+        return "\\:/((.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)/?)?"; //$NON-NLS-1$
     }
 }

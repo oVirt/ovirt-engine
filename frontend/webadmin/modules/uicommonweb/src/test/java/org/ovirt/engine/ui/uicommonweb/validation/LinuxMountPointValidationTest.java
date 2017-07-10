@@ -33,6 +33,11 @@ public class LinuxMountPointValidationTest {
     }
 
     @Test
+    public void validWithOnlySlash() {
+        assertValid("somehost.somedoamin.com2:/"); // $NON-NLS-1$
+    }
+
+    @Test
     public void validWithHost() {
         assertValid("somehost:/path/to/dir"); // $NON-NLS-1$
     }
