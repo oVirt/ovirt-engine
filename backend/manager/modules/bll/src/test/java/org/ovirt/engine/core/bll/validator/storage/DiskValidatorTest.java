@@ -196,36 +196,51 @@ public class DiskValidatorTest {
 
     @Test
     public void testDiskAttachedToAnyNonDownVM() {
-        assertThat(validator.isDiskAttachedToAnyNonDownVm(), isValid());
+        assertThat(validator.isDiskAPluggedToAnyNonDownVm(), isValid());
     }
 
     @Test
-    public void testDiskAttachedToAnyNonDownVMAllDown() {
-        VM vm1 = createVM();
-        VM vm2 = createVM();
-        vm1.setName("Vm1");
-        vm2.setName("Vm2");
-        List<VM> vmList = Arrays.asList(vm1, vm2);
-
-        when(vmDao.getVmsListForDisk(any(), anyBoolean())).thenReturn(vmList);
-        assertThat(validator.isDiskAttachedToAnyNonDownVm(), isValid());
+    public void testDiskAttachedToAnyNonDownVMNoVMs() {
+        assertThat(validator.isDiskAPluggedToAnyNonDownVm(), isValid());
     }
 
     @Test
-    public void testDiskAttachedToAnyNonDownVMNotAllDown() {
-        VM vm1 = createVM();
-        VM vm2 = createVM();
-        vm1.setName("Vm1");
-        vm2.setName("Vm2");
-        vm1.setStatus(VMStatus.Paused);
-        List<VM> vmList = Arrays.asList(vm1, vm2);
+    public void testDiskAttachedToAnyNonDownVMWithProblems() {
+        VM vmPausedPlugged = createVM();
+        vmPausedPlugged.setName("vmPausedPlugged");
+        vmPausedPlugged.setStatus(VMStatus.Paused);
+        VmDevice device1 = new VmDevice();
+        device1.setPlugged(true);
+        Pair<VM, VmDevice> pair1 = new Pair<>(vmPausedPlugged, device1);
 
-        when(vmDao.getVmsListForDisk(any(), anyBoolean())).thenReturn(vmList);
+        VM vmDownPlugged = createVM();
+        vmDownPlugged.setName("vmDownPlugged");
+        VmDevice device2 = new VmDevice();
+        device2.setPlugged(true);
+        Pair<VM, VmDevice> pair2 = new Pair<>(vmDownPlugged, device2);
+
+        VM vmRunningUnplugged = createVM();
+        vmRunningUnplugged.setName("vmRunningUnplugged");
+        vmRunningUnplugged.setStatus(VMStatus.Up);
+        VmDevice device3 = new VmDevice();
+        device3.setPlugged(false);
+        Pair<VM, VmDevice> pair3 = new Pair<>(vmRunningUnplugged, device3);
+
+        VM anotherPausedPlugged = createVM();
+        anotherPausedPlugged.setName("anotherPausedPlugged");
+        anotherPausedPlugged.setStatus(VMStatus.Paused);
+        VmDevice device4 = new VmDevice();
+        device4.setPlugged(true);
+        Pair<VM, VmDevice> pair4 = new Pair<>(anotherPausedPlugged, device4);
+
+        List<Pair<VM, VmDevice>> vmList = Arrays.asList(pair1, pair2, pair3, pair4);
+
+        when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
-                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "Vm1")};
+                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "vmPausedPlugged,anotherPausedPlugged")};
 
-        assertThat(validator.isDiskAttachedToAnyNonDownVm(),
+        assertThat(validator.isDiskAPluggedToAnyNonDownVm(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, expectedReplacements));
     }
 

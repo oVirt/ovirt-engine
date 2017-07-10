@@ -89,7 +89,7 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
         initializeSuppliedImage();
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, ""))
                 .when(diskValidator)
-                .isDiskAttachedToAnyNonDownVm();
+                .isDiskAPluggedToAnyNonDownVm();
 
         getCommand().validate();
         ValidateTestUtils.assertValidationMessages(
