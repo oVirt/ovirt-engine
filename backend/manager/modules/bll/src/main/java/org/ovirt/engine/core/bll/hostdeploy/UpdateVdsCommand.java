@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostedengine.HostedEngineHelper;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -184,8 +185,11 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         hostedEngineHelper.createVdsDeployParams(getVdsId(),
                                 getParameters().getHostedEngineDeployConfiguration().getDeployAction()));
             }
+
             List<ActionReturnValue> resultList = runInternalMultipleActions(
-                    actionType, new ArrayList<>(Arrays.asList(tempVar)));
+                    actionType,
+                    new ArrayList<>(Arrays.asList(tempVar)),
+                    ExecutionHandler.createInternalJobContext().getExecutionContext());
 
             // Since Host status is set to "Installing", failure of InstallVdsCommand will hang the Host to in that
             // status, therefore needed to fail the command to revert the status.
