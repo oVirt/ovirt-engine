@@ -903,6 +903,7 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
 
         writer.writeStartElement("channel");
+        writer.writeAttributeString("type", "unix");
 
         writer.writeStartElement("target");
         writer.writeAttributeString("type", "virtio");
