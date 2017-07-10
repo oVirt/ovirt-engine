@@ -29,6 +29,7 @@ import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.OriginType;
+import org.ovirt.engine.core.compat.Version;
 
 public class VmBaseMapper {
     protected static final int BYTES_PER_MB = 1024 * 1024;
@@ -110,9 +111,9 @@ public class VmBaseMapper {
             }
         }
         if (model.isSetCustomCompatibilityVersion()) {
-            entity.setCustomCompatibilityVersion(VersionMapper.map(model.getCustomCompatibilityVersion()));
+            Version entityMappedVersion = VersionMapper.map(model.getCustomCompatibilityVersion());
+            entity.setCustomCompatibilityVersion(entityMappedVersion.isNotValid() ? null : entityMappedVersion);
         }
-
         if (model.isSetLease()) {
             entity.setLeaseStorageDomainId(StorageDomainLeaseMapper.map(model.getLease()));
         }
