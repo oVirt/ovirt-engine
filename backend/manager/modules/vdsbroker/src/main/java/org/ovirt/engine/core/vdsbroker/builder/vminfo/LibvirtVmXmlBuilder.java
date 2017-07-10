@@ -1394,7 +1394,7 @@ public class LibvirtVmXmlBuilder {
         case LUN:
             LunDisk lunDisk = (LunDisk) disk;
             writer.writeAttributeString(
-                    "file",
+                    "dev",
                     String.format("/dev/mapper/%s",
                             lunDisk.getLun().getLUNId()));
             break;
