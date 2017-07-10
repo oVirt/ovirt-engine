@@ -242,7 +242,7 @@ public class DiskValidatorTest {
         when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
-                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "vmPausedPlugged,anotherPausedPlugged")};
+                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "anotherPausedPlugged,vmPausedPlugged")};
 
         assertThat(validator.isDiskAPluggedToAnyNonDownVm(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, expectedReplacements));
