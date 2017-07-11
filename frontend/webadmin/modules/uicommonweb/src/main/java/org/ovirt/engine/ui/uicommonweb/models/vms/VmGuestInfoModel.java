@@ -247,7 +247,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
                 optional = messages.guestOSVersionOptional(guestOsCodename);
             }
             guestOsNamedVersion = messages.guestOSVersionLinux(guestOsDistribution, guestOsVersion, optional);
-        } else if (guestOsType == OsType.Windows && guestOs.startsWith("Win ")) { //$NON-NLS-1$
+        } else if (guestOsType == OsType.Windows && guestOs != null && guestOs.startsWith("Win ")) { //$NON-NLS-1$
             if (guestOs.startsWith("Win 20")) { //$NON-NLS-1$
                 guestOsNamedVersion = messages.guestOSVersionWindowsServer(guestOs.substring(4), guestOsVersion);
             } else {
