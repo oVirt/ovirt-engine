@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
-import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
 
@@ -63,7 +62,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Mock
     private VmDao vmDao;
     @Mock
-    private DiskVmElementDao diskVmElementDao;
+    private MultipleDiskVmElementValidator multipleDiskVmElementValidator;
     @Mock
     private SnapshotsValidator snapshotsValidator;
 
@@ -358,6 +357,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         when(vmDao.get(any())).thenReturn(vm);
 
         doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
+        doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
         doReturn(ActionType.MoveOrCopyDisk).when(command).getActionType();
