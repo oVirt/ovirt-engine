@@ -143,7 +143,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
 
-        when(diskValidator.isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any()))
+        when(diskValidator.isDiskPluggedToAnyNonDownVm(anyBoolean()))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);

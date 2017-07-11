@@ -326,8 +326,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     protected boolean checkCanBeMoveInVm() {
-        return validate(createDiskValidator(getDiskImage()).isDiskPluggedToVmsThatAreNotDown(true,
-                getVmsWithVmDeviceInfoForDiskId()));
+        return validate(createDiskValidator(getDiskImage()).isDiskPluggedToAnyNonDownVm(true));
     }
 
     @Override

@@ -87,15 +87,15 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
     @Test
     public void validateCantUploadDiskAttached() {
         initializeSuppliedImage();
-        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, ""))
+        doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_PLUGGED_TO_NON_DOWN_VMS, ""))
                 .when(diskValidator)
-                .isDiskPluggedToAnyNonDownVm();
+                .isDiskPluggedToAnyNonDownVm(false);
 
         getCommand().validate();
         ValidateTestUtils.assertValidationMessages(
                 "Can't start a transfer for an image that is attached to any VMs.",
                 getCommand(),
-                EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS);
+                EngineMessage.ACTION_TYPE_FAILED_DISK_PLUGGED_TO_NON_DOWN_VMS);
     }
 
     @Test

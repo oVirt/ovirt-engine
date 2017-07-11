@@ -268,7 +268,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN)).when(diskValidator)
-                .isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any());
+                .isDiskPluggedToAnyNonDownVm(anyBoolean());
 
         assertFalse(command.validate());
         assertTrue(command.getReturnValue()

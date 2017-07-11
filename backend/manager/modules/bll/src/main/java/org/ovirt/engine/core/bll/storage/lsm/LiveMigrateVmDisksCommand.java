@@ -461,7 +461,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected boolean isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(Guid imageId) {
-        return validate(createDiskValidator(getDiskImageByImageId(imageId)).isDiskPluggedToVmsThatAreNotDown(true, null));
+        return validate(createDiskValidator(getDiskImageByImageId(imageId)).isDiskPluggedToAnyNonDownVm(true));
     }
 
     protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {

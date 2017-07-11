@@ -130,38 +130,6 @@ public class DiskValidatorTest {
     }
 
     @Test
-    public void diskPluggedToVmsThatAreNotDownValid() {
-        List<Pair<VM, VmDevice>> vmsInfo = prepareForCheckingIfDiskPluggedToVmsThatAreNotDown();
-        assertThat(validator.isDiskPluggedToVmsThatAreNotDown(false, vmsInfo), isValid());
-    }
-
-    @Test
-    public void diskPluggedToVmsThatAreNotDownFail() {
-        List<Pair<VM, VmDevice>> vmsInfo = prepareForCheckingIfDiskPluggedToVmsThatAreNotDown();
-        vmsInfo.get(0).getFirst().setStatus(VMStatus.Up);
-        assertThat(validator.isDiskPluggedToVmsThatAreNotDown(false, vmsInfo),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
-    }
-
-    @Test
-    public void diskPluggedToVmsNotAsSnapshotSuccess() {
-        List<Pair<VM, VmDevice>> vmsInfo = prepareForCheckingIfDiskPluggedToVmsThatAreNotDown();
-        vmsInfo.get(0).getFirst().setStatus(VMStatus.Up);
-        vmsInfo.get(1).getFirst().setStatus(VMStatus.Up);
-        assertThat(validator.isDiskPluggedToVmsThatAreNotDown(true, vmsInfo),
-                isValid());
-    }
-
-    @Test
-    public void diskPluggedToVmsCheckSnapshotsFail() {
-        List<Pair<VM, VmDevice>> vmsInfo = prepareForCheckingIfDiskPluggedToVmsThatAreNotDown();
-        vmsInfo.get(1).getFirst().setStatus(VMStatus.Up);
-        vmsInfo.get(1).getSecond().setSnapshotId(Guid.newGuid());
-        assertThat(validator.isDiskPluggedToVmsThatAreNotDown(true, vmsInfo),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
-    }
-
-    @Test
     public void testIsUsingScsiReservationValidWhenSgioIsUnFiltered() {
         setupForLun();
 
@@ -196,7 +164,7 @@ public class DiskValidatorTest {
 
     @Test
     public void testDiskAttachedToAnyNonDownVM() {
-        assertThat(validator.isDiskPluggedToAnyNonDownVm(), isValid());
+        assertThat(validator.isDiskPluggedToAnyNonDownVm(false), isValid());
     }
 
     @Test
@@ -228,15 +196,20 @@ public class DiskValidatorTest {
         device4.setPlugged(true);
         Pair<VM, VmDevice> pair4 = new Pair<>(anotherPausedPlugged, device4);
 
-        List<Pair<VM, VmDevice>> vmList = Arrays.asList(pair1, pair2, pair3, pair4);
+        VmDevice device5 = new VmDevice();
+        device5.setPlugged(true);
+        device5.setSnapshotId(Guid.newGuid());
+        Pair<VM, VmDevice> pair5 = new Pair<>(anotherPausedPlugged, device5);
+
+        List<Pair<VM, VmDevice>> vmList = Arrays.asList(pair1, pair2, pair3, pair4, pair5);
 
         when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
                 ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "anotherPausedPlugged,vmPausedPlugged")};
 
-        assertThat(validator.isDiskPluggedToAnyNonDownVm(),
-                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, expectedReplacements));
+        assertThat(validator.isDiskPluggedToAnyNonDownVm(true),
+                failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_PLUGGED_TO_NON_DOWN_VMS, expectedReplacements));
     }
 
     @Test

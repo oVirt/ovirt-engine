@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
@@ -40,30 +38,6 @@ public class DiskValidator {
 
     public DiskValidator(Disk disk) {
         this.disk = disk;
-    }
-
-    public ValidationResult isDiskPluggedToVmsThatAreNotDown(boolean checkOnlyVmsSnapshotPluggedTo, List<Pair<VM, VmDevice>> vmsForDisk) {
-        if (vmsForDisk == null) {
-            vmsForDisk = getVmDao().getVmsWithPlugInfo(disk.getId());
-        }
-
-        for (Pair<VM, VmDevice> pair : vmsForDisk) {
-            VmDevice vmDevice = pair.getSecond();
-
-            if (checkOnlyVmsSnapshotPluggedTo && vmDevice.getSnapshotId() == null) {
-                continue;
-            }
-
-            VM currVm = pair.getFirst();
-            if (VMStatus.Down != currVm.getStatus()) {
-                if (vmDevice.isPlugged()) {
-                    return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-                }
-            }
-        }
-
-        return ValidationResult.VALID;
-
     }
 
     protected VmDao getVmDao() {
@@ -120,18 +94,19 @@ public class DiskValidator {
                 when(vms.stream().noneMatch(vm1 -> vm1.getId().equals(vm.getId())));
     }
 
-    public ValidationResult isDiskPluggedToAnyNonDownVm() {
+    public ValidationResult isDiskPluggedToAnyNonDownVm(boolean checkOnlyVmsSnapshotPluggedTo) {
         String vmNames = getVmDao()
                 .getVmsWithPlugInfo(disk.getId())
                 .stream()
                 .filter(p -> p.getFirst().getStatus() != VMStatus.Down)
                 .filter(p -> p.getSecond().isPlugged())
+                .filter(p -> checkOnlyVmsSnapshotPluggedTo && p.getSecond().getSnapshotId() == null)
                 .map(p -> p.getFirst().getName())
                 .sorted()
                 .collect(Collectors.joining(","));
 
         if (!vmNames.isEmpty()) {
-            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS,
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_PLUGGED_TO_NON_DOWN_VMS,
                     ReplacementUtils.createSetVariableString(DISK_NAME_VARIABLE, disk.getDiskAlias()),
                     ReplacementUtils.createSetVariableString(VM_LIST, vmNames));
 

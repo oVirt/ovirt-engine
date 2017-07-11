@@ -272,7 +272,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * vm should be down
      */
     protected boolean checkCanBeMoveInVm() {
-        return validate(createDiskValidator(getImage()).isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
+        return validate(createDiskValidator(getImage()).isDiskPluggedToAnyNonDownVm(false));
     }
 
     /**

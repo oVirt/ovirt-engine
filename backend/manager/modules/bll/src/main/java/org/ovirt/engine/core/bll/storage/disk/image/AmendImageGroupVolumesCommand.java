@@ -27,9 +27,7 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.AmendVolumeCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsmImageLocationInfo;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -74,8 +72,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         if (!validate(diskValidator.isDiskExists())) {
             return false;
         }
-        List<Pair<VM, VmDevice>> vmsForDisk = vmDao.getVmsWithPlugInfo(getDiskImage().getId());
-        if (!validate(diskValidator.isDiskPluggedToVmsThatAreNotDown(false, vmsForDisk))) {
+        if (!validate(diskValidator.isDiskPluggedToAnyNonDownVm(false))) {
             return false;
         }
         setStoragePoolId(getDiskImage().getStoragePoolId());

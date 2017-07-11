@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -35,16 +33,12 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
 
     @Mock
     private DiskDao diskDao;
-
-    @Mock
-    private VmDao vmDao;
 
     @Mock
     private StoragePoolDao storagePoolDao;
@@ -100,7 +94,7 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidationFailsDiskConnectedToRunningVm() {
-        when(diskValidator.isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any()))
+        when(diskValidator.isDiskPluggedToAnyNonDownVm(false))
                 .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
