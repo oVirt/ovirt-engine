@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll.storage.disk.image;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,22 +16,20 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -52,6 +51,9 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
 
     @Mock
     private StorageDomainDao storageDomainDao;
+
+    @Mock
+    private DiskValidator diskValidator;
 
     private Guid diskId = Guid.newGuid();
     private Guid storagePoolId = Guid.newGuid();
@@ -79,6 +81,7 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
         storageIds.add(storageDomainId);
         diskImage.setStorageIds(storageIds);
         doReturn(diskImage).when(diskDao).get(diskId);
+        doReturn(diskValidator).when(command).createDiskValidator();
         mockRunningStoragePool();
         mockRunningStorageDomain();
     }
@@ -90,18 +93,15 @@ public class AmendImageGroupVolumesCommandTest extends BaseCommandTest {
 
     @Test
     public void testValidationFailsDiskNotExists() {
-        doReturn(null).when(diskDao).get(diskId);
+        when(diskValidator.isDiskExists())
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST));
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
     public void testValidationFailsDiskConnectedToRunningVm() {
-        VM vm = new VM();
-        vm.setStatus(VMStatus.Up);
-        VmDevice vmDevice = new VmDevice();
-        vmDevice.setPlugged(true);
-        List<Pair<VM, VmDevice>> vms = Collections.singletonList(new Pair<>(vm, vmDevice));
-        doReturn(vms).when(vmDao).getVmsWithPlugInfo(diskId);
+        when(diskValidator.isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any()))
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 

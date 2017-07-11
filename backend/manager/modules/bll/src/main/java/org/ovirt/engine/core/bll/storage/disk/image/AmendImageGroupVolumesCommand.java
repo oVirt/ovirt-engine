@@ -70,7 +70,7 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
 
     @Override
     protected boolean validate() {
-        DiskValidator diskValidator = new DiskValidator(getDiskImage());
+        DiskValidator diskValidator = createDiskValidator();
         if (!validate(diskValidator.isDiskExists())) {
             return false;
         }
@@ -97,6 +97,10 @@ public class AmendImageGroupVolumesCommand<T extends AmendImageGroupVolumesComma
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList(getDiskImage()));
         return validate(diskImagesValidator.diskImagesNotIllegal()) &&
                 validate(diskImagesValidator.diskImagesNotLocked());
+    }
+
+    protected DiskValidator createDiskValidator() {
+        return new DiskValidator(getDiskImage());
     }
 
     @Override
