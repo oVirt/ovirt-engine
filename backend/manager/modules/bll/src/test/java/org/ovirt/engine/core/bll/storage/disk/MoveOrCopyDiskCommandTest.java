@@ -46,7 +46,6 @@ import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
-import org.ovirt.engine.core.dao.VmDeviceDao;
 
 public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
@@ -63,8 +62,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private StorageDomainDao storageDomainDao;
     @Mock
     private VmDao vmDao;
-    @Mock
-    private VmDeviceDao vmDeviceDao;
     @Mock
     private DiskVmElementDao diskVmElementDao;
     @Mock
