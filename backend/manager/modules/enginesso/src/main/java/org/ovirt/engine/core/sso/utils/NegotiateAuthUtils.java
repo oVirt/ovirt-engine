@@ -103,43 +103,48 @@ public class NegotiateAuthUtils {
 
                 switch (output.<Integer>get(Authn.InvokeKeys.RESULT)) {
                     case Authn.AuthResult.SUCCESS:
-                        ExtMap authRecord = output.get(Authn.InvokeKeys.AUTH_RECORD);
-                        if (profile.getMapper() != null) {
-                            authRecord = profile.getMapper().invoke(
+                        try {
+                            ExtMap authRecord = output.get(Authn.InvokeKeys.AUTH_RECORD);
+                            if (profile.getMapper() != null) {
+                                authRecord = profile.getMapper().invoke(
                                     new ExtMap().mput(
-                                            Base.InvokeKeys.COMMAND,
-                                            Mapping.InvokeCommands.MAP_AUTH_RECORD
+                                        Base.InvokeKeys.COMMAND,
+                                        Mapping.InvokeCommands.MAP_AUTH_RECORD
                                     ).mput(
-                                            Authn.InvokeKeys.AUTH_RECORD,
-                                            authRecord
+                                        Authn.InvokeKeys.AUTH_RECORD,
+                                        authRecord
                                     ),
                                     true
-                            ).get(
+                                ).get(
                                     Authn.InvokeKeys.AUTH_RECORD,
                                     authRecord
-                            );
-                        }
-                        ExtMap outputMap = profile.getAuthz().invoke(new ExtMap().mput(
+                                );
+                            }
+                            ExtMap outputMap = profile.getAuthz().invoke(new ExtMap().mput(
                                 Base.InvokeKeys.COMMAND,
                                 Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
-                        ).mput(
+                            ).mput(
                                 Authn.InvokeKeys.AUTH_RECORD,
                                 authRecord
-                        ).mput(
+                            ).mput(
                                 Authz.InvokeKeys.QUERY_FLAGS,
                                 Authz.QueryFlags.RESOLVE_GROUPS | Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE
-                        ));
-                        SsoSession ssoSession = SsoUtils.persistAuthInfoInContextWithToken(req,
+                            ));
+                            SsoSession ssoSession = SsoUtils.persistAuthInfoInContextWithToken(req,
                                 null,
                                 profile.getName(),
                                 authRecord,
                                 outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD));
-                        log.info("User {}@{} successfully logged in with scopes : {} ",
+                            log.info("User {}@{} successfully logged in with scopes : {} ",
                                 SsoUtils.getUserId(outputMap.get(Authz.InvokeKeys.PRINCIPAL_RECORD)),
                                 profile.getName(),
                                 ssoSession.getScope());
-                        token = (String) req.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
-                        stack.clear();
+                            token = (String) req.getAttribute(SsoConstants.HTTP_REQ_ATTR_ACCESS_TOKEN);
+                            stack.clear();
+                        } catch(Exception e) {
+                            log.debug("Cannot fetch principal, trying other authn extension.");
+                            stack.pop();
+                        }
                         break;
 
                     case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
