@@ -38,7 +38,7 @@
                 </b:Row>
                 <b:Row>
                     <b:Column size="SM_12">
-                        <ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" label="{constants.passthorughVnicProfile}" usePatternFly="true" />
+                        <ge:EntityModelCheckBoxEditor ui:field="passthroughEditor" label="{constants.passthroughVnicProfile}" usePatternFly="true" />
                     </b:Column>
                 </b:Row>
                 <b:Row>

@@ -1046,7 +1046,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String networkFilterNameVnicProfile();
 
-    String passthorughVnicProfile();
+    String passthroughVnicProfile();
 
     String migratableVnicProfile();
 
