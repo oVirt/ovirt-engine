@@ -45,6 +45,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
@@ -266,7 +268,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         AddVmParameters parameters = new AddVmParameters(currVm);
         parameters.setPoolId(getVmPool().getVmPoolId());
         if (getVmPool().isAutoStorageSelect()) {
-            parameters.setDiskInfoDestinationMap(autoSelectTargetDomain());
+            parameters.setDiskInfoDestinationMap(autoSelectTargetDomainAndVolumeFormat());
         }
         else {
             parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
@@ -461,7 +463,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         }
     }
 
-    private HashMap<Guid, DiskImage> autoSelectTargetDomain() {
+    private HashMap<Guid, DiskImage> autoSelectTargetDomainAndVolumeFormat() {
         HashMap<Guid, DiskImage> destinationMap = new HashMap<>();
         for (Disk disk: templateDisks) {
             DiskImage diskImage = (DiskImage)disk;
@@ -476,7 +478,19 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
                     break;
                 }
             }
+            // Set target domain
             diskImage.setStorageIds(storageIds);
+            // Set volume format.
+            // Note that the disks of VMs in a pool are essentially snapshots of the template's disks.
+            // therefore when creating the VM's disks, the image parameters are overridden anyway.
+            // We were required to change only the VolumeFormat here for passing the AddVMCommand's
+            // validation
+            if (diskImage.getDiskStorageType() == DiskStorageType.CINDER) {
+                diskImage.setVolumeFormat(VolumeFormat.RAW);
+            } else {
+                diskImage.setVolumeFormat(VolumeFormat.COW);
+            }
+
             destinationMap.put(disk.getId(), diskImage);
         }
         return destinationMap;
