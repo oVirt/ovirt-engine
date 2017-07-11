@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.MoveOrCopyDiskCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -371,10 +370,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         // During LSM the disks are being locked prior to the snapshot phase
         // therefore returning true here.
         return true;
-    }
-
-    protected DiskValidator createDiskValidator(DiskImage disk) {
-        return new DiskValidator(disk);
     }
 
     @Override

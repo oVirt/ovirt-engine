@@ -3,11 +3,11 @@ package org.ovirt.engine.core.bll.storage.disk;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -67,6 +68,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private SnapshotsValidator snapshotsValidator;
     @Mock
     private StorageDomainValidator storageDomainValidator;
+    @Mock
+    private DiskValidator diskValidator;
 
     /**
      * The command under test.
@@ -131,7 +134,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         command.getParameters().setStorageDomainId(destStorageId);
         command.setStorageDomainId(destStorageId);
         initVmDiskImage(false);
-        mockGetVmsListForDisk();
         initSrcStorageDomain();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
     }
@@ -140,9 +142,11 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     public void validateVmIsNotDown() {
         initializeCommand(new DiskImage());
         initVmDiskImage(false);
-        mockGetVmsListForDisk();
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
+
+        when(diskValidator.isDiskPluggedToVmsThatAreNotDown(anyBoolean(), any()))
+                .thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN));
 
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
@@ -151,7 +155,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     public void validateDiskIsLocked() {
         initializeCommand(new DiskImage());
         initVmDiskImage(false);
-        mockGetVmsListForDisk();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
@@ -310,22 +313,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
     }
 
-    private void mockGetVmsListForDisk() {
-        List<Pair<VM, VmDevice>> vmList = new ArrayList<>();
-        VM vm1 = new VM();
-        vm1.setStatus(VMStatus.PoweringDown);
-        VM vm2 = new VM();
-        vm2.setStatus(VMStatus.Down);
-        VmDevice device1 = new VmDevice();
-        device1.setPlugged(true);
-        VmDevice device2 = new VmDevice();
-        device2.setPlugged(true);
-        vmList.add(new Pair<>(vm1, device1));
-        vmList.add(new Pair<>(vm2, device2));
-
-        when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
-    }
-
     private void mockStorageDomainValidatorWithoutSpace() {
         when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any(DiskImage.class))).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
@@ -353,6 +340,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
 
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator();
         doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
+        doReturn(diskValidator).when(command).createDiskValidator(disk);
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
         doReturn(ActionType.MoveOrCopyDisk).when(command).getActionType();
