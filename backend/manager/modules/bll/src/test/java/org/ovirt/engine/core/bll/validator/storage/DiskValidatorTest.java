@@ -200,11 +200,6 @@ public class DiskValidatorTest {
     }
 
     @Test
-    public void testDiskAttachedToAnyNonDownVMNoVMs() {
-        assertThat(validator.isDiskPluggedToAnyNonDownVm(), isValid());
-    }
-
-    @Test
     public void testDiskAttachedToAnyNonDownVMWithProblems() {
         VM vmPausedPlugged = createVM();
         vmPausedPlugged.setName("vmPausedPlugged");
