@@ -357,7 +357,7 @@ _dbfunc_common_run_required_scripts() {
 _dbfunc_common_run_file() {
 	local file="$1"
 	local extension=$(echo "${file}" | sed 's/^.*\.//')
-	if [ -x "${file}" && "${extension}" != "sql" ]; then
+	if [ -x "${file}" ] && [ "${extension}" != "sql" ]; then
 		# delegate all DBFUNC_ vars in subshell
 		echo "Running upgrade shell script '${file}'..."
 		(
