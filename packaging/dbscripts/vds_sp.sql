@@ -790,9 +790,7 @@ BEGIN
         WHERE vds_id = v_vds_id;
 
         -- delete VDS permissions --
-        DELETE
-        FROM permissions
-        WHERE object_id = v_vds_id;
+        PERFORM DeletePermissionsByEntityId(v_vds_id);
     END;
 
     RETURN;
@@ -1037,9 +1035,7 @@ BEGIN
         FROM vds_static
         WHERE vds_id = v_vds_id;
 
-        DELETE
-        FROM permissions
-        WHERE object_id = v_vds_id;
+        PERFORM DeletePermissionsByEntityId(v_vds_id);
     END;
 
     RETURN;

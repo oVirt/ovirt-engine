@@ -587,29 +587,8 @@ LANGUAGE plpgsql;
             AND external_id = v_domain_entry_id
         INTO selected_user_id;
 
-        INSERT INTO permissions (
-            id,
-            role_id,
-            ad_element_id,
-            object_id,
-            object_type_id
-            )
-        SELECT uuid_generate_v1(),
-            input_role_id,
-            selected_user_id,
-            getGlobalIds('system'),
-            1
-        WHERE NOT EXISTS (
-                SELECT role_id,
-                    ad_element_id,
-                    object_id,
-                    object_type_id
-                FROM permissions
-                WHERE role_id = input_role_id
-                    AND ad_element_id = selected_user_id
-                    AND object_id = getGlobalIds('system')
-                    AND object_type_id = 1
-                );
+        PERFORM InsertPermission(selected_user_id, uuid_generate_v1(), input_role_id, getGlobalIds('system'), 1);
+
     END;$BODY$
 
     LANGUAGE plpgsql;

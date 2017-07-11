@@ -202,9 +202,7 @@ BEGIN
     WHERE id = v_id;
 
     -- delete StoragePool permissions --
-    DELETE
-    FROM permissions
-    WHERE object_id = v_id;
+    PERFORM DeletePermissionsByEntityId(v_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -608,9 +606,7 @@ BEGIN
     WHERE id = v_id;
 
     -- delete Storage permissions --
-    DELETE
-    FROM permissions
-    WHERE object_id = v_id;
+    PERFORM DeletePermissionsByEntityId(v_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -855,6 +851,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION Remove_Entities_From_storage_domain (v_storage_domain_id UUID)
 RETURNS VOID AS $PROCEDURE$
+DECLARE v_ids UUID[];
 BEGIN
     BEGIN
         -- Creating a temporary table which will give all the images and the disks which resids on only the specified storage domain. (copied template disks on multiple storage domains will not be part of this table)
@@ -1028,13 +1025,8 @@ BEGIN
                 );
     END;
 
-    DELETE
-    FROM permissions
-    WHERE object_id IN (
-            SELECT vm_id AS vm_guid
-            FROM VM_IDS_TEMPORARY_TABLE
-            WHERE entity_type <> 'TEMPLATE'
-            );
+    v_ids := array_agg(vm_id::UUID) AS vm_guid FROM VM_IDS_TEMPORARY_TABLE WHERE entity_type <> 'TEMPLATE';
+    PERFORM DeletePermissionsByEntityIds(v_ids);
 
     DELETE
     FROM snapshots
@@ -1061,12 +1053,8 @@ BEGIN
             FROM TEMPLATES_IDS_TEMPORARY_TABLE
             );
 
-    DELETE
-    FROM permissions
-    WHERE object_id IN (
-            SELECT vm_guid
-            FROM TEMPLATES_IDS_TEMPORARY_TABLE
-            );
+    v_ids := array_agg(vm_guid::UUID) FROM TEMPLATES_IDS_TEMPORARY_TABLE;
+    PERFORM DeletePermissionsByEntityIds(v_ids);
 
     DELETE
     FROM vm_static
@@ -1119,12 +1107,8 @@ BEGIN
             );
 
     -- Deletes the disks's permissions which the only storage domain they are reside on, is the storage domain.
-    DELETE
-    FROM permissions
-    WHERE object_id IN (
-            SELECT disk_id
-            FROM STORAGE_DOMAIN_MAP_TABLE
-            );
+    v_ids := array_agg(disk_id::UUID) FROM STORAGE_DOMAIN_MAP_TABLE;
+    PERFORM DeletePermissionsByEntityIds(v_ids);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -1133,9 +1117,7 @@ RETURNS VOID AS $PROCEDURE$
 BEGIN
     PERFORM Remove_Entities_From_storage_domain(v_storage_domain_id);
 
-    DELETE
-    FROM permissions
-    WHERE object_id = v_storage_domain_id;
+    PERFORM DeletePermissionsByEntityId(v_storage_domain_id);
 
     DELETE
     FROM storage_domain_dynamic

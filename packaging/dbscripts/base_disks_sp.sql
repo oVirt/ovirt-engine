@@ -92,9 +92,7 @@ BEGIN
     WHERE disk_id = v_disk_id;
 
     -- Delete the disk's permissions
-    DELETE
-    FROM permissions
-    WHERE object_id = v_disk_id;
+    PERFORM DeletePermissionsByEntityId(v_disk_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

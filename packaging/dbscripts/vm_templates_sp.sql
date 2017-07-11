@@ -467,8 +467,7 @@ BEGIN
       DELETE FROM vm_static
       WHERE vm_guid = v_vmt_guid;
       -- delete Template permissions --
-      DELETE FROM permissions
-      WHERE object_id = v_vmt_guid;
+      PERFORM DeletePermissionsByEntityId(v_vmt_guid);
 END; $procedure$
 LANGUAGE plpgsql;
 

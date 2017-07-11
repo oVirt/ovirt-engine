@@ -70,9 +70,7 @@ BEGIN
     WHERE id = v_id;
 
     -- Delete the disk profiles permissions
-    DELETE
-    FROM permissions
-    WHERE object_id = v_id;
+    PERFORM DeletePermissionsByEntityId(v_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

@@ -1175,7 +1175,7 @@ BEGIN
 
 			-- delete VM permissions --
       if v_remove_permissions then
-        DELETE FROM permissions where object_id = v_vm_guid;
+        PERFORM DeletePermissionsByEntityId(v_vm_guid);
       end if;
 
       -- set the child_count for the template

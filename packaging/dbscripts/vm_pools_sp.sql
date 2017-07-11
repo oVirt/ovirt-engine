@@ -104,9 +104,7 @@ BEGIN
     WHERE vm_pool_id = v_vm_pool_id;
 
     -- delete VmPool permissions --
-    DELETE
-    FROM permissions
-    WHERE object_id = v_vm_pool_id;
+    PERFORM DeletePermissionsByEntityId(v_vm_pool_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

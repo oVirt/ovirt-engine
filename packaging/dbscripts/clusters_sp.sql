@@ -270,9 +270,7 @@ BEGIN
     WHERE cluster_id = v_cluster_id;
 
     -- delete VDS group permissions --
-    DELETE
-    FROM permissions
-    WHERE object_id = v_cluster_id;
+    PERFORM DeletePermissionsByEntityId(v_cluster_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

@@ -133,9 +133,7 @@ BEGIN
     WHERE id = v_id;
 
     -- Delete the network's permissions
-    DELETE
-    FROM permissions
-    WHERE object_id = v_id;
+    PERFORM DeletePermissionsByEntityId(v_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
@@ -1717,9 +1715,7 @@ BEGIN
     WHERE id = v_id;
 
     -- Delete the vnic profiles permissions
-    DELETE
-    FROM permissions
-    WHERE object_id = v_id;
+    PERFORM DeletePermissionsByEntityId(v_id);
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 

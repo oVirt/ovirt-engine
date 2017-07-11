@@ -684,6 +684,14 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+CREATE OR REPLACE FUNCTION DeletePermissionsByEntityIds(v_ids UUID[])
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM permissions
+   WHERE object_id = ANY(v_ids);
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 
