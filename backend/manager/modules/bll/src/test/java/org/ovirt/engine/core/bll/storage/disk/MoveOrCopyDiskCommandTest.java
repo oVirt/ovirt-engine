@@ -65,6 +65,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     private MultipleDiskVmElementValidator multipleDiskVmElementValidator;
     @Mock
     private SnapshotsValidator snapshotsValidator;
+    @Mock
+    private StorageDomainValidator storageDomainValidator;
 
     /**
      * The command under test.
@@ -191,7 +193,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initVmDiskImage(false);
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
-        doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
+        mockStorageDomainValidatorWithoutSpace();
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
@@ -202,7 +204,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initVmDiskImage(false);
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
-        doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
         ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
@@ -325,15 +326,9 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
     }
 
-    private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
-        StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
+    private void mockStorageDomainValidatorWithoutSpace() {
         when(storageDomainValidator.hasSpaceForDiskWithSnapshots(any(DiskImage.class))).thenReturn(
                 new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
-        return storageDomainValidator;
-    }
-
-    private static StorageDomainValidator mockStorageDomainValidator() {
-        return mock(StorageDomainValidator.class);
     }
 
     private void initSrcStorageDomain() {
@@ -356,7 +351,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         vm.setStatus(VMStatus.Down);
         when(vmDao.get(any())).thenReturn(vm);
 
-        doReturn(mockStorageDomainValidator()).when(command).createStorageDomainValidator();
+        doReturn(storageDomainValidator).when(command).createStorageDomainValidator();
         doReturn(multipleDiskVmElementValidator).when(command).createMultipleDiskVmElementValidator();
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(disk.getId()).when(command).getImageGroupId();
