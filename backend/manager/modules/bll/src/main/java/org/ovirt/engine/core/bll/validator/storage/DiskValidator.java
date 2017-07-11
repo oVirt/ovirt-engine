@@ -120,7 +120,7 @@ public class DiskValidator {
                 when(vms.stream().noneMatch(vm1 -> vm1.getId().equals(vm.getId())));
     }
 
-    public ValidationResult isDiskAPluggedToAnyNonDownVm() {
+    public ValidationResult isDiskPluggedToAnyNonDownVm() {
         String vmNames = getVmDao()
                 .getVmsWithPlugInfo(disk.getId())
                 .stream()

@@ -196,12 +196,12 @@ public class DiskValidatorTest {
 
     @Test
     public void testDiskAttachedToAnyNonDownVM() {
-        assertThat(validator.isDiskAPluggedToAnyNonDownVm(), isValid());
+        assertThat(validator.isDiskPluggedToAnyNonDownVm(), isValid());
     }
 
     @Test
     public void testDiskAttachedToAnyNonDownVMNoVMs() {
-        assertThat(validator.isDiskAPluggedToAnyNonDownVm(), isValid());
+        assertThat(validator.isDiskPluggedToAnyNonDownVm(), isValid());
     }
 
     @Test
@@ -240,7 +240,7 @@ public class DiskValidatorTest {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
                 ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "anotherPausedPlugged,vmPausedPlugged")};
 
-        assertThat(validator.isDiskAPluggedToAnyNonDownVm(),
+        assertThat(validator.isDiskPluggedToAnyNonDownVm(),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_ATTACHED_TO_VMS, expectedReplacements));
     }
 
