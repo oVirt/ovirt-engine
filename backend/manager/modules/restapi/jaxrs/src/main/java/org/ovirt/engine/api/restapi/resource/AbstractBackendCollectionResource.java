@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.api.restapi.util.ParametersHelper;
@@ -166,7 +167,10 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     }
 
     protected void handleAsynchrony(ActionReturnValue result, R model) {
-        model.setCreationStatus(getAsynchronousStatus(result).value());
+        CreationStatus status = getAsynchronousStatus(result);
+        if (status != null) {
+            model.setCreationStatus(status.value());
+        }
         linkSubResource(model, CREATION_STATUS_REL, asString(result.getVdsmTaskIdList()));
     }
 

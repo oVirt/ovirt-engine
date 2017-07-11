@@ -195,7 +195,10 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
         addOrUpdateLink(action, "parent", path.substring(0, path.lastIndexOf("/")));
         addOrUpdateLink(action, "replay", path);
 
-        action.setStatus(getAsynchronousStatus(actionResult).value());
+        CreationStatus status = getAsynchronousStatus(actionResult);
+        if (status != null) {
+            action.setStatus(status.value());
+        }
         return Response.status(ACCEPTED_STATUS).entity(action).build();
     }
 
