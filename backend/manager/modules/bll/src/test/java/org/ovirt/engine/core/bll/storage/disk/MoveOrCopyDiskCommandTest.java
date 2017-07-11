@@ -85,20 +85,14 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
     @Test
     public void validateImageNotFound() {
         initializeCommand(new DiskImage());
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
     public void validateWrongDiskImageTypeTemplate() {
         initializeCommand(new DiskImage());
         initTemplateDiskImage();
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
     }
 
     @Test
@@ -108,10 +102,8 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(true);
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command,
+                EngineMessage.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS);
     }
 
     @Test
@@ -121,7 +113,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.NFS);
         initVmDiskImage(true);
 
-        assertTrue(command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -131,7 +123,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.GLUSTERFS);
         initVmDiskImage(false);
 
-        assertTrue(command.validate());
+        ValidateTestUtils.runAndAssertValidateSuccess(command);
     }
 
     @Test
@@ -143,10 +135,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         initSrcStorageDomain();
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
     }
 
     @Test
@@ -157,10 +146,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain(StorageType.NFS);
 
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
     }
 
     @Test
@@ -169,9 +155,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initVmDiskImage(false);
         mockGetVmsListForDisk();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue().getValidationMessages().contains(
-                EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_DISKS_LOCKED);
     }
 
     @Test
@@ -201,9 +185,7 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         doReturn(new VmTemplate()).when(command).getTemplateForImage();
 
         command.init();
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue().getValidationMessages().contains(
-                EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
+        ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.VM_TEMPLATE_IMAGE_IS_LOCKED);
     }
 
     @Test
