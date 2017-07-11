@@ -25,7 +25,6 @@ import org.ovirt.engine.core.bll.storage.disk.image.CopyImageGroupCommand;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskOperationsValidator;
-import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleDiskVmElementValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -42,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
@@ -164,10 +162,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean isImageExist() {
-        if (getImage() == null) {
-            return failValidation(EngineMessage.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
-        }
-        return true;
+        return validate(createDiskValidator(getImage()).isDiskExists());
     }
 
     protected boolean isImageNotLocked() {
@@ -278,10 +273,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     protected boolean checkCanBeMoveInVm() {
         return validate(createDiskValidator(getImage()).isDiskPluggedToVmsThatAreNotDown(false, getVmsWithVmDeviceInfoForDiskId()));
-    }
-
-    protected DiskValidator createDiskValidator(Disk disk) {
-        return new DiskValidator(disk);
     }
 
     /**
