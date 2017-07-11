@@ -22,8 +22,6 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUn
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineMemoryReservationFilterPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.LabelFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
@@ -226,6 +224,13 @@ public class InternalClusterPolicies {
                 .set(PolicyUnitParameter.SPM_VM_GRACE, "5")
                 .register();
 
+        /* This scheduling policy is hidden because we are not ready to remove
+           the implementation of it atm, but it is not useful for the currently
+           supported host OSs (RHEL 7 only).
+
+           The user can still create it manually as the specific policy unit
+           is still available - InClusterUpgradeFilterPolicyUnit
+
         createBuilder("8d5d7bec-68de-4a67-b53e-0ac54686d586")
                 .name("InClusterUpgrade")
                 .setBalancer(NoneBalancePolicyUnit.class)
@@ -239,6 +244,7 @@ public class InternalClusterPolicies {
                 .addFilters(InClusterUpgradeFilterPolicyUnit.class)
                 .addFunction(1, InClusterUpgradeWeightPolicyUnit.class)
                 .register();
+        */
     }
 
     public static Map<Guid, ClusterPolicy> getClusterPolicies() {
