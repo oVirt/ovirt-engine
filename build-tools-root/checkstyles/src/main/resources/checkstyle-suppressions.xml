@@ -52,7 +52,6 @@
     <suppress checks="MethodName" files="CommonApplicationResources.java"/>
     <suppress checks="MethodName" files="ApplicationResources.java"/>
     <suppress checks="MethodName" files="ApplicationResourcesWithLookup.java"/>
-    <suppress checks="MethodName" files="Enums.java"/>
     <suppress checks="MethodName" files="LocalizedEnums.java"/>
     <suppress checks="MethodName" files="SpiceRedKeys.java"/>
 

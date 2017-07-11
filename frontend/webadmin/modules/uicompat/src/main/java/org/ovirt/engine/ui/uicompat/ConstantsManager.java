@@ -16,13 +16,13 @@ public abstract class ConstantsManager {
 
     public abstract UIConstants getConstants();
     public abstract UIMessages getMessages();
-    public abstract Enums getEnums();
+    public abstract LocalizedEnums getEnums();
 
     static class GwtConstantsManager extends ConstantsManager {
 
         private static UIConstants constants;
         private static UIMessages messages;
-        private static Enums enums;
+        private static LocalizedEnums enums;
 
         @Override
         public UIConstants getConstants() {
@@ -41,9 +41,9 @@ public abstract class ConstantsManager {
         }
 
         @Override
-        public Enums getEnums() {
+        public LocalizedEnums getEnums() {
             if (enums == null) {
-                enums = GWT.create(Enums.class);
+                enums = GWT.create(LocalizedEnums.class);
             }
             return enums;
         }

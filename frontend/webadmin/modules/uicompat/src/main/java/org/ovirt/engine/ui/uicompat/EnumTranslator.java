@@ -8,7 +8,7 @@ public class EnumTranslator implements Translator<Enum<?>> {
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final EnumTranslator INSTANCE = new EnumTranslator();
 
-    private static final Enums enums = ConstantsManager.getInstance().getEnums();
+    private static final LocalizedEnums enums = ConstantsManager.getInstance().getEnums();
 
     private EnumTranslator() {
     }

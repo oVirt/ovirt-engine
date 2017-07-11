@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup.Mocks;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Enums;
+import org.ovirt.engine.ui.uicompat.LocalizedEnums;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -74,7 +74,7 @@ public class UiCommonSetup implements TestRule {
         TypeResolver typeResolver();
         UIConstants uiConstants();
         UIMessages uiMessages();
-        Enums enums();
+        LocalizedEnums enums();
 
     }
 
@@ -112,7 +112,7 @@ class Env {
     private final ConstantsManager constantsManager = mock(ConstantsManager.class);
     private final UIConstants uiConstants = mock(UIConstants.class);
     private final UIMessages uiMessages = mock(UIMessages.class);
-    private final Enums enums = mock(Enums.class);
+    private final LocalizedEnums enums = mock(LocalizedEnums.class);
 
     final Mocks mocks = new Mocks() {
         @Override
@@ -141,7 +141,7 @@ class Env {
         }
 
         @Override
-        public Enums enums() {
+        public LocalizedEnums enums() {
             return enums;
         }
     };
