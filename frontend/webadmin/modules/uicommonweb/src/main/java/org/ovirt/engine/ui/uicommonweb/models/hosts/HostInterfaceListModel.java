@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
@@ -348,6 +349,13 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, HostInterfa
 
         getSaveNetworkConfigCommand().setIsExecutionAllowed(host != null
                 && (host.getNetConfigDirty() == null ? false : host.getNetConfigDirty()));
+
+        getSyncAllHostNetworksCommand().setIsExecutionAllowed(getItems() != null
+                && getItems().stream().flatMap(model -> model.getInterfaces().stream())
+                .map(hostInterface -> hostInterface.getInterface().getNetworkImplementationDetails())
+                .filter(Objects::nonNull)
+                .anyMatch(implementationDetails -> implementationDetails.isManaged()
+                        && !implementationDetails.isInSync()));
     }
 
     public void syncAllHostNetworks() {
