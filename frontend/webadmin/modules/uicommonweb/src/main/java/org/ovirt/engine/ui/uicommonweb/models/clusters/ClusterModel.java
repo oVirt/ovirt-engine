@@ -956,58 +956,58 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     public void init(final boolean isEdit) {
         setIsEdit(isEdit);
-        setName(new EntityModel<String>());
-        setDescription(new EntityModel<String>());
-        setComment(new EntityModel<String>());
+        setName(new EntityModel<>());
+        setDescription(new EntityModel<>());
+        setComment(new EntityModel<>());
         setEnableTrustedService(new EntityModel<>(false));
         setEnableHaReservation(new EntityModel<>(false));
         setEnableOptionalReason(new EntityModel<>(false));
-        setMigrationPolicies(new ListModel<MigrationPolicy>());
+        setMigrationPolicies(new ListModel<>());
         getMigrationPolicies().getSelectedItemChangedEvent().addListener(this);
         getEnableOptionalReason().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         setEnableHostMaintenanceReason(new EntityModel<>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
-        setGlusterTunedProfile(new ListModel<String>());
+        setGlusterTunedProfile(new ListModel<>());
         AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery<>(returnValue -> setAllowClusterWithVirtGlusterEnabled(returnValue)));
 
-        setEnableOvirtService(new EntityModel<Boolean>());
-        setEnableGlusterService(new EntityModel<Boolean>());
-        setAdditionalClusterFeatures(new ListModel<List<AdditionalFeature>>());
+        setEnableOvirtService(new EntityModel<>());
+        setEnableGlusterService(new EntityModel<>());
+        setAdditionalClusterFeatures(new ListModel<>());
         List<List<AdditionalFeature>> additionalFeatures = new ArrayList<>();
         additionalFeatures.add(Collections.emptyList());
         getAdditionalClusterFeatures().setItems(additionalFeatures, null);
-        setSpiceProxyEnabled(new EntityModel<Boolean>());
+        setSpiceProxyEnabled(new EntityModel<>());
         getSpiceProxyEnabled().setEntity(false);
         getSpiceProxyEnabled().getEntityChangedEvent().addListener(this);
 
-        setSpiceProxy(new EntityModel<String>());
+        setSpiceProxy(new EntityModel<>());
         getSpiceProxy().setIsChangeable(false);
 
-        setFencingEnabledModel(new EntityModel<Boolean>());
+        setFencingEnabledModel(new EntityModel<>());
         getFencingEnabledModel().setEntity(true);
         getFencingEnabledModel().getEntityChangedEvent().addListener((ev, sender, args) -> updateFencingPolicyContent(getVersion() == null ? null : getVersion().getSelectedItem()));
 
-        setSkipFencingIfSDActiveEnabled(new EntityModel<Boolean>());
+        setSkipFencingIfSDActiveEnabled(new EntityModel<>());
         getSkipFencingIfSDActiveEnabled().setEntity(true);
 
-        setSkipFencingIfGlusterBricksUp(new EntityModel<Boolean>());
+        setSkipFencingIfGlusterBricksUp(new EntityModel<>());
         getSkipFencingIfGlusterBricksUp().setEntity(false);
         getSkipFencingIfGlusterBricksUp().setIsAvailable(false);
-        setSkipFencingIfGlusterQuorumNotMet(new EntityModel<Boolean>());
+        setSkipFencingIfGlusterQuorumNotMet(new EntityModel<>());
         getSkipFencingIfGlusterQuorumNotMet().setEntity(false);
         getSkipFencingIfGlusterQuorumNotMet().setIsAvailable(false);
 
-        setSkipFencingIfConnectivityBrokenEnabled(new EntityModel<Boolean>());
+        setSkipFencingIfConnectivityBrokenEnabled(new EntityModel<>());
         getSkipFencingIfConnectivityBrokenEnabled().setEntity(true);
 
-        setEnableOvirtService(new EntityModel<Boolean>());
-        setEnableGlusterService(new EntityModel<Boolean>());
+        setEnableOvirtService(new EntityModel<>());
+        setEnableGlusterService(new EntityModel<>());
 
         setSerialNumberPolicy(new SerialNumberPolicyModel());
 
-        setAutoConverge(new ListModel<Boolean>());
+        setAutoConverge(new ListModel<>());
         getAutoConverge().setItems(Arrays.asList(null, true, false));
-        setMigrateCompressed(new ListModel<Boolean>());
+        setMigrateCompressed(new ListModel<>());
         getMigrateCompressed().setItems(Arrays.asList(null, true, false));
 
         getEnableOvirtService().getEntityChangedEvent().addListener((ev, sender, args) -> {
@@ -1037,7 +1037,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getEnableOvirtService().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.VirtOnly
                 && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
-        setRngHwrngSourceRequired(new EntityModel<Boolean>());
+        setRngHwrngSourceRequired(new EntityModel<>());
         getRngHwrngSourceRequired().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
         initImportCluster(isEdit);
@@ -1103,10 +1103,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         getGlusterTunedProfile().setIsAvailable(getEnableGlusterService().getEntity());
 
-        setOptimizationNone(new EntityModel<Integer>());
-        setOptimizationForServer(new EntityModel<Integer>());
-        setOptimizationForDesktop(new EntityModel<Integer>());
-        setOptimizationCustom(new EntityModel<Integer>());
+        setOptimizationNone(new EntityModel<>());
+        setOptimizationForServer(new EntityModel<>());
+        setOptimizationForDesktop(new EntityModel<>());
+        setOptimizationCustom(new EntityModel<>());
 
         EntityModel<Boolean> tempVar = new EntityModel<>();
         tempVar.setEntity(false);
@@ -1139,7 +1139,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setMigrateOnErrorOption_HA_ONLY(tempVar7);
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
         // KSM feature
-        setEnableKsm(new EntityModel<Boolean>());
+        setEnableKsm(new EntityModel<>());
         getEnableKsm().setEntity(false);
         getKsmPolicyForNumaSelection().setIsChangeable(false);
         getEnableKsm().getEntityChangedEvent().addListener((ev, sender, args) -> {
@@ -1154,7 +1154,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             }
         });
 
-        setEnableBallooning(new EntityModel<Boolean>());
+        setEnableBallooning(new EntityModel<>());
         getEnableBallooning().setEntity(false);
         // Optimization methods:
         // default value =100;
@@ -1164,15 +1164,15 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         setVersionSupportsCpuThreads(new EntityModel<>(true));
 
-        setOptimizeForUtilization(new EntityModel<Boolean>());
-        setOptimizeForSpeed(new EntityModel<Boolean>());
+        setOptimizeForUtilization(new EntityModel<>());
+        setOptimizeForSpeed(new EntityModel<>());
         getOptimizeForUtilization().setEntity(true);
         getOptimizeForSpeed().setEntity(false);
         getOptimizeForUtilization().getEntityChangedEvent().addListener(this);
         getOptimizeForSpeed().getEntityChangedEvent().addListener(this);
 
-        setGuarantyResources(new EntityModel<Boolean>());
-        setAllowOverbooking(new EntityModel<Boolean>());
+        setGuarantyResources(new EntityModel<>());
+        setAllowOverbooking(new EntityModel<>());
         getGuarantyResources().setEntity(true);
         getAllowOverbooking().setEntity(false);
         getAllowOverbooking().getEntityChangedEvent().addListener(this);
@@ -1197,7 +1197,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             });
         }
 
-        setHostsWithBrokenConnectivityThreshold(new ListModel<Integer>());
+        setHostsWithBrokenConnectivityThreshold(new ListModel<>());
         getHostsWithBrokenConnectivityThreshold().setIsAvailable(true);
         getHostsWithBrokenConnectivityThreshold().getSelectedItemChangedEvent().addListener(this);
         initHostsWithBrokenConnectivityThreshold();
@@ -1240,14 +1240,14 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             }));
         }));
 
-        setDataCenter(new ListModel<StoragePool>());
+        setDataCenter(new ListModel<>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
-        setArchitecture(new ListModel<ArchitectureType>());
+        setArchitecture(new ListModel<>());
         getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
-        setManagementNetwork(new ListModel<Network>());
+        setManagementNetwork(new ListModel<>());
         if (isEdit && !isClusterDetached()) {
             getManagementNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
@@ -1255,15 +1255,15 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
             getManagementNetwork().setIsChangeable(false);
         }
 
-        setCPU(new FilteredListModel<ServerCpu>());
+        setCPU(new FilteredListModel<>());
         getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         getCPU().getSelectedItemChangedEvent().addListener(this);
 
-        setVersion(new ListModel<Version>());
+        setVersion(new ListModel<>());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
 
-        setSwitchType(new ListModel<SwitchType>());
+        setSwitchType(new ListModel<>());
         initSwitchType();
 
 
@@ -1272,7 +1272,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setValidTab(TabName.GENERAL_TAB, true);
         setMigrationTabAvailable(true);
 
-        setClusterPolicy(new ListModel<ClusterPolicy>());
+        setClusterPolicy(new ListModel<>());
         setCustomPropertySheet(new KeyValueModel());
         getClusterPolicy().getSelectedItemChangedEvent().addListener(this);
         Frontend.getInstance().runQuery(QueryType.GetAllPolicyUnits, new QueryParametersBase(),
@@ -1307,8 +1307,8 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                                         clusterPolicyChanged();
                                     }));
                 }));
-        setCustomMigrationNetworkBandwidth(new EntityModel<Integer>());
-        setMigrationBandwidthLimitType(new ListModel<MigrationBandwidthLimitType>());
+        setCustomMigrationNetworkBandwidth(new EntityModel<>());
+        setMigrationBandwidthLimitType(new ListModel<>());
     }
 
     private void updateGlusterFencingPolicyAvailability() {
@@ -1419,7 +1419,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
     }
 
     private void initImportCluster(boolean isEdit) {
-        setGlusterHostAddress(new EntityModel<String>());
+        setGlusterHostAddress(new EntityModel<>());
         getGlusterHostAddress().getEntityChangedEvent().addListener((ev, sender, args) -> {
             setIsFingerprintVerified(false);
             if (getGlusterHostAddress().getEntity() == null
@@ -1432,12 +1432,12 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     VdsStatic.DEFAULT_SSH_PORT);
         });
 
-        setGlusterHostFingerprint(new EntityModel<String>());
+        setGlusterHostFingerprint(new EntityModel<>());
         getGlusterHostFingerprint().setEntity(""); //$NON-NLS-1$
         setIsFingerprintVerified(false);
-        setGlusterHostPassword(new EntityModel<String>());
+        setGlusterHostPassword(new EntityModel<>());
 
-        setIsImportGlusterConfiguration(new EntityModel<Boolean>());
+        setIsImportGlusterConfiguration(new EntityModel<>());
         getIsImportGlusterConfiguration().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (getIsImportGlusterConfiguration().getEntity() != null
                     && getIsImportGlusterConfiguration().getEntity()) {
