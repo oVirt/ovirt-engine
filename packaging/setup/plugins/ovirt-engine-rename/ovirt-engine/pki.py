@@ -24,7 +24,6 @@ import os
 
 from M2Crypto import X509
 
-from otopi import constants as otopicons
 from otopi import filetransaction
 from otopi import plugin
 from otopi import transaction
@@ -53,16 +52,6 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
         self.uninstall_files = []
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_BOOT,
-    )
-    def _boot(self):
-        self.environment[
-            otopicons.CoreEnv.LOG_FILTER_KEYS
-        ].append(
-            oenginecons.PKIEnv.STORE_PASS
-        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,

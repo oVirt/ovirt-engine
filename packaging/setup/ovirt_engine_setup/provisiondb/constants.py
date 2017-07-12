@@ -24,6 +24,7 @@ import gettext
 from otopi import util
 
 from ovirt_engine_setup.constants import classproperty
+from ovirt_engine_setup.constants import osetupattrs
 from ovirt_engine_setup.constants import osetupattrsclass
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 
@@ -99,7 +100,13 @@ class ProvDBEnv(object):
     SECURED_HOST_VALIDATION = 'OVESETUP_PROVISION_DB/securedHostValidation'
     DATABASE = 'OVESETUP_PROVISION_DB/database'
     USER = 'OVESETUP_PROVISION_DB/user'
-    PASSWORD = 'OVESETUP_PROVISION_DB/password'
+
+    @osetupattrs(
+        is_secret=True,
+    )
+    def PASSWORD(self):
+        return 'OVESETUP_PROVISION_DB/password'
+
     CONNECTION = 'OVESETUP_PROVISION_DB/connection'
     STATEMENT = 'OVESETUP_PROVISION_DB/statement'
     PGPASS_FILE = 'OVESETUP_PROVISION_DB/pgPassFile'

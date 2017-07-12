@@ -467,6 +467,7 @@ class ConfigEnv(object):
 
     @osetupattrs(
         answerfile=True,
+        is_secret=True,
     )
     def REMOTE_ENGINE_HOST_ROOT_PASSWORD(self):
         return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'

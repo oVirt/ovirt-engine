@@ -508,6 +508,7 @@ class EngineDBEnv(object):
         answerfile_condition=lambda env: not env.get(
             oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
         ),
+        is_secret=True,
     )
     def PASSWORD(self):
         return 'OVESETUP_DB/password'
@@ -630,7 +631,11 @@ class SystemEnv(object):
 @util.codegen
 @osetupattrsclass
 class PKIEnv(object):
-    STORE_PASS = 'OVESETUP_PKI/storePassword'
+    @osetupattrs(
+        is_secret=True,
+    )
+    def STORE_PASS(self):
+        return 'OVESETUP_PKI/storePassword'
 
     @osetupattrs(
         postinstallfile=True,
@@ -771,6 +776,7 @@ class ConfigEnv(object):
 
     @osetupattrs(
         answerfile=True,
+        is_secret=True,
     )
     def ADMIN_PASSWORD(self):
         return 'OVESETUP_CONFIG/adminPassword'
@@ -881,7 +887,12 @@ class OvnEnv(object):
     )
 
     PROVIDER_NAME = 'ovirt-provider-ovn'
-    OVIRT_PROVIDER_OVN_SECRET = 'OVESETUP_OVN/ovirtProviderOvnSecret'
+
+    @osetupattrs(
+        is_secret=True,
+    )
+    def OVIRT_PROVIDER_OVN_SECRET(self):
+        return 'OVESETUP_OVN/ovirtProviderOvnSecret'
 
 
 @util.export

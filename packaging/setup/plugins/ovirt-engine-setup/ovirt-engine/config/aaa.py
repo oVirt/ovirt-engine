@@ -27,7 +27,6 @@ import string
 
 from M2Crypto import RSA
 
-from otopi import constants as otopicons
 from otopi import plugin
 from otopi import util
 
@@ -59,16 +58,6 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_BOOT,
-    )
-    def _boot(self):
-        self.environment[
-            otopicons.CoreEnv.LOG_FILTER_KEYS
-        ].append(
-            oenginecons.ConfigEnv.ADMIN_PASSWORD
-        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,

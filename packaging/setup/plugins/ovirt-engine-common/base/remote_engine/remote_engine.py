@@ -19,7 +19,6 @@
 """Remote engine plugin."""
 
 
-from otopi import constants as otopicons
 from otopi import plugin
 from otopi import util
 
@@ -61,11 +60,6 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_ROOT_PASSWORD,
             None
-        )
-        self.environment[
-            otopicons.CoreEnv.LOG_FILTER_KEYS
-        ].append(
-            osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_ROOT_PASSWORD
         )
         self.environment[
             osetupcons.ConfigEnv.REMOTE_ENGINE_SETUP_STYLES

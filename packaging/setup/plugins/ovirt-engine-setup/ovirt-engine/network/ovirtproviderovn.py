@@ -107,16 +107,6 @@ class Plugin(plugin.PluginBase):
         self._failed_commands = []
         self._manual_tasks = []
 
-    @plugin.event(
-        stage=plugin.Stages.STAGE_BOOT,
-    )
-    def _boot(self):
-        self.environment[
-            otopicons.CoreEnv.LOG_FILTER_KEYS
-        ].append(
-            OvnEnv.OVIRT_PROVIDER_OVN_SECRET
-        )
-
     def _add_provider_to_db(self):
         auth_required = self._user is not None
         fqdn = self.environment[osetupcons.ConfigEnv.FQDN]

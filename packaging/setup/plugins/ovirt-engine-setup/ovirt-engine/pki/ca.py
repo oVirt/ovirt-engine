@@ -401,16 +401,6 @@ class Plugin(plugin.PluginBase):
         self._ca_was_renewed = False
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_BOOT,
-    )
-    def _boot(self):
-        self.environment[
-            otopicons.CoreEnv.LOG_FILTER_KEYS
-        ].append(
-            oenginecons.PKIEnv.STORE_PASS
-        )
-
-    @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
