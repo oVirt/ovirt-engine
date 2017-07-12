@@ -1040,7 +1040,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setRngHwrngSourceRequired(new EntityModel<>());
         getRngHwrngSourceRequired().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
-        initImportCluster(isEdit);
+        initImportCluster();
 
         getEnableGlusterService().getEntityChangedEvent().addListener((ev, sender, args) -> {
             refreshAdditionalClusterFeaturesList();
@@ -1418,7 +1418,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getSpiceProxy().setEntity(proxy);
     }
 
-    private void initImportCluster(boolean isEdit) {
+    private void initImportCluster() {
         setGlusterHostAddress(new EntityModel<>());
         getGlusterHostAddress().getEntityChangedEvent().addListener((ev, sender, args) -> {
             setIsFingerprintVerified(false);
@@ -1566,7 +1566,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         if (ev.matchesDefinition(ListModel.itemsChangedEventDefinition)) {
             handleItemsChangedEventDefinition(sender);
         } else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
-            handleSelectedItemChangedEventDefinition(sender, args);
+            handleSelectedItemChangedEventDefinition(sender);
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             handleEntityChangedEventDefinition((EntityModel) sender);
         }
@@ -1625,17 +1625,17 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    private void handleSelectedItemChangedEventDefinition(Object sender, EventArgs args) {
+    private void handleSelectedItemChangedEventDefinition(Object sender) {
         if (sender == getDataCenter()) {
-            storagePool_SelectedItemChanged(args);
+            storagePool_SelectedItemChanged();
         } else if (sender == getVersion()) {
-            version_SelectedItemChanged(args);
+            version_SelectedItemChanged();
         } else if (sender == getClusterPolicy()) {
             clusterPolicyChanged();
         } else if (sender == getCPU()) {
-            CPU_SelectedItemChanged(args);
+            CPU_SelectedItemChanged();
         } else if (sender == getArchitecture()) {
-            architectureSelectedItemChanged(args);
+            architectureSelectedItemChanged();
         } else if (sender == getMacPoolListModel()) {
             getMacPoolModel().setEntity(getMacPoolListModel().getSelectedItem());
         }  else if (sender == getMigrationPolicies()) {
@@ -1652,7 +1652,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getMigrateCompressed().setIsChangeable(!hasMigrationPolicy, constants.availableOnlyWithLegacyPolicy());
     }
 
-    private void architectureSelectedItemChanged(EventArgs args) {
+    private void architectureSelectedItemChanged() {
         filterCpuTypeByArchitecture();
     }
 
@@ -1669,11 +1669,11 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getCPU().filterItems(filter);
     }
 
-    private void CPU_SelectedItemChanged(EventArgs args) {
+    private void CPU_SelectedItemChanged() {
         updateMigrateOnError();
     }
 
-    private void version_SelectedItemChanged(EventArgs e) {
+    private void version_SelectedItemChanged() {
         Version version = getEffectiveVersion();
 
         AsyncDataProvider.getInstance().getCPUList(new AsyncQuery<>(cpus -> {
@@ -1926,7 +1926,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getHostsWithBrokenConnectivityThreshold().setSelectedItem(50);
     }
 
-    private void storagePool_SelectedItemChanged(EventArgs e) {
+    private void storagePool_SelectedItemChanged() {
         // possible versions for new cluster (when editing cluster, this event won't occur)
         // are actually the possible versions for the data-center that the cluster is going
         // to be attached to.
