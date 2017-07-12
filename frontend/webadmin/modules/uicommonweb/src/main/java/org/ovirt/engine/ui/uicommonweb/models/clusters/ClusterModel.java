@@ -2151,7 +2151,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
 
         getKsmPolicyForNumaSelection().setSelectedItem(ksmPolicyForNuma);
-        return;
     }
 
     public enum KsmPolicyForNuma {
