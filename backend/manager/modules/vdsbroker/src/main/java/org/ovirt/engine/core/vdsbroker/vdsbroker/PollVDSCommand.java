@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.concurrent.TimeoutException;
+
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
@@ -54,5 +56,12 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
      */
     @Override
     protected void logToAudit() {
+    }
+
+    @Override
+    protected void logTimeoutException(TimeoutException e, VDSNetworkException ex) {
+        //don't do that.
+        //PollingVds is usually done to wait until connectivity to host is recovered.
+        //Any timeouts during process are expected and we don't want to log such 'failures'.
     }
 }
