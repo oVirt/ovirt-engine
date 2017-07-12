@@ -2087,10 +2087,10 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getRngHwrngSourceRequired().getIsValid()
                 && getGlusterHostPassword().getIsValid()
-                && (getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
+                && (!getIsImportGlusterConfiguration().getEntity() || (getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && getSerialNumberPolicy().getCustomSerialNumber().getIsValid()
-                && isFingerprintVerified()) : true);
+                && isFingerprintVerified()));
         setValidTab(TabName.GENERAL_TAB, generalTabValid);
 
         if (getVersion().getSelectedItem() != null) {
