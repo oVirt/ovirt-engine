@@ -359,7 +359,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 sb.append(templates.textForCheckBox(constants.attach()));
             }
 
-        }, assignAllHeader, "80px"); //$NON-NLS-1$
+        }, assignAllHeader, "110px"); //$NON-NLS-1$
         clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>((index, model, value) -> {
             model.setRequired(value);
             refreshClustersTable();
@@ -380,7 +380,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 sb.append(templates.textForCheckBox(constants.required()));
             }
 
-        }, requiredAllHeader, "80px"); //$NON-NLS-1$
+        }, requiredAllHeader, "110px"); //$NON-NLS-1$
     }
 
     private boolean isRequiredChangeable() {
