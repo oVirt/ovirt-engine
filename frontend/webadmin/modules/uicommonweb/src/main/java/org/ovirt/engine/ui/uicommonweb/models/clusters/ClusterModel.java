@@ -294,10 +294,6 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
     public void setAllowClusterWithVirtGlusterEnabled(boolean value) {
         allowClusterWithVirtGlusterEnabled = value;
-        if (allowClusterWithVirtGlusterEnabled != value) {
-            allowClusterWithVirtGlusterEnabled = value;
-            onPropertyChanged(new PropertyChangedEventArgs("AllowClusterWithVirtGlusterEnabled")); //$NON-NLS-1$
-        }
     }
 
     private EntityModel<Boolean> privateEnableOvirtService;
