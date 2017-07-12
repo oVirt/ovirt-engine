@@ -1865,7 +1865,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
 
         if (getIsEdit()) {
             if (!canChangeArchitecture) {
-                getArchitecture().setItems(new ArrayList<>(Arrays.asList(getEntity().getArchitecture())));
+                getArchitecture().setItems(new ArrayList<>(Collections.singletonList(getEntity().getArchitecture())));
             }
 
             if (oldSelectedArch != null) {
