@@ -158,9 +158,10 @@ public class ImagesHandler {
         }
 
         if (destStorages != null) {
-            destStorages.putAll(diskInfoDestinationMap.values().stream()
-                    .collect(Collectors.toMap(d -> d.getStorageIds().get(0),
-                            d -> storageDomainsMap.get(d.getStorageIds().get(0)))));
+            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+                Guid storageDomainId = diskImage.getStorageIds().get(0);
+                destStorages.put(storageDomainId, storageDomainsMap.get(storageDomainId));
+            }
         }
     }
 
