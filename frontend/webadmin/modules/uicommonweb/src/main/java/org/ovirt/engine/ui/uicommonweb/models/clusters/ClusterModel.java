@@ -1524,7 +1524,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         if (dataCenterId == null) {
             return;
         }
-        final AsyncQuery getAllDataCenterNetworksQuery = new AsyncQuery<>(new AsyncCallback<List<Network>>() {
+        final AsyncQuery<List<Network>> getAllDataCenterNetworksQuery = new AsyncQuery<>(new AsyncCallback<List<Network>>() {
             @Override
             public void onSuccess(List<Network> dcNetworks) {
                 if (getDataCenter().getSelectedItem() == null) {
