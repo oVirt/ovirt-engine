@@ -1564,7 +1564,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         } else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
             handleSelectedItemChangedEventDefinition(sender);
         } else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
-            handleEntityChangedEventDefinition((EntityModel) sender);
+            handleEntityChangedEventDefinition((EntityModel<Boolean>) sender);
         }
     }
 
@@ -1574,7 +1574,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
     }
 
-    private void handleEntityChangedEventDefinition(EntityModel senderEntityModel) {
+    private void handleEntityChangedEventDefinition(EntityModel<Boolean> senderEntityModel) {
         if (senderEntityModel == getSpiceProxyEnabled()) {
             getSpiceProxy().setIsChangeable(getSpiceProxyEnabled().getEntity());
         } else if ((Boolean) senderEntityModel.getEntity()) {
