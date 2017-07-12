@@ -494,10 +494,21 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
     }
 
     @Test
-    public void testReportConfigurationsOnHostWhenIpv4BootProtocolStatic() {
-        boolean syncAddress = RandomUtils.instance().nextBoolean();
-        boolean syncNetmask = RandomUtils.instance().nextBoolean();
-        boolean syncGateway = RandomUtils.instance().nextBoolean();
+    public void testReportConfigurationsOnHostWhenIpv4BootProtocolStaticAndAddressSynced() {
+        testReportConfigurationsOnHostWhenIpv4BootProtocolStatic(true, false, false);
+    }
+
+    @Test
+    public void testReportConfigurationsOnHostWhenIpv4BootProtocolStaticAndNetmaskSynced() {
+        testReportConfigurationsOnHostWhenIpv4BootProtocolStatic(false, true, false);
+    }
+
+    @Test
+    public void testReportConfigurationsOnHostWhenIpv4BootProtocolStaticAndGatewaySynced() {
+        testReportConfigurationsOnHostWhenIpv4BootProtocolStatic(false, false, true);
+    }
+
+    private void testReportConfigurationsOnHostWhenIpv4BootProtocolStatic(boolean syncAddress, boolean syncNetmask, boolean syncGateway) {
         initIpv4ConfigurationBootProtocolAddress(Ipv4BootProtocol.STATIC_IP, syncAddress);
         initIpv4ConfigurationBootProtocolNetmask(Ipv4BootProtocol.STATIC_IP, syncNetmask);
         initIpv4ConfigurationBootProtocolGateway(Ipv4BootProtocol.STATIC_IP, syncGateway);
@@ -527,7 +538,12 @@ public class NetworkInSyncWithVdsNetworkInterfaceTest {
                         primaryAddress.getGateway(),
                         syncGateway)
         );
-        assertThat(reportedConfigurationList.containsAll(expectedReportedConfigurations), is(true));
+
+        for (ReportedConfiguration expectedReportedConfiguration : expectedReportedConfigurations) {
+            assertThat("expected configuration not reported:" + expectedReportedConfiguration,
+                    reportedConfigurationList.contains(expectedReportedConfiguration),
+                    is(true));
+        }
         assertThat(reportedConfigurationList.size(), is(expectedReportedConfigurations.size()));
     }
 
