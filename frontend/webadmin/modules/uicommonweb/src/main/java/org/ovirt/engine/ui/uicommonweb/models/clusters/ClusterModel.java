@@ -968,7 +968,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setEnableHostMaintenanceReason(new EntityModel<>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         setGlusterTunedProfile(new ListModel<>());
-        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery<>(returnValue -> setAllowClusterWithVirtGlusterEnabled(returnValue)));
+        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery<>(this::setAllowClusterWithVirtGlusterEnabled));
 
         setEnableOvirtService(new EntityModel<>());
         setEnableGlusterService(new EntityModel<>());
