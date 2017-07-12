@@ -921,7 +921,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         Frontend.getInstance().runQuery(QueryType.GetAllMacPools,
                 new QueryParametersBase(),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                    getMacPoolListModel().setItems((Collection<MacPool>) returnValue.getReturnValue());
+                    getMacPoolListModel().setItems(returnValue.getReturnValue());
                     stopProgress();
                 }));
     }
@@ -937,7 +937,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
                     stopProgress();
                     List<String> glusterTunedProfiles = new ArrayList<>();
                     if (returnValue.getSucceeded()) {
-                        glusterTunedProfiles.addAll((List<String>) returnValue.getReturnValue());
+                        glusterTunedProfiles.addAll(returnValue.getReturnValue());
                     }
                     final String oldSelectedProfile = glusterTunedProfile.getSelectedItem();
                     glusterTunedProfile.setItems(glusterTunedProfiles);
