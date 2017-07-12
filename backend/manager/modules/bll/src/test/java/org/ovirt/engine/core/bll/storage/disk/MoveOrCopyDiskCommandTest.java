@@ -31,13 +31,11 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -230,46 +228,6 @@ public class MoveOrCopyDiskCommandTest extends BaseCommandTest {
         initDestStorageDomain(StorageType.NFS);
         when(snapshotsValidator.vmNotInPreview(any())).thenReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW));
         ValidateTestUtils.runAndAssertValidateFailure(command, EngineMessage.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
-    }
-
-    @Test
-    public void validateFailureOnMovingLunDisk() {
-        initializeCommand(new LunDisk());
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
-    }
-
-    @Test
-    public void validateFailureOnCopyingLunDisk() {
-        initializeCommand(new LunDisk());
-        command.getParameters().setOperation(ImageOperation.Copy);
-        command.init();
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
-    }
-
-    @Test
-    public void validateFailureOnMovingVmLunDisk() {
-        initializeCommand(new LunDisk());
-        vmDevice.setSnapshotId(Guid.newGuid());
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
-    }
-
-    @Test
-    public void validateFailureOnMovingCinderDisk() {
-        initializeCommand(new CinderDisk());
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
-    }
-
-    @Test
-    public void validateFailureOnCopyingCinderDisk() {
-        initializeCommand(new CinderDisk());
-        command.getParameters().setOperation(ImageOperation.Copy);
-        command.init();
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_NOT_SUPPORTED_DISK_STORAGE_TYPE);
     }
 
     @Test
