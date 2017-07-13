@@ -28,9 +28,7 @@ import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.di.InjectorRule;
@@ -52,9 +50,6 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     private MacPoolDao macPoolDao;
 
     @Mock
-    private AuditLogDao auditLogDao;
-
-    @Mock
     private DecoratedMacPoolFactory decoratedMacPoolFactory;
 
     @Mock
@@ -71,7 +66,6 @@ public class MacPoolPerClusterTest extends DbDependentTestBase {
     @Before
     public void setUp() throws Exception {
         injectorRule.bind(AuditLogDirector.class, auditLogDirector);
-        when(DbFacade.getInstance().getAuditLogDao()).thenReturn(auditLogDao);
 
         commandContext = CommandContext.createContext(SESSION_ID);
         macPool = createMacPool(MAC_FROM, MAC_TO);
