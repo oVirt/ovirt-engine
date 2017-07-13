@@ -2,12 +2,13 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import java.text.MessageFormat;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.AuditLogDao;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,9 @@ import org.slf4j.LoggerFactory;
 public class AuditLogDirector {
     private static final Logger log = LoggerFactory.getLogger(AuditLogDirector.class);
     private static final int USERNAME_LENGTH = 255;
+
+    @Inject
+    private AuditLogDao auditLogDao;
 
     public void log(AuditLogable auditLogable, AuditLogType logType) {
         log(auditLogable, logType, "");
@@ -62,7 +66,7 @@ public class AuditLogDirector {
         auditLog.setUserName(StringUtils.abbreviate(auditLog.getUserName(), USERNAME_LENGTH));
 
         TransactionSupport.executeInNewTransaction(() -> {
-            getDbFacadeInstance().getAuditLogDao().save(auditLog);
+            auditLogDao.save(auditLog);
             return null;
         });
         return auditLog;
@@ -105,9 +109,5 @@ public class AuditLogDirector {
             String resolvedMessage = MessageResolver.resolveMessage(messageByType, auditLogable);
             return auditLogable.createAuditLog(logType, resolvedMessage);
         }
-    }
-
-    private DbFacade getDbFacadeInstance() {
-        return DbFacade.getInstance();
     }
 }
