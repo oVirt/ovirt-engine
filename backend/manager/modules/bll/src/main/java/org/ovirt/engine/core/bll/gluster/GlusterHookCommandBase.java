@@ -5,7 +5,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.Cluster;
@@ -28,9 +27,6 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     private GlusterUtil glusterUtil;
 
     protected GlusterHookEntity entity;
-
-    @Inject
-    protected ClusterUtils clusterUtils;
 
     public GlusterHookCommandBase(T params, CommandContext commandContext) {
         super(params, commandContext);

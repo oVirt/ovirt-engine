@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
@@ -32,6 +33,9 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
 
     @Inject
     private GlusterHooksDao glusterHooksDao;
+
+    @Inject
+    private ClusterUtils clusterUtils;
 
     protected List<String> errors = new ArrayList<>();
 
