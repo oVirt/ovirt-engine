@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -15,12 +17,31 @@ import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 
 public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
     private StorageDomain storageDomain;
+
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private DiskProfileDao diskProfileDao;
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmDao vmDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     public DiskProfileValidator(DiskProfile profile) {
         super(profile);
@@ -53,7 +74,7 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
 
     protected StorageDomain getStorageDomain(Guid sdGuid) {
         if (sdGuid != null) {
-            return getDbFacade().getStorageDomainDao().get(sdGuid);
+            return storageDomainDao.get(sdGuid);
         }
         return null;
     }
@@ -100,7 +121,7 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
     }
 
     private ValidationResult validateUnattachedDisks() {
-        List<DiskImage> entities = getDbFacade().getDiskImageDao().getAllForDiskProfiles(Collections.singletonList(getProfile().getId()));
+        List<DiskImage> entities = diskImageDao.getAllForDiskProfiles(Collections.singletonList(getProfile().getId()));
         if (entities.isEmpty()) {
             return ValidationResult.VALID;
         }
@@ -116,21 +137,21 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
 
     @Override
     protected DiskProfileDao getProfileDao() {
-        return getDbFacade().getDiskProfileDao();
+        return diskProfileDao;
     }
 
     @Override
     protected List<DiskProfile> getProfilesByParentEntity() {
-        return getDbFacade().getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId());
+        return diskProfileDao.getAllForStorageDomain(getStorageDomain().getId());
     }
 
     @Override
     protected List<VmTemplate> getTemplatesUsingProfile() {
-        return getDbFacade().getVmTemplateDao().getAllForDiskProfile(getProfile().getId());
+        return vmTemplateDao.getAllForDiskProfile(getProfile().getId());
     }
 
     @Override
     protected List<VM> getVmsUsingProfile() {
-        return getDbFacade().getVmDao().getAllForDiskProfiles(Collections.singletonList(getProfile().getId()));
+        return vmDao.getAllForDiskProfiles(Collections.singletonList(getProfile().getId()));
     }
 }

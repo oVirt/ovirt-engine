@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +96,7 @@ public class DiskProfileHelper {
     }
 
     public ValidationResult isDiskProfileParentEntityValid(DiskProfile diskProfile, Guid storageDomainId) {
-        return new DiskProfileValidator(diskProfile).isParentEntityValid(storageDomainId);
+        return Injector.injectMembers(new DiskProfileValidator(diskProfile)).isParentEntityValid(storageDomainId);
     }
 
     /**

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class UpdateDiskProfileCommand extends UpdateProfileCommandBase<DiskProfileParameters, DiskProfile, DiskProfileValidator> {
 
@@ -31,7 +32,7 @@ public class UpdateDiskProfileCommand extends UpdateProfileCommandBase<DiskProfi
 
     @Override
     protected DiskProfileValidator getProfileValidator() {
-        return new DiskProfileValidator(getProfile());
+        return Injector.injectMembers(new DiskProfileValidator(getProfile()));
     }
 
     @Override

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class DiskProfileHelperTest {
         diskImage = createDisk();
         map.clear();
 
-        when(diskProfileHelper.isDiskProfileParentEntityValid(any(), any())).thenReturn(ValidationResult.VALID);
+        doReturn(ValidationResult.VALID).when(diskProfileHelper).isDiskProfileParentEntityValid(any(), any());
         doReturn(Guid.newGuid()).when(permissionDao).getEntityPermissions(any(), any(), any(), any());
         doReturn(Collections.singletonList(diskProfile_a)).when(diskProfileDao).getAllForStorageDomain
                 (STORAGE_DOMAIN_1);
