@@ -212,11 +212,14 @@ public abstract class OvfWriter implements IOvfBuilder {
             if (image.getDiskDescription() != null) {
                 _writer.writeAttributeString(OVF_URI, "disk-description", image.getDiskDescription());
             }
-            _writer.writeAttributeString(OVF_URI, "wipe-after-delete",
+            _writer.writeAttributeString(OVF_URI,
+                    "wipe-after-delete",
                     String.valueOf(image.isWipeAfterDelete()));
             _writer.writeAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getDescription()));
             _writer.writeAttributeString(OVF_URI, "disk_storage_type", image.getDiskStorageType().name());
-            _writer.writeAttributeString(OVF_URI, "cinder_volume_type", StringUtils.defaultString(image.getCinderVolumeType()));
+            _writer.writeAttributeString(OVF_URI,
+                    "cinder_volume_type",
+                    StringUtils.defaultString(image.getCinderVolumeType()));
             _writer.writeEndElement();
         }
         _writer.writeEndElement();
@@ -284,7 +287,8 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeElement(CUSTOM_COMPATIBILITY_VERSION, String.valueOf(vmBase.getCustomCompatibilityVersion()));
         }
 
-        _writer.writeElement(CLUSTER_COMPATIBILITY_VERSION, String.valueOf(version));// cluster version the VM/Snapshot originates from
+        _writer.writeElement(CLUSTER_COMPATIBILITY_VERSION, String.valueOf(version));// cluster version the VM/Snapshot
+                                                                                     // originates from
         _writer.writeElement(VM_TYPE, String.valueOf(vmBase.getVmType().getValue()));
 
         if (vmBase.getTunnelMigration() != null) {
@@ -547,8 +551,9 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected void writeSystem() {
         _writer.writeStartElement("System");
         _writer.writeStartElement(VSSD_URI, "VirtualSystemType");
-        _writer.writeRaw(String.format("%1$s %2$s", Config.<String>getValue(ConfigValues.OvfVirtualSystemType),
-                Config.<String>getValue(ConfigValues.VdcVersion)));
+        _writer.writeRaw(String.format("%1$s %2$s",
+                Config.<String> getValue(ConfigValues.OvfVirtualSystemType),
+                Config.<String> getValue(ConfigValues.VdcVersion)));
         _writer.writeEndElement();
         _writer.writeEndElement();
     }
