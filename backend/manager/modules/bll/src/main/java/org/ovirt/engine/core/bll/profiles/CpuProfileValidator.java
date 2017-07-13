@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -11,12 +13,26 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 
 public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
     private Cluster cluster;
+
+    @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
+    private CpuProfileDao cpuProfileDao;
+
+    @Inject
+    private VmTemplateDao vmTemplateDao;
+
+    @Inject
+    private VmDao vmDao;
 
     public CpuProfileValidator(CpuProfile profile) {
         super(profile);
@@ -28,7 +44,7 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
 
     @Override
     public ValidationResult parentEntityExists() {
-        if (DbFacade.getInstance().getClusterDao().get(getProfile().getClusterId()) == null) {
+        if (clusterDao.get(getProfile().getClusterId()) == null) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
         return ValidationResult.VALID;
@@ -45,7 +61,7 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
 
     protected Cluster getCluster() {
         if (cluster == null) {
-            cluster = getDbFacade().getClusterDao().get(getProfile().getClusterId());
+            cluster = clusterDao.get(getProfile().getClusterId());
         }
 
         return cluster;
@@ -61,21 +77,21 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
 
     @Override
     protected CpuProfileDao getProfileDao() {
-        return getDbFacade().getCpuProfileDao();
+        return cpuProfileDao;
     }
 
     @Override
     protected List<CpuProfile> getProfilesByParentEntity() {
-        return getDbFacade().getCpuProfileDao().getAllForCluster(getCluster().getId());
+        return cpuProfileDao.getAllForCluster(getCluster().getId());
     }
 
     @Override
     public List<VmTemplate> getTemplatesUsingProfile() {
-        return getDbFacade().getVmTemplateDao().getAllForCpuProfile(getProfile().getId());
+        return vmTemplateDao.getAllForCpuProfile(getProfile().getId());
     }
 
     @Override
     public List<VM> getVmsUsingProfile() {
-        return getDbFacade().getVmDao().getAllForCpuProfiles(Collections.singletonList(getProfile().getId()));
+        return vmDao.getAllForCpuProfiles(Collections.singletonList(getProfile().getId()));
     }
 }

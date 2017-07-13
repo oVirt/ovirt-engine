@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
+import org.ovirt.engine.core.di.Injector;
 
 @ValidateSupportsTransaction
 public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParameters, CpuProfile, CpuProfileValidator> {
@@ -34,7 +35,7 @@ public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParame
 
     @Override
     protected CpuProfileValidator getProfileValidator() {
-        return new CpuProfileValidator(getProfile());
+        return Injector.injectMembers(new CpuProfileValidator(getProfile()));
     }
 
     @Override

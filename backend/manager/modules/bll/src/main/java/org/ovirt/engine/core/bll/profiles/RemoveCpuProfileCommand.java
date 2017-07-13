@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class RemoveCpuProfileCommand extends RemoveProfileCommandBase<CpuProfileParameters, CpuProfile, CpuProfileValidator> {
 
@@ -26,7 +27,7 @@ public class RemoveCpuProfileCommand extends RemoveProfileCommandBase<CpuProfile
 
     @Override
     protected CpuProfileValidator getProfileValidator() {
-        return new CpuProfileValidator(getProfile());
+        return Injector.injectMembers(new CpuProfileValidator(getProfile()));
     }
 
     @Override

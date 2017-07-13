@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 import org.ovirt.engine.core.dao.qos.CpuQosDao;
+import org.ovirt.engine.core.di.Injector;
 
 public class UpdateCpuProfileCommand extends UpdateProfileCommandBase<CpuProfileParameters, CpuProfile, CpuProfileValidator> {
 
@@ -36,7 +37,7 @@ public class UpdateCpuProfileCommand extends UpdateProfileCommandBase<CpuProfile
 
     @Override
     protected CpuProfileValidator getProfileValidator() {
-        return new CpuProfileValidator(getProfile());
+        return Injector.injectMembers(new CpuProfileValidator(getProfile()));
     }
 
     @Override
