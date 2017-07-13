@@ -100,7 +100,7 @@ public class DiskValidator {
                 .stream()
                 .filter(p -> p.getFirst().getStatus() != VMStatus.Down)
                 .filter(p -> p.getSecond().isPlugged())
-                .filter(p -> checkOnlyVmsSnapshotPluggedTo && p.getSecond().getSnapshotId() == null)
+                .filter(p -> !(checkOnlyVmsSnapshotPluggedTo && p.getSecond().getSnapshotId() == null))
                 .map(p -> p.getFirst().getName())
                 .sorted()
                 .collect(Collectors.joining(","));

@@ -169,6 +169,16 @@ public class DiskValidatorTest {
 
     @Test
     public void testDiskAttachedToAnyNonDownVMWithProblems() {
+        testDiskAttachedToAnyNonDownVMWithProblems
+                (false, "anotherPausedPlugged,runningSnapshotPlugged,vmPausedPlugged");
+    }
+
+    @Test
+    public void testDiskAttachedToAnyNonDownVMWithProblemsOnlyPlugged() {
+        testDiskAttachedToAnyNonDownVMWithProblems(true, "runningSnapshotPlugged");
+    }
+
+    private void testDiskAttachedToAnyNonDownVMWithProblems(boolean checkOnlyPlugged, String expectedNames) {
         VM vmPausedPlugged = createVM();
         vmPausedPlugged.setName("vmPausedPlugged");
         vmPausedPlugged.setStatus(VMStatus.Paused);
@@ -196,19 +206,22 @@ public class DiskValidatorTest {
         device4.setPlugged(true);
         Pair<VM, VmDevice> pair4 = new Pair<>(anotherPausedPlugged, device4);
 
+        VM runningSnapshotPlugged = createVM();
+        runningSnapshotPlugged.setName("runningSnapshotPlugged");
+        runningSnapshotPlugged.setStatus(VMStatus.Up);
         VmDevice device5 = new VmDevice();
         device5.setPlugged(true);
         device5.setSnapshotId(Guid.newGuid());
-        Pair<VM, VmDevice> pair5 = new Pair<>(anotherPausedPlugged, device5);
+        Pair<VM, VmDevice> pair5 = new Pair<>(runningSnapshotPlugged, device5);
 
         List<Pair<VM, VmDevice>> vmList = Arrays.asList(pair1, pair2, pair3, pair4, pair5);
 
         when(vmDao.getVmsWithPlugInfo(any())).thenReturn(vmList);
         String[] expectedReplacements = {
                 ReplacementUtils.createSetVariableString(DiskValidator.DISK_NAME_VARIABLE, disk.getDiskAlias()),
-                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, "anotherPausedPlugged,vmPausedPlugged")};
+                ReplacementUtils.createSetVariableString(DiskValidator.VM_LIST, expectedNames)};
 
-        assertThat(validator.isDiskPluggedToAnyNonDownVm(true),
+        assertThat(validator.isDiskPluggedToAnyNonDownVm(checkOnlyPlugged),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_DISK_PLUGGED_TO_NON_DOWN_VMS, expectedReplacements));
     }
 
