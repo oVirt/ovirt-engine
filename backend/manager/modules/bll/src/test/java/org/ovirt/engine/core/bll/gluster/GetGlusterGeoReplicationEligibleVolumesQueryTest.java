@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -42,6 +43,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
     private GlusterVolumeDao volumeDao;
 
     @Spy
+    @InjectMocks
     private GlusterGeoRepUtil geoRepUtil;
 
     private GeoRepCreateEligibilityBaseTest baseTest = new GeoRepCreateEligibilityBaseTest();
@@ -52,7 +54,7 @@ public class GetGlusterGeoReplicationEligibleVolumesQueryTest extends AbstractQu
         doReturn(Guid.newGuid()).when(geoRepUtil).getUpServerId(any(Guid.class));
         doReturn(true).when(geoRepUtil).checkEmptyGlusterVolume(any(Guid.class), anyString());
         doReturn(getExpectedVolumes()).when(getQuery()).getAllGlusterVolumesWithMasterCompatibleVersion(baseTest.getMASTER_VOLUME_ID());
-        baseTest.setupMock(geoRepUtil, geoRepDao, clusterDao);
+        baseTest.setupMock(geoRepDao, clusterDao);
         doReturn(baseTest.getMasterVolume()).when(volumeDao).getById(baseTest.getMASTER_VOLUME_ID());
     }
 

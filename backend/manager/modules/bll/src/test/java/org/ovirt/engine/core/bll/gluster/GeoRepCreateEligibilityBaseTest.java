@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -42,10 +41,8 @@ public class GeoRepCreateEligibilityBaseTest {
     }
 
     @Before
-    public void setupMock(GlusterGeoRepUtil geoRepUtil, GlusterGeoRepDao geoRepDao, ClusterDao clusterDao) {
-        doReturn(geoRepDao).when(geoRepUtil).getGeoRepDao();
+    public void setupMock(GlusterGeoRepDao geoRepDao, ClusterDao clusterDao) {
         doReturn(getGeoRepSessions()).when(geoRepDao).getAllSessions();
-        doReturn(clusterDao).when(geoRepUtil).getClusterDao();
 
         doReturn(getCluster(MASTER_CLUSTER_ID, CLUSTER_COMPATIBILITY_VERSION)).when(clusterDao).get(MASTER_CLUSTER_ID);
 

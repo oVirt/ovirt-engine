@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -37,12 +38,13 @@ public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQueryTest extends A
     private GeoRepCreateEligibilityBaseTest baseTest = new GeoRepCreateEligibilityBaseTest();
 
     @Spy
+    @InjectMocks
     private GlusterGeoRepUtil geoRepUtil;
 
     @Before
     public void setupMock() {
         doReturn(geoRepUtil).when(getQuery()).getGeoRepUtilInstance();
-        baseTest.setupMock(geoRepUtil, geoRepDao, clusterDao);
+        baseTest.setupMock(geoRepDao, clusterDao);
     }
 
     protected List<GlusterGeoRepNonEligibilityReason> getNonEligibilityReasonsForSlaveVolume2() {

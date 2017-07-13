@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ClusterDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 
@@ -28,6 +27,12 @@ import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 public class GlusterGeoRepUtil {
     @Inject
     private GlusterUtil glusterUtil;
+
+    @Inject
+    private ClusterDao clusterDao;
+
+    @Inject
+    private GlusterGeoRepDao glusterGeoRepDao;
 
     public Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> getEligibilityPredicates(final GlusterVolumeEntity masterVolume) {
         Map<GlusterGeoRepNonEligibilityReason, Predicate<GlusterVolumeEntity>> eligibilityPredicates = new HashMap<>();
@@ -97,10 +102,10 @@ public class GlusterGeoRepUtil {
     }
 
     public ClusterDao getClusterDao() {
-        return DbFacade.getInstance().getClusterDao();
+        return clusterDao;
     }
 
     public GlusterGeoRepDao getGeoRepDao() {
-        return DbFacade.getInstance().getGlusterGeoRepDao();
+        return glusterGeoRepDao;
     }
 }
