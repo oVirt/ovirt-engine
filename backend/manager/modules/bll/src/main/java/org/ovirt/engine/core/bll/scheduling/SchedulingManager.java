@@ -58,7 +58,6 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
@@ -91,7 +90,13 @@ public class SchedulingManager implements BackendService {
     @Inject
     private ExternalSchedulerDiscovery exSchedulerDiscovery;
     @Inject
-    private DbFacade dbFacade;
+    private VdsDao vdsDao;
+    @Inject
+    private ClusterDao clusterDao;
+    @Inject
+    private PolicyUnitDao policyUnitDao;
+    @Inject
+    private ClusterPolicyDao clusterPolicyDao;
     @Inject
     private NetworkDeviceHelper networkDeviceHelper;
     @Inject
@@ -224,7 +229,7 @@ public class SchedulingManager implements BackendService {
         }
 
         // Get all user provided cluster policies
-        List<ClusterPolicy> allClusterPolicies = getClusterPolicyDao().getAll(
+        List<ClusterPolicy> allClusterPolicies = clusterPolicyDao.getAll(
                 Collections.unmodifiableMap(internalTypes));
 
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
@@ -244,7 +249,7 @@ public class SchedulingManager implements BackendService {
         }
 
         // Load all external policy units
-        List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
+        List<PolicyUnit> allPolicyUnits = policyUnitDao.getAll();
         for (PolicyUnit policyUnit : allPolicyUnits) {
             policyUnits.put(policyUnit.getId(), new ExternalPolicyUnit(policyUnit, getPendingResourceManager()));
         }
@@ -306,7 +311,7 @@ public class SchedulingManager implements BackendService {
             log.debug("Scheduling started, correlation Id: {}", correlationId);
             checkAllowOverbooking(cluster);
             lockCluster(cluster.getId());
-            List<VDS> vdsList = getVdsDao()
+            List<VDS> vdsList = vdsDao
                     .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
             vdsList = removeBlacklistedHosts(vdsList, hostBlackList);
             vdsList = keepOnlyWhitelistedHosts(vdsList, hostWhiteList);
@@ -525,7 +530,7 @@ public class SchedulingManager implements BackendService {
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
             List<String> messages) {
-        List<VDS> vdsList = getVdsDao()
+        List<VDS> vdsList = vdsDao
                 .getAllForClusterWithStatus(cluster.getId(), VDSStatus.Up);
         vdsList = removeBlacklistedHosts(vdsList, vdsBlackList);
         vdsList = keepOnlyWhitelistedHosts(vdsList, vdsWhiteList);
@@ -836,34 +841,18 @@ public class SchedulingManager implements BackendService {
     }
 
     public void addClusterPolicy(ClusterPolicy clusterPolicy) {
-        getClusterPolicyDao().save(clusterPolicy);
+        clusterPolicyDao.save(clusterPolicy);
         policyMap.put(clusterPolicy.getId(), clusterPolicy);
     }
 
     public void editClusterPolicy(ClusterPolicy clusterPolicy) {
-        getClusterPolicyDao().update(clusterPolicy);
+        clusterPolicyDao.update(clusterPolicy);
         policyMap.put(clusterPolicy.getId(), clusterPolicy);
     }
 
     public void removeClusterPolicy(Guid clusterPolicyId) {
-        getClusterPolicyDao().remove(clusterPolicyId);
+        clusterPolicyDao.remove(clusterPolicyId);
         policyMap.remove(clusterPolicyId);
-    }
-
-    private VdsDao getVdsDao() {
-        return dbFacade.getVdsDao();
-    }
-
-    private ClusterDao getClusterDao() {
-        return dbFacade.getClusterDao();
-    }
-
-    private PolicyUnitDao getPolicyUnitDao() {
-        return dbFacade.getPolicyUnitDao();
-    }
-
-    private ClusterPolicyDao getClusterPolicyDao() {
-        return dbFacade.getClusterPolicyDao();
     }
 
     private void enableLoadBalancer() {
@@ -903,7 +892,7 @@ public class SchedulingManager implements BackendService {
     public void performHaResevationCheck() {
 
         log.debug("HA Reservation check timer entered.");
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
         if (clusters != null) {
             HaReservationHandling haReservationHandling = new HaReservationHandling(getPendingResourceManager());
             for (Cluster cluster : clusters) {
@@ -949,13 +938,13 @@ public class SchedulingManager implements BackendService {
     @OnTimerMethodAnnotation("performLoadBalancing")
     public void performLoadBalancing() {
         log.debug("Load Balancer timer entered.");
-        List<Cluster> clusters = getClusterDao().getAll();
+        List<Cluster> clusters = clusterDao.getAll();
         for (Cluster cluster : clusters) {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
             Optional<BalanceResult> balanceResult = Optional.empty();
             if (policyUnit.getPolicyUnit().isEnabled()) {
-                List<VDS> hosts = getVdsDao().getAllForClusterWithoutMigrating(cluster.getId());
+                List<VDS> hosts = vdsDao.getAllForClusterWithoutMigrating(cluster.getId());
                 if (policyUnit.getPolicyUnit().isInternal()) {
                     balanceResult = internalRunBalance(policyUnit, cluster, hosts);
                 } else if (Config.<Boolean> getValue(ConfigValues.ExternalSchedulerEnabled)) {
@@ -1048,7 +1037,7 @@ public class SchedulingManager implements BackendService {
     }
 
     public void removeExternalPolicyUnit(Guid policyUnitId) {
-        getPolicyUnitDao().remove(policyUnitId);
+        policyUnitDao.remove(policyUnitId);
         policyUnits.remove(policyUnitId);
     }
 
@@ -1058,7 +1047,7 @@ public class SchedulingManager implements BackendService {
      */
     public void updateHostSchedulingStats(VDS vds) {
         if (vds.getUsageCpuPercent() != null) {
-            Cluster cluster = getClusterDao().get(vds.getClusterId());
+            Cluster cluster = clusterDao.get(vds.getClusterId());
             if (vds.getUsageCpuPercent() >= NumberUtils.toInt(cluster.getClusterPolicyProperties()
                     .get(HIGH_UTILIZATION),
                     Config.<Integer> getValue(ConfigValues.HighUtilizationForEvenlyDistribute))
