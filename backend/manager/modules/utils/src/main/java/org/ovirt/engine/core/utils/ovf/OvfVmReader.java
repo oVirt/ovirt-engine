@@ -136,10 +136,12 @@ public class OvfVmReader extends OvfReader {
 
         consumeReadProperty(content,
                 OvfProperties.BOOT_TIME,
-                val -> _vm.setBootTime(OvfParser.utcDateStringToLocalDate(val)));
+                val -> _vm.setBootTime(OvfParser.utcDateStringToLocalDate(val)),
+                () -> _vm.setBootTime(null));
         consumeReadProperty(content,
                 OvfProperties.DOWNTIME,
-                val -> _vm.setDowntime(Long.parseLong(val)));
+                val -> _vm.setDowntime(Long.parseLong(val)),
+                () -> _vm.setDowntime(0));
         consumeReadProperty(content, OvfProperties.APPLICATIONS_LIST, val -> _vm.setAppList(val), () -> {
             // if no app list in VM, get it from one of the leafs
             if (_images != null && _images.size() > 0) {
