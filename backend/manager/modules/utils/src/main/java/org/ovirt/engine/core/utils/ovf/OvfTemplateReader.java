@@ -80,40 +80,30 @@ public class OvfTemplateReader extends OvfReader {
     @Override
     protected void readGeneralData(XmlNode content) {
         // General Vm
-        consumeReadProperty(content, OvfProperties.NAME, val -> {
+        consumeReadProperty(content, NAME, val -> {
             _vmTemplate.setName(val);
             name = val;
         });
-        consumeReadProperty(content, OvfProperties.TEMPLATE_ID, val -> _vmTemplate.setId(new Guid(val)));
+        consumeReadProperty(content, TEMPLATE_ID, val -> _vmTemplate.setId(new Guid(val)));
+        consumeReadProperty(content, IS_DISABLED, val -> _vmTemplate.setDisabled(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, TRUSTED_SERVICE, val -> _vmTemplate.setTrustedService(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, TEMPLATE_TYPE, val -> _vmTemplate.setTemplateType(VmEntityType.valueOf(val)));
         consumeReadProperty(content,
-                OvfProperties.IS_DISABLED,
-                val -> _vmTemplate.setDisabled(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.TRUSTED_SERVICE,
-                val -> _vmTemplate.setTrustedService(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.TEMPLATE_TYPE,
-                val -> _vmTemplate.setTemplateType(VmEntityType.valueOf(val)));
-        consumeReadProperty(content,
-                OvfProperties.BASE_TEMPLATE_ID,
+                BASE_TEMPLATE_ID,
                 val -> _vmTemplate.setBaseTemplateId(Guid.createGuidFromString(val)),
                 () -> {
                     // in case base template is missing, we assume it is a base template
                     _vmTemplate.setBaseTemplateId(_vmTemplate.getId());
                 });
         consumeReadProperty(content,
-                OvfProperties.TEMPLATE_VERSION_NUMBER,
+                TEMPLATE_VERSION_NUMBER,
                 val -> _vmTemplate.setTemplateVersionNumber(Integer.parseInt(val)));
-        consumeReadProperty(content,
-                OvfProperties.TEMPLATE_VERSION_NAME,
-                val -> _vmTemplate.setTemplateVersionName(val));
-        consumeReadProperty(content,
-                OvfProperties.AUTO_STARTUP,
-                val -> _vmTemplate.setAutoStartup(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, TEMPLATE_VERSION_NAME, val -> _vmTemplate.setTemplateVersionName(val));
+        consumeReadProperty(content, AUTO_STARTUP, val -> _vmTemplate.setAutoStartup(Boolean.parseBoolean(val)));
     }
 
     @Override
     protected String getDefaultDisplayTypeStringRepresentation() {
-        return OvfProperties.TEMPLATE_DEFAULT_DISPLAY_TYPE;
+        return TEMPLATE_DEFAULT_DISPLAY_TYPE;
     }
 }

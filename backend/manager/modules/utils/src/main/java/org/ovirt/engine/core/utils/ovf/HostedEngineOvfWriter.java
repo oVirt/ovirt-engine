@@ -44,11 +44,11 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
 
     @Override
     protected void writeCustomEmulatedMachine() {
-        _writer.writeElement(OvfProperties.CUSTOM_EMULATED_MACHINE, emulatedMachine);
+        _writer.writeElement(CUSTOM_EMULATED_MACHINE, emulatedMachine);
     }
 
     @Override
     protected void writeCustomCpuName() {
-        _writer.writeElement(OvfProperties.CUSTOM_CPU_NAME, cpuId);
+        _writer.writeElement(CUSTOM_CPU_NAME, cpuId);
     }
 }

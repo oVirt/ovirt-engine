@@ -303,19 +303,19 @@ public abstract class OvfReader implements IOvfBuilder {
     private VmDevice readVmDevice(XmlNode node, Guid deviceId) {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(deviceId, vmBase.getId()));
-        if (selectSingleNode(node, OvfProperties.VMD_ADDRESS, _xmlNS) != null
-                && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_ADDRESS, _xmlNS).innerText)) {
-            vmDevice.setAddress(String.valueOf(selectSingleNode(node, OvfProperties.VMD_ADDRESS, _xmlNS).innerText));
+        if (selectSingleNode(node, VMD_ADDRESS, _xmlNS) != null
+                && !StringUtils.isEmpty(selectSingleNode(node, VMD_ADDRESS, _xmlNS).innerText)) {
+            vmDevice.setAddress(String.valueOf(selectSingleNode(node, VMD_ADDRESS, _xmlNS).innerText));
         } else {
             vmDevice.setAddress("");
         }
-        if (selectSingleNode(node, OvfProperties.VMD_ALIAS, _xmlNS) != null
-                && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_ALIAS, _xmlNS).innerText)) {
-            vmDevice.setAlias(String.valueOf(selectSingleNode(node, OvfProperties.VMD_ALIAS, _xmlNS).innerText));
+        if (selectSingleNode(node, VMD_ALIAS, _xmlNS) != null
+                && !StringUtils.isEmpty(selectSingleNode(node, VMD_ALIAS, _xmlNS).innerText)) {
+            vmDevice.setAlias(String.valueOf(selectSingleNode(node, VMD_ALIAS, _xmlNS).innerText));
         } else {
             vmDevice.setAlias("");
         }
-        XmlNode specParamsNode = selectSingleNode(node, OvfProperties.VMD_SPEC_PARAMS, _xmlNS);
+        XmlNode specParamsNode = selectSingleNode(node, VMD_SPEC_PARAMS, _xmlNS);
         if (specParamsNode != null
                 && !StringUtils.isEmpty(specParamsNode.innerText)) {
             vmDevice.setSpecParams(getMapNode(specParamsNode));
@@ -323,46 +323,43 @@ public abstract class OvfReader implements IOvfBuilder {
             // Empty map
             vmDevice.setSpecParams(Collections.emptyMap());
         }
-        if (selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS) != null
-                && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
-            vmDevice.setType(VmDeviceGeneralType
-                    .forValue(String.valueOf(selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS).innerText)));
+        if (selectSingleNode(node, VMD_TYPE, _xmlNS) != null
+                && !StringUtils.isEmpty(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText)) {
+            vmDevice.setType(
+                    VmDeviceGeneralType.forValue(String.valueOf(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText)));
         } else {
-            int resourceType = getResourceType(node, OvfProperties.VMD_RESOURCE_TYPE);
+            int resourceType = getResourceType(node, VMD_RESOURCE_TYPE);
             vmDevice.setType(VmDeviceGeneralType.forValue(VmDeviceType.getoVirtDevice(resourceType)));
         }
-        if (selectSingleNode(node, OvfProperties.VMD_DEVICE, _xmlNS) != null
-                && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_DEVICE, _xmlNS).innerText)) {
-            vmDevice.setDevice(String.valueOf(selectSingleNode(node, OvfProperties.VMD_DEVICE, _xmlNS).innerText));
+        if (selectSingleNode(node, VMD_DEVICE, _xmlNS) != null
+                && !StringUtils.isEmpty(selectSingleNode(node, VMD_DEVICE, _xmlNS).innerText)) {
+            vmDevice.setDevice(String.valueOf(selectSingleNode(node, VMD_DEVICE, _xmlNS).innerText));
         } else {
             setDeviceByResource(node, vmDevice);
         }
-        if (selectSingleNode(node, OvfProperties.VMD_IS_PLUGGED, _xmlNS) != null
-                && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_IS_PLUGGED, _xmlNS).innerText)) {
-            vmDevice.setPlugged(
-                    Boolean.valueOf(selectSingleNode(node, OvfProperties.VMD_IS_PLUGGED, _xmlNS).innerText));
+        if (selectSingleNode(node, VMD_IS_PLUGGED, _xmlNS) != null
+                && !StringUtils.isEmpty(selectSingleNode(node, VMD_IS_PLUGGED, _xmlNS).innerText)) {
+            vmDevice.setPlugged(Boolean.valueOf(selectSingleNode(node, VMD_IS_PLUGGED, _xmlNS).innerText));
         } else {
             vmDevice.setPlugged(Boolean.TRUE);
         }
-        if (selectSingleNode(node, OvfProperties.VMD_IS_READONLY, _xmlNS) != null
-                && !StringUtils.isEmpty(selectSingleNode(node, OvfProperties.VMD_IS_READONLY, _xmlNS).innerText)) {
-            vmDevice.setReadOnly(
-                    Boolean.valueOf(selectSingleNode(node, OvfProperties.VMD_IS_READONLY, _xmlNS).innerText));
+        if (selectSingleNode(node, VMD_IS_READONLY, _xmlNS) != null
+                && !StringUtils.isEmpty(selectSingleNode(node, VMD_IS_READONLY, _xmlNS).innerText)) {
+            vmDevice.setReadOnly(Boolean.valueOf(selectSingleNode(node, VMD_IS_READONLY, _xmlNS).innerText));
         } else {
             vmDevice.setReadOnly(Boolean.FALSE);
         }
-        if (selectSingleNode(node, OvfProperties.VMD_CUSTOM_PROP, _xmlNS) != null
-                && StringUtils.isNotEmpty(selectSingleNode(node, OvfProperties.VMD_CUSTOM_PROP, _xmlNS).innerText)) {
+        if (selectSingleNode(node, VMD_CUSTOM_PROP, _xmlNS) != null
+                && StringUtils.isNotEmpty(selectSingleNode(node, VMD_CUSTOM_PROP, _xmlNS).innerText)) {
             vmDevice.setCustomProperties(DevicePropertiesUtils.getInstance().convertProperties(
-                    String.valueOf(selectSingleNode(node, OvfProperties.VMD_CUSTOM_PROP, _xmlNS).innerText)));
+                    String.valueOf(selectSingleNode(node, VMD_CUSTOM_PROP, _xmlNS).innerText)));
         } else {
             vmDevice.setCustomProperties(null);
         }
 
-        if (selectSingleNode(node, OvfProperties.VMD_SNAPSHOT_PROP, _xmlNS) != null
-                && StringUtils.isNotEmpty(selectSingleNode(node, OvfProperties.VMD_SNAPSHOT_PROP, _xmlNS).innerText)) {
-            vmDevice.setSnapshotId(
-                    new Guid(String.valueOf(selectSingleNode(node, OvfProperties.VMD_CUSTOM_PROP, _xmlNS).innerText)));
+        if (selectSingleNode(node, VMD_SNAPSHOT_PROP, _xmlNS) != null
+                && StringUtils.isNotEmpty(selectSingleNode(node, VMD_SNAPSHOT_PROP, _xmlNS).innerText)) {
+            vmDevice.setSnapshotId(new Guid(String.valueOf(selectSingleNode(node, VMD_CUSTOM_PROP, _xmlNS).innerText)));
         }
 
         return vmDevice;
@@ -504,11 +501,11 @@ public abstract class OvfReader implements IOvfBuilder {
 
     private VmDevice readOtherHardwareItem(XmlNode node) {
         boolean managed = false;
-        if (selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS) != null
-                && StringUtils.isNotEmpty(selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
+        if (selectSingleNode(node, VMD_TYPE, _xmlNS) != null
+                && StringUtils.isNotEmpty(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText)) {
             VmDeviceGeneralType type = VmDeviceGeneralType
-                    .forValue(String.valueOf(selectSingleNode(node, OvfProperties.VMD_TYPE, _xmlNS).innerText));
-            String device = selectSingleNode(node, OvfProperties.VMD_DEVICE, _xmlNS).innerText;
+                    .forValue(String.valueOf(selectSingleNode(node, VMD_TYPE, _xmlNS).innerText));
+            String device = selectSingleNode(node, VMD_DEVICE, _xmlNS).innerText;
             // special devices are treated as managed devices but still have the OTHER OVF ResourceType
             managed = VmDeviceCommonUtils.isSpecialDevice(device, type);
         }
@@ -525,33 +522,33 @@ public abstract class OvfReader implements IOvfBuilder {
         // set ovf version to the ovf object
         vmBase.setOvfVersion(getVersion());
 
-        consumeReadProperty(content, OvfProperties.DESCRIPTION, val -> vmBase.setDescription(val));
-        consumeReadProperty(content, OvfProperties.COMMENT, val -> vmBase.setComment(val));
-        consumeReadProperty(content, OvfProperties.DOMAIN, val -> vmBase.getVmInit().setDomain(val));
+        consumeReadProperty(content, DESCRIPTION, val -> vmBase.setDescription(val));
+        consumeReadProperty(content, COMMENT, val -> vmBase.setComment(val));
+        consumeReadProperty(content, DOMAIN, val -> vmBase.getVmInit().setDomain(val));
         consumeReadProperty(content,
-                OvfProperties.CREATION_DATE,
+                CREATION_DATE,
                 val -> vmBase.setCreationDate(OvfParser.utcDateStringToLocalDate(val)));
         consumeReadProperty(content,
-                OvfProperties.EXPORT_DATE,
+                EXPORT_DATE,
                 val -> vmBase.setExportDate(OvfParser.utcDateStringToLocalDate(val)));
         consumeReadProperty(content,
-                OvfProperties.DEFAULT_BOOT_SEQUENCE,
+                DEFAULT_BOOT_SEQUENCE,
                 val -> vmBase.setDefaultBootSequence(BootSequence.forValue(Integer.parseInt(val))));
-        consumeReadProperty(content, OvfProperties.INITRD_URL, val -> vmBase.setInitrdUrl(val));
-        consumeReadProperty(content, OvfProperties.KERNEL_URL, val -> vmBase.setKernelUrl(val));
-        consumeReadProperty(content, OvfProperties.KERNEL_PARAMS, val -> vmBase.setKernelParams(val));
+        consumeReadProperty(content, INITRD_URL, val -> vmBase.setInitrdUrl(val));
+        consumeReadProperty(content, KERNEL_URL, val -> vmBase.setKernelUrl(val));
+        consumeReadProperty(content, KERNEL_PARAMS, val -> vmBase.setKernelParams(val));
         consumeReadProperty(content,
-                OvfProperties.GENERATION,
+                GENERATION,
                 val -> vmBase.setDbGeneration(Long.parseLong(val)),
                 () -> vmBase.setDbGeneration(1L));
 
-        node = selectSingleNode(content, OvfProperties.CUSTOM_COMPATIBILITY_VERSION);
+        node = selectSingleNode(content, CUSTOM_COMPATIBILITY_VERSION);
         if (node != null) {
             vmBase.setCustomCompatibilityVersion(new Version(node.innerText));
         }
 
         Version originVersion = new Version(getVersion()); // the originating ENGINE version
-        node = selectSingleNode(content, OvfProperties.CLUSTER_COMPATIBILITY_VERSION);
+        node = selectSingleNode(content, CLUSTER_COMPATIBILITY_VERSION);
         if (node != null) {
             originVersion = new Version(node.innerText);
         }
@@ -593,7 +590,7 @@ public abstract class OvfReader implements IOvfBuilder {
         fixDiskVmElements();
 
         // due to dependency on vmBase.getOsId() must be read AFTER readOsSection
-        consumeReadProperty(content, OvfProperties.TIMEZONE, val -> vmBase.setTimeZone(val), () -> {
+        consumeReadProperty(content, TIMEZONE, val -> vmBase.setTimeZone(val), () -> {
             if (osRepository.isWindows(vmBase.getOsId())) {
                 vmBase.setTimeZone(Config.getValue(ConfigValues.DefaultWindowsTimeZone));
             } else {
@@ -601,91 +598,63 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         });
 
+        consumeReadProperty(content, ORIGIN, val -> vmBase.setOrigin(OriginType.forValue(Integer.parseInt(val))));
+        consumeReadProperty(content, VM_TYPE, val -> vmBase.setVmType(VmType.forValue(Integer.parseInt(val))));
         consumeReadProperty(content,
-                OvfProperties.ORIGIN,
-                val -> vmBase.setOrigin(OriginType.forValue(Integer.parseInt(val))));
-        consumeReadProperty(content,
-                OvfProperties.VM_TYPE,
-                val -> vmBase.setVmType(VmType.forValue(Integer.parseInt(val))));
-        consumeReadProperty(content,
-                OvfProperties.IS_SMARTCARD_ENABLED,
+                IS_SMARTCARD_ENABLED,
                 val -> vmBase.setSmartcardEnabled(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, NUM_OF_IOTHREADS, val -> vmBase.setNumOfIoThreads(Integer.parseInt(val)));
+        consumeReadProperty(content, DELETE_PROTECTED, val -> vmBase.setDeleteProtected(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, SSO_METHOD, val -> vmBase.setSsoMethod(SsoMethod.fromString(val)));
+        consumeReadProperty(content, TUNNEL_MIGRATION, val -> vmBase.setTunnelMigration(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, VNC_KEYBOARD_LAYOUT, val -> vmBase.setVncKeyboardLayout(val));
+        consumeReadProperty(content, MIN_ALLOCATED_MEMORY, val -> vmBase.setMinAllocatedMem(Integer.parseInt(val)));
+        consumeReadProperty(content, IS_STATELESS, val -> vmBase.setStateless(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, IS_RUN_AND_PAUSE, val -> vmBase.setRunAndPause(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
-                OvfProperties.NUM_OF_IOTHREADS,
-                val -> vmBase.setNumOfIoThreads(Integer.parseInt(val)));
-        consumeReadProperty(content,
-                OvfProperties.DELETE_PROTECTED,
-                val -> vmBase.setDeleteProtected(Boolean.parseBoolean(val)));
-        consumeReadProperty(content, OvfProperties.SSO_METHOD, val -> vmBase.setSsoMethod(SsoMethod.fromString(val)));
-        consumeReadProperty(content,
-                OvfProperties.TUNNEL_MIGRATION,
-                val -> vmBase.setTunnelMigration(Boolean.parseBoolean(val)));
-        consumeReadProperty(content, OvfProperties.VNC_KEYBOARD_LAYOUT, val -> vmBase.setVncKeyboardLayout(val));
-        consumeReadProperty(content,
-                OvfProperties.MIN_ALLOCATED_MEMORY,
-                val -> vmBase.setMinAllocatedMem(Integer.parseInt(val)));
-        consumeReadProperty(content, OvfProperties.IS_STATELESS, val -> vmBase.setStateless(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.IS_RUN_AND_PAUSE,
-                val -> vmBase.setRunAndPause(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.CREATED_BY_USER_ID,
+                CREATED_BY_USER_ID,
                 val -> vmBase.setCreatedByUserId(Guid.createGuidFromString(val)));
+        consumeReadProperty(content, MIGRATION_DOWNTIME, val -> vmBase.setMigrationDowntime(Integer.parseInt(val)));
         consumeReadProperty(content,
-                OvfProperties.MIGRATION_DOWNTIME,
-                val -> vmBase.setMigrationDowntime(Integer.parseInt(val)));
-        consumeReadProperty(content,
-                OvfProperties.MIGRATION_SUPPORT,
+                MIGRATION_SUPPORT,
                 val -> vmBase.setMigrationSupport(MigrationSupport.forValue(Integer.parseInt(val))));
 
         // TODO dedicated to multiple hosts
         readDedicatedHostsList();
 
         consumeReadProperty(content,
-                OvfProperties.SERIAL_NUMBER_POLICY,
+                SERIAL_NUMBER_POLICY,
                 val -> vmBase.setSerialNumberPolicy(SerialNumberPolicy.forValue(Integer.parseInt(val))));
-        consumeReadProperty(content, OvfProperties.CUSTOM_SERIAL_NUMBER, val -> vmBase.setCustomSerialNumber(val));
+        consumeReadProperty(content, CUSTOM_SERIAL_NUMBER, val -> vmBase.setCustomSerialNumber(val));
+        consumeReadProperty(content, AUTO_STARTUP, val -> vmBase.setAutoStartup(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, PRIORITY, val -> vmBase.setPriority(Integer.parseInt(val)));
+        consumeReadProperty(content, IS_BOOT_MENU_ENABLED, val -> vmBase.setBootMenuEnabled(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
-                OvfProperties.AUTO_STARTUP,
-                val -> vmBase.setAutoStartup(Boolean.parseBoolean(val)));
-        consumeReadProperty(content, OvfProperties.PRIORITY, val -> vmBase.setPriority(Integer.parseInt(val)));
-        consumeReadProperty(content,
-                OvfProperties.IS_BOOT_MENU_ENABLED,
-                val -> vmBase.setBootMenuEnabled(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.IS_SPICE_FILE_TRANSFER_ENABLED,
+                IS_SPICE_FILE_TRANSFER_ENABLED,
                 val -> vmBase.setSpiceFileTransferEnabled(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
-                OvfProperties.IS_SPICE_COPY_PASTE_ENABLED,
+                IS_SPICE_COPY_PASTE_ENABLED,
                 val -> vmBase.setSpiceCopyPasteEnabled(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
-                OvfProperties.ALLOW_CONSOLE_RECONNECT,
+                ALLOW_CONSOLE_RECONNECT,
                 val -> vmBase.setAllowConsoleReconnect(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, IS_AUTO_CONVERGE, val -> vmBase.setAutoConverge(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
-                OvfProperties.IS_AUTO_CONVERGE,
-                val -> vmBase.setAutoConverge(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.IS_MIGRATE_COMPRESSED,
+                IS_MIGRATE_COMPRESSED,
                 val -> vmBase.setMigrateCompressed(Boolean.parseBoolean(val)));
         consumeReadProperty(content,
-                OvfProperties.MIGRATION_POLICY_ID,
+                MIGRATION_POLICY_ID,
                 val -> vmBase.setMigrationPolicyId(Guid.createGuidFromString(val)));
-        consumeReadProperty(content,
-                OvfProperties.CUSTOM_EMULATED_MACHINE,
-                val -> vmBase.setCustomEmulatedMachine(val));
-        consumeReadProperty(content, OvfProperties.CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));
-        consumeReadProperty(content, OvfProperties.PREDEFINED_PROPERTIES, val -> vmBase.setPredefinedProperties(val));
-        consumeReadProperty(content,
-                OvfProperties.USER_DEFINED_PROPERTIES,
-                val -> vmBase.setUserDefinedProperties(val));
-        consumeReadProperty(content,
-                OvfProperties.MAX_MEMORY_SIZE_MB,
-                val -> vmBase.setMaxMemorySizeMb(Integer.parseInt(val)));
+        consumeReadProperty(content, CUSTOM_EMULATED_MACHINE, val -> vmBase.setCustomEmulatedMachine(val));
+        consumeReadProperty(content, CUSTOM_CPU_NAME, val -> vmBase.setCustomCpuName(val));
+        consumeReadProperty(content, PREDEFINED_PROPERTIES, val -> vmBase.setPredefinedProperties(val));
+        consumeReadProperty(content, USER_DEFINED_PROPERTIES, val -> vmBase.setUserDefinedProperties(val));
+        consumeReadProperty(content, MAX_MEMORY_SIZE_MB, val -> vmBase.setMaxMemorySizeMb(Integer.parseInt(val)));
 
         vmBase.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(
                 vmBase.getPredefinedProperties(), vmBase.getUserDefinedProperties()));
 
-        consumeReadProperty(content, OvfProperties.VM_LEASE, val -> vmBase.setLeaseStorageDomainId(new Guid(val)));
+        consumeReadProperty(content, VM_LEASE, val -> vmBase.setLeaseStorageDomainId(new Guid(val)));
 
         readGeneralData(content);
 
@@ -710,7 +679,7 @@ public abstract class OvfReader implements IOvfBuilder {
     private void readDedicatedHostsList() {
         vmBase.setDedicatedVmForVdsList(new LinkedList<>()); // initialize to empty list
         // search all dedicated hosts with xPath
-        XmlNodeList hostsList = selectNodes(_document, "//*/Content/" + OvfProperties.DEDICATED_VM_FOR_VDS);
+        XmlNodeList hostsList = selectNodes(_document, "//*/Content/" + DEDICATED_VM_FOR_VDS);
         for (XmlNode hostNode : hostsList) {
             if (hostNode != null && StringUtils.isNotEmpty(hostNode.innerText)) {
                 vmBase.getDedicatedVmForVdsList().add(Guid.createGuidFromString(hostNode.innerText));
@@ -787,7 +756,7 @@ public abstract class OvfReader implements IOvfBuilder {
         }
         if (!list.iterator().hasNext()) {
             String pattern = "//*/Item[" +
-                    OvfProperties.VMD_RESOURCE_TYPE +
+                    VMD_RESOURCE_TYPE +
                     "=" +
                     OvfHardware.Network +
                     "]";
@@ -802,17 +771,17 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
-        String networkName = selectSingleNode(node, OvfProperties.VMD_CONNECTION, _xmlNS).innerText;
+        String networkName = selectSingleNode(node, VMD_CONNECTION, _xmlNS).innerText;
         iface.setNetworkName(StringUtils.defaultIfEmpty(networkName, null));
 
-        XmlNode vnicProfileNameNode = selectSingleNode(node, OvfProperties.VMD_VNIC_PROFILE_NAME, _xmlNS);
+        XmlNode vnicProfileNameNode = selectSingleNode(node, VMD_VNIC_PROFILE_NAME, _xmlNS);
         iface.setVnicProfileName(vnicProfileNameNode == null ? null
                 : StringUtils.defaultIfEmpty(vnicProfileNameNode.innerText, null));
 
-        XmlNode linkedNode = selectSingleNode(node, OvfProperties.VMD_LINKED, _xmlNS);
+        XmlNode linkedNode = selectSingleNode(node, VMD_LINKED, _xmlNS);
         iface.setLinked(linkedNode == null ? true : Boolean.valueOf(linkedNode.innerText));
 
-        iface.setName(selectSingleNode(node, OvfProperties.VMD_NAME, _xmlNS).innerText);
+        iface.setName(selectSingleNode(node, VMD_NAME, _xmlNS).innerText);
 
         String resourceSubType = selectSingleNode(node, "rasd:ResourceSubType", _xmlNS).innerText;
         if (StringUtils.isNotEmpty(resourceSubType)) {
@@ -840,19 +809,19 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void setDeviceByResource(XmlNode node, VmDevice vmDevice) {
-        int resourceType = getResourceType(node, OvfProperties.VMD_RESOURCE_TYPE);
-        int resourceSubType = getResourceType(node, OvfProperties.VMD_SUB_RESOURCE_TYPE);
+        int resourceType = getResourceType(node, VMD_RESOURCE_TYPE);
+        int resourceSubType = getResourceType(node, VMD_SUB_RESOURCE_TYPE);
         if (resourceSubType == -1) {
             // we need special handling for Monitor to define it as vnc or spice
             if (Integer.parseInt(OvfHardware.Monitor) == resourceType) {
                 // get number of monitors from VirtualQuantity in OVF
-                if (selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS) != null
+                if (selectSingleNode(node, VMD_VIRTUAL_QUANTITY, _xmlNS) != null
                         && !StringUtils.isEmpty(selectSingleNode(node,
-                                OvfProperties.VMD_VIRTUAL_QUANTITY,
+                                VMD_VIRTUAL_QUANTITY,
                                 _xmlNS).innerText)) {
                     int virtualQuantity =
                             Integer.parseInt(
-                                    selectSingleNode(node, OvfProperties.VMD_VIRTUAL_QUANTITY, _xmlNS).innerText);
+                                    selectSingleNode(node, VMD_VIRTUAL_QUANTITY, _xmlNS).innerText);
                     if (virtualQuantity > 1) {
                         vmDevice.setDevice(VmDeviceType.QXL.getName());
                     } else {

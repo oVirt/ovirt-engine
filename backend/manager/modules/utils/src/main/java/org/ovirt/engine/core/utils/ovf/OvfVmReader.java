@@ -104,18 +104,16 @@ public class OvfVmReader extends OvfReader {
     @Override
     protected void readGeneralData(XmlNode content) {
         // General Vm
-        consumeReadProperty(content, OvfProperties.NAME, val -> {
+        consumeReadProperty(content, NAME, val -> {
             _vm.getStaticData().setName(val);
             name = val;
         });
-        consumeReadProperty(content, OvfProperties.TEMPLATE_ID, val -> _vm.getStaticData().setVmtGuid(new Guid(val)));
-        consumeReadProperty(content, OvfProperties.TEMPLATE_NAME, val -> _vm.setVmtName(val));
-        consumeReadProperty(content, OvfProperties.INSTANCE_TYPE_ID, val -> _vm.setInstanceTypeId(new Guid(val)));
-        consumeReadProperty(content, OvfProperties.IMAGE_TYPE_ID, val -> _vm.setImageTypeId(new Guid(val)));
-        consumeReadProperty(content,
-                OvfProperties.IS_INITIALIZED,
-                val -> _vm.getStaticData().setInitialized(Boolean.parseBoolean(val)));
-        consumeReadProperty(content, OvfProperties.QUOTA_ID, val -> _vm.getStaticData().setQuotaId(new Guid(val)));
+        consumeReadProperty(content, TEMPLATE_ID, val -> _vm.getStaticData().setVmtGuid(new Guid(val)));
+        consumeReadProperty(content, TEMPLATE_NAME, val -> _vm.setVmtName(val));
+        consumeReadProperty(content, INSTANCE_TYPE_ID, val -> _vm.setInstanceTypeId(new Guid(val)));
+        consumeReadProperty(content, IMAGE_TYPE_ID, val -> _vm.setImageTypeId(new Guid(val)));
+        consumeReadProperty(content, IS_INITIALIZED, val -> _vm.setInitialized(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, QUOTA_ID, val -> _vm.getStaticData().setQuotaId(new Guid(val)));
 
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(_vm.getStaticData());
         // Gets a list of all the aliases of the fields that should be logged in
@@ -137,14 +135,14 @@ public class OvfVmReader extends OvfReader {
                 _vm.getUserDefinedProperties()));
 
         consumeReadProperty(content,
-                OvfProperties.BOOT_TIME,
+                BOOT_TIME,
                 val -> _vm.setBootTime(OvfParser.utcDateStringToLocalDate(val)),
                 () -> _vm.setBootTime(null));
         consumeReadProperty(content,
-                OvfProperties.DOWNTIME,
+                DOWNTIME,
                 val -> _vm.setDowntime(Long.parseLong(val)),
                 () -> _vm.setDowntime(0));
-        consumeReadProperty(content, OvfProperties.APPLICATIONS_LIST, val -> _vm.setAppList(val), () -> {
+        consumeReadProperty(content, APPLICATIONS_LIST, val -> _vm.setAppList(val), () -> {
             // if no app list in VM, get it from one of the leafs
             if (_images != null && _images.size() > 0) {
                 int root = getFirstImage(_images, _images.get(0));
@@ -160,29 +158,17 @@ public class OvfVmReader extends OvfReader {
                 }
             }
         });
-        consumeReadProperty(content,
-                OvfProperties.TRUSTED_SERVICE,
-                val -> _vm.setTrustedService(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.ORIGINAL_TEMPLATE_ID,
-                val -> _vm.getStaticData().setOriginalTemplateGuid(new Guid(val)));
-        consumeReadProperty(content,
-                OvfProperties.ORIGINAL_TEMPLATE_NAME,
-                val -> _vm.getStaticData().setOriginalTemplateName(val));
-        consumeReadProperty(content,
-                OvfProperties.USE_LATEST_VERSION,
-                val -> _vm.setUseLatestVersion(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.USE_HOST_CPU,
-                val -> _vm.setUseHostCpuFlags(Boolean.parseBoolean(val)));
-        consumeReadProperty(content,
-                OvfProperties.STOP_TIME,
-                val -> _vm.setLastStopTime(OvfParser.utcDateStringToLocalDate(val)));
+        consumeReadProperty(content, TRUSTED_SERVICE, val -> _vm.setTrustedService(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, ORIGINAL_TEMPLATE_ID, val -> _vm.setOriginalTemplateGuid(new Guid(val)));
+        consumeReadProperty(content, ORIGINAL_TEMPLATE_NAME, val -> _vm.getStaticData().setOriginalTemplateName(val));
+        consumeReadProperty(content, USE_LATEST_VERSION, val -> _vm.setUseLatestVersion(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, USE_HOST_CPU, val -> _vm.setUseHostCpuFlags(Boolean.parseBoolean(val)));
+        consumeReadProperty(content, STOP_TIME, val -> _vm.setLastStopTime(OvfParser.utcDateStringToLocalDate(val)));
     }
 
     @Override
     protected String getDefaultDisplayTypeStringRepresentation() {
-        return OvfProperties.VM_DEFAULT_DISPLAY_TYPE;
+        return VM_DEFAULT_DISPLAY_TYPE;
     }
 
     // function returns the index of the image that has no parent

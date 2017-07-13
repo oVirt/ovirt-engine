@@ -21,18 +21,17 @@ public class OvfTemplateWriter extends OvfWriter {
     @Override
     protected void writeGeneralData() {
         super.writeGeneralData();
-        _writer.writeElement(OvfProperties.TEMPLATE_ID, vmTemplate.getId().toString());
+        _writer.writeElement(TEMPLATE_ID, vmTemplate.getId().toString());
         OriginType originType = vmTemplate.getOrigin();
-        _writer.writeElement(OvfProperties.ORIGIN, originType == null ? "" : String.valueOf(originType.getValue()));
-        _writer.writeElement(OvfProperties.TEMPLATE_DEFAULT_DISPLAY_TYPE,
+        _writer.writeElement(ORIGIN, originType == null ? "" : String.valueOf(originType.getValue()));
+        _writer.writeElement(TEMPLATE_DEFAULT_DISPLAY_TYPE,
                 String.valueOf(vmTemplate.getDefaultDisplayType().getValue()));
-        _writer.writeElement(OvfProperties.IS_DISABLED, String.valueOf(vmTemplate.isDisabled()));
-        _writer.writeElement(OvfProperties.TRUSTED_SERVICE, String.valueOf(vmTemplate.isTrustedService()));
-        _writer.writeElement(OvfProperties.TEMPLATE_TYPE, vmTemplate.getTemplateType().name());
-        _writer.writeElement(OvfProperties.BASE_TEMPLATE_ID, vmTemplate.getBaseTemplateId().toString());
-        _writer.writeElement(OvfProperties.TEMPLATE_VERSION_NUMBER,
-                String.valueOf(vmTemplate.getTemplateVersionNumber()));
-        _writer.writeElement(OvfProperties.TEMPLATE_VERSION_NAME, vmTemplate.getTemplateVersionName());
+        _writer.writeElement(IS_DISABLED, String.valueOf(vmTemplate.isDisabled()));
+        _writer.writeElement(TRUSTED_SERVICE, String.valueOf(vmTemplate.isTrustedService()));
+        _writer.writeElement(TEMPLATE_TYPE, vmTemplate.getTemplateType().name());
+        _writer.writeElement(BASE_TEMPLATE_ID, vmTemplate.getBaseTemplateId().toString());
+        _writer.writeElement(TEMPLATE_VERSION_NUMBER, String.valueOf(vmTemplate.getTemplateVersionNumber()));
+        _writer.writeElement(TEMPLATE_VERSION_NAME, vmTemplate.getTemplateVersionName());
     }
 
     @Override
