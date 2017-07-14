@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
 
-    StorageType getType();
+    Collection<StorageType> getTypes();
 
     boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext,
             ConnectHostToStoragePoolServersParameters parameters,

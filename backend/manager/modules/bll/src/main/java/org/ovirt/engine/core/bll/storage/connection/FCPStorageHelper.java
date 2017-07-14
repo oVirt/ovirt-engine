@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -27,8 +29,8 @@ public class FCPStorageHelper extends StorageHelperBase {
     }
 
     @Override
-    public StorageType getType() {
-        return StorageType.FCP;
+    public Collection<StorageType> getTypes() {
+        return Collections.singleton(StorageType.FCP);
     }
 
     @Override

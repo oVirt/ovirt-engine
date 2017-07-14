@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,8 +39,8 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     private static final Logger log = LoggerFactory.getLogger(ISCSIStorageHelper.class);
 
     @Override
-    public StorageType getType() {
-        return StorageType.ISCSI;
+    public Collection<StorageType> getTypes() {
+        return Collections.singleton(StorageType.ISCSI);
     }
 
     @Override

@@ -20,7 +20,9 @@ public class StorageHelperDirector {
     @PostConstruct
     public void initializeHelpers() {
         for (IStorageHelper helper : injectedHelpers) {
-            helpers.put(helper.getType(), helper);
+            for (StorageType type : helper.getTypes()) {
+                helpers.put(type, helper);
+            }
         }
     }
 

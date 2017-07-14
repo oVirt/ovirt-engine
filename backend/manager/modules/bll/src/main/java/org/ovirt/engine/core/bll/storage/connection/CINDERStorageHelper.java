@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -55,8 +56,8 @@ public class CINDERStorageHelper extends StorageHelperBase {
     private static Logger log = LoggerFactory.getLogger(CINDERStorageHelper.class);
 
     @Override
-    public StorageType getType() {
-        return StorageType.CINDER;
+    public Collection<StorageType> getTypes() {
+        return Collections.singleton(StorageType.CINDER);
     }
 
     @Override

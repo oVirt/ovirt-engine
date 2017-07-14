@@ -1,7 +1,11 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -10,6 +14,7 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,8 +22,14 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class BaseFsStorageHelper extends StorageHelperBase {
-    private static final Logger log = LoggerFactory.getLogger(BaseFsStorageHelper.class);
+@Singleton
+public class FileStorageHelper extends StorageHelperBase {
+    private static final Logger log = LoggerFactory.getLogger(FileStorageHelper.class);
+
+    @Override
+    public Collection<StorageType> getTypes() {
+        return Arrays.asList(StorageType.LOCALFS, StorageType.NFS, StorageType.POSIXFS);
+    }
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
