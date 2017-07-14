@@ -91,7 +91,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         HostStatusColumn<VDS> statusIconColumn = new HostStatusColumn<>();
         statusIconColumn.setContextMenuTitle(constants.statusIconHost());
-        getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(statusIconColumn, constants.empty(), "35px"); //$NON-NLS-1$
 
         HostAdditionalStatusColumn additionalStatusColumn = new HostAdditionalStatusColumn();
         additionalStatusColumn.setContextMenuTitle(constants.additionalStatusHost());
@@ -387,7 +387,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 constants.management(),
                 managementSubActions
             ),
-            new DropdownActionButton<VDS>(managementSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
+            new DropdownActionButton<>(managementSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
                 @Override
                 public List<VDS> getSelectedItems() {
                     return getMainModel().getSelectedItems();
@@ -431,7 +431,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 constants.installation(),
                 moreSubActions
             ),
-            new DropdownActionButton<VDS>(moreSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
+            new DropdownActionButton<>(moreSubActions, new DropdownActionButton.SelectedItemsProvider<VDS>() {
                 @Override
                 public List<VDS> getSelectedItems() {
                     return getMainModel().getSelectedItems();
