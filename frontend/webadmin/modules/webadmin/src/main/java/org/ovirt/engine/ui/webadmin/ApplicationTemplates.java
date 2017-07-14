@@ -125,8 +125,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     SafeHtml imageTextSetupNetworkUsage(SafeHtml image, String text, String color);
 
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
-            + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{1}</span></span>")
-    SafeHtml imageTextSetupNetwork(SafeHtml image, String text);
+            + "<span style='position: relative; margin-left: 3px; margin-right: 3px; height: 14px; line-height: 14px;'>{1}</span></span>")
+    SafeHtml imageWithText(SafeHtml image, String text);
 
     @Template("<span><span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; margin-left: 3px; margin-right: 3px; white-space: normal; height: 14px; line-height: 14px;'>{1}</span></span>")

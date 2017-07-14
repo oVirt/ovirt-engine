@@ -100,7 +100,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         // Not managed
         if (!networkModel.isManaged()) {
-            addRow(templates.imageTextSetupNetwork(unknownImage, constants.unmanagedNetworkItemInfo()));
+            addRow(templates.imageWithText(unknownImage, constants.unmanagedNetworkItemInfo()));
             addRow(SafeHtmlUtils.fromString(constants.unmanagedNetworkDescriptionItemInfo()));
             descriptionSectionHasValues = true;
         }

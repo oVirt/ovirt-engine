@@ -32,7 +32,7 @@ public class MultiImageColumnHelper {
             if (!tooltip.isEmpty()) {
                 tooltip = tooltip.concat(constants.lineBreak()); //$NON-NLS-1$
             }
-            tooltip = tooltip.concat(templates.imageTextSetupNetwork(imageToText.getKey(),
+            tooltip = tooltip.concat(templates.imageWithText(imageToText.getKey(),
                     imageToText.getValue()).asString());
         }
 
