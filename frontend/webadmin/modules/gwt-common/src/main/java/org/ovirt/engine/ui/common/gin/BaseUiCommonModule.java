@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.uicommon.LoggerImpl;
 import org.ovirt.engine.ui.common.uicommon.NoVncImpl;
 import org.ovirt.engine.ui.common.uicommon.RdpNativeImpl;
 import org.ovirt.engine.ui.common.uicommon.RdpPluginImpl;
-import org.ovirt.engine.ui.common.uicommon.SpiceHtml5Impl;
 import org.ovirt.engine.ui.common.uicommon.SpiceNativeImpl;
 import org.ovirt.engine.ui.common.uicommon.UiCommonDefaultTypeResolver;
 import org.ovirt.engine.ui.common.uicommon.VncNativeImpl;
@@ -18,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.OptionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
 
@@ -55,7 +53,6 @@ public abstract class BaseUiCommonModule extends AbstractGinModule {
         bind(INoVnc.class).to(NoVncImpl.class);
         bind(IVncNative.class).to(VncNativeImpl.class);
 
-        bind(ISpiceHtml5.class).to(SpiceHtml5Impl.class);
         bind(ISpiceNative.class).to(SpiceNativeImpl.class);
 
         bind(IRdpNative.class).to(RdpNativeImpl.class);

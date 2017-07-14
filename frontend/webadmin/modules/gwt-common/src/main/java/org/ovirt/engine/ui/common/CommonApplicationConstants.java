@@ -1153,8 +1153,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String noVnc();
 
-    String spiceHtml5();
-
     String usbAutoshare();
 
     String openInFullScreen();
@@ -1186,8 +1184,6 @@ public interface CommonApplicationConstants extends Constants {
     String spiceInvokeAuto();
 
     String consoleInvokeNative();
-
-    String spiceInvokeHtml5();
 
     String invokeNoVnc();
 
@@ -1464,8 +1460,6 @@ public interface CommonApplicationConstants extends Constants {
     String removeProfile();
 
     String cpuProfileLabel();
-
-    String spiceHtml5DoesntSupportSpiceProxy();
 
     String numaUnassignedInstructions();
 

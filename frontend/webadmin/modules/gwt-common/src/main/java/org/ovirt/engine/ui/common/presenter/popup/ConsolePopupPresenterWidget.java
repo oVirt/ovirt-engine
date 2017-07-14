@@ -48,10 +48,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         HasValueChangeHandlers<Boolean> getVncRadioButton();
 
-        HasValueChangeHandlers<Boolean> getSpiceAutoImplRadioButton();
-        HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton();
-        HasValueChangeHandlers<Boolean> getSpiceHtml5ImplRadioButton();
-
         HasValueChangeHandlers<Boolean> getNoVncImplRadioButton();
         HasValueChangeHandlers<Boolean> getVncNativeImplRadioButton();
 
@@ -81,10 +77,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void setAdditionalConsoleAvailable(boolean hasAdditionalConsole);
 
         void setSpiceConsoleAvailable(boolean available);
-
-        void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode consoleMode);
-
-        void setSpiceHtml5ImplEnabled(boolean enabled, String reason);
 
         void setRdpPluginImplEnabled(boolean enabled, String reason);
 
@@ -171,7 +163,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     private void initView(ConsolePopupModel model) {
 
-        listenOnRadioButtons(model);
+        listenOnRadioButtons();
         VmConsoles vmConsoles = model.getVmConsoles();
 
         getView().setSpiceAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.SPICE));
@@ -202,7 +194,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getSpiceImpl().getOptions().isSpiceProxyEnabled();
         }
 
-        getView().setSpiceHtml5ImplEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());
         getView().setNoVncEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());
 
         if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.RDP)) {
@@ -211,7 +202,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         spiceProxyDefinedOnCluster = consoleUtils.isSpiceProxyDefined(vmConsoles.getVm());
 
-        selectSpiceImplementation(vmConsoles.getConsoleModel(SpiceConsoleModel.class).getClientConsoleMode());
+        handleSpiceProxyAvailability();
         getView().selectVncImplementation(vmConsoles.getConsoleModel(VncConsoleModel.class).getClientConsoleMode());
         getView().selectRdpImplementation(vmConsoles.getConsoleModel(RdpConsoleModel.class).getClientConsoleMode());
 
@@ -262,29 +253,17 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         }
     }
 
-    protected void listenOnRadioButtons(final ConsolePopupModel model) {
+    protected void listenOnRadioButtons() {
         registerHandler(getView().getRdpRadioButton().addValueChangeHandler(event -> getView().showRdpPanel(event.getValue())));
 
         registerHandler(getView().getVncRadioButton().addValueChangeHandler(event -> getView().showVncPanel(event.getValue())));
 
         registerHandler(getView().getSpiceRadioButton().addValueChangeHandler(event -> getView().showSpicePanel(event.getValue())));
 
-        registerHandler(getView().getSpiceAutoImplRadioButton()
-                .addValueChangeHandler(event -> selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Auto)));
-
-        registerHandler(getView().getSpiceNativeImplRadioButton()
-                .addValueChangeHandler(event -> selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native)));
-        registerHandler(getView().getSpiceHtml5ImplRadioButton()
-                .addValueChangeHandler(event -> {
-                    boolean previousSpicePreference = getView().getSpiceProxy();
-                    selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Html5);
-                    spiceProxyUserPreference = previousSpicePreference;
-                }));
-
-         registerHandler(getView().getNoVncImplRadioButton()
+        registerHandler(getView().getNoVncImplRadioButton()
                 .addValueChangeHandler(event -> getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.NoVnc)));
 
-         registerHandler(getView().getVncNativeImplRadioButton()
+        registerHandler(getView().getVncNativeImplRadioButton()
                  .addValueChangeHandler(event -> getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.Native)));
 
         registerHandler(getView().getRdpAutoImplRadioButton()
@@ -297,32 +276,14 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 .addValueChangeHandler(event -> getView().selectRdpImplementation(RdpConsoleModel.ClientConsoleMode.Plugin)));
     }
 
-    /**
-     * Selects spice implementation.
-     * Handles spice proxy availability as well.
-     */
-    private void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode clientMode) {
-        getView().selectSpiceImplementation(clientMode);
-        setSpiceProxyAvailability(clientMode);
-        getView().setSpiceProxy(clientMode == SpiceConsoleModel.ClientConsoleMode.Html5
-                ? false
-                : spiceProxyUserPreference);
+    private void handleSpiceProxyAvailability() {
+        setSpiceProxyAvailability();
+        getView().setSpiceProxy(spiceProxyUserPreference);
     }
 
-    private void setSpiceProxyAvailability(SpiceConsoleModel.ClientConsoleMode clientMode) {
-        boolean isHtml5 = clientMode == SpiceConsoleModel.ClientConsoleMode.Html5;
-
-        // firstly handle availability on cluster
+    private void setSpiceProxyAvailability() {
         getView().setSpiceProxyEnabled(
                 spiceProxyDefinedOnCluster,
                 spiceProxyDefinedOnCluster ? "" : constants.spiceProxyCanBeEnabledOnlyWhenDefined()); //$NON-NLS-1$
-
-        // then, if it's available on cluster, check if it's supported by selected client
-        if (spiceProxyDefinedOnCluster) {
-            getView().setSpiceProxyEnabled(
-                    !isHtml5,
-                    isHtml5 ? constants.spiceHtml5DoesntSupportSpiceProxy() : ""); //$NON-NLS-1$
-        }
-
     }
 }

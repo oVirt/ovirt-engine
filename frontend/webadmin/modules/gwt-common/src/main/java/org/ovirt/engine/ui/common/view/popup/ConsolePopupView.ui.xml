@@ -67,17 +67,6 @@ xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
                 </g:FlowPanel>
 
                 <g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel} cpv_spicePanel_pfly_fix">
-                    <v:WidgetWithInfo ui:field="spiceHeadline" />
-                    <t:WidgetTooltip ui:field="spiceAutoImplRadioButtonTooltip">
-                        <ge:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
-                    </t:WidgetTooltip>
-                    <t:WidgetTooltip ui:field="spiceNativeImplRadioButtonTooltip">
-                        <ge:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
-                    </t:WidgetTooltip>
-                    <t:WidgetTooltip ui:field="spiceHtml5ImplRadioButtonTooltip">
-                        <ge:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
-                    </t:WidgetTooltip>
-
                     <g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle} cpv_spiceTitle_pfly_fix" />
                     <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
                     <w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />

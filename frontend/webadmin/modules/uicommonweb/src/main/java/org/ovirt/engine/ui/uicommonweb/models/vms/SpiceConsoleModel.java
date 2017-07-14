@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
@@ -30,22 +29,15 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 
 public class SpiceConsoleModel extends ConsoleModel {
 
-    public enum ClientConsoleMode { Native, Auto, Html5 }
-
     public static EventDefinition spiceDisconnectedEventDefinition;
     public static EventDefinition spiceConnectedEventDefinition;
 
     private static final DynamicMessages dynamicMessages = (DynamicMessages) TypeResolver.getInstance().resolve(DynamicMessages.class);
 
     private ConsoleClient spiceImpl;
-    private ClientConsoleMode consoleMode;
 
     private void setSpiceImpl(ConsoleClient value) {
         spiceImpl = value;
-    }
-
-    public ClientConsoleMode getClientConsoleMode() {
-        return consoleMode;
     }
 
     static {
@@ -57,11 +49,8 @@ public class SpiceConsoleModel extends ConsoleModel {
         super(myVm, parentModel);
 
         setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
-        setConsoleClientMode(getDefaultConsoleMode());
-    }
 
-    protected ClientConsoleMode getDefaultConsoleMode() {
-        return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.ClientModeSpiceDefault));
+        initConsole();
     }
 
     public ConsoleClient getSpiceImpl() {
@@ -76,31 +65,11 @@ public class SpiceConsoleModel extends ConsoleModel {
     }
 
     /**
-     * Sets implementation of ConsoleClient which will be used
-     * and performs sets initial configuration as well (different for WA/UP).
-     *
-     * Default mode is "Auto"
+     * Performs initial configuration (different for WA/UP).
      */
-    public void setConsoleClientMode(ClientConsoleMode consoleMode) {
+    public void initConsole() {
         ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
-        this.consoleMode = consoleMode;
-
-        switch (consoleMode) {
-            case Native:
-                setSpiceImpl((ConsoleClient) TypeResolver.getInstance().resolve(ISpiceNative.class));
-                break;
-            case Html5:
-                if (consoleUtils.webBasedClientsSupported()) {
-                    setSpiceImpl((ConsoleClient) TypeResolver.getInstance().resolve(ISpiceHtml5.class));
-                } else {
-                    getLogger().debug("Cannot select SPICE-HTML5."); //$NON-NLS-1$
-                    setDefaultConsoleMode();
-                }
-                break;
-            default:
-                setDefaultConsoleMode();
-            break;
-        }
+        setSpiceImpl((ConsoleClient) TypeResolver.getInstance().resolve(ISpiceNative.class));
 
         getConfigurator().configure(getSpiceImpl());
 
@@ -108,10 +77,6 @@ public class SpiceConsoleModel extends ConsoleModel {
             boolean isSpiceProxyDefined = consoleUtils.isSpiceProxyDefined(getEntity());
             getSpiceImpl().getOptions().setSpiceProxyEnabled(isSpiceProxyDefined);
         }
-    }
-
-    private void setDefaultConsoleMode() {
-        setSpiceImpl((ConsoleClient) TypeResolver.getInstance().resolve(ISpiceNative.class));
     }
 
     @Override

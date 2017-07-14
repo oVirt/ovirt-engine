@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
 
@@ -33,7 +32,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
     // contain state unique for each connect operation and thus
     // new instance is required each time
     private final Provider<ISpiceNative> spiceNativeProvider;
-    private final Provider<ISpiceHtml5> spiceHtml5Provider;
     private final Provider<IRdpPlugin> rdpPluginProvider;
     private final Provider<IRdpNative> rdpNativeProvider;
     private final Provider<IVncNative> vncNativeProvider;
@@ -46,7 +44,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             ConsoleOptionsFrontendPersister consoleOptionsFrontendPersister,
             CurrentUserRole currentUserRole,
             Provider<ISpiceNative> spiceNativeProvider,
-            Provider<ISpiceHtml5> spiceHtml5Provider,
             Provider<IRdpPlugin> rdpPluginProvider,
             Provider<IRdpNative> rdpNativeProvider,
             Provider<IVncNative> vncNativeProvider,
@@ -60,7 +57,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
         this.currentUserRole = currentUserRole;
 
         this.spiceNativeProvider = spiceNativeProvider;
-        this.spiceHtml5Provider = spiceHtml5Provider;
         this.rdpPluginProvider = rdpPluginProvider;
         this.rdpNativeProvider = rdpNativeProvider;
         this.vncNativeProvider = vncNativeProvider;
@@ -79,8 +75,6 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             return new TimerImpl();
         } else if (type == ISpiceNative.class) {
             return spiceNativeProvider.get();
-        } else if (type == ISpiceHtml5.class) {
-            return spiceHtml5Provider.get();
         } else if (type == IRdpPlugin.class) {
             return rdpPluginProvider.get();
         } else if (type == IRdpNative.class) {

@@ -29,7 +29,6 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private final ConsoleUtils consoleUtils;
 
     // spice options
-    private static final String SPICE_CLIENT_MODE = "_spiceClientMode"; //$NON-NLS-1$
     private static final String OPEN_IN_FULL_SCREEN = "_openInFullScreen"; //$NON-NLS-1$
     private static final String SMARTCARD_ENABLED_OVERRIDDEN = "_smartcardEnabledOverridden"; //$NON-NLS-1$
     private static final String WAN_OPTIONS = "_wanOptions"; //$NON-NLS-1$
@@ -157,11 +156,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     }
 
     protected void storeSpiceData(VmConsoles vmConsoles, KeyMaker keyMaker) {
-        SpiceConsoleModel consoleModel = vmConsoles.getConsoleModel(SpiceConsoleModel.class);
         ConsoleClient spice = asSpice(vmConsoles);
-
-        clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_MODE),
-                consoleModel.getClientConsoleMode().toString());
 
         storeBool(keyMaker.make(OPEN_IN_FULL_SCREEN), spice.getOptions().isFullScreen());
         storeBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN), spice.getOptions().isSmartcardEnabledOverridden());
@@ -199,8 +194,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         vmConsoles.selectProtocol(ConsoleProtocol.SPICE);
 
         try {
-            SpiceConsoleModel.ClientConsoleMode consoleMode = SpiceConsoleModel.ClientConsoleMode.valueOf(clientStorage.getLocalItem(keyMaker.make(SPICE_CLIENT_MODE)));
-            vmConsoles.getConsoleModel(SpiceConsoleModel.class).setConsoleClientMode(consoleMode);
+            vmConsoles.getConsoleModel(SpiceConsoleModel.class).initConsole();
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed loading SPICE data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
