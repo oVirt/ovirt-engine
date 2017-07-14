@@ -46,6 +46,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CINDERStorageHelper cinderStorageHelper;
 
     public DetachStorageDomainFromPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -126,7 +128,6 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     }
 
     private void detachCinderStorageDomain() {
-        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
         cinderStorageHelper.detachCinderDomainFromPool(getStorageDomain().getStoragePoolIsoMapData());
         setSucceeded(true);
     }

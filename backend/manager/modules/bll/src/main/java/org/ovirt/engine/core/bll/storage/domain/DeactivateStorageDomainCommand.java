@@ -87,6 +87,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     private StorageDomainStaticDao storageDomainStaticDao;
     @Inject
     private VmDao vmDao;
+    @Inject
+    private CINDERStorageHelper cinderStorageHelper;
 
     private boolean isLastMaster;
 
@@ -381,7 +383,6 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return;
             }
         }
-        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
         cinderStorageHelper.deactivateCinderDomain(getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
         setSucceeded(true);

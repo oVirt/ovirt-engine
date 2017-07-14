@@ -11,11 +11,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface IStorageHelper {
+
+    StorageType getType();
 
     boolean prepareConnectHostToStoragePoolServers(CommandContext cmdContext,
             ConnectHostToStoragePoolServersParameters parameters,

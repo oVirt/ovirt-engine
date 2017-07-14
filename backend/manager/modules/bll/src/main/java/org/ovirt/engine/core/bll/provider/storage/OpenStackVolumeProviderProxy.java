@@ -47,7 +47,7 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
     }
 
     protected void attachStorageDomainToDataCenter(Guid storageDomainId, Guid storagePoolId) {
-        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
+        CINDERStorageHelper cinderStorageHelper = Injector.get(CINDERStorageHelper.class);
         cinderStorageHelper.attachCinderDomainToPool(storageDomainId, storagePoolId);
         cinderStorageHelper.activateCinderDomain(storageDomainId, storagePoolId);
     }

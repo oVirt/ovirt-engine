@@ -27,6 +27,11 @@ public class FCPStorageHelper extends StorageHelperBase {
     }
 
     @Override
+    public StorageType getType() {
+        return StorageType.FCP;
+    }
+
+    @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         return runConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }

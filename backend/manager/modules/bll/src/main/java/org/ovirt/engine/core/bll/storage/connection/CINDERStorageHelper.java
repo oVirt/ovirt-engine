@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -47,9 +49,15 @@ import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class CINDERStorageHelper extends StorageHelperBase {
 
     private static Logger log = LoggerFactory.getLogger(CINDERStorageHelper.class);
+
+    @Override
+    public StorageType getType() {
+        return StorageType.CINDER;
+    }
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {

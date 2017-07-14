@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.storage.connection;
 
 import java.util.List;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -23,12 +25,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Storage helper for Gluster FS connections
  */
+@Singleton
 public class GLUSTERFSStorageHelper extends BaseFsStorageHelper {
 
     private static final Logger log = LoggerFactory.getLogger(GLUSTERFSStorageHelper.class);
 
     @Override
-    protected StorageType getType() {
+    public StorageType getType() {
         return StorageType.GLUSTERFS;
     }
 

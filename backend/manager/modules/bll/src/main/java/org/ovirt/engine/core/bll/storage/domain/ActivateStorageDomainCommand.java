@@ -47,6 +47,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     private IsoDomainListSynchronizer isoDomainListSynchronizer;
     @Inject
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
+    @Inject
+    private CINDERStorageHelper cinderStorageHelper;
 
     public ActivateStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -147,7 +149,6 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 return;
             }
         }
-        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
         cinderStorageHelper.activateCinderDomain(getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
         setSucceeded(true);

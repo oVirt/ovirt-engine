@@ -60,6 +60,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
     private UnregisteredOVFDataDao unregisteredOVFDataDao;
+    @Inject
+    private CINDERStorageHelper cinderStorageHelper;
 
     public AttachStorageDomainToPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -218,7 +220,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     }
 
     private void handleCinderDomain() {
-        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
         cinderStorageHelper.attachCinderDomainToPool(getStorageDomain().getId(),
                 getParameters().getStoragePoolId());
         if (getParameters().getActivate()) {
@@ -246,7 +247,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     protected void attemptToActivateCinderDomain() {
         try {
-            CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
             cinderStorageHelper.activateCinderDomain(
                     getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
         } catch (RuntimeException e) {

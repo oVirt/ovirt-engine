@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -68,6 +67,4 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
         return true;
     }
-
-    protected abstract StorageType getType();
 }

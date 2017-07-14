@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -30,8 +32,14 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
 public class ISCSIStorageHelper extends StorageHelperBase {
     private static final Logger log = LoggerFactory.getLogger(ISCSIStorageHelper.class);
+
+    @Override
+    public StorageType getType() {
+        return StorageType.ISCSI;
+    }
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {

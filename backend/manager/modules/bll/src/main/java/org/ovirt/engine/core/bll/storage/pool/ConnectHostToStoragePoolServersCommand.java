@@ -29,6 +29,8 @@ public class ConnectHostToStoragePoolServersCommand extends
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private CINDERStorageHelper cinderStorageHelper;
 
     public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters,
             CommandContext cmdContext) {
@@ -56,7 +58,6 @@ public class ConnectHostToStoragePoolServersCommand extends
             connectSucceeded = connectStorageServersByType(connectionsType, connections) && connectSucceeded;
         }
 
-        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
         if (cinderStorageHelper.isActiveCinderDomainAvailable(getStoragePool().getId())) {
             connectSucceeded &= cinderStorageHelper.prepareConnectHostToStoragePoolServers(
                     getContext(), getParameters(), null);

@@ -27,6 +27,8 @@ public class DisconnectHostFromStoragePoolServersCommand extends
 
     @Inject
     private AuditLogDirector auditLogDirector;
+    @Inject
+    private CINDERStorageHelper cinderStorageHelper;
 
     public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -47,7 +49,6 @@ public class DisconnectHostFromStoragePoolServersCommand extends
         }
 
         // Unregister libvirt secrets when required (for Cinder storage domains).
-        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
         if (cinderStorageHelper.isActiveCinderDomainAvailable(getStoragePool().getId())) {
             unregisterLibvirtSecrets();
         }
