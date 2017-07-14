@@ -96,6 +96,10 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
             return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_POOL_NAME);
         }
 
+        if (oldPool.isAutoStorageSelect() != getParameters().getVmPool().isAutoStorageSelect()) {
+            return failValidation(EngineMessage.VM_POOL_CANNOT_CHANGE_AUTO_STORAGE_SELECT);
+        }
+
         return true;
     }
 

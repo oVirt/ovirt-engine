@@ -1927,6 +1927,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VM_POOL_CANNOT_CHANGE_POOL_STATEFUL_OPTION();
 
+    String VM_POOL_CANNOT_CHANGE_AUTO_STORAGE_SELECT();
+
     String VM_POOL_CANNOT_CHANGE_POOL_NAME();
 
     String MOVE_VM_CLUSTER_MISSING_NETWORK();
