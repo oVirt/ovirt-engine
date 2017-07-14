@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Storage helper for Posix FS connections
+ * Storage helper for Gluster FS connections
  */
 public class GLUSTERFSStorageHelper extends BaseFsStorageHelper {
 
