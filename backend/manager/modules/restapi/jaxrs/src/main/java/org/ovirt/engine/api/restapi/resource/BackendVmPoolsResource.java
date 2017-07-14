@@ -72,6 +72,11 @@ public class BackendVmPoolsResource
         params.setConsoleEnabled(!getConsoleDevicesForEntity(template.getId()).isEmpty());
         params.setVirtioScsiEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, template.getId()).isEmpty());
         params.setSoundDeviceEnabled(pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getSoundDevicesForEntity(this, template.getId()).isEmpty());
+        boolean balloonEnabled = pool.isSetVm() &&
+                pool.getVm().isSetMemoryPolicy() &&
+                pool.getVm().getMemoryPolicy().isSetBallooning() &&
+                pool.getVm().getMemoryPolicy().isBallooning();
+        params.setBalloonEnabled(balloonEnabled);
 
         return performCreate(ActionType.AddVmPool,
                                params,
