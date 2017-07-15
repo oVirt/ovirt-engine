@@ -313,6 +313,17 @@ public class UploadImageModel extends Model implements ICommandTarget {
             }));
     }
 
+    private void initiateSilentResumeUpload() {
+        TransferImageStatusParameters parameters = new TransferImageStatusParameters();
+        parameters.setDiskId(getDiskModel().getDisk().getId());
+        UploadImageManager.getInstance().resumeUpload(null, parameters,
+                new AsyncQuery<>(errorMessage -> {
+                    if (errorMessage != null) {
+                        getLogger().error(errorMessage, null);
+                    }
+                }));
+    }
+
     private TransferDiskImageParameters createInitParams() {
         Disk newDisk = diskModel.getDisk();
         AddDiskParameters diskParameters = new AddDiskParameters(newDisk);
@@ -346,6 +357,14 @@ public class UploadImageModel extends Model implements ICommandTarget {
             Guid limitToStorageDomainId,
             DiskImage resumeUploadDisk) {
         UploadImageModel model = new UploadImageModel(limitToStorageDomainId, resumeUploadDisk);
+
+        // Silently resume upload if handler already exists in UploadImageManager
+        if (resumeUploadDisk != null &&
+                UploadImageManager.getInstance().isUploadImageHandlerExists(resumeUploadDisk.getId())) {
+            model.initiateSilentResumeUpload();
+            return;
+        }
+
         model.setTitle(resumeUploadDisk == null
                 ? ConstantsManager.getInstance().getConstants().uploadImageTitle()
                 : ConstantsManager.getInstance().getConstants().uploadImageResumeTitle());

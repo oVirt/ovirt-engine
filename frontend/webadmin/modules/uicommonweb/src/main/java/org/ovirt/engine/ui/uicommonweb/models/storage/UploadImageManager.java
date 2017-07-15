@@ -71,6 +71,18 @@ public class UploadImageManager {
         uploadImageHandler.resume(transferImageStatusParameters, asyncQuery);
     }
 
+    /**
+     * Returns whether an UploadImageHandler exists by a specified diskId
+     *
+     * @param diskId
+     *            upload disk ID
+     * @return whether an UploadImageHandler exists
+     */
+    public boolean isUploadImageHandlerExists(Guid diskId) {
+        Optional<UploadImageHandler> uploadImageHandlerOptional = getUploadImageHandler(diskId);
+        return uploadImageHandlerOptional.isPresent();
+    }
+
     private UploadImageHandler createUploadImageHandler(Element fileUploadElement) {
         final UploadImageHandler uploadImageHandler = new UploadImageHandler(fileUploadElement);
         uploadImageHandler.getUploadFinishedEvent().addListener((ev, sender, args) -> {
