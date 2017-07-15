@@ -126,8 +126,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     }
 
     private void detachCinderStorageDomain() {
-        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
-        CINDERStorageHelper.detachCinderDomainFromPool(getStorageDomain().getStoragePoolIsoMapData());
+        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
+        cinderStorageHelper.detachCinderDomainFromPool(getStorageDomain().getStoragePoolIsoMapData());
         setSucceeded(true);
     }
 

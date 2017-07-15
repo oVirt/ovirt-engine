@@ -381,8 +381,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return;
             }
         }
-        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
-        CINDERStorageHelper.deactivateCinderDomain(getParameters().getStorageDomainId(),
+        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
+        cinderStorageHelper.deactivateCinderDomain(getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
         setSucceeded(true);
     }

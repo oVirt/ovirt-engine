@@ -47,8 +47,8 @@ public class DisconnectHostFromStoragePoolServersCommand extends
         }
 
         // Unregister libvirt secrets when required (for Cinder storage domains).
-        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
-        if (CINDERStorageHelper.isActiveCinderDomainAvailable(getStoragePool().getId())) {
+        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
+        if (cinderStorageHelper.isActiveCinderDomainAvailable(getStoragePool().getId())) {
             unregisterLibvirtSecrets();
         }
     }

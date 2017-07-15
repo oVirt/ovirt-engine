@@ -218,8 +218,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     }
 
     private void handleCinderDomain() {
-        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
-        CINDERStorageHelper.attachCinderDomainToPool(getStorageDomain().getId(),
+        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
+        cinderStorageHelper.attachCinderDomainToPool(getStorageDomain().getId(),
                 getParameters().getStoragePoolId());
         if (getParameters().getActivate()) {
             attemptToActivateCinderDomain();
@@ -246,8 +246,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     protected void attemptToActivateCinderDomain() {
         try {
-            CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
-            CINDERStorageHelper.activateCinderDomain(
+            CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
+            cinderStorageHelper.activateCinderDomain(
                     getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
         } catch (RuntimeException e) {
             auditLogDirector.log(this, AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED);

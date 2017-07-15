@@ -147,8 +147,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                 return;
             }
         }
-        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
-        CINDERStorageHelper.activateCinderDomain(getParameters().getStorageDomainId(),
+        CINDERStorageHelper cinderStorageHelper = new CINDERStorageHelper();
+        cinderStorageHelper.activateCinderDomain(getParameters().getStorageDomainId(),
                 getParameters().getStoragePoolId());
         setSucceeded(true);
     }
