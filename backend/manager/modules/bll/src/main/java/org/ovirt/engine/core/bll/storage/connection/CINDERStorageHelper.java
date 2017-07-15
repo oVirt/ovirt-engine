@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -45,23 +44,12 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CINDERStorageHelper extends StorageHelperBase {
 
     private static Logger log = LoggerFactory.getLogger(CINDERStorageHelper.class);
-
-    private boolean runInNewTransaction = true;
-
-    public boolean isRunInNewTransaction() {
-        return runInNewTransaction;
-    }
-
-    public void setRunInNewTransaction(boolean runInNewTransaction) {
-        this.runInNewTransaction = runInNewTransaction;
-    }
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
@@ -219,32 +207,10 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return returnValue.getSucceeded();
     }
 
-    private <T> void execute(final Callable<T> callable) {
-        if (runInNewTransaction) {
-            TransactionSupport.executeInNewTransaction(() -> {
-                invokeCallable(callable);
-                return null;
-            });
-        } else {
-            invokeCallable(callable);
-        }
-    }
-
-    private <T> void invokeCallable(Callable<T> callable) {
-        try {
-            callable.call();
-        } catch (Exception e) {
-            log.error("Error in CinderStorageHelper.", e);
-        }
-    }
-
     public void attachCinderDomainToPool(final Guid storageDomainId, final Guid storagePoolId) {
-        execute(() -> {
-            StoragePoolIsoMap storagePoolIsoMap =
-                    new StoragePoolIsoMap(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
-            getStoragePoolIsoMapDao().save(storagePoolIsoMap);
-            return null;
-        });
+        StoragePoolIsoMap storagePoolIsoMap =
+                new StoragePoolIsoMap(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
+        getStoragePoolIsoMapDao().save(storagePoolIsoMap);
     }
 
     public static ValidationResult isCinderHasNoImages(Guid storageDomainId) {
@@ -275,23 +241,16 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     public void detachCinderDomainFromPool(final StoragePoolIsoMap mapToRemove) {
-        execute(() -> {
-            getStoragePoolIsoMapDao().remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
-                    mapToRemove.getStoragePoolId()));
-            return null;
-        });
+        getStoragePoolIsoMapDao().remove
+                (new StoragePoolIsoMapId(mapToRemove.getStorageId(), mapToRemove.getStoragePoolId()));
     }
 
     private void updateCinderDomainStatus(final Guid storageDomainId,
                                           final Guid storagePoolId,
                                           final StorageDomainStatus storageDomainStatus) {
-        execute(() -> {
-            StoragePoolIsoMap map =
-                    getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
-            map.setStatus(storageDomainStatus);
-            getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
-            return null;
-        });
+        StoragePoolIsoMap map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
+        map.setStatus(storageDomainStatus);
+        getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
     }
 
     public void deactivateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
