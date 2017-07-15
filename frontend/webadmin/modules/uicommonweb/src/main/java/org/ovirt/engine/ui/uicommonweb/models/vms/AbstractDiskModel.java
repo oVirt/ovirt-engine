@@ -348,7 +348,11 @@ public abstract class AbstractDiskModel extends DiskModel {
         onSaveCommand.setTitle(constants.ok());
         onSaveCommand.setIsDefault(true);
         getCommands().add(onSaveCommand);
-        getCommands().add(getCancelCommand());
+
+        // Add command only if defined (as cleanup is invoked on each command)
+        if (getCancelCommand() != null) {
+            getCommands().add(getCancelCommand());
+        }
 
         // Update data
         if (getVm() != null) {
