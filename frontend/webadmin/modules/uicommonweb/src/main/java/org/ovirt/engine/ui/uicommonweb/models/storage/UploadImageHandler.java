@@ -70,6 +70,7 @@ public class UploadImageHandler {
 
     private Guid commandId;
     private long bytesSent;
+    private long bytesEndOffset;
     private String progressStr;
     private UploadState uploadState;
     private boolean continuePolling;
@@ -115,6 +116,14 @@ public class UploadImageHandler {
     public void setBytesSent(double bytesSent) {
         this.bytesSent = (long)bytesSent;
         setProgressStr("Sent " + bytesSent / SizeConverter.BYTES_IN_MB + "MB"); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public long getBytesEndOffset() {
+        return bytesEndOffset;
+    }
+
+    public void setBytesEndOffset(long bytesEndOffset) {
+        this.bytesEndOffset = bytesEndOffset;
     }
 
     public String getProgressStr() {
@@ -209,13 +218,19 @@ public class UploadImageHandler {
      *
      * @param transferDiskImageParameters
      *            transfer parameters
+     * @param startByte
+     *            start offset
+     * @param endByte
+     *            end offset
      */
-    public void start(TransferDiskImageParameters transferDiskImageParameters) {
+    public void start(TransferDiskImageParameters transferDiskImageParameters,
+                      long startByte, long endByte) {
         Frontend.getInstance().runAction(ActionType.TransferDiskImage, transferDiskImageParameters,
                 result -> {
                     if (result.getReturnValue().getSucceeded()) {
                         setCommandId(result.getReturnValue().getActionReturnValue());
-                        setBytesSent(0);
+                        setBytesSent(startByte);
+                        setBytesEndOffset(endByte);
                         startStatusPolling();
                     } else {
                         setProgressStr(messages.uploadImageFailedToStartMessage(result.getReturnValue().getDescription()));
@@ -286,7 +301,7 @@ public class UploadImageHandler {
                         setUploadState(UploadState.INITIALIZING);
                         setProgressStr("Uploading from byte " + getBytesSent()); //$NON-NLS-1$
                         startUpload(getFileUploadElement(), proxyURI,
-                                getTransferToken(), getBytesSent(), signedTicket,
+                                getTransferToken(), getBytesSent(), getBytesEndOffset(), signedTicket,
                                 chunkSizeKB, xhrTimeoutSec, xhrRetryIntervalSec, maxRetries);
                     }
                     break;
@@ -407,7 +422,7 @@ public class UploadImageHandler {
     }
 
     private native void startUpload(Element fileUploadElement, String proxyUri,
-                                    String resourceId, double startByte, String signedTicket,
+                                    String resourceId, double startByte, double endByte, String signedTicket,
                                     int chunkSizeKB, int xhrTimeoutSec, int xhrRetryIntervalSec, int maxRetries) /*-{
 
         var bytesPerMB = 1024 * 1024;
@@ -475,7 +490,7 @@ public class UploadImageHandler {
             }
 
             log.DEBUG('sendChunk: Sending from byte ' + bytesSent);
-            bytesToSend = Math.min(file.size - bytesSent, chunkSizeKB * 1024);
+            bytesToSend = Math.min(endByte - bytesSent, chunkSizeKB * 1024);
             bytesSentThisRequest = 0;
 
             if (xhr === undefined) {
@@ -489,7 +504,7 @@ public class UploadImageHandler {
             }
 
             var address = proxyUri + '/' + resourceId;
-            var contentRange = 'bytes ' + bytesSent + '-' + (bytesSent + bytesToSend - 1) + '/' + file.size;
+            var contentRange = 'bytes ' + bytesSent + '-' + (bytesSent + bytesToSend - 1) + '/' + endByte;
 
             xhr.open('PUT', address);
             xhr.timeout = xhrTimeoutSec * 1000;  // Must be set after xhr.open()
@@ -518,13 +533,13 @@ public class UploadImageHandler {
                     }
                     if (getUploadStateString() === UploadStates.CLIENT_ERROR) {
                         finalizeUpload();
-                    } else if (bytesSent < file.size) {
+                    } else if (bytesSent < endByte) {
                         chunkErrorCount = 0;
                         setBytesSent(bytesSent);
                         sendChunk();
                     } else {
                         elapsed = (performance.now() - startTime) / 1000;
-                        bytesPerSec = (elapsed > 0 ? file.size / elapsed : file.size);
+                        bytesPerSec = (elapsed > 0 ? endByte / elapsed : endByte);
                         log.INFO('xhrHandle: Finished transfer in ' + elapsed + ' seconds, '
                             + bytesPerSec / bytesPerMB + ' MB per second');
                         setUploadStateByString(UploadStates.SUCCESS);

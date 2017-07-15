@@ -45,9 +45,29 @@ public class UploadImageManager {
      *            transfer parameters
      */
     public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters) {
+        startUpload(fileUploadElement,
+                transferDiskImageParameters,
+                0,
+                transferDiskImageParameters.getTransferSize());
+    }
+
+    /**
+     * Start a new upload by a specified range.
+     *
+     * @param fileUploadElement
+     *            the file upload html element
+     * @param transferDiskImageParameters
+     *            transfer parameters
+     * @param startByte
+     *            start offset
+     * @param endByte
+     *            end offset
+     */
+    public void startUpload(Element fileUploadElement, TransferDiskImageParameters transferDiskImageParameters,
+                            long startByte, long endByte) {
         UploadImageHandler uploadImageHandler = createUploadImageHandler(fileUploadElement);
         uploadImageHandlers.add(uploadImageHandler);
-        uploadImageHandler.start(transferDiskImageParameters);
+        uploadImageHandler.start(transferDiskImageParameters, startByte, endByte);
     }
 
     /**
