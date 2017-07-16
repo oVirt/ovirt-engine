@@ -6,7 +6,7 @@
   xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
   xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" >
 
-	<d:SimpleDialogPanel width="470px" height="220px">
+	<d:SimpleDialogPanel width="470px" height="300px">
 		<d:content>
 			<g:FlowPanel>
 				<e:ListModelListBoxEditor ui:field="clusterEditor" />

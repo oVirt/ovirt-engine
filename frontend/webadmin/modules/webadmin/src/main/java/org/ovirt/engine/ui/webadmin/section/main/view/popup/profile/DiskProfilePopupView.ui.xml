@@ -8,7 +8,7 @@
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<d:SimpleDialogPanel width="470px" height="220px">
+	<d:SimpleDialogPanel width="470px" height="300px">
 		<d:content>
 			<g:FlowPanel>
 				<e:ListModelListBoxEditor ui:field="storageDomainEditor" />
