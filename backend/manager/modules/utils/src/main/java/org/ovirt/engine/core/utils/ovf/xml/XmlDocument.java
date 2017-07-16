@@ -51,7 +51,7 @@ public class XmlDocument {
             XPathFactory factory = XPathFactory.newInstance();
             XPath xPath = factory.newXPath();
             Object o = xPath.evaluate(string, doc, XPathConstants.NODE);
-            return new XmlNode((Node) o);
+            return o != null ? new XmlNode((Node) o) : null;
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Failed to evaluate xpath: " + string, e);
         }
@@ -63,7 +63,7 @@ public class XmlDocument {
             XPath xPath = factory.newXPath();
             xPath.setNamespaceContext(_xmlns);
             Object o = xPath.evaluate(string, doc, XPathConstants.NODE);
-            return new XmlNode((Node) o);
+            return o != null ? new XmlNode((Node) o) : null;
         } catch (XPathExpressionException e) {
             throw new RuntimeException("Failed to evaluate xpath: " + string, e);
         }
