@@ -410,12 +410,8 @@ public abstract class OvfWriter implements IOvfBuilder {
 
         for (VmDevice vmDevice : devices) {
             _writer.writeStartElement("Item");
-            _writer.writeStartElement(RASD_URI, "ResourceType");
-            _writer.writeRaw(OvfHardware.OTHER);
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "InstanceId");
-            _writer.writeRaw(vmDevice.getId().getDeviceId().toString());
-            _writer.writeEndElement();
+            _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.OTHER);
+            _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
             writeVmDeviceInfo(vmDevice);
             _writer.writeEndElement(); // item
         }
@@ -428,22 +424,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getType() == VmDeviceGeneralType.VIDEO) {
                 _writer.writeStartElement("Item");
-                _writer.writeStartElement(RASD_URI, "Caption");
-                _writer.writeRaw("Graphical Controller");
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "InstanceId");
-                _writer.writeRaw(vmDevice.getId().getDeviceId().toString());
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "ResourceType");
-                _writer.writeRaw(OvfHardware.Monitor);
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "VirtualQuantity");
+                _writer.writeElement(RASD_URI, "Caption", "Graphical Controller");
+                _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
+                _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.Monitor);
                 // we should write number of monitors for each entry for backward compatibility
-                _writer.writeRaw(String.valueOf(numOfMonitors));
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "SinglePciQxl");
-                _writer.writeRaw(String.valueOf(vmBase.getSingleQxlPci()));
-                _writer.writeEndElement();
+                _writer.writeElement(RASD_URI, "VirtualQuantity", String.valueOf(numOfMonitors));
+                _writer.writeElement(RASD_URI, "SinglePciQxl", String.valueOf(vmBase.getSingleQxlPci()));
                 writeVmDeviceInfo(vmDevice);
                 _writer.writeEndElement(); // item
                 if (i++ == numOfMonitors) {
@@ -458,15 +444,9 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getType() == VmDeviceGeneralType.GRAPHICS) {
                 _writer.writeStartElement("Item");
-                _writer.writeStartElement(RASD_URI, "Caption");
-                _writer.writeRaw("Graphical Framebuffer");
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "InstanceId");
-                _writer.writeRaw(vmDevice.getId().getDeviceId().toString());
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "ResourceType");
-                _writer.writeRaw(OvfHardware.Graphics);
-                _writer.writeEndElement();
+                _writer.writeElement(RASD_URI, "Caption", "Graphical Framebuffer");
+                _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
+                _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.Graphics);
                 writeVmDeviceInfo(vmDevice);
                 _writer.writeEndElement(); // item
             }
@@ -478,15 +458,9 @@ public abstract class OvfWriter implements IOvfBuilder {
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())) {
                 _writer.writeStartElement("Item");
-                _writer.writeStartElement(RASD_URI, "Caption");
-                _writer.writeRaw("CDROM");
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "InstanceId");
-                _writer.writeRaw(vmDevice.getId().getDeviceId().toString());
-                _writer.writeEndElement();
-                _writer.writeStartElement(RASD_URI, "ResourceType");
-                _writer.writeRaw(OvfHardware.CD);
-                _writer.writeEndElement();
+                _writer.writeElement(RASD_URI, "Caption", "CDROM");
+                _writer.writeElement(RASD_URI, "InstanceId", vmDevice.getId().getDeviceId().toString());
+                _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.CD);
                 writeVmDeviceInfo(vmDevice);
                 _writer.writeEndElement(); // item
                 break; // only one CD is currently supported
@@ -543,47 +517,28 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeInfo() {
-        _writer.writeStartElement("Info");
-        _writer.writeRaw(String.format("%1$s CPU, %2$s Memory", vmBase.getNumOfCpus(), vmBase.getMemSizeMb()));
-        _writer.writeEndElement();
+        _writer.writeElement("Info",
+                String.format("%1$s CPU, %2$s Memory", vmBase.getNumOfCpus(), vmBase.getMemSizeMb()));
     }
 
     protected void writeSystem() {
         _writer.writeStartElement("System");
-        _writer.writeStartElement(VSSD_URI, "VirtualSystemType");
-        _writer.writeRaw(String.format("%1$s %2$s",
-                Config.<String> getValue(ConfigValues.OvfVirtualSystemType),
-                Config.<String> getValue(ConfigValues.VdcVersion)));
-        _writer.writeEndElement();
+        _writer.writeElement(VSSD_URI, "VirtualSystemType", String.format("%1$s %2$s",
+                Config.getValue(ConfigValues.OvfVirtualSystemType),
+                Config.getValue(ConfigValues.VdcVersion)));
         _writer.writeEndElement();
     }
 
     protected void writeCpu() {
         _writer.writeStartElement("Item");
-        _writer.writeStartElement(RASD_URI, "Caption");
-        _writer.writeRaw(String.format("%1$s virtual cpu", vmBase.getNumOfCpus()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "Description");
-        _writer.writeRaw("Number of virtual CPU");
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "InstanceId");
-        _writer.writeRaw(String.valueOf(++_instanceId));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "ResourceType");
-        _writer.writeRaw(OvfHardware.CPU);
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "num_of_sockets");
-        _writer.writeRaw(String.valueOf(vmBase.getNumOfSockets()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "cpu_per_socket");
-        _writer.writeRaw(String.valueOf(vmBase.getCpuPerSocket()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "threads_per_cpu");
-        _writer.writeRaw(String.valueOf(vmBase.getThreadsPerCpu()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "max_num_of_vcpus");
-        _writer.writeRaw(String.valueOf(maxNumOfVcpus()));
-        _writer.writeEndElement();
+        _writer.writeElement(RASD_URI, "Caption", String.format("%1$s virtual cpu", vmBase.getNumOfCpus()));
+        _writer.writeElement(RASD_URI, "Description", "Number of virtual CPU");
+        _writer.writeElement(RASD_URI, "InstanceId", String.valueOf(++_instanceId));
+        _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.CPU);
+        _writer.writeElement(RASD_URI, "num_of_sockets", String.valueOf(vmBase.getNumOfSockets()));
+        _writer.writeElement(RASD_URI, "cpu_per_socket", String.valueOf(vmBase.getCpuPerSocket()));
+        _writer.writeElement(RASD_URI, "threads_per_cpu", String.valueOf(vmBase.getThreadsPerCpu()));
+        _writer.writeElement(RASD_URI, "max_num_of_vcpus", String.valueOf(maxNumOfVcpus()));
         _writer.writeEndElement(); // item
     }
 
@@ -591,70 +546,36 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected void writeMemory() {
         _writer.writeStartElement("Item");
-        _writer.writeStartElement(RASD_URI, "Caption");
-        _writer.writeRaw(String.format("%1$s MB of memory", vmBase.getMemSizeMb()));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "Description");
-        _writer.writeRaw("Memory Size");
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "InstanceId");
-        _writer.writeRaw(String.valueOf(++_instanceId));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "ResourceType");
-        _writer.writeRaw(OvfHardware.Memory);
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "AllocationUnits");
-        _writer.writeRaw("MegaBytes");
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "VirtualQuantity");
-        _writer.writeRaw(String.valueOf(vmBase.getMemSizeMb()));
-        _writer.writeEndElement();
+        _writer.writeElement(RASD_URI, "Caption", String.format("%1$s MB of memory", vmBase.getMemSizeMb()));
+        _writer.writeElement(RASD_URI, "Description", "Memory Size");
+        _writer.writeElement(RASD_URI, "InstanceId", String.valueOf(++_instanceId));
+        _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.Memory);
+        _writer.writeElement(RASD_URI, "AllocationUnits", "MegaBytes");
+        _writer.writeElement(RASD_URI, "VirtualQuantity", String.valueOf(vmBase.getMemSizeMb()));
         _writer.writeEndElement(); // item
     }
 
     protected void writeDrive() {
         for (DiskImage image : _images) {
             _writer.writeStartElement("Item");
-            _writer.writeStartElement(RASD_URI, "Caption");
-            _writer.writeRaw(image.getDiskAlias());
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "InstanceId");
-            _writer.writeRaw(image.getImageId().toString());
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "ResourceType");
-            _writer.writeRaw(OvfHardware.DiskImage);
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "HostResource");
-            _writer.writeRaw(OvfParser.createImageFile(image));
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "Parent");
-            _writer.writeRaw(image.getParentId().toString());
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "Template");
-            _writer.writeRaw(image.getImageTemplateId().toString());
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "ApplicationList");
-            _writer.writeRaw(image.getAppList());
-            _writer.writeEndElement();
+            _writer.writeElement(RASD_URI, "Caption", image.getDiskAlias());
+            _writer.writeElement(RASD_URI, "InstanceId", image.getImageId().toString());
+            _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.DiskImage);
+            _writer.writeElement(RASD_URI, "HostResource", OvfParser.createImageFile(image));
+            _writer.writeElement(RASD_URI, "Parent", image.getParentId().toString());
+            _writer.writeElement(RASD_URI, "Template", image.getImageTemplateId().toString());
+            _writer.writeElement(RASD_URI, "ApplicationList", image.getAppList());
             if (image.getStorageIds() != null && image.getStorageIds().size() > 0) {
-                _writer.writeStartElement(RASD_URI, "StorageId");
-                _writer.writeRaw(image.getStorageIds().get(0).toString());
-                _writer.writeEndElement();
+                _writer.writeElement(RASD_URI, "StorageId", image.getStorageIds().get(0).toString());
             }
             if (image.getStoragePoolId() != null) {
-                _writer.writeStartElement(RASD_URI, "StoragePoolId");
-                _writer.writeRaw(image.getStoragePoolId().toString());
-                _writer.writeEndElement();
+                _writer.writeElement(RASD_URI, "StoragePoolId", image.getStoragePoolId().toString());
             }
-            _writer.writeStartElement(RASD_URI, "CreationDate");
-            _writer.writeRaw(OvfParser.localDateToUtcDateString(image.getCreationDate()));
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "LastModified");
-            _writer.writeRaw(OvfParser.localDateToUtcDateString(image.getLastModified()));
-            _writer.writeEndElement();
-            _writer.writeStartElement(RASD_URI, "last_modified_date");
-            _writer.writeRaw(OvfParser.localDateToUtcDateString(image.getLastModifiedDate()));
-            _writer.writeEndElement();
+            _writer.writeElement(RASD_URI, "CreationDate", OvfParser.localDateToUtcDateString(image.getCreationDate()));
+            _writer.writeElement(RASD_URI, "LastModified", OvfParser.localDateToUtcDateString(image.getLastModified()));
+            _writer.writeElement(RASD_URI,
+                    "last_modified_date",
+                    OvfParser.localDateToUtcDateString(image.getLastModifiedDate()));
             writeManagedDeviceInfo(vmBase, image.getId());
             _writer.writeEndElement(); // item
         }
@@ -662,18 +583,12 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected void writeUsb() {
         _writer.writeStartElement("Item");
-        _writer.writeStartElement(RASD_URI, "Caption");
-        _writer.writeRaw("USB Controller");
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "InstanceId");
-        _writer.writeRaw(String.valueOf(++_instanceId));
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "ResourceType");
-        _writer.writeRaw(OvfHardware.USB);
-        _writer.writeEndElement();
-        _writer.writeStartElement(RASD_URI, "UsbPolicy");
-        _writer.writeRaw(vmBase.getUsbPolicy() != null ? vmBase.getUsbPolicy().toString() : UsbPolicy.DISABLED.name());
-        _writer.writeEndElement();
+        _writer.writeElement(RASD_URI, "Caption", "USB Controller");
+        _writer.writeElement(RASD_URI, "InstanceId", String.valueOf(++_instanceId));
+        _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.USB);
+        _writer.writeElement(RASD_URI,
+                "UsbPolicy",
+                vmBase.getUsbPolicy() != null ? vmBase.getUsbPolicy().toString() : UsbPolicy.DISABLED.name());
         _writer.writeEndElement(); // item
     }
 
