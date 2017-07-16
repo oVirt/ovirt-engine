@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
-import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -46,7 +45,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     private List<ActionReturnValue> actionReturnValues = new ArrayList<>();
     private List<MoveDiskParameters> moveDiskParametersList = new ArrayList<>();
-    private List<LiveMigrateVmDisksParameters> liveMigrateVmDisksParametersList = new ArrayList<>();
+    private List<LiveMigrateDiskParameters> liveMigrateVmDisksParametersList = new ArrayList<>();
     private Map<Guid, DiskImage> diskMap = new HashMap<>();
     private Map<MoveDiskParameters, DiskImage> cachedParamsToDisks;
 
@@ -75,7 +74,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         }
 
         if (!liveMigrateVmDisksParametersList.isEmpty()) {
-            actionReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.LiveMigrateVmDisks,
+            actionReturnValues.addAll(Backend.getInstance().runMultipleActions(ActionType.LiveMigrateDisk,
                     getParametersList(liveMigrateVmDisksParametersList), false));
         }
 
@@ -210,17 +209,13 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
                 diskMap.get(moveDiskParameters.getImageId()).getId());
     }
 
-    private LiveMigrateVmDisksParameters createLiveMigrateVmDisksParameters(List<MoveDiskParameters> moveDiskParamsList, Guid vmId) {
+    private LiveMigrateDiskParameters createLiveMigrateVmDisksParameters(List<MoveDiskParameters> moveDiskParamsList, Guid vmId) {
         // Create LiveMigrateDiskParameters list
         List<LiveMigrateDiskParameters> liveMigrateDiskParametersList = moveDiskParamsList.stream()
                 .map(moveDiskParameters -> createLiveMigrateDiskParameters(moveDiskParameters, vmId))
                 .collect(Collectors.toList());
 
-        // Create LiveMigrateVmDisksParameters (multiple disks)
-        LiveMigrateVmDisksParameters liveMigrateDisksParameters =
-                new LiveMigrateVmDisksParameters(liveMigrateDiskParametersList, vmId);
-
-        return liveMigrateDisksParameters;
+        return liveMigrateDiskParametersList.get(0);
     }
 
     private List<ActionParametersBase> getParametersList(List<? extends ActionParametersBase> parametersList) {
@@ -264,7 +259,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         return moveDiskParametersList;
     }
 
-    protected List<LiveMigrateVmDisksParameters> getLiveMigrateVmDisksParametersList() {
+    protected List<LiveMigrateDiskParameters> getLiveMigrateVmDisksParametersList() {
         return liveMigrateVmDisksParametersList;
     }
 }

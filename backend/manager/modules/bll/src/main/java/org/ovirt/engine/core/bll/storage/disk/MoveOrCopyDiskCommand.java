@@ -101,6 +101,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         super(parameters, commandContext);
     }
 
+    public MoveOrCopyDiskCommand(Guid commandId) {
+        super(commandId);
+    }
+
     @Override
     protected DiskImage getImage() {
         return super.getImage();

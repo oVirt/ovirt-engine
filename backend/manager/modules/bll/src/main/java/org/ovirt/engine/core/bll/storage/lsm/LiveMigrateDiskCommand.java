@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.bll.storage.lsm;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.CommandActionState;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.SerialChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
@@ -16,26 +20,44 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.disk.MoveOrCopyDiskCommand;
+import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
+import org.ovirt.engine.core.bll.tasks.CommandHelper;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ActionParametersBase.EndProcedure;
+import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
+import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.CreateImagePlaceholderCommandParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters.LiveDiskMigrateStage;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.SyncImageGroupDataCommandParameters;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -45,20 +67,27 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.builder.vminfo.VmInfoBuildUtils;
 
-@NonTransactiveCommandAttribute
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T>implements SerialChildExecutingCommand {
 
     private Guid sourceQuotaId;
     private Guid sourceDiskProfileId;
+
+    @Inject
+    private ImagesHandler imagesHandler;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -80,8 +109,22 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Inject
     private VmInfoBuildUtils vmInfoBuildUtils;
     @Inject
+    private DiskDao diskDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+    @Inject
+    private DiskVmElementDao diskVmElementDao;
+    @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
+
+
+    private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
+    private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
+
+    public LiveMigrateDiskCommand(Guid commandId) {
+        super(commandId);
+    }
 
     public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -97,6 +140,28 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         getParameters().setDiskAlias(getDiskAlias());
         getParameters().setImageGroupID(getImageGroupId());
         getParameters().setCommandType(getActionType());
+
+        getParameters().setDestinationImageId(((DiskImage)getDiskImageByDiskId(getParameters().getImageGroupID()))
+                .getImageId());
+    }
+
+    private Disk getDiskImageByDiskId(Guid diskId) {
+        Disk disk = diskDao.get(diskId);
+        if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage diskImage = (DiskImage) disk;
+            if (!diskImagesMap.containsKey(diskImage.getImageId())) {
+                diskImagesMap.put(diskImage.getImageId(), (DiskImage) disk);
+            }
+        }
+        return disk;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        DiskImage diskImage = diskImageDao.get(getParameters().getImageId());
+        return Collections.singletonList(new PermissionSubject(diskImage.getId(),
+                VdcObjectType.Disk,
+                ActionGroup.DISK_LIVE_STORAGE_MIGRATION));
     }
 
     private CreateImagePlaceholderCommandParameters buildCreateImagePlacerholderParams() {
@@ -117,13 +182,48 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     protected void executeCommand() {
-        runInternalAction(ActionType.CreateImagePlaceholder,
-                buildCreateImagePlacerholderParams(), createStepsContext(StepEnum.CLONE_IMAGE_STRUCTURE));
+        imagesHandler.updateAllDiskImagesSnapshotsStatusInTransactionWithCompensation(getImageGroupIds(),
+                ImageStatus.LOCKED,
+                ImageStatus.OK,
+                getCompensationContext());
+        ActionReturnValue actionReturnValueurnValue = runInternalAction(ActionType.CreateAllSnapshotsFromVm,
+                getCreateSnapshotParameters(),
+                ExecutionHandler.createInternalJobContext(getContext()));
+        getParameters().setAutoGeneratedSnapshotId(actionReturnValueurnValue.getActionReturnValue());
+        persistCommand(getParameters().getParentCommand(), getCallback() != null);
         setSucceeded(true);
     }
 
+    protected CreateAllSnapshotsFromVmParameters getCreateSnapshotParameters() {
+        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters
+                (getParameters().getVmId(), getDiskAlias() + " " + StorageConstants.LSM_AUTO_GENERATED_SNAPSHOT_DESCRIPTION, false);
+
+        params.setParentCommand(ActionType.LiveMigrateDisk);
+        params.setSnapshotType(Snapshot.SnapshotType.REGULAR);
+        params.setParentParameters(getParameters());
+        params.setImagesParameters(getParameters().getImagesParameters());
+        params.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
+        params.setDiskIds(getImageGroupIds());
+        params.setDiskIdsToIgnoreInChecks(getImageGroupIds());
+        params.setNeedsLocking(false);
+        params.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        return params;
+    }
+
+    private Set<Guid> getImageGroupIds() {
+        return Collections.singleton(getImageGroupId());
+    }
+
+
     @Override
     public boolean performNextOperation(int completedChildCount) {
+        if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.CREATE_SNAPSHOT) {
+            updateStage(LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION);
+            runInternalAction(ActionType.CreateImagePlaceholder,
+                    buildCreateImagePlacerholderParams(), createStepsContext(StepEnum.CLONE_IMAGE_STRUCTURE));
+            return true;
+        }
+
         if (getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.IMAGE_PLACEHOLDER_CREATION) {
             updateStage(LiveDiskMigrateStage.VM_REPLICATE_DISK_START);
             replicateDiskStart();
@@ -140,12 +240,51 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             liveStorageMigrationHelper.removeImage(this, getParameters().getSourceStorageDomainId(), getParameters()
                     .getImageGroupID(), getParameters().getDestinationImageId(), AuditLogType
                     .USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_SRC_IMAGE);
-            return false;
+            updateStage(LiveDiskMigrateStage.LIVE_MIGRATE_DISK_EXEC_COMPLETED);
+            return true;
+        }
+
+        if (isRemoveAutoGeneratedSnapshotRequired()) {
+            updateStage(LiveDiskMigrateStage.AUTO_GENERATED_SNAPSHOT_REMOVE_START);
+            removeAutogeneratedSnapshot();
+            updateStage(LiveDiskMigrateStage.AUTO_GENERATED_SNAPSHOT_REMOVE_END);
+            return true;
         }
 
         return false;
     }
 
+    private boolean isRemoveAutoGeneratedSnapshotRequired() {
+        boolean removeSnapshotRequired = getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.LIVE_MIGRATE_DISK_EXEC_COMPLETED &&
+                getParameters().getLiveDiskMigrateStage() != LiveDiskMigrateStage.AUTO_GENERATED_SNAPSHOT_REMOVE_END;
+        if (removeSnapshotRequired) {
+            if (!getVm().getStatus().isQualifiedForLiveSnapshotMerge()) {
+                // If the VM is not qualified for live merge, i.e. its status is not up, the auto-generated snapshot
+                // is not removed. Removing the snapshot while the VM isn't running will end up with cold merge
+                // and this is not desired here.
+                // Once cold merge enhanced to use qemu-img commit, this limit can be removed. See BZ 1246114.
+                // This behavior can be tracked by BZ 1369942.
+                log.warn("Auto-generated snapshot cannot be removed because VM isn't qualified for live merge. VM status is '{}'",
+                        getVm().getStatus());
+                removeSnapshotRequired = false;
+            }
+        }
+
+        return removeSnapshotRequired;
+    }
+
+    private void removeAutogeneratedSnapshot() {
+        RemoveSnapshotParameters removeSnapshotParameters = new RemoveSnapshotParameters(getParameters().getAutoGeneratedSnapshotId(),
+                getVmId());
+        removeSnapshotParameters.setEndProcedure(EndProcedure.COMMAND_MANAGED);
+        removeSnapshotParameters.setParentCommand(getActionType());
+        removeSnapshotParameters.setParentParameters(getParameters());
+        removeSnapshotParameters.setNeedsLocking(false);
+
+        runInternalAction(ActionType.RemoveSnapshot,
+                removeSnapshotParameters,
+                ExecutionHandler.createInternalJobContext(createStepsContext(StepEnum.MERGE_SNAPSHOTS)));
+    }
 
     private CommandContext createStepsContext(StepEnum step) {
         Step addedStep = executionHandler.addSubStep(getExecutionContext(),
@@ -165,7 +304,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     private boolean isConsiderSuccessful() {
-        return getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.SOURCE_IMAGE_DELETION;
+        return getParameters().getLiveDiskMigrateStage() == LiveDiskMigrateStage.AUTO_GENERATED_SNAPSHOT_REMOVE_END;
     }
 
     @Override
@@ -374,7 +513,116 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
             auditLogDirector.log(this, AuditLogType.USER_MOVED_DISK_FINISHED_FAILURE);
         }
 
-        return validate;
+        setStoragePoolId(getVm().getStoragePoolId());
+
+        if (!validateDestDomainsSpaceRequirements()) {
+            return false;
+        }
+
+        getReturnValue().setValid(isDiskNotShareable(getParameters().getImageId())
+                    && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(getParameters().getImageId()));
+
+        if (!getReturnValue().isValid()) {
+            return false;
+        }
+
+        if (!setAndValidateDiskProfiles()) {
+            return false;
+        }
+
+        return validateCreateAllSnapshotsFromVmCommand() && validate;
+    }
+
+    protected boolean validateCreateAllSnapshotsFromVmCommand() {
+        ActionReturnValue returnValue = CommandHelper.validate(ActionType.CreateAllSnapshotsFromVm,
+                getCreateSnapshotParameters(), getContext().clone());
+        if (!returnValue.isValid()) {
+            getReturnValue().setValidationMessages(returnValue.getValidationMessages());
+            return false;
+        }
+        return true;
+    }
+
+    private StorageDomain getStorageDomainById(Guid storageDomainId, Guid storagePoolId) {
+        if (storageDomainsMap.containsKey(storageDomainId)) {
+            return storageDomainsMap.get(storageDomainId);
+        }
+
+        StorageDomain storageDomain = storageDomainDao.getForStoragePool(storageDomainId, storagePoolId);
+        storageDomainsMap.put(storageDomainId, storageDomain);
+
+        return storageDomain;
+    }
+
+    protected boolean validateDestDomainsSpaceRequirements() {
+        Map<Guid, List<DiskImage>> storageDomainsImagesMap = new HashMap<>();
+
+        MultiValueMapUtils.addToMap(getParameters().getTargetStorageDomainId(),
+                    getDiskImageByImageId(getParameters().getImageId()),
+                    storageDomainsImagesMap);
+
+        for (Map.Entry<Guid, List<DiskImage>> entry : storageDomainsImagesMap.entrySet()) {
+            Guid destDomainId = entry.getKey();
+            List<DiskImage> disksList = entry.getValue();
+            Guid storagePoolId = disksList.get(0).getStoragePoolId();
+            StorageDomain destDomain = getStorageDomainById(destDomainId, storagePoolId);
+
+            if (!isStorageDomainWithinThresholds(destDomain)) {
+                return false;
+            }
+
+            for (DiskImage diskImage : disksList) {
+                List<DiskImage> allImageSnapshots = diskImageDao.getAllSnapshotsForLeaf(diskImage.getImageId());
+
+                diskImage.getSnapshots().addAll(allImageSnapshots);
+            }
+
+            StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destDomain);
+            if (!validate(storageDomainValidator.hasSpaceForClonedDisks(disksList))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {
+        return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
+    }
+
+    private DiskImage getDiskImageByImageId(Guid imageId) {
+        if (diskImagesMap.containsKey(imageId)) {
+            return diskImagesMap.get(imageId);
+        }
+
+        DiskImage diskImage = diskImageDao.get(imageId);
+        diskImagesMap.put(imageId, diskImage);
+
+        return diskImage;
+    }
+
+    private boolean isDiskNotShareable(Guid imageId) {
+        DiskImage diskImage = getDiskImageByImageId(imageId);
+
+        if (diskImage.isShareable()) {
+            addValidationMessageVariable("diskAliases", diskImage.getDiskAlias());
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_SHAREABLE_DISK_NOT_SUPPORTED);
+        }
+
+        return true;
+    }
+
+    protected boolean isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(Guid imageId) {
+        return validate(createDiskValidator(getDiskImageByImageId(imageId)).isDiskPluggedToAnyNonDownVm(true));
+    }
+
+    protected DiskVmElementValidator createDiskVmElementValidator(Guid diskId, Guid vmId) {
+        return new DiskVmElementValidator(diskDao.get(diskId), diskVmElementDao.get(new VmDeviceId(diskId, vmId)));
+    }
+
+
+    protected StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
+        return new StorageDomainValidator(storageDomain);
     }
 
     @Override
@@ -404,12 +652,20 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return null;
+        return Collections.singletonMap(getParameters().getImageGroupID().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                        getDiskIsBeingMigratedMessage(getDiskImageByDiskId(getParameters().getImageGroupID()))));
     }
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        return null;
+        return Collections.singletonMap(getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    private String getDiskIsBeingMigratedMessage(Disk disk) {
+        return EngineMessage.ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED.name()
+                + String.format("$DiskName %1$s", disk != null ? disk.getDiskAlias() : "");
     }
 
     private void handleDestDisk() {
@@ -439,5 +695,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
                     .getImageGroupID(), getParameters().getDestinationImageId(), AuditLogType
                     .USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE);
         }
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            jobProperties.put(VdcObjectType.VM.name().toLowerCase(), getVmName());
+        }
+        return jobProperties;
     }
 }

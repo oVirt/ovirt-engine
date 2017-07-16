@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,32 +16,35 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.ovirt.engine.core.bll.BaseCommandTest;
-import org.ovirt.engine.core.bll.ValidateTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskVmElementValidator;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
-import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDao;
+import org.ovirt.engine.core.dao.DiskVmElementDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 import org.ovirt.engine.core.dao.VmDao;
 
-public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
+public class
+LiveMigrateDiskCommandTest extends BaseCommandTest {
 
     private final Guid diskImageId = Guid.newGuid();
     private final Guid diskImageGroupId = Guid.newGuid();
@@ -71,24 +73,30 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     protected SnapshotDao snapshotDao;
 
     @Mock
-    private VmValidator vmValidator;
-
-    @Mock
-    private SnapshotsValidator snapshotsValidator;
-
-    @Mock
     private DiskValidator diskValidator;
 
     @Mock
     private DiskVmElementValidator diskVmElementValidator;
+
+    @Mock
+    private DiskDao diskDao;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
+
+    @Mock
+    private DiskProfileHelper diskProfileHelper;
+
+    @Mock
+    private DiskVmElementDao diskVmElementDao;
 
     /**
      * The command under test
      */
     @Spy
     @InjectMocks
-    protected LiveMigrateVmDisksCommand<LiveMigrateVmDisksParameters> command =
-            new LiveMigrateVmDisksCommand<>(new LiveMigrateVmDisksParameters(new ArrayList<>(), vmId), null);
+    protected LiveMigrateDiskCommand<LiveMigrateDiskParameters> command =
+            new LiveMigrateDiskCommand<>(createLiveMigrateDiskParameters(), null);
 
     @Before
     public void setupCommand() {
@@ -99,44 +107,22 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     private void initSpyCommand() {
         doReturn(true).when(command).validateDestDomainsSpaceRequirements();
-        doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).validateCreateAllSnapshotsFromVmCommand();
+        doReturn(ActionType.LiveMigrateDisk).when(command).getActionType();
     }
 
-    private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters() {
-        return Collections.singletonList(new LiveMigrateDiskParameters(diskImageId,
+    private LiveMigrateDiskParameters createLiveMigrateDiskParameters() {
+        return new LiveMigrateDiskParameters(diskImageId,
                 srcStorageId,
                 dstStorageId,
                 vmId,
                 quotaId,
                 diskProfileId,
-                diskImageGroupId));
-    }
-
-    private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters(Guid srcStorageId, Guid dstStorageId) {
-        return Collections.singletonList(new LiveMigrateDiskParameters(diskImageId,
-                srcStorageId,
-                dstStorageId,
-                vmId,
-                quotaId,
-                diskProfileId,
-                diskImageGroupId));
-    }
-
-    private void createParameters() {
-        command.getParameters().setParametersList(createLiveMigrateVmDisksParameters());
-        command.getParameters().setVmId(vmId);
-    }
-
-    private void createParameters(Guid srcStorageId, Guid dstStorageId) {
-        command.getParameters().setParametersList(createLiveMigrateVmDisksParameters(srcStorageId, dstStorageId));
-        command.getParameters().setVmId(vmId);
+                diskImageGroupId);
     }
 
     @Test
     public void validateFailsWhenCreateAllSnapshotFromVmValidationFails() {
-        createParameters(srcStorageId, dstStorageId);
-
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
         srcStorageDomain.setStatus(StorageDomainStatus.Active);
 
@@ -151,18 +137,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateNoDisksSpecified() {
-        initVm(VMStatus.Up, Guid.newGuid(), null);
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED.toString()));
-    }
-
-    @Test
     public void validateVmShareableDisk() {
-        createParameters();
-
         DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
         diskImage.setShareable(true);
 
@@ -175,26 +150,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     @Test
-    public void validateMissingTemplateDisk() {
-        createParameters();
-
-        DiskImage diskImage = initDiskImage(diskImageGroupId, diskImageId);
-        Guid templateImageId = Guid.newGuid();
-        diskImage.setImageTemplateId(templateImageId);
-
-        initDiskImage(Guid.newGuid(), templateImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
-
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN.toString()));
-    }
-
-    @Test
     public void validateInvalidDestinationDomain() {
-        createParameters();
-
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
         srcStorageDomain.setStatus(StorageDomainStatus.Active);
 
@@ -209,22 +165,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString()));
-    }
-
-    @Test
-    public void validateSameSourceAndDest() throws Exception {
-        createParameters(srcStorageId, srcStorageId);
-
-        StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
-        srcStorageDomain.setStatus(StorageDomainStatus.Active);
-
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
-
-        assertFalse(command.validate());
-        assertTrue(command.getReturnValue()
-                .getValidationMessages()
-                .contains(EngineMessage.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME.name()));
     }
 
     @Test
@@ -245,8 +185,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     }
 
     private void validateInvalidDestinationAndSourceDomainOfDifferentStorageSubtypes(StorageType sourceType, StorageType destType) {
-        createParameters();
-
         StorageDomain srcStorageDomain = initStorageDomain(srcStorageId);
         srcStorageDomain.setStatus(StorageDomainStatus.Active);
         srcStorageDomain.setStorageType(sourceType);
@@ -263,7 +201,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
 
     @Test
     public void validateVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
-        createParameters();
         initDiskImage(diskImageGroupId, diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
 
@@ -274,47 +211,6 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         assertTrue(command.getReturnValue()
                 .getValidationMessages()
                 .contains(EngineMessage.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN.name()));
-    }
-
-    @Test
-    public void validateFailsOnPassDiscardSupport() {
-        createParameters();
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
-
-        StorageDomain srcSd = initStorageDomain(srcStorageId);
-        srcSd.setStatus(StorageDomainStatus.Active);
-
-        StorageDomain dstSd = initStorageDomain(dstStorageId);
-        dstSd.setStatus(StorageDomainStatus.Active);
-
-        when(diskVmElementValidator.isPassDiscardSupported(any())).thenReturn(
-                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);
-    }
-
-    @Test
-    public void passDiscardNotSupportedOnDestSd() {
-        Guid dstSd = Guid.newGuid();
-        when(diskVmElementValidator.isPassDiscardSupported(dstSd)).thenReturn(
-                new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE));
-        assertFalse(command.validatePassDiscardSupportedOnDestinationStorageDomain(
-                new LiveMigrateDiskParameters(Guid.newGuid(), Guid.newGuid(), dstSd, Guid.newGuid(),
-                        Guid.newGuid(), Guid.newGuid(), Guid.newGuid())));
-    }
-
-    @Test
-    public void validateDiskInBackupDomainForUpVM() {
-        createParameters();
-        initDiskImage(diskImageGroupId, diskImageId);
-        initVm(VMStatus.Up, Guid.newGuid(), diskImageGroupId);
-        StorageDomain destStorageDomain = initStorageDomain(dstStorageId);
-        destStorageDomain.setStatus(StorageDomainStatus.Active);
-        destStorageDomain.setStorageType(StorageType.NFS);
-        destStorageDomain.setBackup(true);
-        ValidateTestUtils.runAndAssertValidateFailure(command,
-                EngineMessage.ACTION_TYPE_FAILED_VM_DISKS_ON_BACKUP_STORAGE);
     }
 
     /** Initialize Entities */
@@ -336,6 +232,7 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         diskImage.getImage().setId(diskImageId);
         diskImage.setStoragePoolId(storagePoolId);
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(srcStorageId)));
+        diskImage.setVmEntityType(VmEntityType.VM);
 
         when(diskImageDao.getAncestor(diskImageId)).thenReturn(diskImage);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
@@ -348,8 +245,10 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
         storageDomain.setId(storageDomainId);
         storageDomain.setStoragePoolId(storagePoolId);
 
+        command.setStorageDomain(storageDomain);
         when(storageDomainDao.get(any())).thenReturn(storageDomain);
         when(storageDomainDao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
+
 
         return storageDomain;
     }
@@ -357,14 +256,13 @@ public class LiveMigrateVmDisksCommandTest extends BaseCommandTest {
     private void initStoragePool() {
         storagePool = new StoragePool();
 
+        command.setStoragePoolId(storagePoolId);
         when(storagePoolDao.get(any())).thenReturn(storagePool);
-        when(command.getStoragePoolId()).thenReturn(storagePoolId);
     }
 
     /** Mock Daos */
 
     private void mockValidators() {
-        doReturn(vmValidator).when(command).createVmValidator();
         doReturn(diskValidator).when(command).createDiskValidator(any());
         doReturn(diskVmElementValidator).when(command).createDiskVmElementValidator(any(), any());
     }

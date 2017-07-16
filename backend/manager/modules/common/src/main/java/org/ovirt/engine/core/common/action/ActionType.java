@@ -312,7 +312,6 @@ public enum ActionType {
     ConnectAllHostsToLun(1008, QuotaDependency.NONE),
     AddPosixFsStorageDomain(1009, ActionGroup.CREATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     LiveMigrateDisk(1010, QuotaDependency.NONE),
-    LiveMigrateVmDisks(1011, QuotaDependency.STORAGE),
     MoveDisks(1012, false, QuotaDependency.NONE),
     ExtendImageSize(1013, false, QuotaDependency.STORAGE),
     ImportRepoImage(1014, ActionGroup.CREATE_DISK, QuotaDependency.STORAGE),
