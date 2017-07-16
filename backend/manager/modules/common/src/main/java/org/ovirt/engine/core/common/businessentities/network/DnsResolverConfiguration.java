@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -17,7 +16,6 @@ public class DnsResolverConfiguration implements BusinessEntity<Guid> {
 
     private Guid id;
 
-    @NotNull
     @Size(min = 1, max = BusinessEntitiesDefinitions.MAX_SUPPORTED_DNS_CONFIGURATIONS)
     @Valid
     private List<NameServer> nameServers;

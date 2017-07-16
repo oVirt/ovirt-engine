@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import static java.util.stream.Collectors.toList;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.network.NameServer;
 
 public class DnsResolverConfigurationMapper {
     public static org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration map(
+            org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration dnsResolverConfiguration,
             DnsResolverConfiguration model) {
 
         org.ovirt.engine.core.common.businessentities.network.DnsResolverConfiguration result =
@@ -23,11 +23,12 @@ public class DnsResolverConfigurationMapper {
 
                 result.setNameServers(mapNameServers(nameServers));
                 return result;
+            } else {
+                return null;
             }
+        } else {
+            return null;
         }
-
-        result.setNameServers(Collections.emptyList());
-        return result;
     }
 
     private static List<NameServer> mapNameServers(List<String> nameServers) {

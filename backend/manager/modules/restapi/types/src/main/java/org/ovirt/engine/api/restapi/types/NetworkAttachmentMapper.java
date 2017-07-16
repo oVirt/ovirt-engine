@@ -85,7 +85,8 @@ public class NetworkAttachmentMapper {
 
         if (model.isSetDnsResolverConfiguration()) {
             entity.setDnsResolverConfiguration(
-                    DnsResolverConfigurationMapper.map(model.getDnsResolverConfiguration()));
+                    DnsResolverConfigurationMapper.map(entity.getDnsResolverConfiguration(),
+                            model.getDnsResolverConfiguration()));
         }
 
         if (model.isSetQos()) {

@@ -80,7 +80,8 @@ public class NetworkMapper {
 
         if (model.isSetDnsResolverConfiguration()) {
             entity.setDnsResolverConfiguration(
-                    DnsResolverConfigurationMapper.map(model.getDnsResolverConfiguration()));
+                    DnsResolverConfigurationMapper.map(entity.getDnsResolverConfiguration(),
+                            model.getDnsResolverConfiguration()));
         }
 
         return entity;
