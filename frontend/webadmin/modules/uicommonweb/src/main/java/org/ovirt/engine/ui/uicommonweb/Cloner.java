@@ -326,6 +326,7 @@ public final class Cloner {
         obj.setComment(instance.getComment());
         obj.setId(instance.getId());
         obj.setName(instance.getName());
+        obj.setVdsmName(instance.getVdsmName());
         obj.setSubnet(instance.getSubnet());
         obj.setGateway(instance.getGateway());
         obj.setType(instance.getType());

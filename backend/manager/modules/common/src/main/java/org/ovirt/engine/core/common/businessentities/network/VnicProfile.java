@@ -4,14 +4,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
-import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -22,9 +20,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
 
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })
     private Guid id;
-    @Size(min = 1, max = BusinessEntitiesDefinitions.VNIC_PROFILE_NAME_SIZE, groups = { CreateEntity.class,
-            UpdateEntity.class })
-    @ValidName(message = "VALIDATION_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
+    @NotEmpty
     private String name;
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     private Guid networkId;
