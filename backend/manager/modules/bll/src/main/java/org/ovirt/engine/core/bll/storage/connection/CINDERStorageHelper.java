@@ -72,7 +72,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return registerLibvirtSecrets(storageDomain, vds, libvirtSecrets);
     }
 
-    public static boolean isLibrbdAvailable(VDS vds) {
+    private static boolean isLibrbdAvailable(VDS vds) {
         return vds.getLibrbdVersion() != null;
     }
 
