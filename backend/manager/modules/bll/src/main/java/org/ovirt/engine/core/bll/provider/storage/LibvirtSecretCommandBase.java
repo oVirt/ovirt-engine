@@ -32,6 +32,8 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
     private StorageDomainDao storageDomainDao;
     @Inject
     private VdsDao vdsDao;
+    @Inject
+    private CINDERStorageHelper cinderStorageHelper;
 
     public LibvirtSecretCommandBase(LibvirtSecretParameters parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -77,7 +79,7 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
         if (getStorageDomain().getStatus() == StorageDomainStatus.Active) {
             List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
             for (VDS vds : hostsInStatusUp) {
-                CINDERStorageHelper.registerLibvirtSecrets(
+                cinderStorageHelper.registerLibvirtSecrets(
                         getStorageDomain(), vds, Collections.singletonList(getParameters().getLibvirtSecret()));
             }
         } else {
@@ -90,7 +92,7 @@ public abstract class LibvirtSecretCommandBase extends CommandBase<LibvirtSecret
         if (getStorageDomain().getStatus() == StorageDomainStatus.Active) {
             List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
             for (VDS vds : hostsInStatusUp) {
-                CINDERStorageHelper.unregisterLibvirtSecrets(
+                cinderStorageHelper.unregisterLibvirtSecrets(
                         getStorageDomain(), vds, Collections.singletonList(getParameters().getLibvirtSecret()));
             }
         } else {

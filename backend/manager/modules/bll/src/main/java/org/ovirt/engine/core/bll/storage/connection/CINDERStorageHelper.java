@@ -129,8 +129,8 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return redundantSnapshotIdsToDelete;
     }
 
-    public static Pair<Boolean, EngineFault> registerLibvirtSecrets(StorageDomain storageDomain, VDS vds,
-                                                           List<LibvirtSecret> libvirtSecrets) {
+    public Pair<Boolean, EngineFault> registerLibvirtSecrets
+            (StorageDomain storageDomain, VDS vds, List<LibvirtSecret> libvirtSecrets) {
         VDSReturnValue returnValue;
         if (!libvirtSecrets.isEmpty()) {
             try {
@@ -155,8 +155,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return new Pair<>(true, null);
     }
 
-    public static boolean unregisterLibvirtSecrets(
-            StorageDomain storageDomain, VDS vds, List<LibvirtSecret> libvirtSecrets) {
+    public boolean unregisterLibvirtSecrets(StorageDomain storageDomain, VDS vds, List<LibvirtSecret> libvirtSecrets) {
         List<Guid> libvirtSecretsUuids = libvirtSecrets.stream().map(LibvirtSecret::getId).collect(Collectors.toList());
         if (!libvirtSecrets.isEmpty()) {
             VDSReturnValue returnValue;
