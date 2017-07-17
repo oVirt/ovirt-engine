@@ -96,11 +96,11 @@ public abstract class OvfReader implements IOvfBuilder {
      * reads the OVF header
      */
     private void readHeader() {
-        version = "";
         XmlNode node = selectSingleNode(_document, "//ovf:Envelope", _xmlNS);
-        if (node != null) {
-            version = node.attributes.get("ovf:version").getValue();
+        if (node == null) {
+            node = selectSingleNode(_document, "//Envelope", _xmlNS);
         }
+        version = node != null ? node.attributes.get("ovf:version").getValue() : "";
     }
 
     @Override
