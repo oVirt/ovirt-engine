@@ -485,7 +485,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             lun = lunFromStorage;
         }
         TransactionSupport.executeInNewTransaction(() -> {
-            lunHelper.proceedLUNInDb(lun, lun.getLunType());
+            lunHelper.proceedDirectLUNInDb(lun, lun.getLunType());
             baseDiskDao.save(getParameters().getDiskInfo());
             diskLunMapDao.save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUNId()));
             if (getVm() != null) {

@@ -128,6 +128,7 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
                 .stream()
                 .peek(lun -> {
                     if (lunDao.get(lun.getId()).getVolumeGroupId().isEmpty()) {
+                        lun.setPhysicalVolumeId(null);
                         lun.setVolumeGroupId("");
                     }
                 })

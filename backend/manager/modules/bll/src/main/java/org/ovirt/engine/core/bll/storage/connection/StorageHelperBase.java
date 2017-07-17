@@ -159,6 +159,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
             lunDao.remove(lun.getLUNId());
         } else {
             lun.setVolumeGroupId("");
+            lun.setPhysicalVolumeId(null);
             lunDao.update(lun);
         }
     }

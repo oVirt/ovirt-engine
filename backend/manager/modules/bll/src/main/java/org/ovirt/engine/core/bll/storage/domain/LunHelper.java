@@ -29,7 +29,8 @@ public class LunHelper {
     @Inject
     private ISCSIStorageHelper iscsiStorageHelper;
 
-    public void proceedLUNInDb(final LUNs lun, StorageType storageType) {
+    public void proceedDirectLUNInDb(final LUNs lun, StorageType storageType) {
+        lun.setPhysicalVolumeId(null);
         proceedLUNInDb(lun, storageType, "");
     }
 
