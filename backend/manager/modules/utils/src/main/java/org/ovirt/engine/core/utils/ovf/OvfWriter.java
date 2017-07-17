@@ -135,14 +135,13 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     @Override
     public void buildNetwork() {
-        _writer.writeStartElement("Section");
-        _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":NetworkSection_Type");
-        _writer.writeStartElement("Info");
-        _writer.writeRaw("List of networks");
-        _writer.writeEndElement();
-        _writer.writeStartElement("Network");
-        _writer.writeAttributeString(OVF_URI, "name", "Network 1");
-        _writer.writeEndElement();
+        _writer.writeStartElement("NetworkSection");
+        _writer.writeElement("Info", "List of networks");
+        vmBase.getInterfaces().stream().map(VmNetworkInterface::getNetworkName).distinct().forEach(network -> {
+            _writer.writeStartElement("Network");
+            _writer.writeAttributeString(OVF_URI, "name", network);
+            _writer.writeEndElement();
+        });
         _writer.writeEndElement();
     }
 
