@@ -119,7 +119,11 @@ public class SyncAttachedDirectLunsCommand<T extends SyncAttachedDirectLunsParam
         return getDeviceList(lunsIds)
                 .stream()
                 .filter(lun -> lunToDiskIds.containsKey(lun.getLUNId()))
-                .peek(lun -> lun.setVolumeGroupId(""))
+                .peek(lun -> {
+                    if (lunDao.get(lun.getId()).getVolumeGroupId().isEmpty()) {
+                        lun.setVolumeGroupId("");
+                    }
+                })
                 .peek(lun -> lun.setDiskId(lunToDiskIds.get(lun.getLUNId())))
                 .collect(Collectors.toList());
     }
