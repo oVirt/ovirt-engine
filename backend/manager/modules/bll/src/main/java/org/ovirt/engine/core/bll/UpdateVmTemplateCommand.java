@@ -17,7 +17,6 @@ import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.IconUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.utils.RngDeviceUtils;
 import org.ovirt.engine.core.bll.validator.IconValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
@@ -65,8 +64,6 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Inject
     private CpuProfileHelper cpuProfileHelper;
-    @Inject
-    private RngDeviceUtils rngDeviceUtils;
     @Inject
     private VmTemplateDao vmTemplateDao;
     @Inject
