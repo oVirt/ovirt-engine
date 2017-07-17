@@ -15,9 +15,9 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.constants.StorageConstants;
@@ -117,9 +117,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         }
 
         if (storageType == StorageType.GLUSTERFS) {
-            StorageConnectionValidator validator = new StorageConnectionValidator(conn);
-            if (!validate(validateVolumeIdAndUpdatePath(conn))
-                    || !validate(validator.canVDSConnectToGlusterfs(getVds()))) {
+            if (!validate(validateVolumeIdAndUpdatePath(conn)) || !validate(canVDSConnectToGlusterfs(getVds()))) {
                 return false;
             }
         }
@@ -156,6 +154,16 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         }
         return ValidationResult.VALID;
     }
+
+    private ValidationResult canVDSConnectToGlusterfs(VDS vds) {
+        if (!GLUSTERFSStorageHelper.canVDSConnectToGlusterfs(vds)) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAIL_VDS_CANNOT_CONNECT_TO_GLUSTERFS,
+                    String.format("$VdsName %1$s", vds.getName()));
+        }
+
+        return ValidationResult.VALID;
+    }
+
 
     private static final List<String> NFS_MANAGED_OPTIONS = Arrays.asList("timeo", "retrans", "vfs_type", "protocol_version", "nfsvers", "vers", "minorversion", "addr", "clientaddr");
     private static final List<String> POSIX_MANAGED_OPTIONS = Arrays.asList("vfs_type", "addr", "clientaddr");
