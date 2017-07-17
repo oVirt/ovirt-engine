@@ -1,10 +1,8 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
@@ -103,30 +101,6 @@ public class CINDERStorageHelper extends StorageHelperBase {
             connectSucceeded &= handleLibvirtSecrets(cmdContext, parameters.getVds(), parameters.getStoragePoolId());
         }
         return connectSucceeded;
-    }
-
-    /**
-     * A utility method for committing a previewed snapshot. The method filters out all the snapshots which will not be
-     * part of volume chain once the snapshot get committed, and returns a list of redundant snapshots that should be
-     * deleted.
-     *
-     * @param diskId
-     *            - Disk id to fetch all volumes related to it.
-     * @param criticalSnapshotsChain
-     *            - The snapshot's ids which are critical for the VM since they are used and can not be deleted.
-     * @return - A list of redundant snapshots that should be deleted.
-     */
-    public static List<Guid> getRedundantVolumesToDeleteAfterCommitSnapshot(Guid diskId, Set<Guid> criticalSnapshotsChain) {
-        List<Guid> redundantSnapshotIdsToDelete = new ArrayList<>();
-
-        // Fetch all the relevant snapshots to remove.
-        List<DiskImage> allVolumesInCinderDisk = getDiskImageDao().getAllSnapshotsForImageGroup(diskId);
-        for (DiskImage diskImage : allVolumesInCinderDisk) {
-            if (!criticalSnapshotsChain.contains(diskImage.getVmSnapshotId())) {
-                redundantSnapshotIdsToDelete.add(diskImage.getVmSnapshotId());
-            }
-        }
-        return redundantSnapshotIdsToDelete;
     }
 
     public Pair<Boolean, EngineFault> registerLibvirtSecrets
