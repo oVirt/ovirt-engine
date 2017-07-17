@@ -44,6 +44,8 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
     private Set<PresenterWidget<?>> mainTabPresenters;
     private Set<PresenterWidget<?>> subTabPresenters;
 
+    private boolean clearing = false;
+
     @Inject
     public MainContentPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, TasksPresenter tasksPresenter,
             BookmarkPresenter bookmarkPresenter, TagsPresenter tagsPresenter) {
@@ -62,45 +64,49 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
                     @Override
                     public void onUpdateMainContentLayout(UpdateMainContentLayoutEvent event) {
                         UpdateMainContentLayout.ContentDisplayType displayType = event.getContentDisplayType();
-                        switch (displayType) {
-                        case MAIN:
-                            clearSlot(TYPE_SetSubTabPanelContent);
-                            clearSlot(TYPE_SetOverlayContent);
-                            break;
-                        case SUB:
-                            clearSlot(TYPE_SetMainTabPanelContent);
-                            clearSlot(TYPE_SetOverlayContent);
-                            break;
-                        case OVERLAY:
-                            Set<PresenterWidget<?>> currentMainPresenters = new HashSet<>();
-                            if (mainTabPresenters != null) {
-                                currentMainPresenters.addAll(mainTabPresenters);
-                            }
-                            Set<PresenterWidget<?>> currentSubPresenters = new HashSet<>();
-                            if (subTabPresenters != null) {
-                                currentSubPresenters.addAll(subTabPresenters);
-                            }
-                            mainTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetMainTabPanelContent));
-                            subTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetSubTabPanelContent));
-                            if (!(currentMainPresenters.isEmpty() && currentSubPresenters.isEmpty()) &&
-                                    currentOverlayMatches(event.getOverlayType()) ) {
-                                restoreTabs(currentMainPresenters, currentSubPresenters);
-                            } else {
-                                // If the overlay matches (it means we are switching overlay), switch to original
-                                // tab, then switch to the new overlay, so we keep the real tab.
-                                if (!currentOverlayMatches(event.getOverlayType())) {
-                                    restoreTabs(currentMainPresenters, currentSubPresenters);
-                                    mainTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetMainTabPanelContent));
-                                    subTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetSubTabPanelContent));
-                                }
+                        if (!clearing) {
+                            clearing = true;
+                            switch (displayType) {
+                            case MAIN:
                                 clearSlot(TYPE_SetSubTabPanelContent);
+                                clearSlot(TYPE_SetOverlayContent);
+                                break;
+                            case SUB:
                                 clearSlot(TYPE_SetMainTabPanelContent);
-                                setInSlot(TYPE_SetOverlayContent, getOverlayPresenter(event.getOverlayType()));
+                                clearSlot(TYPE_SetOverlayContent);
+                                break;
+                            case OVERLAY:
+                                Set<PresenterWidget<?>> currentMainPresenters = new HashSet<>();
+                                if (mainTabPresenters != null) {
+                                    currentMainPresenters.addAll(mainTabPresenters);
+                                }
+                                Set<PresenterWidget<?>> currentSubPresenters = new HashSet<>();
+                                if (subTabPresenters != null) {
+                                    currentSubPresenters.addAll(subTabPresenters);
+                                }
+                                mainTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetMainTabPanelContent));
+                                subTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetSubTabPanelContent));
+                                if (!(currentMainPresenters.isEmpty() && currentSubPresenters.isEmpty()) &&
+                                        currentOverlayMatches(event.getOverlayType()) ) {
+                                    restoreTabs(currentMainPresenters, currentSubPresenters);
+                                } else {
+                                    // If the overlay matches (it means we are switching overlay), switch to original
+                                    // tab, then switch to the new overlay, so we keep the real tab.
+                                    if (!currentOverlayMatches(event.getOverlayType())) {
+                                        restoreTabs(currentMainPresenters, currentSubPresenters);
+                                        mainTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetMainTabPanelContent));
+                                        subTabPresenters = getChildren(LegacySlotConvertor.convert(TYPE_SetSubTabPanelContent));
+                                    }
+                                    clearSlot(TYPE_SetSubTabPanelContent);
+                                    clearSlot(TYPE_SetMainTabPanelContent);
+                                    setInSlot(TYPE_SetOverlayContent, getOverlayPresenter(event.getOverlayType()));
+                                }
+                                break;
+                            case RESTORE:
+                                restoreTabs(mainTabPresenters, subTabPresenters);
+                                break;
                             }
-                            break;
-                        case RESTORE:
-                            restoreTabs(mainTabPresenters, subTabPresenters);
-                            break;
+                            clearing = false;
                         }
                     }
 
