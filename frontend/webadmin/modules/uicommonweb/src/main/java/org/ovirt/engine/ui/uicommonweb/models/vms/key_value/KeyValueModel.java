@@ -233,6 +233,7 @@ public class KeyValueModel extends BaseKeyModel<KeyValueLineModel> {
         for (String key : usedKeys) {
             KeyValueLineModel lineModel = createNewLineModel(key);
             lineModel.getKeys().setSelectedItem(key);
+            setValueByKey(lineModel, key);
             lineModels.add(lineModel);
         }
 
