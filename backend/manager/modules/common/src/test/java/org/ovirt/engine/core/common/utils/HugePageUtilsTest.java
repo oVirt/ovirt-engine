@@ -41,39 +41,35 @@ public class HugePageUtilsTest {
 
     @Test
     public void getHugePagesNoHugePagesDefined() {
-        HugePageUtils utils = new HugePageUtils();
         VmBase base = new VmBase();
-        base.setMemSizeMb(1025);
+        base.setMemSizeMb(1);
 
-        assertThat(utils.getHugePages(base).size(), is(0));
+        assertThat(HugePageUtils.getHugePages(base).size(), is(0));
     }
 
     @Test
     public void getHugeMemoryFitsIntoOneHugePage() {
-        HugePageUtils utils = new HugePageUtils();
         VmBase base = new VmBase();
-        base.setCustomProperties("hugepages=1024");
+        base.setCustomProperties("hugepages=1048576");
         base.setMemSizeMb(1024);
 
-        assertThat(utils.getHugePages(base).size(), is(1));
-        assertThat(utils.getHugePages(base).get(1024), is(1));
+        assertThat(HugePageUtils.getHugePages(base).size(), is(1));
+        assertThat(HugePageUtils.getHugePages(base).get(1048576), is(1));
     }
 
     @Test
     public void getHugePagesMemoryDoesNotFitIntoOne() {
-        HugePageUtils utils = new HugePageUtils();
         VmBase base = new VmBase();
-        base.setCustomProperties("hugepages=1024");
+        base.setCustomProperties("hugepages=1048576");
         base.setMemSizeMb(1025);
 
-        assertThat(utils.getHugePages(base).size(), is(1));
-        assertThat(utils.getHugePages(base).get(1024), is(2));
+        assertThat(HugePageUtils.getHugePages(base).size(), is(1));
+        assertThat(HugePageUtils.getHugePages(base).get(1048576), is(2));
     }
 
     private void testIsBackedByHudepagesHugePage(String customProperties, boolean expected) {
-        HugePageUtils utils = new HugePageUtils();
         VmBase base = new VmBase();
         base.setCustomProperties(customProperties);
-        assertThat(utils.isBackedByHudepages(base), is(expected));
+        assertThat(HugePageUtils.isBackedByHugepages(base), is(expected));
     }
 }
