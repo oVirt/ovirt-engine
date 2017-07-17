@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
-import org.ovirt.engine.core.bll.storage.connection.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.connection.StorageHelperDirector;
 import org.ovirt.engine.core.bll.storage.disk.cinder.CinderBroker;
 import org.ovirt.engine.core.bll.validator.VmValidator;
@@ -91,8 +91,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
                 updateLUNConnectionsInfo(lun);
-                Map<StorageType, List<StorageServerConnections>> lunsByStorageType =
-                        StorageHelperBase.filterConnectionsByStorageType(lun);
+                Map<StorageType, List<StorageServerConnections>> lunsByStorageType = filterConnectionsByStorageType(lun);
                 for (StorageType storageType : lunsByStorageType.keySet()) {
                     if (!getStorageHelper(storageType).connectStorageToLunByVdsId(null,
                             getVm().getRunOnVds(),
@@ -111,6 +110,10 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
                 getVm(), disk, vmDevice, diskAddressMap, getDiskVmElement().getDiskInterface(),
                 getDiskVmElement().isPassDiscard()));
+    }
+
+    protected static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {
+        return lun.getLunConnections().stream().collect(Collectors.groupingBy(StorageServerConnections::getStorageType));
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {

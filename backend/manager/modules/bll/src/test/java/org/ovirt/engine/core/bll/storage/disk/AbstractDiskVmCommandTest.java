@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage.connection;
+package org.ovirt.engine.core.bll.storage.disk;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -12,15 +12,14 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
-public class StorageHelperBaseTest {
-
+public class AbstractDiskVmCommandTest {
     @Test
     public void getLunConnectionsForFC() {
         LUNs lun = new LUNs();
         ArrayList<StorageServerConnections> connections = new ArrayList<>();
         lun.setLunConnections(connections);
         Map<StorageType, List<StorageServerConnections>> connectionsByType =
-                StorageHelperBase.filterConnectionsByStorageType(lun);
+                AbstractDiskVmCommand.filterConnectionsByStorageType(lun);
         assertTrue("Map of storage connections should be empty.", connectionsByType.isEmpty());
     }
 
@@ -47,7 +46,7 @@ public class StorageHelperBaseTest {
 
         lun.setLunConnections(connections);
         Map<StorageType, List<StorageServerConnections>> connectionsByType =
-                StorageHelperBase.filterConnectionsByStorageType(lun);
+                AbstractDiskVmCommand.filterConnectionsByStorageType(lun);
         assertTrue("Map of ISCSI storage connections should not be empty.", !connectionsByType.isEmpty());
         assertEquals("Map of ISCSI storage connections should have only one type of connections.",
                 1,
@@ -81,7 +80,7 @@ public class StorageHelperBaseTest {
 
         lun.setLunConnections(connections);
         Map<StorageType, List<StorageServerConnections>> connectionsByType =
-                StorageHelperBase.filterConnectionsByStorageType(lun);
+                AbstractDiskVmCommand.filterConnectionsByStorageType(lun);
         assertTrue("Map of storage connections should not be empty.", !connectionsByType.isEmpty());
         assertEquals("Map of storage connections should have only two types of connections.",
                 2,

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -118,10 +117,6 @@ public abstract class StorageHelperBase implements IStorageHelper {
     @Override
     public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
         return new Pair<>(true, null);
-    }
-
-    public static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {
-        return lun.getLunConnections().stream().collect(Collectors.groupingBy(StorageServerConnections::getStorageType));
     }
 
     protected boolean isActiveStorageDomainAvailable(final StorageType storageType, Guid poolId) {
