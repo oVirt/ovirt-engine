@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,14 +36,15 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected VmBase vmBase;
     private Version version;
 
-    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    private OsRepository osRepository;
 
-    public OvfWriter(VmBase vmBase, List<DiskImage> images, Version version) {
+    public OvfWriter(VmBase vmBase, List<DiskImage> images, Version version, OsRepository osRepository) {
         _document = new XmlDocument();
         _images = images;
         _writer = new XmlTextWriter();
         this.vmBase = vmBase;
         this.version = version;
+        this.osRepository = osRepository;
         writeHeader();
     }
 

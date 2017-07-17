@@ -6,14 +6,15 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Version;
 
 public class OvfTemplateWriter extends OvfWriter {
     protected VmTemplate vmTemplate;
 
-    public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
-        super(vmTemplate, images, version);
+    public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version, OsRepository osRepository) {
+        super(vmTemplate, images, version, osRepository);
         this.vmTemplate = vmTemplate;
     }
 

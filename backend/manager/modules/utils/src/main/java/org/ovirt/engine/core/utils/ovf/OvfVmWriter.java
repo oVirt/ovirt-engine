@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Match;
 import org.ovirt.engine.core.compat.Regex;
@@ -20,8 +21,8 @@ public class OvfVmWriter extends OvfWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
     private VM vm;
 
-    public OvfVmWriter(VM vm, List<DiskImage> images, Version version) {
-        super(vm.getStaticData(), images, version);
+    public OvfVmWriter(VM vm, List<DiskImage> images, Version version, OsRepository osRepository) {
+        super(vm.getStaticData(), images, version, osRepository);
         this.vm = vm;
     }
 

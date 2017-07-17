@@ -12,20 +12,19 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 
 public class OvfTemplateReader extends OvfReader {
     protected VmTemplate _vmTemplate;
-    private final OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
 
     public OvfTemplateReader(XmlDocument document,
             VmTemplate vmTemplate,
             List<DiskImage> images,
-            List<VmNetworkInterface> interfaces) {
-        super(document, images, interfaces, vmTemplate);
+            List<VmNetworkInterface> interfaces,
+            OsRepository osRepository) {
+        super(document, images, interfaces, vmTemplate, osRepository);
         _vmTemplate = vmTemplate;
     }
 

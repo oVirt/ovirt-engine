@@ -53,7 +53,8 @@ public class HostedEngineOvfWriterTest {
                 images,
                 version,
                 emulatedMachine,
-                cpuId);
+                cpuId,
+                osRepository);
     }
 
     @Test
@@ -66,7 +67,7 @@ public class HostedEngineOvfWriterTest {
     public void clusterEmulatedMachineIsNull() {
         emulatedMachine = null;
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId))
+                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId, osRepository))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("emulated machine");
     }
@@ -81,7 +82,7 @@ public class HostedEngineOvfWriterTest {
     public void cpuIdIsNull() {
         cpuId = null;
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId))
+                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId, osRepository))
                 .isInstanceOf(NullPointerException.class)
                 .hasMessageContaining("cpuId");
     }
@@ -90,7 +91,7 @@ public class HostedEngineOvfWriterTest {
     public void notHostedEngineVM() {
         vm.setOrigin(OriginType.OVIRT);
         assertThatThrownBy(
-                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId))
+                () -> new HostedEngineOvfWriter(vm, images, version, emulatedMachine, cpuId, osRepository))
                         .isInstanceOf(IllegalArgumentException.class)
                         .hasMessageContaining("Hosted Engine");
 

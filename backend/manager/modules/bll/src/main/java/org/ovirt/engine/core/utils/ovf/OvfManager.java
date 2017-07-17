@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
+import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -46,22 +47,24 @@ public class OvfManager {
     @Inject
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
+    private OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+
     public String exportVm(VM vm, List<DiskImage> images, Version version) {
         updateBootOrderOnDevices(vm.getStaticData(), false);
         final OvfVmWriter vmWriter;
         if (vm.isHostedEngine()) {
             Cluster cluster = clusterDao.get(vm.getClusterId());
             String cpuId = cpuFlagsManagerHandler.getCpuId(cluster.getCpuName(), cluster.getCompatibilityVersion());
-            vmWriter = new HostedEngineOvfWriter(vm, images, version, cluster.getEmulatedMachine(), cpuId);
+            vmWriter = new HostedEngineOvfWriter(vm, images, version, cluster.getEmulatedMachine(), cpuId, osRepository);
         } else {
-            vmWriter = new OvfVmWriter(vm, images, version);
+            vmWriter = new OvfVmWriter(vm, images, version, osRepository);
         }
         return vmWriter.build().getStringRepresentation();
     }
 
     public String exportTemplate(VmTemplate vmTemplate, List<DiskImage> images, Version version) {
         updateBootOrderOnDevices(vmTemplate, true);
-        return new OvfTemplateWriter(vmTemplate, images, version).build().getStringRepresentation();
+        return new OvfTemplateWriter(vmTemplate, images, version, osRepository).build().getStringRepresentation();
     }
 
     public void importVm(String ovfstring,
@@ -72,7 +75,7 @@ public class OvfManager {
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, interfaces);
+            ovf = new OvfVmReader(new XmlDocument(ovfstring), vm, images, interfaces, osRepository);
             ovf.build();
             initIcons(vm.getStaticData());
         } catch (Exception ex) {
@@ -90,7 +93,7 @@ public class OvfManager {
 
         OvfReader ovf = null;
         try {
-            ovf = new OvfTemplateReader(new XmlDocument(ovfstring), vmTemplate, images, interfaces);
+            ovf = new OvfTemplateReader(new XmlDocument(ovfstring), vmTemplate, images, interfaces, osRepository);
             ovf.build();
             initIcons(vmTemplate);
         } catch (Exception ex) {
@@ -156,6 +159,10 @@ public class OvfManager {
                 devices,
                 interfaces,
                 diskVmElements);
+    }
+
+    public void setOsRepository(OsRepository osRepository) {
+        this.osRepository = osRepository;
     }
 
 }

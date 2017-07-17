@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -40,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -83,15 +81,12 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
     @Mock
     private OvfManager ovfManager;
 
-    @BeforeClass
-    public static void setUpInjections() {
-        // init the injector with the osRepository instance
-        OsRepository osRepository = mock(OsRepository.class);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
-    }
+    @Mock
+    private OsRepository osRepository;
 
     @Before
     public void setUp() throws IOException {
+        ovfManager.setOsRepository(osRepository);
         doReturn(cluster).when(cmd).getCluster();
         doReturn(emptyList()).when(cmd).getImages();
 

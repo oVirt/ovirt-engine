@@ -7,6 +7,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -30,8 +31,9 @@ public class HostedEngineOvfWriter extends OvfVmWriter {
             @NotNull List<DiskImage> images,
             @NotNull Version version,
             @NotNull String emulatedMachine,
-            @NotNull String cpuId) {
-        super(vm, images, version);
+            @NotNull String cpuId,
+            @NotNull OsRepository osRepository) {
+        super(vm, images, version, osRepository);
         if (!vm.isHostedEngine()) {
             throw new IllegalArgumentException(
                     String.format("The VM %s isn't hosted engine - aborting the export", vm));

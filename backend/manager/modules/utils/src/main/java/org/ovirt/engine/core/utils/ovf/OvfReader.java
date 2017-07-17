@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -57,7 +56,7 @@ import org.w3c.dom.NodeList;
 public abstract class OvfReader implements IOvfBuilder {
     private static final Logger log = LoggerFactory.getLogger(OvfReader.class);
 
-    protected OsRepository osRepository = SimpleDependencyInjector.getInstance().get(OsRepository.class);
+    protected OsRepository osRepository;
     protected List<DiskImage> _images;
     protected List<VmNetworkInterface> interfaces;
     protected XmlDocument _document;
@@ -69,11 +68,17 @@ public abstract class OvfReader implements IOvfBuilder {
     private final VmBase vmBase;
     private String lastReadEntry = "";
 
-    public OvfReader(XmlDocument document, List<DiskImage> images, List<VmNetworkInterface> interfaces, VmBase vmBase) {
+    public OvfReader(
+            XmlDocument document,
+            List<DiskImage> images,
+            List<VmNetworkInterface> interfaces,
+            VmBase vmBase,
+            OsRepository osRepository) {
         _images = images;
         this.interfaces = interfaces;
         _document = document;
         this.vmBase = vmBase;
+        this.osRepository = osRepository;
 
         _xmlNS = new XmlNamespaceManager();
         _xmlNS.addNamespace("ovf", OVF_URI);

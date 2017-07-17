@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -87,10 +86,11 @@ public class OvfManagerTest {
     @Mock
     private OvfVmIconDefaultsProvider iconDefaultsProvider;
 
+    private static OsRepository osRepository;
+
     @BeforeClass
     public static void setUpClass() {
-        OsRepository osRepository = mock(OsRepository.class);
-        SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        osRepository = mock(OsRepository.class);
         final HashMap<Integer, String> osIdsToNames = new HashMap<>();
         osIdsToNames.put(DEFAULT_OS_ID, "os_name_a");
         osIdsToNames.put(EXISTING_OS_ID, "os_name_b");
@@ -115,6 +115,7 @@ public class OvfManagerTest {
 
     @Before
     public void setUp() throws Exception {
+        manager.setOsRepository(osRepository);
         doNothing().when(manager).updateBootOrderOnDevices(any(VmBase.class), anyBoolean());
 
         Map<Integer, VmIconIdSizePair> iconDefaults = new HashMap<>();
