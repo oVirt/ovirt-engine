@@ -126,7 +126,11 @@ public class SyncDirectLunsCommand<T extends SyncDirectLunsParameters> extends A
         Set<String> lunsIds = lunToDirectLunIds.keySet();
         return getDeviceList(lunsIds)
                 .stream()
-                .peek(lun -> lun.setVolumeGroupId(""))
+                .peek(lun -> {
+                    if (lunDao.get(lun.getId()).getVolumeGroupId().isEmpty()) {
+                        lun.setVolumeGroupId("");
+                    }
+                })
                 .peek(lun -> lun.setDiskId(lunToDirectLunIds.get(lun.getLUNId())))
                 .collect(Collectors.toList());
     }
