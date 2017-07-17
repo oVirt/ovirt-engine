@@ -2481,6 +2481,8 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VAR__DETAIL__SWAP_VALUE_ILLEGAL();
 
+    String VAR__DETAIL__NOT_ENOUGH_HUGE_PAGES();
+
     String VAR__DETAIL__NOT_ENOUGH_MEMORY();
 
     String VAR__DETAIL__NOT_MEMORY_PINNED_NUMA();

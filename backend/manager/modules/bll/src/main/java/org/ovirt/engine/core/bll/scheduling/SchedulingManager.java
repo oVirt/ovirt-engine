@@ -33,6 +33,7 @@ import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerBroker;
 import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscovery;
 import org.ovirt.engine.core.bll.scheduling.external.WeightResultEntry;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingCpuCores;
+import org.ovirt.engine.core.bll.scheduling.pending.PendingHugePages;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingOvercommitMemory;
 import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -336,8 +338,16 @@ public class SchedulingManager implements BackendService {
                 VDS bestHostEntity = vdsList.stream().filter(vds -> vds.getId().equals(bestHostId)).findFirst().get();
 
                 getPendingResourceManager().addPending(new PendingMemory(bestHostId, vm, bestHostEntity.getGuestOverhead()));
-                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHostId, vm, vm.getMemSizeMb()));
+                getPendingResourceManager().addPending(new PendingOvercommitMemory(bestHostId, vm,
+                        HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())));
                 getPendingResourceManager().addPending(new PendingVM(bestHostId, vm));
+
+                // Add pending records for all specified hugepage sizes
+                for (Map.Entry<Integer, Integer> hugepage: HugePageUtils.getHugePages(vm.getStaticData()).entrySet()) {
+                    getPendingResourceManager().addPending(new PendingHugePages(bestHostId, vm,
+                            hugepage.getKey(), hugepage.getValue()));
+                }
+
                 getPendingResourceManager().notifyHostManagers(bestHostId);
 
                 markVfsAsUsedByVm(vm, bestHostId);

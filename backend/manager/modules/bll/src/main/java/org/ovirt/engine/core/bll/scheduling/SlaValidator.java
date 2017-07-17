@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.utils.HugePageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,12 @@ public class SlaValidator {
      */
     public boolean hasPhysMemoryToRunVM(VDS curVds, VM vm, int pendingMemory) {
         if (curVds.getMemFree() != null && curVds.getGuestOverhead() != null) {
-            double vmMemRequired = vm.getMemSizeMb() + curVds.getGuestOverhead();
+            double vmMemRequired = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())
+                    + curVds.getGuestOverhead();
+
+            if (HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
+                log.debug("VM uses HugePages - ignore its memory size");
+            }
             double vdsMemLimit = curVds.getMemFree() - pendingMemory;
 
             log.debug("hasPhysMemoryToRunVM: host '{}'; free memory is : {} MB (+ {} MB pending); free swap is: {} MB, required memory is {} MB; Guest overhead {} MB",
@@ -69,7 +75,13 @@ public class SlaValidator {
      * @return true when there is enough memory, false otherwise
      */
     public boolean hasOvercommitMemoryToRunVM(VDS curVds, VM vm) {
-        double vmMemRequired = vm.getMemSizeMb() + curVds.getGuestOverhead();
+        double vmMemRequired = HugePageUtils.getRequiredMemoryWithoutHugePages(vm.getStaticData())
+                + curVds.getGuestOverhead();
+
+        if (HugePageUtils.isBackedByHugepages(vm.getStaticData())) {
+            log.debug("VM uses HugePages - ignore its memory size");
+        }
+
         double vdsMemLimit = curVds.getMaxSchedulingMemory();
 
         log.debug("hasOvercommitMemoryToRunVM: host '{}'; max scheduling memory : {} MB; required memory is {} MB; Guest overhead {} MB",
