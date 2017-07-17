@@ -6,7 +6,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
-import org.ovirt.engine.core.bll.storage.connection.CINDERStorageHelper;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -14,9 +13,11 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
 
@@ -27,6 +28,9 @@ public class CinderProviderValidator extends ProviderValidator {
 
     @Inject
     private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private DiskImageDao diskImageDao;
 
     StorageDomain CinderStorageDomain;
 
@@ -60,7 +64,15 @@ public class CinderProviderValidator extends ProviderValidator {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                     String.format("$%s %s", "status", status));
         }
-        return CINDERStorageHelper.isCinderHasNoImages(getStorageDomain().getId());
+        return isCinderHasNoImages(getStorageDomain().getId());
+    }
+
+    public ValidationResult isCinderHasNoImages(Guid storageDomainId) {
+        List<DiskImage> cinderDisks = diskImageDao.getAllForStorageDomain(storageDomainId);
+        if (!cinderDisks.isEmpty()) {
+            return new ValidationResult(EngineMessage.ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES);
+        }
+        return ValidationResult.VALID;
     }
 
     private StorageDomain getStorageDomain() {

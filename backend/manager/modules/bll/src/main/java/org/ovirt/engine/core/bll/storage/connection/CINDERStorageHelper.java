@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
@@ -23,12 +22,10 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineFault;
-import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RegisterLibvirtSecretsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.UnregisterLibvirtSecretsVDSParameters;
@@ -39,7 +36,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
-import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -195,14 +191,6 @@ public class CINDERStorageHelper extends StorageHelperBase {
         getStoragePoolIsoMapDao().save(storagePoolIsoMap);
     }
 
-    public static ValidationResult isCinderHasNoImages(Guid storageDomainId) {
-        List<DiskImage> cinderDisks = getDiskImageDao().getAllForStorageDomain(storageDomainId);
-        if (!cinderDisks.isEmpty()) {
-            return new ValidationResult(EngineMessage.ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES);
-        }
-        return ValidationResult.VALID;
-    }
-
     public void activateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
         OpenStackVolumeProviderProxy proxy = OpenStackVolumeProviderProxy.getFromStorageDomainId(storageDomainId,
                 Injector.get(ProviderProxyFactory.class));
@@ -257,9 +245,5 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     private static DbFacade getDbFacade() {
         return DbFacade.getInstance();
-    }
-
-    private static DiskImageDao getDiskImageDao() {
-        return getDbFacade().getDiskImageDao();
     }
 }
