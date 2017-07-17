@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -91,15 +90,15 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             if (commandType == VDSCommandType.HotPlugDisk) {
                 LUNs lun = lunDisk.getLun();
                 updateLUNConnectionsInfo(lun);
-                Map<StorageType, List<StorageServerConnections>> lunsByStorageType = filterConnectionsByStorageType(lun);
-                for (StorageType storageType : lunsByStorageType.keySet()) {
-                    if (!getStorageHelper(storageType).connectStorageToLunByVdsId(null,
+
+                lun.getLunConnections().stream().map(StorageServerConnections::getStorageType).distinct().forEach(t -> {
+                    if (!getStorageHelper(t).connectStorageToLunByVdsId(null,
                             getVm().getRunOnVds(),
                             lun,
                             getVm().getStoragePoolId())) {
                         throw new EngineException(EngineError.StorageServerConnectionError);
                     }
-                }
+                });
             }
         } else if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
             CinderDisk cinderDisk = (CinderDisk) disk;
@@ -110,10 +109,6 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
                 getVm(), disk, vmDevice, diskAddressMap, getDiskVmElement().getDiskInterface(),
                 getDiskVmElement().isPassDiscard()));
-    }
-
-    protected static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {
-        return lun.getLunConnections().stream().collect(Collectors.groupingBy(StorageServerConnections::getStorageType));
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {
