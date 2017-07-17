@@ -42,6 +42,9 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     @Inject
     private StorageHelperDirector storageHelperDirector;
 
+    @Inject
+    private GLUSTERFSStorageHelper glusterfsStorageHelper;
+
     public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -156,7 +159,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     }
 
     private ValidationResult canVDSConnectToGlusterfs(VDS vds) {
-        if (!GLUSTERFSStorageHelper.canVDSConnectToGlusterfs(vds)) {
+        if (!glusterfsStorageHelper.canVDSConnectToGlusterfs(vds)) {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAIL_VDS_CANNOT_CONNECT_TO_GLUSTERFS,
                     String.format("$VdsName %1$s", vds.getName()));
         }

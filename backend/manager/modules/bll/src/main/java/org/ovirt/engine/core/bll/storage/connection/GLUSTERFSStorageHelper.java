@@ -68,7 +68,7 @@ public class GLUSTERFSStorageHelper extends FileStorageHelper {
         return true;
     }
 
-    public static boolean canVDSConnectToGlusterfs(VDS vds) {
+    public boolean canVDSConnectToGlusterfs(VDS vds) {
         RpmVersion glusterfsCliVer = vds.getGlusterfsCliVersion();
         return glusterfsCliVer != null && StringUtils.isNotEmpty(glusterfsCliVer.getRpmRelease());
     }
