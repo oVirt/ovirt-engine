@@ -44,6 +44,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
+import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
+import org.ovirt.engine.core.utils.ovf.xml.XmlAttributeCollection;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
@@ -67,6 +69,7 @@ public abstract class OvfReader implements IOvfBuilder {
     private String version;
     private final VmBase vmBase;
     private String lastReadEntry = "";
+    private Map<String, XmlAttributeCollection> fileIdToFileAttributes;
 
     public OvfReader(
             XmlDocument document,
@@ -80,6 +83,7 @@ public abstract class OvfReader implements IOvfBuilder {
         this.vmBase = vmBase;
         this.osRepository = osRepository;
 
+        fileIdToFileAttributes = new HashMap<>();
         _xmlNS = new XmlNamespaceManager();
         _xmlNS.addNamespace("ovf", OVF_URI);
         _xmlNS.addNamespace("rasd", RASD_URI);
@@ -110,7 +114,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     @Override
     public void buildReference() {
-        buildImageReference();
+        buildFileReference();
         buildNicReference();
     }
 
@@ -127,9 +131,54 @@ public abstract class OvfReader implements IOvfBuilder {
     public void buildDisk() {
         XmlNodeList list = selectNodes(_document, "//*/Section/Disk");
         for (XmlNode node : list) {
-            final Guid guid = new Guid(node.attributes.get("ovf:diskId").getValue());
+            String diskId = node.attributes.get("ovf:diskId").getValue();
+            // oVirt used the diskId as the file id
+            XmlAttributeCollection fileAttributes = fileIdToFileAttributes.get(diskId);
+            // Accroding to the OVF specification the fileRef should match the file id instead
+            if (fileAttributes == null) {
+                fileAttributes = fileIdToFileAttributes.get(node.attributes.get("ovf:fileRef").getValue());
+            }
+            if (fileAttributes == null) {
+                // TODO: the OVF specification defines empty disks as ones that do not have File
+                // elements in the References section. We don't support it yet.
+                continue;
+            }
 
-            DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
+            // If the disk storage type is Cinder then override the disk image with Cinder object,
+            // otherwise use the disk image.
+            DiskImage image = new DiskImage();
+
+            XmlAttribute diskStorageType = fileAttributes.get("ovf:disk_storage_type");
+            if (diskStorageType == null) {
+                diskStorageType = node.attributes.get("ovf:disk_storage_type");
+            }
+            // If the OVF is old and does not contain any storage type reference then we assume we can only have disk
+            // image.
+            if (diskStorageType != null) {
+                if (DiskStorageType.CINDER.name().equals(diskStorageType.getValue())) {
+                    image = new CinderDisk();
+                    XmlAttribute cinderVolumeType = fileAttributes.get("ovf:cinder_volume_type");
+                    if (cinderVolumeType == null) {
+                        cinderVolumeType = node.attributes.get("ovf:cinder_volume_type");
+                    }
+                    if (cinderVolumeType != null) {
+                        image.setCinderVolumeType(cinderVolumeType.getValue());
+                    }
+                }
+            }
+            image.setImageId(new Guid(diskId));
+            image.setId(OvfParser.getImageGroupIdFromImageFile(fileAttributes.get("ovf:href").getValue()));
+            // Default values:
+            image.setActive(true);
+            image.setImageStatus(ImageStatus.OK);
+            XmlAttribute description = fileAttributes.get("ovf:description");
+            if (description == null) {
+                description = node.attributes.get("ovf:description");
+            }
+            image.setDescription(description.getValue());
+
+            image.setDiskVmElements(Collections.singletonList(new DiskVmElement(image.getId(), vmBase.getId())));
+
             DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
 
             if (node.attributes.get("ovf:vm_snapshot_id") != null) {
@@ -197,6 +246,8 @@ public abstract class OvfReader implements IOvfBuilder {
                             .getValue()));
                 }
             }
+
+            _images.add(image);
         }
     }
 
@@ -749,35 +800,9 @@ public abstract class OvfReader implements IOvfBuilder {
 
     }
 
-    private void buildImageReference() {
-        XmlNodeList list = selectNodes(_document, "//*/File", _xmlNS);
-        for (XmlNode node : list) {
-            // If the disk storage type is Cinder then override the disk image with Cinder object, otherwise use the
-            // disk image.
-            DiskImage disk = new DiskImage();
-
-            // If the OVF is old and does not contain any storage type reference then we assume we can only have disk
-            // image.
-            if (node.attributes.get("ovf:disk_storage_type") != null) {
-                String diskStorageType = node.attributes.get("ovf:disk_storage_type").getValue();
-                if (diskStorageType != null && diskStorageType.equals(DiskStorageType.CINDER.name())) {
-                    disk = new CinderDisk();
-                    if (node.attributes.get("ovf:cinder_volume_type") != null) {
-                        String cinderVolumeType = node.attributes.get("ovf:cinder_volume_type").getValue();
-                        disk.setCinderVolumeType(cinderVolumeType);
-                    }
-                }
-            }
-            disk.setImageId(new Guid(node.attributes.get("ovf:id").getValue()));
-            disk.setId(OvfParser.getImageGroupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
-            // Default values:
-            disk.setActive(true);
-            disk.setImageStatus(ImageStatus.OK);
-            disk.setDescription(node.attributes.get("ovf:description").getValue());
-
-            disk.setDiskVmElements(Collections.singletonList(new DiskVmElement(disk.getId(), vmBase.getId())));
-
-            _images.add(disk);
+    private void buildFileReference() {
+        for (XmlNode node : selectNodes(_document, "//*/File", _xmlNS)) {
+            fileIdToFileAttributes.put(node.attributes.get("ovf:id").getValue(), node.attributes);
         }
     }
 
