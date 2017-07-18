@@ -25,6 +25,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HostDeviceFilterPolicyUn
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineMemoryReservationFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.HugePagesFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.LabelFilterPolicyUnit;
@@ -67,6 +68,7 @@ public class InternalPolicyUnits {
         enabledUnits.add(HostedEngineHAClusterFilterPolicyUnit.class);
         enabledUnits.add(HostedEngineHAClusterWeightPolicyUnit.class);
         enabledUnits.add(HostedEngineMemoryReservationFilterPolicyUnit.class);
+        enabledUnits.add(HugePagesFilterPolicyUnit.class);
         enabledUnits.add(MemoryPolicyUnit.class);
         enabledUnits.add(MigrationPolicyUnit.class);
         enabledUnits.add(NetworkPolicyUnit.class);
