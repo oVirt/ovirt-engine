@@ -64,7 +64,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        Provider provider = providerDao.get(Guid.createGuidFromString(storageDomain.getStorage()));
+        Provider<?> provider = providerDao.get(Guid.createGuidFromString(storageDomain.getStorage()));
         List<LibvirtSecret> libvirtSecrets = libvirtSecretDao.getAllByProviderId(provider.getId());
         VDS vds = vdsDao.get(vdsId);
         if (!isLibrbdAvailable(vds)) {
@@ -82,7 +82,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
-        Provider provider = providerDao.get(Guid.createGuidFromString(storageDomain.getStorage()));
+        Provider<?> provider = providerDao.get(Guid.createGuidFromString(storageDomain.getStorage()));
         List<LibvirtSecret> libvirtSecrets = libvirtSecretDao.getAllByProviderId(provider.getId());
         VDS vds = vdsDao.get(vdsId);
         return unregisterLibvirtSecrets(storageDomain, vds, libvirtSecrets);
