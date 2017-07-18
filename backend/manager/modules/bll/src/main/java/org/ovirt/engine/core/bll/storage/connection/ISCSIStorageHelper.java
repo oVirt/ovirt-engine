@@ -191,7 +191,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return (List<StorageServerConnections>) CollectionUtils.subtract(connections, toRemove);
     }
 
-    public static StorageServerConnections findConnectionWithSameDetails(StorageServerConnections connection) {
+    public StorageServerConnections findConnectionWithSameDetails(StorageServerConnections connection) {
         // As we encrypt the password when saving the connection to the DB and each encryption generates different
         // result,
         // we can't query the connections to check if connection with the exact

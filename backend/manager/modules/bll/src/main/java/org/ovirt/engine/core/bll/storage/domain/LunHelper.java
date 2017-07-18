@@ -26,6 +26,9 @@ public class LunHelper {
     @Inject
     private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
 
+    @Inject
+    private ISCSIStorageHelper iscsiStorageHelper;
+
     public void proceedLUNInDb(final LUNs lun, StorageType storageType) {
         proceedLUNInDb(lun, storageType, "");
     }
@@ -44,7 +47,7 @@ public class LunHelper {
         }
 
         for (StorageServerConnections connection : lun.getLunConnections()) {
-            StorageServerConnections dbConnection = ISCSIStorageHelper.findConnectionWithSameDetails(connection);
+            StorageServerConnections dbConnection = iscsiStorageHelper.findConnectionWithSameDetails(connection);
             if (dbConnection == null) {
                 connection.setId(Guid.newGuid().toString());
                 connection.setStorageType(storageType);

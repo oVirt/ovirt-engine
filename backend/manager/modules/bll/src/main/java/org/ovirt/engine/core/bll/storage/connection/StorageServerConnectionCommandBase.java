@@ -29,6 +29,8 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
     private StorageDomainDao storageDomainDao;
     @Inject
     private StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private ISCSIStorageHelper iscsiStorageHelper;
 
     protected StorageServerConnectionCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -92,7 +94,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
     }
 
     protected StorageServerConnections findConnectionWithSameDetails(StorageServerConnections connection) {
-        return ISCSIStorageHelper.findConnectionWithSameDetails(connection);
+        return iscsiStorageHelper.findConnectionWithSameDetails(connection);
     }
 
     protected boolean checkIsConnectionFieldEmpty(StorageServerConnections connection) {
