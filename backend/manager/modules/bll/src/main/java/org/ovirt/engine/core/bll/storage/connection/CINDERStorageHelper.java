@@ -178,7 +178,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     private boolean handleLibvirtSecrets(CommandContext cmdContext, VDS vds, Guid poolId) {
         List<LibvirtSecret> libvirtSecrets =
                 libvirtSecretDao.getAllByStoragePoolIdFilteredByActiveStorageDomains(poolId);
-        if (!libvirtSecrets.isEmpty() && !registerLibvirtSecretsImpl(vds, libvirtSecrets, false)) {
+        if (!libvirtSecrets.isEmpty() && !registerLibvirtSecretsImpl(vds, libvirtSecrets)) {
             log.error("Failed to register libvirt secret on vds {}.", vds.getName());
             setNonOperational(cmdContext, vds.getId(), NonOperationalReason.LIBVIRT_SECRETS_REGISTRATION_FAILURE);
             return false;
@@ -186,10 +186,10 @@ public class CINDERStorageHelper extends StorageHelperBase {
         return true;
     }
 
-    private boolean registerLibvirtSecretsImpl(VDS vds, List<LibvirtSecret> libvirtSecrets, boolean clearUnusedSecrets) {
+    private boolean registerLibvirtSecretsImpl(VDS vds, List<LibvirtSecret> libvirtSecrets) {
         VDSReturnValue returnValue = backend.getResourceManager().runVdsCommand(
                 VDSCommandType.RegisterLibvirtSecrets,
-                new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets, clearUnusedSecrets));
+                new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets, false));
         return returnValue.getSucceeded();
     }
 
