@@ -500,9 +500,11 @@ TODO: use SASS, break into gwt-standard.scss
 }
 
 .gwt-PopupPanel {
-  border: 3px solid #C3D9FF;
-  padding: 3px;
   background: white;
+  z-index: 1070;
+}
+
+.gwt-DecoratedPopupPanel {
   z-index: 1070;
 }
 

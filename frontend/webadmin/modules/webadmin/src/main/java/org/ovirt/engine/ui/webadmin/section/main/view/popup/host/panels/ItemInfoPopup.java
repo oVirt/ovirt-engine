@@ -65,7 +65,6 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         super(true);
         contents.setCellPadding(5);
         setWidget(contents);
-        getElement().getStyle().setZIndex(1);
     }
 
     public final SafeHtml getTooltipContent(NetworkItemModel<?> item) {
