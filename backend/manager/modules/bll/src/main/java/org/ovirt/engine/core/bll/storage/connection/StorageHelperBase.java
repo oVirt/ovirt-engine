@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -24,15 +26,29 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.LunDao;
-import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.slf4j.Logger;
 
 public abstract class StorageHelperBase implements IStorageHelper {
+    @Inject
+    protected AuditLogDirector auditLogDirector;
+    @Inject
+    protected BackendInternal backend;
+    @Inject
+    protected LunDao lunDao;
+    @Inject
+    protected DiskLunMapDao diskLunMapDao;
+    @Inject
+    protected StorageServerConnectionDao storageServerConnectionDao;
+    @Inject
+    private StorageDomainDao storageDomainDao;
+
     protected abstract Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type);
 
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain,
@@ -82,11 +98,11 @@ public abstract class StorageHelperBase implements IStorageHelper {
     @Override
     public void removeLun(LUNs lun) {
         if (lun.getVolumeGroupId().isEmpty()) {
-            DbFacade.getInstance().getLunDao().remove(lun.getLUNId());
+            lunDao.remove(lun.getLUNId());
             for (StorageServerConnections connection : filterConnectionsUsedByOthers(lun.getLunConnections(),
                     "",
                     lun.getLUNId())) {
-                DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getId());
+                storageServerConnectionDao.remove(connection.getId());
             }
         }
     }
@@ -120,23 +136,19 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     protected boolean isActiveStorageDomainAvailable(final StorageType storageType, Guid poolId) {
-        List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(poolId);
+        List<StorageDomain> storageDomains = storageDomainDao.getAllForStoragePool(poolId);
         return storageDomains.stream()
                 .anyMatch(s -> s.getStorageType() == storageType && s.getStatus() == StorageDomainStatus.Active);
     }
 
     protected void setNonOperational(CommandContext cmdContext, Guid vdsId, NonOperationalReason reason) {
-        Backend.getInstance().runInternalAction(ActionType.SetNonOperationalVds,
+        backend.runInternalAction(ActionType.SetNonOperationalVds,
                 new SetNonOperationalVdsParameters(vdsId, reason),
                 ExecutionHandler.createInternalJobContext(cmdContext));
     }
 
-    protected static LunDao getLunDao() {
-        return DbFacade.getInstance().getLunDao();
-    }
-
     protected int removeStorageDomainLuns(StorageDomainStatic storageDomain) {
-        final List<LUNs> lunsList = getLunDao().getAllForVolumeGroup(storageDomain.getStorage());
+        final List<LUNs> lunsList = lunDao.getAllForVolumeGroup(storageDomain.getStorage());
         int numOfRemovedLuns = 0;
         for (LUNs lun : lunsList) {
             if (removeLunFromStorageDomain(lun)) {
@@ -147,20 +159,20 @@ public abstract class StorageHelperBase implements IStorageHelper {
     }
 
     private boolean removeLunFromStorageDomain(LUNs lun) {
-        if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lun.getLUNId()) == null) {
-            getLunDao().remove(lun.getLUNId());
+        if (diskLunMapDao.getDiskIdByLunId(lun.getLUNId()) == null) {
+            lunDao.remove(lun.getLUNId());
             return true;
         }
 
         lun.setVolumeGroupId("");
-        getLunDao().update(lun);
+        lunDao.update(lun);
         return false;
     }
 
 
     @Override
     public void removeLunFromStorageDomain(String lunId) {
-        removeLunFromStorageDomain(getLunDao().get(lunId));
+        removeLunFromStorageDomain(lunDao.get(lunId));
     }
 
     protected String addToAuditLogErrorMessage(String connection, String errorCode,
@@ -180,7 +192,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         // will set the error code instead.
         String translatedError = getTranslatedStorageError(errorCode);
         logable.addCustomValue("ErrorMessage", translatedError);
-        Injector.get(AuditLogDirector.class).log(logable, AuditLogType.STORAGE_DOMAIN_ERROR);
+        auditLogDirector.log(logable, AuditLogType.STORAGE_DOMAIN_ERROR);
         return connectionField;
     }
 
@@ -188,8 +200,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         String translatedError = getTranslatedStorageError(errorCode);
         logger.error(
                 "The connection with details '{}' failed because of error code '{}' and error message is: {}",
-                connectionField, errorCode, Backend.getInstance().getVdsErrorsTranslator()
-                        .translateErrorTextSingle(translatedError));
+                connectionField, errorCode, backend.getVdsErrorsTranslator().translateErrorTextSingle(translatedError));
     }
 
     /**
@@ -205,10 +216,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         String translatedError = errorCode;
         EngineError error = EngineError.forValue(Integer.parseInt(errorCode));
         if (error != null) {
-            translatedError =
-                    Backend.getInstance()
-                            .getVdsErrorsTranslator()
-                            .translateErrorTextSingle(error.toString());
+            translatedError = backend.getVdsErrorsTranslator().translateErrorTextSingle(error.toString());
         }
         return translatedError;
     }
@@ -235,7 +243,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return true;
     }
 
-    public static void addMessageToAuditLog(AuditLogType auditLogType, StorageDomain storageDomain, VDS vds){
+    public void addMessageToAuditLog(AuditLogType auditLogType, StorageDomain storageDomain, VDS vds){
         AuditLogable logable = new AuditLogableImpl();
         logable.setVdsId(vds.getId());
         logable.setVdsName(vds.getName());
@@ -243,7 +251,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
             logable.setStorageDomainId(storageDomain.getId());
             logable.setStorageDomainName(storageDomain.getName());
         }
-        Injector.get(AuditLogDirector.class).log(logable, auditLogType);
+        auditLogDirector.log(logable, auditLogType);
     }
 
 }

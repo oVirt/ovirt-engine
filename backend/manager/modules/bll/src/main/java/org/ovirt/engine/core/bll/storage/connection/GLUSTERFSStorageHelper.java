@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,9 @@ public class GLUSTERFSStorageHelper extends FileStorageHelper {
 
     private static final Logger log = LoggerFactory.getLogger(GLUSTERFSStorageHelper.class);
 
+    @Inject
+    private VdsDao vdsDao;
+
     @Override
     public Collection<StorageType> getTypes() {
         return Collections.singleton(StorageType.GLUSTERFS);
@@ -39,7 +42,7 @@ public class GLUSTERFSStorageHelper extends FileStorageHelper {
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        VDS vds = getVdsDao().get(vdsId);
+        VDS vds = vdsDao.get(vdsId);
         if (!canVDSConnectToGlusterfs(vds)) {
             log.error("Couldn't find glusterfs-cli package on vds {} (needed for connecting storage domain {}).",
                     vds.getName(), storageDomain.getName());
@@ -76,13 +79,4 @@ public class GLUSTERFSStorageHelper extends FileStorageHelper {
     private boolean isActiveGlusterfsDomainAvailable(Guid poolId) {
         return isActiveStorageDomainAvailable(StorageType.GLUSTERFS, poolId);
     }
-
-    private static VdsDao getVdsDao() {
-        return getDbFacade().getVdsDao();
-    }
-
-    private static DbFacade getDbFacade() {
-        return DbFacade.getInstance();
-    }
-
 }

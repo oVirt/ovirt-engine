@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
@@ -30,13 +30,19 @@ import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagemen
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Singleton
 public class ISCSIStorageHelper extends StorageHelperBase {
     private static final Logger log = LoggerFactory.getLogger(ISCSIStorageHelper.class);
+
+    @Inject
+    private StorageServerConnectionLunMapDao storageServerConnectionLunMapDao;
+    @Inject
+    private InterfaceDao interfaceDao;
 
     @Override
     public Collection<StorageType> getTypes() {
@@ -58,8 +64,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         boolean isSuccess = true;
         VDSReturnValue returnValue = null;
         List<StorageServerConnections> list =
-                (lun == null) ? DbFacade.getInstance()
-                        .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage())
+                (lun == null) ? storageServerConnectionDao.getAllForVolumeGroup(storageDomain.getStorage())
                         : lun.getLunConnections();
 
         if (list.size() != 0) {
@@ -73,8 +78,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             if (storageDomain != null && storageDomain.getStoragePoolId() != null) {
                 poolId = storageDomain.getStoragePoolId();
             }
-            returnValue = Backend
-                    .getInstance()
+            returnValue = backend
                     .getResourceManager()
                     .runVdsCommand(
                             VDSCommandType.forValue(type),
@@ -99,8 +103,8 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         for (StorageServerConnections conn : conns) {
             // Get list of endpoints (nics or vlans) that will initiate iscsi sessions.
             // Targets are represented by StorageServerConnections object (connection, iqn, port, portal).
-            List<VdsNetworkInterface> ifaces = DbFacade.getInstance().getInterfaceDao()
-                    .getIscsiIfacesByHostIdAndStorageTargetId(vdsId, conn.getId());
+            List<VdsNetworkInterface> ifaces =
+                    interfaceDao.getIscsiIfacesByHostIdAndStorageTargetId(vdsId, conn.getId());
 
             if (!ifaces.isEmpty()) {
                 VdsNetworkInterface removedInterface = ifaces.remove(0);
@@ -153,8 +157,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
         List<String> lunsByVg =
-                lunId.isEmpty() ? DbFacade.getInstance()
-                        .getLunDao()
+                lunId.isEmpty() ? lunDao
                         .getAllForVolumeGroup(vgId)
                         .stream()
                         .map(LUNs::getLUNId)
@@ -164,7 +167,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         List<String> lunsByVgWithNoDisks = new ArrayList<>();
         if (lunId.isEmpty()) {
             for (String lunIdByVg : lunsByVg) {
-                if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lunIdByVg) == null) {
+                if (diskLunMapDao.getDiskIdByLunId(lunIdByVg) == null) {
                     lunsByVgWithNoDisks.add(lunIdByVg);
                 }
             }
@@ -176,8 +179,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         for (StorageServerConnections connection : connections) {
             fillConnectionDetailsIfNeeded(connection);
             if (connection.getId() != null) {
-                List<String> list = DbFacade.getInstance()
-                        .getLunDao()
+                List<String> list = lunDao
                         .getAllForStorageServerConnection(connection.getId())
                         .stream()
                         .map(LUNs::getLUNId)
@@ -199,8 +201,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // then compare the password after it was already
         // decrypted.
         // NOTE- THIS METHOD IS CURRENTLY USED ALSO FOR FCP connections, change with care.
-        List<StorageServerConnections> connections =
-                DbFacade.getInstance().getStorageServerConnectionDao().getAllForConnection(connection);
+        List<StorageServerConnections> connections = storageServerConnectionDao.getAllForConnection(connection);
         for (StorageServerConnections dbConnection : connections) {
             if (Objects.equals(dbConnection.getPassword(), connection.getPassword())) {
                 return dbConnection;
@@ -228,14 +229,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         List<String> failedConnectionsList =
                 returnValue.keySet().stream().filter(a -> !"0".equals(returnValue.get(a))).collect(Collectors.toList());
         for (String failedConnection : failedConnectionsList) {
-            List<LUNs> failedLuns = DbFacade.getInstance().getLunDao()
-                    .getAllForStorageServerConnection(failedConnection);
+            List<LUNs> failedLuns = lunDao.getAllForStorageServerConnection(failedConnection);
             if (!failedLuns.isEmpty()) {
                 for (LUNs lun : failedLuns) {
                     // TODO: check if LUNs in the same pool.
                     List<String> strings =
-                            DbFacade.getInstance()
-                                    .getStorageServerConnectionLunMapDao()
+                            storageServerConnectionLunMapDao
                                     .getAll(lun.getLUNId())
                                     .stream()
                                     .map(LUNStorageServerConnectionMap::getStorageServerConnection)
@@ -264,10 +263,10 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
-        List<StorageServerConnections> list = DbFacade.getInstance()
-                .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
+        List<StorageServerConnections> list =
+                storageServerConnectionDao.getAllForVolumeGroup(storageDomain.getStorage());
         for (StorageServerConnections connection : filterConnectionsUsedByOthers(list, storageDomain.getStorage(), "")) {
-            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getId());
+            storageServerConnectionDao.remove(connection.getId());
         }
 
         // There is no need to remove entries from lun_storage_server_connection_map,
@@ -312,8 +311,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // Synchronize LUN details comprising the storage domain with the DB
         SyncLunsInfoForBlockStorageDomainParameters parameters = new SyncLunsInfoForBlockStorageDomainParameters(
                 storageDomain.getId(), vdsId);
-        return Backend.getInstance()
-                .runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters)
-                .getSucceeded();
+        return backend.runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters).getSucceeded();
     }
 }

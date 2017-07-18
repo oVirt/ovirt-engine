@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -18,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.EngineFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,11 +32,9 @@ public class FileStorageHelper extends StorageHelperBase {
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         Pair<Boolean, EngineFault> result;
-        StorageServerConnections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
-                storageDomain.getStorage());
+        StorageServerConnections connection = storageServerConnectionDao.get(storageDomain.getStorage());
         if (connection != null) {
-            ActionReturnValue returnValue = Backend
-                    .getInstance()
+            ActionReturnValue returnValue = backend
                     .runInternalAction(ActionType.forValue(type),
                             new StorageServerConnectionParametersBase(connection, vdsId, false));
             result = new Pair<>(returnValue.getSucceeded(), returnValue.getFault());
@@ -69,11 +65,10 @@ public class FileStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean storageDomainRemoved(StorageDomainStatic storageDomain) {
-        StorageServerConnections connection =
-                DbFacade.getInstance().getStorageServerConnectionDao().get(storageDomain.getStorage());
+        StorageServerConnections connection = storageServerConnectionDao.get(storageDomain.getStorage());
 
         if (connection != null) {
-            DbFacade.getInstance().getStorageServerConnectionDao().remove(connection.getId());
+            storageServerConnectionDao.remove(connection.getId());
         }
 
         return true;

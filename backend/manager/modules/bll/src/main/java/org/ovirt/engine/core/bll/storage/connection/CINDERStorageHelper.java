@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
@@ -32,15 +32,12 @@ import org.ovirt.engine.core.common.vdscommands.UnregisterLibvirtSecretsVDSParam
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.LibvirtSecretDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +46,17 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     private static Logger log = LoggerFactory.getLogger(CINDERStorageHelper.class);
 
+    @Inject
+    private ProviderProxyFactory providerProxyFactory;
+    @Inject
+    private ProviderDao providerDao;
+    @Inject
+    private LibvirtSecretDao libvirtSecretDao;
+    @Inject
+    private VdsDao vdsDao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
+
     @Override
     public Collection<StorageType> getTypes() {
         return Collections.singleton(StorageType.CINDER);
@@ -56,9 +64,9 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     protected Pair<Boolean, EngineFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
-        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
-        VDS vds = getVdsDao().get(vdsId);
+        Provider provider = providerDao.get(Guid.createGuidFromString(storageDomain.getStorage()));
+        List<LibvirtSecret> libvirtSecrets = libvirtSecretDao.getAllByProviderId(provider.getId());
+        VDS vds = vdsDao.get(vdsId);
         if (!isLibrbdAvailable(vds)) {
             log.error("Couldn't found librbd1 package on vds {} (needed for storage domain {}).",
                     vds.getName(), storageDomain.getName());
@@ -74,9 +82,9 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
-        Provider provider = getProviderDao().get(Guid.createGuidFromString(storageDomain.getStorage()));
-        List<LibvirtSecret> libvirtSecrets = getLibvirtSecretDao().getAllByProviderId(provider.getId());
-        VDS vds = getVdsDao().get(vdsId);
+        Provider provider = providerDao.get(Guid.createGuidFromString(storageDomain.getStorage()));
+        List<LibvirtSecret> libvirtSecrets = libvirtSecretDao.getAllByProviderId(provider.getId());
+        VDS vds = vdsDao.get(vdsId);
         return unregisterLibvirtSecrets(storageDomain, vds, libvirtSecrets);
     }
 
@@ -104,7 +112,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         VDSReturnValue returnValue;
         if (!libvirtSecrets.isEmpty()) {
             try {
-                returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
+                returnValue = backend.getResourceManager().runVdsCommand(
                         VDSCommandType.RegisterLibvirtSecrets,
                         new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets));
             } catch (RuntimeException e) {
@@ -130,7 +138,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
         if (!libvirtSecrets.isEmpty()) {
             VDSReturnValue returnValue;
             try {
-                returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
+                returnValue = backend.getResourceManager().runVdsCommand(
                         VDSCommandType.UnregisterLibvirtSecrets,
                         new UnregisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecretsUuids));
             } catch (RuntimeException e) {
@@ -153,7 +161,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     @Override
     public Pair<Boolean, AuditLogType> disconnectHostFromStoragePoolServersCommandCompleted(HostStoragePoolParametersBase parameters) {
         // unregister all libvirt secrets if needed
-        VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
+        VDSReturnValue returnValue = backend.getResourceManager().runVdsCommand(
                 VDSCommandType.RegisterLibvirtSecrets,
                 new RegisterLibvirtSecretsVDSParameters(parameters.getVds().getId(), Collections.emptyList(), true));
         if (!returnValue.getSucceeded()) {
@@ -169,7 +177,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
 
     private boolean handleLibvirtSecrets(CommandContext cmdContext, VDS vds, Guid poolId) {
         List<LibvirtSecret> libvirtSecrets =
-                DbFacade.getInstance().getLibvirtSecretDao().getAllByStoragePoolIdFilteredByActiveStorageDomains(poolId);
+                libvirtSecretDao.getAllByStoragePoolIdFilteredByActiveStorageDomains(poolId);
         if (!libvirtSecrets.isEmpty() && !registerLibvirtSecretsImpl(vds, libvirtSecrets, false)) {
             log.error("Failed to register libvirt secret on vds {}.", vds.getName());
             setNonOperational(cmdContext, vds.getId(), NonOperationalReason.LIBVIRT_SECRETS_REGISTRATION_FAILURE);
@@ -179,7 +187,7 @@ public class CINDERStorageHelper extends StorageHelperBase {
     }
 
     private boolean registerLibvirtSecretsImpl(VDS vds, List<LibvirtSecret> libvirtSecrets, boolean clearUnusedSecrets) {
-        VDSReturnValue returnValue = Backend.getInstance().getResourceManager().runVdsCommand(
+        VDSReturnValue returnValue = backend.getResourceManager().runVdsCommand(
                 VDSCommandType.RegisterLibvirtSecrets,
                 new RegisterLibvirtSecretsVDSParameters(vds.getId(), libvirtSecrets, clearUnusedSecrets));
         return returnValue.getSucceeded();
@@ -188,12 +196,12 @@ public class CINDERStorageHelper extends StorageHelperBase {
     public void attachCinderDomainToPool(final Guid storageDomainId, final Guid storagePoolId) {
         StoragePoolIsoMap storagePoolIsoMap =
                 new StoragePoolIsoMap(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
-        getStoragePoolIsoMapDao().save(storagePoolIsoMap);
+        storagePoolIsoMapDao.save(storagePoolIsoMap);
     }
 
     public void activateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
-        OpenStackVolumeProviderProxy proxy = OpenStackVolumeProviderProxy.getFromStorageDomainId(storageDomainId,
-                Injector.get(ProviderProxyFactory.class));
+        OpenStackVolumeProviderProxy proxy =
+                OpenStackVolumeProviderProxy.getFromStorageDomainId(storageDomainId, providerProxyFactory);
         if (proxy == null) {
             log.error("Couldn't create an OpenStackVolumeProviderProxy for storage domain ID: {}", storageDomainId);
             return;
@@ -205,45 +213,24 @@ public class CINDERStorageHelper extends StorageHelperBase {
             AuditLogable loggable = new AuditLogableImpl();
             loggable.addCustomValue("CinderException", e.getCause().getCause() != null ?
                     e.getCause().getCause().getMessage() : e.getCause().getMessage());
-            Injector.get(AuditLogDirector.class).log(loggable, AuditLogType.CINDER_PROVIDER_ERROR);
+            auditLogDirector.log(loggable, AuditLogType.CINDER_PROVIDER_ERROR);
             throw e;
         }
     }
 
     public void detachCinderDomainFromPool(final StoragePoolIsoMap mapToRemove) {
-        getStoragePoolIsoMapDao().remove
-                (new StoragePoolIsoMapId(mapToRemove.getStorageId(), mapToRemove.getStoragePoolId()));
+        storagePoolIsoMapDao.remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(), mapToRemove.getStoragePoolId()));
     }
 
     private void updateCinderDomainStatus(final Guid storageDomainId,
                                           final Guid storagePoolId,
                                           final StorageDomainStatus storageDomainStatus) {
-        StoragePoolIsoMap map = getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
+        StoragePoolIsoMap map = storagePoolIsoMapDao.get(new StoragePoolIsoMapId(storageDomainId, storagePoolId));
         map.setStatus(storageDomainStatus);
-        getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
+        storagePoolIsoMapDao.updateStatus(map.getId(), map.getStatus());
     }
 
     public void deactivateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
         updateCinderDomainStatus(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
-    }
-
-    private StoragePoolIsoMapDao getStoragePoolIsoMapDao() {
-        return getDbFacade().getStoragePoolIsoMapDao();
-    }
-
-    private ProviderDao getProviderDao() {
-        return getDbFacade().getProviderDao();
-    }
-
-    private VdsDao getVdsDao() {
-        return getDbFacade().getVdsDao();
-    }
-
-    private LibvirtSecretDao getLibvirtSecretDao() {
-        return getDbFacade().getLibvirtSecretDao();
-    }
-
-    private static DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 }

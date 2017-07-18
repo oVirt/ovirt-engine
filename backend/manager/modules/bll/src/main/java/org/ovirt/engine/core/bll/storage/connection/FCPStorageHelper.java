@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.SyncLunsInfoForBlockStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -68,7 +67,7 @@ public class FCPStorageHelper extends StorageHelperBase {
         // Synchronize LUN details comprising the storage domain with the DB
         SyncLunsInfoForBlockStorageDomainParameters parameters = new SyncLunsInfoForBlockStorageDomainParameters(
                 storageDomain.getId(), vdsId);
-        return Backend.getInstance().runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters).getSucceeded();
+        return backend.runInternalAction(ActionType.SyncLunsInfoForBlockStorageDomain, parameters).getSucceeded();
     }
 
     public static StorageServerConnections getFCPConnection() {
@@ -82,8 +81,7 @@ public class FCPStorageHelper extends StorageHelperBase {
             LUNs lun,
             Guid storagePoolId) {
 
-        VDSReturnValue returnValue = Backend
-                .getInstance()
+        VDSReturnValue returnValue = backend
                 .getResourceManager()
                 .runVdsCommand(
                         VDSCommandType.forValue(type),
