@@ -50,6 +50,11 @@ public abstract class PendingResource {
      * This allows us to replace previous (stale) allocation with
      * new value just by calling .put() or .add().
      *
+     * Countable resources should use the VM reference in equals
+     * and hashCode if the allocated amount depends on the VM
+     * configuration or if multiple VMs can "take" from the
+     * resource pool at the same time.
+     *
      * For example:
      *
      * - Pending VM memory should only use the VM field
