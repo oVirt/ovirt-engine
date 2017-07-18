@@ -156,16 +156,13 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             List<StorageServerConnections> connections, String vgId, final String lunId) {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
-        List<String> lunsByVg =
-                lunId.isEmpty() ? lunDao
-                        .getAllForVolumeGroup(vgId)
-                        .stream()
-                        .map(LUNs::getLUNId)
-                        .collect(Collectors.toList()) : null;
-        // if a luns were retrieved by vgId, they can belongs not only to storage but also to disks
-        // at that case they should left at db
         List<String> lunsByVgWithNoDisks = new ArrayList<>();
         if (lunId.isEmpty()) {
+            List<String> lunsByVg =
+                    lunDao.getAllForVolumeGroup(vgId).stream().map(LUNs::getLUNId).collect(Collectors.toList());
+
+            // if a luns were retrieved by vgId, they can belongs not only to storage but also to disks
+            // at that case they should left at db
             for (String lunIdByVg : lunsByVg) {
                 if (diskLunMapDao.getDiskIdByLunId(lunIdByVg) == null) {
                     lunsByVgWithNoDisks.add(lunIdByVg);
