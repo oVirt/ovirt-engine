@@ -94,6 +94,9 @@ public class SsoRestApiAuthFilter implements Filter {
                     SsoUtils.createUserSession(req, payload, false);
                 }
             } catch (Exception e) {
+                req.setAttribute(
+                        SessionConstants.SSO_AUTHENTICATION_ERR_MSG,
+                        e.getMessage());
                 log.error("Cannot authenticate using authentication Headers: {}", e.getMessage());
                 log.debug("Cannot authenticate using authentication Headers", e);
             }

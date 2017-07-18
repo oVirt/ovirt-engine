@@ -30,6 +30,7 @@ import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.SsoOAuthServiceUtils;
 import org.ovirt.engine.core.aaa.SsoUtils;
+import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,6 +123,9 @@ public class SsoRestApiNegotiationFilter implements Filter {
                     chain.doFilter(req, resp);
                 }
             } catch (Exception e) {
+                req.setAttribute(
+                        SessionConstants.SSO_AUTHENTICATION_ERR_MSG,
+                        e.getMessage());
                 log.error("Cannot authenticate using External Authentication: {}", e.getMessage());
                 log.debug("Cannot authenticate using External Authentication", e);
                 chain.doFilter(req, resp);

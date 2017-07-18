@@ -16,6 +16,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.constants.SessionConstants;
+
 public class EnforceAuthFilter implements Filter {
 
     private final List<String> additionalSchemes = new ArrayList<>();
@@ -50,7 +53,12 @@ public class EnforceAuthFilter implements Filter {
             for (String scheme: allSchemes) {
                 res.setHeader(FiltersHelper.Constants.HEADER_WWW_AUTHENTICATE, scheme);
             }
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            String errMsg = (String) req.getAttribute(SessionConstants.SSO_AUTHENTICATION_ERR_MSG);
+            if (StringUtils.isEmpty(errMsg)) {
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            } else {
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED, errMsg);
+            }
         }
 
     }
