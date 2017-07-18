@@ -147,26 +147,20 @@ public abstract class StorageHelperBase implements IStorageHelper {
                 ExecutionHandler.createInternalJobContext(cmdContext));
     }
 
-    protected int removeStorageDomainLuns(StorageDomainStatic storageDomain) {
+    protected void removeStorageDomainLuns(StorageDomainStatic storageDomain) {
         final List<LUNs> lunsList = lunDao.getAllForVolumeGroup(storageDomain.getStorage());
-        int numOfRemovedLuns = 0;
         for (LUNs lun : lunsList) {
-            if (removeLunFromStorageDomain(lun)) {
-                numOfRemovedLuns++;
-            }
+            removeLunFromStorageDomain(lun);
         }
-        return numOfRemovedLuns;
     }
 
-    private boolean removeLunFromStorageDomain(LUNs lun) {
+    private void removeLunFromStorageDomain(LUNs lun) {
         if (diskLunMapDao.getDiskIdByLunId(lun.getLUNId()) == null) {
             lunDao.remove(lun.getLUNId());
-            return true;
+        } else {
+            lun.setVolumeGroupId("");
+            lunDao.update(lun);
         }
-
-        lun.setVolumeGroupId("");
-        lunDao.update(lun);
-        return false;
     }
 
 
