@@ -30,6 +30,16 @@ public class HugePageUtilsTest {
     }
 
     @Test
+    public void isBackedByHudepagesHugePagePropertySetToZero() {
+        testIsBackedByHudepagesHugePage("hugepages=0", false);
+    }
+
+    @Test
+    public void isBackedByHudepagesHugePagePropertySetToNegative() {
+        testIsBackedByHudepagesHugePage("hugepages=-5", false);
+    }
+
+    @Test
     public void getHugePagesNoHugePagesDefined() {
         HugePageUtils utils = new HugePageUtils();
         VmBase base = new VmBase();

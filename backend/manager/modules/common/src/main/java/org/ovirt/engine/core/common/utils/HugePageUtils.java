@@ -26,8 +26,7 @@ public class HugePageUtils {
         }
 
         try {
-            Integer.parseInt(hugePage);
-            return true;
+            return Integer.parseInt(hugePage) > 0;
         } catch (NumberFormatException e) {
             return false;
         }
