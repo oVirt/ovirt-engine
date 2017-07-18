@@ -36,7 +36,7 @@ public class SubTabProviderSecretView extends AbstractSubTabTableView<Provider, 
     public SubTabProviderSecretView(SearchableDetailModelProvider<LibvirtSecret, ProviderListModel, ProviderSecretListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -85,24 +85,27 @@ public class SubTabProviderSecretView extends AbstractSubTabTableView<Provider, 
         creationDateColumn.makeSortable();
         getTable().addColumn(creationDateColumn, constants.creationDateLibvirtSecret(), "200px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.newLibvirtSecret()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getNewCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.editLibvirtSecret()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEditCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.removeLibvirtSecret()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getRemoveCommand();
-            }
-        });
+        this.addButtonToActionGroup(
+            getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.newLibvirtSecret()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getDetailModel().getNewCommand();
+                }
+        }));
+        this.addButtonToActionGroup(
+            getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.editLibvirtSecret()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getDetailModel().getEditCommand();
+                }
+        }));
+        this.addButtonToActionGroup(
+            getTable().addActionButton(new WebAdminButtonDefinition<LibvirtSecret>(constants.removeLibvirtSecret()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getDetailModel().getRemoveCommand();
+                }
+        }));
     }
 
 }

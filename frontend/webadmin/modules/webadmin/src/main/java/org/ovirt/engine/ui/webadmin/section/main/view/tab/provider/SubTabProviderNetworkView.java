@@ -35,7 +35,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
     public SubTabProviderNetworkView(SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {
         super(modelProvider);
         initTable();
-        initWidget(getTable());
+        initWidget(getTableContainer());
     }
 
     @Override
@@ -74,12 +74,13 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         dcColumn.makeSortable();
         getTable().addColumn(dcColumn, constants.dataCenterProviderNetwork(), "200px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDiscoverCommand();
-            }
-        });
+        this.addButtonToActionGroup(
+            getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
+                @Override
+                protected UICommand resolveCommand() {
+                    return getDetailModel().getDiscoverCommand();
+                }
+        }));
     }
 
     @Override
