@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -10,9 +9,9 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner.Silent;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.bll.ValidateTestUtils;
@@ -27,16 +26,14 @@ import org.ovirt.engine.core.compat.Guid;
 public class AddStorageServerConnectionCommandTest extends
         StorageServerConnectionTestCommon<AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>> {
 
+    @Mock
+    protected ISCSIStorageHelper iscsiStorageHelper;
+
     @Override
     protected AddStorageServerConnectionCommand<StorageServerConnectionParametersBase> createCommand() {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
         return new AddStorageServerConnectionCommand<>(parameters, null);
-    }
-
-    @Before
-    public void prepareMocks() {
-        doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
     }
 
     @Test
@@ -182,7 +179,7 @@ public class AddStorageServerConnectionCommandTest extends
        StorageServerConnections  existingConn = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
        existingConn.setId(Guid.newGuid().toString());
 
-       when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(existingConn);
+       when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(existingConn);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
        assertTrue(isExists);
     }

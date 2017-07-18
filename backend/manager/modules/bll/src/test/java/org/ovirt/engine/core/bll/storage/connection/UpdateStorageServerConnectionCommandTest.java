@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.storage.connection;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -48,6 +47,9 @@ import org.ovirt.engine.core.dao.VmDao;
 public class UpdateStorageServerConnectionCommandTest extends
         StorageServerConnectionTestCommon<UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>> {
 
+    @Mock
+    protected ISCSIStorageHelper iscsiStorageHelper;
+
     @Override
     protected UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase> createCommand() {
         parameters = new StorageServerConnectionParametersBase();
@@ -92,12 +94,6 @@ public class UpdateStorageServerConnectionCommandTest extends
                         StorageType.POSIXFS,
                         "nfs",
                         "timeo=30");
-
-        prepareMocks();
-    }
-
-    private void prepareMocks() {
-        doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
     }
 
     protected StorageDomain createDomain() {
@@ -649,7 +645,7 @@ public class UpdateStorageServerConnectionCommandTest extends
 
        StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
 
-       when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(connection1);
+       when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(connection1);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
        assertTrue(isExists);
     }
@@ -658,7 +654,7 @@ public class UpdateStorageServerConnectionCommandTest extends
     public void isConnWithSameDetailsExistCheckSameConn() {
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
 
-       when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(newISCSIConnection);
+       when(iscsiStorageHelper.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(newISCSIConnection);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
         assertFalse(isExists);
     }

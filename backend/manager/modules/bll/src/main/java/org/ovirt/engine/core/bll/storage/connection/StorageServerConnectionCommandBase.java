@@ -82,7 +82,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
             connections = storageServerConnectionDao.getAllForStorage(connectionField);
         }
         else {
-            StorageServerConnections sameConnection = findConnectionWithSameDetails(connection);
+            StorageServerConnections sameConnection = iscsiStorageHelper.findConnectionWithSameDetails(connection);
             connections =
                     sameConnection != null ? Collections.singletonList(sameConnection)
                             : Collections.emptyList();
@@ -91,10 +91,6 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
         boolean isDuplicateConnExists = connections.size() > 1
                 || (connections.size() == 1 && !connections.get(0).getId().equalsIgnoreCase(connection.getId()));
         return isDuplicateConnExists;
-    }
-
-    protected StorageServerConnections findConnectionWithSameDetails(StorageServerConnections connection) {
-        return iscsiStorageHelper.findConnectionWithSameDetails(connection);
     }
 
     protected boolean checkIsConnectionFieldEmpty(StorageServerConnections connection) {
