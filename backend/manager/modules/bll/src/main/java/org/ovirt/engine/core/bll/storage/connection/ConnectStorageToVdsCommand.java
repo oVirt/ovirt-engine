@@ -45,6 +45,9 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     @Inject
     private GLUSTERFSStorageHelper glusterfsStorageHelper;
 
+    @Inject
+    private ISCSIStorageHelper iscsiStorageHelper;
+
     public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -78,7 +81,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         List<StorageServerConnections> connections = Arrays.asList(getConnection());
 
         if (getConnection().getStorageType() == StorageType.ISCSI) {
-            connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
+            connections = iscsiStorageHelper.updateIfaces(connections, getVds().getId());
         }
 
         Map<String, String> result = (HashMap<String, String>) runVdsCommand(

@@ -93,7 +93,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return new Pair<>(isSuccess, engineFault);
     }
 
-    public static List<StorageServerConnections> updateIfaces(List<StorageServerConnections> conns, Guid vdsId) {
+    public List<StorageServerConnections> updateIfaces(List<StorageServerConnections> conns, Guid vdsId) {
         List<StorageServerConnections> res = new ArrayList<>(conns);
 
         for (StorageServerConnections conn : conns) {

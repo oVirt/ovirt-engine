@@ -33,6 +33,8 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public abstract class BaseIscsiBondCommand<T extends ActionParametersBase> extends CommandBase<T> {
 
     @Inject
+    private ISCSIStorageHelper iscsiStorageHelper;
+    @Inject
     protected IscsiBondDao iscsiBondDao;
 
     protected boolean encounterConnectionProblems;
@@ -64,7 +66,7 @@ public abstract class BaseIscsiBondCommand<T extends ActionParametersBase> exten
         for (final VDS host : hosts) {
             tasks.add(() -> {
                 try {
-                    final List<StorageServerConnections> conns = ISCSIStorageHelper.updateIfaces(connections, host.getId());
+                    final List<StorageServerConnections> conns = iscsiStorageHelper.updateIfaces(connections, host.getId());
                     VDSReturnValue returnValue = runVdsCommand(VDSCommandType.ConnectStorageServer,
                             new StorageServerConnectionManagementVDSParameters(host.getId(), Guid.Empty, StorageType.ISCSI, conns)
                     );
