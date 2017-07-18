@@ -57,6 +57,7 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
     private String vmId;
     private String fqdn;
     private String compatibilityVersion;
+    private String optimizedForSystemProfile;
 
     private ImportSource source;
 
@@ -190,6 +191,8 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         else {
             setDefaultHost(ConstantsManager.getInstance().getConstants().anyHostInCluster());
         }
+
+        setOptimizedForSystemProfile(translator.translate(vm.getVmType()));
     }
 
     public EntityModel<String> getName() {
@@ -506,6 +509,17 @@ public class VmImportGeneralModel extends AbstractGeneralModel<ImportVmData> {
         if (!Objects.equals(compatibilityVersion, value)) {
             compatibilityVersion = value;
             onPropertyChanged(new PropertyChangedEventArgs("CompatibilityVersion")); //$NON-NLS-1$
+        }
+    }
+
+    public String getOptimizedForSystemProfile() {
+        return optimizedForSystemProfile;
+    }
+
+    public void setOptimizedForSystemProfile(String value) {
+        if (!Objects.equals(optimizedForSystemProfile, value)) {
+            optimizedForSystemProfile = value;
+            onPropertyChanged(new PropertyChangedEventArgs("OptimizedForSystemProfile")); //$NON-NLS-1$
         }
     }
 }

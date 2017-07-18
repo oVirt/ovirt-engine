@@ -31,6 +31,7 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     StringValueLabel defaultDisplayType = new StringValueLabel();
     StringValueLabel usbPolicy = new StringValueLabel();
     StringValueLabel defaultHost = new StringValueLabel();
+    StringValueLabel optimizedForSystemProfile = new StringValueLabel();
 
     @Ignore
     StringValueLabel monitorCount = new StringValueLabel();
@@ -40,7 +41,7 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     private final Driver driver = GWT.create(Driver.class);
 
     public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider) {
-        super(modelProvider, 3, 6);
+        super(modelProvider, 3, 7);
     }
 
     /**
@@ -57,7 +58,7 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
         formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
         formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
-
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 6, 0));
         formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));
 
@@ -66,7 +67,6 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresPoolGeneral(), cpuInfoWithTooltip, 2, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfMonitorsPoolGeneral(), monitorCount, 3, 1));
         formBuilder.addFormItem(new FormItem(constants.usbPolicyPoolGeneral(), usbPolicy, 4, 1));
-
         formBuilder.addFormItem(new FormItem(constants.runOnPoolGeneral(), defaultHost, 0, 2));
     }
 

@@ -51,6 +51,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     StringValueLabel guestCpuCount = new StringValueLabel();
     StringValueLabel quotaName = new StringValueLabel();
     StringValueLabel origin = new StringValueLabel();
+    StringValueLabel optimizedForSystemProfile = new StringValueLabel();
 
     @Ignore
     StringValueLabel monitorCount = new StringValueLabel();
@@ -60,7 +61,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
     private final Driver driver = GWT.create(Driver.class);
 
     public VmImportGeneralModelForm(ModelProvider<VmImportGeneralModel> modelProvider) {
-        super(modelProvider, 3, 7);
+        super(modelProvider, 3, 8);
 
         operatingSystems = new ListModelListBox<>(new AbstractRenderer<Integer>() {
             @Override
@@ -104,6 +105,7 @@ public class VmImportGeneralModelForm extends AbstractModelBoundFormWidget<VmImp
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 7, 0));
 
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedMemInfo(), guestFreeCachedBufferedMemInfo, 1, 1)

@@ -289,6 +289,19 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private String optimizedForSystemProfile;
+
+    public String getOptimizedForSystemProfile() {
+        return optimizedForSystemProfile;
+    }
+
+    public void setOptimizedForSystemProfile(String value) {
+        if (!Objects.equals(optimizedForSystemProfile, value)) {
+            optimizedForSystemProfile = value;
+            onPropertyChanged(new PropertyChangedEventArgs("OptimizedForSystemProfile")); //$NON-NLS-1$
+        }
+    }
+
     private boolean hasAlert;
 
     public boolean getHasAlert() {
@@ -534,6 +547,8 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         setIsHighlyAvailable(vm.isAutoStartup());
 
         setPriority(AsyncDataProvider.getInstance().priorityToString(vm.getPriority()));
+
+        setOptimizedForSystemProfile(translator.translate(vm.getVmType()));
 
         setMonitorCount(vm.getNumOfMonitors());
 

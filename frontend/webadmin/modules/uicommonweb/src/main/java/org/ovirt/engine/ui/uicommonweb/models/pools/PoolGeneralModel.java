@@ -310,6 +310,19 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
         return quotaName;
     }
 
+    private String optimizedForSystemProfile;
+
+    public String getOptimizedForSystemProfile() {
+        return optimizedForSystemProfile;
+    }
+
+    public void setOptimizedForSystemProfile(String value) {
+        if (!Objects.equals(optimizedForSystemProfile, value)) {
+            optimizedForSystemProfile = value;
+            onPropertyChanged(new PropertyChangedEventArgs("OptimizedForSystemProfile")); //$NON-NLS-1$
+        }
+    }
+
     static {
         updateCompleteEventDefinition = new EventDefinition("UpdateComplete", PoolGeneralModel.class); //$NON-NLS-1$
     }
@@ -375,14 +388,13 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             setUsbPolicy(translator.translate(getvm().getUsbPolicy()));
 
                             setHasDomain(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
-
+                            setOptimizedForSystemProfile(translator.translate(getvm().getVmType()));
                             setHasTimeZone(AsyncDataProvider.getInstance().isWindowsOsType(getvm().getVmOsId()));
                             setTimeZone(getvm().getTimeZone());
 
                             setIsStateless(!pool.isStateful());
 
                             setQuotaName(getvm().getQuotaName());
-
                             setHasDefaultHost(getvm().getDedicatedVmForVdsList().size() > 0);
                             if (getHasDefaultHost()) {
 
@@ -427,6 +439,7 @@ public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
                             setDefaultHost(null);
                             setIsStateless(!pool.isStateful());
                             setGraphicsType(""); //$NON-NLS-1$
+                            setOptimizedForSystemProfile(""); //$NON-NLS-1$
 
                             getUpdateCompleteEvent().raise(this, EventArgs.EMPTY);
                         }

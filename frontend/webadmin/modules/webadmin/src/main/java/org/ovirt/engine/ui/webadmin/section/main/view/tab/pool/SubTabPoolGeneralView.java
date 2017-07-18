@@ -56,6 +56,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     StringValueLabel timeZone = new StringValueLabel();
     StringValueLabel usbPolicy = new StringValueLabel();
     StringValueLabel quotaName = new StringValueLabel();
+    StringValueLabel optimizedForSystemProfile = new StringValueLabel();
 
     @Ignore
     StringValueLabel isStateless = new StringValueLabel();
@@ -86,7 +87,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 7);
+        formBuilder = new FormBuilder(formPanel, 3, 8);
         formBuilder.setRelativeColumnWidth(0, 3);
         formBuilder.setRelativeColumnWidth(1, 4);
         formBuilder.setRelativeColumnWidth(2, 5);
@@ -98,6 +99,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 6, 0));
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 7, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));

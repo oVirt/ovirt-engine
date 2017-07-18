@@ -138,6 +138,19 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         }
     }
 
+    private String optimizedForSystemProfile;
+
+    public String getOptimizedForSystemProfile() {
+        return optimizedForSystemProfile;
+    }
+
+    public void setOptimizedForSystemProfile(String value) {
+        if (!Objects.equals(optimizedForSystemProfile, value)) {
+            optimizedForSystemProfile = value;
+            onPropertyChanged(new PropertyChangedEventArgs("OptimizedForSystemProfile")); //$NON-NLS-1$
+        }
+    }
+
     private String origin;
 
     public String getOrigin() {
@@ -355,6 +368,9 @@ public class TemplateGeneralModel extends AbstractGeneralModel<VmTemplate> {
         setOS(AsyncDataProvider.getInstance().getOsName(template.getOsId()));
 
         Translator translator = EnumTranslator.getInstance();
+
+        setOptimizedForSystemProfile(translator.translate(template.getVmType()));
+
         setDefaultDisplayType(translator.translate(template.getDefaultDisplayType()));
 
         setOrigin(translator.translate(template.getOrigin()));

@@ -35,6 +35,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     StringValueLabel timeZone = new StringValueLabel();
     StringValueLabel quotaName = new StringValueLabel();
     StringValueLabel templateId = new StringValueLabel();
+    StringValueLabel optimizedForSystemProfile = new StringValueLabel();
 
     BooleanLabel isHighlyAvailable;
 
@@ -48,7 +49,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     private final Driver driver = GWT.create(Driver.class);
 
     public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider) {
-        super(modelProvider, 3, 6);
+        super(modelProvider, 3, 7);
     }
 
     /**
@@ -67,6 +68,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
         formBuilder.addFormItem(new FormItem(constants.osTemplateGeneral(), oS, 3, 0));
         formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 6, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemTemplateGeneral(), definedMemory, 0, 1));
 

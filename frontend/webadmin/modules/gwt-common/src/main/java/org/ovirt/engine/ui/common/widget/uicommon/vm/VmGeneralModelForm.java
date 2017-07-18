@@ -33,6 +33,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     StringValueLabel defaultDisplayType = new StringValueLabel();
     StringValueLabel origin = new StringValueLabel();
     StringValueLabel priority = new StringValueLabel();
+    StringValueLabel optimizedForSystemProfile = new StringValueLabel();
     StringValueLabel usbPolicy = new StringValueLabel();
     StringValueLabel createdByUser = new StringValueLabel();
     StringValueLabel defaultHost = new StringValueLabel();
@@ -74,7 +75,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.graphicsProtocol(), graphicsType, 4, 0));
         formBuilder.addFormItem(new FormItem(constants.videoType(), defaultDisplayType, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 6, 0));
-
+        formBuilder.addFormItem(new FormItem(constants.optimizedFor(), optimizedForSystemProfile, 7, 0));
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.guestFreeCachedBufferedMemInfo(), guestFreeCachedBufferedMemInfo, 2, 1)
