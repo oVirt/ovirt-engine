@@ -52,6 +52,7 @@ public class SsoPostLoginFilter implements Filter {
         obj.put("domain", loggedInUser.getDomain()); //$NON-NLS-1$
         obj.put("isAdmin", Boolean.toString(loggedInUser.isAdmin())); //$NON-NLS-1$
         obj.put("ssoToken", ssoToken); //$NON-NLS-1$
+        obj.put("userId", loggedInUser.getId().toString()); //$NON-NLS-1$
         return obj;
     }
 
