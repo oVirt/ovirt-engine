@@ -46,7 +46,6 @@ class Plugin(plugin.PluginBase):
         before=(
             otopicons.Stages.CORE_LOG_INIT,
         ),
-        priority=plugin.Stages.PRIORITY_HIGH - 10,
     )
     def _preinit(self):
         # We do not set otopicons.CoreEnv.LOG_DIR for health-check - otopi's

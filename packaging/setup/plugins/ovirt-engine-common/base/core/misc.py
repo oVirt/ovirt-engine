@@ -45,7 +45,6 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
-        priority=plugin.Stages.PRIORITY_HIGH - 20,
     )
     def _preinit(self):
         self.environment.setdefault(
