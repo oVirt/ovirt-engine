@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage.connection;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -86,7 +85,7 @@ public class FCPStorageHelper extends StorageHelperBase {
                 .runVdsCommand(
                         VDSCommandType.forValue(type),
                         new StorageServerConnectionManagementVDSParameters(vdsId,
-                                storagePoolId, StorageType.FCP, Arrays.asList(getFCPConnection())));
+                                storagePoolId, StorageType.FCP, Collections.singletonList(getFCPConnection())));
         boolean isSuccess = returnValue.getSucceeded();
         EngineFault engineFault = null;
         if (!isSuccess && returnValue.getVdsError() != null) {
