@@ -106,7 +106,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
             prm.setCopyCollapse(true);
         }
 
-        return Collections.<ActionParametersBase>singletonList(prm);
+        return Collections.singletonList(prm);
     }
 
 }
