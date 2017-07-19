@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -105,7 +106,7 @@ public class ImportVmFromOvaModel extends ImportVmFromExternalProviderModel {
             prm.setCopyCollapse(true);
         }
 
-        return java.util.Collections.<ActionParametersBase>singletonList(prm);
+        return Collections.<ActionParametersBase>singletonList(prm);
     }
 
 }
