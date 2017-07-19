@@ -224,6 +224,7 @@ public class ListModel<T> extends Model {
             selectedItems.add(selectedItem);
             setSelectedItem(selectedItem);
             setSelectedItems(selectedItems);
+            getSelectionModel().setSelected(selectedItem, true);
         }
     }
 

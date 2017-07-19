@@ -119,9 +119,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel<StoragePo
         final NetworkQoSModel networkQoSModel = new EditNetworkQoSModel(networkQoS, this, getEntity());
         setWindow(networkQoSModel);
 
-        networkQoSModel.getDataCenters().setItems(Arrays.asList(getEntity()));
-        networkQoSModel.getDataCenters().setSelectedItem(getEntity());
-
+        networkQoSModel.getDataCenters().setItems(Arrays.asList(getEntity()), getEntity());
     }
 
     @Override
@@ -151,7 +149,6 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel<StoragePo
         final NewNetworkQoSModel newNetworkQoSModel = new NewNetworkQoSModel(this, getEntity());
         setWindow(newNetworkQoSModel);
 
-        newNetworkQoSModel.getDataCenters().setItems(Arrays.asList(getEntity()));
-        newNetworkQoSModel.getDataCenters().setSelectedItem(getEntity());
+        newNetworkQoSModel.getDataCenters().setItems(Arrays.asList(getEntity()), getEntity());
     }
 }
