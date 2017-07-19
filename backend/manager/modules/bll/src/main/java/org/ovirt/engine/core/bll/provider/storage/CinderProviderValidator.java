@@ -64,11 +64,11 @@ public class CinderProviderValidator extends ProviderValidator {
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                     String.format("$%s %s", "status", status));
         }
-        return isCinderHasNoImages(getStorageDomain().getId());
+        return isCinderHasNoImages();
     }
 
-    public ValidationResult isCinderHasNoImages(Guid storageDomainId) {
-        List<DiskImage> cinderDisks = diskImageDao.getAllForStorageDomain(storageDomainId);
+    public ValidationResult isCinderHasNoImages() {
+        List<DiskImage> cinderDisks = diskImageDao.getAllForStorageDomain(getStorageDomain().getId());
         if (!cinderDisks.isEmpty()) {
             return new ValidationResult(EngineMessage.ERROR_CANNOT_DETACH_CINDER_PROVIDER_WITH_IMAGES);
         }

@@ -19,7 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
-import org.ovirt.engine.core.bll.provider.storage.CinderProviderValidator;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.connection.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -76,7 +77,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     @Inject
     protected ImagesHandler imagesHandler;
     @Inject
-    private CinderProviderValidator cinderProviderValidator;
+    private ProviderProxyFactory providerProxyFactory;
 
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -127,7 +128,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean isCinderStorageHasNoDisks() {
         if (getStorageDomain().getStorageType() == StorageType.CINDER) {
-            return validate(cinderProviderValidator.isCinderHasNoImages(getStorageDomainId()));
+            return validate(OpenStackVolumeProviderProxy.getFromStorageDomainId(getStorageDomainId(), providerProxyFactory)
+                    .getProviderValidator()
+                    .isCinderHasNoImages());
         }
         return true;
     }
