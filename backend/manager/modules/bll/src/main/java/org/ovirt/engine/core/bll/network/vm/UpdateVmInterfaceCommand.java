@@ -17,8 +17,11 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.RemoveVmNicFilterParameterParameters;
+import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -26,8 +29,11 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -125,6 +131,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 updatePassthoughDeviceIfNeeded();
                 getCompensationContext().snapshotEntity(oldIface);
                 vmNicDao.update(getInterface());
+                saveNetworkFilterParameters();
                 getCompensationContext().stateChanged();
                 return null;
             });
@@ -328,6 +335,33 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {
         return !Objects.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
+    }
+
+    protected void saveNetworkFilterParameters() {
+        List<VmNicFilterParameter> newParameters = getParameters().getFilterParameters();
+        if (newParameters != null) {
+            List<VmNicFilterParameter> savedParameters = runInternalQuery(QueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
+                    new IdQueryParameters(getInterface().getId())).getReturnValue();
+            for (VmNicFilterParameter parameter : newParameters) {
+                boolean toUpdate = savedParameters.stream()
+                        .anyMatch(saved -> Objects.equals(parameter.getId(), saved.getId()));
+                if (toUpdate) {
+                    runInternalAction(ActionType.UpdateVmNicFilterParameter,
+                            new VmNicFilterParameterParameters(getParameters().getVmId(), parameter));
+                } else {
+                    parameter.setVmInterfaceId(getInterface().getId());
+                    runInternalAction(ActionType.AddVmNicFilterParameter,
+                            new VmNicFilterParameterParameters(getParameters().getVmId(), parameter));
+                }
+            }
+            for (VmNicFilterParameter parameter : savedParameters) {
+                if (newParameters.stream()
+                        .noneMatch(newParameter -> Objects.equals(parameter.getId(), newParameter.getId()))) {
+                    runInternalAction(ActionType.RemoveVmNicFilterParameter,
+                            new RemoveVmNicFilterParameterParameters(getParameters().getVmId(), parameter.getId()));
+                }
+            }
+        }
     }
 
     private enum RequiredAction {

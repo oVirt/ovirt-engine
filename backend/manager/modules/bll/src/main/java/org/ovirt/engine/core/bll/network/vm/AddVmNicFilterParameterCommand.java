@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.bll.ValidateSupportsTransaction;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.validator.VmNicFilterParameterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.VmNicFilterParameterDao;
 
+@ValidateSupportsTransaction
 public class AddVmNicFilterParameterCommand<T extends VmNicFilterParameterParameters>
         extends AbstractVmNicFilterParameterCommand<T> {
 

@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -15,6 +18,9 @@ public class AddVmInterfaceParameters extends VmOperationParameterBase {
 
     private String networkName;
     private boolean portMirroring;
+
+    @Valid
+    private List<VmNicFilterParameter> filterParameters;
 
     public AddVmInterfaceParameters() {
     }
@@ -62,5 +68,13 @@ public class AddVmInterfaceParameters extends VmOperationParameterBase {
         return super.appendAttributes(tsb).
                 append("nic", getInterface()).
                 append("network", getNetworkName());
+    }
+
+    public List<VmNicFilterParameter> getFilterParameters() {
+        return filterParameters;
+    }
+
+    public void setFilterParameters(List<VmNicFilterParameter> filterParameters) {
+        this.filterParameters = filterParameters;
     }
 }

@@ -13,11 +13,14 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.VmNicFilterParameterParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -75,6 +78,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                 bumpVmVersion();
                 addInterfaceToDb(getInterface());
                 addInterfaceDeviceToDb();
+                saveNetworkFilterParameters();
                 getCompensationContext().stateChanged();
                 return null;
             });
@@ -210,5 +214,15 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         }
 
         return permissionList;
+    }
+
+    protected void saveNetworkFilterParameters() {
+        if (getParameters().getFilterParameters() != null) {
+            for (VmNicFilterParameter parameter : getParameters().getFilterParameters()) {
+                parameter.setVmInterfaceId(getInterface().getId());
+                runInternalAction(ActionType.AddVmNicFilterParameter,
+                        new VmNicFilterParameterParameters(getParameters().getVmId(), parameter));
+            }
+        }
     }
 }
