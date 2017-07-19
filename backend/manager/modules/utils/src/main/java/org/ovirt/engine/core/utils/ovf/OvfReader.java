@@ -129,7 +129,9 @@ public abstract class OvfReader implements IOvfBuilder {
 
     @Override
     public void buildDisk() {
-        XmlNodeList list = selectNodes(_document, "//*/Section/Disk");
+        XmlNode diskSection = selectSingleNode(_document, "//*/DiskSection");
+        XmlNodeList list =
+                diskSection != null ? diskSection.selectNodes("Disk") : selectNodes(_document, "//*/Section/Disk");
         for (XmlNode node : list) {
             String diskId = node.attributes.get("ovf:diskId").getValue();
             // oVirt used the diskId as the file id
@@ -166,8 +168,18 @@ public abstract class OvfReader implements IOvfBuilder {
                     }
                 }
             }
-            image.setImageId(new Guid(diskId));
-            image.setId(OvfParser.getImageGroupIdFromImageFile(fileAttributes.get("ovf:href").getValue()));
+            try {
+                image.setImageId(new Guid(diskId));
+            } catch (IllegalArgumentException ex) {
+                log.warn("could not retrieve volume id of {} from ovf, generating new guid", diskId);
+                image.setImageId(Guid.newGuid());
+            }
+            try {
+                image.setId(OvfParser.getImageGroupIdFromImageFile(fileAttributes.get("ovf:href").getValue()));
+            } catch (IllegalArgumentException ex) {
+                log.warn("could not retrieve disk id of {} from ovf, generating new guid", diskId);
+                image.setId(Guid.newGuid());
+            }
             // Default values:
             image.setActive(true);
             image.setImageStatus(ImageStatus.OK);
@@ -175,7 +187,7 @@ public abstract class OvfReader implements IOvfBuilder {
             if (description == null) {
                 description = node.attributes.get("ovf:description");
             }
-            image.setDescription(description.getValue());
+            image.setDescription(description != null ? description.getValue() : diskId);
 
             image.setDiskVmElements(Collections.singletonList(new DiskVmElement(image.getId(), vmBase.getId())));
 
@@ -185,13 +197,26 @@ public abstract class OvfReader implements IOvfBuilder {
                 image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
             }
 
-            if (!StringUtils.isEmpty(node.attributes.get("ovf:size").getValue())) {
-                image.setSize(convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:size").getValue())));
+            XmlAttribute virtualSize = node.attributes.get("ovf:size");
+            if (virtualSize == null) {
+                virtualSize = node.attributes.get("ovf:capacity");
+                // TODO take ovf:capacityAllocationUnits into account
             }
-            if (!StringUtils.isEmpty(node.attributes.get("ovf:actual_size").getValue())) {
-                image.setActualSizeInBytes(
-                        convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:actual_size").getValue())));
+            if (!StringUtils.isEmpty(virtualSize.getValue())) {
+                image.setSize(convertGigabyteToBytes(Long.parseLong(virtualSize.getValue())));
             }
+
+            XmlAttribute actualSize = node.attributes.get("ovf:actual_size");
+            if (actualSize == null) {
+                actualSize = fileAttributes.get("ovf:size");
+                // TODO populatedSize in case of compression
+                image.setActualSizeInBytes(Long.parseLong(actualSize.getValue()));
+            } else {
+                if (!StringUtils.isEmpty(actualSize.getValue())) {
+                    image.setActualSizeInBytes(convertGigabyteToBytes(Long.parseLong(actualSize.getValue())));
+                }
+            }
+
             if (node.attributes.get("ovf:volume-format") != null) {
                 if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
                     image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format").getValue()));
