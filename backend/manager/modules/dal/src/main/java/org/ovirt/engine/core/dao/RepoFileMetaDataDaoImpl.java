@@ -6,10 +6,6 @@ import java.util.List;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -70,33 +66,6 @@ public class RepoFileMetaDataDaoImpl extends BaseDao implements RepoFileMetaData
 
         return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain", repoImageMapper, parameterSource);
     }
-
-    /**
-     * Returns a list of all repository files with specific file extension from all the storage pools,
-     * which meet the same status, type and SPM status.
-     */
-    @Override
-    public List<RepoImage> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
-            StoragePoolStatus storagePoolStatus, StorageDomainStatus storageDomainStatus,
-            VDSStatus vdsStatus) {
-        MapSqlParameterSource parameterSource =
-                getCustomMapSqlParameterSource().addValue("storage_domain_type", storageDomainType.getValue());
-        parameterSource.addValue("storage_pool_status", storagePoolStatus.getValue());
-        parameterSource.addValue("vds_status", vdsStatus.getValue());
-        parameterSource.addValue("storage_domain_status", storageDomainStatus.getValue());
-
-        return getCallsHandler().executeReadList("GetRepo_files_in_all_storage_pools",
-                thinRepoImageMapper,
-                parameterSource);
-    }
-
-    private static final RowMapper<RepoImage> thinRepoImageMapper = (rs, rowNum) -> {
-        RepoImage entity = new RepoImage();
-        entity.setRepoDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
-        entity.setLastRefreshed(rs.getLong("last_refreshed"));
-        entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
-        return entity;
-    };
 
     private static final RowMapper<RepoImage> repoImageMapper= (rs, rowNum) -> {
         RepoImage entity = new RepoImage();

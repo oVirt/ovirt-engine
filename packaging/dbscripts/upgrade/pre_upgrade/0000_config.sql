@@ -70,7 +70,6 @@ select fn_db_add_config_value('AutoApprovePatterns','','general');
 select fn_db_add_config_value('AutoInstallCertificateOnApprove','true','general');
 select fn_db_add_config_value('AutoRecoverySchedule','0 0/5 * * * ?','general');
 select fn_db_add_config_value('AutoRegistrationDefaultClusterID','99408929-82CF-4DC7-A532-9D998063FA95','general');
-select fn_db_add_config_value('AutoRepoDomainRefreshTime','60','general');
 select fn_db_add_config_value('BlockMigrationOnSwapUsagePercentage','0','general');
 select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE

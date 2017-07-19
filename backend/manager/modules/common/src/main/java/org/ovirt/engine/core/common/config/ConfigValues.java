@@ -282,8 +282,8 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     NumberVdsRefreshesBeforeRetryToStartUnknownVms,
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("60")
-    AutoRepoDomainRefreshTime,
+    @DefaultValueAttribute("1")
+    RepoDomainInvalidateCacheTimeInMinutes,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     InstallVds,

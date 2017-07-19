@@ -1,0 +1,2 @@
+select fn_db_delete_config_value_all_versions('AutoRepoDomainRefreshTime');
+DROP TYPE IF EXISTS GetRepo_files_in_all_storage_pools_rs CASCADE;

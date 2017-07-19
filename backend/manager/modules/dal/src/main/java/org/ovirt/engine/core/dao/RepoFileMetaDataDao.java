@@ -2,10 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -36,13 +32,4 @@ public interface RepoFileMetaDataDao extends Dao {
      */
     List<RepoImage> getRepoListForStorageDomain(Guid storageDomainId,
             ImageFileType fileType);
-
-    /**
-     * Returns list of the oldest last refreshed repository files,
-     * for each storage pool, storage domain and file type in all System,
-     * which meets the same storage domain status, type and SPM status.
-     */
-    List<RepoImage> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
-            StoragePoolStatus storagePoolStatus, StorageDomainStatus storageDomainStatus,
-            VDSStatus vdsStatus);
 }

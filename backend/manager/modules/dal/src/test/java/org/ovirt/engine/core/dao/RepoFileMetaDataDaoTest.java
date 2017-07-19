@@ -6,16 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -97,92 +92,6 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
 
         assertNotNull(listOfRepoFiles);
         assertTrue(listOfRepoFiles.isEmpty());
-    }
-
-    /**
-     * Test fetch of all storage domains for all the repository files,
-     * The fetch should fetch 4 rows, the first one is an empty storage domain,
-     * The empty storage domain, should not have files, but should be fetched, since we want to refresh it.
-     * The other three are from the same storage domain with three different types.
-     */
-    @Test
-    public void testFetchAllIsoDomainInSystemNoDuplicate() {
-        // Should get one iso file
-        List<RepoImage> listOfAllIsoFiles = repoFileMetaDataDao
-                .getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
-                        StoragePoolStatus.Up,
-                        StorageDomainStatus.Active,
-                        VDSStatus.Up);
-
-        // Should get only 4 files, 3 file types from one shared storage domain.
-        // plus one empty file of the storage pool with no Iso at all.
-        assertEquals(4, listOfAllIsoFiles.size());
-    }
-
-    /**
-     * Test fetch of all storage domains for all the repository files,
-     * The fetch should fetch 4 rows, the first one is an empty storage domain,
-     * The empty storage domain, should not have files, but should be fetched, since we want to refresh it.
-     * The other three are from the same storage domain with three different types.
-     * In this test, we test the file types, to check if all were fetched.
-     */
-    @Test
-    public void testFileTypeWhenFetchAllIsoDomainInSystem() {
-        // Should get one iso file
-        List<RepoImage> listOfAllIsoFiles = repoFileMetaDataDao
-                .getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
-                        StoragePoolStatus.Up,
-                        StorageDomainStatus.Active,
-                        VDSStatus.Up);
-
-        List<ImageFileType> SharedStorageDomainFileType = new ArrayList<>();
-        List<ImageFileType> EmptyStorageDomainFileType = new ArrayList<>();
-        for (RepoImage fileMD : listOfAllIsoFiles) {
-            Guid repoDomainId = fileMD.getRepoDomainId();
-            if (repoDomainId.equals(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3)) {
-                // Should have three types of files.
-                SharedStorageDomainFileType.add(fileMD.getFileType());
-            } else if (repoDomainId.equals(FixturesTool.STORAGE_DOAMIN_NFS_ISO)) {
-                // Should have only one type (UNKNOWN)
-                EmptyStorageDomainFileType.add(fileMD.getFileType());
-            }
-        }
-
-        // Start the check
-        // the shared storage domain, should have three types of files.
-        assertEquals(3, SharedStorageDomainFileType.size());
-        assertTrue(SharedStorageDomainFileType.contains(ImageFileType.Unknown));
-        assertTrue(SharedStorageDomainFileType.contains(ImageFileType.ISO));
-        assertTrue(SharedStorageDomainFileType.contains(ImageFileType.Floppy));
-
-        // The empty storage domain, should not have files, but should be fetched, since we want to refresh it.
-        assertEquals(1, EmptyStorageDomainFileType.size());
-        assertTrue(EmptyStorageDomainFileType.contains(ImageFileType.Unknown));
-    }
-
-    /**
-     * Test fetch of all storage pools and check if fetched the oldest file,
-     * when fetching all the repository files.
-     */
-    @Test
-    public void testFetchAllIsoDomainOldestFile() {
-        List<RepoImage> listOfIsoFiles = repoFileMetaDataDao
-                .getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
-                        StoragePoolStatus.Up,
-                        StorageDomainStatus.Active,
-                        VDSStatus.Up);
-
-        List<RepoImage> listOfFloppyFiles =
-                repoFileMetaDataDao
-                        .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
-                                ImageFileType.Floppy);
-
-        final long minLastRefreshed =
-                listOfFloppyFiles.stream().mapToLong(RepoImage::getLastRefreshed).min().orElse(9999999999999L);
-
-        // Check if fetched the oldest file when fetching all repository files.
-        assertTrue(listOfIsoFiles.stream()
-                .noneMatch(f -> f.getFileType() == ImageFileType.Floppy && f.getLastRefreshed() > minLastRefreshed));
     }
 
     /**

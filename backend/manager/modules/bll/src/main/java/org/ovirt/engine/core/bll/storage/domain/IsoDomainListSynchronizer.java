@@ -7,18 +7,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.mutable.MutableLong;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
@@ -29,8 +27,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -53,8 +49,6 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -73,12 +67,13 @@ import org.slf4j.LoggerFactory;
 public class IsoDomainListSynchronizer implements BackendService {
     private static final Logger log = LoggerFactory.getLogger(IsoDomainListSynchronizer.class);
 
-    private static final int MIN_TO_MILLISECONDS = 60 * 1000;
     private static final String ISO_VDSM_FILE_PATTERN = "*.iso";
     private static final Pattern ISO_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.iso$", Pattern.CASE_INSENSITIVE);
     private static final String FLOPPY_VDSM_FILE_PATTERN = "*.vfd";
     private static final Pattern FLOPPY_FILE_PATTERN_REGEX = Pattern.compile("^.*\\.vfd$", Pattern.CASE_INSENSITIVE);
     private static final String ALL_FILES_PATTERN = "*";
+
+    private ConcurrentMap<Guid, MutableLong> domainsLastRefreshedTime = new ConcurrentHashMap<>();
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -99,17 +94,12 @@ public class IsoDomainListSynchronizer implements BackendService {
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
 
     @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
-
-    @Inject
     private VmHandler vmHandler;
 
     @Inject
     private ProviderProxyFactory providerProxyFactory;
 
-    private List<RepoImage> problematicRepoFileList = new ArrayList<>();
     private final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
-    private int isoDomainRefreshRate;
 
     public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
     public static final String TOOL_VERSION = "toolVersion";
@@ -122,56 +112,6 @@ public class IsoDomainListSynchronizer implements BackendService {
     // Not kept as static member to enable reloading the config value
     public static String getGuestToolsSetupIsoPrefix() {
         return Config.getValue(ConfigValues.GuestToolsSetupIsoPrefix);
-    }
-
-    @PostConstruct
-    private void init() {
-        log.info("Start initializing {}", getClass().getSimpleName());
-        isoDomainRefreshRate = Config.<Integer> getValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
-        schedulerUtil.scheduleAFixedDelayJob(this,
-                "fetchIsoDomains",
-                new Class[] {},
-                new Object[] {},
-                300000,
-                isoDomainRefreshRate,
-                TimeUnit.MILLISECONDS);
-        log.info("Finished initializing {}", getClass().getSimpleName());
-    }
-
-    /**
-     * Check and update if needed each Iso domain in each Data Center in the system.
-     */
-    @OnTimerMethodAnnotation("fetchIsoDomains")
-    public synchronized void fetchIsoDomains() {
-        // Gets all the active Iso storage domains.
-        List<RepoImage> repofileList = repoFileMetaDataDao.getAllRepoFilesForAllStoragePools(StorageDomainType.ISO,
-                        StoragePoolStatus.Up,
-                        StorageDomainStatus.Active,
-                        VDSStatus.Up);
-
-        resetProblematicList();
-        // Iterate for each storage domain.
-        List<Callable<Void>> tasks = new ArrayList<>();
-        for (final RepoImage repoImage : repofileList) {
-            // If the list should be refreshed and the refresh from the VDSM was succeeded, fetch the file list again
-            // from the DB.
-            if (shouldRefreshIsoDomain(repoImage.getLastRefreshed())) {
-                tasks.add(() -> {
-                    updateCachedIsoFileListFromVdsm(repoImage);
-                    return null;
-                });
-            } else {
-                log.debug("Automatic refresh process for '{}' file type in storage domain id '{}' was not performed"
-                                + " since refresh time out did not passed yet.",
-                        repoImage.getFileType(),
-                        repoImage.getRepoDomainId());
-            }
-        }
-
-        ThreadPoolUtil.invokeAll(tasks);
-
-        // After refresh for all Iso domains finished, handle the log.
-        handleErrorLog(new ArrayList<>(problematicRepoFileList));
     }
 
     /**
@@ -196,11 +136,31 @@ public class IsoDomainListSynchronizer implements BackendService {
             throw new EngineException(EngineError.GetIsoListError);
         }
 
-        if (forceRefresh && !refreshRepos(storageDomainId, imageType)) {
-            throw new EngineException(EngineError.IMAGES_NOT_SUPPORTED_ERROR);
-        }
+        refreshReposIfNeeded(storageDomainId, imageType, forceRefresh);
+
         // In any case, whether refreshed or not, get Iso list from the cache.
         return getCachedIsoListByDomainId(storageDomainId, imageType);
+    }
+
+    private void refreshReposIfNeeded(Guid storageDomainId, ImageFileType imageType, boolean forceRefresh) {
+        MutableLong lastRefreshed = domainsLastRefreshedTime.computeIfAbsent(storageDomainId, k -> new MutableLong(-1));
+
+        if (forceRefresh || shouldInvalidateCache(lastRefreshed.longValue())) {
+            synchronized (lastRefreshed) {
+                // Double check as another thread might have already finished a refresh and released the lock
+                if (forceRefresh || shouldInvalidateCache(lastRefreshed.longValue())) {
+                    boolean refreshSucceeded = refreshRepos(storageDomainId, imageType);
+                    lastRefreshed.setValue(System.currentTimeMillis());
+                    if (!refreshSucceeded) {
+                        throw new EngineException(EngineError.IMAGES_NOT_SUPPORTED_ERROR);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean shouldInvalidateCache(long lastRefreshed) {
+        return System.currentTimeMillis() > lastRefreshed + getInvalidateCachePeriodFromConfig();
     }
 
     private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType) {
@@ -423,23 +383,6 @@ public class IsoDomainListSynchronizer implements BackendService {
     }
 
     /**
-     * Handling the list of problematic repository files, to maintain multi thread caching.
-     * @see #resetProblematicList()
-     */
-    private void addRepoFileToProblematicList(List<RepoImage> repoImageList) {
-        problematicRepoFileList.addAll(repoImageList);
-    }
-
-   /**
-     * Reset the list of problematic repository files, before starting the refresh procedure.
-     * uses for multy thread caching.
-     * @see #addRepoFileToProblematicList(List)
-     */
-    private void resetProblematicList() {
-        problematicRepoFileList.clear();
-    }
-
-    /**
      * Print information on the problematic storage domain. Mainly transfer the business entity to list, for handling
      * the error uniformly.
      * Create a mock RepoImage object in a list, to use the functionality of the handleErrorLog with list.
@@ -543,29 +486,6 @@ public class IsoDomainListSynchronizer implements BackendService {
         return storageDomainName;
     }
 
-    /**
-     * Updates the DB cache table with files fetched from VDSM.
-     * The method is dedicated for multiple threads refresh.
-     * If refresh from VDSM has encounter problems, we update the problematic domain list.
-     */
-    private void updateCachedIsoFileListFromVdsm(RepoImage repoImage) {
-        boolean isRefreshed = false;
-        try {
-            List<RepoImage> problematicRepoFileList = new ArrayList<>();
-            isRefreshed =
-                    refreshIsoDomain(repoImage.getRepoDomainId(),
-                            problematicRepoFileList,
-                            repoImage.getFileType());
-            addRepoFileToProblematicList(problematicRepoFileList);
-        } finally {
-            log.info("Finished automatic refresh process for '{}' file type with {}, for storage domain id '{}'.",
-                    repoImage.getFileType(),
-                    isRefreshed ? "success"
-                            : "failure",
-                    repoImage.getRepoDomainId());
-        }
-    }
-
     private boolean refreshIsoFileListMetaData(final Guid repoStorageDomainId,
                                                final Map<String, Map<String, Object>> fileStats,
                                                final ImageFileType imageType) {
@@ -642,17 +562,6 @@ public class IsoDomainListSynchronizer implements BackendService {
             // Add an audit log that refresh was failed for Floppy files.
             handleErrorLog(storagePoolId, storageDomainId, ImageFileType.Floppy);
         }
-    }
-
-    /**
-     * Check if last refreshed time has exceeded the time limit configured in isoDomainRefreshRate.
-     *
-     * @param lastRefreshed
-     *            - Time when repository file was last refreshed.
-     * @return True if time exceeded, and should refresh the domain, false otherwise.
-     */
-    private boolean shouldRefreshIsoDomain(long lastRefreshed) {
-        return (System.currentTimeMillis() - lastRefreshed) > isoDomainRefreshRate;
     }
 
     private boolean updateAllFileListFromVDSM(Guid repoStoragePoolId, Guid repoStorageDomainId) {
@@ -893,4 +802,7 @@ public class IsoDomainListSynchronizer implements BackendService {
         return null;
     }
 
+    private int getInvalidateCachePeriodFromConfig() {
+        return Config.<Integer> getValue(ConfigValues.RepoDomainInvalidateCacheTimeInMinutes) * 60 * 1000;
+    }
 }
