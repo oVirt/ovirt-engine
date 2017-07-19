@@ -601,6 +601,12 @@ public interface CommonApplicationConstants extends Constants {
 
     String nameInterface();
 
+    String networkFilterParametersWidgetName();
+
+    String nameNetworkFilterParameter();
+
+    String valueNetworkFilterParameter();
+
     String networkNameInterface();
 
     String originalNetworkNameInterface();

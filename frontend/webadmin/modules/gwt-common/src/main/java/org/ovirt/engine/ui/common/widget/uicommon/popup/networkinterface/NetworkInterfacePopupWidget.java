@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.NetworkFilterParameterWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
@@ -93,6 +94,10 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Ignore
     Label macExample;
 
+    @UiField
+    @Ignore
+    public NetworkFilterParameterWidget networkFilterParameterWidget;
+
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
@@ -151,7 +156,9 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Override
     public void edit(final VmInterfaceModel iface) {
         driver.edit(iface);
-
+        networkFilterParameterWidget.edit(iface.getNetworkFilterParameterListModel());
+        networkFilterParameterWidget.setEnabled(iface.getNetworkFilterParameterListModel().getIsAvailable());
+        networkFilterParameterWidget.setVisible(iface.getNetworkFilterParameterListModel().getIsAvailable());
         hideMacWhenNotEnabled(iface);
         iface.getMAC().getPropertyChangedEvent().addListener((ev, sender, args) -> {
             if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
@@ -170,6 +177,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @Override
     public VmInterfaceModel flush() {
+        networkFilterParameterWidget.flush();
         return driver.flush();
     }
 

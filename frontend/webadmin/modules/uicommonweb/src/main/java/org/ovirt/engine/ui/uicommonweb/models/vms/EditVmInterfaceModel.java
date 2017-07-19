@@ -47,6 +47,12 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
         this.vm = vm;
     }
 
+    @Override
+    protected void init() {
+        getNetworkFilterParameterListModel().setIsAvailable(true);
+        super.init();
+    }
+
     protected void onPlugChange() {
         if (!isVmUp()) {
             return;

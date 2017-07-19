@@ -47,6 +47,7 @@ public class NewTemplateInterfaceModel extends NewVmInterfaceModel {
     protected void init() {
         super.init();
         getPlugged().setIsChangeable(false);
+        getNetworkFilterParameterListModel().setIsAvailable(false);
     }
 
     @Override

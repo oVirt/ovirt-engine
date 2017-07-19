@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -9,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -59,6 +62,10 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
         initMAC();
 
         initLinked();
+
+        initNetworkFilterParameters(new AsyncQuery<>(returnValue -> {
+            getNetworkFilterParameterListModel().setItems(returnValue);
+        }));
 
         initProfiles();
 
@@ -117,6 +124,23 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected ActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave) {
-        return new AddVmInterfaceParameters(getVm().getId(), nicToSave);
+        AddVmInterfaceParameters parameters = new AddVmInterfaceParameters(getVm().getId(), nicToSave);
+        parameters.setFilterParameters(getNetworkFilterParameterListModel().getItems()
+                .stream().map(x -> x.flush()).collect(Collectors.toList()));
+        return parameters;
+    }
+
+    protected void initNetworkFilterParameters(AsyncQuery<List<NetworkFilterParameterModel>> aQuery) {
+        aQuery.converterCallback = returnValue -> {
+            List<NetworkFilterParameterModel> parameters = new ArrayList<>();
+            if (returnValue == null) {
+                return parameters;
+            }
+            for (VmNicFilterParameter parameter : (List<VmNicFilterParameter>) returnValue) {
+                parameters.add(new NetworkFilterParameterModel(parameter));
+            }
+            return parameters;
+        };
+        AsyncDataProvider.getInstance().getVnicInteraceNetworkFilterParameters(aQuery, getNic().getId());
     }
 }

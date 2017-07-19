@@ -198,6 +198,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.NetworkFilterParameterModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
@@ -2641,6 +2642,15 @@ public class AsyncDataProvider {
         }
         Frontend.getInstance().runQuery(QueryType.GetVnicProfilesByClusterId,
                 new IdQueryParameters(clusterId),
+                aQuery);
+    }
+
+    public void getVnicInteraceNetworkFilterParameters(AsyncQuery<List<NetworkFilterParameterModel>> aQuery, Guid interfaceId) {
+        if (aQuery.converterCallback == null) {
+            aQuery.converterCallback = new ListConverter<>();
+        }
+        Frontend.getInstance().runQuery(QueryType.GetVmInterfaceFilterParametersByVmInterfaceId,
+                new IdQueryParameters(interfaceId),
                 aQuery);
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -53,6 +54,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void init() {
+        getNetworkFilterParameterListModel().setIsAvailable(true);
         AsyncDataProvider.getInstance().getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), new AsyncQuery<>(
                 returnValue -> {
                     setSupportedVnicTypes(returnValue);
@@ -117,7 +119,10 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected ActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave) {
-        return new AddVmInterfaceParameters(getVm().getId(), nicToSave);
+        AddVmInterfaceParameters parameters = new AddVmInterfaceParameters(getVm().getId(), nicToSave);
+        parameters.setFilterParameters(getNetworkFilterParameterListModel().getItems()
+                .stream().map(x -> x.flush()).collect(Collectors.toList()));
+        return parameters;
     }
 
     protected VmNetworkInterface getNic() {

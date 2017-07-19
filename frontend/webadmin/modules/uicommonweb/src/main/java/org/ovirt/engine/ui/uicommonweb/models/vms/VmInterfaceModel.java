@@ -62,6 +62,8 @@ public abstract class VmInterfaceModel extends Model {
 
     private Guid dcId;
 
+    private ListModel<NetworkFilterParameterModel> networkFilterParameterListModel;
+
     protected VmInterfaceModel(VmBase vm,
             VMStatus vmStatus,
             Guid dcId,
@@ -129,6 +131,7 @@ public abstract class VmInterfaceModel extends Model {
         setUnplugged_IsSelected(new EntityModel<Boolean>());
         getUnplugged_IsSelected().getEntityChangedEvent().addListener(this);
 
+        setNetworkFilterParameterListModel(new ListModel<NetworkFilterParameterModel>());
     }
 
     protected abstract void init();
@@ -250,6 +253,14 @@ public abstract class VmInterfaceModel extends Model {
         unplugged_IsSelected = value;
     }
 
+    public ListModel<NetworkFilterParameterModel> getNetworkFilterParameterListModel() {
+        return networkFilterParameterListModel;
+    }
+
+    public void setNetworkFilterParameterListModel(ListModel<NetworkFilterParameterModel> networkFilterParameterListModel) {
+        this.networkFilterParameterListModel = networkFilterParameterListModel;
+    }
+
     @Override
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
@@ -340,8 +351,20 @@ public abstract class VmInterfaceModel extends Model {
             getMAC().validateEntity(new IValidation[] { new NotEmptyValidation(), new UnicastMacAddressValidation() });
         }
 
+        validateNetworkFilterParameters();
+
         return getName().getIsValid() && getNicType().getIsValid()
-                && getMAC().getIsValid() && getProfile().getIsValid();
+                && getMAC().getIsValid() && getProfile().getIsValid()
+                && getNetworkFilterParameterListModel().getIsValid();
+    }
+
+    private void validateNetworkFilterParameters() {
+        boolean valid = true;
+        for (NetworkFilterParameterModel model : getNetworkFilterParameterListModel().getItems()) {
+            model.validate();
+            valid &= model.getIsValid();
+        }
+        getNetworkFilterParameterListModel().setIsValid(valid);
     }
 
     protected abstract VmNetworkInterface createBaseNic();
@@ -380,7 +403,6 @@ public abstract class VmInterfaceModel extends Model {
                 result -> {
                     ActionReturnValue returnValue = result.getReturnValue();
                     stopProgress();
-
                     if (returnValue != null && returnValue.getSucceeded()) {
                         cancel();
                         postOnSave();
