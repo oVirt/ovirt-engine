@@ -710,7 +710,16 @@ class ConfigEnv(object):
     ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT = \
         'OVESETUP_CONFIG/isoDomainDefaultMountPoint'
 
-    ENGINE_FQDN = 'OVESETUP_ENGINE_CONFIG/fqdn'
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Engine Host FQDN'),
+        summary_condition=lambda env: not env.get(
+            CoreEnv.ENABLE
+        ),
+    )
+    def ENGINE_FQDN(self):
+        return 'OVESETUP_ENGINE_CONFIG/fqdn'
 
     @osetupattrs(
         answerfile=True,
