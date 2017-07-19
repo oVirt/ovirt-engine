@@ -126,7 +126,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<span>{0}</span>")
     SafeHtml text(String text);
 
-    @Template("<div style='border-right: 1px solid #D7D7E1; height: 32px;'>{0}</div>")
+    @Template("<div style='border-right: 0 solid #D7D7E1; height: 32px;'>{0}</div>")
     SafeHtml nonResizeableColumnHeader(SafeHtml text);
 
     @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")

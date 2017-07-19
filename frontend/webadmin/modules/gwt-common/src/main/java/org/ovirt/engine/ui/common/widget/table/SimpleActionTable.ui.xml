@@ -11,6 +11,7 @@
     <ui:style type="org.ovirt.engine.ui.common.widget.table.SimpleActionTable.Style">
         .tableHorizontalOverflow {
             overflow-x: auto;
+            margin-top: -1px;
         }
 
         .refreshPanel {
@@ -64,7 +65,7 @@
                 </b:ButtonGroup>
             </b:FormGroup>
         </g:FlowPanel>
-        <g:FlowPanel addStyleNames="{style.tableHorizontalOverflow}">
+        <g:FlowPanel addStyleNames="table-bordered {style.tableHorizontalOverflow}">
             <g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
             <g:FlowPanel ui:field="tableContainer" />
         </g:FlowPanel>

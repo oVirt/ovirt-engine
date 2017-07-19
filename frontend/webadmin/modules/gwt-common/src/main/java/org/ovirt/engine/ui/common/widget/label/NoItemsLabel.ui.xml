@@ -4,6 +4,7 @@
     <ui:style>
         .label {
             padding-top: 5px;
+            border-top: 1px solid #D1D1D1;
         }
     </ui:style>
     <g:Label ui:field="label" addStyleNames="{style.label}" />

@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -76,7 +77,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getVolumeType(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), disk.getDiskVmElements().iterator().next().getDiskInterface(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskStorageType>(), disk.getDiskStorageType(), "110px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DateLabel(), disk.getCreationDate(), "90px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DateLabel(), disk.getCreationDate(), "100px"); //$NON-NLS-1$
 
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(getEntityId(diskModel));
@@ -99,7 +100,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
 
         TreeItem item = new TreeItem(table);
         item.setUserObject(NODE_HEADER);
-        item.getElement().getStyle().setBackgroundColor("#F0F2FF"); //$NON-NLS-1$
+        item.getElement().getStyle().setPadding(0, Unit.PX);
         return item;
     }
 

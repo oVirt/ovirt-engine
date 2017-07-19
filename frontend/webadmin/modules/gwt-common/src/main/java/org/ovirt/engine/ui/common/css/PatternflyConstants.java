@@ -91,4 +91,6 @@ public class PatternflyConstants {
     public static final String PF_PANEL_COUNTER = "panel-counter"; // $NON-NLS-1$
     public static final String COLLAPSED = "collapsed"; // $NON-NLS-1$
 
+    public static final String PF_TABLE_BORDERED = "table-bordered"; // $NON-NLS-1$
+
 }
