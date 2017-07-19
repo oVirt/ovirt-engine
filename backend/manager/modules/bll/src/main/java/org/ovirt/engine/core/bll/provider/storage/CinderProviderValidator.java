@@ -32,7 +32,7 @@ public class CinderProviderValidator extends ProviderValidator {
     @Inject
     private DiskImageDao diskImageDao;
 
-    StorageDomain CinderStorageDomain;
+    StorageDomain cinderStorageDomain;
 
     public CinderProviderValidator(Provider<?> provider) {
         super(provider);
@@ -76,13 +76,13 @@ public class CinderProviderValidator extends ProviderValidator {
     }
 
     private StorageDomain getStorageDomain() {
-        if (CinderStorageDomain == null) {
+        if (cinderStorageDomain == null) {
             List<StorageDomain> providerStorageList = storageDomainDao.getAllByConnectionId(provider.getId());
             if (!providerStorageList.isEmpty()) {
-                CinderStorageDomain = providerStorageList.get(0);
+                cinderStorageDomain = providerStorageList.get(0);
             }
         }
-        return CinderStorageDomain;
+        return cinderStorageDomain;
     }
 
     private ValidationResult validateAttachStorageDomain() {
