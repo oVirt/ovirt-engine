@@ -112,6 +112,8 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_CONFIG_DOCKERC_CINDER',
                 note=_(
+                    'Please note: container deployment will be deprecated '
+                    'on 4.2\n'
                     'Deploy Cinder container on this host '
                     '(@VALUES@) [@DEFAULT@]: '
                 ),
@@ -127,6 +129,8 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_CONFIG_DOCKERC_GLANCE',
                 note=_(
+                    'Please note: container deployment will be deprecated '
+                    'on 4.2\n'
                     'Deploy Glance container on this host '
                     '(@VALUES@) [@DEFAULT@]: '
                 ),
