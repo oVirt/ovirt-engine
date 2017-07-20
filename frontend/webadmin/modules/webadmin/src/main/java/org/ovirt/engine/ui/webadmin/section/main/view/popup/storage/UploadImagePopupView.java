@@ -177,7 +177,7 @@ public class UploadImagePopupView extends AbstractModelBoundPopupView<UploadImag
     }
 
     private void handleImageUploadBrowserSupport(final UploadImageModel model) {
-        model.setBrowserSupportsUpload(model.browserSupportsUploadAPIs());
+        model.setBrowserSupportsUpload(UploadImageModel.browserSupportsUploadAPIs());
 
         if (!model.getBrowserSupportsUpload()) {
             model.getOkCommand().setIsExecutionAllowed(false);
