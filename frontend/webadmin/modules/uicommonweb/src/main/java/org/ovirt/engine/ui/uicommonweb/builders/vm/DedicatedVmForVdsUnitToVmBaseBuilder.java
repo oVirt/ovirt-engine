@@ -16,7 +16,7 @@ public class DedicatedVmForVdsUnitToVmBaseBuilder<T extends VmBase> extends Base
         // host migration configuration
         List<VDS> defaultHosts = model.getDefaultHost().getSelectedItems();
         if (model.getIsAutoAssign().getEntity()) {
-            vm.setDedicatedVmForVdsList(Collections.<Guid>emptyList());
+            vm.setDedicatedVmForVdsList(Collections.emptyList());
         } else {
             List<Guid> defaultHostsGuids = new ArrayList<>();
             for (VDS host: defaultHosts) {
