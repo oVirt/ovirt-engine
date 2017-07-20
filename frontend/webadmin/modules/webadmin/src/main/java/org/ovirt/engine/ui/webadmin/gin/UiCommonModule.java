@@ -63,8 +63,7 @@ public class UiCommonModule extends BaseUiCommonModule {
     }
 
     void bindModels() {
-        // All model providers are ultimately referenced via ModelBoundTabData
-        // and are therefore created early on, just like eager singletons
+        // all model providers should be bound as singletons
         install(new DataCenterModule());
         install(new StorageModule());
         install(new ClusterModule());
