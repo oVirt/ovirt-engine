@@ -333,7 +333,19 @@
               name="default"
               jndi-name="java:jboss/ee/concurrency/factory/default"
               context-service="default"/>
-          </managed-thread-factories>
+          <managed-thread-factory
+              name="commandCoordinator"
+              jndi-name="java:jboss/ee/concurrency/factory/commandCoordinator"
+              context-service="default"/>
+          <managed-thread-factory
+              name="hostUpdatesChecker"
+              jndi-name="java:jboss/ee/concurrency/factory/hostUpdatesChecker"
+              context-service="default"/>
+          <managed-thread-factory
+              name="engine"
+              jndi-name="java:jboss/ee/concurrency/factory/engine"
+              context-service="default"/>
+        </managed-thread-factories>
         <managed-executor-services>
           <managed-executor-service
               name="default"
@@ -347,7 +359,7 @@
               long-running-tasks="true"
               jndi-name="java:jboss/ee/concurrency/executor/commandCoordinator"
               context-service="default"
-              thread-factory="default"
+              thread-factory="commandCoordinator"
               core-threads="1"
               max-threads="{{ config.getinteger('COMMAND_COORDINATOR_THREAD_POOL_SIZE') }}"
               keepalive-time="5000"
@@ -357,19 +369,19 @@
               long-running-tasks="true"
               jndi-name="java:jboss/ee/concurrency/executor/hostUpdatesChecker"
               context-service="default"
-              thread-factory="default"
+              thread-factory="hostUpdatesChecker"
               core-threads="1"
               max-threads="{{ config.getinteger('HOST_CHECK_FOR_UPDATES_THREAD_POOL_SIZE') }}"
               keepalive-time="5000"
               reject-policy="RETRY_ABORT" />
           <managed-executor-service
-              name="managedThreadPool"
+              name="engineThreadPool"
               long-running-tasks="true"
-              jndi-name="java:jboss/ee/concurrency/executor/managedThreadPool"
+              jndi-name="java:jboss/ee/concurrency/executor/engineThreadPool"
               context-service="default"
-              thread-factory="default"
-              core-threads="{{ config.getinteger('MANAGED_THREAD_POOL_MIN_SIZE') }}"
-              max-threads="{{ config.getinteger('MANAGED_THREAD_POOL_MAX_SIZE') }}"
+              thread-factory="engine"
+              core-threads="{{ config.getinteger('ENGINE_THREAD_POOL_MIN_SIZE') }}"
+              max-threads="{{ config.getinteger('ENGINE_THREAD_POOL_MAX_SIZE') }}"
               keepalive-time="5000"
               reject-policy="RETRY_ABORT" />
         </managed-executor-services>

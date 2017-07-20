@@ -15,7 +15,7 @@ import javax.inject.Qualifier;
 @Target({FIELD, TYPE, METHOD })
 public @interface ThreadPools {
 
-    enum ThreadPoolType {CoCo, HostUpdatesChecker, ManagedThreadPool}
+    enum ThreadPoolType {CoCo, HostUpdatesChecker, EngineThreadPool}
 
     ThreadPoolType value();
 }
