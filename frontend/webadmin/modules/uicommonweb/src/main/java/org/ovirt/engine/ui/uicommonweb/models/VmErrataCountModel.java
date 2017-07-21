@@ -23,4 +23,5 @@ public class VmErrataCountModel extends AbstractErrataCountModel {
     protected QueryType getQueryType() {
         return QueryType.GetErrataCountsForVm;
     }
+
 }

@@ -27,4 +27,5 @@ public class EngineErrataListModel extends AbstractErrataListModel {
     protected QueryType getQueryType() {
         return QueryType.GetErrataForEngine;
     }
+
 }

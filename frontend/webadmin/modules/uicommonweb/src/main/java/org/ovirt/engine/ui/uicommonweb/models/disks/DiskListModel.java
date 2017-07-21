@@ -176,18 +176,22 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         this.diskViewType = diskViewType;
     }
 
-    private final DiskVmListModel diskVmListModel;
-    private final DiskTemplateListModel diskTemplateListModel;
-    private final DiskStorageListModel diskStorageListModel;
+    private final DiskVmListModel vmListModel;
+    private final DiskTemplateListModel templateListModel;
+    private final DiskStorageListModel storageListModel;
+    private final DiskGeneralModel generalModel;
+    private final PermissionListModel<Disk> permissionListModel;
 
     @Inject
     public DiskListModel(final DiskVmListModel diskVmListModel, final DiskTemplateListModel diskTemplateListModel,
             final DiskStorageListModel diskStorageListModel, final DiskGeneralModel diskGeneralModel,
             final PermissionListModel<Disk> permissionListModel) {
-        this.diskVmListModel = diskVmListModel;
-        this.diskTemplateListModel = diskTemplateListModel;
-        this.diskStorageListModel = diskStorageListModel;
-        setDetailList(diskGeneralModel, permissionListModel);
+        this.vmListModel = diskVmListModel;
+        this.templateListModel = diskTemplateListModel;
+        this.storageListModel = diskStorageListModel;
+        this.generalModel = diskGeneralModel;
+        this.permissionListModel = permissionListModel;
+        setDetailList();
 
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setApplicationPlace(WebAdminApplicationPlaces.diskMainTabPlace);
@@ -218,17 +222,16 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         setDiskViewType(new EntityModel<DiskStorageType>());
     }
 
-    private void setDetailList(final DiskGeneralModel diskGeneralModel,
-            final PermissionListModel<Disk> permissionListModel) {
-        diskVmListModel.setIsAvailable(false);
-        diskTemplateListModel.setIsAvailable(false);
-        diskStorageListModel.setIsAvailable(false);
+    private void setDetailList() {
+        vmListModel.setIsAvailable(false);
+        templateListModel.setIsAvailable(false);
+        storageListModel.setIsAvailable(false);
 
         List<HasEntity<? extends Disk>> list = new ArrayList<>();
-        list.add(diskGeneralModel);
-        list.add(diskVmListModel);
-        list.add(diskTemplateListModel);
-        list.add(diskStorageListModel);
+        list.add(generalModel);
+        list.add(vmListModel);
+        list.add(templateListModel);
+        list.add(storageListModel);
         list.add(permissionListModel);
         // TODO: find better type bound for list
         setDetailModels((List) list);
@@ -262,9 +265,9 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         if (getSelectedItem() != null) {
             Disk disk = getSelectedItem();
 
-            diskVmListModel.setIsAvailable(disk.getVmEntityType() == null || !disk.getVmEntityType().isTemplateType());
-            diskTemplateListModel.setIsAvailable(disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType());
-            diskStorageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE ||
+            vmListModel.setIsAvailable(disk.getVmEntityType() == null || !disk.getVmEntityType().isTemplateType());
+            templateListModel.setIsAvailable(disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType());
+            storageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE ||
                     disk.getDiskStorageType() == DiskStorageType.CINDER);
         }
     }
@@ -726,4 +729,25 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
     protected String getListName() {
         return "DiskListModel"; //$NON-NLS-1$
     }
+
+    public DiskGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    public DiskVmListModel getVmListModel() {
+        return vmListModel;
+    }
+
+    public DiskTemplateListModel getTemplateListModel() {
+        return templateListModel;
+    }
+
+    public DiskStorageListModel getStorageListModel() {
+        return storageListModel;
+    }
+
+    public PermissionListModel<Disk> getPermissionListModel() {
+        return permissionListModel;
+    }
+
 }

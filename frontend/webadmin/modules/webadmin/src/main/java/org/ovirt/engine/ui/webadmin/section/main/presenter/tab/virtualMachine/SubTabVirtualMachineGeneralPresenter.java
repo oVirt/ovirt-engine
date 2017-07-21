@@ -3,12 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Label;
@@ -24,8 +22,6 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabVirtualMachineGeneralPresenter
     extends AbstractSubTabVirtualMachinePresenter<VmGeneralModel, SubTabVirtualMachineGeneralPresenter.ViewDef,
         SubTabVirtualMachineGeneralPresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace)
@@ -50,7 +46,7 @@ public class SubTabVirtualMachineGeneralPresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.virtualMachineGeneralSubTabLabel(), 0);
+        return DetailTabDataIndex.VIRTUALMACHINE_GENERAL;
     }
 
     @Inject
@@ -110,4 +106,5 @@ public class SubTabVirtualMachineGeneralPresenter
         final Label label = new Label(text);
         view.addAlert(label);
     }
+
 }

@@ -5,13 +5,11 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -26,8 +24,6 @@ public class SubTabNetworkTemplatePresenter
     extends AbstractSubTabNetworkPresenter<NetworkTemplateListModel, SubTabNetworkTemplatePresenter.ViewDef,
         SubTabNetworkTemplatePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkTemplateSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkTemplatePresenter> {
@@ -38,16 +34,16 @@ public class SubTabNetworkTemplatePresenter
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.networkTemplateSubTabLabel(), 6);
+        return DetailTabDataIndex.NETWORK_TEMPLATE;
     }
 
     @Inject
     public SubTabNetworkTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
             NetworkTemplateActionPanelPresenterWidget actionPanel,
-            SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>,
-                NetworkListModel, NetworkTemplateListModel> modelProvider) {
+            SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

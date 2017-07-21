@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.tab;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.NavTabs;
@@ -13,13 +16,16 @@ import org.ovirt.engine.ui.common.widget.tab.TabFactory;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.Tab;
 import com.gwtplatform.mvp.client.TabData;
@@ -35,19 +41,23 @@ public class SimpleTabPanel extends AbstractTabPanel {
     @UiField
     FlowPanel tabContainer;
 
-    final OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs;
-
     @UiField
     Column breadCrumbsContainer;
 
+    final OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs;
     private final DetailTabLayout tabLayout;
+
     private NavTabs navTabs;
     private HandlerRegistration keyHandler;
 
+    private final Map<TabData, Widget> actualTabWidgets = new HashMap<>();
+    private final Map<TabData, String> tabHistoryTokens = new HashMap<>();
+
     public SimpleTabPanel(OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs, DetailTabLayout tabLayout) {
-        navTabs = createPatternFlyNavTabs();
-        this.tabLayout = tabLayout;
         this.breadCrumbs = breadCrumbs;
+        this.tabLayout = tabLayout;
+        this.navTabs = createPatternFlyNavTabs();
+
         initWidget();
         tabContainer.add(navTabs);
         if (breadCrumbs != null) {
@@ -55,6 +65,11 @@ public class SimpleTabPanel extends AbstractTabPanel {
         }
     }
 
+    /**
+     * TODO(vs) newTab (Tab impl.) is effectively an unattached empty div element.
+     * This means methods like updateTab currently have no effect. The AnchorListItem
+     * widget created in addTabDefinition is the actual tab widget impl.
+     */
     @Override
     public Tab addTab(TabData tabData, String historyToken) {
         TabDefinition newTab = createNewTab(tabData);
@@ -62,6 +77,8 @@ public class SimpleTabPanel extends AbstractTabPanel {
         newTab.setText(tabData.getLabel());
         int index = tabLayout.addGroupedTabData(tabData);
         addTabDefinition(newTab, index);
+        actualTabWidgets.put(tabData, navTabs.getWidget(index));
+        tabHistoryTokens.put(tabData, historyToken);
         // Update tabs to show/hide if needed.
         updateTab(newTab);
         return newTab;
@@ -129,7 +146,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
         super.setActiveTab(tab);
         String title = tab.getText();
         String href = calculateHref(tab);
-        for(int i = 0; i < navTabs.getWidgetCount(); i++) {
+        for (int i = 0; i < navTabs.getWidgetCount(); i++) {
             IsWidget widget = navTabs.getWidget(i);
             if (widget instanceof AnchorListItem) {
                 AnchorListItem item = (AnchorListItem) widget;
@@ -145,7 +162,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
     private String calculateHref(Tab tab) {
         String href = "#"; //$NON-NLS-1$
         if (tab instanceof AbstractTab) {
-            href = ((AbstractTab)tab).getTargetHistoryToken();
+            href = ((AbstractTab) tab).getTargetHistoryToken();
         }
         return href;
     }
@@ -159,35 +176,33 @@ public class SimpleTabPanel extends AbstractTabPanel {
     }
 
     @Override
-    public void removeTabDefinition(Tab tab) {
-        String title = tab.getText();
-        String href = calculateHref(tab);
-        for(int i = 0; i < navTabs.getWidgetCount(); i++) {
-            IsWidget widget = navTabs.getWidget(i);
-            if (widget instanceof AnchorListItem) {
-                AnchorListItem item = (AnchorListItem) widget;
-                if (item.getText().equals(title) && item.getHref().endsWith(href)) {
-                    navTabs.remove(i);
-                    break;
-                }
+    public void setTabVisible(TabData tabData, boolean visible) {
+        Widget tabWidget = actualTabWidgets.get(tabData);
+        if (tabWidget != null) {
+            // update tab visibility
+            tabWidget.setVisible(visible);
+
+            // handle the case when currently active tab becomes hidden
+            if (!visible && getActiveTabHistoryToken().equals(tabHistoryTokens.get(tabData))) {
+                Scheduler.get().scheduleDeferred(() -> {
+                    String href = getFirstVisibleTabHref();
+                    if (href != null) {
+                        String historyToken = href.substring(href.indexOf("#") + 1); //$NON-NLS-1$
+                        History.newItem(historyToken);
+                    }
+                });
             }
         }
     }
 
-    @Override
-    public void updateTab(TabDefinition tab) {
-        super.updateTab(tab);
-        String title = tab.getText();
-        String href = calculateHref(tab);
-        for(int i = 0; i < navTabs.getWidgetCount(); i++) {
-            IsWidget widget = navTabs.getWidget(i);
-            if (widget instanceof AnchorListItem) {
-                AnchorListItem item = (AnchorListItem) widget;
-                if (item.getText().equals(title) && item.getHref().endsWith(href)) {
-                    item.setVisible(tab.isAccessible());
-                    break;
-                }
+    private String getFirstVisibleTabHref() {
+        for (int i = 0; i < navTabs.getWidgetCount(); i++) {
+            Widget tabWidget = navTabs.getWidget(i);
+            if (tabWidget instanceof AnchorListItem && tabWidget.isVisible()) {
+                return ((AnchorListItem) navTabs.getWidget(i)).getHref();
             }
         }
+        return null;
     }
+
 }

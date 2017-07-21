@@ -22,7 +22,8 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public NetworkSubTabPanelView(OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public NetworkSubTabPanelView(OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

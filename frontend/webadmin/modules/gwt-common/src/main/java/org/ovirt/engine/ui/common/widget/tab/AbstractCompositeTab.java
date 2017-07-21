@@ -35,4 +35,5 @@ public abstract class AbstractCompositeTab extends AbstractTab implements TabDef
     @Override
     public void deactivate() {
     }
+
 }

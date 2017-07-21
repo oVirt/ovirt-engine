@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabVolumePermissionPresenter
     extends AbstractSubTabGlusterPresenter<PermissionListModel<GlusterVolumeEntity>,
         SubTabVolumePermissionPresenter.ViewDef, SubTabVolumePermissionPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.volumePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVolumePermissionPresenter> {
@@ -36,16 +32,16 @@ public class SubTabVolumePermissionPresenter
 
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.volumePermissionSubTabLabel(), 3);
+        return DetailTabDataIndex.GLUSTER_PERMISSIONS;
     }
 
     @Inject
     public SubTabVolumePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<Permission, VolumeListModel,
-            PermissionListModel<GlusterVolumeEntity>> modelProvider) {
+            SearchableDetailModelProvider<Permission, VolumeListModel, PermissionListModel<GlusterVolumeEntity>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

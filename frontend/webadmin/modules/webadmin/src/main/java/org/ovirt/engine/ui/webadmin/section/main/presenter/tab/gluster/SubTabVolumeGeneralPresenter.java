@@ -3,12 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -23,8 +21,6 @@ public class SubTabVolumeGeneralPresenter
     extends AbstractSubTabGlusterPresenter<VolumeGeneralModel, SubTabVolumeGeneralPresenter.ViewDef,
         SubTabVolumeGeneralPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.volumeGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVolumeGeneralPresenter> {
@@ -35,7 +31,7 @@ public class SubTabVolumeGeneralPresenter
 
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.volumeGeneralSubTabLabel(), 0);
+        return DetailTabDataIndex.GLUSTER_GENERAL;
     }
 
     @Inject
@@ -46,4 +42,5 @@ public class SubTabVolumeGeneralPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

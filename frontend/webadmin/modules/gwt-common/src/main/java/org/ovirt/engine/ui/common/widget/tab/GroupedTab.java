@@ -12,4 +12,5 @@ public class GroupedTab extends SimpleTab implements HasHandlers {
         setGroupPriority(tabData.getGroupPriority());
         setIcon(tabData.getIcon());
     }
+
 }

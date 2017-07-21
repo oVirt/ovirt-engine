@@ -22,7 +22,8 @@ public class StorageSubTabPanelView extends AbstractSubTabPanelView implements S
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public StorageSubTabPanelView(OvirtBreadCrumbsPresenterWidget<StorageDomain, StorageListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public StorageSubTabPanelView(OvirtBreadCrumbsPresenterWidget<StorageDomain, StorageListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

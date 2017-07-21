@@ -31,5 +31,9 @@ public interface DetailModelProvider<M extends ListWithDetailsModel, D extends H
      */
     void activateDetailModel();
 
+    /**
+     * Returns the main model associated with the detail model.
+     */
     M getMainModel();
+
 }

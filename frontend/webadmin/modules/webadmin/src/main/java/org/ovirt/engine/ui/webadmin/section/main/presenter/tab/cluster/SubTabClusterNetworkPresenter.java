@@ -3,13 +3,13 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -36,7 +36,7 @@ public class SubTabClusterNetworkPresenter
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.clusterNetworkSubTabLabel(), 1);
+        return DetailTabDataIndex.CLUSTER_NETWORK;
     }
 
     @Inject
@@ -47,4 +47,5 @@ public class SubTabClusterNetworkPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

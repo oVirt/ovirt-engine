@@ -22,7 +22,8 @@ public class TemplateSubTabPanelView extends AbstractSubTabPanelView implements 
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public TemplateSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VmTemplate, TemplateListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public TemplateSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VmTemplate, TemplateListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

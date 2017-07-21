@@ -22,7 +22,8 @@ public class VolumeSubTabPanelView extends AbstractSubTabPanelView implements Vo
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public VolumeSubTabPanelView(OvirtBreadCrumbsPresenterWidget<GlusterVolumeEntity, VolumeListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public VolumeSubTabPanelView(OvirtBreadCrumbsPresenterWidget<GlusterVolumeEntity, VolumeListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

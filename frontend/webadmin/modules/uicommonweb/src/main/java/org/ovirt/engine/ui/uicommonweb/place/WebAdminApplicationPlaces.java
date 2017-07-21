@@ -45,8 +45,7 @@ public class WebAdminApplicationPlaces {
 
     // Main section: sub tabs
 
-    // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model
-    // hashName
+    // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model hashName
     public static final String SUB_TAB_PREFIX = "-"; //$NON-NLS-1$
 
     // DataCenter
@@ -399,10 +398,7 @@ public class WebAdminApplicationPlaces {
     // Errata
     public static final String errataDetailsSubTabPlace = errataMainTabPlace + SUB_TAB_PREFIX + "details"; //$NON-NLS-1$
 
-
-
     // Default places
-
     public static final String DEFAULT_MAIN_SECTION_PLACE = virtualMachineMainTabPlace;
 
 }

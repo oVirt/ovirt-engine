@@ -23,4 +23,5 @@ public class HostErrataCountModel extends AbstractErrataCountModel {
     protected QueryType getQueryType() {
         return QueryType.GetErrataCountsForHost;
     }
+
 }

@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabNetworkPermissionPresenter
     extends AbstractSubTabNetworkPresenter<PermissionListModel<NetworkView>, SubTabNetworkPermissionPresenter.ViewDef,
         SubTabNetworkPermissionPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkPermissionPresenter> {
@@ -36,17 +32,17 @@ public class SubTabNetworkPermissionPresenter
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.networkPermissionSubTabLabel(), 7);
+        return DetailTabDataIndex.NETWORK_PERMISSION;
     }
 
     @Inject
     public SubTabNetworkPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<Permission, NetworkListModel,
-            PermissionListModel<NetworkView>> modelProvider) {
+            SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }
 

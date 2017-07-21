@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -44,6 +43,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.inject.Inject;
 
 public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> implements TagAssigningModel<DbUser> {
+
     private UICommand privateAddCommand;
 
     public UICommand getAddCommand() {
@@ -75,28 +75,28 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         privateAssignTagsCommand = value;
     }
 
-    protected Object[] getSelectedKeys() {
-        if (getSelectedItems() == null) {
-            return new Object[0];
-        }
-        else {
-            ArrayList<Object> items = new ArrayList<>();
-            for (Object i : getSelectedItems()) {
-                items.add(((Cluster) i).getId());
-            }
-            return items.toArray(new Object[] {});
-        }
-    }
+    private final UserGroupListModel groupListModel;
+    private final UserEventNotifierListModel eventNotifierListModel;
+    private final UserGeneralModel generalModel;
+    private final UserPermissionListModel permissionListModel;
+    private final UserQuotaListModel quotaListModel;
+    private final UserEventListModel eventListModel;
 
     @Inject
     public UserListModel(final UserGroupListModel userGroupListModel,
-            final UserEventNotifierListModel userEventNotifierListModel, final UserGeneralModel userGeneralModel,
-            final UserQuotaListModel userQuotaListModel, final UserPermissionListModel userPermissionListModel,
+            final UserEventNotifierListModel userEventNotifierListModel,
+            final UserGeneralModel userGeneralModel,
+            final UserQuotaListModel userQuotaListModel,
+            final UserPermissionListModel userPermissionListModel,
             final UserEventListModel userEventListModel) {
         setIsTimerDisabled(true);
-        this.userGroupListModel = userGroupListModel;
-        this.userEventNotifierListModel = userEventNotifierListModel;
-        setDetailList(userGeneralModel, userQuotaListModel, userPermissionListModel, userEventListModel);
+        this.groupListModel = userGroupListModel;
+        this.eventNotifierListModel = userEventNotifierListModel;
+        this.generalModel = userGeneralModel;
+        this.permissionListModel = userPermissionListModel;
+        this.quotaListModel = userQuotaListModel;
+        this.eventListModel = userEventListModel;
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
         setApplicationPlace(WebAdminApplicationPlaces.userMainTabPlace);
 
@@ -114,17 +114,15 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private void setDetailList(final UserGeneralModel userGeneralModel, final UserQuotaListModel userQuotaListModel,
-            final UserPermissionListModel userPermissionListModel, final UserEventListModel userEventListModel) {
-
+    private void setDetailList() {
         List<HasEntity<DbUser>> list = new ArrayList<>();
-        list.add(userGeneralModel);
-        list.add(userQuotaListModel);
-        list.add(userPermissionListModel);
-        list.add(userEventListModel);
-        userGroupListModel.setIsAvailable(false);
-        list.add(userGroupListModel);
-        list.add(userEventNotifierListModel);
+        list.add(generalModel);
+        list.add(quotaListModel);
+        list.add(permissionListModel);
+        list.add(eventListModel);
+        groupListModel.setIsAvailable(false);
+        list.add(groupListModel);
+        list.add(eventNotifierListModel);
         setDetailModels(list);
     }
 
@@ -360,9 +358,6 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         return true;
     }
 
-    private final UserGroupListModel userGroupListModel;
-    private final UserEventNotifierListModel userEventNotifierListModel;
-
     private IFrontendActionAsyncCallback nopCallback = result -> {
         // Nothing.
     };
@@ -371,8 +366,8 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
     protected void updateDetailsAvailability() {
         if (getSelectedItem() != null) {
             DbUser adUser = getSelectedItem();
-            userGroupListModel.setIsAvailable(!adUser.isGroup());
-            userEventNotifierListModel.setIsAvailable(!adUser.isGroup());
+            groupListModel.setIsAvailable(!adUser.isGroup());
+            eventNotifierListModel.setIsAvailable(!adUser.isGroup());
         }
     }
 
@@ -535,4 +530,29 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
     protected String getListName() {
         return "UserListModel"; //$NON-NLS-1$
     }
+
+    public UserGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    public UserPermissionListModel getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    public UserQuotaListModel getQuotaListModel() {
+        return quotaListModel;
+    }
+
+    public UserGroupListModel getGroupListModel() {
+        return groupListModel;
+    }
+
+    public UserEventNotifierListModel getEventNotifierListModel() {
+        return eventNotifierListModel;
+    }
+
+    public UserEventListModel getEventListModel() {
+        return eventListModel;
+    }
+
 }

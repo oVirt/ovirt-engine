@@ -22,7 +22,8 @@ public class PoolSubTabPanelView extends AbstractSubTabPanelView implements Pool
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public PoolSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VmPool, PoolListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public PoolSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VmPool, PoolListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

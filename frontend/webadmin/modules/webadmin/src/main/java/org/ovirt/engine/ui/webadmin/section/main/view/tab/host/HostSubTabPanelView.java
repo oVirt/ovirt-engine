@@ -22,7 +22,8 @@ public class HostSubTabPanelView extends AbstractSubTabPanelView implements Host
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public HostSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VDS, HostListModel<Void>> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public HostSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VDS, HostListModel<Void>> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

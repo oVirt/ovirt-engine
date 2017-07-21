@@ -20,7 +20,8 @@ public class QuotaSubTabPanelView extends AbstractSubTabPanelView implements Quo
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public QuotaSubTabPanelView(QuotaBreadCrumbsPresenterWidget breadCrumbs, DetailTabLayout detailTabLayout) {
+    public QuotaSubTabPanelView(QuotaBreadCrumbsPresenterWidget breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

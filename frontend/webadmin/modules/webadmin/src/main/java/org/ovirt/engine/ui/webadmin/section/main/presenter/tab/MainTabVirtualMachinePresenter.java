@@ -51,14 +51,9 @@ public class MainTabVirtualMachinePresenter
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(WebadminMenuLayout menuLayout) {
-        MenuLayoutMenuDetails menuTabDetails =
-                menuLayout.getDetails(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
-        return new GroupedTabData(
-                menuTabDetails.getSecondaryTitle(),
-                menuTabDetails.getPrimaryTitle(),
-                menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryPriority(),
-                menuTabDetails.getIcon());
+        MenuLayoutMenuDetails menuDetails = menuLayout.getDetails(
+                WebAdminApplicationPlaces.virtualMachineMainTabPlace);
+        return new GroupedTabData(menuDetails);
     }
 
     @Inject
@@ -86,4 +81,5 @@ public class MainTabVirtualMachinePresenter
         getView().setActiveTags(event.getActiveTags());
         setTags(event.getActiveTags());
     }
+
 }

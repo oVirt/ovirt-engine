@@ -3,14 +3,12 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.HostAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.AffinityLabelsActionPanelPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -25,8 +23,6 @@ public class SubTabHostAffinityLabelPresenter
         extends AbstractSubTabHostPresenter<HostAffinityLabelListModel,
         SubTabHostAffinityLabelPresenter.ViewDef, SubTabHostAffinityLabelPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostAffinityLabelsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostAffinityLabelPresenter> {
@@ -37,7 +33,7 @@ public class SubTabHostAffinityLabelPresenter
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.affinityLabelsSubTabLabel(), 6);
+        return DetailTabDataIndex.HOSTS_AFFINITY_LABELS;
     }
 
     @Inject
@@ -48,4 +44,5 @@ public class SubTabHostAffinityLabelPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

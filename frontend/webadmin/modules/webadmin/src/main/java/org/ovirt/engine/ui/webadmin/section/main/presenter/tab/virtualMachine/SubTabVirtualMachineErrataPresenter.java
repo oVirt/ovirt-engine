@@ -4,14 +4,12 @@ import org.ovirt.engine.core.common.businessentities.ErrataCounts;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -25,15 +23,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
-/**
  * Presenter for the sub tab (VMs > Errata) that contains errata (singular: Erratum)
  * for the selected VM.
  */
 public class SubTabVirtualMachineErrataPresenter
     extends AbstractSubTabVirtualMachinePresenter<VmErrataCountModel, SubTabVirtualMachineErrataPresenter.ViewDef,
         SubTabVirtualMachineErrataPresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineErrataSubTabPlace)
@@ -52,7 +47,7 @@ public class SubTabVirtualMachineErrataPresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.virtualMachineErrataSubTabLabel(), 10);
+        return DetailTabDataIndex.VIRTUALMACHINE_ERRATA;
     }
 
     private final VmErrataCountModel errataCountModel;

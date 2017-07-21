@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabClusterGlusterHookPresenter
     extends AbstractSubTabClusterPresenter<ClusterGlusterHookListModel, SubTabClusterGlusterHookPresenter.ViewDef,
         SubTabClusterGlusterHookPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterGlusterHookSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterGlusterHookPresenter> {
@@ -36,7 +32,7 @@ public class SubTabClusterGlusterHookPresenter
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.clusterGlusterHooksSubTabLabel(), 5);
+        return DetailTabDataIndex.CLUSTER_GLUSTER_HOOKS;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabClusterGlusterHookPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

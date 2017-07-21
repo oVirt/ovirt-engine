@@ -140,8 +140,14 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         privateGuideContext = value;
     }
 
-    final DataCenterQuotaListModel quotaListModel;
-    final DataCenterIscsiBondListModel iscsiBondListModel;
+    private final DataCenterQuotaListModel quotaListModel;
+    private final DataCenterIscsiBondListModel iscsiBondListModel;
+    private final DataCenterStorageListModel storageListModel;
+    private final DataCenterNetworkListModel networkListModel;
+    private final DataCenterClusterListModel clusterListModel;
+    private final DataCenterStorageQosListModel storageQosListModel;
+    private final PermissionListModel<StoragePool> permissionListModel;
+    private final DataCenterEventListModel eventListModel;
 
     @Inject
     public DataCenterListModel(final DataCenterIscsiBondListModel dataCenterIscsiBondListModel,
@@ -155,11 +161,16 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
             final PermissionListModel<StoragePool> permissionListModel,
             final DataCenterEventListModel dataCenterEventListModel) {
-        iscsiBondListModel = dataCenterIscsiBondListModel;
-        quotaListModel = dataCenterQuotaListModel;
-        setDetailList(dataCenterStorageListModel, dataCenterNetworkListModel, dataCenterClusterListModel,
-                dataCenterNetworkQoSListModel, dataCenterHostNetworkQosListModel, dataCenterStorageQosListModel,
-                dataCenterCpuQosListModel, permissionListModel, dataCenterEventListModel);
+        this.iscsiBondListModel = dataCenterIscsiBondListModel;
+        this.quotaListModel = dataCenterQuotaListModel;
+        this.storageListModel = dataCenterStorageListModel;
+        this.networkListModel = dataCenterNetworkListModel;
+        this.clusterListModel = dataCenterClusterListModel;
+        this.storageQosListModel = dataCenterStorageQosListModel;
+        this.permissionListModel = permissionListModel;
+        this.eventListModel = dataCenterEventListModel;
+        setDetailList(dataCenterNetworkQoSListModel, dataCenterHostNetworkQosListModel,
+                dataCenterCpuQosListModel);
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
         setApplicationPlace(WebAdminApplicationPlaces.dataCenterMainTabPlace);
 
@@ -208,28 +219,22 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                 }), (Guid) getGuideContext());
     }
 
-    private void setDetailList(final DataCenterStorageListModel dataCenterStorageListModel,
-            final DataCenterNetworkListModel dataCenterNetworkListModel,
-            final DataCenterClusterListModel dataCenterClusterListModel,
-            final DataCenterNetworkQoSListModel dataCenterNetworkQoSListModel,
+    private void setDetailList(final DataCenterNetworkQoSListModel dataCenterNetworkQoSListModel,
             final DataCenterHostNetworkQosListModel dataCenterHostNetworkQosListModel,
-            final DataCenterStorageQosListModel dataCenterStorageQosListModel,
-            final DataCenterCpuQosListModel dataCenterCpuQosListModel,
-            final PermissionListModel<StoragePool> permissionListModel,
-            final DataCenterEventListModel dataCenterEventListModel) {
+            final DataCenterCpuQosListModel dataCenterCpuQosListModel) {
         List<HasEntity<StoragePool>> list = new ArrayList<>();
-        list.add(dataCenterStorageListModel);
+        list.add(storageListModel);
         list.add(iscsiBondListModel);
-        list.add(dataCenterNetworkListModel);
-        list.add(dataCenterClusterListModel);
+        list.add(networkListModel);
+        list.add(clusterListModel);
         quotaListModel.setIsAvailable(false);
         list.add(quotaListModel);
         list.add(dataCenterNetworkQoSListModel);
         list.add(dataCenterHostNetworkQosListModel);
-        list.add(dataCenterStorageQosListModel);
+        list.add(storageQosListModel);
         list.add(dataCenterCpuQosListModel);
         list.add(permissionListModel);
-        list.add(dataCenterEventListModel);
+        list.add(eventListModel);
         setDetailModels(list);
     }
 
@@ -816,4 +821,37 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
     protected String getListName() {
         return "DataCenterListModel"; //$NON-NLS-1$
     }
+
+    public DataCenterStorageListModel getStorageListModel() {
+        return storageListModel;
+    }
+
+    public DataCenterNetworkListModel getNetworkListModel() {
+        return networkListModel;
+    }
+
+    public DataCenterIscsiBondListModel getIscsiBondListModel() {
+        return iscsiBondListModel;
+    }
+
+    public DataCenterClusterListModel getClusterListModel() {
+        return clusterListModel;
+    }
+
+    public DataCenterStorageQosListModel getStorageQosListModel() {
+        return storageQosListModel;
+    }
+
+    public DataCenterQuotaListModel getQuotaListModel() {
+        return quotaListModel;
+    }
+
+    public PermissionListModel<StoragePool> getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    public DataCenterEventListModel getEventListModel() {
+        return eventListModel;
+    }
+
 }

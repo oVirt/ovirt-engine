@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabNetworkProfilePresenter
     extends AbstractSubTabNetworkPresenter<NetworkProfileListModel, SubTabNetworkProfilePresenter.ViewDef,
         SubTabNetworkProfilePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkProfileSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkProfilePresenter> {
@@ -36,7 +32,7 @@ public class SubTabNetworkProfilePresenter
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.vnicProfilesMainTabLabel(), 1);
+        return DetailTabDataIndex.NETWORK_PROFILE;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabNetworkProfilePresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

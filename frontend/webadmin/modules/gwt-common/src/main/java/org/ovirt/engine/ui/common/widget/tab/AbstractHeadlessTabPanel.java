@@ -21,6 +21,11 @@ public abstract class AbstractHeadlessTabPanel extends AbstractTabPanel {
         this.menuLayout = menuLayout;
     }
 
+    /**
+     * TODO(vs) newTab (Tab impl.) is effectively an unattached empty div element.
+     * This means methods like updateTab currently have no effect. The AnchorListItem
+     * widget created in addTabDefinition is the actual tab widget impl.
+     */
     @Override
     public Tab addTab(TabData tabData, String historyToken) {
         TabDefinition newTab = createNewTab(tabData);
@@ -57,25 +62,19 @@ public abstract class AbstractHeadlessTabPanel extends AbstractTabPanel {
     }
 
     @Override
-    public void removeTabDefinition(Tab tab) {
-        if (tabWidgetHandler != null && tab instanceof TabDefinition) {
-            tabWidgetHandler.removeTabWidget((TabDefinition) tab);
-        }
-    }
-
-    @Override
     public void updateTab(TabDefinition tab) {
         super.updateTab(tab);
         if (tabWidgetHandler != null) {
-            tabWidgetHandler.updateTab((TabDefinition) tab);
+            tabWidgetHandler.updateTab(tab);
         }
     }
 
     @Override
     public void setActiveTab(Tab tab) {
         super.setActiveTab(tab);
-        if (tabWidgetHandler != null) {
+        if (tabWidgetHandler != null && tab instanceof TabDefinition) {
             tabWidgetHandler.setActiveTab((TabDefinition) tab);
         }
     }
+
 }

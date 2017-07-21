@@ -14,8 +14,8 @@ public class WebadminMenuLayout {
         setUiMode(UiModeData.getUiMode());
     }
 
-    private void getMenuLayout(PrimaryMenuItem[] items, SecondaryMenuItem[] secondaryItems) {
-        for (PrimaryMenuItem layout: items) {
+    private void initLayoutMap(PrimaryMenuItem[] items, SecondaryMenuItem[] secondaryItems) {
+        for (PrimaryMenuItem layout : items) {
             if (layout.getHref() != null) {
                 // Main menu without sub items.
                 MenuLayoutMenuDetails details = new MenuLayoutMenuDetails();
@@ -26,7 +26,7 @@ public class WebadminMenuLayout {
                 layoutMap.put(layout.getHref(), details);
             }
         }
-        for (SecondaryMenuItem subMenu: secondaryItems) {
+        for (SecondaryMenuItem subMenu : secondaryItems) {
             MenuLayoutMenuDetails details = new MenuLayoutMenuDetails();
             details.setPrimaryPriority(subMenu.getPrimaryMenu().getIndex());
             details.setPrimaryTitle(subMenu.getPrimaryMenu().getTitle());
@@ -40,13 +40,13 @@ public class WebadminMenuLayout {
     public void setUiMode(ApplicationMode applicationMode) {
         switch (applicationMode) {
         case AllModes:
-            getMenuLayout(AllModesMenuLayout.values(), AllModesSubMenu.values());
+            initLayoutMap(AllModesMenuLayout.values(), AllModesSubMenu.values());
             break;
         case GlusterOnly:
-            getMenuLayout(GlusterModeMenuLayout.values(), GlusterModeSubMenu.values());
+            initLayoutMap(GlusterModeMenuLayout.values(), GlusterModeSubMenu.values());
             break;
         case VirtOnly:
-            getMenuLayout(AllModesMenuLayout.values(), AllModesSubMenu.values());
+            initLayoutMap(AllModesMenuLayout.values(), AllModesSubMenu.values());
             break;
         default:
             break;
@@ -56,4 +56,5 @@ public class WebadminMenuLayout {
     public MenuLayoutMenuDetails getDetails(String itemPlace) {
         return layoutMap.get(itemPlace);
     }
+
 }

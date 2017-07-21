@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabVirtualMachineVirtualDiskPresenter
     extends AbstractSubTabVirtualMachinePresenter<VmDiskListModel, SubTabVirtualMachineVirtualDiskPresenter.ViewDef,
         SubTabVirtualMachineVirtualDiskPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineVirtualDiskSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineVirtualDiskPresenter> {
@@ -36,7 +32,7 @@ public class SubTabVirtualMachineVirtualDiskPresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.virtualMachineVirtualDiskSubTabLabel(), 2);
+        return DetailTabDataIndex.VIRTUALMACHINE_VIRTUAL_DISK;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabVirtualMachineVirtualDiskPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

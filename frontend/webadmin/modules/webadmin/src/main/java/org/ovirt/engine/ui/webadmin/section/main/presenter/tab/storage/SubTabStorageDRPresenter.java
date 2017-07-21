@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDR;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDRListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -22,8 +20,6 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabStorageDRPresenter extends AbstractSubTabStoragePresenter<StorageDRListModel, SubTabStorageDRPresenter.ViewDef, SubTabStorageDRPresenter.ProxyDef> {
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageDRSubTabPlace)
@@ -38,7 +34,7 @@ public class SubTabStorageDRPresenter extends AbstractSubTabStoragePresenter<Sto
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.storageDRSubTabLabel(), 12);
+        return DetailTabDataIndex.STORAGE_DR;
     }
 
     @Inject
@@ -46,13 +42,7 @@ public class SubTabStorageDRPresenter extends AbstractSubTabStoragePresenter<Sto
             PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
             StorageDRActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel> modelProvider) {
-        super(eventBus,
-                view,
-                proxy,
-                placeManager,
-                modelProvider,
-                selectedItems,
-                actionPanel,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 import org.ovirt.engine.core.common.businessentities.GuestContainer;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabVirtualMachineGuestContainerPresenter
         extends AbstractSubTabVirtualMachinePresenter<VmGuestContainerListModel, SubTabVirtualMachineGuestContainerPresenter.ViewDef,
         SubTabVirtualMachineGuestContainerPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineContainerSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineGuestContainerPresenter> {
@@ -36,15 +32,16 @@ public class SubTabVirtualMachineGuestContainerPresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.virtualMachineContainerSubTabLabel(), 4);
+        return DetailTabDataIndex.VIRTUALMACHINE_GUEST_CONTAINER;
     }
 
     @Inject
     public SubTabVirtualMachineGuestContainerPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, SearchableDetailModelProvider<GuestContainer, VmListModel<Void>,
-            VmGuestContainerListModel> modelProvider, VirtualMachineMainTabSelectedItems selectedItems) {
+            PlaceManager placeManager, SearchableDetailModelProvider<GuestContainer, VmListModel<Void>, VmGuestContainerListModel> modelProvider,
+            VirtualMachineMainTabSelectedItems selectedItems) {
         // View has no action buttons, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

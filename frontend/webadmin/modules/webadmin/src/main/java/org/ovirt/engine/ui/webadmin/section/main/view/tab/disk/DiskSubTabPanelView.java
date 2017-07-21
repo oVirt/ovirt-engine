@@ -21,7 +21,8 @@ public class DiskSubTabPanelView extends AbstractSubTabPanelView implements Disk
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public DiskSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Disk, DiskListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public DiskSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Disk, DiskListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

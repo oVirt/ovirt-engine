@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabDiskVmPresenter
     extends AbstractSubTabDiskPresenter<DiskVmListModel, SubTabDiskVmPresenter.ViewDef,
         SubTabDiskVmPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.diskVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDiskVmPresenter> {
@@ -36,7 +32,7 @@ public class SubTabDiskVmPresenter
 
     @TabInfo(container = DiskSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.diskVmSubTabLabel(), 1);
+        return DetailTabDataIndex.DISKS_VMS;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabDiskVmPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 DiskSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

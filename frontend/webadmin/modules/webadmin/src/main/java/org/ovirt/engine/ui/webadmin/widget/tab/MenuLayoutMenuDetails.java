@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.webadmin.widget.tab;
 
+import org.ovirt.engine.ui.common.uicommon.model.MenuDetails;
+
 import com.google.gwt.dom.client.Style.HasCssName;
 
-public class MenuLayoutMenuDetails {
+public class MenuLayoutMenuDetails implements MenuDetails {
+
     private String primaryTitle;
     private String secondaryTitle;
     private int primaryPriority;

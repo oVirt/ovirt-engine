@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabQuotaStoragePresenter
     extends AbstractSubTabQuotaPresenter<QuotaStorageListModel, SubTabQuotaStoragePresenter.ViewDef,
         SubTabQuotaStoragePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.quotaStorageSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabQuotaStoragePresenter> {
@@ -36,7 +32,7 @@ public class SubTabQuotaStoragePresenter
 
     @TabInfo(container = QuotaSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.quotaStorageSubTabLabel(), 1);
+        return DetailTabDataIndex.QUOTA_STORAGE;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabQuotaStoragePresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 QuotaSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

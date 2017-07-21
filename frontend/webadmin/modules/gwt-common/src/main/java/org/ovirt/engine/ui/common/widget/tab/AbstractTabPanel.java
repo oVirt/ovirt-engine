@@ -23,7 +23,6 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     @UiField
     public Panel tabContentContainer;
 
-
     private Tab activeTab;
     private String activeTabHistoryToken;
 
@@ -62,7 +61,7 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     }
 
     protected String getActiveTabHistoryToken() {
-        return this.activeTabHistoryToken;
+        return activeTabHistoryToken;
     }
 
     /**
@@ -83,15 +82,13 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
         tab.asWidget().setVisible(tab.isAccessible());
     }
 
+    public void setTabVisible(TabData tabData, boolean visible) {
+    }
+
     /**
      * Adds a tab widget to this tab panel at the given position.
      */
     public abstract void addTabDefinition(Tab tab, int index);
-
-    /**
-     * Removes a tab widget from this tab panel.
-     */
-    public abstract void removeTabDefinition(Tab tab);
 
     /**
      * Returns a new tab widget based on the given data.

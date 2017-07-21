@@ -30,26 +30,42 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, NetworkView> {
+
     private UICommand newCommand;
     private UICommand importCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
 
-    private final NetworkExternalSubnetListModel networkExternalSubnetListModel;
     private final Provider<ImportNetworksModel> importNetworkModelProvider;
+    private final NetworkExternalSubnetListModel externalSubnetListModel;
+    private final NetworkGeneralModel generalModel;
+    private final NetworkProfileListModel profileListModel;
+    private final NetworkClusterListModel clusterListModel;
+    private final NetworkHostListModel hostListModel;
+    private final NetworkVmListModel vmListModel;
+    private final NetworkTemplateListModel templateListModel;
+    private final PermissionListModel<NetworkView> permissionListModel;
 
     @Inject
     public NetworkListModel(final Provider<ImportNetworksModel> importNetworkModelProvider,
             final NetworkExternalSubnetListModel networkExternalSubnetListModel,
-            final NetworkGeneralModel networkGeneralModel, final NetworkProfileListModel networkProfileListModel,
+            final NetworkGeneralModel networkGeneralModel,
+            final NetworkProfileListModel networkProfileListModel,
             final NetworkClusterListModel networkClusterListModel,
-            final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
+            final NetworkHostListModel networkHostListModel,
+            final NetworkVmListModel networkVmListModel,
             final NetworkTemplateListModel networkTemplateListModel,
             final PermissionListModel<NetworkView> permissionListModel) {
-        this.networkExternalSubnetListModel = networkExternalSubnetListModel;
         this.importNetworkModelProvider = importNetworkModelProvider;
-        setDetailList(networkGeneralModel, networkProfileListModel, networkClusterListModel, networkHostListModel,
-                networkVmListModel, networkTemplateListModel, permissionListModel);
+        this.externalSubnetListModel = networkExternalSubnetListModel;
+        this.generalModel = networkGeneralModel;
+        this.profileListModel = networkProfileListModel;
+        this.clusterListModel = networkClusterListModel;
+        this.hostListModel = networkHostListModel;
+        this.vmListModel = networkVmListModel;
+        this.templateListModel = networkTemplateListModel;
+        this.permissionListModel = permissionListModel;
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
         setHelpTag(HelpTag.networks);
         setApplicationPlace(WebAdminApplicationPlaces.networkMainTabPlace);
@@ -70,21 +86,16 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private void setDetailList(final NetworkGeneralModel networkGeneralModel,
-            final NetworkProfileListModel networkProfileListModel,
-            final NetworkClusterListModel networkClusterListModel,
-            final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
-            final NetworkTemplateListModel networkTemplateListModel,
-            final PermissionListModel<NetworkView> permissionListModel) {
+    private void setDetailList() {
         List<HasEntity<NetworkView>> list = new ArrayList<>();
 
-        list.add(networkGeneralModel);
-        list.add(networkProfileListModel);
-        list.add(networkExternalSubnetListModel);
-        list.add(networkClusterListModel);
-        list.add(networkHostListModel);
-        list.add(networkVmListModel);
-        list.add(networkTemplateListModel);
+        list.add(generalModel);
+        list.add(profileListModel);
+        list.add(externalSubnetListModel);
+        list.add(clusterListModel);
+        list.add(hostListModel);
+        list.add(vmListModel);
+        list.add(templateListModel);
         list.add(permissionListModel);
 
         setDetailModels(list);
@@ -160,7 +171,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
         NetworkView network = getSelectedItem();
-        networkExternalSubnetListModel.setIsAvailable(network != null && network.isExternal());
+        externalSubnetListModel.setIsAvailable(network != null && network.isExternal());
     }
 
     @Override
@@ -260,4 +271,37 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
     private void setRemoveCommand(UICommand value) {
         removeCommand = value;
     }
+
+    public NetworkGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    public NetworkProfileListModel getProfileListModel() {
+        return profileListModel;
+    }
+
+    public NetworkExternalSubnetListModel getExternalSubnetListModel() {
+        return externalSubnetListModel;
+    }
+
+    public NetworkClusterListModel getClusterListModel() {
+        return clusterListModel;
+    }
+
+    public NetworkHostListModel getHostListModel() {
+        return hostListModel;
+    }
+
+    public NetworkVmListModel getVmListModel() {
+        return vmListModel;
+    }
+
+    public NetworkTemplateListModel getTemplateListModel() {
+        return templateListModel;
+    }
+
+    public PermissionListModel<NetworkView> getPermissionListModel() {
+        return permissionListModel;
+    }
+
 }

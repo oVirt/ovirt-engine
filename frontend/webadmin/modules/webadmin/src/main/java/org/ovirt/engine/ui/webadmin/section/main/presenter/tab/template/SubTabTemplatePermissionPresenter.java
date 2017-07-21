@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabTemplatePermissionPresenter
     extends AbstractSubTabTemplatePresenter<PermissionListModel<VmTemplate>, SubTabTemplatePermissionPresenter.ViewDef,
     SubTabTemplatePermissionPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.templatePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabTemplatePermissionPresenter> {
@@ -36,16 +32,16 @@ public class SubTabTemplatePermissionPresenter
 
     @TabInfo(container = TemplateSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.templatePermissionSubTabLabel(), 5);
+        return DetailTabDataIndex.TEMPLATE_PERMISSION;
     }
 
     @Inject
     public SubTabTemplatePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
-            SearchableDetailModelProvider<Permission, TemplateListModel,
-            PermissionListModel<VmTemplate>> modelProvider) {
+            SearchableDetailModelProvider<Permission, TemplateListModel, PermissionListModel<VmTemplate>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 TemplateSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

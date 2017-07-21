@@ -22,7 +22,8 @@ public class UserSubTabPanelView extends AbstractSubTabPanelView implements User
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public UserSubTabPanelView(OvirtBreadCrumbsPresenterWidget<DbUser, UserListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public UserSubTabPanelView(OvirtBreadCrumbsPresenterWidget<DbUser, UserListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

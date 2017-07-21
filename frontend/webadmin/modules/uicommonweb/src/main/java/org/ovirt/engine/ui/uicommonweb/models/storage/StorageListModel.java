@@ -139,36 +139,42 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     @Inject
     public StorageListModel(final StorageGeneralModel storageGeneralModel,
             final StorageDataCenterListModel storageDataCenterListModel,
-            final VmBackupModel storageVmBackupModel, final TemplateBackupModel storageTemplateBackupModel,
+            final VmBackupModel storageVmBackupModel,
+            final TemplateBackupModel storageTemplateBackupModel,
             final StorageRegisterVmListModel storageRegisterVmListModel,
             final StorageRegisterTemplateListModel storageRegisterTemplateListModel,
             final StorageRegisterDiskImageListModel storageRegisterDiskImageListModel,
-            final StorageVmListModel storageVmListModel, final StorageTemplateListModel storageTemplateListModel,
-            final StorageIsoListModel storageIsoListModel, final StorageDiskListModel storageDiskListModel,
+            final StorageVmListModel storageVmListModel,
+            final StorageTemplateListModel storageTemplateListModel,
+            final StorageIsoListModel storageIsoListModel,
+            final StorageDiskListModel storageDiskListModel,
             final StorageRegisterDiskListModel storageRegisterDiskListModel,
-            final StorageSnapshotListModel storageSnapshotListModel, final DiskProfileListModel diskProfileListModel,
+            final StorageSnapshotListModel storageSnapshotListModel,
+            final DiskProfileListModel diskProfileListModel,
             final StorageEventListModel storageEventListModel,
             final PermissionListModel<StorageDomain> permissionListModel,
             final StorageDRListModel storageDRListModel,
             final StorageLeaseListModel storageLeaseListModel) {
-        generalModel = storageGeneralModel;
-        dcListModel = storageDataCenterListModel;
-        vmBackupModel = storageVmBackupModel;
-        templateBackupModel = storageTemplateBackupModel;
-        vmRegisterListModel = storageRegisterVmListModel;
-        templateRegisterListModel = storageRegisterTemplateListModel;
-        diskImageRegisterListModel = storageRegisterDiskImageListModel;
-        vmListModel = storageVmListModel;
-        templateListModel = storageTemplateListModel;
-        isoListModel = storageIsoListModel;
-        diskListModel = storageDiskListModel;
-        registerDiskListModel = storageRegisterDiskListModel;
-        snapshotListModel = storageSnapshotListModel;
+        this.generalModel = storageGeneralModel;
+        this.dcListModel = storageDataCenterListModel;
+        this.vmBackupModel = storageVmBackupModel;
+        this.templateBackupModel = storageTemplateBackupModel;
+        this.vmRegisterListModel = storageRegisterVmListModel;
+        this.templateRegisterListModel = storageRegisterTemplateListModel;
+        this.diskImageRegisterListModel = storageRegisterDiskImageListModel;
+        this.vmListModel = storageVmListModel;
+        this.templateListModel = storageTemplateListModel;
+        this.isoListModel = storageIsoListModel;
+        this.diskListModel = storageDiskListModel;
+        this.registerDiskListModel = storageRegisterDiskListModel;
+        this.snapshotListModel = storageSnapshotListModel;
         this.diskProfileListModel = diskProfileListModel;
-        this.storageDRListModel = storageDRListModel;
-        this.storageLeaseListModel = storageLeaseListModel;
+        this.drListModel = storageDRListModel;
+        this.leaseListModel = storageLeaseListModel;
+        this.eventListModel = storageEventListModel;
+        this.permissionListModel = permissionListModel;
 
-        setDetailList(storageEventListModel, permissionListModel);
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
         setApplicationPlace(WebAdminApplicationPlaces.storageMainTabPlace);
 
@@ -191,12 +197,11 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private void setDetailList(final StorageEventListModel storageEventListModel,
-            final PermissionListModel<StorageDomain> permissionListModel) {
+    private void setDetailList() {
         generalModel.setIsAvailable(false);
         dcListModel.setIsAvailable(false);
-        this.vmBackupModel.setIsAvailable(false);
-        this.templateBackupModel.setIsAvailable(false);
+        vmBackupModel.setIsAvailable(false);
+        templateBackupModel.setIsAvailable(false);
         vmRegisterListModel.setIsAvailable(false);
         templateRegisterListModel.setIsAvailable(false);
         diskImageRegisterListModel.setIsAvailable(false);
@@ -206,9 +211,9 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         diskListModel.setIsAvailable(false);
         registerDiskListModel.setIsAvailable(false);
         snapshotListModel.setIsAvailable(false);
-        this.diskProfileListModel.setIsAvailable(false);
-        this.storageDRListModel.setIsAvailable(false);
-        this.storageLeaseListModel.setIsAvailable(false);
+        diskProfileListModel.setIsAvailable(false);
+        drListModel.setIsAvailable(false);
+        leaseListModel.setIsAvailable(false);
 
         List<HasEntity<StorageDomain>> list = new ArrayList<>();
         list.add(generalModel);
@@ -220,14 +225,14 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
         list.add(diskImageRegisterListModel);
         list.add(vmListModel);
         list.add(templateListModel);
-        list.add(storageLeaseListModel);
+        list.add(leaseListModel);
         list.add(isoListModel);
         list.add(diskListModel);
         list.add(registerDiskListModel);
         list.add(snapshotListModel);
-        list.add(this.diskProfileListModel);
-        list.add(this.storageDRListModel);
-        list.add(storageEventListModel);
+        list.add(diskProfileListModel);
+        list.add(drListModel);
+        list.add(eventListModel);
         list.add(permissionListModel);
         setDetailModels(list);
     }
@@ -246,8 +251,10 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
     private final StorageRegisterDiskListModel registerDiskListModel;
     private final StorageSnapshotListModel snapshotListModel;
     private final DiskProfileListModel diskProfileListModel;
-    private final StorageDRListModel storageDRListModel;
-    private final StorageLeaseListModel storageLeaseListModel;
+    private final StorageDRListModel drListModel;
+    private final StorageLeaseListModel leaseListModel;
+    private final StorageEventListModel eventListModel;
+    private final PermissionListModel<StorageDomain> permissionListModel;
 
     public StorageDomainStatic storageDomain;
     public TaskContext context;
@@ -844,8 +851,8 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
             registerDiskListModel.setIsAvailable(isCinderStorage);
             snapshotListModel.setIsAvailable(isDataStorage || isCinderStorage);
             diskProfileListModel.setIsAvailable(isDataStorage);
-            storageDRListModel.setIsAvailable(isGlusterStorage);
-            storageLeaseListModel.setIsAvailable(isDataStorage);
+            drListModel.setIsAvailable(isGlusterStorage);
+            leaseListModel.setIsAvailable(isDataStorage);
 
             isoListModel.setIsAvailable(isImageStorage);
         }
@@ -1857,4 +1864,77 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
                 || nfsModel.getTimeout().asConvertible().nullableShort() != null
                 || nfsModel.getMountOptions().getEntity() != null;
     }
+
+    public StorageGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    public StorageDataCenterListModel getDcListModel() {
+        return dcListModel;
+    }
+
+    public StorageRegisterVmListModel getVmRegisterListModel() {
+        return vmRegisterListModel;
+    }
+
+    public VmBackupModel getVmBackupModel() {
+        return vmBackupModel;
+    }
+
+    public StorageRegisterTemplateListModel getTemplateRegisterListModel() {
+        return templateRegisterListModel;
+    }
+
+    public TemplateBackupModel getTemplateBackupModel() {
+        return templateBackupModel;
+    }
+
+    public StorageRegisterDiskImageListModel getDiskImageRegisterListModel() {
+        return diskImageRegisterListModel;
+    }
+
+    public StorageVmListModel getVmListModel() {
+        return vmListModel;
+    }
+
+    public StorageTemplateListModel getTemplateListModel() {
+        return templateListModel;
+    }
+
+    public StorageIsoListModel getIsoListModel() {
+        return isoListModel;
+    }
+
+    public StorageDiskListModel getDiskListModel() {
+        return diskListModel;
+    }
+
+    public StorageSnapshotListModel getSnapshotListModel() {
+        return snapshotListModel;
+    }
+
+    public StorageRegisterDiskListModel getRegisterDiskListModel() {
+        return registerDiskListModel;
+    }
+
+    public StorageLeaseListModel getLeaseListModel() {
+        return leaseListModel;
+    }
+
+    public DiskProfileListModel getDiskProfileListModel() {
+        return diskProfileListModel;
+    }
+
+    public StorageDRListModel getDRListModel() {
+        return drListModel;
+    }
+
+    public StorageEventListModel getEventListModel() {
+        return eventListModel;
+    }
+
+    public PermissionListModel<StorageDomain> getPermissionListModel() {
+        return permissionListModel;
+    }
+
 }

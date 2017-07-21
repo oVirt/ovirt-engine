@@ -22,7 +22,8 @@ public class DataCenterSubTabPanelView extends AbstractSubTabPanelView implement
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public DataCenterSubTabPanelView(OvirtBreadCrumbsPresenterWidget<StoragePool, DataCenterListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public DataCenterSubTabPanelView(OvirtBreadCrumbsPresenterWidget<StoragePool, DataCenterListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

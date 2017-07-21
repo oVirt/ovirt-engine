@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 
 public class MenuLayout {
+
     private final Comparator<GroupedTabData> tabDataComparator =
             Comparator.comparing(t -> t.getGroupPriority());
 
@@ -83,4 +84,5 @@ public class MenuLayout {
         }
         return menuIndex;
     }
+
 }

@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabVirtualMachinePermissionPresenter
     extends AbstractSubTabVirtualMachinePresenter<PermissionListModel<VM>,
         SubTabVirtualMachinePermissionPresenter.ViewDef, SubTabVirtualMachinePermissionPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachinePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachinePermissionPresenter> {
@@ -36,7 +32,7 @@ public class SubTabVirtualMachinePermissionPresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.virtualMachinePermissionSubTabLabel(), 9);
+        return DetailTabDataIndex.VIRTUALMACHINE_PERMISSION;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabVirtualMachinePermissionPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.HostGlusterSwiftActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,8 +23,6 @@ public class SubTabHostGlusterSwiftPresenter
     extends AbstractSubTabHostPresenter<HostGlusterSwiftListModel, SubTabHostGlusterSwiftPresenter.ViewDef,
         SubTabHostGlusterSwiftPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostGlusterSwiftSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostGlusterSwiftPresenter> {
@@ -37,7 +33,7 @@ public class SubTabHostGlusterSwiftPresenter
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.hostGlusterSwiftSubTabLabel(), 8);
+        return DetailTabDataIndex.HOSTS_GLUSTER_SWIFT;
     }
 
     @Inject
@@ -48,4 +44,5 @@ public class SubTabHostGlusterSwiftPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

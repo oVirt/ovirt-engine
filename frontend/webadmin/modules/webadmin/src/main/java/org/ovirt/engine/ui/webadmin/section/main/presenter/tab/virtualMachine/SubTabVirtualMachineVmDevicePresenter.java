@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.CellClickHandler;
 import org.ovirt.engine.ui.common.widget.HasCellClickHandlers;
@@ -10,8 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDeviceFeEntity;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.shared.EventBus;
@@ -27,8 +25,6 @@ public class SubTabVirtualMachineVmDevicePresenter
     extends AbstractSubTabVirtualMachinePresenter<VmDevicesListModel<VM>, SubTabVirtualMachineVmDevicePresenter.ViewDef,
         SubTabVirtualMachineVmDevicePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineVmDeviceSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineVmDevicePresenter> {
@@ -40,16 +36,12 @@ public class SubTabVirtualMachineVmDevicePresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.virtualMachineVmDevicesSubTabLabel(), 6);
+        return DetailTabDataIndex.VIRTUALMACHINE_VM_DEVICE;
     }
 
     @Inject
-    public SubTabVirtualMachineVmDevicePresenter(
-            EventBus eventBus,
-            ViewDef view,
-            ProxyDef proxy,
-            PlaceManager placeManager,
-            SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider,
+    public SubTabVirtualMachineVmDevicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider,
             VirtualMachineMainTabSelectedItems selectedItems) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
@@ -66,4 +58,5 @@ public class SubTabVirtualMachineVmDevicePresenter
                 }
         }));
     }
+
 }

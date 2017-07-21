@@ -3,12 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -23,8 +21,6 @@ public class SubTabClusterServicePresenter
     extends AbstractSubTabClusterPresenter<ClusterServiceModel, SubTabClusterServicePresenter.ViewDef,
         SubTabClusterServicePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterServiceSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterServicePresenter> {
@@ -35,7 +31,7 @@ public class SubTabClusterServicePresenter
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.clusterServiceSubTabLabel(), 4);
+        return DetailTabDataIndex.CLUSTER_SERVICE;
     }
 
     @Inject
@@ -46,4 +42,5 @@ public class SubTabClusterServicePresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

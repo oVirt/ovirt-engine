@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractHeaderView;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 import org.ovirt.engine.ui.common.widget.PatternflyStyles;
-import org.ovirt.engine.ui.common.widget.action.ActionAnchorListItem;
 import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -90,7 +89,6 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
 
     private NotificationListWidget eventsWidget;
     private NotificationListWidget alertsWidget;
-    ActionAnchorListItem alertDismissAction;
 
     @Inject
     public HeaderView(ApplicationDynamicMessages dynamicMessages) {
@@ -247,38 +245,6 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     }
 
     @Override
-    public void removeTab(String title, String href) {
-        for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
-            if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
-                ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
-                String groupName = group.getElement().getAttribute(GROUP_NAME);
-                if (title != null && title.equals(groupName)) {
-                    mainNavbarNavContainer.remove(group);
-                } else if (title != null && group.getWidgetCount() > 2) {
-                    FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
-                    if (removeSubMenu(title, (ListGroup) groupContainer.getWidget(1))) {
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private boolean removeSubMenu(String title, ListGroup container) {
-        for (int i = 0; i < container.getWidgetCount(); i++) {
-            if (container.getWidget(i) instanceof ListGroupItem) {
-                ListGroupItem group = (ListGroupItem) container.getWidget(i);
-                String groupName = group.getElement().getAttribute(GROUP_NAME);
-                if (title.equals(groupName)) {
-                    mainNavbarNavContainer.remove(group);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
     public void updateTab(String title, String href, boolean accessible) {
         for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
             if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
@@ -322,11 +288,10 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         for (int i = 0; i < mainNavbarNavContainer.getWidgetCount(); i++) {
             if (mainNavbarNavContainer.getWidget(i) instanceof ListGroupItem) {
                 ListGroupItem group = (ListGroupItem) mainNavbarNavContainer.getWidget(i);
-                String groupName = group.getElement().getAttribute(GROUP_NAME);
                 if (title != null) {
                     if (group.getWidgetCount() > 2) {
                         FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
-                        if (markSecondaryMenuActive(title, href, (ListGroup) groupContainer.getWidget(1), groupName)) {
+                        if (markSecondaryMenuActive(href, (ListGroup) groupContainer.getWidget(1))) {
                             group.addStyleName(Styles.ACTIVE);
                         } else {
                             group.removeStyleName(Styles.ACTIVE);
@@ -344,8 +309,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         }
     }
 
-    private boolean markSecondaryMenuActive(String title, String href, ListGroup secondaryMenulistGroup,
-            String groupName) {
+    private boolean markSecondaryMenuActive(String href, ListGroup secondaryMenulistGroup) {
         boolean result = false;
         for (int i = 0; i < secondaryMenulistGroup.getWidgetCount(); i++) {
             if (secondaryMenulistGroup.getWidget(i) instanceof ListGroupItem) {
@@ -403,4 +367,5 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     public void setAlertCount(int count) {
         events.setBadgeText(String.valueOf(count));
     }
+
 }

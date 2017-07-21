@@ -45,14 +45,9 @@ public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresente
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(WebadminMenuLayout menuLayout) {
-        MenuLayoutMenuDetails menuTabDetails =
-                menuLayout.getDetails(WebAdminApplicationPlaces.templateMainTabPlace);
-        return new GroupedTabData(
-                menuTabDetails.getSecondaryTitle(),
-                menuTabDetails.getPrimaryTitle(),
-                menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryPriority(),
-                menuTabDetails.getIcon());
+        MenuLayoutMenuDetails menuDetails = menuLayout.getDetails(
+                WebAdminApplicationPlaces.templateMainTabPlace);
+        return new GroupedTabData(menuDetails);
     }
 
     @Inject

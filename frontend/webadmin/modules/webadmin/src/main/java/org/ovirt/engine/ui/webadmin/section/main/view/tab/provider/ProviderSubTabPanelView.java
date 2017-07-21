@@ -22,7 +22,8 @@ public class ProviderSubTabPanelView extends AbstractSubTabPanelView implements 
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public ProviderSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Provider, ProviderListModel> breadCrumbs, DetailTabLayout detailTabLayout) {
+    public ProviderSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Provider, ProviderListModel> breadCrumbs,
+            DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
         initWidget(getTabPanel());
     }

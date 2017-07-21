@@ -89,23 +89,32 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         privateRemoveCommand = value;
     }
 
-    protected Object[] getSelectedKeys() {
-        if (getSelectedItems() == null) {
-            return new Object[0];
-        }
-        else {
-            Object[] keys = new Object[getSelectedItems().size()];
-            for (int i = 0; i < getSelectedItems().size(); i++) {
-                keys[i] = getSelectedItems().get(i).getVmPoolId();
-            }
-            return keys;
-        }
+    private final PoolGeneralModel generalModel;
+
+    public PoolGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    private final PoolVmListModel vmListModel;
+
+    public PoolVmListModel getVmListModel() {
+        return vmListModel;
+    }
+
+    private final PermissionListModel<VmPool> permissionListModel;
+
+    public PermissionListModel<VmPool> getPermissionListModel() {
+        return permissionListModel;
     }
 
     @Inject
     public PoolListModel(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
             final PermissionListModel<VmPool> permissionListModel) {
-        setDetailList(poolGeneralModel, poolVmListModel, permissionListModel);
+        this.generalModel = poolGeneralModel;
+        this.vmListModel = poolVmListModel;
+        this.permissionListModel = permissionListModel;
+
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().poolsTitle());
         setApplicationPlace(WebAdminApplicationPlaces.poolMainTabPlace);
 
@@ -124,11 +133,10 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private void setDetailList(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
-            final PermissionListModel<VmPool> permissionListModel) {
+    private void setDetailList() {
         List<HasEntity<VmPool>> list = new ArrayList<>();
-        list.add(poolGeneralModel);
-        list.add(poolVmListModel);
+        list.add(generalModel);
+        list.add(vmListModel);
         list.add(permissionListModel);
         setDetailModels(list);
     }
@@ -565,4 +573,5 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
     private void cancelConfirmation() {
         setConfirmWindow(null);
     }
+
 }

@@ -19,17 +19,15 @@ import com.google.inject.Inject;
  * a grid of Erratum in the top pane, and the selected Erratum's detail in the bottom pane.
  */
 public abstract class ErrataListWithDetailsPopupPresenterWidget<T extends
-    SearchableDetailModelProvider<Erratum, ? extends SearchableListModel,
-            ? extends AbstractErrataListModel>>
-    extends AbstractModelBoundPopupPresenterWidget<AbstractErrataCountModel,
-        ErrataListWithDetailsPopupPresenterWidget.ViewDef> {
+    SearchableDetailModelProvider<Erratum, ? extends SearchableListModel, ? extends AbstractErrataListModel>>
+    extends AbstractModelBoundPopupPresenterWidget<AbstractErrataCountModel, ErrataListWithDetailsPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<AbstractErrataCountModel> {
-        public void setErrataDetailPanelVisibilty(boolean visible);
-        public void updateErrataDetailFormPanel(Erratum erratum);
-        public ErrataTableView getErrataTable();
-        public Erratum getSelectedErratum();
-        public void showErrataList();
+        void setErrataDetailPanelVisibilty(boolean visible);
+        void updateErrataDetailFormPanel(Erratum erratum);
+        ErrataTableView getErrataTable();
+        Erratum getSelectedErratum();
+        void showErrataList();
     }
 
     private final T modelProvider;
@@ -97,4 +95,5 @@ public abstract class ErrataListWithDetailsPopupPresenterWidget<T extends
             modelProvider.getModel().getPropertyChangedEvent().removeListener(changeListener);
         }
     }
+
 }

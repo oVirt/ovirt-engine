@@ -2,15 +2,13 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostInterfaceActionPanelPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,8 +24,6 @@ public class SubTabHostInterfacePresenter
     extends AbstractSubTabHostPresenter<HostInterfaceListModel, SubTabHostInterfacePresenter.ViewDef,
         SubTabHostInterfacePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostInterfaceSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostInterfacePresenter> {
@@ -40,7 +36,7 @@ public class SubTabHostInterfacePresenter
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.hostIfaceSubTabLabel(), 2);
+        return DetailTabDataIndex.HOSTS_IFACE;
     }
 
     @Inject
@@ -68,4 +64,5 @@ public class SubTabHostInterfacePresenter
         super.onReveal();
         getView().setParentOverflow();
     }
+
 }

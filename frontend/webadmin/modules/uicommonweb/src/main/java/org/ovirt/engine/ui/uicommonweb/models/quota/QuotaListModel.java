@@ -67,13 +67,65 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         this.editCommand = editQuotaCommand;
     }
 
+    private final QuotaClusterListModel clusterListModel;
+
+    public QuotaClusterListModel getClusterListModel() {
+        return clusterListModel;
+    }
+
+    private final QuotaStorageListModel storageListModel;
+
+    public QuotaStorageListModel getStorageListModel() {
+        return storageListModel;
+    }
+
+    private final QuotaVmListModel vmListModel;
+
+    public QuotaVmListModel getVmListModel() {
+        return vmListModel;
+    }
+
+    private final QuotaTemplateListModel templateListModel;
+
+    public QuotaTemplateListModel getTemplateListModel() {
+        return templateListModel;
+    }
+
+    private final QuotaUserListModel userListModel;
+
+    public QuotaUserListModel getUserListModel() {
+        return userListModel;
+    }
+
+    private final QuotaPermissionListModel permissionListModel;
+
+    public QuotaPermissionListModel getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    private final QuotaEventListModel eventListModel;
+
+    public QuotaEventListModel getEventListModel() {
+        return eventListModel;
+    }
+
     @Inject
     public QuotaListModel(final QuotaClusterListModel quotaClusterListModel,
-            final QuotaStorageListModel quotaStorageListModel, final QuotaVmListModel quotaVmListModel,
-            final QuotaTemplateListModel quotaTemplateListModel, final QuotaUserListModel quotaUserListModel,
-            final QuotaPermissionListModel quotaPermissionListModel, final QuotaEventListModel quotaEventListModel) {
-        setDetailList(quotaClusterListModel, quotaStorageListModel, quotaVmListModel, quotaTemplateListModel,
-                quotaUserListModel, quotaPermissionListModel, quotaEventListModel);
+            final QuotaStorageListModel quotaStorageListModel,
+            final QuotaVmListModel quotaVmListModel,
+            final QuotaTemplateListModel quotaTemplateListModel,
+            final QuotaUserListModel quotaUserListModel,
+            final QuotaPermissionListModel quotaPermissionListModel,
+            final QuotaEventListModel quotaEventListModel) {
+        this.clusterListModel = quotaClusterListModel;
+        this.storageListModel = quotaStorageListModel;
+        this.vmListModel = quotaVmListModel;
+        this.templateListModel = quotaTemplateListModel;
+        this.userListModel = quotaUserListModel;
+        this.permissionListModel = quotaPermissionListModel;
+        this.eventListModel = quotaEventListModel;
+
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
         setApplicationPlace(WebAdminApplicationPlaces.quotaMainTabPlace);
 
@@ -93,18 +145,15 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private void setDetailList(final QuotaClusterListModel quotaClusterListModel,
-            final QuotaStorageListModel quotaStorageListModel, final QuotaVmListModel quotaVmListModel,
-            final QuotaTemplateListModel quotaTemplateListModel, final QuotaUserListModel quotaUserListModel,
-            final QuotaPermissionListModel quotaPermissionListModel, final QuotaEventListModel quotaEventListModel) {
+    private void setDetailList() {
         List<HasEntity<Quota>> list = new ArrayList<>();
-        list.add(quotaClusterListModel);
-        list.add(quotaStorageListModel);
-        list.add(quotaVmListModel);
-        list.add(quotaTemplateListModel);
-        list.add(quotaUserListModel);
-        list.add(quotaPermissionListModel);
-        list.add(quotaEventListModel);
+        list.add(clusterListModel);
+        list.add(storageListModel);
+        list.add(vmListModel);
+        list.add(templateListModel);
+        list.add(userListModel);
+        list.add(permissionListModel);
+        list.add(eventListModel);
 
         setDetailModels(list);
     }

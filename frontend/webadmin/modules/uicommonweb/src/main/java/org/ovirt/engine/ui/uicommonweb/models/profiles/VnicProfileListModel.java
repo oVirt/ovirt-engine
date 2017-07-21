@@ -21,16 +21,38 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.inject.Inject;
 
 public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfileView, VnicProfileView> {
+
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
 
+    private final VnicProfileVmListModel vmListModel;
+
+    public VnicProfileVmListModel getVmListModel() {
+        return vmListModel;
+    }
+
+    private final PermissionListModel<VnicProfileView> permissionListModel;
+
+    public PermissionListModel<VnicProfileView> getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    private final VnicProfileTemplateListModel templateListModel;
+
+    public VnicProfileTemplateListModel getTemplateListModel() {
+        return templateListModel;
+    }
+
     @Inject
-    public VnicProfileListModel(
-            final VnicProfileVmListModel vNicProfileVmListModel,
+    public VnicProfileListModel(final VnicProfileVmListModel vNicProfileVmListModel,
             final VnicProfileTemplateListModel vNicProfileTemplateListModel,
             final PermissionListModel<VnicProfileView> permissionListModel) {
-        setDetailList(vNicProfileVmListModel, vNicProfileTemplateListModel, permissionListModel);
+        this.vmListModel = vNicProfileVmListModel;
+        this.permissionListModel = permissionListModel;
+        this.templateListModel = vNicProfileTemplateListModel;
+
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHelpTag(HelpTag.vnicProfiles);
         setApplicationPlace(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
@@ -53,13 +75,11 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private void setDetailList(final VnicProfileVmListModel vNicProfileVmListModel,
-            final VnicProfileTemplateListModel vNicProfileTemplateListModel,
-            final PermissionListModel<VnicProfileView> permissionListModel) {
+    private void setDetailList() {
         List<HasEntity<VnicProfileView>> list = new ArrayList<>();
 
-        list.add(vNicProfileVmListModel);
-        list.add(vNicProfileTemplateListModel);
+        list.add(vmListModel);
+        list.add(templateListModel);
         list.add(permissionListModel);
 
         setDetailModels(list);
@@ -172,4 +192,5 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
     private void setRemoveCommand(UICommand value) {
         removeCommand = value;
     }
+
 }

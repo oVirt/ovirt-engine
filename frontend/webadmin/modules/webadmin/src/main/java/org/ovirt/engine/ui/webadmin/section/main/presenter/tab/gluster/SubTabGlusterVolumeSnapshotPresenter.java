@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabGlusterVolumeSnapshotPresenter
     extends AbstractSubTabGlusterPresenter<GlusterVolumeSnapshotListModel, SubTabGlusterVolumeSnapshotPresenter.ViewDef,
         SubTabGlusterVolumeSnapshotPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.volumeSnapshotSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabGlusterVolumeSnapshotPresenter> {
@@ -36,7 +32,7 @@ public class SubTabGlusterVolumeSnapshotPresenter
 
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.volumeSnapshotSubTabLabel(), 5);
+        return DetailTabDataIndex.GLUSTER_SNAPSHOTS;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabGlusterVolumeSnapshotPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

@@ -53,22 +53,17 @@ public class MainTabEngineErrataPresenter extends AbstractMainTabWithDetailsPres
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(WebadminMenuLayout menuLayout) {
-        MenuLayoutMenuDetails menuTabDetails =
-                menuLayout.getDetails(WebAdminApplicationPlaces.errataMainTabPlace);
-        return new GroupedTabData(
-                menuTabDetails.getSecondaryTitle(),
-                menuTabDetails.getPrimaryTitle(),
-                menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryPriority(),
-                menuTabDetails.getIcon());
+        MenuLayoutMenuDetails menuDetails = menuLayout.getDetails(
+                WebAdminApplicationPlaces.errataMainTabPlace);
+        return new GroupedTabData(menuDetails);
     }
 
     @Inject
     public MainTabEngineErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<Erratum, EngineErrataListModel> modelErrata,
+            PlaceManager placeManager, MainModelProvider<Erratum, EngineErrataListModel> modelProvider,
             OvirtBreadCrumbsPresenterWidget<Erratum, EngineErrataListModel> breadCrumbs) {
         // View has no action panel, passing null.
-        super(eventBus, view, proxy, placeManager, modelErrata, null, breadCrumbs, null);
+        super(eventBus, view, proxy, placeManager, modelProvider, null, breadCrumbs, null);
     }
 
     @Override

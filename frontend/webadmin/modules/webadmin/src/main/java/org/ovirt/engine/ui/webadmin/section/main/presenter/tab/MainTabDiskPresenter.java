@@ -53,14 +53,9 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(WebadminMenuLayout menuLayout) {
-        MenuLayoutMenuDetails menuTabDetails =
-                menuLayout.getDetails(WebAdminApplicationPlaces.diskMainTabPlace);
-        return new GroupedTabData(
-                menuTabDetails.getSecondaryTitle(),
-                menuTabDetails.getPrimaryTitle(),
-                menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryPriority(),
-                menuTabDetails.getIcon());
+        MenuLayoutMenuDetails menuDetails = menuLayout.getDetails(
+                WebAdminApplicationPlaces.diskMainTabPlace);
+        return new GroupedTabData(menuDetails);
     }
 
     @Inject
@@ -92,4 +87,5 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
         super.onReveal();
         getView().handleQuotaColumnVisibility();
     }
+
 }

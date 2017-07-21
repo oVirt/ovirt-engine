@@ -8,16 +8,15 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget.AlertType;
 
 import com.google.gwt.event.shared.EventBus;
@@ -36,7 +35,6 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<HostGeneralModel,
     HostGeneralSubTabPresenter.ViewDef, HostGeneralSubTabPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
     private static final ApplicationMessages messages = AssetProvider.getMessages();
 
     @ProxyCodeSplit
@@ -75,7 +73,7 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.hostGeneralSubTabLabel(), 0);
+        return DetailTabDataIndex.HOSTS_GENERAL;
     }
 
     @Inject
@@ -222,4 +220,5 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
     private void addTextAndLinkAlert(final ViewDef view, final String text, final UICommand command) {
         addTextAndLinkAlert(view, text, command, AlertType.ALERT);
     }
+
 }

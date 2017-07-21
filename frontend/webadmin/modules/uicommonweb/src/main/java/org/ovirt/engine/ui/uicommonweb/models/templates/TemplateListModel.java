@@ -97,25 +97,67 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         privateCreateVmfromTemplateCommand = value;
     }
 
-    @Inject
-    public TemplateListModel(final TemplateGeneralModel templateGeneralModel,
-            final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
-            final TemplateStorageListModel templateStorageListModel,
-            final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
-            final PermissionListModel<VmTemplate> permissionListModel) {
-        this(templateGeneralModel, templateVmListModel, templateInterfaceListModel, templateStorageListModel,
-                templateDiskListModel, templateEventListModel, permissionListModel, 3);
+    private final TemplateGeneralModel generalModel;
+
+    public TemplateGeneralModel getGeneralModel() {
+        return generalModel;
     }
 
+    private final TemplateVmListModel vmListModel;
+
+    public TemplateVmListModel getVmListModel() {
+        return vmListModel;
+    }
+
+    private final TemplateInterfaceListModel interfaceListModel;
+
+    public TemplateInterfaceListModel getInterfaceListModel() {
+        return interfaceListModel;
+    }
+
+    private final TemplateDiskListModel diskListModel;
+
+    public TemplateDiskListModel getDiskListModel() {
+        return diskListModel;
+    }
+
+    private final TemplateStorageListModel storageListModel;
+
+    public TemplateStorageListModel getStorageListModel() {
+        return storageListModel;
+    }
+
+    private final PermissionListModel<VmTemplate> permissionListModel;
+
+    public PermissionListModel<VmTemplate> getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    private final TemplateEventListModel eventListModel;
+
+    public TemplateEventListModel getEventListModel() {
+        return eventListModel;
+    }
+
+    @Inject
     public TemplateListModel(final TemplateGeneralModel templateGeneralModel,
-            final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
+            final TemplateVmListModel templateVmListModel,
+            final TemplateInterfaceListModel templateInterfaceListModel,
             final TemplateStorageListModel templateStorageListModel,
-            final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
-            final PermissionListModel<VmTemplate> permissionListModel, int customPosition) {
+            final TemplateDiskListModel templateDiskListModel,
+            final TemplateEventListModel templateEventListModel,
+            final PermissionListModel<VmTemplate> permissionListModel) {
+        this.generalModel = templateGeneralModel;
+        this.vmListModel = templateVmListModel;
+        this.interfaceListModel = templateInterfaceListModel;
+        this.diskListModel = templateDiskListModel;
+        this.storageListModel = templateStorageListModel;
+        this.permissionListModel = permissionListModel;
+        this.eventListModel = templateEventListModel;
+
         List<HasEntity<VmTemplate>> list = new ArrayList<>();
-        setDetailList(list, templateGeneralModel, templateVmListModel, templateInterfaceListModel,
-                templateStorageListModel);
-        addCustomModelsDetailModelList(list, customPosition, templateDiskListModel, templateEventListModel, permissionListModel);
+        setDetailList(list);
+        addCustomModelsDetailModelList(list, 3);
         setDetailModels(list);
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setApplicationPlace(WebAdminApplicationPlaces.templateMainTabPlace);
@@ -136,13 +178,11 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private void setDetailList(final List<HasEntity<VmTemplate>> list, final TemplateGeneralModel templateGeneralModel,
-            final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
-            final TemplateStorageListModel templateStorageListModel) {
-        list.add(templateGeneralModel);
-        list.add(templateVmListModel);
-        list.add(templateInterfaceListModel);
-        list.add(templateStorageListModel);
+    private void setDetailList(final List<HasEntity<VmTemplate>> list) {
+        list.add(generalModel);
+        list.add(vmListModel);
+        list.add(interfaceListModel);
+        list.add(storageListModel);
     }
 
     @Override
@@ -334,11 +374,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
                 }, model);
     }
 
-    protected void addCustomModelsDetailModelList(final List<HasEntity<VmTemplate>> list, int customPosition,
-            final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
-            final PermissionListModel<VmTemplate> permissionListModel) {
-        list.add(customPosition, templateDiskListModel);
-        list.add(templateEventListModel);
+    protected void addCustomModelsDetailModelList(final List<HasEntity<VmTemplate>> list,
+            int customPosition) {
+        list.add(customPosition, diskListModel);
+        list.add(eventListModel);
         list.add(permissionListModel);
     }
 
@@ -863,4 +902,5 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         super.setupNewVmModel(model, vmType, uiCommands);
         model.getProvisioning().setEntity(vmType == VmType.Server || vmType == VmType.HighPerformance);
     }
+
 }

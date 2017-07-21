@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
@@ -14,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -25,23 +27,28 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class HostVmListModel extends VmListModel<VDS> {
+
     @Inject
-    public HostVmListModel(VmGeneralModel vmGeneralModel,
-            VmInterfaceListModel vmInterfaceListModel,
-            VmDiskListModel vmDiskListModel,
-            VmSnapshotListModel vmSnapshotListModel,
-            VmEventListModel vmEventListModel,
-            VmAppListModel<VM> vmAppListModel,
-            PermissionListModel<VM> permissionListModel,
-            VmAffinityGroupListModel vmAffinityGroupListModel,
-            VmGuestInfoModel vmGuestInfoModel,
-            Provider<ImportVmsModel> importVmsModelProvider,
-            VmHostDeviceListModel vmHostDeviceListModel,
-            VmDevicesListModel vmDevicesListModel,
-            VmAffinityLabelListModel vmAffinityLabelListModel) {
-        super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
-                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel, importVmsModelProvider,
-                vmHostDeviceListModel, vmDevicesListModel, vmAffinityLabelListModel);
+    public HostVmListModel(final VmGeneralModel vmGeneralModel,
+            final VmInterfaceListModel vmInterfaceListModel,
+            final VmDiskListModel vmDiskListModel,
+            final VmSnapshotListModel vmSnapshotListModel,
+            final VmEventListModel vmEventListModel,
+            final VmAppListModel<VM> vmAppListModel,
+            final PermissionListModel<VM> permissionListModel,
+            final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final VmGuestInfoModel vmGuestInfoModel,
+            final Provider<ImportVmsModel> importVmsModelProvider,
+            final VmHostDeviceListModel vmHostDeviceListModel,
+            final VmDevicesListModel<VM> vmDevicesListModel,
+            final VmAffinityLabelListModel vmAffinityLabelListModel,
+            final VmErrataCountModel vmErrataCountModel,
+            final VmGuestContainerListModel vmGuestContainerListModel) {
+        super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel,
+                vmSnapshotListModel, vmEventListModel, vmAppListModel,
+                permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel,
+                importVmsModelProvider, vmHostDeviceListModel, vmDevicesListModel,
+                vmAffinityLabelListModel, vmErrataCountModel, vmGuestContainerListModel);
     }
 
     @Override
@@ -83,4 +90,5 @@ public class HostVmListModel extends VmListModel<VDS> {
             search();
         }
     }
+
 }

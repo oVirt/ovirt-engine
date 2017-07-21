@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabStorageEventPresenter
     extends AbstractSubTabStoragePresenter<StorageEventListModel, SubTabStorageEventPresenter.ViewDef,
         SubTabStorageEventPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageEventPresenter> {
@@ -36,7 +32,7 @@ public class SubTabStorageEventPresenter
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.storageEventSubTabLabel(), 12);
+        return DetailTabDataIndex.STORAGE_EVENTS;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabStorageEventPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

@@ -6,9 +6,18 @@ import com.google.gwt.dom.client.Style.HasCssName;
 import com.gwtplatform.mvp.client.TabDataBasic;
 
 public class GroupedTabData extends TabDataBasic {
+
     private final String groupTitle;
     private final int groupPriority;
     private final HasCssName icon;
+
+    public GroupedTabData(MenuDetails menuDetails) {
+        this(menuDetails.getSecondaryTitle(),
+                menuDetails.getPrimaryTitle(),
+                menuDetails.getSecondaryPriority(),
+                menuDetails.getPrimaryPriority(),
+                menuDetails.getIcon());
+    }
 
     public GroupedTabData(String label, String groupTitle, int priority, int groupPriority, HasCssName icon) {
         super(label, priority);
@@ -35,9 +44,11 @@ public class GroupedTabData extends TabDataBasic {
 
     public String toString() {
         return ToStringBuilder.forInstance(this)
-            .append("Group", groupTitle) // $NON-NLS-1$
             .append("label", getLabel()) // $NON-NLS-1$
-            .append("priority", getPriority()).toString(); // $NON-NLS-1$
+            .append("priority", getPriority()) // $NON-NLS-1$
+            .append("groupTitle", groupTitle) // $NON-NLS-1$
+            .append("groupPriority", groupPriority) // $NON-NLS-1$
+            .build();
     }
 
 }

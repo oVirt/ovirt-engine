@@ -144,22 +144,22 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         privateGuideContext = value;
     }
 
-    private final ClusterServiceModel clusterServiceModel;
+    private final ClusterServiceModel serviceModel;
 
-    public ClusterServiceModel getClusterServiceModel() {
-        return clusterServiceModel;
+    public ClusterServiceModel getServiceModel() {
+        return serviceModel;
     }
 
-    private final ClusterVmListModel clusterVmListModel;
+    private final ClusterVmListModel vmListModel;
 
-    public ClusterVmListModel getClusterVmListModel() {
-        return clusterVmListModel;
+    public ClusterVmListModel getVmListModel() {
+        return vmListModel;
     }
 
-    private final ClusterGlusterHookListModel clusterGlusterHookListModel;
+    private final ClusterGlusterHookListModel glusterHookListModel;
 
-    public ClusterGlusterHookListModel getClusterGlusterHookListModel() {
-        return clusterGlusterHookListModel;
+    public ClusterGlusterHookListModel getGlusterHookListModel() {
+        return glusterHookListModel;
     }
 
     private final ClusterAffinityGroupListModel affinityGroupListModel;
@@ -180,21 +180,52 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         return cpuProfileListModel;
     }
 
+    private final ClusterGeneralModel generalModel;
+
+    public ClusterGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    private final ClusterNetworkListModel networkListModel;
+
+    public ClusterNetworkListModel getNetworkListModel() {
+        return networkListModel;
+    }
+
+    private final ClusterHostListModel hostListModel;
+
+    public ClusterHostListModel getHostListModel() {
+        return hostListModel;
+    }
+
+    private final PermissionListModel<Cluster> permissionListModel;
+
+    public PermissionListModel<Cluster> getPermissionListModel() {
+        return permissionListModel;
+    }
+
     @Inject
-    public ClusterListModel(final ClusterVmListModel clusterVmListModel, final ClusterServiceModel clusterServiceModel,
+    public ClusterListModel(final ClusterVmListModel clusterVmListModel,
+            final ClusterServiceModel clusterServiceModel,
             final ClusterGlusterHookListModel clusterGlusterHookListModel,
             final ClusterAffinityGroupListModel clusterAffinityGroupListModel,
-            final CpuProfileListModel cpuProfileListModel, final ClusterGeneralModel clusterGeneralModel,
-            final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
+            final CpuProfileListModel cpuProfileListModel,
+            final ClusterGeneralModel clusterGeneralModel,
+            final ClusterNetworkListModel clusterNetworkListModel,
+            final ClusterHostListModel clusterHostListModel,
             final PermissionListModel<Cluster> permissionListModel,
             final ClusterAffinityLabelListModel clusterAffinityLabelListModel) {
-        this.clusterVmListModel = clusterVmListModel;
-        this.clusterServiceModel = clusterServiceModel;
-        this.clusterGlusterHookListModel = clusterGlusterHookListModel;
+        this.vmListModel = clusterVmListModel;
+        this.serviceModel = clusterServiceModel;
+        this.glusterHookListModel = clusterGlusterHookListModel;
         this.affinityGroupListModel = clusterAffinityGroupListModel;
         this.cpuProfileListModel = cpuProfileListModel;
         this.affinityLabelListModel = clusterAffinityLabelListModel;
-        setDetailList(clusterGeneralModel, clusterNetworkListModel, clusterHostListModel, permissionListModel);
+        this.generalModel = clusterGeneralModel;
+        this.networkListModel = clusterNetworkListModel;
+        this.hostListModel = clusterHostListModel;
+        this.permissionListModel = permissionListModel;
+        setDetailList();
 
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
         setHelpTag(HelpTag.clusters);
@@ -245,16 +276,14 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
                 }), (Guid) getGuideContext());
     }
 
-    private void setDetailList(final ClusterGeneralModel clusterGeneralModel,
-            final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel<Cluster> permissionListModel) {
+    private void setDetailList() {
         List<HasEntity<Cluster>> list = new ArrayList<>();
-        list.add(clusterGeneralModel);
-        list.add(clusterNetworkListModel);
-        list.add(clusterHostListModel);
-        list.add(clusterVmListModel);
-        list.add(clusterServiceModel);
-        list.add(clusterGlusterHookListModel);
+        list.add(generalModel);
+        list.add(networkListModel);
+        list.add(hostListModel);
+        list.add(vmListModel);
+        list.add(serviceModel);
+        list.add(glusterHookListModel);
         list.add(cpuProfileListModel);
         list.add(permissionListModel);
         list.add(affinityGroupListModel);
@@ -269,9 +298,9 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         boolean clusterSupportsVirtService = cluster != null && cluster.supportsVirtService();
         boolean clusterSupportsGlusterService = cluster != null && cluster.supportsGlusterService();
 
-        getClusterVmListModel().setIsAvailable(clusterSupportsVirtService);
-        getClusterServiceModel().setIsAvailable(clusterSupportsGlusterService);
-        getClusterGlusterHookListModel().setIsAvailable(clusterSupportsGlusterService);
+        getVmListModel().setIsAvailable(clusterSupportsVirtService);
+        getServiceModel().setIsAvailable(clusterSupportsGlusterService);
+        getGlusterHookListModel().setIsAvailable(clusterSupportsGlusterService);
         getAffinityGroupListModel().setIsAvailable(clusterSupportsVirtService);
         getCpuProfileListModel().setIsAvailable(clusterSupportsVirtService);
         getAffinityLabelListModel().setIsAvailable(clusterSupportsVirtService);

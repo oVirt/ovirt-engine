@@ -47,22 +47,14 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(WebadminMenuLayout menuLayout) {
-        MenuLayoutMenuDetails menuTabDetails =
-                menuLayout.getDetails(WebAdminApplicationPlaces.networkMainTabPlace);
-        return new GroupedTabData(
-                menuTabDetails.getSecondaryTitle(),
-                menuTabDetails.getPrimaryTitle(),
-                menuTabDetails.getSecondaryPriority(),
-                menuTabDetails.getPrimaryPriority(),
-                menuTabDetails.getIcon());
+        MenuLayoutMenuDetails menuDetails = menuLayout.getDetails(
+                WebAdminApplicationPlaces.networkMainTabPlace);
+        return new GroupedTabData(menuDetails);
     }
 
     @Inject
-    public MainTabNetworkPresenter(EventBus eventBus,
-            ViewDef view,
-            ProxyDef proxy,
-            PlaceManager placeManager,
-            MainModelProvider<NetworkView, NetworkListModel> modelProvider,
+    public MainTabNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, MainModelProvider<NetworkView, NetworkListModel> modelProvider,
             SearchPanelPresenterWidget<NetworkView, NetworkListModel> searchPanelPresenterWidget,
             OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs,
             NetworkActionPanelPresenterWidget actionPanel) {

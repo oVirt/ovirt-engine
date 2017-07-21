@@ -74,6 +74,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolesFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
+import org.ovirt.engine.ui.uicommonweb.models.VmErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.VmAffinityLabelListModel;
@@ -374,18 +375,123 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
      *  when the VM has next-run configuration */
     private VM editedVm;
 
+    private final VmGeneralModel generalModel;
+
+    public VmGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    private final VmInterfaceListModel interfaceListModel;
+
+    public VmInterfaceListModel getInterfaceListModel() {
+        return interfaceListModel;
+    }
+
+    private final VmEventListModel eventListModel;
+
+    public VmEventListModel getEventListModel() {
+        return eventListModel;
+    }
+
+    private final VmDiskListModel diskListModel;
+
+    public VmDiskListModel getDiskListModel() {
+        return diskListModel;
+    }
+
+    private final VmSnapshotListModel snapshotListModel;
+
+    public VmSnapshotListModel getSnapshotListModel() {
+        return snapshotListModel;
+    }
+
+    private final VmAppListModel<VM> appListModel;
+
+    public VmAppListModel<VM> getAppListModel() {
+        return appListModel;
+    }
+
+    private final VmHostDeviceListModel hostDeviceListModel;
+
+    public VmHostDeviceListModel getHostDeviceListModel() {
+        return hostDeviceListModel;
+    }
+
+    private final VmDevicesListModel<VM> vmDevicesListModel;
+
+    public VmDevicesListModel<VM> getVmDevicesListModel() {
+        return vmDevicesListModel;
+    }
+
+    private final VmAffinityGroupListModel affinityGroupListModel;
+
+    public VmAffinityGroupListModel getAffinityGroupListModel() {
+        return affinityGroupListModel;
+    }
+
+    private final VmAffinityLabelListModel affinityLabelListModel;
+
+    public VmAffinityLabelListModel getAffinityLabelListModel() {
+        return affinityLabelListModel;
+    }
+
+    private final PermissionListModel<VM> permissionListModel;
+
+    public PermissionListModel<VM> getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    private final VmGuestInfoModel guestInfoModel;
+
+    public VmGuestInfoModel getGuestInfoModel() {
+        return guestInfoModel;
+    }
+
+    private final VmErrataCountModel errataCountModel;
+
+    public VmErrataCountModel getErrataCountModel() {
+        return errataCountModel;
+    }
+
+    private final VmGuestContainerListModel guestContainerListModel;
+
+    public VmGuestContainerListModel getGuestContainerListModel() {
+        return guestContainerListModel;
+    }
+
     @Inject
-    public VmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
-            final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
-            final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
-            final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmGuestInfoModel vmGuestInfoModel, final Provider<ImportVmsModel> importVmsModelProvider,
-            final VmHostDeviceListModel vmHostDeviceListModel, final VmDevicesListModel vmDevicesListModel,
-            final VmAffinityLabelListModel vmAffinityLabelListModel) {
-        setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
-                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel, vmHostDeviceListModel,
-                vmDevicesListModel, vmAffinityLabelListModel);
+    public VmListModel(final VmGeneralModel vmGeneralModel,
+            final VmInterfaceListModel vmInterfaceListModel,
+            final VmDiskListModel vmDiskListModel,
+            final VmSnapshotListModel vmSnapshotListModel,
+            final VmEventListModel vmEventListModel,
+            final VmAppListModel<VM> vmAppListModel,
+            final PermissionListModel<VM> permissionListModel,
+            final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final VmGuestInfoModel vmGuestInfoModel,
+            final Provider<ImportVmsModel> importVmsModelProvider,
+            final VmHostDeviceListModel vmHostDeviceListModel,
+            final VmDevicesListModel<VM> vmDevicesListModel,
+            final VmAffinityLabelListModel vmAffinityLabelListModel,
+            final VmErrataCountModel vmErrataCountModel,
+            final VmGuestContainerListModel vmGuestContainerListModel) {
         this.importVmsModelProvider = importVmsModelProvider;
+        this.generalModel = vmGeneralModel;
+        this.interfaceListModel = vmInterfaceListModel;
+        this.eventListModel = vmEventListModel;
+        this.diskListModel = vmDiskListModel;
+        this.snapshotListModel = vmSnapshotListModel;
+        this.appListModel = vmAppListModel;
+        this.hostDeviceListModel = vmHostDeviceListModel;
+        this.vmDevicesListModel = vmDevicesListModel;
+        this.affinityGroupListModel = vmAffinityGroupListModel;
+        this.affinityLabelListModel = vmAffinityLabelListModel;
+        this.permissionListModel = permissionListModel;
+        this.guestInfoModel = vmGuestInfoModel;
+        this.errataCountModel = vmErrataCountModel;
+        this.guestContainerListModel = vmGuestContainerListModel;
+
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setApplicationPlace(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
@@ -436,25 +542,21 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         getItemsChangedEvent().addListener((ev, sender, args) -> vmAffinityLabelListModel.loadEntitiesNameMap());
     }
 
-    private void setDetailList(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
-            final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
-            final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
-            final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmGuestInfoModel vmGuestInfoModel, final VmHostDeviceListModel vmHostDeviceListModel,
-            final VmDevicesListModel vmDevicesListModel, final VmAffinityLabelListModel vmAffinityLabelListModel) {
+    private void setDetailList() {
         List<HasEntity<VM>> list = new ArrayList<>();
-        list.add(vmGeneralModel);
-        list.add(vmInterfaceListModel);
-        list.add(vmDiskListModel);
-        list.add(vmSnapshotListModel);
-        list.add(vmEventListModel);
-        list.add(vmAppListModel);
+        list.add(generalModel);
+        list.add(interfaceListModel);
+        list.add(diskListModel);
+        list.add(snapshotListModel);
+        list.add(eventListModel);
+        list.add(appListModel);
         list.add(vmDevicesListModel);
         list.add(permissionListModel);
-        list.add(vmAffinityGroupListModel);
-        list.add(vmGuestInfoModel);
-        list.add(vmHostDeviceListModel);
-        list.add(vmAffinityLabelListModel);
+        list.add(affinityGroupListModel);
+        list.add(guestInfoModel);
+        list.add(hostDeviceListModel);
+        list.add(affinityLabelListModel);
+        list.add(guestContainerListModel);
         setDetailModels(list);
     }
 

@@ -50,8 +50,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
         void addTab(String title, int index, String id, String href, String groupTitle, int groupIndex, HasCssName icon);
 
-        void removeTab(String title, String href);
-
         void updateTab(String title, String href, boolean accessible);
 
         void markActiveTab(String text, String href);
@@ -73,6 +71,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         ActionWidget getEventActionWidget();
 
         ActionWidget getAlertActionWidget();
+
     }
 
     private final ApplicationConstants constants = AssetProvider.getConstants();
@@ -187,11 +186,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     }
 
     @Override
-    public void removeTabWidget(TabDefinition tab) {
-        getView().removeTab(tab.getText(), getHref(tab));
-    }
-
-    @Override
     public void updateTab(TabDefinition tab) {
         getView().updateTab(tab.getText(), getHref(tab), tab.isAccessible());
     }
@@ -200,4 +194,5 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     public void setActiveTab(TabDefinition tab) {
         getView().markActiveTab(tab.getText(), getHref(tab));
     }
+
 }

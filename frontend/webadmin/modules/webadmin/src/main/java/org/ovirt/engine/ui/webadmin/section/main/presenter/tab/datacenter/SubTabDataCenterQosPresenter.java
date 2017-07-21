@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabDataCenterQosPresenter
     extends AbstractSubTabDataCenterPresenter<DataCenterStorageQosListModel,
         SubTabDataCenterQosPresenter.ViewDef, SubTabDataCenterQosPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterQosSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterQosPresenter> {
@@ -36,7 +32,7 @@ public class SubTabDataCenterQosPresenter
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.dataCenterQosSubTabLabel(), 4);
+        return DetailTabDataIndex.DATACENTER_QOS;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabDataCenterQosPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

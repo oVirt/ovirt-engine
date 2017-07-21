@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterDiskImageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabStorageRegisterDiskImagePresenter
         extends AbstractSubTabStoragePresenter<StorageRegisterDiskImageListModel, SubTabStorageRegisterDiskImagePresenter.ViewDef,
         SubTabStorageRegisterDiskImagePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageDisksImageRegisterSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageRegisterDiskImagePresenter> {
@@ -36,7 +32,7 @@ public class SubTabStorageRegisterDiskImagePresenter
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.storageDiskBackupSubTabLabel(), 4);
+        return DetailTabDataIndex.STORAGE_REGISTER_DISK_IMAGE;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabStorageRegisterDiskImagePresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

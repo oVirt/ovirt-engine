@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.HostAffinityLabelListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
@@ -36,21 +37,23 @@ public class ClusterHostListModel extends HostListModel<Cluster> {
 
     @Inject
     public ClusterHostListModel(final HostGeneralModel hostGeneralModel,
-            final HostGlusterSwiftListModel hostGlusterSwiftListModel, final HostBricksListModel hostBricksListModel,
-            final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
-            final HostInterfaceListModel hostInterfaceListModel, final HostDeviceListModel hostDeviceListModel,
-            final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
+            final HostGlusterSwiftListModel hostGlusterSwiftListModel,
+            final HostBricksListModel hostBricksListModel,
+            final HostVmListModel hostVmListModel,
+            final HostEventListModel hostEventListModel,
+            final HostInterfaceListModel hostInterfaceListModel,
+            final HostDeviceListModel hostDeviceListModel,
+            final HostHardwareGeneralModel hostHardwareGeneralModel,
+            final HostHooksListModel hostHooksListModel,
             final PermissionListModel<VDS> permissionListModel,
-            final HostGlusterStorageDevicesListModel gusterStorageDeviceListModel,
-            final HostAffinityLabelListModel hostAffinityLabelListModel) {
-        super(hostGeneralModel, hostGlusterSwiftListModel, hostBricksListModel, hostVmListModel, hostEventListModel,
-                hostInterfaceListModel,
-                hostDeviceListModel,
-                hostHardwareGeneralModel,
-                hostHooksListModel,
-                permissionListModel,
-                gusterStorageDeviceListModel,
-                hostAffinityLabelListModel);
+            final HostGlusterStorageDevicesListModel glusterStorageDeviceListModel,
+            final HostAffinityLabelListModel hostAffinityLabelListModel,
+            final HostErrataCountModel hostErrataCountModel) {
+        super(hostGeneralModel, hostGlusterSwiftListModel, hostBricksListModel,
+                hostVmListModel, hostEventListModel, hostInterfaceListModel,
+                hostDeviceListModel, hostHardwareGeneralModel, hostHooksListModel,
+                permissionListModel, glusterStorageDeviceListModel, hostAffinityLabelListModel,
+                hostErrataCountModel);
         setUpdateMomPolicyCommand(new UICommand("updateMomPolicyCommand", this)); //$NON-NLS-1$
         getUpdateMomPolicyCommand().setAvailableInModes(ApplicationMode.VirtOnly);
     }
@@ -141,4 +144,5 @@ public class ClusterHostListModel extends HostListModel<Cluster> {
 
                 }, null);
     }
+
 }

@@ -3,12 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -23,8 +21,6 @@ public class SubTabNetworkGeneralPresenter
     extends AbstractSubTabNetworkPresenter<NetworkGeneralModel, SubTabNetworkGeneralPresenter.ViewDef,
         SubTabNetworkGeneralPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkGeneralPresenter> {
@@ -35,7 +31,7 @@ public class SubTabNetworkGeneralPresenter
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.networkGeneralSubTabLabel(), 0);
+        return DetailTabDataIndex.NETWORK_GENERAL;
     }
 
     @Inject
@@ -46,4 +42,5 @@ public class SubTabNetworkGeneralPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

@@ -160,24 +160,6 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         this.optimizeForVirtStoreCommand = optimizeForVirtStoreCommand;
     }
 
-    private final VolumeBrickListModel brickListModel;
-
-    public VolumeBrickListModel getBrickListModel() {
-        return this.brickListModel;
-    }
-
-    private final VolumeGeoRepListModel geoRepListModel;
-
-    public VolumeGeoRepListModel getGeoRepListModel() {
-        return geoRepListModel;
-    }
-
-    private final GlusterVolumeSnapshotListModel snapshotListModel;
-
-    public GlusterVolumeSnapshotListModel getSnapshotListModel() {
-        return snapshotListModel;
-    }
-
     public UICommand getStartVolumeProfilingCommand() {
         return startVolumeProfilingCommand;
     }
@@ -234,8 +216,51 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         this.editSnapshotScheduleCommand = command;
     }
 
+    private final VolumeBrickListModel brickListModel;
+
+    public VolumeBrickListModel getBrickListModel() {
+        return brickListModel;
+    }
+
+    private final VolumeGeoRepListModel geoRepListModel;
+
+    public VolumeGeoRepListModel getGeoRepListModel() {
+        return geoRepListModel;
+    }
+
+    private final GlusterVolumeSnapshotListModel snapshotListModel;
+
+    public GlusterVolumeSnapshotListModel getSnapshotListModel() {
+        return snapshotListModel;
+    }
+
+    private final VolumeGeneralModel generalModel;
+
+    public VolumeGeneralModel getGeneralModel() {
+        return generalModel;
+    }
+
+    private final VolumeParameterListModel parameterListModel;
+
+    public VolumeParameterListModel getParameterListModel() {
+        return parameterListModel;
+    }
+
+    private final PermissionListModel<GlusterVolumeEntity> permissionListModel;
+
+    public PermissionListModel<GlusterVolumeEntity> getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    private final VolumeEventListModel eventListModel;
+
+    public VolumeEventListModel getEventListModel() {
+        return eventListModel;
+    }
+
     @Inject
-    public VolumeListModel(final VolumeBrickListModel volumeBrickListModel, final VolumeGeneralModel volumeGeneralModel,
+    public VolumeListModel(final VolumeBrickListModel volumeBrickListModel,
+            final VolumeGeneralModel volumeGeneralModel,
             final VolumeParameterListModel volumeParameterListModel,
             final PermissionListModel<GlusterVolumeEntity> permissionListModel,
             final VolumeEventListModel volumeEventListModel,
@@ -244,7 +269,11 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         this.brickListModel = volumeBrickListModel;
         this.geoRepListModel = geoRepListModel;
         this.snapshotListModel = snapshotListModel;
-        setDetailList(volumeGeneralModel, volumeParameterListModel, permissionListModel, volumeEventListModel);
+        this.generalModel = volumeGeneralModel;
+        this.parameterListModel = volumeParameterListModel;
+        this.permissionListModel = permissionListModel;
+        this.eventListModel = volumeEventListModel;
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
         setApplicationPlace(WebAdminApplicationPlaces.volumeMainTabPlace);
 
@@ -289,18 +318,14 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         new AsyncQuery<String>(returnValue -> glusterMetaVolumeName = returnValue));
     }
 
-    private void setDetailList(final VolumeGeneralModel volumeGeneralModel,
-            final VolumeParameterListModel volumeParameterListModel,
-            final PermissionListModel<GlusterVolumeEntity> permissionListModel,
-            final VolumeEventListModel volumeEventListModel) {
-
+    private void setDetailList() {
         List<HasEntity<GlusterVolumeEntity>> list = new ArrayList<>();
-        list.add(volumeGeneralModel);
-        list.add(volumeParameterListModel);
+        list.add(generalModel);
+        list.add(parameterListModel);
         list.add(getBrickListModel());
         list.add(getGeoRepListModel());
         list.add(permissionListModel);
-        list.add(volumeEventListModel);
+        list.add(eventListModel);
         list.add(getSnapshotListModel());
         setDetailModels(list);
     }

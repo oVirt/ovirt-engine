@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabClusterPermissionPresenter
     extends AbstractSubTabClusterPresenter<PermissionListModel<Cluster>, SubTabClusterPermissionPresenter.ViewDef,
         SubTabClusterPermissionPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterPermissionPresenter> {
@@ -36,7 +32,7 @@ public class SubTabClusterPermissionPresenter
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.clusterPermissionSubTabLabel(), 9);
+        return DetailTabDataIndex.CLUSTER_PERMISSIONS;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabClusterPermissionPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

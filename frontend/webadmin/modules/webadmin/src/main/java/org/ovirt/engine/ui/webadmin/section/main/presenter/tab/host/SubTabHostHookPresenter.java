@@ -4,13 +4,11 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -25,8 +23,6 @@ public class SubTabHostHookPresenter
     extends AbstractSubTabHostPresenter<HostHooksListModel, SubTabHostHookPresenter.ViewDef,
         SubTabHostHookPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostHookSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostHookPresenter> {
@@ -37,7 +33,7 @@ public class SubTabHostHookPresenter
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.hostHookSubTabLabel(), 3);
+        return DetailTabDataIndex.HOSTS_HOOKS;
     }
 
     @Inject
@@ -48,4 +44,5 @@ public class SubTabHostHookPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

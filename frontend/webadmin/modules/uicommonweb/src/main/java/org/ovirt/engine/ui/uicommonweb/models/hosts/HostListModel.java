@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.HostErrataCountModel;
 import org.ovirt.engine.ui.uicommonweb.models.HostMaintenanceConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
@@ -98,6 +99,10 @@ import com.google.inject.Inject;
 public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> implements TagAssigningModel<VDS> {
 
     private final HostGeneralModel generalModel;
+
+    public HostGeneralModel getGeneralModel() {
+        return generalModel;
+    }
 
     private UICommand privateNewCommand;
 
@@ -353,7 +358,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private final HostEventListModel privateHostEventListModel;
 
-    private HostEventListModel getHostEventListModel() {
+    public HostEventListModel getEventListModel() {
         return privateHostEventListModel;
     }
 
@@ -376,59 +381,88 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         return glusterSwiftModel;
     }
 
-    private final HostBricksListModel hostBricksListModel;
+    private final HostBricksListModel bricksListModel;
 
-    public HostBricksListModel getHostBricksListModel() {
-        return hostBricksListModel;
+    public HostBricksListModel getBricksListModel() {
+        return bricksListModel;
     }
 
-    private HostGlusterStorageDevicesListModel glusterStorageDeviceListModel;
+    private final HostGlusterStorageDevicesListModel glusterStorageDeviceListModel;
 
     public HostGlusterStorageDevicesListModel getGlusterStorageDeviceListModel() {
         return glusterStorageDeviceListModel;
     }
 
-    public void setGlusterStorageDeviceListModel(HostGlusterStorageDevicesListModel storageDeviceListModel) {
-        this.glusterStorageDeviceListModel = storageDeviceListModel;
+    private final HostVmListModel vmListModel;
+
+    public HostVmListModel getVmListModel() {
+        return this.vmListModel;
     }
 
-    private final HostVmListModel hostVmListModel;
+    private final HostInterfaceListModel interfaceListModel;
 
-    public HostVmListModel getHostVmListModel() {
-        return this.hostVmListModel;
+    public HostInterfaceListModel getInterfaceListModel() {
+        return interfaceListModel;
     }
 
-    protected Object[] getSelectedKeys() {
-        if (getSelectedItems() == null) {
-            return new Object[0];
-        }
-        else {
-            Object[] keys = new Object[getSelectedItems().size()];
-            for (int i = 0; i < getSelectedItems().size(); i++) {
-                keys[i] = getSelectedItems().get(i).getId();
-            }
-            return keys;
-        }
+    private final HostDeviceListModel deviceListModel;
+
+    public HostDeviceListModel getDeviceListModel() {
+        return deviceListModel;
+    }
+
+    private final HostHooksListModel hooksListModel;
+
+    public HostHooksListModel getHooksListModel() {
+        return hooksListModel;
+    }
+
+    private final PermissionListModel<VDS> permissionListModel;
+
+    public PermissionListModel<VDS> getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    private final HostAffinityLabelListModel affinityLabelListModel;
+
+    public HostAffinityLabelListModel getAffinityLabelListModel() {
+        return affinityLabelListModel;
+    }
+
+    private final HostErrataCountModel errataCountModel;
+
+    public HostErrataCountModel getErrataCountModel() {
+        return errataCountModel;
     }
 
     @Inject
     public HostListModel(final HostGeneralModel hostGeneralModel,
-            final HostGlusterSwiftListModel hostGlusterSwiftListModel, final HostBricksListModel hostBricksListModel,
-            final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
-            final HostInterfaceListModel hostInterfaceListModel, final HostDeviceListModel hostDeviceListModel,
-            final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
+            final HostGlusterSwiftListModel hostGlusterSwiftListModel,
+            final HostBricksListModel hostBricksListModel,
+            final HostVmListModel hostVmListModel,
+            final HostEventListModel hostEventListModel,
+            final HostInterfaceListModel hostInterfaceListModel,
+            final HostDeviceListModel hostDeviceListModel,
+            final HostHardwareGeneralModel hostHardwareGeneralModel,
+            final HostHooksListModel hostHooksListModel,
             final PermissionListModel<VDS> permissionListModel,
             final HostGlusterStorageDevicesListModel glusterStorageDeviceListModel,
-            final HostAffinityLabelListModel hostAffinityLabelListModel) {
+            final HostAffinityLabelListModel hostAffinityLabelListModel,
+            final HostErrataCountModel hostErrataCountModel) {
         this.generalModel = hostGeneralModel;
         this.glusterSwiftModel = hostGlusterSwiftListModel;
-        this.hostBricksListModel = hostBricksListModel;
-        this.hostVmListModel = hostVmListModel;
+        this.bricksListModel = hostBricksListModel;
+        this.vmListModel = hostVmListModel;
         this.privateHostEventListModel = hostEventListModel;
         this.glusterStorageDeviceListModel = glusterStorageDeviceListModel;
+        this.interfaceListModel = hostInterfaceListModel;
+        this.deviceListModel = hostDeviceListModel;
+        this.hooksListModel = hostHooksListModel;
+        this.permissionListModel = permissionListModel;
+        this.affinityLabelListModel = hostAffinityLabelListModel;
+        this.errataCountModel = hostErrataCountModel;
 
-        setDetailList(hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel,
-                hostDeviceListModel, hostAffinityLabelListModel);
+        setDetailList(hostHardwareGeneralModel);
 
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
         setHelpTag(HelpTag.hosts);
@@ -477,26 +511,23 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         getItemsChangedEvent().addListener((ev, sender, args) -> hostAffinityLabelListModel.loadEntitiesNameMap());
     }
 
-    private void setDetailList(final HostInterfaceListModel hostInterfaceListModel,
-                               final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-                               final PermissionListModel<VDS> permissionListModel, final HostDeviceListModel hostDeviceListModel,
-                               final HostAffinityLabelListModel hostAffinityLabelListModel) {
+    private void setDetailList(final HostHardwareGeneralModel hostHardwareGeneralModel) {
         generalModel.getRequestEditEvent().addListener(this);
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
 
         List<HasEntity<VDS>> list = new ArrayList<>();
         list.add(generalModel);
         list.add(hostHardwareGeneralModel);
-        list.add(getHostVmListModel());
-        list.add(hostInterfaceListModel);
-        list.add(hostDeviceListModel);
-        list.add(getHostEventListModel());
-        list.add(hostHooksListModel);
+        list.add(getVmListModel());
+        list.add(interfaceListModel);
+        list.add(deviceListModel);
+        list.add(getEventListModel());
+        list.add(hooksListModel);
         list.add(getGlusterSwiftModel());
-        list.add(getHostBricksListModel());
+        list.add(getBricksListModel());
         list.add(getGlusterStorageDeviceListModel());
         list.add(permissionListModel);
-        list.add(hostAffinityLabelListModel);
+        list.add(affinityLabelListModel);
         setDetailModels(list);
     }
 
@@ -715,7 +746,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
     }
 
     private void goToEventsTab() {
-        setActiveDetailModel(getHostEventListModel());
+        setActiveDetailModel(getEventListModel());
     }
 
     public void edit(final boolean isEditWithPMemphasis) {
@@ -1615,8 +1646,8 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
         super.updateDetailsAvailability();
         VDS vds = getSelectedItem();
         getGlusterSwiftModel().setIsAvailable(false);
-        getHostBricksListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService());
-        getHostVmListModel().setIsAvailable(vds != null && vds.getClusterSupportsVirtService());
+        getBricksListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService());
+        getVmListModel().setIsAvailable(vds != null && vds.getClusterSupportsVirtService());
         getGlusterStorageDeviceListModel().setIsAvailable(vds != null && vds.getClusterSupportsGlusterService());
     }
 

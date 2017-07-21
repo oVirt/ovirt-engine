@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabStorageDiskProfilePresenter
     extends AbstractSubTabStoragePresenter<DiskProfileListModel, SubTabStorageDiskProfilePresenter.ViewDef,
         SubTabStorageDiskProfilePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageDiskProfileSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageDiskProfilePresenter> {
@@ -38,7 +34,7 @@ public class SubTabStorageDiskProfilePresenter
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.diskProfilesSubTabLabel(), 11);
+        return DetailTabDataIndex.STORAGE_DISK_PROFILES;
     }
 
     @Inject
@@ -56,4 +52,5 @@ public class SubTabStorageDiskProfilePresenter
 
         getView().addModelListeners();
     }
+
 }

@@ -37,7 +37,6 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
     protected Guid guid;
 
     public AbstractErrataListModel() {
-
         setIsTimerDisabled(true);
         setTitle(ConstantsManager.getInstance().getConstants().errata());
         setHelpTag(HelpTag.errata);
@@ -49,7 +48,6 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-
     }
 
     @Override
@@ -132,4 +130,5 @@ public abstract class AbstractErrataListModel extends ListWithSimpleDetailsModel
     }
 
     protected abstract QueryType getQueryType();
+
 }

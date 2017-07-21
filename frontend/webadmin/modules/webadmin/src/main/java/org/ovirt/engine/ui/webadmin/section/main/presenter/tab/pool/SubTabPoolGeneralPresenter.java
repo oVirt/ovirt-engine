@@ -3,12 +3,10 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolGeneralView;
 
 import com.google.gwt.event.shared.EventBus;
@@ -23,8 +21,6 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabPoolGeneralPresenter
     extends AbstractSubTabPoolPresenter<PoolGeneralModel, SubTabPoolGeneralView, SubTabPoolGeneralPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.poolGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabPoolGeneralPresenter> {
@@ -35,7 +31,7 @@ public class SubTabPoolGeneralPresenter
 
     @TabInfo(container = PoolSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.poolGeneralSubTabLabel(), 0);
+        return DetailTabDataIndex.POOL_GENERAL;
     }
 
     @Inject
@@ -46,4 +42,5 @@ public class SubTabPoolGeneralPresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 PoolSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }

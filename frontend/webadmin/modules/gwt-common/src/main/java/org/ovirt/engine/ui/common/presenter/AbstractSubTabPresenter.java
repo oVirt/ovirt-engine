@@ -236,4 +236,5 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     protected AbstractMainTabSelectedItems<T> getSelectedMainItems() {
         return selectedMainItems;
     }
+
 }

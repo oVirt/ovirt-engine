@@ -4,12 +4,10 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -30,8 +28,6 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
     EngineErrataListModel, EntityModel<Erratum>, SubTabEngineErrataDetailsPresenter.ViewDef,
     SubTabEngineErrataDetailsPresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.errataDetailsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabEngineErrataDetailsPresenter> {
@@ -42,7 +38,7 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
 
     @TabInfo(container = ErrataSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.errataDetailsSubTabLabel(), 1);
+        return DetailTabDataIndex.ERRATA_DETAILS;
     }
 
     @Inject
@@ -58,4 +54,5 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
     protected PlaceRequest getMainTabRequest() {
         return PlaceRequestFactory.get(WebAdminApplicationPlaces.errataMainTabPlace);
     }
+
 }

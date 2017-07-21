@@ -6,8 +6,6 @@ import com.gwtplatform.mvp.client.RequestTabsHandler;
 
 /**
  * Event triggered when {@link DynamicTabContainerPresenter} should redraw (remove and re-add) its tabs.
- *
- * @see UpdateDynamicTabContainer
  */
 @GenEvent
 public class RedrawDynamicTabContainer {

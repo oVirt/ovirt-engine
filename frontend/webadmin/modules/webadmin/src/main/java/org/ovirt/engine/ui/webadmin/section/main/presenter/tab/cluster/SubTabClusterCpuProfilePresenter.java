@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabClusterCpuProfilePresenter
     extends AbstractSubTabClusterPresenter<CpuProfileListModel, SubTabClusterCpuProfilePresenter.ViewDef,
         SubTabClusterCpuProfilePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterCpuProfileSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterCpuProfilePresenter> {
@@ -38,7 +34,7 @@ public class SubTabClusterCpuProfilePresenter
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.cpuProfilesSubTabLabel(), 8);
+        return DetailTabDataIndex.CLUSTER_CPU_PROFILES;
     }
 
     @Inject
@@ -56,4 +52,5 @@ public class SubTabClusterCpuProfilePresenter
 
         getView().addModelListeners();
     }
+
 }

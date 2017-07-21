@@ -10,7 +10,7 @@ import com.gwtplatform.mvp.client.Tab;
  */
 public interface TabDefinition extends Tab, HasAccess {
 
-    public static final String TAB_ID_PREFIX = "tab-id-"; //$NON-NLS-1$
+    String TAB_ID_PREFIX = "tab-id-"; //$NON-NLS-1$
 
     /**
      * Set the group title this tab belongs to
@@ -51,4 +51,5 @@ public interface TabDefinition extends Tab, HasAccess {
      * Get the id
      */
     String getId();
+
 }

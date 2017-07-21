@@ -3,13 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DetailTabDataIndex;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -24,8 +22,6 @@ public class SubTabVirtualMachineHostDevicePresenter
     extends AbstractSubTabVirtualMachinePresenter<VmHostDeviceListModel,
         SubTabVirtualMachineHostDevicePresenter.ViewDef, SubTabVirtualMachineHostDevicePresenter.ProxyDef> {
 
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
-
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineHostDeviceSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineHostDevicePresenter> {
@@ -36,7 +32,7 @@ public class SubTabVirtualMachineHostDevicePresenter
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData() {
-        return new GroupedTabData(constants.virtualMachineHostDeviceSubTabLabel(), 5);
+        return DetailTabDataIndex.VIRTUALMACHINE_HOST_DEVICE;
     }
 
     @Inject
@@ -47,4 +43,5 @@ public class SubTabVirtualMachineHostDevicePresenter
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
+
 }
