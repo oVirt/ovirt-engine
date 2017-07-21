@@ -633,8 +633,7 @@ public class SchedulingManager implements BackendService {
         }
 
         hostList =
-                runInternalFilters(internalFilters, cluster, hostList, vm, parameters, filterPositionMap,
-                        runVmDelayer, correlationId, result);
+                runInternalFilters(internalFilters, cluster, hostList, vm, parameters, runVmDelayer, correlationId, result);
 
         if (shouldRunExternalFilters
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
@@ -655,7 +654,6 @@ public class SchedulingManager implements BackendService {
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters,
-            Map<Guid, Integer> filterPositionMap,
             RunVmDelayer runVmDelayer,
             String correlationId,
             SchedulingResult result) {
