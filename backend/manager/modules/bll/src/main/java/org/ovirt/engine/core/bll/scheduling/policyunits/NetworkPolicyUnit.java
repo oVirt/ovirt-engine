@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<VDS> filter(Cluster cluster, List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
         if (hosts == null || hosts.isEmpty()) {
-            return null;
+            return Collections.emptyList();
         }
 
         List<VDS> toRemoveHostList = new ArrayList<>();
