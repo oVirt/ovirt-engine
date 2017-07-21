@@ -24,6 +24,8 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<VM> newButtonDefinition;
+
     @Inject
     public VirtualMachineActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<VM> view,
@@ -33,13 +35,14 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {
+        newButtonDefinition = new WebAdminButtonDefinition<VM>(constants.newVm()) {
 
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewVmCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addMenuListItem(new WebAdminButtonDefinition<VM>(constants.restoreVm()) {
             @Override
             protected UICommand resolveCommand() {
@@ -184,6 +187,10 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
                 return getModel().getGuideCommand();
             }
         });
+    }
+
+    public WebAdminButtonDefinition<VM> getNewButtonDefinition() {
+        return newButtonDefinition;
     }
 
 }

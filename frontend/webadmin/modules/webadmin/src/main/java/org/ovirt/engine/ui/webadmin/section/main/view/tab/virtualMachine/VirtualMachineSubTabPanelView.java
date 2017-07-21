@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
@@ -24,9 +25,10 @@ public class VirtualMachineSubTabPanelView extends AbstractSubTabPanelView
 
     @Inject
     public VirtualMachineSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VM, VmListModel<Void>> breadCrumbs,
-            DetailTabLayout detailTabLayout) {
-        tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
+            VirtualMachineActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
+        tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
+        actionPanel.removeButton(actionPanel.getNewButtonDefinition());
     }
 
     @Override

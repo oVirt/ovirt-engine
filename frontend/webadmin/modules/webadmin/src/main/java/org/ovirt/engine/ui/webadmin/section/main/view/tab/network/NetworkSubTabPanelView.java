@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
@@ -23,9 +24,11 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
 
     @Inject
     public NetworkSubTabPanelView(OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs,
-            DetailTabLayout detailTabLayout) {
-        tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
+            NetworkActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
+        tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
+        actionPanel.removeButton(actionPanel.getNewButtonDefinition());
+        actionPanel.removeButton(actionPanel.getImportButtonDefinition());
     }
 
     @Override

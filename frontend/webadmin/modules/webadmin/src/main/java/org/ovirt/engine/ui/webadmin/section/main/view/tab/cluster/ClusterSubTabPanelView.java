@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
@@ -23,9 +24,10 @@ public class ClusterSubTabPanelView extends AbstractSubTabPanelView implements C
 
     @Inject
     public ClusterSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Cluster, ClusterListModel<Void>> breadCrumbs,
-            DetailTabLayout detailTabLayout) {
-        tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
+            ClusterActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
+        tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
+        actionPanel.removeButton(actionPanel.getNewButtonDefinition());
     }
 
     @Override

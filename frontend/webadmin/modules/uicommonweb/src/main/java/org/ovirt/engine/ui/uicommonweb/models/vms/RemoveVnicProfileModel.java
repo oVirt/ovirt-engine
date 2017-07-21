@@ -11,16 +11,16 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class RemoveVnicProfileModel extends ConfirmationModel {
 
     private final List<VnicProfileView> profiles;
     private final boolean fullMsg;
-    private final ListModel sourceListModel;
+    private final SearchableListModel<?, VnicProfileView>  sourceListModel;
 
-    public RemoveVnicProfileModel(ListModel sourceListModel, List<VnicProfileView> profiles, boolean isFullMsg) {
+    public RemoveVnicProfileModel(SearchableListModel<?, VnicProfileView> sourceListModel, List<VnicProfileView> profiles, boolean isFullMsg) {
         setTitle(ConstantsManager.getInstance().getConstants().removeVnicProfileTitle());
         setHelpTag(HelpTag.remove_vnic_prfoile);
         setHashName("remove_vnic_prfoile"); //$NON-NLS-1$
@@ -57,6 +57,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
 
         }
 
+        sourceListModel.selectNextItem();
         startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVnicProfile, list,

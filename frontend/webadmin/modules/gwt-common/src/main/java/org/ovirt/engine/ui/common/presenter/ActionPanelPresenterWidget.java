@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
@@ -75,6 +76,12 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
          * Add the toolbar's search result / applied filter row to the action panel below the search panel and buttons
          */
         void setFilterResult(IsWidget result);
+
+        /**
+         * Get a map of button definitions to action buttons.
+         * @return A map of the action button definitions to the action buttons.
+         */
+        Map<ActionButtonDefinition<T>, ActionButton> getActionItems();
     }
 
     private final SearchableTableModelProvider<T, M> dataProvider;
@@ -199,6 +206,13 @@ public abstract class ActionPanelPresenterWidget<T, M extends SearchableListMode
 
     protected com.google.gwt.event.shared.EventBus getSharedEventBus() {
         return (com.google.gwt.event.shared.EventBus) getEventBus();
+    }
+
+    public void removeButton(ActionButtonDefinition<T> buttonDef) {
+        ActionButton buttonToRemove = getView().getActionItems().get(buttonDef);
+        if (buttonToRemove != null) {
+            buttonToRemove.asWidget().removeFromParent();
+        }
     }
 
     protected abstract void initializeButtons();

@@ -19,6 +19,8 @@ public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWi
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<StoragePool> newButtonDefinition;
+
     @Inject
     public DataCenterActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<StoragePool> view,
@@ -28,12 +30,13 @@ public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWi
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
+        newButtonDefinition = new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
 
         addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.editDC()) {
             @Override
@@ -68,5 +71,9 @@ public class DataCenterActionPanelPresenterWidget extends ActionPanelPresenterWi
                 return getModel().getRecoveryStorageCommand();
             }
         });
+    }
+
+    public WebAdminButtonDefinition<StoragePool> getNewButtonDefinition() {
+        return newButtonDefinition;
     }
 }

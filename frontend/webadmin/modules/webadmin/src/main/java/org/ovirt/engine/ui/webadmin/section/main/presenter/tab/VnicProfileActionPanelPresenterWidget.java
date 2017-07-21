@@ -18,6 +18,8 @@ public class VnicProfileActionPanelPresenterWidget extends
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<VnicProfileView> newButtonDefinition;
+
     @Inject
     public VnicProfileActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<VnicProfileView> view,
@@ -27,12 +29,13 @@ public class VnicProfileActionPanelPresenterWidget extends
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newVnicProfile()) {
+        newButtonDefinition = new WebAdminButtonDefinition<VnicProfileView>(constants.newVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.editVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
@@ -45,6 +48,10 @@ public class VnicProfileActionPanelPresenterWidget extends
                 return getModel().getRemoveCommand();
             }
         });
+    }
+
+    public WebAdminButtonDefinition<VnicProfileView> getNewButtonDefinition() {
+        return newButtonDefinition;
     }
 
 }

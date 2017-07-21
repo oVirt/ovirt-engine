@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VnicProfileActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.VnicProfileSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.widget.tab.SimpleTabPanel;
@@ -23,9 +24,10 @@ public class VnicProfileSubTabPanelView extends AbstractSubTabPanelView implemen
 
     @Inject
     public VnicProfileSubTabPanelView(OvirtBreadCrumbsPresenterWidget<VnicProfileView, VnicProfileListModel> breadCrumbs,
-            DetailTabLayout detailTabLayout) {
-        tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
+            VnicProfileActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
+        tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
+        actionPanel.removeButton(actionPanel.getNewButtonDefinition());
     }
 
     @Override

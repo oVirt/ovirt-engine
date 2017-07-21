@@ -12,20 +12,18 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("deprecation")
 public class RemoveProvidersModel extends ConfirmationModel {
 
     private static final String CMD_REMOVE = "OnRemove"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
-    private final SearchableListModel sourceListModel;
+    private final ProviderListModel sourceListModel;
     private final List<Provider> providers;
 
     @SuppressWarnings("unchecked")
-    public RemoveProvidersModel(SearchableListModel sourceListModel) {
+    public RemoveProvidersModel(ProviderListModel sourceListModel) {
         this.sourceListModel = sourceListModel;
         providers = (List<Provider>) sourceListModel.getSelectedItems();
 
@@ -55,6 +53,7 @@ public class RemoveProvidersModel extends ConfirmationModel {
             parameterList.add(new ProviderParameters(provider));
         }
 
+        sourceListModel.selectNextItem();
         Frontend.getInstance().runMultipleActions(ActionType.RemoveProvider, parameterList,
                 result -> sourceListModel.getSearchCommand().execute());
         cancel();

@@ -1253,3 +1253,12 @@ td.datePickerYear {
   background: #d0e4f6 url(../../gwt/standard/images/splitPanelThumb.png) center center no-repeat;
   cursor: row-resize;
 }
+
+.detailMainActionPanelContainer {
+  padding: 0;
+}
+
+.detailMainActionPanelContainer .toolbar-pf {
+  margin-top: 10px;
+  height: 73px;
+}

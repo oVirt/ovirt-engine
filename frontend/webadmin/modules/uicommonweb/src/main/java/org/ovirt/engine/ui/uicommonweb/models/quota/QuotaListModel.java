@@ -587,6 +587,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
             prms.add(idParameters);
         }
 
+        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveQuota, prms,
@@ -595,7 +596,6 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
                     cancel();
-
                 }, model);
     }
 

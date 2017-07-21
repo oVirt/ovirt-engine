@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.NavTabs;
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
@@ -44,7 +45,11 @@ public class SimpleTabPanel extends AbstractTabPanel {
     @UiField
     Column breadCrumbsContainer;
 
-    final OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs;
+    @UiField
+    Column mainActionPanel;
+
+    private final OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs;
+    private final ActionPanelPresenterWidget<?, ?> actionPanel;
     private final DetailTabLayout tabLayout;
 
     private NavTabs navTabs;
@@ -53,11 +58,12 @@ public class SimpleTabPanel extends AbstractTabPanel {
     private final Map<TabData, Widget> actualTabWidgets = new HashMap<>();
     private final Map<TabData, String> tabHistoryTokens = new HashMap<>();
 
-    public SimpleTabPanel(OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs, DetailTabLayout tabLayout) {
-        this.breadCrumbs = breadCrumbs;
+    public SimpleTabPanel(OvirtBreadCrumbsPresenterWidget<?, ?> breadCrumbs,
+            ActionPanelPresenterWidget<?, ?> actionPanel, DetailTabLayout tabLayout) {
+        navTabs = createPatternFlyNavTabs();
         this.tabLayout = tabLayout;
-        this.navTabs = createPatternFlyNavTabs();
-
+        this.breadCrumbs = breadCrumbs;
+        this.actionPanel = actionPanel;
         initWidget();
         tabContainer.add(navTabs);
         if (breadCrumbs != null) {
@@ -123,10 +129,11 @@ public class SimpleTabPanel extends AbstractTabPanel {
                 }
             }
         );
-        if (breadCrumbs != null) {
-            if (breadCrumbsContainer.getWidgetCount() == 0) {
-                breadCrumbsContainer.add(breadCrumbs);
-            }
+        if (breadCrumbs != null && breadCrumbsContainer.getWidgetCount() == 0) {
+            breadCrumbsContainer.add(breadCrumbs);
+        }
+        if (actionPanel != null && mainActionPanel.getWidgetCount() == 0) {
+            mainActionPanel.add(actionPanel);
         }
     }
 

@@ -17,6 +17,8 @@ public class UserActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<DbUser> newButtonDefinition;
+
     @Inject
     public UserActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<DbUser> view,
@@ -26,12 +28,13 @@ public class UserActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<DbUser>(constants.addUser()) {
+        newButtonDefinition = new WebAdminButtonDefinition<DbUser>(constants.addUser()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<DbUser>(constants.removeUser()) {
             @Override
             protected UICommand resolveCommand() {
@@ -44,6 +47,10 @@ public class UserActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
                 return getModel().getAssignTagsCommand();
             }
         });
+    }
+
+    public WebAdminButtonDefinition<DbUser> getNewButtonDefinition() {
+        return newButtonDefinition;
     }
 
 }

@@ -115,6 +115,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
 
         ConfirmationModel model = new RemoveVnicProfileModel(this, getSelectedItems(), true);
         setConfirmWindow(model);
+
     }
 
     @Override

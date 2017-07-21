@@ -36,6 +36,12 @@ public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<
         return activeDetailModels.isEmpty() ? null : activeDetailModels.get(0);
     }
 
+    public void ensureActiveDetailModel() {
+        if (getActiveDetailModel() == null) {
+            setActiveDetailModel(getDetailModels().get(0));
+        }
+    }
+
     public void setActiveDetailModel(HasEntity<D> value) {
         if (!activeDetailModels.contains(value)) {
             activeDetailModelChanging(value, true);

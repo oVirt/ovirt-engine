@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
@@ -88,16 +89,16 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     private ExternalSubnetModel subnetModel;
     private UICommand addQosCommand;
     private final Network network;
-    private final ListModel sourceListModel;
+    private final SearchableListModel<?, ? extends Network> sourceListModel;
     private boolean isGeneralTabValid;
     private boolean isVnicProfileTabValid;
     private boolean isSubnetTabValid;
 
-    public NetworkModel(ListModel sourceListModel) {
+    public NetworkModel(SearchableListModel<?, ? extends Network> sourceListModel) {
         this(new Network(), sourceListModel);
     }
 
-    public NetworkModel(Network network, ListModel sourceListModel) {
+    public NetworkModel(Network network, SearchableListModel<?, ? extends Network> sourceListModel) {
         addCommands();
         this.network = network;
         this.sourceListModel = sourceListModel;
@@ -398,7 +399,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
         return network;
     }
 
-    public ListModel getSourceListModel() {
+    public SearchableListModel<?, ?> getSourceListModel() {
         return sourceListModel;
     }
 

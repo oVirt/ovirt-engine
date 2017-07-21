@@ -17,6 +17,8 @@ public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidg
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<Provider> newButtonDefinition;
+
     @Inject
     public ProviderActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<Provider> view,
@@ -26,12 +28,13 @@ public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidg
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<Provider>(constants.addProvider()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Provider>(constants.addProvider()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
 
         addActionButton(new WebAdminButtonDefinition<Provider>(constants.editProvider()) {
             @Override
@@ -46,6 +49,10 @@ public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidg
                 return getModel().getRemoveCommand();
             }
         });
+    }
+
+    public WebAdminButtonDefinition<Provider> getNewButtonDefinition() {
+        return newButtonDefinition;
     }
 
 }

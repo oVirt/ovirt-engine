@@ -17,6 +17,9 @@ public class StorageActionPanelPresenterWidget extends ActionPanelPresenterWidge
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<StorageDomain> newButtonDefinition;
+    private WebAdminButtonDefinition<StorageDomain> importButtonDefinition;
+
     @Inject
     public StorageActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<StorageDomain> view,
@@ -26,18 +29,20 @@ public class StorageActionPanelPresenterWidget extends ActionPanelPresenterWidge
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
+        newButtonDefinition = new WebAdminButtonDefinition<StorageDomain>(constants.newDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewDomainCommand();
             }
-        });
-        addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.importDomainStorage()) {
+        };
+        addActionButton(newButtonDefinition);
+        importButtonDefinition = new WebAdminButtonDefinition<StorageDomain>(constants.importDomainStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getImportDomainCommand();
             }
-        });
+        };
+        addActionButton(importButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.editStorage()) {
             @Override
             protected UICommand resolveCommand() {
@@ -70,4 +75,11 @@ public class StorageActionPanelPresenterWidget extends ActionPanelPresenterWidge
         });
     }
 
+    public WebAdminButtonDefinition<StorageDomain> getNewButtonDefinition() {
+        return newButtonDefinition;
+    }
+
+    public WebAdminButtonDefinition<StorageDomain> getImportButtonDefinition() {
+        return importButtonDefinition;
+    }
 }

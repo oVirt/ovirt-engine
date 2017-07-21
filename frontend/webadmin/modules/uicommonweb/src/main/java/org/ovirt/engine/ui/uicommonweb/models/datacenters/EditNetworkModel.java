@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditNetworkModel extends NetworkModel {
@@ -16,7 +16,7 @@ public class EditNetworkModel extends NetworkModel {
     private final boolean originallyVmNetwork;
     private boolean management;
 
-    public EditNetworkModel(Network network, ListModel sourceListModel) {
+    public EditNetworkModel(Network network, SearchableListModel<?, ? extends Network> sourceListModel) {
         super(network, sourceListModel);
         originallyVmNetwork = network.isVmNetwork();
         getDataCenters().setIsChangeable(false);

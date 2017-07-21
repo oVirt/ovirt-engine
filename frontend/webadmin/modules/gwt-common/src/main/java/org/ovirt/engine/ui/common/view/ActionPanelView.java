@@ -59,7 +59,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     private String elementId = DOM.createUniqueId();
 
     // Map of ActionButtonDefinition to AnchorListItems.
-    private final Map<ActionButtonDefinition<T>, ActionButton> actionItemList = new HashMap<>();
+    private final Map<ActionButtonDefinition<T>, ActionButton> actionItemMap = new HashMap<>();
 
     public ActionPanelView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -68,7 +68,13 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
 
     @Override
     public void setSearchPanel(IsWidget searchPanel) {
-        searchBarContainer.add(searchPanel);
+        if (searchPanel != null) {
+            searchBarContainer.add(searchPanel);
+            searchBarContainer.setVisible(true);
+        } else {
+            searchBarContainer.clear();
+            searchBarContainer.setVisible(false);
+        }
     }
 
     @Override
@@ -90,7 +96,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
             menuItem.asWidget().getElement().setId(ElementIdUtils.createElementId(getElementId(), menuItemId));
         }
 
-        actionItemList.put(menuItemDef, menuItem);
+        actionItemMap.put(menuItemDef, menuItem);
         actionKebab.addMenuItem(menuItem);
         return menuItem;
     }
@@ -138,7 +144,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
         actionFormGroup.remove(actionKebab);
         actionFormGroup.add(button);
         actionFormGroup.add(actionKebab);
-        actionItemList.put(buttonDef, button);
+        actionItemMap.put(buttonDef, button);
     }
 
     private SimpleActionButton createNewActionButton(ActionButtonDefinition<T> buttonDef) {
@@ -151,7 +157,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
 
     @Override
     public void updateActionButton(boolean isVisible, boolean isEnabled, ActionButtonDefinition<T> buttonDef) {
-        ActionButton button = actionItemList.get(buttonDef);
+        ActionButton button = actionItemMap.get(buttonDef);
         if (button != null) {
             button.asWidget().setVisible(isVisible);
             button.setEnabled(isEnabled);
@@ -165,7 +171,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
 
     @Override
     public void updateMenuItem(boolean isVisible, boolean isEnabled, ActionButtonDefinition<T> menuItemDef) {
-        ActionButton item = actionItemList.get(menuItemDef);
+        ActionButton item = actionItemMap.get(menuItemDef);
         if (item != null) {
             item.asWidget().setVisible(isVisible);
             item.setEnabled(isEnabled);
@@ -177,12 +183,12 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     }
 
     private boolean anyVisibleListItems() {
-        return actionItemList.values().stream().anyMatch(item -> item.asWidget().isVisible());
+        return actionItemMap.values().stream().anyMatch(item -> item.asWidget().isVisible());
     }
 
     @Override
     public boolean hasActionButtons() {
-        return !actionItemList.isEmpty();
+        return !actionItemMap.isEmpty();
     }
 
     @Override
@@ -193,5 +199,10 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
     @Override
      public void addDividerToKebab() {
         actionKebab.addDivider();
+    }
+
+    @Override
+    public Map<ActionButtonDefinition<T>, ActionButton> getActionItems() {
+        return actionItemMap;
     }
 }

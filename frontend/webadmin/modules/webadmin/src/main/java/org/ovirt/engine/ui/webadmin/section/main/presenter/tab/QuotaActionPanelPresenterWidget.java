@@ -17,6 +17,8 @@ public class QuotaActionPanelPresenterWidget extends ActionPanelPresenterWidget<
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<Quota> newButtonDefinition;
+
     @Inject
     public QuotaActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<Quota> view,
@@ -26,12 +28,13 @@ public class QuotaActionPanelPresenterWidget extends ActionPanelPresenterWidget<
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Quota>(constants.addQuota()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getCreateCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<Quota>(constants.editQuota()) {
             @Override
             protected UICommand resolveCommand() {
@@ -52,4 +55,7 @@ public class QuotaActionPanelPresenterWidget extends ActionPanelPresenterWidget<
         });
     }
 
+    public WebAdminButtonDefinition<Quota> getNewButtonDefinition() {
+        return newButtonDefinition;
+    }
 }

@@ -23,6 +23,8 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<Disk> newButtonDefinition;
+
     @Inject
     public DiskActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<Disk> view,
@@ -32,12 +34,13 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<Disk>(constants.newDisk()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Disk>(constants.newDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
 
         addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
@@ -112,4 +115,7 @@ public class DiskActionPanelPresenterWidget extends ActionPanelPresenterWidget<D
                 uploadActions), uploadActions);
     }
 
+    public WebAdminButtonDefinition<Disk> getNewButtonDefinition() {
+        return newButtonDefinition;
+    }
 }

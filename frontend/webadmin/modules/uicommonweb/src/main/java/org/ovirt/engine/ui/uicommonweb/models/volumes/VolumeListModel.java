@@ -416,6 +416,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             list.add(new GlusterVolumeActionParameters(volume.getId(), false));
         }
 
+        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.DeleteGlusterVolume, list,

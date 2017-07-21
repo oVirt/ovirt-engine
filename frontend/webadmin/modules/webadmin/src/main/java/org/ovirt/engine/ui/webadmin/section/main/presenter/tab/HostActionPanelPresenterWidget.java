@@ -25,6 +25,8 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<VDS> newButtonDefinition;
+
     @Inject
     public HostActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<VDS> view,
@@ -34,12 +36,13 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
+        newButtonDefinition = new WebAdminButtonDefinition<VDS>(constants.newHost()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<VDS>(constants.editHost()) {
             @Override
             protected UICommand resolveCommand() {
@@ -240,4 +243,7 @@ public class HostActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
     }
 
+    public WebAdminButtonDefinition<VDS> getNewButtonDefinition() {
+        return newButtonDefinition;
+    }
 }

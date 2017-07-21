@@ -16,6 +16,9 @@ import com.google.web.bindery.event.shared.EventBus;
 public class NetworkActionPanelPresenterWidget extends ActionPanelPresenterWidget<NetworkView, NetworkListModel> {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<NetworkView> newButtonDefinition;
+    private WebAdminButtonDefinition<NetworkView> importButtonDefinition;
+
     @Inject
     public NetworkActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<NetworkView> view,
@@ -25,18 +28,20 @@ public class NetworkActionPanelPresenterWidget extends ActionPanelPresenterWidge
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
+        newButtonDefinition = new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
-        addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
+        };
+        addActionButton(newButtonDefinition);
+        importButtonDefinition = new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getImportCommand();
             }
-        });
+        };
+        addActionButton(importButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.editNetwork()) {
             @Override
             protected UICommand resolveCommand() {
@@ -51,4 +56,11 @@ public class NetworkActionPanelPresenterWidget extends ActionPanelPresenterWidge
         });
     }
 
+    public WebAdminButtonDefinition<NetworkView> getNewButtonDefinition() {
+        return newButtonDefinition;
+    }
+
+    public WebAdminButtonDefinition<NetworkView> getImportButtonDefinition() {
+        return importButtonDefinition;
+    }
 }

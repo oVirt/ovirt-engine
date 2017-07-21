@@ -22,6 +22,8 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<GlusterVolumeEntity> newButtonDefinition;
+
     @Inject
     public VolumeActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<GlusterVolumeEntity> view,
@@ -31,12 +33,13 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
+        newButtonDefinition = new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewVolumeCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.removeVolume()) {
             @Override
             protected UICommand resolveCommand() {
@@ -152,5 +155,9 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
         snapshotMenu.add(configureVolumeSnapshotOptionsButton);
 
         return snapshotMenu;
+    }
+
+    public WebAdminButtonDefinition<GlusterVolumeEntity> getNewButtonDefinition() {
+        return newButtonDefinition;
     }
 }

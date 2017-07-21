@@ -13,13 +13,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.IModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditVnicProfileModel extends VnicProfileModel {
 
-    public EditVnicProfileModel(IModel sourceModel,
+    public EditVnicProfileModel(SearchableListModel<?, ?> sourceModel,
             VnicProfile profile,
             Guid dcId,
             boolean customPropertiesVisible) {
@@ -40,7 +40,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
         updateChangabilityIfVmsUsingTheProfile();
     }
 
-    public EditVnicProfileModel(IModel sourceModel, VnicProfile profile, Guid dcId) {
+    public EditVnicProfileModel(SearchableListModel<?, ?> sourceModel, VnicProfile profile, Guid dcId) {
         this(sourceModel, profile, dcId, true);
     }
 

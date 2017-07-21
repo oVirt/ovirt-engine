@@ -1,12 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.Cluster;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public class ClusterNewNetworkModel extends NewNetworkModel{
 
     private final Cluster cluster;
-    public ClusterNewNetworkModel(ListModel sourceListModel, Cluster cluster) {
+    public ClusterNewNetworkModel(SearchableListModel<?, ? extends Network> sourceListModel, Cluster cluster) {
         super(sourceListModel);
         this.cluster= cluster;
     }

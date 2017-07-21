@@ -30,9 +30,9 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -49,7 +49,7 @@ public abstract class VnicProfileModel extends Model {
     private KeyValueModel customPropertySheet;
     private EntityModel<Boolean> publicUse;
     private EntityModel<String> description;
-    private final IModel sourceModel;
+    private final SearchableListModel<?, ?> sourceModel;
     private ListModel<Network> network;
     private ListModel<StoragePool> dataCenters;
     private ListModel<NetworkQoS> networkQoS;
@@ -157,7 +157,7 @@ public abstract class VnicProfileModel extends Model {
         this.networkFilter = networkFilter;
     }
 
-    public VnicProfileModel(IModel sourceModel,
+    public VnicProfileModel(SearchableListModel<?, ?> sourceModel,
             boolean customPropertiesVisible,
             Guid dcId,
             Guid defaultQosId) {

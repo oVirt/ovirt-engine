@@ -437,6 +437,38 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         }
     }
 
+    private T determineNextSelectedItem() {
+        T currentItem = getSelectedItem() != null ? getSelectedItem() : getSelectedItems() != null ?
+                getSelectedItems().get(0) : null;
+        T nextItem = null;
+        Collection<T> items = getItems();
+        if (items != null && currentItem != null) {
+            List<T> itemsList = new ArrayList<>(items);
+            int currentIndex = itemsList.indexOf(currentItem);
+            if (currentIndex > -1 && currentIndex < itemsList.size()) {
+                if (currentIndex + 1 < itemsList.size()) {
+                    // Try next item.
+                    nextItem = itemsList.get(currentIndex + 1);
+                } else if (currentIndex - 1 > -1) {
+                    // Try previous item
+                    nextItem = itemsList.get(currentIndex - 1);
+                }
+                // If neither worked, next selected item will be null.
+            }
+        }
+        return nextItem;
+    }
+
+    public void selectNextItem() {
+        T nextSelectedItem = determineNextSelectedItem();
+        setSelectedItem(nextSelectedItem);
+        if (nextSelectedItem != null) {
+            getSelectionModel().setSelected(nextSelectedItem, true);
+        } else {
+            getSelectionModel().clear();
+        }
+    }
+
     protected void startGridTimer() {
         if (getTimer() != null) {
             //Timer can be null if the event bus hasn't been set yet (model hasn't been fully initialized)

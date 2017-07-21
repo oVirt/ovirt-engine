@@ -42,9 +42,7 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -56,6 +54,7 @@ import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -731,7 +730,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery<>(dataCenters -> {
             HostModel innerHostModel = (HostModel) getWindow();
-            final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
             innerHostModel.getDataCenter().setItems(dataCenters);
             innerHostModel.getDataCenter().setSelectedItem(Linq.firstOrNull(dataCenters));
@@ -1079,6 +1077,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             list.add(new RemoveVdsParameters(vds.getId(), force));
         }
 
+        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVds, list,
@@ -1087,7 +1086,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
                     cancel();
-
                 }, model);
     }
 
@@ -1706,18 +1704,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             return;
         }
 
-        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(), host.getId());
-    }
-
-    private void setUpgradeActionStatus(final VDS vds) {
-        final boolean executionAllowed = canUpgradeHost(vds);
-        if (!executionAllowed) {
-            final UIConstants constants = ConstantsManager.getInstance().getConstants();
-            getUpgradeCommand().getExecuteProhibitionReasons()
-                    .add(constants.switchToMaintenanceModeToEnableUpgradeReason());
-        }
-
-        getUpgradeCommand().setIsExecutionAllowed(executionAllowed);
+        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery<List<RpmVersion>>(), host.getId());
     }
 
     @Override
@@ -2054,16 +2041,6 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             Frontend.getInstance().runMultipleAction(ActionType.UpdateVmNumaNodes, updateParamsList);
         }
         setWindow(null);
-    }
-
-    private void updateVNodesMap(VM vm, Map<Guid, VmNumaNode> map) {
-        List<VmNumaNode> list = new ArrayList<>();
-        for (VmNumaNode node : vm.getvNumaNodeList()) {
-            list.add(node);
-        }
-        for (VmNumaNode node : list) {
-            map.put(node.getId(), node);
-        }
     }
 
     private void selectAsSPM() {

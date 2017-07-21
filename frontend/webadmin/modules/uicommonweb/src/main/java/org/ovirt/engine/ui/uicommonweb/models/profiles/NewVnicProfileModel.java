@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.IModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVnicProfileModel extends VnicProfileModel {
 
-    public NewVnicProfileModel(IModel sourceModel,
+    public NewVnicProfileModel(SearchableListModel<?, ?> sourceModel,
             boolean customPropertiesVisible,
             Guid dcId) {
         super(sourceModel, customPropertiesVisible, dcId, null);
@@ -27,7 +27,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
         getMigratable().setEntity(true);
     }
 
-    public NewVnicProfileModel(IModel sourceModel, Guid dcId) {
+    public NewVnicProfileModel(SearchableListModel<?, ?> sourceModel, Guid dcId) {
         this(sourceModel, true, dcId);
     }
 

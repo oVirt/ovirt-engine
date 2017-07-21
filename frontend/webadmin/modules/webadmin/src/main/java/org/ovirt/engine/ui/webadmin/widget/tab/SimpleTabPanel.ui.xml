@@ -10,16 +10,21 @@
         .inheritPosition {
             position: inherit;
         }
+
+        .topSeparation {
+            padding-bottom: 20px;
+        }
+
+        .breadCrumbsBorder {
+            border-bottom: 1px solid #D1D1D1;
+        }
     </ui:style>
 
     <g:FlowPanel>
         <b:Container fluid="true" addStyleNames="obrand_main_tab">
-            <b:Row>
-                <b:Column size="SM_12 LG_6" ui:field="breadCrumbsContainer">
-                </b:Column>
-                <b:Column size="SM_12 LG_6">
-                    <!-- action bar -->
-                </b:Column>
+            <b:Row addStyleNames="{style.topSeparation}">
+                <b:Column size="SM_12 LG_6" ui:field="breadCrumbsContainer" addStyleNames="{style.breadCrumbsBorder}" />
+                <b:Column size="SM_12 LG_6" ui:field="mainActionPanel" addStyleNames="detailMainActionPanelContainer" />
             </b:Row>
             <b:Row>
                 <b:Column size="SM_12" addStyleNames="{style.inheritPosition}">

@@ -162,7 +162,9 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     protected abstract void fireTableSelectionChangeEvent();
 
     protected PlaceRequest getSubTabRequest() {
-        String subTabName = modelProvider.getModel().getActiveDetailModel().getHashName();
+        String subTabName;
+        modelProvider.getModel().ensureActiveDetailModel();
+        subTabName = modelProvider.getModel().getActiveDetailModel().getHashName();
         String requestToken = getMainTabRequest().getNameToken() + WebAdminApplicationPlaces.SUB_TAB_PREFIX + subTabName;
         return PlaceRequestFactory.get(requestToken);
     }

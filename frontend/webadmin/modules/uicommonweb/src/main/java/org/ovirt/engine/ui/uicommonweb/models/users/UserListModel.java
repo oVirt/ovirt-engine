@@ -461,6 +461,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
             syncSearch();
             cancel();
         });
+        selectNextItem();
         if (getUserOrGroup() == UserOrGroup.User) {
             if (userPrms.size() > 0) {
                 Frontend.getInstance().runMultipleAction(ActionType.RemoveUser, userPrms, lastCallback);

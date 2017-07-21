@@ -19,6 +19,8 @@ public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidge
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<Cluster> newButtonDefinition;
+
     @Inject
     public ClusterActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<Cluster> view,
@@ -28,12 +30,13 @@ public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidge
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<Cluster>(constants.newCluster()) {
+        newButtonDefinition = new WebAdminButtonDefinition<Cluster>(constants.newCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<Cluster>(constants.editCluster()) {
             @Override
             protected UICommand resolveCommand() {
@@ -62,4 +65,7 @@ public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidge
         });
     }
 
+    public WebAdminButtonDefinition<Cluster> getNewButtonDefinition() {
+        return newButtonDefinition;
+    }
 }

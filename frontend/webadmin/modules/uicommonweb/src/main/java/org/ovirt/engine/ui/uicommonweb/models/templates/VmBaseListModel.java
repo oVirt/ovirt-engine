@@ -322,7 +322,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
         } else {
             updateVM(model);
         }
-
     }
 
     private void saveNewVm(final UnitVmModel model) {
@@ -401,7 +400,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
                 new FullUnitToVmBaseBuilder());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
     }
-
 
     protected boolean balloonEnabled(UnitVmModel model) {
         return BalloonEnabled.balloonEnabled(model);

@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
@@ -86,6 +87,8 @@ public abstract class AbstractDiskModel extends DiskModel {
     private UICommand cancelCommand;
 
     private StorageModel storageModel;
+
+    private SearchableListModel<?, Disk> sourceModel;
 
     public EntityModel<Boolean> getIsWipeAfterDelete() {
         return isWipeAfterDelete;
@@ -1170,6 +1173,14 @@ public abstract class AbstractDiskModel extends DiskModel {
                 return  getCinderDisk().getStorageIds().get(0);
         }
         return null;
+    }
+
+    public SearchableListModel<?, Disk> getSourceModel() {
+        return sourceModel;
+    }
+
+    public void setSourceModel(SearchableListModel<?, Disk> sourceModel) {
+        this.sourceModel = sourceModel;
     }
 
     protected boolean performUpdateHosts() {

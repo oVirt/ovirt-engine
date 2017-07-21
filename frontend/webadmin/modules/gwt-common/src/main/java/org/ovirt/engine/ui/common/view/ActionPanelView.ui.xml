@@ -9,7 +9,7 @@
     <g:FlowPanel ui:field="mainContainer" addStyleNames="toolbar-pf">
         <g:FlowPanel>
             <g:FlowPanel ui:field="actionContainer" addStyleNames="toolbar-pf-actions">
-                <b:FormGroup ui:field="searchBarContainer" addStyleNames="toolbar-pf-filter" />
+                <b:FormGroup ui:field="searchBarContainer" addStyleNames="toolbar-pf-filter" visible="false" />
                 <b:FormGroup ui:field="actionFormGroup">
                     <w:Kebab ui:field="actionKebab" visible="false"/>
                 </b:FormGroup>

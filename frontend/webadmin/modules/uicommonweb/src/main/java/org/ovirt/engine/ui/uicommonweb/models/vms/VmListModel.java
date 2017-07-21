@@ -1558,6 +1558,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
             list.add(new RemoveVmParameters(entry.getKey(), false, (Boolean) entry.getValue().getEntity()));
         }
 
+        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVm, list,

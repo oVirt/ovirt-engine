@@ -298,6 +298,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.setCancelCommand(cancelCommand);
 
+        model.setSourceModel(this);
         model.initialize();
     }
 
@@ -437,17 +438,18 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
 
     private void onRemove() {
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
-        ArrayList<ActionParametersBase> paramerterList = new ArrayList<>();
+        ArrayList<ActionParametersBase> parameterList = new ArrayList<>();
 
         for (Object item : getSelectedItems()) {
             Disk disk = (Disk) item;
             ActionParametersBase parameters = new RemoveDiskParameters(disk.getId());
-            paramerterList.add(parameters);
+            parameterList.add(parameters);
         }
 
+        selectNextItem();
         model.startProgress();
 
-        Frontend.getInstance().runMultipleAction(ActionType.RemoveDisk, paramerterList,
+        Frontend.getInstance().runMultipleAction(ActionType.RemoveDisk, parameterList,
                 result -> {
                     DiskListModel localModel = (DiskListModel) result.getState();
                     localModel.stopProgress();

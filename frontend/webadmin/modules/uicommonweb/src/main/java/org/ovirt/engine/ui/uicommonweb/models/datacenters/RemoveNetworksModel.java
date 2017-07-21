@@ -22,15 +22,15 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class RemoveNetworksModel extends ConfirmationModel {
 
-    private final ListModel sourceListModel;
+    private final SearchableListModel<?, ? extends Network> sourceListModel;
 
     @SuppressWarnings("unchecked")
-    public RemoveNetworksModel(ListModel sourceListModel) {
+    public RemoveNetworksModel(SearchableListModel<?, ? extends Network> sourceListModel) {
         this.sourceListModel = sourceListModel;
 
         setTitle(ConstantsManager.getInstance().getConstants().removeLogicalNetworkTitle());
@@ -156,6 +156,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
                 pb.add(new RemoveNetworkParameters(network.getId()));
             }
         }
+        sourceListModel.selectNextItem();
         Frontend.getInstance().runMultipleAction(ActionType.RemoveNetwork, pb);
 
         sourceListModel.setConfirmWindow(null);

@@ -17,6 +17,8 @@ public class PoolActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private WebAdminButtonDefinition<VmPool> newButtonDefinition;
+
     @Inject
     public PoolActionPanelPresenterWidget(EventBus eventBus,
             ActionPanelPresenterWidget.ViewDef<VmPool> view,
@@ -26,12 +28,13 @@ public class PoolActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
 
     @Override
     protected void initializeButtons() {
-        addActionButton(new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
+        newButtonDefinition = new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
-        });
+        };
+        addActionButton(newButtonDefinition);
         addActionButton(new WebAdminButtonDefinition<VmPool>(constants.editPool()) {
             @Override
             protected UICommand resolveCommand() {
@@ -46,4 +49,7 @@ public class PoolActionPanelPresenterWidget extends ActionPanelPresenterWidget<V
         });
     }
 
+    public WebAdminButtonDefinition<VmPool> getNewButtonDefinition() {
+        return newButtonDefinition;
+    }
 }

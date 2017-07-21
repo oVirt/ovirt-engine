@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.OrderedMultiSelectionModel;
+import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
@@ -89,6 +90,12 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 updateDetailModelSelection();
             }));
         }
+        OvirtSelectionModel<T> mainModelSelectionModel = modelProvider.getMainModel().getSelectionModel();
+        if (mainModelSelectionModel != null) {
+            registerHandler(mainModelSelectionModel.addSelectionChangeHandler(event -> {
+                itemChanged(getSelectedMainItems().getSelectedItem());
+            }));
+        }
         initializeHandlers();
         getSelectedMainItems().registerListener(this);
         itemChanged(getSelectedMainItems().getSelectedItem());
@@ -99,6 +106,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     public void itemChanged(T item) {
         if (item != null && getView().asWidget().isVisible()) {
             getView().setMainTabSelectedItem(item);
+        } else if (item == null && getView().asWidget().isVisible()) {
+            // No selection so we can't positively show anything, switch to grid.
+            placeManager.revealPlace(getMainTabRequest());
         }
     }
 

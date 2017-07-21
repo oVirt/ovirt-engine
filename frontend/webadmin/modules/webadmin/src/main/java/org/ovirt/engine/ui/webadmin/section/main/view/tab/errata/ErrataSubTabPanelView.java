@@ -23,7 +23,8 @@ public class ErrataSubTabPanelView extends AbstractSubTabPanelView implements Er
     @Inject
     public ErrataSubTabPanelView(OvirtBreadCrumbsPresenterWidget<Erratum, EngineErrataListModel> breadCrumbs,
             DetailTabLayout detailTabLayout) {
-        tabPanel = new SimpleTabPanel(breadCrumbs, detailTabLayout);
+        // No errata action panel.
+        tabPanel = new SimpleTabPanel(breadCrumbs, null, detailTabLayout);
         initWidget(getTabPanel());
     }
 

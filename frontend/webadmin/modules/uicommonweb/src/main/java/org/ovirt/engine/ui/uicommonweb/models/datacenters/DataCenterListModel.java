@@ -468,6 +468,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
             parameters.add(new StoragePoolParametersBase(a.getId()));
         }
 
+        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveStoragePool, parameters,
@@ -476,7 +477,6 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
                     ConfirmationModel localModel = (ConfirmationModel) result.getState();
                     localModel.stopProgress();
                     cancel();
-
                 }, model);
     }
 

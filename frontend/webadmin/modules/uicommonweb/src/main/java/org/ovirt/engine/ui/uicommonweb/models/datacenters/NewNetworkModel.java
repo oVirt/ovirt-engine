@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -28,9 +29,9 @@ public class NewNetworkModel extends NetworkModel {
 
     private ListModel<NetworkClusterModel> privateNetworkClusterList;
 
-    public NewNetworkModel(ListModel sourceListModel) {
+    public NewNetworkModel(SearchableListModel<?, ? extends Network> sourceListModel) {
         super(sourceListModel);
-        setNetworkClusterList(new ListModel());
+        setNetworkClusterList(new ListModel<NetworkClusterModel>());
         init();
     }
 
@@ -144,7 +145,7 @@ public class NewNetworkModel extends NetworkModel {
 
     private void postAddNetwork(ActionReturnValue retVal) {
         if (isActionSucceeded(retVal)) {
-            postSaveAction((Guid) retVal.getActionReturnValue(), null);
+            postSaveAction(retVal.getActionReturnValue(), null);
         } else {
             failedPostSaveAction();
         }

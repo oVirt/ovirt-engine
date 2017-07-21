@@ -535,6 +535,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
             list.add(new VmTemplateManagementParameters(a.getId()));
         }
 
+        selectNextItem();
         model.startProgress();
 
         Frontend.getInstance().runMultipleAction(ActionType.RemoveVmTemplate, list,
