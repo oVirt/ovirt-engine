@@ -923,8 +923,7 @@ public class SchedulingManager implements BackendService {
                     }
 
                     boolean clusterHaStatusFromPreviousCycle =
-                            clusterId2isHaReservationSafe.containsKey(cluster.getId()) ? clusterId2isHaReservationSafe.get(cluster.getId())
-                                    : true;
+                            clusterId2isHaReservationSafe.getOrDefault(cluster.getId(), true);
 
                     // Update the status map with the new status
                     clusterId2isHaReservationSafe.put(cluster.getId(), clusterHaStatus);
