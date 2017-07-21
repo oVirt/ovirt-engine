@@ -639,7 +639,7 @@ public class SchedulingManager implements BackendService {
                 && Config.<Boolean>getValue(ConfigValues.ExternalSchedulerEnabled)
                 && !externalFilters.isEmpty()
                 && !hostList.isEmpty()) {
-            hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages, correlationId, result);
+            hostList = runExternalFilters(externalFilters, hostList, vm, parameters, correlationId, result);
         }
 
         if (hostList.isEmpty()) {
@@ -701,7 +701,6 @@ public class SchedulingManager implements BackendService {
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters,
-            List<String> messages,
             String correlationId,
             SchedulingResult result) {
 
