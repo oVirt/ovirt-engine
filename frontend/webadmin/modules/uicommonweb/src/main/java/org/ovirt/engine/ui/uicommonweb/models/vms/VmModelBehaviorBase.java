@@ -512,7 +512,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                       ? oldDefaultHosts
                                       : !hosts.isEmpty()
                                               ? Collections.singletonList(hosts.get(0))
-                                              : Collections.<VDS>emptyList();
+                                              : Collections.emptyList();
                     getModel().getDefaultHost().setSelectedItems(hostsToSelect);
                     changeDefaultHost();
 
