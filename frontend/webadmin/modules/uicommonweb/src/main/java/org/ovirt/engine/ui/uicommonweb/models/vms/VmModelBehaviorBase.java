@@ -252,10 +252,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
-    public boolean instanceTypeActive() {
-        return getInstanceTypeManager() != null ? getInstanceTypeManager().isActive() : false;
-    }
-
     protected InstanceTypeManager getInstanceTypeManager() {
         return null;
     }
@@ -1492,14 +1488,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public boolean isExistingTemplateBehavior() {
         return this instanceof TemplateVmModelBehavior;
-    }
-
-    public boolean isNewTemplateBehavior() {
-        return this instanceof NewTemplateVmModelBehavior;
-    }
-
-    public boolean isAnyTemplateBehavior() {
-        return this instanceof TemplateVmModelBehavior || this instanceof ExistingBlankTemplateModelBehavior;
     }
 
     public int getMaxNameLength() {
