@@ -589,7 +589,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 case IMAGE:
                     diskModel.setSize(new EntityModel<>((int) disk.getSizeInGigabytes()));
                     ListModel volumes = new ListModel();
-                    volumes.setItems(disk.getVolumeType() == VolumeType.Preallocated ? new ArrayList<>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
+                    volumes.setItems(disk.getVolumeType() == VolumeType.Preallocated ?
+                            new ArrayList<>(Collections.singletonList(VolumeType.Preallocated))
                             : AsyncDataProvider.getInstance().getVolumeTypeList(), disk.getVolumeType());
                     diskModel.setVolumeType(volumes);
                     break;
@@ -597,10 +598,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     CinderDisk cinderDisk = (CinderDisk) disk;
                     diskModel.setSize(new EntityModel<>((int) cinderDisk.getSizeInGigabytes()));
                     ListModel volumeTypes = new ListModel();
-                    volumeTypes.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
+                    volumeTypes.setItems(new ArrayList<>(Collections.singletonList(cinderDisk.getVolumeType())), cinderDisk.getVolumeType());
                     diskModel.setVolumeType(volumeTypes);
                     ListModel volumeFormats = new ListModel();
-                    volumeFormats.setItems(new ArrayList<>(Arrays.asList(cinderDisk.getVolumeFormat())), cinderDisk.getVolumeFormat());
+                    volumeFormats.setItems(new ArrayList<>(Collections.singletonList(cinderDisk.getVolumeFormat())), cinderDisk.getVolumeFormat());
                     diskModel.setVolumeFormat(volumeFormats);
                     break;
             }
@@ -1098,7 +1099,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     private void initListToOne(ListModel list) {
-        list.setItems(Arrays.asList(1));
+        list.setItems(Collections.singletonList(1));
         list.setSelectedItem(1);
     }
 
