@@ -577,7 +577,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void initTemplateDisks(List<DiskImage> disks) {
-        Collections.sort(disks, new DiskByDiskAliasComparator());
+        disks.sort(new DiskByDiskAliasComparator());
         ArrayList<DiskModel> list = new ArrayList<>();
 
         for (DiskImage disk : disks) {
@@ -648,7 +648,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             boolean provisioning = getModel().getProvisioning().getEntity();
             ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getModel().getDisks();
-            Collections.sort(activeStorageDomains, new NameableComparator());
+            activeStorageDomains.sort(new NameableComparator());
 
             List<DiskModel> diskImages = Linq.filterDisksByType(disks, DiskStorageType.IMAGE);
             for (DiskModel diskModel : diskImages) {
@@ -662,7 +662,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                 // Set target storage domains
                 availableDiskStorageDomains = provisioning ? activeStorageDomains : activeDiskStorageDomains;
-                Collections.sort(availableDiskStorageDomains, new NameableComparator());
+                availableDiskStorageDomains.sort(new NameableComparator());
                 diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
 
                 diskModel.getStorageDomain().setChangeProhibitionReason(
