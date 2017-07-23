@@ -492,8 +492,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         Cluster cluster = getModel().getSelectedCluster();
 
         if (cluster == null) {
-            getModel().getDefaultHost().setItems(new ArrayList<VDS>());
-            getModel().getDefaultHost().setSelectedItems(new ArrayList<VDS>());
+            getModel().getDefaultHost().setItems(new ArrayList<>());
+            getModel().getDefaultHost().setSelectedItems(new ArrayList<>());
             return;
         }
 
@@ -635,7 +635,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             postInitStorageDomains();
         }
         else {
-            getModel().getStorageDomain().setItems(new ArrayList<StorageDomain>());
+            getModel().getStorageDomain().setItems(new ArrayList<>());
             getModel().getStorageDomain().setSelectedItem(null);
             getModel().getStorageDomain().setIsChangeable(false);
         }
@@ -1430,7 +1430,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         vm.setName(vmName);
         Integer nodeCount = getModel().getNumaNodeCount().getEntity();
-        vm.setvNumaNodeList(new ArrayList<VmNumaNode>());
+        vm.setvNumaNodeList(new ArrayList<>());
         for (int i = 0; i < nodeCount; i++) {
             VmNumaNode vmNumaNode = new VmNumaNode();
             vmNumaNode.setIndex(i);
