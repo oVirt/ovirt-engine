@@ -573,9 +573,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void initDisks() {
         VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
 
-        AsyncDataProvider.getInstance().getTemplateDiskList(asyncQuery(
-                returnValue -> initTemplateDisks(returnValue)),
-                template.getId());
+        AsyncDataProvider.getInstance().getTemplateDiskList(asyncQuery(this::initTemplateDisks), template.getId());
     }
 
     protected void initTemplateDisks(List<DiskImage> disks) {
