@@ -193,4 +193,21 @@ public abstract class OvfOvirtReader extends OvfReader {
 
     protected abstract void setClusterArch(ArchitectureType arch);
 
+    @Override
+    protected void readDiskImageItem(XmlNode node) {
+        final Guid guid = new Guid(selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText);
+        DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
+        if (image == null) {
+            return;
+        }
+
+        image.setId(OvfParser.getImageGroupIdFromImageFile(selectSingleNode(node,
+                "rasd:HostResource",
+                _xmlNS).innerText));
+        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText)) {
+            image.setParentId(new Guid(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText));
+        }
+
+        super.readDiskImageItem(node, image);
+    }
 }

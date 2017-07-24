@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.utils.ovf;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -35,49 +33,6 @@ public class OvfVmReader extends OvfOvirtReader {
         super(document, images, interfaces, vm.getStaticData(), osRepository);
         _vm = vm;
         _vm.setInterfaces(interfaces);
-    }
-
-    @Override
-    protected void readDiskImageItem(XmlNode node) {
-        final Guid guid = new Guid(selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText);
-
-        DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
-        image.setId(OvfParser.getImageGroupIdFromImageFile(selectSingleNode(node,
-                "rasd:HostResource",
-                _xmlNS).innerText));
-        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText)) {
-            image.setParentId(new Guid(selectSingleNode(node, "rasd:Parent", _xmlNS).innerText));
-        }
-        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Template", _xmlNS).innerText)) {
-            image.setImageTemplateId(new Guid(selectSingleNode(node, "rasd:Template", _xmlNS).innerText));
-        }
-        image.setAppList(selectSingleNode(node, "rasd:ApplicationList", _xmlNS).innerText);
-
-        XmlNode storageNode = selectSingleNode(node, "rasd:StorageId", _xmlNS);
-        if (storageNode != null &&
-                StringUtils.isNotEmpty(storageNode.innerText)) {
-            image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(storageNode.innerText))));
-        }
-        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
-            image.setStoragePoolId(new Guid(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText));
-        }
-        final Date creationDate = OvfParser.utcDateStringToLocalDate(
-                selectSingleNode(node, "rasd:CreationDate", _xmlNS).innerText);
-        if (creationDate != null) {
-            image.setCreationDate(creationDate);
-        }
-        final Date lastModified = OvfParser.utcDateStringToLocalDate(
-                selectSingleNode(node, "rasd:LastModified", _xmlNS).innerText);
-        if (lastModified != null) {
-            image.setLastModified(lastModified);
-        }
-        final Date last_modified_date = OvfParser.utcDateStringToLocalDate(
-                selectSingleNode(node, "rasd:last_modified_date", _xmlNS).innerText);
-        if (last_modified_date != null) {
-            image.setLastModifiedDate(last_modified_date);
-        }
-        VmDevice readDevice = readManagedVmDevice(node, image.getId());
-        image.setPlugged(readDevice.isPlugged());
     }
 
     @Override

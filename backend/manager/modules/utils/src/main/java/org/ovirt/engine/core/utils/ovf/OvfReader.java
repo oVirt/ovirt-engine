@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.utils.ovf;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -345,6 +348,39 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     protected abstract void readDiskImageItem(XmlNode node);
+
+    protected void readDiskImageItem(XmlNode node, DiskImage image) {
+        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Template", _xmlNS).innerText)) {
+            image.setImageTemplateId(new Guid(selectSingleNode(node, "rasd:Template", _xmlNS).innerText));
+        }
+        image.setAppList(selectSingleNode(node, "rasd:ApplicationList", _xmlNS).innerText);
+
+        XmlNode storageNode = selectSingleNode(node, "rasd:StorageId", _xmlNS);
+        if (storageNode != null &&
+                StringUtils.isNotEmpty(storageNode.innerText)) {
+            image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(storageNode.innerText))));
+        }
+        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
+            image.setStoragePoolId(new Guid(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText));
+        }
+        final Date creationDate = OvfParser.utcDateStringToLocalDate(
+                selectSingleNode(node, "rasd:CreationDate", _xmlNS).innerText);
+        if (creationDate != null) {
+            image.setCreationDate(creationDate);
+        }
+        final Date lastModified = OvfParser.utcDateStringToLocalDate(
+                selectSingleNode(node, "rasd:LastModified", _xmlNS).innerText);
+        if (lastModified != null) {
+            image.setLastModified(lastModified);
+        }
+        final Date last_modified_date = OvfParser.utcDateStringToLocalDate(
+                selectSingleNode(node, "rasd:last_modified_date", _xmlNS).innerText);
+        if (last_modified_date != null) {
+            image.setLastModifiedDate(last_modified_date);
+        }
+        VmDevice readDevice = readManagedVmDevice(node, image.getId());
+        image.setPlugged(readDevice.isPlugged());
+    }
 
     protected void readMonitorItem(XmlNode node) {
         vmBase.setNumOfMonitors(
