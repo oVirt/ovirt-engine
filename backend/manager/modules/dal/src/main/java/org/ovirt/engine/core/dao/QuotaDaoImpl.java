@@ -214,7 +214,7 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
         // get thin quota (only basic quota meta data)
         List<Quota> allThinQuota = getCallsHandler().executeReadList("getAllThinQuota", getQuotaMetaDataFromResultSet(), parameterSource);
 
-        if (allThinQuota != null && !allThinQuota.isEmpty()){
+        if (!allThinQuota.isEmpty()){
             Map<Guid, Quota> allQuotaMap = new HashMap<>();
             for (Quota quota : allThinQuota) {
                 allQuotaMap.put(quota.getId(), quota);
@@ -223,34 +223,30 @@ public class QuotaDaoImpl extends BaseDao implements QuotaDao {
             List<QuotaStorage> quotaStorageList = getAllQuotaStorageIncludingConsumption();
             List<QuotaCluster> quotaClusterList = getAllQuotaClusterIncludingConsumption();
 
-            if (quotaStorageList != null) {
-                for (QuotaStorage quotaStorage : quotaStorageList) {
-                    Quota quota = allQuotaMap.get(quotaStorage.getQuotaId());
-                    if (quota != null) {
-                        if (quotaStorage.getStorageId() == null || quotaStorage.getStorageId().equals(Guid.Empty)) {
-                            quota.setGlobalQuotaStorage(quotaStorage);
-                        } else {
-                            if (quota.getQuotaStorages() == null) {
-                                quota.setQuotaStorages(new ArrayList<>());
-                            }
-                            quota.getQuotaStorages().add(quotaStorage);
+            for (QuotaStorage quotaStorage : quotaStorageList) {
+                Quota quota = allQuotaMap.get(quotaStorage.getQuotaId());
+                if (quota != null) {
+                    if (quotaStorage.getStorageId() == null || quotaStorage.getStorageId().equals(Guid.Empty)) {
+                        quota.setGlobalQuotaStorage(quotaStorage);
+                    } else {
+                        if (quota.getQuotaStorages() == null) {
+                            quota.setQuotaStorages(new ArrayList<>());
                         }
+                        quota.getQuotaStorages().add(quotaStorage);
                     }
                 }
             }
 
-            if (quotaClusterList != null) {
-                for (QuotaCluster quotaCluster : quotaClusterList) {
-                    Quota quota = allQuotaMap.get(quotaCluster.getQuotaId());
-                    if (quota != null) {
-                        if (quotaCluster.getClusterId() == null || quotaCluster.getClusterId().equals(Guid.Empty)) {
-                            quota.setGlobalQuotaCluster(quotaCluster);
-                        } else {
-                            if (quota.getQuotaClusters() == null) {
-                                quota.setQuotaClusters(new ArrayList<>());
-                            }
-                            quota.getQuotaClusters().add(quotaCluster);
+            for (QuotaCluster quotaCluster : quotaClusterList) {
+                Quota quota = allQuotaMap.get(quotaCluster.getQuotaId());
+                if (quota != null) {
+                    if (quotaCluster.getClusterId() == null || quotaCluster.getClusterId().equals(Guid.Empty)) {
+                        quota.setGlobalQuotaCluster(quotaCluster);
+                    } else {
+                        if (quota.getQuotaClusters() == null) {
+                            quota.setQuotaClusters(new ArrayList<>());
                         }
+                        quota.getQuotaClusters().add(quotaCluster);
                     }
                 }
             }
