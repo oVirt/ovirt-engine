@@ -144,10 +144,14 @@ public abstract class OvfOvirtReader extends OvfReader {
             if (iface == null) {
                 iface = new VmNetworkInterface();
                 iface.setId(guid);
+                interfaces.add(iface);
             }
             return iface;
         } else { // 3.0 and below OVF format
-            return new VmNetworkInterface();
+            VmNetworkInterface iface = new VmNetworkInterface();
+            iface.setId(Guid.newGuid());
+            interfaces.add(iface);
+            return iface;
         }
     }
 
@@ -171,10 +175,11 @@ public abstract class OvfOvirtReader extends OvfReader {
                     OvfHardware.Network +
                     "]";
             list = selectNodes(_document, pattern, _xmlNS);
+            int nicIdx = 0;
             for (XmlNode node : list) {
                 VmNetworkInterface iface = new VmNetworkInterface();
                 iface.setId(Guid.newGuid());
-                updateSingleNic(node, iface);
+                updateSingleNic(node, iface, ++nicIdx);
                 interfaces.add(iface);
             }
         }

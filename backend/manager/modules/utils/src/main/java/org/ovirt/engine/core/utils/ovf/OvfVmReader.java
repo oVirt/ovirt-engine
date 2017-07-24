@@ -36,8 +36,8 @@ public class OvfVmReader extends OvfOvirtReader {
     }
 
     @Override
-    protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
-        super.updateSingleNic(node, iface);
+    protected void updateSingleNic(XmlNode node, VmNetworkInterface iface, int nicIdx) {
+        super.updateSingleNic(node, iface, nicIdx);
         iface.setMacAddress((selectSingleNode(node, "rasd:MACAddress", _xmlNS) != null) ? selectSingleNode(node,
                 "rasd:MACAddress",
                 _xmlNS).innerText : "");

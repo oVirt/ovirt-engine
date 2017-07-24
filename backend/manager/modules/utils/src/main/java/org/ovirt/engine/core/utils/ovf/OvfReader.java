@@ -299,6 +299,7 @@ public abstract class OvfReader implements IOvfBuilder {
     protected void readHardwareSection(XmlNode section) {
         boolean readVirtioSerial = false;
 
+        int nicIdx = 0;
         for (XmlNode node : selectNodes(section, "Item")) {
             switch (selectSingleNode(node, "rasd:ResourceType", _xmlNS).innerText) {
             case OvfHardware.CPU:
@@ -314,7 +315,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 break;
 
             case OvfHardware.Network:
-                readNetworkItem(node);
+                readNetworkItem(node, ++nicIdx);
                 break;
 
             case OvfHardware.USB:
@@ -431,10 +432,9 @@ public abstract class OvfReader implements IOvfBuilder {
         readManagedVmDevice(node, Guid.newGuid());
     }
 
-    private void readNetworkItem(XmlNode node) {
+    private void readNetworkItem(XmlNode node, int nicIdx) {
         VmNetworkInterface iface = getNetworkInterface(node);
-        updateSingleNic(node, iface);
-        vmBase.getInterfaces().add(iface);
+        updateSingleNic(node, iface, nicIdx);
         readManagedVmDevice(node, iface.getId());
     }
 
@@ -640,8 +640,9 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
-    protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
+    protected void updateSingleNic(XmlNode node, VmNetworkInterface iface, int nicIdx) {
         String networkName = selectSingleNode(node, VMD_CONNECTION, _xmlNS).innerText;
+        iface.setRemoteNetworkName(networkName);
         iface.setNetworkName(StringUtils.defaultIfEmpty(networkName, null));
 
         XmlNode vnicProfileNameNode = selectSingleNode(node, VMD_VNIC_PROFILE_NAME, _xmlNS);
@@ -651,20 +652,35 @@ public abstract class OvfReader implements IOvfBuilder {
         XmlNode linkedNode = selectSingleNode(node, VMD_LINKED, _xmlNS);
         iface.setLinked(linkedNode == null ? true : Boolean.valueOf(linkedNode.innerText));
 
-        iface.setName(selectSingleNode(node, VMD_NAME, _xmlNS).innerText);
+        XmlNode nameNode = selectSingleNode(node, VMD_NAME, _xmlNS);
+        iface.setName(nameNode != null ? nameNode.innerText : String.format("nic%d", nicIdx));
 
-        String resourceSubType = selectSingleNode(node, "rasd:ResourceSubType", _xmlNS).innerText;
-        if (StringUtils.isNotEmpty(resourceSubType)) {
-            iface.setType(Integer.parseInt(resourceSubType));
-        }
+        XmlNode resourceSubTypeNode = selectSingleNode(node, "rasd:ResourceSubType", _xmlNS);
+        iface.setType(getVmInterfaceType(resourceSubTypeNode));
 
         XmlNode speed = selectSingleNode(node, "rasd:speed", _xmlNS);
-        iface.setSpeed((speed != null) ? Integer.parseInt(speed.innerText) : VmInterfaceType.forValue(iface.getType())
+        iface.setSpeed(speed != null ? Integer.parseInt(speed.innerText) : VmInterfaceType.forValue(iface.getType())
                 .getSpeed());
 
     }
 
     protected abstract void buildFileReference();
+
+    private Integer getVmInterfaceType(XmlNode resourceSubTypeNode) {
+        String resourceSubType = resourceSubTypeNode != null ? resourceSubTypeNode.innerText : null;
+        if (StringUtils.isNotEmpty(resourceSubType)) {
+            try {
+                return Integer.parseInt(resourceSubType);
+            } catch(NumberFormatException ex) {
+                for (VmInterfaceType vmInterfaceType : VmInterfaceType.values()) {
+                    if (vmInterfaceType.getInternalName().equalsIgnoreCase(resourceSubType)) {
+                        return vmInterfaceType.getValue();
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     private int getResourceType(XmlNode node, String resource) {
         if (selectSingleNode(node, resource, _xmlNS) != null
@@ -675,11 +691,11 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void setDeviceByResource(XmlNode node, VmDevice vmDevice) {
-        int resourceType = getResourceType(node, VMD_RESOURCE_TYPE);
-        int resourceSubType = getResourceType(node, VMD_SUB_RESOURCE_TYPE);
-        if (resourceSubType == -1) {
+        String resourceType = selectSingleNode(node, VMD_RESOURCE_TYPE, _xmlNS).innerText;
+        XmlNode resourceSubTypeNode = selectSingleNode(node, VMD_SUB_RESOURCE_TYPE, _xmlNS);
+        if (resourceSubTypeNode == null) {
             // we need special handling for Monitor to define it as vnc or spice
-            if (Integer.parseInt(OvfHardware.Monitor) == resourceType) {
+            if (OvfHardware.Monitor.equals(resourceType)) {
                 // get number of monitors from VirtualQuantity in OVF
                 if (selectSingleNode(node, VMD_VIRTUAL_QUANTITY, _xmlNS) != null
                         && !StringUtils.isEmpty(selectSingleNode(node,
@@ -705,11 +721,11 @@ public abstract class OvfReader implements IOvfBuilder {
                     vmDevice.setDevice(VmDeviceType.QXL.getName());
                 }
             } else {
-                vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
+                vmDevice.setDevice(VmDeviceType.getoVirtDevice(Integer.parseInt(resourceType)).getName());
             }
-        } else if (Integer.parseInt(OvfHardware.Network) == resourceType) {
+        } else if (OvfHardware.Network.equals(resourceType)) {
             // handle interfaces with different sub types : we have 0-5 as the VmInterfaceType enum
-            VmInterfaceType nicType = VmInterfaceType.forValue(resourceSubType);
+            VmInterfaceType nicType = VmInterfaceType.forValue(getVmInterfaceType(resourceSubTypeNode));
             if (nicType != null) {
                 if (nicType == VmInterfaceType.pciPassthrough) {
                     vmDevice.setDevice(VmDeviceType.HOST_DEVICE.getName());
@@ -717,7 +733,7 @@ public abstract class OvfReader implements IOvfBuilder {
                     vmDevice.setDevice(VmDeviceType.BRIDGE.getName());
                 }
             } else {
-                vmDevice.setDevice(VmDeviceType.getoVirtDevice(resourceType).getName());
+                vmDevice.setDevice(VmDeviceType.getoVirtDevice(Integer.parseInt(resourceType)).getName());
             }
         }
     }
