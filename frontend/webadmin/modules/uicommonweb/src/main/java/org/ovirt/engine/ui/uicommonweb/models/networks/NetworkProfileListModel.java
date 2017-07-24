@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
-import java.util.Arrays;
-
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -13,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.EditVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -71,8 +68,9 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
         NewVnicProfileModel model = new NewVnicProfileModel(this,
                 getEntity().getDataCenterId());
         setWindow(model);
-
-        initProfileNetwork(model);
+        VnicProfile profile = new VnicProfile();
+        profile.setNetworkId(getEntity().getId());
+        model.setProfile(profile);
     }
 
     public void edit() {
@@ -85,8 +83,6 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
                         getSelectedItem(),
                         getEntity().getDataCenterId());
         setWindow(model);
-
-        initProfileNetwork(model);
     }
 
     public void remove() {
@@ -96,12 +92,6 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
 
         RemoveVnicProfileModel model = new RemoveVnicProfileModel(this, getSelectedItems(), false);
         setWindow(model);
-    }
-
-    private void initProfileNetwork(VnicProfileModel model) {
-        model.getNetwork().setItems(Arrays.<Network>asList(getEntity()));
-        model.getNetwork().setSelectedItem(getEntity());
-        model.getNetwork().setIsChangeable(false);
     }
 
     public void cancel() {

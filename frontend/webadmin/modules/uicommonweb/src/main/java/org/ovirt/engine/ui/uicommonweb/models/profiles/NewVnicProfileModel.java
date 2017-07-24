@@ -1,11 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
-import java.util.Collection;
-
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -56,10 +53,5 @@ public class NewVnicProfileModel extends VnicProfileModel {
     protected void initSelectedNetworkFilter() {
         getNetworkFilter().setSelectedItem(Linq.firstOrNull(getNetworkFilter().getItems(),
                 new Linq.NamePredicate(NetworkFilter.VDSM_NO_MAC_SPOOFING)));
-    }
-
-    @Override
-    protected void updateNetworks(Collection<Network> networks) {
-        getNetwork().setSelectedItem(Linq.firstOrNull(networks));
     }
 }

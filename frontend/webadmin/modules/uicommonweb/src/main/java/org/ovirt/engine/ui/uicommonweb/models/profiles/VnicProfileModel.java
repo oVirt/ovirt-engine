@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -244,7 +245,16 @@ public abstract class VnicProfileModel extends Model {
         }));
     }
 
-    protected abstract void updateNetworks(Collection<Network> networks);
+    protected void updateNetworks(Collection<Network> networks) {
+        VnicProfile profile = getProfile();
+        if (profile != null && profile.getNetworkId() != null) {
+            Network selected = networks.stream()
+                    .filter(net -> Objects.equals(profile.getNetworkId(), net.getId()))
+                    .findFirst().get();
+            getNetwork().setSelectedItem(selected);
+            getNetwork().setIsChangeable(false);
+        }
+    }
 
     protected void initCommands() {
         UICommand okCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$

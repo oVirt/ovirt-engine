@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
@@ -85,22 +84,5 @@ public class EditVnicProfileModel extends VnicProfileModel {
     protected void initSelectedNetworkFilter() {
         getNetworkFilter().setSelectedItem(Linq.firstOrNull(getNetworkFilter().getItems(),
                 new Linq.IdPredicate<>(getProfile().getNetworkFilterId())));
-    }
-
-    @Override
-    protected void updateNetworks(Collection<Network> networks) {
-        Network currentNetwork =
-                findNetwork(getProfile().getNetworkId(), networks);
-        getNetwork().setSelectedItem(currentNetwork);
-        getNetwork().setIsChangeable(false);
-    }
-
-    private Network findNetwork(Guid networkId, Iterable<Network> networks) {
-        for (Network network : networks) {
-            if (networkId.equals(network.getId())) {
-                return network;
-            }
-        }
-        return null;
     }
 }
