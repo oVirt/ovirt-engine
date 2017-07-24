@@ -277,6 +277,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     private void attachDiskToTemplate(Guid templateId) {
         DiskImage templateDiskImage = getParameters().getDiskImage();
         DiskVmElement dve = new DiskVmElement(templateDiskImage.getId(), templateId);
+        dve.setBoot(true);
         dve.setDiskInterface(DiskInterface.VirtIO);
         diskVmElementDao.save(dve);
         vmDeviceUtils.addDiskDevice(templateId, templateDiskImage.getId());
