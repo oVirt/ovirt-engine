@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -23,17 +22,11 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     private static final Long unlimited = -1L;
     private static final int STORAGE_NUM_QUOTAS = 5;
     private static final int VDS_GRUOP_NUM_QUOTAS = 4;
-    private EngineSession unprivilegedUserSession;
-    private EngineSession privilegedUserSession;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getQuotaDao();
-
-        EngineSessionDao engineDao = dbFacade.getEngineSessionDao();
-        unprivilegedUserSession = engineDao.getBySessionId(UNPRIVILEGED_USER_ENGINE_SESSION_ID);
-        privilegedUserSession = engineDao.getBySessionId(PRIVILEGED_USER_ENGINE_SESSION_ID);
     }
 
     @Test
@@ -452,8 +445,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Asserts that {@code expectedQuotas} are relevant for the given {@code storageId}
      */
     private void assertGetAllRelevantQuoatsForStorage(Guid storageId, int expectedQuotas) {
-        assertNotNull(privilegedUserSession);
-        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(storageId, privilegedUserSession.getId(), false);
+        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(storageId, FixturesTool.PRIVILEGED_SESSION_ID, false);
         assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
     }
 
@@ -490,8 +482,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetRelevantStorageQuotaForUserWithoutPrivileges() throws Exception {
-        assertNotNull(unprivilegedUserSession);
-        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, unprivilegedUserSession.getId(), true);
+        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, FixturesTool.UNPRIVILEGED_SESSION_ID, true);
         assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
     }
 
@@ -501,9 +492,8 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetRelevantClusterQuotaForUserWithoutPrivileges() throws Exception {
-        assertNotNull(unprivilegedUserSession);
         List<Quota> quotas = dao.getAllRelevantQuotasForCluster(FixturesTool.CLUSTER_RHEL6_NFS,
-                unprivilegedUserSession.getId(),
+                FixturesTool.UNPRIVILEGED_SESSION_ID,
                 true);
         assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
     }
@@ -512,8 +502,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      * Asserts that {@code expectedQuotas} are relevant for the given {@code clusterId}
      */
     private void assertGetAllRelevantQuoatsForCluster(Guid clusterId, int expectedQuotas) {
-        assertNotNull(privilegedUserSession);
-        List<Quota> quotas = dao.getAllRelevantQuotasForCluster(clusterId, privilegedUserSession.getId(), false);
+        List<Quota> quotas = dao.getAllRelevantQuotasForCluster(clusterId, FixturesTool.PRIVILEGED_SESSION_ID, false);
         assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
     }
 

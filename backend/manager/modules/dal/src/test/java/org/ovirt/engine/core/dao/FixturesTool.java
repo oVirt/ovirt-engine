@@ -484,6 +484,15 @@ public class FixturesTool {
     protected static final Guid EXISTING_SESSION_ID = new Guid("c61a1dec-6b5f-11e4-80d9-3c970e14c386");
 
     /**
+     * An unprivileged session
+     */
+    protected static final long UNPRIVILEGED_SESSION_ID = -1L;
+    /**
+     * A privileged session id
+     */
+    protected static final long PRIVILEGED_SESSION_ID = -2L;
+
+    /**
      * Predefined engine group id
      */
     protected static final Guid EXISTING_GROUP_ID = new Guid("cd854d52-b6bf-4d74-81cd-0345d8266939");
