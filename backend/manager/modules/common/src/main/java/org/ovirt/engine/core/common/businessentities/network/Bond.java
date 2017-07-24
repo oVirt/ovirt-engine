@@ -12,19 +12,11 @@ import org.ovirt.engine.core.common.utils.ToStringBuilder;
 public class Bond extends VdsNetworkInterface {
 
     private static final long serialVersionUID = 268337006285648461L;
-    private List<String> slaves;
+    private List<String> slaves = new ArrayList<>();
     private String activeSlave;
 
     public Bond() {
         setBonded(true);
-        slaves = new ArrayList<>();
-    }
-
-    public Bond(String macAddress, String bondOptions, Integer bondType) {
-        this();
-        setMacAddress(macAddress);
-        setBondOptions(bondOptions);
-        setBondType(bondType);
     }
 
     public Bond(String name) {

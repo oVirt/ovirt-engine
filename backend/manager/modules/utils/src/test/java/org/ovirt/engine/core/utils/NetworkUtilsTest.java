@@ -48,7 +48,9 @@ public class NetworkUtilsTest {
     }
 
     private VdsNetworkInterface createVlan(String baseIfaceName) {
-        VdsNetworkInterface iface = new Vlan(RandomUtils.instance().nextInt(100), baseIfaceName);
+        VdsNetworkInterface iface = new Vlan();
+        iface.setVlanId(RandomUtils.instance().nextInt(100));
+        iface.setBaseInterface(baseIfaceName);
         return iface;
     }
 

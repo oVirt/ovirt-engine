@@ -303,8 +303,7 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
             new RowMapper<VdsNetworkInterface>() {
                 @SuppressWarnings("unchecked")
                 @Override
-                public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
+                public VdsNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
                     VdsNetworkInterface entity = createInterface(rs);
                     entity.setStatistics(HostNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
                     entity.setType((Integer) rs.getObject("type"));
@@ -365,14 +364,25 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                         iface.setBondOptions(bondOptions);
                         iface.setSpeed(speed);
                     } else if (Boolean.TRUE.equals(isBond)) {
-                        Bond bond = new Bond(macAddress, bondOptions, bondType);
+                        Bond bond = new Bond();
+
+                        bond.setMacAddress(macAddress);
+                        bond.setBondOptions(bondOptions);
+                        bond.setBondType(bondType);
+
                         String bondActiveSlave = rs.getString("bond_active_slave");
                         bond.setActiveSlave(bondActiveSlave);
                         iface = bond;
                     } else if (vlanId != null) {
-                        iface = new Vlan(vlanId, baseInterface);
+                        iface = new Vlan();
+                        iface.setVlanId(vlanId);
+                        iface.setBaseInterface(baseInterface);
+
                     } else {
-                        iface = new Nic(macAddress, speed, bondName);
+                        iface = new Nic();
+                        iface.setMacAddress(macAddress);
+                        iface.setSpeed(speed);
+                        iface.setBondName(bondName);
                     }
 
                     return iface;

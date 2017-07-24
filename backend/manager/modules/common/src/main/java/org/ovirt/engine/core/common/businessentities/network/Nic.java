@@ -10,12 +10,6 @@ public class Nic extends VdsNetworkInterface {
     public Nic() {
     }
 
-    public Nic(String macAddress, Integer speed, String bondName) {
-        setMacAddress(macAddress);
-        setSpeed(speed);
-        setBondName(bondName);
-    }
-
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
