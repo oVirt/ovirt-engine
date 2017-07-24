@@ -59,6 +59,15 @@ public class Bond extends VdsNetworkInterface {
     }
 
     @Override
+    public void setBonded(Boolean bonded) {
+        if (Objects.equals(Boolean.FALSE, bonded)) {
+            throw new IllegalArgumentException("It is illegal to have 'unbonded' bond.");
+        } else {
+            super.setBonded(bonded);
+        }
+    }
+
+    @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("macAddress", getMacAddress())

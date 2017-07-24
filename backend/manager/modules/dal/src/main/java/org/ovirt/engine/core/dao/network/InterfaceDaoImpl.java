@@ -305,6 +305,9 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 @Override
                 public VdsNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
                     VdsNetworkInterface entity = createInterface(rs);
+
+                    entity.setSpeed((Integer) rs.getObject("speed"));
+                    entity.setMacAddress(rs.getString("mac_addr"));
                     entity.setStatistics(HostNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
                     entity.setType((Integer) rs.getObject("type"));
                     entity.setIpv4Gateway(rs.getString("gateway"));
@@ -334,58 +337,40 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 }
 
                 /**
-                 * Create the correct type according to the row. If the type can't be determined for whatever reason,
-                 * {@link VdsNetworkInterface} instance is created & initialized.
+                 * Create the correct type according to the row.
                  *
-                 * @param rs
-                 *            The row representing the entity.
+                 * @param rs The row representing the entity.
                  * @return The instance of the correct type as represented by the row.
                  */
                 private VdsNetworkInterface createInterface(ResultSet rs) throws SQLException {
-                    VdsNetworkInterface iface;
-
-                    String macAddress = rs.getString("mac_addr");
                     Integer vlanId = (Integer) rs.getObject("vlan_id");
-                    String baseInterface = rs.getString("base_interface");
-                    Integer bondType = (Integer) rs.getObject("bond_type");
-                    String bondName = rs.getString("bond_name");
                     Boolean isBond = (Boolean) rs.getObject("is_bond");
-                    String bondOptions = rs.getString("bond_opts");
-                    Integer speed = (Integer) rs.getObject("speed");
 
-                    if (Boolean.TRUE.equals(isBond) && vlanId != null) {
-                        iface = new VdsNetworkInterface();
-                        iface.setMacAddress(macAddress);
-                        iface.setVlanId(vlanId);
-                        iface.setBaseInterface(baseInterface);
-                        iface.setBondType(bondType);
-                        iface.setBondName(bondName);
-                        iface.setBonded(isBond);
-                        iface.setBondOptions(bondOptions);
-                        iface.setSpeed(speed);
-                    } else if (Boolean.TRUE.equals(isBond)) {
+                    if (Boolean.TRUE.equals(isBond)) {
                         Bond bond = new Bond();
 
-                        bond.setMacAddress(macAddress);
-                        bond.setBondOptions(bondOptions);
-                        bond.setBondType(bondType);
+                        bond.setBonded(isBond);
+                        bond.setBondOptions(rs.getString("bond_opts"));
+                        bond.setBondType((Integer) rs.getObject("bond_type"));
+                        bond.setActiveSlave(rs.getString("bond_active_slave"));
 
-                        String bondActiveSlave = rs.getString("bond_active_slave");
-                        bond.setActiveSlave(bondActiveSlave);
-                        iface = bond;
-                    } else if (vlanId != null) {
-                        iface = new Vlan();
-                        iface.setVlanId(vlanId);
-                        iface.setBaseInterface(baseInterface);
-
-                    } else {
-                        iface = new Nic();
-                        iface.setMacAddress(macAddress);
-                        iface.setSpeed(speed);
-                        iface.setBondName(bondName);
+                        return bond;
                     }
 
-                    return iface;
+                    if (vlanId != null) {
+                        Vlan vlan = new Vlan();
+                        vlan.setVlanId(vlanId);
+                        vlan.setBaseInterface(rs.getString("base_interface"));
+                        vlan.setBonded(isBond);
+                        return vlan;
+                    }
+
+
+                    Nic nic = new Nic();
+                    nic.setBondName(rs.getString("bond_name"));
+                    nic.setBonded(isBond);
+                    return nic;
+
                 }
             };
 
