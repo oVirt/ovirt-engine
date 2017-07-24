@@ -349,34 +349,47 @@ public abstract class OvfReader implements IOvfBuilder {
     protected abstract void readDiskImageItem(XmlNode node);
 
     protected void readDiskImageItem(XmlNode node, DiskImage image) {
-        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:Template", _xmlNS).innerText)) {
-            image.setImageTemplateId(new Guid(selectSingleNode(node, "rasd:Template", _xmlNS).innerText));
+        XmlNode templateNode = selectSingleNode(node, "rasd:Template", _xmlNS);
+        if (templateNode != null && StringUtils.isNotEmpty(templateNode.innerText)) {
+            image.setImageTemplateId(new Guid(templateNode.innerText));
         }
-        image.setAppList(selectSingleNode(node, "rasd:ApplicationList", _xmlNS).innerText);
+
+        XmlNode applicationsNode = selectSingleNode(node, "rasd:ApplicationList", _xmlNS);
+        if (applicationsNode != null) {
+            image.setAppList(applicationsNode.innerText);
+        }
 
         XmlNode storageNode = selectSingleNode(node, "rasd:StorageId", _xmlNS);
-        if (storageNode != null &&
-                StringUtils.isNotEmpty(storageNode.innerText)) {
+        if (storageNode != null && StringUtils.isNotEmpty(storageNode.innerText)) {
             image.setStorageIds(new ArrayList<>(Arrays.asList(new Guid(storageNode.innerText))));
         }
-        if (StringUtils.isNotEmpty(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText)) {
-            image.setStoragePoolId(new Guid(selectSingleNode(node, "rasd:StoragePoolId", _xmlNS).innerText));
+
+        XmlNode storagePoolNode = selectSingleNode(node, "rasd:StoragePoolId", _xmlNS);
+        if (storagePoolNode != null && StringUtils.isNotEmpty(storagePoolNode.innerText)) {
+            image.setStoragePoolId(new Guid(storagePoolNode.innerText));
         }
-        final Date creationDate = OvfParser.utcDateStringToLocalDate(
-                selectSingleNode(node, "rasd:CreationDate", _xmlNS).innerText);
+
+        XmlNode creationDateNode = selectSingleNode(node, "rasd:CreationDate", _xmlNS);
+        Date creationDate = creationDateNode != null ? OvfParser.utcDateStringToLocalDate(creationDateNode.innerText)
+                : null;
         if (creationDate != null) {
             image.setCreationDate(creationDate);
         }
-        final Date lastModified = OvfParser.utcDateStringToLocalDate(
-                selectSingleNode(node, "rasd:LastModified", _xmlNS).innerText);
+
+        XmlNode lastModifiedNode = selectSingleNode(node, "rasd:LastModified", _xmlNS);
+        Date lastModified = lastModifiedNode != null ? OvfParser.utcDateStringToLocalDate(lastModifiedNode.innerText)
+                : null;
         if (lastModified != null) {
             image.setLastModified(lastModified);
         }
-        final Date last_modified_date = OvfParser.utcDateStringToLocalDate(
-                selectSingleNode(node, "rasd:last_modified_date", _xmlNS).innerText);
+
+        XmlNode lastModifiedDateNode = selectSingleNode(node, "rasd:last_modified_date", _xmlNS);
+        Date last_modified_date = lastModifiedDateNode != null ?
+                OvfParser.utcDateStringToLocalDate(lastModifiedDateNode.innerText) : null;
         if (last_modified_date != null) {
             image.setLastModifiedDate(last_modified_date);
         }
+
         VmDevice readDevice = readManagedVmDevice(node, image.getId());
         image.setPlugged(readDevice.isPlugged());
     }
