@@ -391,7 +391,7 @@ Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python
 Requires:	logrotate
-Requires:	otopi >= 1.6.0
+Requires:	otopi >= 1.7.1
 Requires:	python-paramiko
 Requires(pre):	shadow-utils
 Conflicts:	%{name}-dwh < 3.6.0
@@ -524,7 +524,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine-common >= %{version}-%{release}
 Requires:	tar
 Requires:	bzip2
 Requires:	xz
-Requires:	otopi >= 1.5.0
+Requires:	otopi >= 1.7.1
 Requires:	postgresql >= 9.2.15
 
 %description tools-backup
@@ -591,7 +591,7 @@ Summary:	%{ovirt_product_name_short} health check bundler.
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-base = %{version}-%{release}
 Requires:	makeself >= 2.2
-Requires:	otopi-devtools >= 1.6.0
+Requires:	otopi-devtools >= 1.7.1
 
 %description health-check-bundler
 A utility for creating a bundle script that runs a health check.
