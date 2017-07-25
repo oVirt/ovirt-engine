@@ -11,12 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -24,16 +19,12 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
     private static final int TOTAL_DYNAMIC_DISK_IMAGES = 5;
 
     private DiskImageDynamicDao dao;
-    private ImageDao imageDao;
-    private BaseDiskDao diskDao;
     private DiskImageDynamic existingDynamic;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getDiskImageDynamicDao();
-        imageDao = dbFacade.getImageDao();
-        diskDao = dbFacade.getBaseDiskDao();
         existingDynamic = dao.get(FixturesTool.IMAGE_ID);
     }
 
@@ -115,18 +106,10 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
 
     @Test
     public void testSave() {
-        DiskImage newImage = new DiskImage();
-        newImage.setImageId(Guid.newGuid());
-        newImage.setVolumeFormat(VolumeFormat.COW);
-        newImage.setVolumeType(VolumeType.Sparse);
-        newImage.setActive(true);
-        newImage.setImageTemplateId(FixturesTool.IMAGE_ID);
-        newImage.setId(Guid.newGuid());
-        imageDao.save(newImage.getImage());
-        diskDao.save(newImage);
-        DiskImageDynamic dynamic = createDiskImageDynamic(newImage.getImageId());
-        dao.save(createDiskImageDynamic(newImage.getImageId()));
-        DiskImageDynamic result = dao.get(dynamic.getId());
+        Guid newId = Guid.newGuid();
+        DiskImageDynamic dynamic = createDiskImageDynamic(newId);
+        dao.save(createDiskImageDynamic(newId));
+        DiskImageDynamic result = dao.get(newId);
         assertNotNull(result);
         assertEquals(dynamic, result);
     }
@@ -164,9 +147,6 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         DiskImageDynamic existingDynamic2 = dao.get(imageId);
         assertFalse(existingDynamic2.getReadRate().equals(120));
 
-        VmDevice device = dbFacade.getVmDeviceDao().get(new VmDeviceId(imageGroupId, FixturesTool.VM_RHEL5_POOL_57));
-        assertNull(device.getSnapshotId());
-
         existingDynamic2.setId(imageGroupId);
         Integer readRate = 120;
         existingDynamic2.setReadRate(readRate);
@@ -177,10 +157,6 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
 
         existingDynamic2.setId(imageId);
         assertEquals(existingDynamic2, dao.get(imageId));
-
-        // test that the record isn't updated when a snapshot of the disk is attached to the vm
-        device.setSnapshotId(FixturesTool.EXISTING_SNAPSHOT_ID);
-        dbFacade.getVmDeviceDao().update(device);
 
         existingDynamic2.setReadRate(150);
         dao.updateAllDiskImageDynamicWithDiskIdByVmId(Collections.singleton(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
