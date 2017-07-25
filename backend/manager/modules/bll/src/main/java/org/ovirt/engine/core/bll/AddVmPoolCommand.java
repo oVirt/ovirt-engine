@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -64,6 +65,19 @@ public class AddVmPoolCommand<T extends AddVmPoolParameters> extends CommonVmPoo
         }
 
         return true;
+    }
+
+    @Override
+    protected void updateVmInitPassword() {
+        // We are not passing the VmInit password to the UI,
+        // so we need to update the VmInit password from its template.
+        if (getParameters().getVmStaticData().getVmInit() != null &&
+                getParameters().getVmStaticData().getVmInit().isPasswordAlreadyStored()) {
+            VmBase temp = new VmBase();
+            temp.setId(getParameters().getVmStaticData().getVmtGuid());
+            vmHandler.updateVmInitFromDB(temp, false);
+            getParameters().getVmStaticData().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
+        }
     }
 
     @Override

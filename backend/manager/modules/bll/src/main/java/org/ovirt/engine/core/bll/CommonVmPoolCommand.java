@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.action.AddVmPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -326,17 +325,7 @@ public abstract class CommonVmPoolCommand<T extends AddVmPoolParameters> extends
         return parameters;
     }
 
-    private void updateVmInitPassword() {
-        // We are not passing the VmInit password to the UI,
-        // so we need to update the VmInit password from its template.
-        if (getParameters().getVmStaticData().getVmInit() != null &&
-                getParameters().getVmStaticData().getVmInit().isPasswordAlreadyStored()) {
-            VmBase temp = new VmBase();
-            temp.setId(getParameters().getVmStaticData().getVmtGuid());
-            vmHandler.updateVmInitFromDB(temp, false);
-            getParameters().getVmStaticData().getVmInit().setRootPassword(temp.getVmInit().getRootPassword());
-        }
-    }
+    protected abstract void updateVmInitPassword();
 
     private CommandContext createAddVmStepContext(String currentVmName) {
         CommandContext commandCtx = null;

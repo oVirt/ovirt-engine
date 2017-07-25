@@ -220,4 +220,18 @@ public class UpdateVmPoolCommand<T extends AddVmPoolParameters> extends CommonVm
         return super.getValidationGroups();
     }
 
+    @Override
+    protected void updateVmInitPassword() {
+        // We are not passing the VmInit password to the UI,
+        // so we need to update the VmInit password from one of the VMs in the pool.
+        if (getParameters().getVmStaticData().getVmInit() != null &&
+                getParameters().getVmStaticData().getVmInit().isPasswordAlreadyStored()) {
+            VM temp = vmPoolDao.getVmDataFromPoolByPoolGuid(getParameters().getVmPoolId(), null, false);
+            vmHandler.updateVmInitFromDB(temp.getStaticData(), false);
+            String password = temp.getVmInit() != null ? temp.getVmInit().getRootPassword() : null;
+            getParameters().getVmStaticData().getVmInit().setRootPassword(password);
+            getParameters().getVmStaticData().getVmInit().setPasswordAlreadyStored(false);
+        }
+    }
+
 }
