@@ -142,6 +142,8 @@ select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'gener
 select fn_db_add_config_value('GlusterRefreshRateHealInfo', '600', 'general');
 select fn_db_add_config_value('GlusterUnSyncedEntriesHistoryLimit', '40', 'general');
 select fn_db_add_config_value('GlusterSelfHealMonitoringSupported', 'false', '3.6');
+select fn_db_add_config_value_for_versions_up_to('LibgfApiSupported', 'false', '4.1');
+select fn_db_add_config_value('LibgfApiSupported', 'true', '4.2');
 -- Gluster Geo-replication --
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'general');
