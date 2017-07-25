@@ -1866,9 +1866,9 @@ public class VmDeviceUtils {
                     }
                     if (device.getDeviceId() == null) {
                         if (device.getType() == VmDeviceGeneralType.RNG) {
-                            // only one RNG device allowed
+                            // only one RNG device is allowed per VM
                             VmDevice rng = VmDeviceCommonUtils.findVmDeviceByType(vmManagedDeviceMap, update.getType());
-                            device.setDeviceId(rng.getDeviceId());
+                            device.setDeviceId(rng != null ? rng.getDeviceId() : Guid.newGuid());
                         } else {
                             device.setDeviceId(Guid.newGuid());
                         }
