@@ -54,7 +54,11 @@ public class TokenCleanupUtility {
                 log.debug("No existing Session found for token: {}, cannot invalidate session", ssoSession.getAccessToken());
             } else {
                 log.debug("Existing Session found for token: {}, invalidating session", ssoSession.getAccessToken());
-                existingSession.invalidate();
+                try {
+                    existingSession.invalidate();
+                } catch (IllegalStateException ex) {
+                    log.debug("Unable to cleanup SsoSession: {}", ex.getMessage());
+                }
             }
             invokeAuthnLogout(ssoContext, ssoSession);
             SsoUtils.notifyClientsOfLogoutEvent(ssoContext,
