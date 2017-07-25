@@ -21,11 +21,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
-    private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
     private static final int TOTAL_DYNAMIC_DISK_IMAGES = 5;
-    private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
-
-
 
     private DiskImageDynamicDao dao;
     private ImageDao imageDao;
@@ -38,7 +34,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         dao = dbFacade.getDiskImageDynamicDao();
         imageDao = dbFacade.getImageDao();
         diskDao = dbFacade.getBaseDiskDao();
-        existingDynamic = dao.get(EXISTING_IMAGE_ID);
+        existingDynamic = dao.get(FixturesTool.IMAGE_ID);
     }
 
     /**
@@ -124,7 +120,7 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         newImage.setVolumeFormat(VolumeFormat.COW);
         newImage.setVolumeType(VolumeType.Sparse);
         newImage.setActive(true);
-        newImage.setImageTemplateId(EXISTING_IMAGE_DISK_TEMPLATE);
+        newImage.setImageTemplateId(FixturesTool.IMAGE_ID);
         newImage.setId(Guid.newGuid());
         imageDao.save(newImage.getImage());
         diskDao.save(newImage);
