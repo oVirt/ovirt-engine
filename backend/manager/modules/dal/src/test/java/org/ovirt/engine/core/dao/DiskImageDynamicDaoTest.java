@@ -2,8 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,82 +13,40 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
+public class DiskImageDynamicDaoTest extends BaseGenericDaoTestCase<Guid, DiskImageDynamic, DiskImageDynamicDao> {
     private static final int TOTAL_DYNAMIC_DISK_IMAGES = 5;
 
-    private DiskImageDynamicDao dao;
-    private DiskImageDynamic existingDynamic;
+    @Override
+    protected DiskImageDynamic generateNewEntity() {
+        return createDiskImageDynamic(Guid.newGuid());
+    }
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getDiskImageDynamicDao();
-        existingDynamic = dao.get(FixturesTool.IMAGE_ID);
+    protected void updateExistingEntity() {
+        existingEntity.setActualSize(existingEntity.getActualSize() * 10);
+        existingEntity.setReadLatency(0.000000001d);
+        existingEntity.setWriteLatency(0.000000002d);
+        existingEntity.setFlushLatency(0.999999999d);
     }
 
-    /**
-     * Ensures that retrieving with an incorrect ID returns null.
-     */
-    @Test
-    public void testGetWithInvalidId() {
-        DiskImageDynamic result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.IMAGE_ID;
     }
 
-    /**
-     * Ensures that retrieving the dynamic image works as expected.
-     */
-    @Test
-    public void testGet() {
-        DiskImageDynamic result = dao.get(existingDynamic.getId());
-
-        assertNotNull(result);
-        assertEquals(existingDynamic, result);
+    @Override
+    protected DiskImageDynamicDao prepareDao() {
+        return dbFacade.getDiskImageDynamicDao();
     }
 
-    /**
-     * Ensures that retrieving all dynamic disk images works.
-     */
-    @Test
-    public void testGetAll() {
-        List<DiskImageDynamic> result = dao.getAll();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(TOTAL_DYNAMIC_DISK_IMAGES, result.size());
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
     }
 
-    /**
-     * Ensures that updating a dynamic image works.
-     */
-    @Test
-    public void testUpdate() {
-        existingDynamic.setActualSize(existingDynamic.getActualSize() * 10);
-
-        dao.update(existingDynamic);
-
-        DiskImageDynamic result = dao.get(existingDynamic.getId());
-
-        assertNotNull(result);
-        assertEquals(existingDynamic, result);
-    }
-
-    /**
-     * Ensures that updating a dynamic image works.
-     */
-    @Test
-    public void testUpdateLatency() {
-        existingDynamic.setReadLatency(0.000000001d);
-        existingDynamic.setWriteLatency(0.000000002d);
-        existingDynamic.setFlushLatency(0.999999999d);
-
-        dao.update(existingDynamic);
-
-        DiskImageDynamic result = dao.get(existingDynamic.getId());
-
-        assertNotNull(result);
-        assertEquals(existingDynamic, result);
+    @Override
+    protected int getEntitiesTotalCount() {
+        return TOTAL_DYNAMIC_DISK_IMAGES;
     }
 
     public DiskImageDynamic createDiskImageDynamic(Guid id) {
@@ -105,38 +61,17 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
     }
 
     @Test
-    public void testSave() {
-        Guid newId = Guid.newGuid();
-        DiskImageDynamic dynamic = createDiskImageDynamic(newId);
-        dao.save(createDiskImageDynamic(newId));
-        DiskImageDynamic result = dao.get(newId);
-        assertNotNull(result);
-        assertEquals(dynamic, result);
-    }
-    /**
-     * Ensures that removing a dynamic image works as expected.
-     */
-    @Test
-    public void testRemove() {
-        dao.remove(existingDynamic.getId());
-
-        DiskImageDynamic result = dao.get(existingDynamic.getId());
-
-        assertNull(result);
-    }
-
-    @Test
     public void testUpdateAll() throws Exception {
-        DiskImageDynamic existingDynamic2 = dao.get(new Guid("42058975-3d5e-484a-80c1-01c31207f579"));
-        existingDynamic.setActualSize(100);
-        existingDynamic2.setReadRate(120);
-        existingDynamic.setReadLatency(100d);
-        existingDynamic2.setReadLatency(0.00001d);
+        DiskImageDynamic existingEntity2 = dao.get(new Guid("42058975-3d5e-484a-80c1-01c31207f579"));
+        existingEntity.setActualSize(100);
+        existingEntity2.setReadRate(120);
+        existingEntity.setReadLatency(100d);
+        existingEntity2.setReadLatency(0.00001d);
 
-        dao.updateAll(Arrays.asList(existingDynamic, existingDynamic2));
+        dao.updateAll(Arrays.asList(existingEntity, existingEntity2));
 
-        assertEquals(existingDynamic, dao.get(existingDynamic.getId()));
-        assertEquals(existingDynamic2, dao.get(existingDynamic2.getId()));
+        assertEquals(existingEntity, dao.get(existingEntity.getId()));
+        assertEquals(existingEntity2, dao.get(existingEntity2.getId()));
     }
 
     @Test
@@ -144,23 +79,23 @@ public class DiskImageDynamicDaoTest extends BaseDaoTestCase{
         Guid imageId = FixturesTool.IMAGE_ID_2;
         Guid imageGroupId = FixturesTool.IMAGE_GROUP_ID_2;
 
-        DiskImageDynamic existingDynamic2 = dao.get(imageId);
-        assertFalse(existingDynamic2.getReadRate().equals(120));
+        DiskImageDynamic existingEntity2 = dao.get(imageId);
+        assertFalse(existingEntity2.getReadRate().equals(120));
 
-        existingDynamic2.setId(imageGroupId);
+        existingEntity2.setId(imageGroupId);
         Integer readRate = 120;
-        existingDynamic2.setReadRate(readRate);
+        existingEntity2.setReadRate(readRate);
 
         // test that the record is updated when the active disk is attached to the vm
         dao.updateAllDiskImageDynamicWithDiskIdByVmId(Collections.singleton(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
-                existingDynamic2)));
+                existingEntity2)));
 
-        existingDynamic2.setId(imageId);
-        assertEquals(existingDynamic2, dao.get(imageId));
+        existingEntity2.setId(imageId);
+        assertEquals(existingEntity2, dao.get(imageId));
 
-        existingDynamic2.setReadRate(150);
+        existingEntity2.setReadRate(150);
         dao.updateAllDiskImageDynamicWithDiskIdByVmId(Collections.singleton(new Pair<>(FixturesTool.VM_RHEL5_POOL_57,
-                existingDynamic2)));
+                existingEntity2)));
         assertEquals(readRate, dao.get(imageId).getReadRate());
     }
 
