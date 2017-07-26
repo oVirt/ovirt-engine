@@ -37,6 +37,10 @@ public class ClusterMapper {
             entity.setRequiredSwitchTypeForCluster(SwitchTypeMapper.mapFromModel(model.getSwitchType()));
         }
 
+        if (model.isSetFirewallType()) {
+            entity.setFirewallType(FirewallTypeMapper.mapFromModel(model.getFirewallType()));
+        }
+
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -168,6 +172,7 @@ public class ClusterMapper {
         model.setDescription(entity.getDescription());
         model.setComment(entity.getComment());
         model.setSwitchType(SwitchTypeMapper.mapToModel(entity.getRequiredSwitchTypeForCluster()));
+        model.setFirewallType(FirewallTypeMapper.mapToModel(entity.getFirewallType()));
 
         if (entity.getCpuName() != null) {
             Cpu cpu = new Cpu();
