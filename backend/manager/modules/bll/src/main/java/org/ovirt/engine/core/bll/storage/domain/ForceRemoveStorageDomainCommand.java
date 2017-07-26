@@ -47,6 +47,8 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                     runInternalAction(VdcActionType.ReconstructMasterDomain, tempVar);
                 }
+                releaseStorageDomainMacPool(vmDao.getAllForStoragePool(getStoragePoolId()));
+
                 // try to force detach first
                 DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(
                         getStoragePool().getId(), getStorageDomain().getId(), Guid.Empty, -1);
