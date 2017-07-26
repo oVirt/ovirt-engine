@@ -163,13 +163,13 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     @Test
     public void getStorageConnectionsByStorageTypeWithRecordsMultipleStatuses() {
         getStorageConnectionsByStorageTypeWithRecords(EnumSet.of(StorageDomainStatus.Maintenance, StorageDomainStatus.Unknown),
-                Arrays.asList(FixturesTool.STORAGE_DOAMIN_NFS2_3, FixturesTool.STORAGE_DOAMIN_NFS2_1));
+                Arrays.asList(FixturesTool.STORAGE_DOMAIN_NFS2_3, FixturesTool.STORAGE_DOMAIN_NFS2_1));
     }
 
     @Test
     public void getStorageConnectionsByStorageTypeWithRecordsOneStatus() {
         getStorageConnectionsByStorageTypeWithRecords(EnumSet.of(StorageDomainStatus.Maintenance),
-                Collections.singletonList(FixturesTool.STORAGE_DOAMIN_NFS2_3));
+                Collections.singletonList(FixturesTool.STORAGE_DOMAIN_NFS2_3));
     }
 
 

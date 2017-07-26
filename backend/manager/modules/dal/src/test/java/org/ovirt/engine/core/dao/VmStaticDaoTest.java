@@ -543,7 +543,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllWithLeaseOnStorageDomain() {
-        List<Guid> vmAndTemplatesWithLeasesIds = dao.getAllWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS2_1)
+        List<Guid> vmAndTemplatesWithLeasesIds = dao.getAllWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS2_1)
                 .stream().map(t -> t.getId()).collect(Collectors.toList());
         assertThat(vmAndTemplatesWithLeasesIds,
                 Matchers.contains(FixturesTool.VM_RHEL5_POOL_57));
@@ -551,7 +551,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllActiveWithLeaseOnForStorageDomain() {
-        List<Guid> runningVmsWithLeasesIds = dao.getAllRunningWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS2_1)
+        List<Guid> runningVmsWithLeasesIds = dao.getAllRunningWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS2_1)
                 .stream().map(v -> v.getId()).collect(Collectors.toList());
         assertThat(runningVmsWithLeasesIds, Matchers.contains(FixturesTool.VM_RHEL5_POOL_57));
     }

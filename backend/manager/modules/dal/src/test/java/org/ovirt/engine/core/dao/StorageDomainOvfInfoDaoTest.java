@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, StorageDomainOvfInfo, StorageDomainOvfInfoDao> {
     @Override
     protected StorageDomainOvfInfo generateNewEntity() {
-        return new StorageDomainOvfInfo(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, null, FixturesTool.DISK_ID_2, StorageDomainOvfInfoStatus.OUTDATED, null);
+        return new StorageDomainOvfInfo(FixturesTool.STORAGE_DOMAIN_NFS_MASTER, null, FixturesTool.DISK_ID_2, StorageDomainOvfInfoStatus.OUTDATED, null);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
     @Test
     public void updateOvfUpdatedInfoFewDomains() {
         StorageDomainOvfInfo ovfInfo = dao.get(getExistingEntityId());
-        StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOAMIN_NFS2_2).get(0);
+        StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOMAIN_NFS2_2).get(0);
         assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
         assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo.getStatus());
         dao.updateOvfUpdatedInfo(Arrays.asList(ovfInfo.getStorageDomainId(), ovfInfo1.getStorageDomainId()),
@@ -76,7 +76,7 @@ public class StorageDomainOvfInfoDaoTest extends BaseGenericDaoTestCase<Guid, St
         StorageDomainOvfInfo ovfInfo = dao.get(getExistingEntityId());
         ovfInfo.setStatus(StorageDomainOvfInfoStatus.DISABLED);
         dao.update(ovfInfo);
-        StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOAMIN_NFS2_2).get(0);
+        StorageDomainOvfInfo ovfInfo1 = dao.getAllForDomain(FixturesTool.STORAGE_DOMAIN_NFS2_2).get(0);
         assertNotSame("domain shouldn't be ovf updated prior to test", StorageDomainOvfInfoStatus.UPDATED, ovfInfo1.getStatus());
         dao.updateOvfUpdatedInfo(Arrays.asList(ovfInfo.getStorageDomainId(), ovfInfo1.getStorageDomainId()),
                 StorageDomainOvfInfoStatus.UPDATED,

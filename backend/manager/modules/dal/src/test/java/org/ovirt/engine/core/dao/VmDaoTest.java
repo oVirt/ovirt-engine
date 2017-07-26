@@ -281,7 +281,7 @@ public class VmDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomainWithVms() {
-        List<VM> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        List<VM> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -293,7 +293,7 @@ public class VmDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomainWithoutVMs() {
-        List<VM> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD6);
+        List<VM> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD6);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -348,7 +348,7 @@ public class VmDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllActiveForStorageDomain() {
-        List<VM> result = dao.getAllActiveForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        List<VM> result = dao.getAllActiveForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -532,7 +532,7 @@ public class VmDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllVMsWithDisksOnOtherStorageDomain() {
-        List<VM> result = dao.getAllVMsWithDisksOnOtherStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        List<VM> result = dao.getAllVMsWithDisksOnOtherStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

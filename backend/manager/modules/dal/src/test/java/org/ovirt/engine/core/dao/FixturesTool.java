@@ -51,27 +51,27 @@ public class FixturesTool {
     /**
      * Predefined NFS master storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_NFS2_1 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa31");
+    protected static final Guid STORAGE_DOMAIN_NFS2_1 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa31");
 
     /**
      * Predefined NFS master storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_NFS2_2 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa32");
+    protected static final Guid STORAGE_DOMAIN_NFS2_2 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa32");
 
     /**
      * Predefined NFS  storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_NFS2_3 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa41");
+    protected static final Guid STORAGE_DOMAIN_NFS2_3 = new Guid("d9ede37f-e6c3-4bf9-a984-19174070aa41");
 
     /**
      * Predefined NFS master storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_NFS_MASTER = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
+    protected static final Guid STORAGE_DOMAIN_NFS_MASTER = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
 
     /**
      * Predefined NFS iso storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_NFS_ISO = new Guid("17e7489d-d490-4681-a322-073ca19bd33d");
+    protected static final Guid STORAGE_DOMAIN_NFS_ISO = new Guid("17e7489d-d490-4681-a322-073ca19bd33d");
 
     /**
      * Predefined inactive NFS iso storage domain.
@@ -81,18 +81,18 @@ public class FixturesTool {
     /**
      * Predefined shared iso storage domain for both the storgae pools
      */
-    protected static final Guid SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3 =
+    protected static final Guid SHARED_ISO_STORAGE_DOMAIN_FOR_SP2_AND_SP3 =
             new Guid("d034f3b2-fb9c-414a-b1be-1e642cfe57ae");
 
     /**
      * Predefined scale storage domain.
      */
-    public static final Guid STORAGE_DOAMIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+    public static final Guid STORAGE_DOMAIN_SCALE_SD5 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
     /**
      * Predefined scale storage domain.
      */
-    protected static final Guid STORAGE_DOAMIN_SCALE_SD6 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ac");
+    protected static final Guid STORAGE_DOMAIN_SCALE_SD6 = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ac");
 
     /**
      * Predefined vds group.
@@ -142,7 +142,7 @@ public class FixturesTool {
      * <li>virtual_cpu = 100</li>
      * <li>mem_size_mb = 10000</li>
      * <li>storage_size_gb = 1000000</li></ul>
-     * Specific cluster ID c2211b56-8869-41cd-84e1-78d7cb96f31d(STORAGE_DOAMIN_NFS_MASTER) with no limitations
+     * Specific cluster ID c2211b56-8869-41cd-84e1-78d7cb96f31d(STORAGE_DOMAIN_NFS_MASTER) with no limitations
      */
     protected static final Guid QUOTA_GENERAL = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
 
@@ -156,7 +156,7 @@ public class FixturesTool {
      * Predefined quota with specific limitations, Its GUID is 88296e00-0cad-4e5a-9291-008a7b7f4400.
      * <ul>Global limitation:
      * <li>virtual_cpu = 100</li></ul>
-     * Specific storage ID c2211b56-8869-41cd-84e1-78d7cb96f31d(STORAGE_DOAMIN_NFS_MASTER) <ul><li>storage_size_gb = 1000</li></ul>
+     * Specific storage ID c2211b56-8869-41cd-84e1-78d7cb96f31d(STORAGE_DOMAIN_NFS_MASTER) <ul><li>storage_size_gb = 1000</li></ul>
      * Specific cluster ID b399944a-81ab-4ec5-8266-e19ba7c3c9d1(CLUSTER_RHEL6_ISCSI) <ul><li>virtual_cpu = 10</li><li>mem_size_mb = -1</li></ul>
      * Specific cluster ID 0e57070e-2469-4b38-84a2-f111aaabd49d(CLUSTER_RHEL6_NFS) <ul><li>virtual_cpu = null</li><li>mem_size_mb = -1</li></ul>
      */
@@ -275,45 +275,45 @@ public class FixturesTool {
     public static final Guid VM_TEMPLATE_RHEL5_V2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b83");
 
     /**
-     * Predefined unregistered Template related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * Predefined unregistered Template related to Storage Domain STORAGE_DOMAIN_NFS2_1
      * (d9ede37f-e6c3-4bf9-a984-19174070aa31)
      */
     protected static final Guid UNREGISTERED_TEMPLATE = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b94");
 
     /**
-     * Predefined unregistered VM related to Storage Domain STORAGE_DOAMIN_NFS2_1 (d9ede37f-e6c3-4bf9-a984-19174070aa31)
+     * Predefined unregistered VM related to Storage Domain STORAGE_DOMAIN_NFS2_1 (d9ede37f-e6c3-4bf9-a984-19174070aa31)
      */
     public static final Guid UNREGISTERED_VM = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4359");
 
     /**
-     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOMAIN_NFS2_1
      * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and description.
      */
     protected static final Guid UNREGISTERED_DISK = new Guid("88296e11-0cad-4e5a-9299-008a7b6f4388");
 
     /**
-     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOMAIN_NFS2_1
      * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and description, attached to vm_id
      * 77296e00-0cad-4e5a-9299-008a7b6f4355.
      */
     protected static final Guid UNREGISTERED_DISK2 = new Guid("98296e11-0cad-4e5a-9299-008a7b6f4389");
 
     /**
-     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOMAIN_NFS2_1
      * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and description, attached to the following vms_id:
      * 77296e00-0cad-4e5a-9299-008a7b6f4355,77296e00-0cad-4e5a-9299-008a7b6f4356.
      */
     protected static final Guid UNREGISTERED_DISK3 = new Guid("10296e11-0cad-4e5a-9299-008a7b6f4310");
 
     /**
-     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOMAIN_NFS2_1
      * (d9ede37f-e6c3-4bf9-a984-19174070aa31) with disk alias and without description, attached to the following
      * vms_id: 77296e00-0cad-4e5a-9299-008a7b6f4355,77296e00-0cad-4e5a-9299-008a7b6f4356.
      */
     protected static final Guid UNREGISTERED_DISK4 = new Guid("10296e11-0cad-4e5a-9299-008a7b6f4311");
 
     /**
-     * Predefined unregistered disk related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * Predefined unregistered disk related to Storage Domain STORAGE_DOMAIN_NFS2_1
      * (d9ede37f-e6c3-4bf9-a984-19174070aa31) without disk alias nor description, attached to the following vms_id:
      * 77296e00-0cad-4e5a-9299-008a7b6f4355,77296e00-0cad-4e5a-9299-008a7b6f4356.
      */
@@ -405,7 +405,7 @@ public class FixturesTool {
 
     /**
      * Predefined image on a VM template for testing. <BR/>
-     * The image is defined on storage domain STORAGE_DOAMIN_SCALE_SD5.
+     * The image is defined on storage domain STORAGE_DOMAIN_SCALE_SD5.
      */
     protected static final Guid TEMPLATE_IMAGE_ID = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
 

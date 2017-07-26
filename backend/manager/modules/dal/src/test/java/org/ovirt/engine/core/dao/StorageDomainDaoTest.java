@@ -45,7 +45,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getStorageDomainDao();
-        existingDomain = dao.get(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        existingDomain = dao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
     }
 
     /**
@@ -56,7 +56,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         Guid result = dao.getMasterStorageDomainIdForPool(FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
-        assertEquals(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, result);
+        assertEquals(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, result);
     }
 
     @Test
@@ -186,7 +186,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         List<StorageDomain> result = dao.getAllStorageDomainsByImageId(FixturesTool.TEMPLATE_IMAGE_ID);
         assertEquals(1, result.size());
         StorageDomain domain = result.get(0);
-        assertEquals(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, domain.getId());
+        assertEquals(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, domain.getId());
         assertEquals("Wrong committed disk size", 8, domain.getCommittedDiskSize());
         assertEquals("Wrong actual disk size", 4, domain.getActualImagesSize());
         assertEquals("Wrong shared status", StorageDomainSharedStatus.Active, domain.getStorageDomainSharedStatus());
@@ -444,20 +444,20 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         List<VmTemplate> templates =
-                getDbFacade().getVmTemplateDao().getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+                getDbFacade().getVmTemplateDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         BaseDisk diskImage = getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID);
 
         assertNotNull(diskImage);
         assertFalse(vms.isEmpty());
         assertFalse(templates.isEmpty());
 
-        assertNotNull(dao.get(FixturesTool.STORAGE_DOAMIN_SCALE_SD5));
+        assertNotNull(dao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5));
 
         dao.remove(existingDomain.getId());
 
-        assertNull(dao.get(FixturesTool.STORAGE_DOAMIN_SCALE_SD5));
+        assertNull(dao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5));
 
         for (VM vm : vms) {
             assertNull(getDbFacade().getVmDao().get(vm.getId()));
@@ -471,7 +471,7 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetNumberOfImagesInExistingDomain() {
-        long numOfImages = dao.getNumberOfImagesInStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        long numOfImages = dao.getNumberOfImagesInStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         assertEquals("Number of images on storage domain different than expected", NUMBER_OF_IMAGES_ON_EXISTING_DOMAIN, numOfImages);
     }
 
@@ -487,16 +487,16 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemoveEntitesFromStorageDomain() {
-        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         List<VmTemplate> templates =
-                getDbFacade().getVmTemplateDao().getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+                getDbFacade().getVmTemplateDao().getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         BaseDisk diskImage = getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID);
 
         assertNotNull(diskImage);
         assertFalse(vms.isEmpty());
         assertFalse(templates.isEmpty());
 
-        assertNotNull(dao.get(FixturesTool.STORAGE_DOAMIN_SCALE_SD5));
+        assertNotNull(dao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5));
 
         dao.removeEntitesFromStorageDomain(existingDomain.getId());
 
@@ -515,19 +515,19 @@ public class StorageDomainDaoTest extends BaseDaoTestCase {
         List<StorageDomain> domains = dao.getAllByConnectionId(new Guid("0cc146e8-e5ed-482c-8814-270bc48c297f"));
         assertEquals("Unexpected number of storage domains by connection id", 1, domains.size());
         assertEquals("Wrong storage domain id for search by connection id",
-                FixturesTool.STORAGE_DOAMIN_NFS_MASTER,
+                FixturesTool.STORAGE_DOMAIN_NFS_MASTER,
                 domains.get(0).getId());
     }
 
     @Test
     public void testContainsUnregisteredEntities() {
-        StorageDomain storageDomain = dao.get(FixturesTool.STORAGE_DOAMIN_NFS2_1);
+        StorageDomain storageDomain = dao.get(FixturesTool.STORAGE_DOMAIN_NFS2_1);
         assertTrue(storageDomain.isContainsUnregisteredEntities());
     }
 
     @Test
     public void testNotContainsUnregisteredEntities() {
-        StorageDomain storageDomain = dao.get(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        StorageDomain storageDomain = dao.get(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         assertFalse(storageDomain.isContainsUnregisteredEntities());
     }
 

@@ -420,7 +420,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetRelevantQuotasExistingStorage() throws Exception {
         // there is one specific quota and all the general ones defined on this storage domain
-        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, STORAGE_NUM_QUOTAS);
+        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOMAIN_NFS_MASTER, STORAGE_NUM_QUOTAS);
     }
 
     /**
@@ -429,7 +429,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetRelevantQuotasExistingStorageNoSpecificQuotas() throws Exception {
         // there are no specific quotas, but all the general quotas relate to the storage pool containing this domain
-        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOAMIN_NFS_ISO, STORAGE_NUM_QUOTAS - 1);
+        assertGetAllRelevantQuoatsForStorage(FixturesTool.STORAGE_DOMAIN_NFS_ISO, STORAGE_NUM_QUOTAS - 1);
     }
 
     /**
@@ -482,7 +482,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetRelevantStorageQuotaForUserWithoutPrivileges() throws Exception {
-        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, FixturesTool.UNPRIVILEGED_SESSION_ID, true);
+        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOMAIN_NFS_MASTER, FixturesTool.UNPRIVILEGED_SESSION_ID, true);
         assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
     }
 
@@ -510,7 +510,7 @@ public class QuotaDaoTest extends BaseDaoTestCase {
         QuotaStorage quotaStorage = new QuotaStorage();
         quotaStorage.setQuotaId(quotaId);
         quotaStorage.setQuotaStorageId(Guid.newGuid());
-        quotaStorage.setStorageId(FixturesTool.STORAGE_DOAMIN_NFS_MASTER);
+        quotaStorage.setStorageId(FixturesTool.STORAGE_DOMAIN_NFS_MASTER);
         quotaStorage.setStorageSizeGB(10000L);
         quotaStorage.setStorageSizeGBUsage(0d);
         return quotaStorage;

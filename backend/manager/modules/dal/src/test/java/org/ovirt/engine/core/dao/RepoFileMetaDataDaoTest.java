@@ -36,7 +36,7 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
     public void testSave() {
         // Fetch the file from cache table
         List<RepoImage> listOfRepoFiles = repoFileMetaDataDao
-                .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
+                .getRepoListForStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS_ISO,
                         ImageFileType.ISO);
         assertNotNull(listOfRepoFiles);
         assertTrue(listOfRepoFiles.isEmpty());
@@ -45,7 +45,7 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
 
         listOfRepoFiles = repoFileMetaDataDao
-                .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
+                .getRepoListForStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS_ISO,
                         ImageFileType.ISO);
         assertFalse(listOfRepoFiles.isEmpty());
     }
@@ -57,14 +57,14 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
     public void testRemove() {
         // Should get one iso file
         List<RepoImage> listOfRepoFiles = repoFileMetaDataDao
-                .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
+                .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOMAIN_FOR_SP2_AND_SP3,
                         ImageFileType.ISO);
 
         assertNotNull(listOfRepoFiles);
         assertFalse(listOfRepoFiles.isEmpty());
 
         // Remove the file from cache table
-        repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
+        repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.SHARED_ISO_STORAGE_DOMAIN_FOR_SP2_AND_SP3,
                 ImageFileType.ISO);
         listOfRepoFiles = getActiveIsoDomain();
 
@@ -79,7 +79,7 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
     public void testRemoveByRemoveIsoDomain() {
         // Should get one iso file
         List<RepoImage> listOfRepoFiles = repoFileMetaDataDao
-                .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
+                .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOMAIN_FOR_SP2_AND_SP3,
                         ImageFileType.ISO);
 
         assertNotNull(listOfRepoFiles);
@@ -87,7 +87,7 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
 
         // Test remove Iso
         StorageDomainDao storageDomainDao = dbFacade.getStorageDomainDao();
-        storageDomainDao.remove(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3);
+        storageDomainDao.remove(FixturesTool.SHARED_ISO_STORAGE_DOMAIN_FOR_SP2_AND_SP3);
         listOfRepoFiles = getActiveIsoDomain();
 
         assertNotNull(listOfRepoFiles);
@@ -103,7 +103,7 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
 
         List<RepoImage> listOfRepoFiles = repoFileMetaDataDao
-                .getRepoListForStorageDomain(FixturesTool.STORAGE_DOAMIN_NFS_ISO,
+                .getRepoListForStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS_ISO,
                         ImageFileType.ISO);
 
         assertNotNull(listOfRepoFiles);
@@ -136,7 +136,7 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
                 + newRepoFileMap.getRepoImageId());
 
         // Remove the file from cache table
-        repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.STORAGE_DOAMIN_NFS_ISO, ImageFileType.ISO);
+        repoFileMetaDataDao.removeRepoDomainFileList(FixturesTool.STORAGE_DOMAIN_NFS_ISO, ImageFileType.ISO);
 
         // Add the new updated file into the cache table.
         repoFileMetaDataDao.addRepoFileMap(newRepoFileMap);
@@ -197,13 +197,13 @@ public class RepoFileMetaDataDaoTest extends BaseDaoTestCase {
         newRepoFileMap.setLastRefreshed(System.currentTimeMillis());
         newRepoFileMap.setSize(null);
         newRepoFileMap.setDateCreated(null);
-        newRepoFileMap.setRepoDomainId(FixturesTool.STORAGE_DOAMIN_NFS_ISO);
+        newRepoFileMap.setRepoDomainId(FixturesTool.STORAGE_DOMAIN_NFS_ISO);
         return newRepoFileMap;
     }
 
     private List<RepoImage> getActiveIsoDomain() {
         return repoFileMetaDataDao
-                .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
+                .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOMAIN_FOR_SP2_AND_SP3,
                         ImageFileType.ISO);
     }
 
