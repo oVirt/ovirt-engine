@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class RoleDaoTest extends BaseDaoTestCase {
+public class RoleDaoTest extends BaseGenericDaoTestCase<Guid, Role, RoleDao> {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
@@ -24,45 +24,40 @@ public class RoleDaoTest extends BaseDaoTestCase {
     private static final int ROLE_COUNT = 7;
     private static final int NON_ADMIN_ROLE_COUNT = 6;
 
-    private RoleDao dao;
-    private Role existingRole;
-    private Role newRole;
-
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getRoleDao();
-
-        existingRole = dao.get(FixturesTool.ROLE_ID);
-
-        newRole = new Role();
+    protected Role generateNewEntity() {
+        Role newRole = new Role();
         newRole.setName("new role");
         newRole.setDescription("This is a new role.");
         newRole.setType(RoleType.USER);
         newRole.setAllowsViewingChildren(false);
         newRole.setAppMode(ApplicationMode.AllModes);
+        return newRole;
     }
 
-    /**
-     * Ensures that the id must be valid.
-     */
-    @Test
-    public void testGetRoleWithInvalidId() {
-        Role result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setDescription("This is an updated description");
     }
 
-    /**
-     * Ensures that retrieving a role works as expected.
-     */
-    @Test
-    public void testGetRole() {
-        Role result = dao.get(existingRole.getId());
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.ROLE_ID;
+    }
 
-        assertNotNull(result);
-        assertEquals(existingRole, result);
+    @Override
+    protected RoleDao prepareDao() {
+        return dbFacade.getRoleDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return ROLE_COUNT;
     }
 
     /**
@@ -80,22 +75,10 @@ public class RoleDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetRoleByName() {
-        Role result = dao.getByName(existingRole.getName());
+        Role result = dao.getByName(existingEntity.getName());
 
         assertNotNull(result);
-        assertEquals(existingRole, result);
-    }
-
-    /**
-     * Ensures the right number of roles are returned.
-     */
-    @Test
-    public void testGetAllRoles() {
-        List<Role> result = dao.getAll();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(ROLE_COUNT, result.size());
+        assertEquals(existingEntity, result);
     }
 
     /**
@@ -138,45 +121,5 @@ public class RoleDaoTest extends BaseDaoTestCase {
                 Guid.newGuid().toString(), ApplicationMode.AllModes.getValue());
         assertNotNull(result);
         assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Ensures that saving a role works as expected.
-     */
-    @Test
-    public void testSaveRole() {
-        dao.save(newRole);
-
-        Role result = dao.getByName(newRole.getName());
-
-        assertNotNull(result);
-        assertEquals(newRole, result);
-    }
-
-    /**
-     * Ensures that updating a role works as expected.
-     */
-    @Test
-    public void testUpdateRole() {
-        existingRole.setDescription("This is an updated description");
-
-        dao.update(existingRole);
-
-        Role result = dao.get(existingRole.getId());
-
-        assertNotNull(result);
-        assertEquals(existingRole, result);
-    }
-
-    /**
-     * Asserts removing a role works as expected
-     */
-    @Test
-    public void testRemoveRole() {
-        dao.remove(existingRole.getId());
-
-        Role result = dao.get(existingRole.getId());
-
-        assertNull(result);
     }
 }
