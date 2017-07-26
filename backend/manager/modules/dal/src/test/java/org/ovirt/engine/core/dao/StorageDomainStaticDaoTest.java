@@ -7,21 +7,15 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
     private StorageDomainStaticDao dao;
-    private StorageDomainDynamicDao dynamicDao;
-    private DiskImageDao diskImageDao;
-    private ImageDao imageDao;
     private StorageDomainStatic existingDomain;
     private StorageDomainStatic newStaticDomain;
 
@@ -30,10 +24,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getStorageDomainStaticDao();
-        dynamicDao = dbFacade.getStorageDomainDynamicDao();
-        diskImageDao = dbFacade.getDiskImageDao();
-        imageDao = dbFacade.getImageDao();
-        existingDomain = dao.get(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
+        existingDomain = dao.get(new Guid("bee623f3-9174-4ffd-aa30-4fb0dc0aa2f6"));
 
         newStaticDomain = new StorageDomainStatic();
         newStaticDomain.setStorageName("NewStorageDomain");
@@ -189,18 +180,6 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        dynamicDao.remove(existingDomain.getId());
-        List<DiskImage> imagesToRemove = diskImageDao.getAllSnapshotsForStorageDomain(existingDomain.getId());
-        Set<Guid> itGuids = imagesToRemove.stream().map(DiskImage::getImageTemplateId).collect(Collectors.toSet());
-        // First remove images that are not image templates
-        imagesToRemove.stream().map(DiskImage::getImageId).filter(id -> !itGuids.contains(id)).forEach(imageDao::remove);
-        // Remove images of templates - the blank image guid (empty guid was also inserted) so it is first removed from
-        // the set
-        // as it has no representation as image on the storage domain
-        itGuids.remove(Guid.Empty);
-        for (Guid guid : itGuids) {
-            imageDao.remove(guid);
-        }
         dao.remove(existingDomain.getId());
 
         StorageDomainStatic domainResult = dao.get(existingDomain.getId());
