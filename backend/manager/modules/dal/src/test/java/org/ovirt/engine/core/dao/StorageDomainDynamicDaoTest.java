@@ -9,8 +9,6 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainDynamicDaoTest extends BaseDaoTestCase {
@@ -18,9 +16,7 @@ public class StorageDomainDynamicDaoTest extends BaseDaoTestCase {
     private static final int USED_DISK_SIZE = 1000;
 
     private StorageDomainDynamicDao dao;
-    private StorageDomainStaticDao staticDao;
     private StorageDomainDynamic newDynamicDomain;
-    private StorageDomainStatic newStaticDomain;
     private StorageDomainDynamic existingDynamic;
 
     @Override
@@ -28,16 +24,11 @@ public class StorageDomainDynamicDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getStorageDomainDynamicDao();
-        staticDao = dbFacade.getStorageDomainStaticDao();
 
         existingDynamic = dao.get(EXISTING_DOMAIN_ID);
 
-        newStaticDomain = new StorageDomainStatic();
-        newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
-        newStaticDomain.setStorageFormat(StorageFormatType.V1);
-        newStaticDomain.setWipeAfterDelete(true);
-        newStaticDomain.setDiscardAfterDelete(false);
         newDynamicDomain = new StorageDomainDynamic();
+        newDynamicDomain.setId(FixturesTool.STORAGE_DOMAIN_NFS2_2);
         newDynamicDomain.setAvailableDiskSize(USED_DISK_SIZE);
     }
 
@@ -68,8 +59,6 @@ public class StorageDomainDynamicDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSave() {
-        staticDao.save(newStaticDomain);
-        newDynamicDomain.setId(newStaticDomain.getId());
         dao.save(newDynamicDomain);
 
         StorageDomainDynamic result = dao.get(newDynamicDomain.getId());
