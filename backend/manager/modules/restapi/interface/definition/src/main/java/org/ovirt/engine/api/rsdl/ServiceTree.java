@@ -33,25 +33,20 @@ public class ServiceTree {
     private static ServiceTreeNode tree = buildTree();
 
     private static ServiceTreeNode buildTree() {
-        return buildNode(SystemResource.class);
+        return buildNode(SystemResource.class, "");
     }
 
     public static ServiceTreeNode getTree() {
         return tree;
     }
 
-    private static ServiceTreeNode buildNode(Class<?> resource) {
-        return buildNode(resource, "", "");
-    }
-
     /**
      * Build the API tree
      */
-    private static ServiceTreeNode buildNode(Class<?> resource, String path, String getterMethod) {
+    private static ServiceTreeNode buildNode(Class<?> resource, String path) {
         ServiceTreeNode node = new ServiceTreeNode.Builder()
                 .name(resource.getSimpleName())
                 .path(path)
-                .getter(getterMethod)
                 .subCollections(getSubServices(resource))
                 .actions(getActions(resource))
                 .build();
@@ -72,7 +67,7 @@ public class ServiceTree {
             Path path = method.getAnnotation(Path.class);
             if (!method.getReturnType().equals(ActionResource.class)
                     && !method.getReturnType().equals(CreationResource.class)) {
-                resources.add(buildNode(method.getReturnType(), path.value(), method.getName()));
+                resources.add(buildNode(method.getReturnType(), path.value()));
             }
         }
         return resources;

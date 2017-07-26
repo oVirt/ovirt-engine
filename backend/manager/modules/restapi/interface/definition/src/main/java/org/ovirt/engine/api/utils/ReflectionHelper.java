@@ -93,12 +93,6 @@ public class ReflectionHelper {
         return method != null ? method : getMethod(o, IS_ROOT + capitalizedName);
     }
 
-    public static Method getSetter(Object o, String name) {
-        String capitalizedName = capitalize(name);
-        Method method = getMethod(o, SET_ROOT + capitalizedName);
-        return method;
-    }
-
     public static Class<?> getReturnType(Object o, String name) {
         Method getter = getGetter(o, name);
         return getter.getReturnType();

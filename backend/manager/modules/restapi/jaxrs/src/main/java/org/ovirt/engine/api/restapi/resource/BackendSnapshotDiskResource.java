@@ -22,16 +22,6 @@ public class BackendSnapshotDiskResource extends BackendDiskResource implements 
     }
 
     @Override
-    /**
-     * Overriding is necessary due to ambiguity: doGet() is inherited
-     * from both BackendDiskResource and SnapshotDiskResource interfaces,
-     * which both have (the same) default implementation.
-     */
-    public Disk doGet() {
-        return SnapshotDiskResource.super.doGet();
-    }
-
-    @Override
     public Disk get() {
         for (Disk disk : collection.list().getDisks()) {
             if (disk.getId().equals(diskId)) {

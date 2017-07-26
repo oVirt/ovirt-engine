@@ -38,6 +38,7 @@ public class BackendResource extends BaseBackendResource {
     private static final String CORRELATION_ID = "correlation_id";
     private static final String ASYNC_CONSTRAINT = "async";
     public static final String FORCE_CONSTRAINT = "force";
+    protected static final String MAX = "max";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
     private static final Logger log = LoggerFactory.getLogger(BackendResource.class);
     public static final String POPULATE = "All-Content";

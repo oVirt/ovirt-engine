@@ -189,27 +189,4 @@ public class ParametersHelper {
             return missing;
         }
     }
-
-    /**
-     * Set a parameter in the parameters map.
-     */
-    public static void setParameter(String name, String value) {
-        Current current = CurrentManager.get();
-        if (current != null) {
-            Map<String, String> parameters = current.getParameters();
-            parameters.put(name, value);
-        }
-    }
-
-    /**
-     * Remove a parameter from the parameters map.
-     * This is done by setting "" as the value. This is because
-     * when searching, if a parameter is missing, it is fetched
-     * directly from he URL, and if we explicitly declare that
-     * we wish to remove a parameter - we would like to avoid
-     * searching in the URL.
-     */
-    public static void removeParameter(String name) {
-        setParameter(name, "");
-    }
 }
