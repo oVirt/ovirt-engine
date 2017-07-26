@@ -31,7 +31,6 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     private static final int NUMBER_OF_TEMPLATES_IN_DB = 8;
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid DELETABLE_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
-    private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid EXISTING_INSTANCE_TYPE_ID = new Guid("99408929-82cf-4dc7-a532-9d998063fa95");
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
@@ -196,7 +195,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomain() {
-        List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID);
+        List<VmTemplate> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
 
         assertGetAllResult(result);
     }
@@ -206,7 +205,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomainWithPermissionsForPriviligedUser() {
-        List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID, PRIVILEGED_USER_ID, true);
+        List<VmTemplate> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, PRIVILEGED_USER_ID, true);
         assertGetAllResult(result);
     }
 
@@ -215,7 +214,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomainWithPermissionsForUnpriviligedUser() {
-        List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID, UNPRIVILEGED_USER_ID, true);
+        List<VmTemplate> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, UNPRIVILEGED_USER_ID, true);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -225,7 +224,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomainWithPermissionsDisabledForUnpriviligedUser() {
-        List<VmTemplate> result = dao.getAllForStorageDomain(STORAGE_DOMAIN_ID, UNPRIVILEGED_USER_ID, false);
+        List<VmTemplate> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, UNPRIVILEGED_USER_ID, false);
         assertGetAllResult(result);
     }
 

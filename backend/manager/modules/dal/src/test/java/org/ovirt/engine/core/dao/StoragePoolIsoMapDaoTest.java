@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_ISO_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid FREE_ISO_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ac");
     private StoragePoolDao storagePoolIsoMapDao;
     private StoragePoolIsoMapDao dao;
@@ -31,7 +30,7 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         storagePoolIsoMapDao = dbFacade.getStoragePoolDao();
 
         existingPool = storagePoolIsoMapDao.get(FixturesTool.DATA_CENTER);
-        existingStoragePoolIsoMap = dao.get(new StoragePoolIsoMapId(EXISTING_ISO_ID, existingPool.getId()));
+        existingStoragePoolIsoMap = dao.get(new StoragePoolIsoMapId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, existingPool.getId()));
         newStoragePoolIsoMap =
                 new StoragePoolIsoMap(FREE_ISO_ID, existingPool.getId(), StorageDomainStatus.Unattached);
     }
@@ -97,12 +96,12 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllStoragePoolIsoMapsForIso() {
-        List<StoragePoolIsoMap> result = dao.getAllForStorage(EXISTING_ISO_ID);
+        List<StoragePoolIsoMap> result = dao.getAllForStorage(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StoragePoolIsoMap mapping : result) {
-            assertEquals(EXISTING_ISO_ID, mapping.getStorageId());
+            assertEquals(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, mapping.getStorageId());
         }
     }
 }

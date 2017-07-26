@@ -411,7 +411,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllConnectionsOfIscsiDomain() {
-      List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
+      List<StorageServerConnections> connections = dao.getAllForDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
       assertEquals(2, connections.size());
       assertTrue(connections.get(0).getId().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk") || connections.get(0).getId().equals("0cc146e8-e5ed-482c-8814-270bc48c297e"));
     }

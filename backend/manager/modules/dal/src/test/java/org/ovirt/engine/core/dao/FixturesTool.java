@@ -479,7 +479,7 @@ public class FixturesTool {
     /**
      * Predefined entity that has associated tasks.
      */
-    protected static final Guid ENTITY_WITH_TASKS_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+    protected static final Guid ENTITY_WITH_TASKS_ID = STORAGE_DOMAIN_SCALE_SD5;
 
     /**
      * Predefined async task

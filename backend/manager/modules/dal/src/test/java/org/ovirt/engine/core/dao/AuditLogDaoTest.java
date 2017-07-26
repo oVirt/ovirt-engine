@@ -70,7 +70,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         newAuditLog.setMessage("Critical, Low disk space.  domain has 1 GB of free space");
         newAuditLog.setStoragePoolId(FixturesTool.DATA_CENTER);
         newAuditLog.setStoragePoolName("rhel6.iscsi");
-        newAuditLog.setStorageDomainId(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
+        newAuditLog.setStorageDomainId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         newAuditLog.setStorageDomainName("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk");
         newAuditLog.setQuotaId(FixturesTool.DEFAULT_QUOTA_GENERAL);
         newAuditLog.setQuotaName("General Quota");

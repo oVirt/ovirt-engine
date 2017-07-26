@@ -33,7 +33,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     private static final Guid VM_POOL_ENTITY_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
     private static final Guid SYSTEM_ENTITY_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0077");
     private static final Guid STORAGE_POOL_ENTITY_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0078");
-    private static final Guid STORAGE_ENTITY_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+    private static final Guid STORAGE_ENTITY_ID = FixturesTool.STORAGE_DOMAIN_SCALE_SD5;
     private static final Guid USER_ENTITY_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final Guid ROLE_ENTITY_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
 
