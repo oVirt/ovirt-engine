@@ -34,7 +34,7 @@ public class RoleDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getRoleDao();
 
-        existingRole = dao.get(new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78"));
+        existingRole = dao.get(FixturesTool.ROLE_ID);
 
         newRole = new Role();
         newRole.setName("new role");

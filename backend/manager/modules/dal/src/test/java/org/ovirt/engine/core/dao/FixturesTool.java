@@ -354,6 +354,14 @@ public class FixturesTool {
     protected static final Guid USER_EXISTING_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
 
     /**
+     * Predefined role for testing
+     * <ul>
+     * <li>name: jUnitTestRole</li>
+     * </ul>
+     */
+    protected static final Guid ROLE_ID = new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78");
+
+    /**
      * Predefined image with the following properties :
      * <ul>
      * <li>disk id: 1b26a52b-b60f-44cb-9f46-3ef333b04a35</li>

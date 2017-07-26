@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleGroupMapDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_ROLE_ID = new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78");
     private RoleGroupMapDao dao;
     private RoleGroupMap newRoleGroupMap;
     private ActionGroup actionGroup;
@@ -25,10 +24,10 @@ public class RoleGroupMapDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getRoleGroupMapDao();
 
-        existingRoleGroupMap = dao.getByActionGroupAndRole(ActionGroup.RUN_VM, EXISTING_ROLE_ID);
+        existingRoleGroupMap = dao.getByActionGroupAndRole(ActionGroup.RUN_VM, FixturesTool.ROLE_ID);
 
         actionGroup = ActionGroup.CONNECT_TO_VM;
-        newRoleGroupMap = new RoleGroupMap(actionGroup, EXISTING_ROLE_ID);
+        newRoleGroupMap = new RoleGroupMap(actionGroup, FixturesTool.ROLE_ID);
     }
 
     @Test
@@ -56,12 +55,12 @@ public class RoleGroupMapDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllRoleGroupMaps() {
-        List<RoleGroupMap> result = dao.getAllForRole(EXISTING_ROLE_ID);
+        List<RoleGroupMap> result = dao.getAllForRole(FixturesTool.ROLE_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (RoleGroupMap map : result) {
-            assertEquals(EXISTING_ROLE_ID, map.getRoleId());
+            assertEquals(FixturesTool.ROLE_ID, map.getRoleId());
         }
     }
 
@@ -86,7 +85,7 @@ public class RoleGroupMapDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemoveRoleGroupMap() {
-        List<RoleGroupMap> before = dao.getAllForRole(EXISTING_ROLE_ID);
+        List<RoleGroupMap> before = dao.getAllForRole(FixturesTool.ROLE_ID);
 
         // make sure we have things to delete first
         assertFalse(before.isEmpty());
@@ -95,7 +94,7 @@ public class RoleGroupMapDaoTest extends BaseDaoTestCase {
             dao.remove(map.getActionGroup(), map.getRoleId());
         }
 
-        List<RoleGroupMap> after = dao.getAllForRole(EXISTING_ROLE_ID);
+        List<RoleGroupMap> after = dao.getAllForRole(FixturesTool.ROLE_ID);
 
         assertTrue(after.isEmpty());
     }
