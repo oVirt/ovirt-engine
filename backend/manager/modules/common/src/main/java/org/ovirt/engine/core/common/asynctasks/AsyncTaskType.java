@@ -7,6 +7,7 @@ public enum AsyncTaskType {
     createVolume,
     deleteVolume,
     deleteImage,
+    reduceImage,
     mergeSnapshots,
     cloneImageStructure,
     syncImageData,

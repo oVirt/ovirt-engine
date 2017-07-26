@@ -1534,6 +1534,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Version.class)
     MultiFirewallSupportSince,
 
+    @TypeConverterAttribute(Boolean.class)
+    ReduceVolumeSupported,
+
     Invalid;
 
     private ClientAccessLevel accessLevel;

@@ -15,11 +15,13 @@ import org.ovirt.engine.core.bll.SerialChildExecutingCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
+import org.ovirt.engine.core.common.action.ReduceImageCommandParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskStep;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
@@ -135,6 +137,14 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         case DESTROY_IMAGE_CHECK:
             nextCommand = buildDestroyCommand(ActionType.DestroyImageCheck, getActionType(),
                     new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()));
+            if (isInternalMerge() && isReduceVolumeSupported()) {
+                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.REDUCE_IMAGE);
+            } else {
+                getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
+            }
+            break;
+        case REDUCE_IMAGE:
+            nextCommand = buildReduceImageCommand();
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskStep.COMPLETE);
             break;
         case COMPLETE:
@@ -186,6 +196,17 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         return parameters;
     }
 
+    private Pair<ActionType, ReduceImageCommandParameters> buildReduceImageCommand() {
+        ReduceImageCommandParameters parameters = new ReduceImageCommandParameters(getStoragePool().getSpmVdsId(),
+                getVdsId(),
+                getDiskImage().getStoragePoolId(),
+                getDiskImage().getStorageIds().get(0),
+                getActiveDiskImage().getId(), getDiskImage().getImageId(), true);
+        parameters.setParentCommand(ActionType.RemoveSnapshotSingleDiskLive);
+        parameters.setParentParameters(getParameters());
+        return new Pair<>(ActionType.ReduceImage, parameters);
+    }
+
     /**
      * Add orphaned, already-merged images from this snapshot to a MergeStatusReturnValue that
      * can be used by the DESTROY_IMAGE command step to tell what needs to be deleted.
@@ -220,6 +241,14 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     private DiskImage getTargetImageInfoFromVdsm() {
         VmBlockJobType blockJobType = getParameters().getMergeStatusReturnValue().getBlockJobType();
         return getImageInfoFromVdsm(blockJobType == VmBlockJobType.PULL ? getDestinationDiskImage() : getDiskImage());
+    }
+
+    private boolean isReduceVolumeSupported() {
+        return FeatureSupported.isReduceVolumeSupported(getStoragePool().getCompatibilityVersion());
+    }
+
+    private boolean isInternalMerge() {
+        return !getActiveDiskImage().getParentId().equals(getDiskImage().getImageId());
     }
 
     @Override

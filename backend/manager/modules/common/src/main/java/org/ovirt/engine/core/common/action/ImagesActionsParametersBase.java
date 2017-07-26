@@ -32,6 +32,14 @@ public class ImagesActionsParametersBase extends StorageDomainParametersBase {
         destinationImageId = Guid.Empty;
         imageGroupID = Guid.Empty;
     }
+    public ImagesActionsParametersBase(Guid vdsId, Guid spId, Guid sdId, Guid imgGroupId,
+                                       Guid imgId) {
+        setVdsId(vdsId);
+        setStoragePoolId(spId);
+        setStorageDomainId(sdId);
+        setImageGroupID(imgGroupId);
+        setImageId(imgId);
+    }
 
     public ImagesActionsParametersBase(ImagesActionsParametersBase other) {
         super(other);

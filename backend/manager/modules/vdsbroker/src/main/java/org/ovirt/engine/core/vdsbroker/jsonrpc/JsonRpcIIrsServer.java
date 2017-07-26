@@ -645,6 +645,21 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
+    public OneUuidReturn reduceVolume(String spUUID, String sdUUID, String imageUUID,
+                               String volumeUUID, boolean allowActive) {
+        JsonRpcRequest request =
+                new RequestBuilder("StoragePool.reduceVolume").withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imageUUID)
+                        .withParameter("volumeID", volumeUUID)
+                        .withParameter("allowActive", allowActive)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("uuid");
+        return new OneUuidReturn(response);
+    }
+
+    @Override
     public VmLeaseTaskInfoReturn addVmLease(String leaseUUID, String sdUUID) {
         HashMap<String, Object> leaseDict = new HashMap<>();
         leaseDict.put("lease_id", leaseUUID);

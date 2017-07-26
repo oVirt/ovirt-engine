@@ -131,6 +131,7 @@ public enum VDSCommandType {
     GetHardwareInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetLldp("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ExtendImageSize("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    ReduceImage("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ExtendVmDiskSize("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetMOMPolicyParameters("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetHaMaintenanceMode("org.ovirt.engine.core.vdsbroker.vdsbroker"),

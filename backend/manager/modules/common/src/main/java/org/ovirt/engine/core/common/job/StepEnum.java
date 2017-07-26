@@ -51,6 +51,7 @@ public enum StepEnum {
     DOWNLOAD_IMAGE_FROM_STREAM(AsyncTaskType.downloadImageFromStream),
     ADD_VM_LEASE(AsyncTaskType.addVmLease),
     REMOVE_VM_LEASE(AsyncTaskType.removeVmLease),
+    REDUCE_IMAGE(AsyncTaskType.reduceImage),
     UNKNOWN(AsyncTaskType.unknown);
 
     /**

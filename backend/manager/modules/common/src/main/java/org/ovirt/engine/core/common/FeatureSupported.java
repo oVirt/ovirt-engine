@@ -213,4 +213,8 @@ public class FeatureSupported {
     public static boolean isFirewalldSupported(VDS vds) {
         return vds.getSupportedClusterVersionsSet().contains(Version.v4_2);
     }
+
+    public static boolean isReduceVolumeSupported(Version version) {
+        return supportedInConfig(ConfigValues.ReduceVolumeSupported, version);
+    }
 }
