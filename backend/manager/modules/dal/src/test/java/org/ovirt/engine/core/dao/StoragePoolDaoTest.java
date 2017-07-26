@@ -34,7 +34,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
         existingPool = dao.get(FixturesTool.DATA_CENTER);
         existingPool.setStatus(StoragePoolStatus.Up);
         vds = FixturesTool.VDS_RHEL6_NFS_SPM;
-        cluster = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+        cluster = FixturesTool.CLUSTER;
         storageDomain = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
         newPool = new StoragePool();

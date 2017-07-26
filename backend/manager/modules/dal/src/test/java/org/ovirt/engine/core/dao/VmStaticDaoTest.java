@@ -37,7 +37,6 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     public static MockConfigRule mcr = new MockConfigRule();
 
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
-    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
     private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
@@ -62,7 +61,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         newVmStatic = new VmStatic();
         newVmStatic.setId(Guid.newGuid());
         newVmStatic.setName("New Virtual Machine");
-        newVmStatic.setClusterId(CLUSTER_ID);
+        newVmStatic.setClusterId(FixturesTool.CLUSTER);
         newVmStatic.setVmtGuid(VM_TEMPLATE_ID);
         newVmStatic.setOrigin(OriginType.OVIRT);
         newVmStatic.setQuotaId(QUOTA_ID);
@@ -127,12 +126,12 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllByGroupAndNetwork() {
         List<VmStatic> result = dao.getAllByGroupAndNetworkName(
-                CLUSTER_ID, "engine");
+                FixturesTool.CLUSTER, "engine");
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(CLUSTER_ID, vm.getClusterId());
+            assertEquals(FixturesTool.CLUSTER, vm.getClusterId());
         }
     }
 
@@ -141,12 +140,12 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllByCluster() {
-        List<VmStatic> result = dao.getAllByCluster(CLUSTER_ID);
+        List<VmStatic> result = dao.getAllByCluster(FixturesTool.CLUSTER);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(CLUSTER_ID, vm.getClusterId());
+            assertEquals(FixturesTool.CLUSTER, vm.getClusterId());
         }
     }
 
@@ -160,7 +159,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals(CLUSTER_ID, vm.getClusterId());
+            assertEquals(FixturesTool.CLUSTER, vm.getClusterId());
         }
     }
 

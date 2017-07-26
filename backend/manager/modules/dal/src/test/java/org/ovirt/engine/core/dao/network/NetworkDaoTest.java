@@ -38,7 +38,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getNetworkDao();
 
-        cluster = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+        cluster = FixturesTool.CLUSTER;
         datacenter = FixturesTool.DATA_CENTER;
 
         new_net = new Network();

@@ -29,7 +29,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class InterfaceDaoImplTest extends BaseDaoTestCase {
     private static final String IP_ADDR = "10.35.110.10";
     private static final Guid VDS_ID = FixturesTool.VDS_RHEL6_NFS_SPM;
-    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final String TARGET_ID = "0cc146e8-e5ed-482c-8814-270bc48c297b";
     private static final String LABEL = "abc";
 
@@ -341,7 +340,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllInterfacesWithIpAddress() {
-        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesWithIpAddress(CLUSTER_ID, IP_ADDR);
+        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesWithIpAddress(FixturesTool.CLUSTER, IP_ADDR);
         assertNotNull(interfaces);
         assertEquals(1, interfaces.size());
         assertGetAllForVdsCorrectResult(interfaces);
@@ -349,14 +348,14 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
 
     @Test
     public void testgetAllInterfacesByClusterId() {
-        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByClusterId(CLUSTER_ID);
+        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByClusterId(FixturesTool.CLUSTER);
         assertNotNull(interfaces);
         assertFalse(interfaces.isEmpty());
     }
 
     @Test
     public void testGetAllInterfacesByLabelForCluster() {
-        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByLabelForCluster(CLUSTER_ID, LABEL);
+        List<VdsNetworkInterface> interfaces = dao.getAllInterfacesByLabelForCluster(FixturesTool.CLUSTER, LABEL);
         assertNotNull(interfaces);
         assertFalse(interfaces.isEmpty());
 
@@ -374,7 +373,7 @@ public class InterfaceDaoImplTest extends BaseDaoTestCase {
 
     @Test
     public void testGetHostNetworksByCluster() {
-        Map<Guid, List<String>> map = dao.getHostNetworksByCluster(CLUSTER_ID);
+        Map<Guid, List<String>> map = dao.getHostNetworksByCluster(FixturesTool.CLUSTER);
         assertNotNull(map);
         assertFalse(map.isEmpty());
         assertNotNull(map.get(VDS_ID));

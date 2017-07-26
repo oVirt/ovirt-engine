@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.ClusterDao;
+import org.ovirt.engine.core.dao.FixturesTool;
 
 public class NetworkClusterDaoTest extends BaseDaoTestCase {
     private static final int NETWORK_CLUSTER_COUNT = 4;
@@ -34,7 +35,7 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
 
         ClusterDao clusterDao = dbFacade.getClusterDao();
 
-        cluster = clusterDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
+        cluster = clusterDao.get(FixturesTool.CLUSTER);
         freeCluster = clusterDao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d3"));
 
         NetworkDao networkDao = dbFacade.getNetworkDao();

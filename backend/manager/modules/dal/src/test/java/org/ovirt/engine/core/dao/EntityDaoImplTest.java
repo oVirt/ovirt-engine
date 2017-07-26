@@ -38,7 +38,6 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
     private static final Guid VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
     private static final Guid TAG_ID = new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c");
     private static final Guid BOOKMARK_ID = new Guid("a4affabf-7b45-4a6c-b0a9-107d0bbe265e");
-    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
@@ -135,10 +134,10 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForCluster() {
-        Cluster cluster = clusterDao.get(CLUSTER_ID);
+        Cluster cluster = clusterDao.get(FixturesTool.CLUSTER);
         assertNotNull(cluster);
         String name = cluster.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.Cluster));
+        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.CLUSTER, VdcObjectType.Cluster));
     }
 
     @Test

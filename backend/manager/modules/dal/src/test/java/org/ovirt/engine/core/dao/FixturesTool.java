@@ -811,7 +811,7 @@ public class FixturesTool {
      * For vnic profile views
      */
     public static final Guid DATA_CENTER = STORAGE_POOL_RHEL6_ISCSI_OTHER;
-    public static final Guid CLUSTER = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    public static final Guid CLUSTER = CLUSTER_RHEL6_ISCSI;
 
     public static final String DATA_CENTER_NAME = "rhel6.iscsi";
 

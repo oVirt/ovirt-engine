@@ -31,13 +31,11 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_PERMISSION_ID = new Guid("9304ce01-2f5f-41b5-92c7-9d69ef0bcfbc");
     private static final Guid VM_TEMPLATE_ENTITY_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid VM_POOL_ENTITY_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
-    private static final Guid CLUSTER_ENTITY_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid SYSTEM_ENTITY_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0077");
     private static final Guid STORAGE_POOL_ENTITY_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0078");
     private static final Guid STORAGE_ENTITY_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
     private static final Guid USER_ENTITY_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final Guid ROLE_ENTITY_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
-    private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     private static final Guid DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS =
             new Guid("88D4301A-17AF-496C-A793-584640853D4B");
@@ -404,27 +402,27 @@ public class PermissionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetTreeForEntityWithVmType() {
-        baseTestGetTreeForEntity(VM_ENTITY_ID, VdcObjectType.VM, CLUSTER_ID);
+        baseTestGetTreeForEntity(VM_ENTITY_ID, VdcObjectType.VM, FixturesTool.CLUSTER);
     }
 
     @Test
     public void testGetTreeForEntityWithVdsType() {
-        baseTestGetTreeForEntity(FixturesTool.VDS_RHEL6_NFS_SPM, VdcObjectType.VDS, CLUSTER_ID);
+        baseTestGetTreeForEntity(FixturesTool.VDS_RHEL6_NFS_SPM, VdcObjectType.VDS, FixturesTool.CLUSTER);
     }
 
     @Test
     public void testGetTreeForEntityWithVmTemplateType() {
-        baseTestGetTreeForEntity(VM_TEMPLATE_ENTITY_ID, VdcObjectType.VmTemplate, CLUSTER_ID);
+        baseTestGetTreeForEntity(VM_TEMPLATE_ENTITY_ID, VdcObjectType.VmTemplate, FixturesTool.CLUSTER);
     }
 
     @Test
     public void testGetTreeForEntityWithVmPoolType() {
-        baseTestGetTreeForEntity(VM_POOL_ENTITY_ID, VdcObjectType.VmPool, CLUSTER_ID);
+        baseTestGetTreeForEntity(VM_POOL_ENTITY_ID, VdcObjectType.VmPool, FixturesTool.CLUSTER);
     }
 
     @Test
     public void testGetTreeForEntityWithClusterType() {
-        baseTestGetTreeForEntity(CLUSTER_ENTITY_ID, VdcObjectType.Cluster, CLUSTER_ID);
+        baseTestGetTreeForEntity(FixturesTool.CLUSTER, VdcObjectType.Cluster, FixturesTool.CLUSTER);
     }
 
     @Test
