@@ -374,6 +374,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         clusterModel.setOriginalName(cluster.getName());
         clusterModel.getName().setEntity(cluster.getName());
         clusterModel.getSwitchType().setSelectedItem(cluster.getRequiredSwitchTypeForCluster());
+        clusterModel.getFirewallType().setSelectedItem(cluster.getFirewallType());
         clusterModel.getEnableOvirtService().setEntity(cluster.supportsVirtService());
         clusterModel.getEnableOvirtService().setIsChangeable(true);
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
@@ -692,6 +693,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
         cluster.setTransparentHugepages(true); //$NON-NLS-1$
         cluster.setCompatibilityVersion(version);
         cluster.setRequiredSwitchTypeForCluster(model.getSwitchType().getSelectedItem());
+        cluster.setFirewallType(model.getFirewallType().getSelectedItem());
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());

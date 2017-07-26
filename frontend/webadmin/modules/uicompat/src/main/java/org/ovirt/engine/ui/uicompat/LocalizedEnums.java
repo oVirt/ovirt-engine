@@ -1273,6 +1273,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String SwitchType___OVS();
 
+    String FirewallType___IPTABLES();
+
+    String FirewallType___FIREWALLD();
+
     String NetworkStatus___NON_OPERATIONAL();
 
     String NetworkStatus___OPERATIONAL();

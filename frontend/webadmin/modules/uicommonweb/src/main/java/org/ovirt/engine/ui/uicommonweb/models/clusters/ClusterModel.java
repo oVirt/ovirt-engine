@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.migration.MigrationPolicy;
 import org.ovirt.engine.core.common.migration.NoMigrationPolicy;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -696,6 +697,16 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         this.enableHostMaintenanceReason = value;
     }
 
+    private ListModel<FirewallType> firewallType;
+
+    public ListModel<FirewallType> getFirewallType() {
+        return firewallType;
+    }
+
+    public void setFirewallType(ListModel<FirewallType> firewallType) {
+        this.firewallType = firewallType;
+    }
+
     private EntityModel<Boolean> privateEnableTrustedService;
 
     private EntityModel<Boolean> privateEnableHaReservation;
@@ -1259,6 +1270,9 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
 
+        setFirewallType(new ListModel<>());
+        initFirewallType();
+
         setSwitchType(new ListModel<>());
         initSwitchType();
 
@@ -1374,6 +1388,24 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         }
 
         return null;
+    }
+
+    private void initFirewallType() {
+        ListModel<FirewallType> firewallType = getFirewallType();
+
+        firewallType.setItems(Arrays.asList(FirewallType.values()));
+        firewallType.setIsChangeable(true);
+        firewallType.setSelectedItem(FirewallType.FIREWALLD);
+    }
+
+    private void updateFirewallTypeUponVersionChange(Version version) {
+        ListModel<FirewallType> firewallType = getFirewallType();
+        if (version.less(AsyncDataProvider.getInstance().multiFirewallSupportSince())) {
+            firewallType.setIsChangeable(false);
+            firewallType.setSelectedItem(FirewallType.IPTABLES);
+        } else {
+            firewallType.setIsChangeable(true);
+        }
     }
 
     private void initSwitchType() {
@@ -1698,6 +1730,7 @@ public class ClusterModel extends EntityModel<Cluster> implements HasValidatedTa
         setRngSourcesCheckboxes(version);
 
         updateSwitchTypeUponVersionChange(version);
+        updateFirewallTypeUponVersionChange(version);
 
         updateFencingPolicyContent(version);
 

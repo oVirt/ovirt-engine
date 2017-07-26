@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.EngineWorkingMode;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
+import org.ovirt.engine.core.compat.Version;
 
 public enum ConfigValues {
     @TypeConverterAttribute(String.class)
@@ -2018,6 +2019,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     DestroyOnRebootSupported(ClientAccessLevel.User),
+
+    @TypeConverterAttribute(Version.class)
+    @DefaultValueAttribute("4.0")
+    MultiFirewallSupportSince,
 
     Invalid;
 

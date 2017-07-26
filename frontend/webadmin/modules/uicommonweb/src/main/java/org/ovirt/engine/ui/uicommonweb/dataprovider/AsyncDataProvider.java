@@ -2139,6 +2139,10 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigValues.DestroyOnRebootSupported, compatibilityVersion.getValue());
     }
 
+    public Version multiFirewallSupportSince() {
+        return (Version)getConfigValuePreConverted(ConfigValues.MultiFirewallSupportSince);
+    }
+
     private static class TemplateConverter implements Converter<List<VmTemplate>, List<VmTemplate>> {
 
         @Override
