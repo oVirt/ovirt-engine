@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.StorageConnection;
@@ -31,7 +30,6 @@ public class BackendStorageDomainServerConnectionResource extends
     }
 
     @Override
-    @DELETE
     public Response remove() {
         get();
         AttachDetachStorageConnectionParameters params =
