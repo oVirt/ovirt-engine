@@ -608,6 +608,10 @@ public class VdsManager {
                     this.cachedVds.setUsageMemPercent(0);
                     this.cachedVds.setUsageNetworkPercent(0);
                 }
+                break;
+            case Up:
+                vds.setInFenceFlow(false);
+                break;
             default:
                 break;
             }

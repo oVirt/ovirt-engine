@@ -113,6 +113,7 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
 
         Guid dnsResolverConfigurationId = getGuid(rs, "dns_resolver_configuration_id");
         entity.setReportedDnsResolverConfiguration(dnsResolverConfigurationDao.get(dnsResolverConfigurationId));
+        entity.setInFenceFlow(rs.getBoolean("in_fence_flow"));
 
         return entity;
     };
@@ -306,7 +307,8 @@ public class VdsDynamicDaoImpl extends MassOperationsGenericDao<VdsDynamic, Guid
                 .addValue("is_hostdev_enabled", vds.isHostDevicePassthroughEnabled())
                 .addValue("pretty_name", vds.getPrettyName())
                 .addValue("hosted_engine_configured", vds.isHostedEngineConfigured())
-                .addValue("dns_resolver_configuration_id", getReportedDnsResolverConfigurationId(vds));
+                .addValue("dns_resolver_configuration_id", getReportedDnsResolverConfigurationId(vds))
+                .addValue("in_fence_flow", vds.isInFenceFlow());
     }
 
     private Guid getReportedDnsResolverConfigurationId(VdsDynamic vds) {

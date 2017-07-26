@@ -225,6 +225,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         if (originalDnsResolverConfiguration != null) {
             vds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration(originalDnsResolverConfiguration));
         }
+        vds.setInFenceFlow(isInFenceFlow());
         return vds;
     }
 
@@ -1579,5 +1580,13 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
 
     public void setGlusterPeerStatus(PeerStatus glusterPeerStatus) {
         this.glusterPeerStatus = glusterPeerStatus;
+    }
+
+    public boolean isInFenceFlow() {
+        return vdsDynamic.isInFenceFlow();
+    }
+
+    public void setInFenceFlow(boolean isInFenceFlow) {
+        vdsDynamic.setInFenceFlow(isInFenceFlow);
     }
 }

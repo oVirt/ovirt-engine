@@ -127,6 +127,18 @@ final class RecoveryStartupBean {
             if (host.getStatus() == VDSStatus.NonResponsive) {
                 nonResponsiveHosts.add(host.getId());
             }
+
+            // Check if engine was restarted in the middle of a fencing flow
+            // this might happen when engine runs in a VM hosted by the host (a.k.a Hosted Engine)
+            // In this case we are marking again the host as non-responsive in order to complete
+            // the fencing flow
+
+            if (host.isInFenceFlow()
+                    && (host.getStatus() == VDSStatus.Down
+                    || host.getStatus() == VDSStatus.Reboot)) {
+                host.setStatus(VDSStatus.NonResponsive);
+                nonResponsiveHosts.add(host.getId());
+            }
         }
         return nonResponsiveHosts;
     }

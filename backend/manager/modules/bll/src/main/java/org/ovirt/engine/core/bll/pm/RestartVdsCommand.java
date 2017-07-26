@@ -26,13 +26,17 @@ import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.AuditLogDao;
+import org.ovirt.engine.core.dao.VdsDynamicDaoImpl;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * Send a Stop followed by Start action to a power management device.
@@ -57,6 +61,10 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
     @Inject
     private HostLocking hostLocking;
 
+    @Inject
+    private VdsDynamicDaoImpl vdsDynamicDao;
+
+
     /**
      * Constructor for command creation when compensation is applied on startup
      */
@@ -70,15 +78,17 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     @Override
     protected boolean validate() {
+        VDS host = getVds();
         FenceValidator fenceValidator = new FenceValidator();
         List<String> messages = getReturnValue().getValidationMessages();
         boolean valid =
-                fenceValidator.isHostExists(getVds(), messages)
-                        && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getCluster(), messages)
-                        && (previousHostedEngineHost.isPreviousHostId(getVds().getId())
-                                || fenceValidator.isStartupTimeoutPassed(messages))
+                fenceValidator.isHostExists(host, messages)
+                        && fenceValidator.isPowerManagementEnabledAndLegal(host, getCluster(), messages)
+                        && (previousHostedEngineHost.isPreviousHostId(host.getId())
+                                || fenceValidator.isStartupTimeoutPassed(messages)
+                                || host.isInFenceFlow())
                         && isQuietTimeFromLastActionPassed()
-                        && fenceValidator.isProxyHostAvailable(getVds(), messages);
+                        && fenceValidator.isProxyHostAvailable(host, messages);
         if (!valid) {
             handleError();
         }
@@ -120,6 +130,9 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         else {
             // execute StopVds action
             returnValue = executeVdsFenceAction(vdsId, sessionId, ActionType.StopVds);
+            if (getParameters().getParentCommand() == ActionType.VdsNotRespondingTreatment) {
+                updateHostInFenceFlow(vdsId, true);
+            }
         }
         if (wasSkippedDueToPolicy(returnValue)) {
             // fence execution was skipped due to fencing policy, host should be alive
@@ -145,6 +158,17 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
                     VDSStatus.NonResponsive.name());
             setVdsStatus(VDSStatus.NonResponsive);
         }
+        // reset the flag since we have completed the restart action, not matter if it succeeded or not
+        updateHostInFenceFlow(vdsId, false);
+    }
+
+    private void updateHostInFenceFlow(Guid hostId, boolean isInFenceFlow) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            VdsDynamic vdsDynamic = vdsDynamicDao.get(hostId);
+            vdsDynamic.setInFenceFlow(isInFenceFlow);
+            vdsDynamicDao.update(vdsDynamic);
+            return null;
+        });
     }
 
     private void executeFenceVdsManuallyAction(final Guid vdsId, String sessionId) {

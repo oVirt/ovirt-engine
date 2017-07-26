@@ -66,13 +66,15 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     @Override
     protected boolean validate() {
         List<String> messages = getReturnValue().getValidationMessages();
+        VDS host = getVds();
         boolean valid =
-                fenceValidator.isHostExists(getVds(), messages)
-                        && fenceValidator.isPowerManagementEnabledAndLegal(getVds(), getCluster(), messages)
-                        && (previousHostedEngineHost.isPreviousHostId(getVds().getId())
-                                || fenceValidator.isStartupTimeoutPassed(messages))
+                fenceValidator.isHostExists(host, messages)
+                        && fenceValidator.isPowerManagementEnabledAndLegal(host, getCluster(), messages)
+                        && (previousHostedEngineHost.isPreviousHostId(host.getId())
+                                || fenceValidator.isStartupTimeoutPassed(messages)
+                                || host.isInFenceFlow())
                         && isQuietTimeFromLastActionPassed()
-                        && fenceValidator.isProxyHostAvailable(getVds(), messages);
+                        && fenceValidator.isProxyHostAvailable(host, messages);
         if (!valid) {
             handleError();
         }

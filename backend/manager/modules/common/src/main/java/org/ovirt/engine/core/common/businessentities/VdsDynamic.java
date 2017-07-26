@@ -196,6 +196,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean hostedEngineConfigured;
 
+    private boolean inFenceFlow;
+
     @Valid
     private DnsResolverConfiguration reportedDnsResolverConfiguration;
 
@@ -802,6 +804,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.reportedDnsResolverConfiguration = reportedDnsResolverConfiguration;
     }
 
+    public boolean isInFenceFlow() {
+        return inFenceFlow;
+    }
+
+    public void setInFenceFlow( boolean isInFenceFlow) {
+        this.inFenceFlow = isInFenceFlow;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -868,7 +878,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 kernelArgs,
                 prettyName,
                 hostedEngineConfigured,
-                reportedDnsResolverConfiguration
+                reportedDnsResolverConfiguration,
+                inFenceFlow
         );
     }
 
@@ -946,6 +957,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && Objects.equals(hostDevicePassthroughEnabled, other.hostDevicePassthroughEnabled)
                 && Objects.equals(prettyName, other.prettyName)
                 && Objects.equals(hostedEngineConfigured, other.hostedEngineConfigured)
-                && Objects.equals(reportedDnsResolverConfiguration, other.reportedDnsResolverConfiguration);
+                && Objects.equals(reportedDnsResolverConfiguration, other.reportedDnsResolverConfiguration)
+                && inFenceFlow == other.inFenceFlow;
     }
 }

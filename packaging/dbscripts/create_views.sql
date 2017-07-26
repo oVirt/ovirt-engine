@@ -1805,7 +1805,8 @@ SELECT cluster.cluster_id AS cluster_id,
     vds_static.kernel_cmdline AS kernel_cmdline,
     vds_static.last_stored_kernel_cmdline AS last_stored_kernel_cmdline,
     cluster.fencing_enabled AS fencing_enabled,
-    gluster_server.peer_status AS gluster_peer_status
+    gluster_server.peer_status AS gluster_peer_status,
+    vds_dynamic.in_fence_flow AS in_fence_flow
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id
@@ -1956,7 +1957,8 @@ SELECT cluster.cluster_id,
     vds_dynamic.maintenance_reason AS maintenance_reason,
     vds_dynamic.is_update_available AS is_update_available,
     vds_dynamic.is_hostdev_enabled AS is_hostdev_enabled,
-    cluster.fencing_enabled AS fencing_enabled
+    cluster.fencing_enabled AS fencing_enabled,
+    vds_dynamic.in_fence_flow AS in_fence_flow
 FROM cluster
 INNER JOIN vds_static
     ON cluster.cluster_id = vds_static.cluster_id

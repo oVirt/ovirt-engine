@@ -119,12 +119,14 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
-        if (!previousHostedEngineHost.isPreviousHostId(getVds().getId())
-                && !new FenceValidator().isStartupTimeoutPassed()) {
+        VDS host = getVds();
+        if (!previousHostedEngineHost.isPreviousHostId(host.getId())
+                && !new FenceValidator().isStartupTimeoutPassed()
+                && !host.isInFenceFlow()) {
             log.error("Failed to run Fence script on vds '{}'.", getVdsName());
             alertIfPowerManagementOperationSkipped();
             // If fencing can't be done and the host is the SPM, set storage-pool to non-operational
-            if (getVds().getSpmStatus() != VdsSpmStatus.None) {
+            if (host.getSpmStatus() != VdsSpmStatus.None) {
                 setStoragePoolNonOperational();
             }
             return;
