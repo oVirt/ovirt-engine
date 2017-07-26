@@ -71,7 +71,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
         newVdsKdumpStatus.setAddress("[\"10.35.110.10\", 1111]");
 
         dbFacade.getVdsKdumpStatusDao().updateForIp("10.35.110.10", newVdsKdumpStatus);
-        newVdsKdumpStatus.setVdsId(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"));
+        newVdsKdumpStatus.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(newVdsKdumpStatus.getVdsId());
 
@@ -108,7 +108,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
 
         dbFacade.getVdsKdumpStatusDao().updateForIp("10.35.110.10", existing);
 
-        existing.setVdsId(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"));
+        existing.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         VdsKdumpStatus found = dbFacade.getVdsKdumpStatusDao().get(existing.getVdsId());
 
         assertNotNull(found);

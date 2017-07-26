@@ -37,7 +37,6 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     public static MockConfigRule mcr = new MockConfigRule();
 
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
-    private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
@@ -156,7 +155,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllWithFailbackByVds() {
-        List<VmStatic> result = dao.getAllWithFailbackByVds(VDS_STATIC_ID);
+        List<VmStatic> result = dao.getAllWithFailbackByVds(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -339,7 +338,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllNamesPinnedToHostReturnsVmNameForHostPinned() throws Exception {
-        List<String> namesPinnedToHost = dao.getAllNamesPinnedToHost(VDS_STATIC_ID);
+        List<String> namesPinnedToHost = dao.getAllNamesPinnedToHost(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertFalse(namesPinnedToHost.isEmpty());
         assertTrue(namesPinnedToHost.contains(existingVmStatic.getName()));

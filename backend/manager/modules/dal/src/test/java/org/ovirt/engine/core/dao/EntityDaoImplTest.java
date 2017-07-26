@@ -35,7 +35,6 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
     // entity IDs for testing retrieving an entity by id and type
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
     private static final Guid VM_TEMPLATE_ID = new Guid("00000000-0000-0000-0000-000000000000");
-    private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
     private static final Guid TAG_ID = new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c");
     private static final Guid BOOKMARK_ID = new Guid("a4affabf-7b45-4a6c-b0a9-107d0bbe265e");
@@ -104,10 +103,10 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForHost() {
-        VdsStatic vds = vdsStaticDao.get(VDS_ID);
+        VdsStatic vds = vdsStaticDao.get(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertNotNull(vds);
         String name = vds.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(VDS_ID, VdcObjectType.VDS));
+        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.VDS_RHEL6_NFS_SPM, VdcObjectType.VDS));
     }
 
     @Test

@@ -29,7 +29,6 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     private static final Guid AD_ELEMENT_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid VM_ENTITY_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid EXISTING_PERMISSION_ID = new Guid("9304ce01-2f5f-41b5-92c7-9d69ef0bcfbc");
-    private static final Guid VDS_ENTITY_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VM_TEMPLATE_ENTITY_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid VM_POOL_ENTITY_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
     private static final Guid CLUSTER_ENTITY_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
@@ -410,7 +409,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetTreeForEntityWithVdsType() {
-        baseTestGetTreeForEntity(VDS_ENTITY_ID, VdcObjectType.VDS, CLUSTER_ID);
+        baseTestGetTreeForEntity(FixturesTool.VDS_RHEL6_NFS_SPM, VdcObjectType.VDS, CLUSTER_ID);
     }
 
     @Test

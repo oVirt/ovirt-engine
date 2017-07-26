@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDynamicDaoTest extends BaseDaoTestCase {
-    private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VDS_STATIC_ID2 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final int DYNAMIC_RUNNING_COUNT = 3;
     private VmDynamicDao dao;
@@ -36,18 +35,18 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForRunningForVds() {
-        List<VmDynamic> result = dao.getAllRunningForVds(VDS_STATIC_ID);
+        List<VmDynamic> result = dao.getAllRunningForVds(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(DYNAMIC_RUNNING_COUNT, result.size());
         for (VmDynamic vmdynamic : result) {
-            assertEquals(VDS_STATIC_ID, vmdynamic.getRunOnVds());
+            assertEquals(FixturesTool.VDS_RHEL6_NFS_SPM, vmdynamic.getRunOnVds());
         }
     }
 
     @Test
     public void testIsAnyVmRunOnVds() {
-        assertTrue(dao.isAnyVmRunOnVds(VDS_STATIC_ID));
+        assertTrue(dao.isAnyVmRunOnVds(FixturesTool.VDS_RHEL6_NFS_SPM));
         assertFalse(dao.isAnyVmRunOnVds(VDS_STATIC_ID2));
     }
 

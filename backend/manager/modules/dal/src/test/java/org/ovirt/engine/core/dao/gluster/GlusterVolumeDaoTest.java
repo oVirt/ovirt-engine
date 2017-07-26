@@ -26,12 +26,12 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.FixturesTool;
 
 /**
  * Tests for Gluster Volume Dao
  */
 public class GlusterVolumeDaoTest extends BaseDaoTestCase {
-    private static final Guid SERVER_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid EXISTING_VOL_DIST_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid EXISTING_VOL_REPL_ID = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
@@ -51,7 +51,7 @@ public class GlusterVolumeDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getGlusterVolumeDao();
-        server = dbFacade.getVdsStaticDao().get(SERVER_ID);
+        server = dbFacade.getVdsStaticDao().get(FixturesTool.VDS_RHEL6_NFS_SPM);
         existingDistVol = dao.getById(EXISTING_VOL_DIST_ID);
         existingReplVol = dao.getById(EXISTING_VOL_REPL_ID);
     }

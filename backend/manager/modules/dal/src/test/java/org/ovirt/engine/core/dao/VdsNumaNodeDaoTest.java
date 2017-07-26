@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
 
-    private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid ANOTHER_EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
     private VdsNumaNodeDao vdsNumaNodeDao;
@@ -36,7 +35,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllVdsNumaNodeByVdsId() {
-        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(EXISTING_VDS_ID);
+        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -73,7 +72,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testMassUpdateNumaNode() {
-        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(EXISTING_VDS_ID);
+        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertNotNull(result);
         assertEquals(2, result.size());
         Set<Integer> cpuList = new HashSet<>();
@@ -87,7 +86,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
         result.get(1).setCpuIds(generateCpuList(6, 2));
         vdsNumaNodeDao.massUpdateNumaNode(result);
 
-        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(EXISTING_VDS_ID);
+        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertNotNull(result);
         assertEquals(2, result.size());
         cpuList.clear();
@@ -100,7 +99,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testMassUpdateNumaNodeStatistics() {
-        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(EXISTING_VDS_ID);
+        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -111,7 +110,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
         result.get(1).getNumaNodeStatistics().setMemFree(50000);
         vdsNumaNodeDao.massUpdateNumaNodeStatistics(result);
 
-        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(EXISTING_VDS_ID);
+        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals(50000, result.get(0).getNumaNodeStatistics().getMemFree());

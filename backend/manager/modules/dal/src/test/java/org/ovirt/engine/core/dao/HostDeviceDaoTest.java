@@ -25,8 +25,6 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
     private static final Guid EXISTING_VM_ID_2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid EXISTING_VM_ID_3 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5002");
 
-    private static final Guid EXISTING_HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
-
     private static final String EXISTING_VM_NAME = "rhel5-pool-57";
     private static final String EXISTING_VM_NAME_2 = "1";
     private static final String EXISTING_VM_NAME_3 = "rhel5-pool-52";
@@ -40,7 +38,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
     @Override
     protected HostDevice generateNewEntity() {
         HostDevice device = new HostDevice();
-        device.setHostId(EXISTING_HOST_ID);
+        device.setHostId(FixturesTool.VDS_RHEL6_NFS_SPM);
         device.setDeviceName(EXISTING_DEVICE_NAME + "___child");
         device.setParentDeviceName(EXISTING_DEVICE_NAME);
         device.setCapability("pci");
@@ -58,7 +56,7 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
 
     @Override
     protected HostDeviceId getExistingEntityId() {
-        return new HostDeviceId(EXISTING_HOST_ID, EXISTING_DEVICE_NAME);
+        return new HostDeviceId(FixturesTool.VDS_RHEL6_NFS_SPM, EXISTING_DEVICE_NAME);
     }
 
     @Override
@@ -108,10 +106,10 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
 
     @Test
     public void testGetHostDevicesByHostIdAndIommuGroup() {
-        List<HostDevice> hostDevices = dao.getHostDevicesByHostIdAndIommuGroup(EXISTING_HOST_ID, EXISTING_IOMMU_GROUP);
+        List<HostDevice> hostDevices = dao.getHostDevicesByHostIdAndIommuGroup(FixturesTool.VDS_RHEL6_NFS_SPM, EXISTING_IOMMU_GROUP);
         assertEquals(TOTAL_DEVICES_IN_GROUP, hostDevices.size());
         for (HostDevice hostDevice : hostDevices) {
-            assertEquals(EXISTING_HOST_ID, hostDevice.getHostId());
+            assertEquals(FixturesTool.VDS_RHEL6_NFS_SPM, hostDevice.getHostId());
             assertEquals(Integer.valueOf(EXISTING_IOMMU_GROUP), hostDevice.getIommuGroup());
         }
     }
@@ -135,39 +133,39 @@ public class HostDeviceDaoTest extends BaseGenericDaoTestCase<HostDeviceId, Host
 
     @Test
     public void testGetExtendedHostDevicesByHostId() {
-        List<HostDeviceView> hostDevices = dao.getExtendedHostDevicesByHostId(EXISTING_HOST_ID);
+        List<HostDeviceView> hostDevices = dao.getExtendedHostDevicesByHostId(FixturesTool.VDS_RHEL6_NFS_SPM);
         assertEquals(getEntitiesTotalCount(), hostDevices.size());
         for (HostDeviceView hostDevice : hostDevices) {
-            assertEquals(EXISTING_HOST_ID, hostDevice.getHostId());
+            assertEquals(FixturesTool.VDS_RHEL6_NFS_SPM, hostDevice.getHostId());
         }
     }
 
     @Test
     public void testCheckVmHostDeviceAvailability() {
-        assertTrue(dao.checkVmHostDeviceAvailability(EXISTING_VM_ID, EXISTING_HOST_ID));
+        assertTrue(dao.checkVmHostDeviceAvailability(EXISTING_VM_ID, FixturesTool.VDS_RHEL6_NFS_SPM));
     }
 
     @Test
     public void testCheckVmHostDeviceAvailabilityOnAlreadyAllocatedDevice() {
-        assertTrue(dao.checkVmHostDeviceAvailability(EXISTING_VM_ID_2, EXISTING_HOST_ID));
+        assertTrue(dao.checkVmHostDeviceAvailability(EXISTING_VM_ID_2, FixturesTool.VDS_RHEL6_NFS_SPM));
     }
 
     @Test
     public void testCheckVmHostDeviceAvailabilityOnAllocatedToDifferentVm() {
-        assertFalse(dao.checkVmHostDeviceAvailability(EXISTING_VM_ID_3, EXISTING_HOST_ID));
+        assertFalse(dao.checkVmHostDeviceAvailability(EXISTING_VM_ID_3, FixturesTool.VDS_RHEL6_NFS_SPM));
     }
 
     @Test
     public void testMarkHostDevicesUsedByVmId() {
-        dao.markHostDevicesUsedByVmId(EXISTING_VM_ID, EXISTING_HOST_ID);
-        HostDevice hostDevice = dao.getHostDeviceByHostIdAndDeviceName(EXISTING_HOST_ID, EXISTING_DEVICE_NAME);
+        dao.markHostDevicesUsedByVmId(EXISTING_VM_ID, FixturesTool.VDS_RHEL6_NFS_SPM);
+        HostDevice hostDevice = dao.getHostDeviceByHostIdAndDeviceName(FixturesTool.VDS_RHEL6_NFS_SPM, EXISTING_DEVICE_NAME);
         assertEquals(EXISTING_VM_ID, hostDevice.getVmId());
     }
 
     @Test
     public void testFreeHostDevicesUsedByVmId() {
         dao.freeHostDevicesUsedByVmId(EXISTING_VM_ID_2);
-        HostDevice hostDevice = dao.getHostDeviceByHostIdAndDeviceName(EXISTING_HOST_ID, EXISTING_DEVICE_NAME_2);
+        HostDevice hostDevice = dao.getHostDeviceByHostIdAndDeviceName(FixturesTool.VDS_RHEL6_NFS_SPM, EXISTING_DEVICE_NAME_2);
         assertNull(hostDevice.getVmId());
     }
 

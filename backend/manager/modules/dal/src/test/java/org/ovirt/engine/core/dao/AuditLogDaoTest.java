@@ -28,7 +28,6 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
 
     private static final String VM_NAME = "rhel5-pool-50";
     private static final String VM_TEMPLATE_NAME = "1";
-    private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final String VDS_NAME = "magenta-vdsc";
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
@@ -63,7 +62,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         newAuditLog.setVmName(VM_NAME);
         newAuditLog.setVmTemplateId(VM_TEMPLATE_ID);
         newAuditLog.setVmTemplateName(VM_TEMPLATE_NAME);
-        newAuditLog.setVdsId(VDS_ID);
+        newAuditLog.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         newAuditLog.setVdsName("magenta-vdsc");
         newAuditLog.setLogTime(EXPECTED_DATE_FORMAT.parse("2010-12-22 14:00:00"));
         newAuditLog.setLogType(AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
@@ -253,7 +252,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     @Test
     public void testRemoveAllForVds()
             throws Exception {
-        dao.removeAllForVds(VDS_ID, true);
+        dao.removeAllForVds(FixturesTool.VDS_RHEL6_NFS_SPM, true);
         List<AuditLog> result = dao.getAll(null, false);
         assertEquals(7, result.size());
     }
@@ -261,7 +260,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     @Test
     public void testRemoveAllOfTypeForVds()
             throws Exception {
-        dao.removeAllOfTypeForVds(VDS_ID,
+        dao.removeAllOfTypeForVds(FixturesTool.VDS_RHEL6_NFS_SPM,
                 AuditLogType.IRS_DISK_SPACE_LOW_ERROR.getValue());
         // show be 1 left that was in event_notification_hist
         List<AuditLog> result = dao.getAll(PRIVILEGED_USER_ID, true);
@@ -329,7 +328,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     @Test
     public void testMultipleAlertsWithSameTypeAndHostAreIgnored() {
         AuditLog entry = new AuditLog(AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY, AuditLogSeverity.ALERT);
-        entry.setVdsId(VDS_ID);
+        entry.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         entry.setVdsName(VDS_NAME);
         entry.setMessage("Testing alert");
 
@@ -359,7 +358,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     @Test
     public void testMultipleAlertsWithSameTypeAndHostAreSavedIfRepeatableTrue() {
         AuditLog entry = new AuditLog(AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY, AuditLogSeverity.ALERT);
-        entry.setVdsId(VDS_ID);
+        entry.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
         entry.setVdsName(VDS_NAME);
         entry.setMessage("Testing alert");
         entry.setRepeatable(true);

@@ -128,7 +128,7 @@ public class FixturesTool {
     /**
      * Predefined NFS storage pool.
      */
-    protected static final Guid VDS_RHEL6_NFS_SPM = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
+    public static final Guid VDS_RHEL6_NFS_SPM = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
     /**
      * Predefined VDS gluster2-vdsc.redhat.com
