@@ -16,70 +16,61 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class StoragePoolDaoTest extends BaseDaoTestCase {
+public class StoragePoolDaoTest extends BaseGenericDaoTestCase<Guid, StoragePool, StoragePoolDao> {
     private static final int NUMBER_OF_POOLS_FOR_PRIVELEGED_USER = 1;
 
-    private StoragePoolDao dao;
-    private StoragePool existingPool;
-    private Guid vds;
-    private Guid cluster;
-    private Guid storageDomain;
-    private StoragePool newPool;
-
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getStoragePoolDao();
-        existingPool = dao.get(FixturesTool.DATA_CENTER);
-        existingPool.setStatus(StoragePoolStatus.Up);
-        vds = FixturesTool.VDS_RHEL6_NFS_SPM;
-        cluster = FixturesTool.CLUSTER;
-        storageDomain = FixturesTool.STORAGE_DOMAIN_SCALE_SD5;
-
-        newPool = new StoragePool();
+    protected StoragePool generateNewEntity() {
+        StoragePool newPool = new StoragePool();
+        newPool.setId(Guid.newGuid());
         newPool.setName("newPoolDude");
         newPool.setCompatibilityVersion(Version.getLast());
-
+        return newPool;
     }
 
-    /**
-     * Ensures that an invalid id results in a null pool.
-     */
-    @Test
-    public void testGetWithInvalidId() {
-        StoragePool result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setdescription("Farkle");
+        existingEntity.setStoragePoolFormatType(StorageFormatType.V1);
     }
 
-    /**
-     * Ensures the right object is returned by id.
-     */
-    @Test
-    public void testGet() {
-        StoragePool result = dao.get(existingPool.getId());
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.DATA_CENTER;
+    }
 
-        assertGetResult(result);
+    @Override
+    protected StoragePoolDao prepareDao() {
+        return dbFacade.getStoragePoolDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 8;
     }
 
     @Test
     public void testGetFilteredWithPermissions() {
-        StoragePool result = dao.get(existingPool.getId(), PRIVILEGED_USER_ID, true);
+        StoragePool result = dao.get(getExistingEntityId(), PRIVILEGED_USER_ID, true);
 
         assertGetResult(result);
     }
 
     @Test
     public void testGetFilteredWithPermissionsNoPermissions() {
-        StoragePool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, true);
+        StoragePool result = dao.get(getExistingEntityId(), UNPRIVILEGED_USER_ID, true);
 
         assertNull(result);
     }
 
     @Test
     public void testGetFilteredWithPermissionsNoPermissionsAndNoFilter() {
-        StoragePool result = dao.get(existingPool.getId(), UNPRIVILEGED_USER_ID, false);
+        StoragePool result = dao.get(getExistingEntityId(), UNPRIVILEGED_USER_ID, false);
 
         assertGetResult(result);
     }
@@ -99,7 +90,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByName() {
-        StoragePool result = dao.getByName(existingPool.getName());
+        StoragePool result = dao.getByName(existingEntity.getName());
 
         assertGetResult(result);
     }
@@ -110,7 +101,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
      */
     private void assertGetResult(StoragePool result) {
         assertNotNull(result);
-        assertEquals(existingPool, result);
+        assertEquals(existingEntity, result);
     }
 
     /**
@@ -118,7 +109,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetForVds() {
-        StoragePool result = dao.getForVds(vds);
+        StoragePool result = dao.getForVds(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertNotNull(result);
     }
@@ -128,19 +119,9 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetForCluster() {
-        StoragePool result = dao.getForCluster(cluster);
+        StoragePool result = dao.getForCluster(FixturesTool.CLUSTER);
 
         assertNotNull(result);
-    }
-
-    /**
-     * Ensures that a collection of pools are returned.
-     */
-    @Test
-    public void testGetAll() {
-        List<StoragePool> result = dao.getAll();
-
-        assertCorrectGetAllResult(result);
     }
 
     @Test
@@ -164,7 +145,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(NUMBER_OF_POOLS_FOR_PRIVELEGED_USER, result.size());
-        assertEquals(result.iterator().next(), existingPool);
+        assertEquals(result.iterator().next(), existingEntity);
     }
 
     /**
@@ -193,7 +174,7 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStorageDomain() {
-        List<StoragePool> result = dao.getAllForStorageDomain(storageDomain);
+        List<StoragePool> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -222,42 +203,17 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
         assertTrue(result.isEmpty());
     }
 
-    @Test
-    public void testSave() {
-        dao.save(newPool);
-
-        StoragePool result = dao.getByName(newPool.getName());
-
-        assertNotNull(result);
-        assertEquals(newPool, result);
-    }
-
-    /**
-     * Ensures that updating a storage pool works as expected.
-     */
-    @Test
-    public void testUpdate() {
-        existingPool.setdescription("Farkle");
-        existingPool.setStoragePoolFormatType(StorageFormatType.V1);
-
-        dao.update(existingPool);
-
-        StoragePool result = dao.get(existingPool.getId());
-
-        assertGetResult(result);
-    }
-
     /**
      * Ensures that partial updating a storage pool works as expected.
      */
     @Test
     public void testPartialUpdate() {
-        existingPool.setdescription("NewFarkle");
-        existingPool.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
+        existingEntity.setdescription("NewFarkle");
+        existingEntity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.HARD_ENFORCEMENT);
 
-        dao.updatePartial(existingPool);
+        dao.updatePartial(existingEntity);
 
-        StoragePool result = dao.get(existingPool.getId());
+        StoragePool result = dao.get(getExistingEntityId());
 
         assertGetResult(result);
     }
@@ -267,43 +223,20 @@ public class StoragePoolDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdateStatus() {
-        dao.updateStatus(existingPool.getId(), StoragePoolStatus.NotOperational);
-        existingPool.setStatus(StoragePoolStatus.NotOperational);
+        dao.updateStatus(getExistingEntityId(), StoragePoolStatus.NotOperational);
+        existingEntity.setStatus(StoragePoolStatus.NotOperational);
 
-        StoragePool result = dao.get(existingPool.getId());
+        StoragePool result = dao.get(getExistingEntityId());
 
         assertGetResult(result);
     }
 
     @Test
     public void testIncreaseStoragePoolMasterVersion() {
-        int result = dao.increaseStoragePoolMasterVersion(existingPool.getId());
-        StoragePool dbPool = dao.get(existingPool.getId());
-        assertEquals(result, existingPool.getMasterDomainVersion() + 1);
+        int result = dao.increaseStoragePoolMasterVersion(getExistingEntityId());
+        StoragePool dbPool = dao.get(getExistingEntityId());
+        assertEquals(result, existingEntity.getMasterDomainVersion() + 1);
         assertEquals(result, dbPool.getMasterDomainVersion());
-    }
-
-    /**
-     * Ensures that removing a storage pool works as expected.
-     */
-    @Test
-    public void testRemove() {
-        Guid poolId = existingPool.getId();
-        VmAndTemplatesGenerationsDao vmAndTemplatesGenerationsDao = dbFacade.getVmAndTemplatesGenerationsDao();
-        VmStaticDao vmStaticDao = dbFacade.getVmStaticDao();
-
-        assertFalse(vmStaticDao.getAllByStoragePoolId(poolId).isEmpty());
-        vmStaticDao.incrementDbGenerationForAllInStoragePool(poolId);
-        assertFalse(vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(poolId).isEmpty());
-        assertFalse(vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(poolId).isEmpty());
-
-        dao.remove(existingPool.getId());
-
-
-        assertTrue(vmStaticDao.getAllByStoragePoolId(poolId).isEmpty());
-        assertTrue(vmAndTemplatesGenerationsDao.getVmsIdsForOvfUpdate(poolId).isEmpty());
-        assertTrue(vmAndTemplatesGenerationsDao.getVmTemplatesIdsForOvfUpdate(poolId).isEmpty());
-        assertNull(dao.get(poolId));
     }
 
     /**
