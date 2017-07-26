@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.MigrationBandwidthLimitType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
 import org.ovirt.engine.core.compat.Guid;
@@ -249,7 +250,8 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
                 .addValue("mac_pool_id", cluster.getMacPoolId())
                 .addValue("switch_type", cluster.getRequiredSwitchTypeForCluster().getOptionValue())
                 .addValue("skip_fencing_if_gluster_bricks_up", cluster.getFencingPolicy().isSkipFencingIfGlusterBricksUp())
-                .addValue("skip_fencing_if_gluster_quorum_not_met", cluster.getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet());
+                .addValue("skip_fencing_if_gluster_quorum_not_met", cluster.getFencingPolicy().isSkipFencingIfGlusterQuorumNotMet())
+                .addValue("firewall_type", cluster.getFirewallType().getValue());
     }
 
     private static final RowMapper<ClusterHostsAndVMs> clusterHostsAndVMsRowMapper = (rs, rowNum) -> {
@@ -311,6 +313,7 @@ public class ClusterDaoImpl extends BaseDao implements ClusterDao {
         entity.setMigrationPolicyId(getGuid(rs, "migration_policy_id"));
         entity.setMacPoolId(getGuid(rs, "mac_pool_id"));
         entity.setRequiredSwitchTypeForCluster(SwitchType.parse(rs.getString("switch_type")));
+        entity.setFirewallType(FirewallType.valueOf(rs.getInt("firewall_type")));
 
         return entity;
     };

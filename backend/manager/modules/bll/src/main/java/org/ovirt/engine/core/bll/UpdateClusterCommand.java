@@ -189,6 +189,7 @@ public class UpdateClusterCommand<T extends ManagementNetworkOnClusterOperationP
         getCluster().setArchitecture(getArchitecture());
 
         setDefaultSwitchTypeIfNeeded();
+        setDefaultFirewallTypeIfNeeded();
 
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();

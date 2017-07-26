@@ -30,7 +30,9 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.common.network.DefaultFirewallType;
 import org.ovirt.engine.core.common.network.DefaultSwitchType;
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
@@ -271,6 +273,15 @@ public abstract class ClusterOperationCommandBase<T extends ManagementNetworkOnC
         if (cluster.getRequiredSwitchTypeForCluster() == null) {
             SwitchType defaultSwitchType = DefaultSwitchType.getDefaultSwitchType(cluster.getCompatibilityVersion());
             cluster.setRequiredSwitchTypeForCluster(defaultSwitchType);
+        }
+    }
+
+    protected void setDefaultFirewallTypeIfNeeded() {
+        Cluster cluster = getCluster();
+        if (cluster.getFirewallType() == null) {
+            FirewallType defaultFirewallType =
+                    DefaultFirewallType.getDefaultFirewallType(cluster.getCompatibilityVersion());
+            cluster.setFirewallType(defaultFirewallType);
         }
     }
 

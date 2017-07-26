@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.network.FirewallType;
 import org.ovirt.engine.core.common.network.SwitchType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.OptimizationType;
@@ -132,6 +133,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
 
     private boolean clusterCompatibilityLevelUpgradeNeeded;
 
+    private FirewallType firewallType;
+
     /**
      * How max sum of bandwidths of both outgoing and incoming migrations on one host are limited
      */
@@ -161,6 +164,7 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
         ksmMergeAcrossNumaNodes = true;
         migrationBandwidthLimitType = MigrationBandwidthLimitType.DEFAULT;
         requiredSwitchTypeForCluster = SwitchType.LEGACY;
+        firewallType = FirewallType.FIREWALLD;
     }
 
     @Override
@@ -565,6 +569,14 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
         this.clusterCompatibilityLevelUpgradeNeeded = clusterCompatibilityLevelUpgradeNeeded;
     }
 
+    public FirewallType getFirewallType() {
+        return firewallType;
+    }
+
+    public void setFirewallType(FirewallType firewallType) {
+        this.firewallType = firewallType;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(
@@ -607,7 +619,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
                 customMigrationNetworkBandwidth,
                 migrationBandwidthLimitType,
                 migrationPolicyId,
-                macPoolId
+                macPoolId,
+                firewallType
         );
     }
 
@@ -663,7 +676,8 @@ public class Cluster implements Queryable, BusinessEntity<Guid>, HasStoragePool<
                 && Objects.equals(customMigrationNetworkBandwidth, other.customMigrationNetworkBandwidth)
                 && Objects.equals(migrationBandwidthLimitType, other.migrationBandwidthLimitType)
                 && Objects.equals(migrationPolicyId, other.migrationPolicyId)
-                && Objects.equals(macPoolId, other.macPoolId);
+                && Objects.equals(macPoolId, other.macPoolId)
+                && Objects.equals(firewallType, other.firewallType);
     }
 
     @Override

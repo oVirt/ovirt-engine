@@ -48,7 +48,8 @@ CREATE OR REPLACE FUNCTION InsertCluster (
     v_mac_pool_id UUID,
     v_switch_type VARCHAR(6),
     v_skip_fencing_if_gluster_bricks_up BOOLEAN,
-    v_skip_fencing_if_gluster_quorum_not_met BOOLEAN
+    v_skip_fencing_if_gluster_quorum_not_met BOOLEAN,
+    v_firewall_type INT
     )
 RETURNS VOID AS $PROCEDURE$
 BEGIN
@@ -97,7 +98,8 @@ BEGIN
         mac_pool_id,
         switch_type,
         skip_fencing_if_gluster_bricks_up,
-        skip_fencing_if_gluster_quorum_not_met
+        skip_fencing_if_gluster_quorum_not_met,
+        firewall_type
         )
     VALUES (
         v_cluster_id,
@@ -144,7 +146,8 @@ BEGIN
         v_mac_pool_id,
         v_switch_type,
         v_skip_fencing_if_gluster_bricks_up,
-        v_skip_fencing_if_gluster_quorum_not_met
+        v_skip_fencing_if_gluster_quorum_not_met,
+        v_firewall_type
         );
 END;$PROCEDURE$
 LANGUAGE plpgsql;
@@ -195,7 +198,8 @@ CREATE OR REPLACE FUNCTION UpdateCluster (
     v_mac_pool_id UUID,
     v_switch_type VARCHAR(6),
     v_skip_fencing_if_gluster_bricks_up BOOLEAN,
-    v_skip_fencing_if_gluster_quorum_not_met BOOLEAN
+    v_skip_fencing_if_gluster_quorum_not_met BOOLEAN,
+    v_firewall_type INT
     )
 RETURNS VOID
     --The [cluster] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -247,7 +251,8 @@ BEGIN
         mac_pool_id = v_mac_pool_id,
         switch_type = v_switch_type,
         skip_fencing_if_gluster_bricks_up = v_skip_fencing_if_gluster_bricks_up,
-        skip_fencing_if_gluster_quorum_not_met = v_skip_fencing_if_gluster_quorum_not_met
+        skip_fencing_if_gluster_quorum_not_met = v_skip_fencing_if_gluster_quorum_not_met,
+        firewall_type = v_firewall_type
     WHERE cluster_id = v_cluster_id;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
