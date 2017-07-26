@@ -81,8 +81,7 @@ public class StorageDomainStaticDaoTest
     public void testGetByName() {
         StorageDomainStatic result = dao.getByName(existingEntity.getStorageName());
 
-        assertNotNull(result);
-        assertEquals(existingEntity.getId(), result.getId());
+        assertEquals(existingEntity, result);
     }
 
     /**
