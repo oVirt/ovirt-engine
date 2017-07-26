@@ -25,7 +25,6 @@ public class PermissionDaoTest extends BaseDaoTestCase {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
-    private static final Guid STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
     private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
     private static final Guid AD_ELEMENT_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     private static final Guid VM_ENTITY_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
@@ -53,7 +52,7 @@ public class PermissionDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getPermissionDao();
 
-        new_permissions = new Permission(AD_ELEMENT_ID, ROLE_ID, STORAGE_POOL_ID,
+        new_permissions = new Permission(AD_ELEMENT_ID, ROLE_ID, FixturesTool.DATA_CENTER,
                 VdcObjectType.StoragePool);
     }
 

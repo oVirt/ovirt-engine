@@ -30,8 +30,7 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getStoragePoolIsoMapDao();
         storagePoolIsoMapDao = dbFacade.getStoragePoolDao();
 
-        existingPool = storagePoolIsoMapDao
-                .get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
+        existingPool = storagePoolIsoMapDao.get(FixturesTool.DATA_CENTER);
         existingStoragePoolIsoMap = dao.get(new StoragePoolIsoMapId(EXISTING_ISO_ID, existingPool.getId()));
         newStoragePoolIsoMap =
                 new StoragePoolIsoMap(FREE_ISO_ID, existingPool.getId(), StorageDomainStatus.Unattached);

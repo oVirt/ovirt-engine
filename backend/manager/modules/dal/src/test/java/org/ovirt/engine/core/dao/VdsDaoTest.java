@@ -290,8 +290,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetListForSpmSelection() {
-        final Guid STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
-        List<VDS> result = dao.getListForSpmSelection(STORAGE_POOL_ID);
+        List<VDS> result = dao.getListForSpmSelection(FixturesTool.DATA_CENTER);
         assertTrue(result.get(0).getVdsSpmPriority() >= result.get(1).getVdsSpmPriority());
     }
 

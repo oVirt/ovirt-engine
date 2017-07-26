@@ -69,7 +69,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         newAuditLog.setLogType(AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
         newAuditLog.setSeverity(AuditLogSeverity.ERROR);
         newAuditLog.setMessage("Critical, Low disk space.  domain has 1 GB of free space");
-        newAuditLog.setStoragePoolId(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
+        newAuditLog.setStoragePoolId(FixturesTool.DATA_CENTER);
         newAuditLog.setStoragePoolName("rhel6.iscsi");
         newAuditLog.setStorageDomainId(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
         newAuditLog.setStorageDomainName("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk");

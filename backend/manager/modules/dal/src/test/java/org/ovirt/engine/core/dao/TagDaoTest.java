@@ -58,7 +58,7 @@ public class TagDaoTest extends BaseDaoTestCase {
 
         existingTag = dao.get(EXISTING_TAG_ID);
         existingTag = dao.get(new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"));
-        parent = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
+        parent = FixturesTool.DATA_CENTER;
         user = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
         vm = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
         template = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");

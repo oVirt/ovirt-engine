@@ -30,7 +30,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     private static final int SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE = 7;
     private static final String EXISTING_DOMAIN_STORAGE_NAME = "G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ";
-    private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
     private StorageServerConnectionDao dao;
     private StorageServerConnections newServerConnection;
@@ -100,7 +99,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllConnectableStorageSeverConnections() {
-        List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(EXISTING_STORAGE_POOL_ID);
+        List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -135,7 +134,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetConnectableStorageConnectionsByStorageType() {
         List<StorageServerConnections> result =
-                dao.getConnectableStorageConnectionsByStorageType(EXISTING_STORAGE_POOL_ID, null);
+                dao.getConnectableStorageConnectionsByStorageType(FixturesTool.DATA_CENTER, null);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -145,7 +144,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     @Test
     public void getStorageConnectionsByStorageTypeNoRecordsOfType() {
         List<StorageServerConnections> result =
-                dao.getStorageConnectionsByStorageTypeAndStatus(EXISTING_STORAGE_POOL_ID, StorageType.FCP, EnumSet.allOf(StorageDomainStatus.class));
+                dao.getStorageConnectionsByStorageTypeAndStatus(FixturesTool.DATA_CENTER, StorageType.FCP, EnumSet.allOf(StorageDomainStatus.class));
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -154,7 +153,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     @Test
     public void getStorageConnectionsByStorageTypeNoRecordsOfStatus() {
         List<StorageServerConnections> result =
-                dao.getStorageConnectionsByStorageTypeAndStatus(EXISTING_STORAGE_POOL_ID, StorageType.NFS, EnumSet.of(StorageDomainStatus.Locked));
+                dao.getStorageConnectionsByStorageTypeAndStatus(FixturesTool.DATA_CENTER, StorageType.NFS, EnumSet.of(StorageDomainStatus.Locked));
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

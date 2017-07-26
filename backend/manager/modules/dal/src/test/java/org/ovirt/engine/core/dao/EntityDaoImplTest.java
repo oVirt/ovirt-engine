@@ -41,7 +41,6 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
     private static final Guid BOOKMARK_ID = new Guid("a4affabf-7b45-4a6c-b0a9-107d0bbe265e");
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid STORAGE_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
-    private static final Guid STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
@@ -153,10 +152,10 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
 
     @Test
     public void testGetEntityNameByIdAndTypeForDataCenter() {
-        StoragePool storagePool = storagePoolDao.get(STORAGE_POOL_ID);
+        StoragePool storagePool = storagePoolDao.get(FixturesTool.DATA_CENTER);
         assertNotNull(storagePool);
         String name = storagePool.getName();
-        assertEquals(name, underTest.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool));
+        assertEquals(name, underTest.getEntityNameByIdAndType(FixturesTool.DATA_CENTER, VdcObjectType.StoragePool));
     }
 
     @Test

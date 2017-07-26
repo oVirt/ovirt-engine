@@ -18,8 +18,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
-
     private StorageDomainStaticDao dao;
     private StorageDomainDynamicDao dynamicDao;
     private DiskImageDao diskImageDao;
@@ -121,7 +119,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForStoragePool() {
-        List<StorageDomainStatic> result = dao.getAllForStoragePool(EXISTING_POOL_ID);
+        List<StorageDomainStatic> result = dao.getAllForStoragePool(FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
@@ -137,7 +135,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllIdsForNonExistingStatus() throws Exception {
-        List<Guid> result = dao.getAllIds(EXISTING_POOL_ID, StorageDomainStatus.Unknown);
+        List<Guid> result = dao.getAllIds(FixturesTool.DATA_CENTER, StorageDomainStatus.Unknown);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -145,7 +143,7 @@ public class StorageDomainStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllIds() throws Exception {
-        List<Guid> result = dao.getAllIds(EXISTING_POOL_ID, StorageDomainStatus.Active);
+        List<Guid> result = dao.getAllIds(FixturesTool.DATA_CENTER, StorageDomainStatus.Active);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
