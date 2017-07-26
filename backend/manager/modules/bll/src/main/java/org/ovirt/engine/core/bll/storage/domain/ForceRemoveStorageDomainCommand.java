@@ -26,11 +26,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.StorageDomainDao;
+import org.ovirt.engine.core.dao.VmDao;
 
 public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
     @Inject
     private StorageDomainDao storageDomainDao;
+
+    @Inject
+    private VmDao vmDao;
 
     public ForceRemoveStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -52,6 +56,8 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                     runInternalAction(ActionType.ReconstructMasterDomain, tempVar);
                 }
+                releaseStorageDomainMacPool(vmDao.getAllForStoragePool(getStoragePoolId()));
+
                 // try to force detach first
                 DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(
                         getStoragePool().getId(), getStorageDomain().getId(), Guid.Empty, -1);
