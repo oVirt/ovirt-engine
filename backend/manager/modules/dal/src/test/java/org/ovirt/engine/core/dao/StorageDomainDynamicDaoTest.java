@@ -1,91 +1,55 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageDomainDynamicDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_DOMAIN_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
+public class StorageDomainDynamicDaoTest
+        extends BaseGenericDaoTestCase<Guid, StorageDomainDynamic, StorageDomainDynamicDao> {
+
     private static final int USED_DISK_SIZE = 1000;
 
-    private StorageDomainDynamicDao dao;
-    private StorageDomainDynamic newDynamicDomain;
-    private StorageDomainDynamic existingDynamic;
-
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getStorageDomainDynamicDao();
-
-        existingDynamic = dao.get(EXISTING_DOMAIN_ID);
-
-        newDynamicDomain = new StorageDomainDynamic();
+    protected StorageDomainDynamic generateNewEntity() {
+        StorageDomainDynamic newDynamicDomain = new StorageDomainDynamic();
         newDynamicDomain.setId(FixturesTool.STORAGE_DOMAIN_NFS2_2);
         newDynamicDomain.setAvailableDiskSize(USED_DISK_SIZE);
+        return newDynamicDomain;
     }
 
-    /**
-     * Ensures that retrieving the dynamic domain works as expected.
-     */
-    @Test
-    public void testGet() {
-        StorageDomainDynamic result = dao.get(EXISTING_DOMAIN_ID);
-
-        assertNotNull(result);
-        assertEquals(EXISTING_DOMAIN_ID, result.getId());
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setUsedDiskSize(USED_DISK_SIZE);
     }
 
-    /**
-     * Ensures that get all is not implemented.
-     */
-    @Test
-    public void testGetAll() {
-        List<StorageDomainDynamic> result = dao.getAll();
-
-        assertNotNull(result);
-        assertFalse(result.isEmpty());
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.STORAGE_DOMAIN_SCALE_SD5;
     }
 
-    /**
-     * Ensures that saving a domain works as expected.
-     */
-    @Test
-    public void testSave() {
-        dao.save(newDynamicDomain);
-
-        StorageDomainDynamic result = dao.get(newDynamicDomain.getId());
-
-        assertNotNull(result);
+    @Override
+    protected StorageDomainDynamicDao prepareDao() {
+        return dbFacade.getStorageDomainDynamicDao();
     }
 
-    /**
-     * Ensures that updating the static and dynamic portions works as expected.
-     */
-    @Test
-    public void testUpdate() {
-        existingDynamic.setUsedDiskSize(USED_DISK_SIZE);
-        dao.update(existingDynamic);
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
 
-        StorageDomainDynamic result = dao.get(existingDynamic.getId());
-
-        assertEquals(existingDynamic, result);
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 10;
     }
 
     @Test
     public void testUpdateStorageDomainExternalStatus() {
-        StorageDomainDynamic before = dao.get(existingDynamic.getId());
-        before.setExternalStatus(ExternalStatus.Error);
-        dao.updateExternalStatus(before.getId(), before.getExternalStatus());
-        StorageDomainDynamic after = dao.get(existingDynamic.getId());
-        assertEquals(before.getExternalStatus(), after.getExternalStatus());
+        existingEntity.setExternalStatus(ExternalStatus.Error);
+        dao.updateExternalStatus(getExistingEntityId(), existingEntity.getExternalStatus());
+        StorageDomainDynamic after = dao.get(existingEntity.getId());
+        assertEquals(existingEntity.getExternalStatus(), after.getExternalStatus());
     }
-    // testRemove is already tested as part of the StorageDomainStaticDaoTest
 }
