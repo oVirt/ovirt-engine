@@ -11,9 +11,10 @@
         }
 
         .content {
-            padding: 0px;
+            padding: 0;
             margin-left: 238px;
-            overflow: visible;
+            margin-right: -15px;
+            overflow: auto;
         }
 
         .headerSeparator {

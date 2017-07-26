@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
@@ -22,12 +23,12 @@ import com.google.inject.Inject;
 
 public class SystemPermissionView extends Composite {
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, SystemPermissionView> {
+    interface ViewUiBinder extends UiBinder<Container, SystemPermissionView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @UiField
-    FlowPanel tabContent;
+    FlowPanel tablePanel;
 
     private SimpleActionTable<Permission> table;
 
@@ -39,27 +40,21 @@ public class SystemPermissionView extends Composite {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SystemPermissionView(SystemPermissionModelProvider modelProvider,
-            EventBus eventBus, SystemPermissionActionPanelPresenterWidget actionPanel, ClientStorage clientStorage) {
+    public SystemPermissionView(EventBus eventBus,  ClientStorage clientStorage,
+            SystemPermissionModelProvider modelProvider,
+            SystemPermissionActionPanelPresenterWidget actionPanel) {
         super();
-        this.modelProvider = modelProvider;
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;
+        this.modelProvider = modelProvider;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
-
         initTable(actionPanel);
     }
 
-    private void localize() {
-    }
-
     private void initTable(SystemPermissionActionPanelPresenterWidget actionPanel) {
-        tabContent.add(actionPanel);
         table = new SimpleActionTable<>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
-        tabContent.add(table);
         table.enableColumnResizing();
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -70,7 +65,8 @@ public class SystemPermissionView extends Composite {
                 return object.getOwnerName();
             }
         };
-        table.addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
+        userColumn.makeSortable((u1, u2) -> u1.getOwnerName().compareTo(u2.getObjectName()));
+        table.addColumn(userColumn, constants.userPermission(), "270px"); //$NON-NLS-1$
 
         AbstractTextColumn<Permission> authzColumn = new AbstractTextColumn<Permission>() {
             @Override
@@ -78,7 +74,8 @@ public class SystemPermissionView extends Composite {
                 return object.getAuthz();
             }
         };
-        table.addColumn(authzColumn, constants.authz(), "200px"); //$NON-NLS-1$
+        authzColumn.makeSortable((a1, a2) -> a1.getAuthz().compareTo(a2.getAuthz()));
+        table.addColumn(authzColumn, constants.authz(), "180px"); //$NON-NLS-1$
 
         AbstractTextColumn<Permission> namespaceColumn = new AbstractTextColumn<Permission>() {
             @Override
@@ -86,7 +83,8 @@ public class SystemPermissionView extends Composite {
                 return object.getNamespace();
             }
         };
-        table.addColumn(namespaceColumn, constants.namespace(), "200px"); //$NON-NLS-1$
+        namespaceColumn.makeSortable((ns1, ns2) -> ns1.getNamespace().compareTo(ns1.getNamespace()));
+        table.addColumn(namespaceColumn, constants.namespace(), "170px"); //$NON-NLS-1$
 
         AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
             @Override
@@ -94,9 +92,13 @@ public class SystemPermissionView extends Composite {
                 return object.getRoleName();
             }
         };
-        table.addColumn(roleColumn, constants.rolePermission());
+        roleColumn.makeSortable((r1, r2) -> r1.getRoleName().compareTo(r2.getRoleName()));
+        table.addColumn(roleColumn, constants.rolePermission(), "110px"); //$NON-NLS-1$
 
         table.getSelectionModel().addSelectionChangeHandler(event -> modelProvider.setSelectedItems(table.getSelectionModel().getSelectedList()));
+
+        tablePanel.add(actionPanel);
+        tablePanel.add(table);
     }
 
     protected Resources getTableHeaderlessResources() {

@@ -22,10 +22,10 @@
             <b:Column size="SM_12">
                 <g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.height}">
                     <g:center>
-                        <g:FlowPanel ui:field="clusterPolicyPanel" addStyleNames="{style.scrollable}" />
+                        <g:FlowPanel ui:field="macPoolPanel" addStyleNames="{style.scrollable}" />
                     </g:center>
                      <g:south size="150">
-                        <g:FlowPanel ui:field="clusterPanel" addStyleNames="{style.scrollable}" />
+                        <g:FlowPanel ui:field="authorizationPanel" addStyleNames="{style.scrollable}" />
                     </g:south>
                  </g:SplitLayoutPanel>
             </b:Column>

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
@@ -22,24 +23,26 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
 public class ClusterPolicyView extends Composite {
-    interface ViewUiBinder extends UiBinder<SimplePanel, ClusterPolicyView> {
+
+    interface ViewUiBinder extends UiBinder<Container, ClusterPolicyView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @UiField
-    SimplePanel clusterPolicyTabContent;
+    SplitLayoutPanel splitLayoutPanel;
 
-    private SimpleActionTable<ClusterPolicy> table;
-    private FlowPanel container = new FlowPanel();
+    @UiField
+    FlowPanel clusterPolicyPanel;
 
+    @UiField
+    FlowPanel clusterPanel;
+
+    private SimpleActionTable<ClusterPolicy> clusterPolicyTable;
     private SimpleActionTable<Cluster> clusterTable;
-
-    private SplitLayoutPanel splitLayoutPanel;
 
     private final ClusterPolicyModelProvider clusterPolicyModelProvider;
     private final ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider;
@@ -51,42 +54,35 @@ public class ClusterPolicyView extends Composite {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public ClusterPolicyView(ClusterPolicyModelProvider clusterPolicyModelProvider,
+    public ClusterPolicyView(EventBus eventBus, ClientStorage clientStorage,
+            ClusterPolicyModelProvider clusterPolicyModelProvider,
             ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ClusterPolicyActionPanelPresenterWidget actionPanel) {
-        this.clusterPolicyModelProvider = clusterPolicyModelProvider;
-        this.clusterPolicyClusterModelProvider = clusterPolicyClusterModelProvider;
+            ClusterPolicyActionPanelPresenterWidget actionPanel) {
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;
+        this.clusterPolicyModelProvider = clusterPolicyModelProvider;
+        this.clusterPolicyClusterModelProvider = clusterPolicyClusterModelProvider;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
-        initSplitLayoutPanel();
-
         initClusterPolicyTable(actionPanel);
         initClustersTable();
-    }
 
-    private void initSplitLayoutPanel() {
-        splitLayoutPanel = new SplitLayoutPanel();
-        splitLayoutPanel.setHeight("100%"); //$NON-NLS-1$
-        splitLayoutPanel.setWidth("100%"); //$NON-NLS-1$
-        clusterPolicyTabContent.add(splitLayoutPanel);
+        setSubTabVisibility(false);
     }
 
     public void setSubTabVisibility(boolean visible) {
         splitLayoutPanel.clear();
         if (visible) {
-            splitLayoutPanel.addSouth(clusterTable, 150);
+            splitLayoutPanel.addSouth(clusterPanel, 150);
         }
-        splitLayoutPanel.add(container);
+        splitLayoutPanel.add(clusterPolicyPanel);
     }
 
     private void initClusterPolicyTable(ClusterPolicyActionPanelPresenterWidget policyActionPanel) {
-        table = new SimpleActionTable<>(clusterPolicyModelProvider,
+        clusterPolicyTable = new SimpleActionTable<>(clusterPolicyModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        table.addColumn(new AbstractImageResourceColumn<ClusterPolicy>() {
+        clusterPolicyTable.addColumn(new AbstractImageResourceColumn<ClusterPolicy>() {
             @Override
             public ImageResource getValue(ClusterPolicy object) {
                 if (object.isLocked()) {
@@ -94,7 +90,6 @@ public class ClusterPolicyView extends Composite {
                 }
                 return null;
             }
-
         }, constants.empty(), "20px"); //$NON-NLS-1$
 
         AbstractTextColumn<ClusterPolicy> nameColumn = new AbstractTextColumn<ClusterPolicy>() {
@@ -103,7 +98,8 @@ public class ClusterPolicyView extends Composite {
                 return object.getName();
             }
         };
-        table.addColumn(nameColumn, constants.clusterPolicyNameLabel(), "100px"); //$NON-NLS-1$
+        nameColumn.makeSortable((n1, n2) -> n1.getName().compareTo(n2.getName()));
+        clusterPolicyTable.addColumn(nameColumn, constants.clusterPolicyNameLabel(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<ClusterPolicy> descColumn = new AbstractTextColumn<ClusterPolicy>() {
             @Override
@@ -111,21 +107,19 @@ public class ClusterPolicyView extends Composite {
                 return object.getDescription();
             }
         };
-        table.addColumn(descColumn, constants.clusterPolicyDescriptionLabel(), "300px"); //$NON-NLS-1$
+        clusterPolicyTable.addColumn(descColumn, constants.clusterPolicyDescriptionLabel(), "300px"); //$NON-NLS-1$
 
-        container.add(policyActionPanel);
-        container.add(table);
-        splitLayoutPanel.add(container);
-
-        table.getSelectionModel().addSelectionChangeHandler(event -> {
-            clusterPolicyModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
-            if (table.getSelectionModel().getSelectedList().size() > 0) {
+        clusterPolicyTable.getSelectionModel().addSelectionChangeHandler(event -> {
+            clusterPolicyModelProvider.setSelectedItems(clusterPolicyTable.getSelectionModel().getSelectedList());
+            if (clusterPolicyTable.getSelectionModel().getSelectedList().size() > 0) {
                 setSubTabVisibility(true);
             } else {
                 setSubTabVisibility(false);
             }
         });
 
+        clusterPolicyPanel.add(policyActionPanel);
+        clusterPolicyPanel.add(clusterPolicyTable);
     }
 
     private void initClustersTable() {
@@ -139,6 +133,8 @@ public class ClusterPolicyView extends Composite {
             }
         };
         clusterTable.addColumn(clusterColumn, constants.clusterPolicyAttachedCluster());
+
+        clusterPanel.add(clusterTable);
     }
 
     protected Resources getTableHeaderlessResources() {

@@ -9,10 +9,6 @@
     <ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
 
     <ui:style>
-        .container {
-            width: 100%;
-        }
-
         .gridHeight {
             height: 415px;
         }
@@ -23,9 +19,15 @@
             margin-right: 5px;
             margin-left: 15px;
         }
+
+        .scrollable {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+        }
     </ui:style>
 
-    <b:Container addStyleNames="{style.container}">
+    <b:Container fluid="true">
         <b:Row>
             <b:Column size="SM_12">
                 <g:Label text="{constants.showRolesLabel}" />
@@ -33,7 +35,7 @@
         </b:Row>
         <b:Row>
             <b:Column size="SM_12">
-                <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" text="{constants.allRolesLabel}" />
+                <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" text="{constants.allRolesLabel}" value="true" />
                 <g:Image resource="{resources.adminImage}" addStyleNames="{style.imageStyle}" />
                 <g:RadioButton name="rolesRadioButton" ui:field="adminRolesRadioButton" text="{constants.adminRolesLabel}" />
                 <g:Image resource="{resources.userImage}" addStyleNames="{style.imageStyle}" />
@@ -42,7 +44,14 @@
         </b:Row>
         <b:Row>
             <b:Column size="SM_12">
-                <g:SimplePanel ui:field="rolesTabContent" addStyleNames="{style.gridHeight}"/>
+                <g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.gridHeight}">
+                    <g:center>
+                        <g:FlowPanel ui:field="roleTablePanel" addStyleNames="{style.scrollable}" />
+                    </g:center>
+                    <g:south size="150">
+                        <g:FlowPanel ui:field="permissionTablePanel" addStyleNames="{style.scrollable}" />
+                    </g:south>
+                </g:SplitLayoutPanel>
             </b:Column>
         </b:Row>
     </b:Container>

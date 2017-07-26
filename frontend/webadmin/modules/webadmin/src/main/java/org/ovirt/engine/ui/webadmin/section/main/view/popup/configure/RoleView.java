@@ -25,14 +25,14 @@ import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
 public class RoleView extends Composite {
 
-    @UiField
-    SimplePanel rolesTabContent;
+    interface ViewUiBinder extends UiBinder<Container, RoleView> {
+        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
 
     @UiField
     RadioButton allRolesRadioButton;
@@ -43,12 +43,17 @@ public class RoleView extends Composite {
     @UiField
     RadioButton userRolesRadioButton;
 
-    private FlowPanel roleTablePanel = new FlowPanel();
-    private SimpleActionTable<Role> table;
+    @UiField
+    SplitLayoutPanel splitLayoutPanel;
 
-    private FlowPanel permissionTablePanel = new FlowPanel();
+    @UiField
+    FlowPanel roleTablePanel;
+
+    @UiField
+    FlowPanel permissionTablePanel;
+
+    private SimpleActionTable<Role> roleTable;
     private SimpleActionTable<Permission> permissionTable;
-    private SplitLayoutPanel splitLayoutPanel;
 
     private final RoleModelProvider roleModelProvider;
     private final RolePermissionModelProvider permissionModelProvider;
@@ -59,30 +64,22 @@ public class RoleView extends Composite {
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public RoleView(RoleModelProvider roleModelProvider,
+    public RoleView(EventBus eventBus, ClientStorage clientStorage,
+            RoleModelProvider roleModelProvider,
             RoleActionPanelPresenterWidget roleActionPanel,
             RolePermissionModelProvider permissionModelProvider,
-            RolePermissionActionPanelPresenterWidget permissionActionPanel,
-            EventBus eventBus, ClientStorage clientStorage) {
-        this.roleModelProvider = roleModelProvider;
-        this.permissionModelProvider = permissionModelProvider;
+            RolePermissionActionPanelPresenterWidget permissionActionPanel) {
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;
+        this.roleModelProvider = roleModelProvider;
+        this.permissionModelProvider = permissionModelProvider;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
         initRolesFilterRadioButtons();
-        initSplitLayoutPanel();
-
         initRoleTable(roleActionPanel);
         initPermissionTable(permissionActionPanel);
-    }
 
-    private void initSplitLayoutPanel() {
-        splitLayoutPanel = new SplitLayoutPanel();
-        splitLayoutPanel.setHeight("100%"); //$NON-NLS-1$
-        splitLayoutPanel.setWidth("100%"); //$NON-NLS-1$
-        rolesTabContent.add(splitLayoutPanel);
+        setSubTabVisibility(false);
     }
 
     public void setSubTabVisibility(boolean visible) {
@@ -94,8 +91,6 @@ public class RoleView extends Composite {
     }
 
     private void initRolesFilterRadioButtons() {
-        allRolesRadioButton.setValue(true);
-
         allRolesRadioButton.addValueChangeHandler(event -> {
             if (event.getValue()) {
                 roleModelProvider.getModel().setItemsFilter(null);
@@ -116,20 +111,18 @@ public class RoleView extends Composite {
                 roleModelProvider.getModel().forceRefresh();
             }
         });
-
-    }
-
-    interface ViewUiBinder extends UiBinder<Container, RoleView> {
-        ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     private void initRoleTable(RoleActionPanelPresenterWidget roleActionPanel) {
-        this.table = new SimpleActionTable<>(roleModelProvider,
+        roleTable = new SimpleActionTable<>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
-        roleTablePanel.add(roleActionPanel);
-        roleTablePanel.add(table);
 
-        this.table.enableColumnResizing();
+        roleTable.enableColumnResizing();
+
+        roleTable.addColumn(new IsLockedImageTypeColumn(), constants.empty(), "25px"); //$NON-NLS-1$
+
+        roleTable.addColumn(new RoleTypeColumn(), constants.empty(), "25px"); //$NON-NLS-1$
+
         AbstractTextColumn<Role> nameColumn = new AbstractTextColumn<Role>() {
             @Override
             public String getValue(Role object) {
@@ -137,12 +130,7 @@ public class RoleView extends Composite {
             }
         };
         nameColumn.makeSortable();
-
-        table.addColumn(new IsLockedImageTypeColumn(), constants.empty(), "25px"); //$NON-NLS-1$
-
-        table.addColumn(new RoleTypeColumn(), constants.empty(), "25px"); //$NON-NLS-1$
-
-        table.addColumn(nameColumn, constants.nameRole(), "175px"); //$NON-NLS-1$
+        roleTable.addColumn(nameColumn, constants.nameRole(), "175px"); //$NON-NLS-1$
 
         AbstractTextColumn<Role> descColumn = new AbstractTextColumn<Role>() {
             @Override
@@ -151,26 +139,24 @@ public class RoleView extends Composite {
             }
         };
         descColumn.makeSortable();
-        table.addColumn(descColumn, constants.descriptionRole(), "575px"); //$NON-NLS-1$
+        roleTable.addColumn(descColumn, constants.descriptionRole(), "500px"); //$NON-NLS-1$
 
-        splitLayoutPanel.add(roleTablePanel);
-
-        table.getSelectionModel().addSelectionChangeHandler(event -> {
-            roleModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
-            if (table.getSelectionModel().getSelectedList().size() > 0) {
+        roleTable.getSelectionModel().addSelectionChangeHandler(event -> {
+            roleModelProvider.setSelectedItems(roleTable.getSelectionModel().getSelectedList());
+            if (roleTable.getSelectionModel().getSelectedList().size() > 0) {
                 setSubTabVisibility(true);
             } else {
                 setSubTabVisibility(false);
             }
         });
 
+        roleTablePanel.add(roleActionPanel);
+        roleTablePanel.add(roleTable);
     }
 
     private void initPermissionTable(RolePermissionActionPanelPresenterWidget permissionActionPanel) {
         permissionTable = new SimpleActionTable<>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
-        permissionTablePanel.add(permissionActionPanel);
-        permissionTablePanel.add(permissionTable);
 
         permissionTable.enableColumnResizing();
 
@@ -194,6 +180,9 @@ public class RoleView extends Composite {
 
         permissionTable.getSelectionModel().addSelectionChangeHandler(event ->
                 permissionModelProvider.setSelectedItems(permissionTable.getSelectionModel().getSelectedList()));
+
+        permissionTablePanel.add(permissionActionPanel);
+        permissionTablePanel.add(permissionTable);
     }
 
     protected Resources getTableHeaderlessResources() {

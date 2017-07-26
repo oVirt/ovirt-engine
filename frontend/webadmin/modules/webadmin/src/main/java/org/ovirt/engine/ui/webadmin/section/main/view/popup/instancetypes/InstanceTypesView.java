@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
@@ -21,68 +22,63 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
 public class InstanceTypesView extends Composite {
 
-    interface ViewUiBinder extends UiBinder<FlowPanel, InstanceTypesView> {
+    interface ViewUiBinder extends UiBinder<Container, InstanceTypesView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @UiField
-    SimplePanel instanceTypesTabContent;
+    SplitLayoutPanel splitLayoutPanel;
 
-    FlowPanel container = new FlowPanel();
-    private SimpleActionTable<InstanceType> table;
+    @UiField
+    FlowPanel typePanel;
 
-    private InstanceTypeGeneralModelForm detailTable;
-    private SplitLayoutPanel splitLayoutPanel;
+    @UiField
+    FlowPanel detailsPanel;
+
+    private SimpleActionTable<InstanceType> typeTable;
+    private InstanceTypeGeneralModelForm detailsWidget;
 
     private final InstanceTypeModelProvider instanceTypeModelProvider;
     private final DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider;
 
     private final EventBus eventBus;
-
     private final ClientStorage clientStorage;
 
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public InstanceTypesView(InstanceTypeModelProvider instanceTypeModelProvider,
-            EventBus eventBus, ClientStorage clientStorage,
-            DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider,
-            InstanceTypesActionPanelPresenterWidget actionPanel) {
-        this.instanceTypeModelProvider = instanceTypeModelProvider;
+    public InstanceTypesView(EventBus eventBus, ClientStorage clientStorage,
+            InstanceTypeModelProvider instanceTypeModelProvider,
+            InstanceTypesActionPanelPresenterWidget actionPanel,
+            DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider) {
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;
+
+        this.instanceTypeModelProvider = instanceTypeModelProvider;
         this.instanceTypeGeneralModelProvider = instanceTypeGeneralModelProvider;
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
-        initSplitLayoutPanel();
-
         initMainTable(actionPanel);
-        initSubtabTable();
-    }
+        initDetailsWidget();
 
-    private void initSplitLayoutPanel() {
-        splitLayoutPanel = new SplitLayoutPanel();
-        splitLayoutPanel.setHeight("100%"); //$NON-NLS-1$
-        splitLayoutPanel.setWidth("100%"); //$NON-NLS-1$
-        instanceTypesTabContent.add(splitLayoutPanel);
+        setSubTabVisibility(false);
     }
 
     public void setSubTabVisibility(boolean visible) {
         splitLayoutPanel.clear();
         if (visible) {
-            splitLayoutPanel.addSouth(detailTable, 150);
+            splitLayoutPanel.addSouth(detailsPanel, 150);
         }
-        splitLayoutPanel.add(container);
+        splitLayoutPanel.add(typePanel);
     }
 
     private void initMainTable(InstanceTypesActionPanelPresenterWidget actionPanel) {
-        table = new SimpleActionTable<>(instanceTypeModelProvider,
+        typeTable = new SimpleActionTable<>(instanceTypeModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         AbstractTextColumn<InstanceType> nameColumn = new AbstractTextColumn<InstanceType>() {
@@ -91,26 +87,26 @@ public class InstanceTypesView extends Composite {
                 return object.getName();
             }
         };
-        table.addColumn(nameColumn, constants.instanceTypeName(), "100px"); //$NON-NLS-1$
+        typeTable.addColumn(nameColumn, constants.instanceTypeName(), "100px"); //$NON-NLS-1$
 
-        container.add(actionPanel);
-        container.add(table);
-        splitLayoutPanel.add(container);
-
-        table.getSelectionModel().addSelectionChangeHandler(event -> {
-            instanceTypeModelProvider.setSelectedItems(table.getSelectionModel().getSelectedList());
-            if (table.getSelectionModel().getSelectedList().size() > 0) {
+        typeTable.getSelectionModel().addSelectionChangeHandler(event -> {
+            instanceTypeModelProvider.setSelectedItems(typeTable.getSelectionModel().getSelectedList());
+            if (typeTable.getSelectionModel().getSelectedList().size() > 0) {
                 setSubTabVisibility(true);
-                detailTable.update();
+                detailsWidget.update();
             } else {
                 setSubTabVisibility(false);
             }
         });
 
+        typePanel.add(actionPanel);
+        typePanel.add(typeTable);
     }
 
-    private void initSubtabTable() {
-        detailTable = new InstanceTypeGeneralModelForm(instanceTypeGeneralModelProvider);
+    private void initDetailsWidget() {
+        detailsWidget = new InstanceTypeGeneralModelForm(instanceTypeGeneralModelProvider);
+
+        detailsPanel.add(detailsWidget);
     }
 
     protected Resources getTableHeaderlessResources() {

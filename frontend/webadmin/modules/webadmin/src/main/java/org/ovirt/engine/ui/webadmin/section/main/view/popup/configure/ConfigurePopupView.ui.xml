@@ -5,6 +5,10 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+    xmlns:c="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.configure"
+    xmlns:s="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling"
+    xmlns:i="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes"
+    xmlns:m="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool"
     xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
@@ -13,37 +17,37 @@
         <d:content>
             <t:DialogTabPanel height="100%" width="100%">
                 <t:tab>
-                    <t:DialogTab ui:field="rolesTab">
+                    <t:DialogTab label="{constants.configureRoleTabLabel}">
                         <t:content>
-                            <g:SimplePanel ui:field="rolesTabPanel" />
+                            <c:RoleView ui:field="roleView" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="systemPermissionsTab">
+                    <t:DialogTab label="{constants.configureSystemPermissionTabLabel}">
                         <t:content>
-                            <g:SimplePanel ui:field="systemPermissionTabPanel" />
+                            <c:SystemPermissionView ui:field="systemPermissionView" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="clusterPoliciesTab">
+                    <t:DialogTab ui:field="clusterPoliciesTab" label="{constants.configureClusterPolicyTabLabel}">
                         <t:content>
-                            <g:SimplePanel ui:field="clusterPoliciesTabPanel" />
+                            <s:ClusterPolicyView ui:field="clusterPolicyView" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="instanceTypesTab">
+                    <t:DialogTab label="{constants.instanceTypes}">
                         <t:content>
-                            <g:SimplePanel ui:field="instanceTypesTabPanel" />
+                            <i:InstanceTypesView ui:field="instanceTypesView" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
                 <t:tab>
-                    <t:DialogTab ui:field="macPoolsTab">
+                    <t:DialogTab label="{constants.configureMacPoolsTabLabel}">
                         <t:content>
-                            <g:SimplePanel ui:field="macPoolsTabPanel" />
+                            <m:SharedMacPoolView ui:field="sharedMacPoolView" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
@@ -51,7 +55,7 @@
         </d:content>
 
         <d:footerButton>
-            <d:SimpleDialogButton ui:field="closeButton" />
+            <d:SimpleDialogButton ui:field="closeButton" text="{constants.closeButtonLabel}" />
         </d:footerButton>
     </d:SimpleDialogPanel>
 

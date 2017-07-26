@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style>
-        .panel {
+        .height {
             height: 470px;
         }
     </ui:style>
 
-    <g:FlowPanel ui:field="tabContent" addStyleNames="{style.panel}" />
+    <b:Container fluid="true">
+        <b:Row>
+            <b:Column size="SM_12">
+                <g:FlowPanel ui:field="tablePanel" addStyleNames="{style.height}" />
+            </b:Column>
+        </b:Row>
+    </b:Container>
 
 </ui:UiBinder>

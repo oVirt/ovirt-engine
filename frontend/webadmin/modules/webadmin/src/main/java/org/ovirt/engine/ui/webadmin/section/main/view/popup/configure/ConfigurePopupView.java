@@ -5,8 +5,6 @@ import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoolView;
@@ -17,7 +15,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
 public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> implements ConfigurePopupPresenterWidget.ViewDef {
@@ -30,70 +27,39 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     SimpleDialogButton closeButton;
 
     @UiField
-    DialogTab rolesTab;
-
-    @UiField
     DialogTab clusterPoliciesTab;
 
-    @UiField
-    DialogTab systemPermissionsTab;
+    @UiField(provided=true)
+    RoleView roleView;
 
-    @UiField
-    DialogTab instanceTypesTab;
+    @UiField(provided=true)
+    SystemPermissionView systemPermissionView;
 
-    @UiField
-    DialogTab macPoolsTab;
+    @UiField(provided=true)
+    ClusterPolicyView clusterPolicyView;
 
-    @UiField
-    SimplePanel rolesTabPanel;
+    @UiField(provided=true)
+    InstanceTypesView instanceTypesView;
 
-    @UiField
-    SimplePanel clusterPoliciesTabPanel;
-
-    @UiField
-    SimplePanel systemPermissionTabPanel;
-
-    @UiField
-    SimplePanel instanceTypesTabPanel;
-
-    @UiField
-    SimplePanel macPoolsTabPanel;
-
-    private static final ApplicationConstants constants = AssetProvider.getConstants();
+    @UiField(provided=true)
+    SharedMacPoolView sharedMacPoolView;
 
     @Inject
     public ConfigurePopupView(
             EventBus eventBus,
             RoleView roleView,
-            ClusterPolicyView clusterPolicyView,
             SystemPermissionView systemPermissionView,
+            ClusterPolicyView clusterPolicyView,
             InstanceTypesView instanceTypesView,
             SharedMacPoolView sharedMacPoolView) {
         super(eventBus);
+        this.roleView = roleView;
+        this.systemPermissionView = systemPermissionView;
+        this.clusterPolicyView = clusterPolicyView;
+        this.instanceTypesView = instanceTypesView;
+        this.sharedMacPoolView = sharedMacPoolView;
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize();
-
-        rolesTabPanel.add(roleView);
-
-        clusterPolicyView.setWidth("100%"); //$NON-NLS-1$
-        clusterPoliciesTabPanel.add(clusterPolicyView);
-
-        systemPermissionTabPanel.add(systemPermissionView);
-
-        instanceTypesView.setWidth("100%"); //$NON-NLS-1$
-        instanceTypesTabPanel.add(instanceTypesView);
-
-        macPoolsTabPanel.add(sharedMacPoolView);
-    }
-
-    void localize() {
-        closeButton.setText(constants.closeButtonLabel());
-
-        rolesTab.setLabel(constants.configureRoleTabLabel());
-        clusterPoliciesTab.setLabel(constants.configureClusterPolicyTabLabel());
-        systemPermissionsTab.setLabel(constants.configureSystemPermissionTabLabel());
-        instanceTypesTab.setLabel(constants.instanceTypes());
-        macPoolsTab.setLabel(constants.configureMacPoolsTabLabel());
     }
 
     @Override
