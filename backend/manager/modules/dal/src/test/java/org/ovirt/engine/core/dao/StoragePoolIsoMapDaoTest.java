@@ -3,77 +3,54 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.compat.Guid;
 
-public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
-    private StoragePoolIsoMapDao dao;
-    private StoragePoolIsoMap existingStoragePoolIsoMap;
-    private StoragePoolIsoMap newStoragePoolIsoMap;
+public class StoragePoolIsoMapDaoTest extends
+        BaseGenericDaoTestCase<StoragePoolIsoMapId, StoragePoolIsoMap, StoragePoolIsoMapDao> {
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getStoragePoolIsoMapDao();
-
-        existingStoragePoolIsoMap = dao.get(new StoragePoolIsoMapId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DATA_CENTER));
-        newStoragePoolIsoMap =
-                new StoragePoolIsoMap(FixturesTool.STORAGE_DOMAIN_SCALE_SD6, FixturesTool.DATA_CENTER, StorageDomainStatus.Unattached);
+    protected StoragePoolIsoMap generateNewEntity() {
+        return new StoragePoolIsoMap
+                (FixturesTool.STORAGE_DOMAIN_SCALE_SD6, FixturesTool.DATA_CENTER, StorageDomainStatus.Unattached);
     }
 
-    @Test
-    public void testGetStoragePoolIsoMap() {
-        StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
-                        existingStoragePoolIsoMap.getStoragePoolId()));
-
-        assertNotNull(result);
-        assertEquals(existingStoragePoolIsoMap, result);
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setStatus(StorageDomainStatus.Active);
     }
 
-    @Test
-    public void testAddStoragePoolIsoMap() {
-        dao.save(newStoragePoolIsoMap);
-
-        StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(newStoragePoolIsoMap.getStorageId(),
-                        newStoragePoolIsoMap.getStoragePoolId()));
-
-        assertNotNull(result);
-        assertEquals(newStoragePoolIsoMap, result);
+    @Override
+    protected StoragePoolIsoMapId getExistingEntityId() {
+        return new StoragePoolIsoMapId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DATA_CENTER);
     }
 
-    @Test
-    public void testUpdateStoragePoolIsoMap() {
-        existingStoragePoolIsoMap.setStatus(StorageDomainStatus.Active);
-
-        dao.update(existingStoragePoolIsoMap);
-
-        StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
-                        existingStoragePoolIsoMap.getStoragePoolId()));
-
-        assertNotNull(result);
-        assertEquals(existingStoragePoolIsoMap, result);
+    @Override
+    protected StoragePoolIsoMapDao prepareDao() {
+        return dbFacade.getStoragePoolIsoMapDao();
     }
 
-    @Test
-    public void testRemoveStoragePoolIsoMap() {
-        dao.remove(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
-                existingStoragePoolIsoMap.getStoragePoolId()));
+    @Override
+    protected StoragePoolIsoMapId generateNonExistingId() {
+        return new StoragePoolIsoMapId(Guid.newGuid(), Guid.newGuid());
+    }
 
-        StoragePoolIsoMap result =
-                dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getStorageId(),
-                        existingStoragePoolIsoMap.getStoragePoolId()));
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 11;
+    }
 
-        assertNull(result);
+    @Ignore
+    @Override
+    public void testGetAll() {
+        // Not supported
     }
 
     @Test
