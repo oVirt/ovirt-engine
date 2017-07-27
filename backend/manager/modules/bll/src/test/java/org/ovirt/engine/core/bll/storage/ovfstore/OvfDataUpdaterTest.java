@@ -50,7 +50,7 @@ public class OvfDataUpdaterTest {
 
     @Test
     public void poolUpdateOvfStoreOnAnyDomainSupported() throws Exception {
-        ovfDataUpdater.ovfUpdateTimer();
+        ovfDataUpdater.ovfUpdate();
         verify();
     }
 

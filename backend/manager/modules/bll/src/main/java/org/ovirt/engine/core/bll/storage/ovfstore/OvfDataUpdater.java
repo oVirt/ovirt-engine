@@ -2,12 +2,16 @@ package org.ovirt.engine.core.bll.storage.ovfstore;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -20,8 +24,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,15 +39,19 @@ public class OvfDataUpdater implements BackendService {
     private BackendInternal backend;
 
     @Inject
-    private SchedulerUtilQuartzImpl scheduler;
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService schedulerService;
 
-    private volatile String updateTimerJobId;
+    private final ReentrantLock lock = new ReentrantLock();
+
+    private volatile ScheduledFuture updateTimerJob;
 
     @PostConstruct
     public void initOvfDataUpdater() {
-        updateTimerJobId = scheduler.scheduleAFixedDelayJob(this, "ovfUpdateTimer", new Class[] {},
-                new Object[] {}, Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
-                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes), TimeUnit.MINUTES);
+        updateTimerJob = schedulerService.scheduleWithFixedDelay(this::ovfUpdate,
+                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
+                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
+                TimeUnit.MINUTES);
         log.info("Initialization of OvfDataUpdater completed successfully.");
     }
 
@@ -58,10 +65,17 @@ public class OvfDataUpdater implements BackendService {
         return backend.runInternalAction(ActionType.ProcessOvfUpdateForStoragePool, parameters);
     }
 
-    @OnTimerMethodAnnotation("ovfUpdateTimer")
-    public void ovfUpdateTimer() {
-        List<StoragePool> storagePools = storagePoolDao.getAllByStatus(StoragePoolStatus.Up);
-        updateOvfData(storagePools);
+    public void ovfUpdate() {
+        lock.lock();
+        try {
+            List<StoragePool> storagePools = storagePoolDao.getAllByStatus(StoragePoolStatus.Up);
+            updateOvfData(storagePools);
+        } catch (Throwable t) {
+            log.error("Exception updating ovf data: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        } finally {
+            lock.unlock();
+        }
     }
 
 
@@ -88,8 +102,16 @@ public class OvfDataUpdater implements BackendService {
     }
 
     public void triggerNow() {
-        if (updateTimerJobId != null) {
-            scheduler.triggerJob(updateTimerJobId);
+        if (updateTimerJob != null) {
+            try {
+                updateTimerJob.cancel(false);
+            } catch (Throwable t) {
+                log.debug("Exception cancelling existing job: {}", ExceptionUtils.getRootCauseMessage(t));
+            }
         }
+        updateTimerJob = schedulerService.scheduleWithFixedDelay(this::ovfUpdate,
+                0,
+                Config.<Integer> getValue(ConfigValues.OvfUpdateIntervalInMinutes),
+                TimeUnit.MINUTES);
     }
 }

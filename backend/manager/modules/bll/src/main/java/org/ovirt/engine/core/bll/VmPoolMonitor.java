@@ -6,13 +6,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.BackendService;
@@ -35,8 +39,7 @@ import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmPoolDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +48,10 @@ public class VmPoolMonitor implements BackendService {
 
     private static final Logger log = LoggerFactory.getLogger(VmPoolMonitor.class);
 
-    private String poolMonitoringJobId;
+    private ScheduledFuture poolMonitoringJob;
 
-    @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
+    private int vmPoolMonitorIntervalInMinutes;
+
     @Inject
     private VmPoolHandler vmPoolHandler;
     @Inject
@@ -57,35 +60,53 @@ public class VmPoolMonitor implements BackendService {
     private VmDao vmDao;
     @Inject
     private VmStaticDao vmStaticDao;
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService schedulerService;
+    private final ReentrantLock lock = new ReentrantLock();
 
     @PostConstruct
     private void init() {
-        int vmPoolMonitorIntervalInMinutes = Config.<Integer>getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
-        poolMonitoringJobId =
-                schedulerUtil.scheduleAFixedDelayJob(
-                        this,
-                        "managePrestartedVmsInAllVmPools",
-                        new Class[] {},
-                        new Object[] {},
+        vmPoolMonitorIntervalInMinutes = Config.<Integer>getValue(ConfigValues.VmPoolMonitorIntervalInMinutes);
+        poolMonitoringJob =
+                schedulerService.scheduleWithFixedDelay(
+                        this::managePrestartedVmsInAllVmPools,
                         vmPoolMonitorIntervalInMinutes,
                         vmPoolMonitorIntervalInMinutes,
                         TimeUnit.MINUTES);
     }
 
     public void triggerPoolMonitoringJob() {
-        schedulerUtil.triggerJob(poolMonitoringJobId);
+        try {
+            poolMonitoringJob.cancel(false);
+        } catch (Throwable t) {
+            log.debug("Exception cancelling existing job: {}", ExceptionUtils.getRootCauseMessage(t));
+        }
+        poolMonitoringJob =
+                schedulerService.scheduleWithFixedDelay(
+                        this::managePrestartedVmsInAllVmPools,
+                        0,
+                        vmPoolMonitorIntervalInMinutes,
+                        TimeUnit.MINUTES);
     }
 
     /**
      * Goes over each VM Pool and makes sure there are at least as much prestarted VMs as defined in the prestartedVms
      * field.
      */
-    @OnTimerMethodAnnotation("managePrestartedVmsInAllVmPools")
-    public void managePrestartedVmsInAllVmPools() {
-        vmPoolDao.getAll()
-                .stream()
-                .filter(pool -> pool.getPrestartedVms() > 0)
-                .forEach(this::managePrestartedVmsInPool);
+    private void managePrestartedVmsInAllVmPools() {
+        lock.lock();
+        try {
+            vmPoolDao.getAll()
+                    .stream()
+                    .filter(pool -> pool.getPrestartedVms() > 0)
+                    .forEach(this::managePrestartedVmsInPool);
+        } catch (Throwable t) {
+            log.error("Exception managing prestarted VMs in all VM pools: {}", ExceptionUtils.getRootCauseMessage(t));
+            log.debug("Exception", t);
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**

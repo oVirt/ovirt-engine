@@ -552,7 +552,7 @@ public final class AsyncTaskManager implements BackendService {
                                 : "polling hasn't started yet.");
 
                 // Set the indication to true for logging tasks status on next
-                // quartz execution.
+                // execution.
                 addTaskToMap(task.getVdsmTaskId(), task);
             } else {
                 SPMTask existingTask = tasks.get(task.getVdsmTaskId());
@@ -564,7 +564,7 @@ public final class AsyncTaskManager implements BackendService {
                             task.getParameters().getDbAsyncTask().getActionType());
 
                     // Set the indication to true for logging tasks status on
-                    // next quartz execution.
+                    // next execution.
                     addTaskToMap(task.getVdsmTaskId(), task);
                 }
             }
@@ -573,7 +573,7 @@ public final class AsyncTaskManager implements BackendService {
 
     /**
      * Adds new task to tasks map , and set the log status to true. We set the
-     * indication to true for logging tasks status on next quartz execution.
+     * indication to true for logging tasks status on next execution.
      *
      * @param guid - Key of the map.
      * @param asyncTask - Value of the map.
@@ -585,7 +585,7 @@ public final class AsyncTaskManager implements BackendService {
 
     /**
      * We set the indication to true when tasks map changes for logging tasks
-     * status on next quartz execution.
+     * status on next execution.
      *
      * @param asyncTaskMap - Map to copy to tasks map.
      */

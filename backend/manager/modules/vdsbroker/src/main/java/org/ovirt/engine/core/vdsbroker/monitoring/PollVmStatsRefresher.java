@@ -1,16 +1,19 @@
 package org.ovirt.engine.core.vdsbroker.monitoring;
 
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.inject.Inject;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +25,9 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     protected static final int NUMBER_VMS_REFRESHES_BEFORE_SAVE = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
 
     @Inject
-    private SchedulerUtilQuartzImpl scheduler;
-    private String vmsMonitoringJobId;
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService schedulerService;
+    private ScheduledFuture vmsMonitoringJob;
 
     public PollVmStatsRefresher(VdsManager vdsManager) {
         super(vdsManager);
@@ -49,19 +53,20 @@ public class PollVmStatsRefresher extends VmStatsRefresher {
     }
 
     public void startMonitoring() {
-        vmsMonitoringJobId =
-                scheduler.scheduleAFixedDelayJob(
-                        this,
-                        "poll",
-                        new Class[0],
-                        new Object[0],
+        vmsMonitoringJob =
+                schedulerService.scheduleWithFixedDelay(
+                        this::poll,
                         0,
                         VMS_REFRESH_RATE * NUMBER_VMS_REFRESHES_BEFORE_SAVE,
                         TimeUnit.MILLISECONDS);
     }
 
     public void stopMonitoring() {
-        scheduler.deleteJob(vmsMonitoringJobId);
+        try {
+            vmsMonitoringJob.cancel(true);
+        } catch (Throwable t) {
+            log.debug("Exception stopping VM monitoring: {}", ExceptionUtils.getRootCauseMessage(t));
+        }
     }
 
     /* visible for testing only */

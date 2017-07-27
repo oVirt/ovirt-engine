@@ -13,11 +13,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
@@ -108,9 +110,7 @@ import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
@@ -120,8 +120,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Inject
     private AuditLogDirector auditLogDirector;
-    @Inject
-    private SchedulerUtilQuartzImpl schedulerUtil;
     @Inject
     private CpuProfileHelper cpuProfileHelper;
     @Inject
@@ -153,7 +151,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Inject
     @Typed(SerialChildCommandsExecutionCallback.class)
     private Instance<SerialChildCommandsExecutionCallback> callbackProvider;
-
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService schedulerService;
     @Inject
     protected ImagesHandler imagesHandler;
 
@@ -172,7 +172,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean pendingAsyncTasks;
 
     private static final String BASE_TEMPLATE_VERSION_NAME = "base version";
-    private static Map<Guid, String> updateVmsJobIdMap = new ConcurrentHashMap<>();
+    private static Map<Guid, String> updateVmsJobHashMap = new ConcurrentHashMap<>();
+    private static Map<Guid, ScheduledFuture> updateVmsJobMap = new ConcurrentHashMap<>();
 
     private VmTemplate cachedBaseTemplate;
     private List<CinderDisk> cinderDisks;
@@ -318,11 +319,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         } else {
             // template version name should be the same as the base template name
             setVmTemplateName(getBaseTemplate().getName());
-            String jobId = updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
+            String jobId = updateVmsJobHashMap.remove(getParameters().getBaseTemplateId());
             if (!StringUtils.isEmpty(jobId)) {
                 log.info("Cancelling current running update for vms for base template id '{}'", getParameters().getBaseTemplateId());
                 try {
-                    getSchedulerUtil().deleteJob(jobId);
+                    updateVmsJobMap.remove(getParameters().getBaseTemplateId()).cancel(true);
                 } catch (Exception e) {
                     log.warn("Failed deleting job '{}' at cancelRecoveryJob", jobId);
                 }
@@ -1023,25 +1024,25 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // in case of new version of a template, update vms marked to use latest
         if (isTemplateVersion()) {
-            updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), StringUtils.EMPTY);
-            String jobId = getSchedulerUtil().scheduleAOneTimeJob(this, "updateVmVersion", new Class[0],
-                    new Object[0], 0, TimeUnit.SECONDS);
-            updateVmsJobIdMap.put(getParameters().getBaseTemplateId(), jobId);
+            updateVmsJobHashMap.put(getParameters().getBaseTemplateId(), StringUtils.EMPTY);
+            ScheduledFuture job = schedulerService.schedule(this::updateVmVersion, 0, TimeUnit.SECONDS);
+            updateVmsJobMap.put(getParameters().getBaseTemplateId(), job);
+            updateVmsJobHashMap.put(getParameters().getBaseTemplateId(), Integer.toString(job.hashCode()));
         }
     }
 
-    @OnTimerMethodAnnotation("updateVmVersion")
-    public void updateVmVersion() {
+    private void updateVmVersion() {
         for (Guid vmId : vmDao.getVmIdsForVersionUpdate(getParameters().getBaseTemplateId())) {
             // if the job was removed, stop executing, we probably have new version creation going on
-            if (!updateVmsJobIdMap.containsKey(getParameters().getBaseTemplateId())) {
+            if (!updateVmsJobHashMap.containsKey(getParameters().getBaseTemplateId())) {
                 break;
             }
             UpdateVmVersionParameters params = new UpdateVmVersionParameters(vmId);
             params.setSessionId(getParameters().getSessionId());
             getBackend().runInternalAction(ActionType.UpdateVmVersion, params, cloneContextAndDetachFromParent());
         }
-        updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
+        updateVmsJobHashMap.remove(getParameters().getBaseTemplateId());
+        updateVmsJobMap.remove(getParameters().getBaseTemplateId());
     }
 
     private void endUnlockOps() {
@@ -1291,10 +1292,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         return locks;
-    }
-
-    private SchedulerUtil getSchedulerUtil() {
-        return schedulerUtil;
     }
 
     @Override

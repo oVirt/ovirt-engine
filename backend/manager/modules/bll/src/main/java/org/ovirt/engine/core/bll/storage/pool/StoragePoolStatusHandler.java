@@ -2,8 +2,11 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -18,9 +21,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,41 +31,33 @@ public final class StoragePoolStatusHandler {
     private static HashMap<Guid, StoragePoolStatusHandler> nonOperationalPools = new HashMap<>();
 
     private final Guid poolId;
-    private final SchedulerUtilQuartzImpl schedulerUtil;
+    private ScheduledFuture scheduledTask;
 
-    private String timerId;
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService schedulerService;
 
-    private StoragePoolStatusHandler(Guid poolId, SchedulerUtilQuartzImpl schedulerUtil) {
-        Objects.requireNonNull(schedulerUtil, "schedulerUtil cannot be null");
-
+    private StoragePoolStatusHandler(Guid poolId) {
         this.poolId = poolId;
-        this.schedulerUtil = schedulerUtil;
-        this.timerId = null;
-    }
-
-    protected SchedulerUtil getScheduler() {
-        return schedulerUtil;
+        this.scheduledTask = null;
     }
 
     private StoragePoolStatusHandler scheduleTimeout() {
-        Class[] argTypes = new Class[0];
-        Object[] args = new Object[0];
         Integer timeout = Config.<Integer> getValue(ConfigValues.StoragePoolNonOperationalResetTimeoutInMin);
 
-        timerId = getScheduler().scheduleAOneTimeJob(this, "onTimeout", argTypes, args, timeout, TimeUnit.MINUTES);
+        scheduledTask = schedulerService.schedule(this::handleTimeout, timeout, TimeUnit.MINUTES);
 
         return this;
     }
 
     private void deScheduleTimeout() {
-        if (timerId != null) {
-            getScheduler().deleteJob(timerId);
-            timerId = null;
+        if (scheduledTask != null) {
+            scheduledTask.cancel(true);
+            scheduledTask = null;
         }
     }
 
-    @OnTimerMethodAnnotation("onTimeout")
-    public void onTimeout() {
+    private void handleTimeout() {
         if (nonOperationalPools.containsKey(poolId)) {
             try {
                 StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
@@ -90,10 +83,8 @@ public final class StoragePoolStatusHandler {
             }
         } else if (status == StoragePoolStatus.NotOperational) {
             synchronized (nonOperationalPools) {
-                final SchedulerUtilQuartzImpl schedulerUtil = Injector.get(SchedulerUtilQuartzImpl.class);
-                final StoragePoolStatusHandler storagePoolStatusHandler = new StoragePoolStatusHandler(
-                        poolId,
-                        schedulerUtil);
+                final StoragePoolStatusHandler storagePoolStatusHandler =
+                        Injector.injectMembers(new StoragePoolStatusHandler(poolId));
                 nonOperationalPools.put(poolId, storagePoolStatusHandler.scheduleTimeout());
             }
         }

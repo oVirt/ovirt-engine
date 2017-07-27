@@ -15,14 +15,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.concurrent.ManagedScheduledExecutorService;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -79,13 +83,11 @@ import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDao;
 import org.ovirt.engine.core.dao.VdsStaticDao;
-import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
-import org.ovirt.engine.core.utils.timer.SchedulerUtil;
-import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.TransportFactory;
@@ -110,8 +112,8 @@ public class IrsProxy {
     private final ReentrantLock syncLock = new ReentrantLock(FAIR_LOCK_TYPE);
 
 
-    private final String storagePoolRefreshJobId;
-    private final String domainRecoverOnHostJobId;
+    private ScheduledFuture storagePoolRefreshJob;
+    private ScheduledFuture domainRecoverOnHostJob;
     private final HashSet<Guid> triedVdssList = new HashSet<>();
     private Guid currentVdsId;
 
@@ -169,6 +171,10 @@ public class IrsProxy {
     @Inject
     private AuditLogDirector auditLogDirector;
 
+    @Inject
+    @ThreadPools(ThreadPools.ThreadPoolType.EngineScheduledThreadPool)
+    private ManagedScheduledExecutorService schedulerService;
+
     private Guid preferredHostId;
 
     public Guid getCurrentVdsId() {
@@ -205,46 +211,43 @@ public class IrsProxy {
         this.fencedIrs = fencedIrs;
     }
 
-    private Guid _storagePoolId = Guid.Empty;
+    private Guid storagePoolId = Guid.Empty;
 
     public IrsProxy(Guid storagePoolId) {
-        _storagePoolId = storagePoolId;
+        this.storagePoolId = storagePoolId;
+    }
+
+    @PostConstruct
+    public void init() {
         int storagePoolRefreshTime = Config.<Integer> getValue(ConfigValues.StoragePoolRefreshTimeInSeconds);
-        storagePoolRefreshJobId = getSchedulUtil().scheduleAFixedDelayJob(this,
-                "updatingTimerElapsed", new Class[0], new Object[0], storagePoolRefreshTime,
-                storagePoolRefreshTime, TimeUnit.SECONDS);
-        domainRecoverOnHostJobId =
-                getSchedulUtil().scheduleAFixedDelayJob(this,
-                        "hostsStorageConnectionsAndPoolMetadataRefresh",
-                        new Class[0],
-                        new Object[0],
+        storagePoolRefreshJob = schedulerService.scheduleWithFixedDelay(this::updatingTimerElapsed,
+                storagePoolRefreshTime,
+                storagePoolRefreshTime,
+                TimeUnit.SECONDS);
+        domainRecoverOnHostJob =
+                schedulerService.scheduleWithFixedDelay(this::hostsStorageConnectionsAndPoolMetadataRefresh,
                         Config.<Integer>getValue(ConfigValues.HostStorageConnectionAndPoolRefreshTimeInSeconds),
                         storagePoolRefreshTime,
                         TimeUnit.SECONDS);
-    }
-
-    protected SchedulerUtil getSchedulUtil() {
-        return Injector.get(SchedulerUtilQuartzImpl.class);
     }
 
     private void updateStoragePoolStatus(Guid poolId, StoragePoolStatus status, AuditLogType auditLogType, EngineError error) {
         getEventListener().storagePoolStatusChange(poolId, status, auditLogType, error);
     }
 
-    @OnTimerMethodAnnotation("updatingTimerElapsed")
     public void updatingTimerElapsed() {
         runInControlledConcurrency(() -> {
             try {
                 if (!_disposed) {
-                    StoragePool storagePool = storagePoolDao.get(_storagePoolId);
+                    StoragePool storagePool = storagePoolDao.get(storagePoolId);
 
                     if (storagePool != null) {
                         // when there are no hosts in status up, it means that there shouldn't be domain monitoring
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
                         if (vdsDao
-                                .getAllForStoragePoolAndStatuses(_storagePoolId, StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus)
+                                .getAllForStoragePoolAndStatuses(storagePoolId, StoragePoolDomainHelper.vdsDomainsActiveMonitoringStatus)
                                 .isEmpty()) {
-                            storagePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
+                            storagePoolDomainHelper.updateApplicablePoolDomainsStatuses(storagePoolId,
                                     StorageConstants.monitoredDomainStatuses,
                                     StorageDomainStatus.Unknown, "no reporting hosts");
                         }
@@ -292,7 +295,7 @@ public class IrsProxy {
         Guid curVdsId = currentVdsId;
         if (curVdsId != null) {
             result = resourceManager.runVdsCommand(VDSCommandType.SpmStatus,
-                    new SpmStatusVDSCommandParameters(curVdsId, _storagePoolId));
+                    new SpmStatusVDSCommandParameters(curVdsId, storagePoolId));
         }
 
         if (result == null
@@ -302,11 +305,11 @@ public class IrsProxy {
             if (storagePool.getStatus() != StoragePoolStatus.NonResponsive
                     && storagePool.getStatus() != StoragePoolStatus.NotOperational) {
                 if (result != null && result.getVdsError() != null) {
-                    updateStoragePoolStatus(_storagePoolId, StoragePoolStatus.NonResponsive,
+                    updateStoragePoolStatus(storagePoolId, StoragePoolStatus.NonResponsive,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_WITH_ERROR,
                                     result.getVdsError().getCode());
                 } else {
-                    updateStoragePoolStatus(_storagePoolId, StoragePoolStatus.NonResponsive,
+                    updateStoragePoolStatus(storagePoolId, StoragePoolStatus.NonResponsive,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
                                     EngineError.ENGINE);
                 }
@@ -335,7 +338,7 @@ public class IrsProxy {
                     if (_errorAttempts < Config.<Integer> getValue(ConfigValues.SPMFailOverAttempts)) {
                         _errorAttempts++;
                         log.warn("failed getting spm status for pool '{}' ({}), attempt number: {}",
-                                _storagePoolId, storagePool.getName(), _errorAttempts);
+                                storagePoolId, storagePool.getName(), _errorAttempts);
                     } else {
                         nullifyInternalProxies();
                         _errorAttempts = 0;
@@ -350,9 +353,9 @@ public class IrsProxy {
             storagePool.setStatus(StoragePoolStatus.Up);
             getEventListener().storagePoolStatusChanged(storagePool.getId(), storagePool.getStatus());
         }
-        List<StorageDomain> domainsInDb = storageDomainDao.getAllForStoragePool(_storagePoolId);
+        List<StorageDomain> domainsInDb = storageDomainDao.getAllForStoragePool(storagePoolId);
         GetStoragePoolInfoVDSCommandParameters tempVar = new GetStoragePoolInfoVDSCommandParameters(
-                _storagePoolId);
+                storagePoolId);
         tempVar.setIgnoreFailoverLimit(true);
         VDSReturnValue storagePoolInfoResult = resourceManager.runVdsCommand(
                 VDSCommandType.GetStoragePoolInfo, tempVar);
@@ -379,7 +382,7 @@ public class IrsProxy {
                     // domain not attached to pool anymore
                     storagePoolIsoMapDao
                             .remove(new StoragePoolIsoMapId(domainInDb.getId(),
-                                    _storagePoolId));
+                                    storagePoolId));
                 }
 
             }
@@ -398,9 +401,9 @@ public class IrsProxy {
 
     public void queueDomainMaintenanceCheck(final StorageDomain domain, final StoragePool pool) {
         getEventQueue()
-                .submitEventAsync(new Event(_storagePoolId, domain.getId(), null, EventType.DOMAINFAILOVER, ""),
+                .submitEventAsync(new Event(storagePoolId, domain.getId(), null, EventType.DOMAINFAILOVER, ""),
                         () -> {
-                            Collection<Guid> vdsConnectedToPool = getVdsConnectedToPool(_storagePoolId);
+                            Collection<Guid> vdsConnectedToPool = getVdsConnectedToPool(storagePoolId);
                             Set<Guid> vdsDomInMaintenance = _domainsInMaintenance.get(domain.getId());
                             if (vdsConnectedToPool.isEmpty() ||
                                     (vdsDomInMaintenance != null &&
@@ -441,7 +444,7 @@ public class IrsProxy {
     }
 
     private boolean proceedStorageDomain(StorageDomain domainFromVdsm, int dataMasterVersion, StoragePool storagePool) {
-        StorageDomain storage_domain = storageDomainDao.getForStoragePool(domainFromVdsm.getId(), _storagePoolId);
+        StorageDomain storage_domain = storageDomainDao.getForStoragePool(domainFromVdsm.getId(), storagePoolId);
 
         if (storage_domain != null) {
             StorageDomainStatic domainFromDb = storage_domain.getStorageStaticData();
@@ -472,7 +475,7 @@ public class IrsProxy {
             }
             boolean statusChanged = false;
             if (domainPoolMapFromDb == null) {
-                domainFromVdsm.setStoragePoolId(_storagePoolId);
+                domainFromVdsm.setStoragePoolId(storagePoolId);
                 storagePoolIsoMapDao.save(domainFromVdsm.getStoragePoolIsoMapData());
                 statusChanged = true;
             } else if (!domainPoolMapFromDb.getStatus().isStorageDomainInProcess()
@@ -580,7 +583,7 @@ public class IrsProxy {
             final String exceptionMessage,
             final String logMessage) {
 
-        getEventQueue().submitEventSync(new Event(_storagePoolId,
+        getEventQueue().submitEventSync(new Event(this.storagePoolId,
                 masterDomain.getId(), null, EventType.RECONSTRUCT, "Reconstruct caused by failure to execute spm command"),
                 () -> {
                     log.warn(logMessage);
@@ -615,13 +618,13 @@ public class IrsProxy {
         if (vdsId != null) {
             try {
                 VDSReturnValue statusResult = resourceManager.runVdsCommand(VDSCommandType.SpmStatus,
-                        new SpmStatusVDSCommandParameters(vdsId, _storagePoolId));
+                        new SpmStatusVDSCommandParameters(vdsId, storagePoolId));
                 if (statusResult != null
                         && statusResult.getSucceeded()
                         && (((SpmStatusResult) statusResult.getReturnValue()).getSpmStatus() == SpmStatus.SPM || ((SpmStatusResult) statusResult
                                 .getReturnValue()).getSpmStatus() == SpmStatus.Contend)) {
                     performFailover = resourceManager.runVdsCommand(VDSCommandType.SpmStop,
-                                    new SpmStopVDSCommandParameters(vdsId, _storagePoolId)).getSucceeded();
+                                    new SpmStopVDSCommandParameters(vdsId, storagePoolId)).getSucceeded();
                 } else {
                     performFailover = true;
                 }
@@ -647,7 +650,7 @@ public class IrsProxy {
 
     public IIrsServer getIrsProxy() {
         if (getmIrsProxy() == null) {
-            final StoragePool storagePool = storagePoolDao.get(_storagePoolId);
+            final StoragePool storagePool = storagePoolDao.get(storagePoolId);
             // don't try to start spm on uninitialized pool
             if (storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
                 String host =
@@ -690,7 +693,7 @@ public class IrsProxy {
             }
 
             private boolean isMasterDomainUp() {
-                return storageDomainDao.getStorageDomains(_storagePoolId, StorageDomainType.Master).stream()
+                return storageDomainDao.getStorageDomains(storagePoolId, StorageDomainType.Master).stream()
                         .anyMatch(d -> d.getStatus() == StorageDomainStatus.Active || d.getStatus() == StorageDomainStatus.Unknown);
             }
         });
@@ -705,8 +708,8 @@ public class IrsProxy {
 
     private void connectStoragePool(VDS vds, StoragePool storagePool) {
         Guid masterDomainId = storageDomainDao
-                .getMasterStorageDomainIdForPool(_storagePoolId);
-        List<StoragePoolIsoMap> storagePoolIsoMap = storagePoolIsoMapDao.getAllForStoragePool(_storagePoolId);
+                .getMasterStorageDomainIdForPool(storagePoolId);
+        List<StoragePoolIsoMap> storagePoolIsoMap = storagePoolIsoMapDao.getAllForStoragePool(storagePoolId);
         VDSReturnValue connectResult = resourceManager.runVdsCommand(
                 VDSCommandType.ConnectStoragePool,
                 new ConnectStoragePoolVDSCommandParameters(vds, storagePool,
@@ -724,10 +727,10 @@ public class IrsProxy {
     private String gethostFromVds() {
         String returnValue = null;
         Guid curVdsId = (currentVdsId != null) ? currentVdsId : Guid.Empty;
-        StoragePool storagePool = storagePoolDao.get(_storagePoolId);
+        StoragePool storagePool = storagePoolDao.get(storagePoolId);
 
         if (storagePool == null) {
-            log.info("hostFromVds::Finished elect spm, storage pool '{}' was removed", _storagePoolId);
+            log.info("hostFromVds::Finished elect spm, storage pool '{}' was removed", storagePoolId);
             return null;
         }
 
@@ -741,7 +744,7 @@ public class IrsProxy {
         StoragePoolStatus prevStatus = storagePool.getStatus();
         if (prevStatus != StoragePoolStatus.NonResponsive) {
             try {
-                getEventListener().storagePoolStatusChange(_storagePoolId, StoragePoolStatus.NonResponsive,
+                getEventListener().storagePoolStatusChange(storagePoolId, StoragePoolStatus.NonResponsive,
                                 AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_SEARCHING_NEW_SPM,
                                 EngineError.ENGINE, TransactionScopeOption.RequiresNew);
             } catch (RuntimeException ex) {
@@ -771,7 +774,7 @@ public class IrsProxy {
 
             VDSReturnValue returnValueFromVds = resourceManager.runVdsCommand(
                     VDSCommandType.SpmStatus,
-                    new SpmStatusVDSCommandParameters(selectedVds.getId(), _storagePoolId));
+                    new SpmStatusVDSCommandParameters(selectedVds.getId(), storagePoolId));
             spmStatus = (SpmStatusResult) returnValueFromVds.getReturnValue();
             boolean ignoreSpmStatusResult = returnValueFromVds.getVdsError() != null
                     && returnValueFromVds.getVdsError().getCode() == EngineError.InquireNotSupportedError;
@@ -792,7 +795,7 @@ public class IrsProxy {
                         // refresh spmStatus result
                         spmStatus = (SpmStatusResult) resourceManager
                                 .runVdsCommand(VDSCommandType.SpmStatus,
-                                        new SpmStatusVDSCommandParameters(selectedVds.getId(), _storagePoolId))
+                                        new SpmStatusVDSCommandParameters(selectedVds.getId(), storagePoolId))
                                 .getReturnValue();
                         log.info(
                                 "hostFromVds::Connected host to pool - selectedVds - {}, spmStatus {}, storage pool {}",
@@ -826,7 +829,7 @@ public class IrsProxy {
                     // then disconnect
                     resourceManager.runVdsCommand(
                             VDSCommandType.DisconnectStoragePool,
-                            new DisconnectStoragePoolVDSCommandParameters(selectedVdsId, _storagePoolId,
+                            new DisconnectStoragePoolVDSCommandParameters(selectedVdsId, storagePoolId,
                                     selectedVdsSpmId));
                 }
             } else {
@@ -846,10 +849,10 @@ public class IrsProxy {
         // Gets a list of the hosts in the storagePool, that are "UP", ordered
         // by vds_spm_priority (not including -1) and secondly ordered by RANDOM(), to
         // deal with the case that there are several hosts with the same priority.
-        List<VDS> allVds = vdsDao.getListForSpmSelection(_storagePoolId);
+        List<VDS> allVds = vdsDao.getListForSpmSelection(storagePoolId);
         List<VDS> vdsRelevantForSpmSelection = new ArrayList<>();
-        Guid preferredHost = getIrsProxyManager().getProxy(_storagePoolId).getPreferredHostId();
-        getIrsProxyManager().getProxy(_storagePoolId).setPreferredHostId(null);
+        Guid preferredHost = getIrsProxyManager().getProxy(storagePoolId).getPreferredHostId();
+        getIrsProxyManager().getProxy(storagePoolId).setPreferredHostId(null);
 
         for (VDS vds : allVds) {
             if (!triedVdssList.contains(vds.getId()) && !vds.getId().equals(curVdsId)) {
@@ -938,7 +941,7 @@ public class IrsProxy {
     }
 
     private boolean wasVdsManuallyFenced(int spmId) {
-        VdsSpmIdMap map = vdsSpmIdMapDao.get(_storagePoolId, spmId);
+        VdsSpmIdMap map = vdsSpmIdMapDao.get(storagePoolId, spmId);
         return map != null && map.getId().equals(getFencedIrs());
     }
 
@@ -974,7 +977,7 @@ public class IrsProxy {
                     // non operational we want to find it as well
                     if (spmVds == null) {
                         List<VDS> nonOperationalVds =
-                                vdsDao.getAllForStoragePoolAndStatus(_storagePoolId, VDSStatus.NonOperational);
+                                vdsDao.getAllForStoragePoolAndStatus(storagePoolId, VDSStatus.NonOperational);
                         for (VDS tempVds : nonOperationalVds) {
                             if (tempVds.getVdsSpmId() == spmId) {
                                 spmVds = tempVds;
@@ -999,7 +1002,7 @@ public class IrsProxy {
                     if (!spmVdsId.equals(Guid.Empty)) {
                         SpmStatusResult destSpmStatus = (SpmStatusResult) resourceManager
                                 .runVdsCommand(VDSCommandType.SpmStatus,
-                                        new SpmStatusVDSCommandParameters(spmVdsId, _storagePoolId))
+                                        new SpmStatusVDSCommandParameters(spmVdsId, storagePoolId))
                                 .getReturnValue();
                         log.info("SpmStatus on vds '{}': '{}'", spmVdsId, destSpmStatus == null ? "NULL"
                                 : destSpmStatus.getSpmStatus());
@@ -1039,7 +1042,7 @@ public class IrsProxy {
                 }
             }
             if (startSpm) {
-                VdsSpmIdMap map = vdsSpmIdMapDao.get(_storagePoolId, vdsSpmIdToFence);
+                VdsSpmIdMap map = vdsSpmIdMapDao.get(storagePoolId, vdsSpmIdToFence);
                 if (map != null) {
                     VDS vdsToFenceObject = vdsDao.get(map.getId());
                     if (vdsToFenceObject != null) {
@@ -1052,7 +1055,7 @@ public class IrsProxy {
                             // try to stop spm
                             VDSReturnValue spmStopReturnValue = resourceManager.runVdsCommand(
                                     VDSCommandType.SpmStop,
-                                    new SpmStopVDSCommandParameters(vdsToFenceObject.getId(), _storagePoolId));
+                                    new SpmStopVDSCommandParameters(vdsToFenceObject.getId(), storagePoolId));
                             // if spm stop succeeded no need to fence,
                             // continue with spm selection
                             if (spmStopReturnValue != null && spmStopReturnValue.getSucceeded()) {
@@ -1091,7 +1094,7 @@ public class IrsProxy {
         SpmStatusResult spmStatus = (SpmStatusResult) resourceManager.runVdsCommand(
                         VDSCommandType.SpmStart,
                         new SpmStartVDSCommandParameters(selectedVds.getId(),
-                                _storagePoolId,
+                                storagePoolId,
                                 prevId,
                                 lver,
                                 storagePool
@@ -1126,7 +1129,7 @@ public class IrsProxy {
 
     public void resetIrs() {
         nullifyInternalProxies();
-        StoragePool storagePool = storagePoolDao.get(_storagePoolId);
+        StoragePool storagePool = storagePoolDao.get(storagePoolId);
         if (storagePool != null) {
             storagePool.setSpmVdsId(null);
             storagePoolDao.update(storagePool);
@@ -1142,11 +1145,11 @@ public class IrsProxy {
         currentVdsId = null;
     }
 
-    private final Map<Guid, HashSet<Guid>> _domainsInProblem = new ConcurrentHashMap<>();
+    private final Map<Guid, HashSet<Guid>> domainsInProblem = new ConcurrentHashMap<>();
     private final Map<Guid, HashSet<Guid>> _domainsInMaintenance = new ConcurrentHashMap<>();
     private final Map<Guid, Guid> vdsReportsOnUnseenDomain = new ConcurrentHashMap<>();
     private final Map<Guid, Guid> vdsHandeledReportsOnUnseenDomains = new ConcurrentHashMap<>();
-    private final Map<Guid, String> _timers = new HashMap<>();
+        private final Map<Guid, ScheduledFuture> timersMap = new HashMap<>();
 
     public void updateVdsDomainsData(VDS vds,
                                      final ArrayList<VDSDomainsData> data) {
@@ -1155,7 +1158,7 @@ public class IrsProxy {
         }
 
         StoragePool storagePool =
-                storagePoolDao.get(_storagePoolId);
+                storagePoolDao.get(storagePoolId);
         if (storagePool != null
                 && (storagePool.getStatus() == StoragePoolStatus.Up
                 || storagePool.getStatus() == StoragePoolStatus.NonResponsive)) {
@@ -1211,9 +1214,9 @@ public class IrsProxy {
         Set<Guid>  domainsInMaintenance = new HashSet<>();
         Set<Guid> maintInPool = new HashSet<>(
                 storageDomainStaticDao.getAllIds(
-                        _storagePoolId, StorageDomainStatus.Maintenance));
+                        storagePoolId, StorageDomainStatus.Maintenance));
         maintInPool.addAll(storageDomainStaticDao.getAllIds(
-                _storagePoolId, StorageDomainStatus.PreparingForMaintenance));
+                storagePoolId, StorageDomainStatus.PreparingForMaintenance));
 
         for (Guid tempDomainId : maintInPool) {
             if (!monitoredDomains.contains(tempDomainId)) {
@@ -1236,11 +1239,11 @@ public class IrsProxy {
         // which are in status Active or Unknown
         Set<Guid> activeDomainsInPool = new HashSet<>(
                 storageDomainStaticDao.getAllIds(
-                        _storagePoolId, StorageDomainStatus.Active));
+                        storagePoolId, StorageDomainStatus.Active));
         Set<Guid> unknownDomainsInPool = new HashSet<>(storageDomainStaticDao.getAllIds(
-                _storagePoolId, StorageDomainStatus.Unknown));
+                storagePoolId, StorageDomainStatus.Unknown));
         Set<Guid> inActiveDomainsInPool =
-                new HashSet<>(storageDomainStaticDao.getAllIds(_storagePoolId, StorageDomainStatus.Inactive));
+                new HashSet<>(storageDomainStaticDao.getAllIds(storagePoolId, StorageDomainStatus.Inactive));
 
         // build a list of all the domains in
         // pool (activeDomainsInPool and unknownDomainsInPool) that are not
@@ -1280,9 +1283,9 @@ public class IrsProxy {
                 log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
                         getDomainIdTuple(tempData.getDomainId()),
                         vdsName,
-                        _storagePoolId);
+                        storagePoolId);
                 StoragePoolIsoMap map =
-                        storagePoolIsoMapDao.get(new StoragePoolIsoMapId(tempData.getDomainId(), _storagePoolId));
+                        storagePoolIsoMapDao.get(new StoragePoolIsoMapId(tempData.getDomainId(), storagePoolId));
                 map.setStatus(StorageDomainStatus.Active);
                 storagePoolIsoMapDao.update(map);
 
@@ -1302,7 +1305,7 @@ public class IrsProxy {
 
     private void updateDomainInProblem(final Guid vdsId, final String vdsName, final Map<Guid, DomainMonitoringResult> domainsInProblem,
                                        final Set<Guid> domainsInMaintenance) {
-        getEventQueue().submitEventSync(new Event(_storagePoolId,
+        getEventQueue().submitEventSync(new Event(storagePoolId,
                 null, vdsId, EventType.DOMAINMONITORING, ""),
                 () -> {
                     EventResult result = new EventResult(true, EventType.DOMAINMONITORING);
@@ -1325,9 +1328,9 @@ public class IrsProxy {
         List<Guid> domainsInProblem = new LinkedList<>();
         Set<Guid> domainsInPool = new HashSet<>(
                 storageDomainStaticDao.getAllIds(
-                        _storagePoolId, StorageDomainStatus.Active));
+                        storagePoolId, StorageDomainStatus.Active));
         domainsInPool.addAll(storageDomainStaticDao.getAllIds(
-                _storagePoolId, StorageDomainStatus.Unknown));
+                storagePoolId, StorageDomainStatus.Unknown));
         List<Guid> domainWhichWereSeen = new ArrayList<>();
         for (VDSDomainsData vdsDomainData : vdsDomainsData) {
             if (domainsInPool.contains(vdsDomainData.getDomainId())) {
@@ -1433,7 +1436,7 @@ public class IrsProxy {
 
     private void updateProblematicVdsData(final Guid vdsId, final String vdsName, Map<Guid, DomainMonitoringResult> problematicDomains) {
         // for all problematic domains
-        // update cache of _domainsInProblem
+        // update cache of domainsInProblem
         // and _vdssInProblem and add a new
         // timer for new domains in problem
         boolean newDomainUnreachableByHost = false;
@@ -1441,7 +1444,7 @@ public class IrsProxy {
         for (Map.Entry<Guid, DomainMonitoringResult> entry : problematicDomains.entrySet()) {
             Guid domainId = entry.getKey();
             DomainMonitoringResult domainMonitoringResult = entry.getValue();
-            HashSet<Guid> hostsReportedDomainAsProblematic = _domainsInProblem.get(domainId);
+            HashSet<Guid> hostsReportedDomainAsProblematic = domainsInProblem.get(domainId);
             boolean domainNotFound = domainMonitoringResult == DomainMonitoringResult.STORAGE_ACCCESS_ERROR;
             if (domainNotFound) {
                 domainsUnreachableByHost.add(domainId);
@@ -1479,10 +1482,10 @@ public class IrsProxy {
             vdsReportsOnUnseenDomain.put(vdsId, newReportId);
         }
 
-        Set<Guid> notReportedDomainsByHost = new HashSet<>(_domainsInProblem.keySet());
+        Set<Guid> notReportedDomainsByHost = new HashSet<>(domainsInProblem.keySet());
         notReportedDomainsByHost.removeAll(problematicDomains.keySet());
         for (Guid domainId : notReportedDomainsByHost) {
-            Set<Guid> vdsForDomain = _domainsInProblem.get(domainId);
+            Set<Guid> vdsForDomain = domainsInProblem.get(domainId);
             if (vdsForDomain != null && vdsForDomain.contains(vdsId)) {
                 domainRecoveredFromProblem(domainId, vdsId, vdsName);
             }
@@ -1492,40 +1495,38 @@ public class IrsProxy {
     private void domainRecoveredFromProblem(Guid domainId, Guid vdsId, String vdsName) {
         String domainIdTuple = getDomainIdTuple(domainId);
         log.info("Domain '{}' recovered from problem. vds: '{}'", domainIdTuple, vdsName);
-        _domainsInProblem.get(domainId).remove(vdsId);
-        if (_domainsInProblem.get(domainId).size() == 0) {
+        domainsInProblem.get(domainId).remove(vdsId);
+        if (domainsInProblem.get(domainId).size() == 0) {
             log.info("Domain '{}' has recovered from problem. No active host in the DC is reporting it as" +
                     " problematic, so clearing the domain recovery timer.", domainIdTuple);
-            _domainsInProblem.remove(domainId);
+            domainsInProblem.remove(domainId);
             clearTimer(domainId);
         }
     }
 
     private void addDomainInProblemData(Guid domainId, Guid vdsId, String vdsName,
                                         DomainMonitoringResult domainMonitoringResult) {
-        _domainsInProblem.put(domainId, new HashSet<>(Arrays.asList(vdsId)));
+        domainsInProblem.put(domainId, new HashSet<>(Arrays.asList(vdsId)));
         log.warn("domain '{}' in problem '{}'. vds: '{}'", getDomainIdTuple(domainId), domainMonitoringResult,
                 vdsName);
-        Class[] inputType = new Class[] { Guid.class };
-        Object[] inputParams = new Object[] { domainId };
-        String jobId = getSchedulUtil().scheduleAOneTimeJob(this, "onTimer", inputType,
-                inputParams, Config.<Integer>getValue(ConfigValues.StorageDomainFailureTimeoutInMinutes),
+        ScheduledFuture job = schedulerService.schedule(() -> onTimer(domainId),
+                Config.<Long>getValue(ConfigValues.StorageDomainFailureTimeoutInMinutes),
                 TimeUnit.MINUTES);
         clearTimer(domainId);
-        _timers.put(domainId, jobId);
+        timersMap.put(domainId, job);
     }
 
     @OnTimerMethodAnnotation("onTimer")
     public void onTimer(final Guid domainId) {
-        getEventQueue().submitEventAsync(new Event(_storagePoolId,
+        getEventQueue().submitEventAsync(new Event(storagePoolId,
                 domainId, null, EventType.DOMAINFAILOVER, ""),
                 () -> {
                     EventResult result = null;
-                    if (_domainsInProblem.containsKey(domainId)) {
+                    if (domainsInProblem.containsKey(domainId)) {
                         log.info("starting processDomainRecovery for domain '{}'.", getDomainIdTuple(domainId));
                         result = processDomainRecovery(domainId);
                     }
-                    _timers.remove(domainId);
+                    timersMap.remove(domainId);
                     return result;
                 });
     }
@@ -1575,10 +1576,10 @@ public class IrsProxy {
 
         List<Callable<Void>> connectStorageTasks = new ArrayList<>();
         final List<Callable<Void>> refreshStoragePoolTasks = new ArrayList<>();
-        final StoragePool storagePool = storagePoolDao.get(_storagePoolId);
+        final StoragePool storagePool = storagePoolDao.get(storagePoolId);
         final Guid masterDomainId =
-                storageDomainDao.getMasterStorageDomainIdForPool(_storagePoolId);
-        final  List<StoragePoolIsoMap> storagePoolIsoMap = storagePoolIsoMapDao.getAllForStoragePool(_storagePoolId);
+                storageDomainDao.getMasterStorageDomainIdForPool(storagePoolId);
+        final  List<StoragePoolIsoMap> storagePoolIsoMap = storagePoolIsoMapDao.getAllForStoragePool(storagePoolId);
 
         Map<String, Pair<String, String>> acquiredLocks = new HashMap<>();
         try {
@@ -1623,7 +1624,7 @@ public class IrsProxy {
             ThreadPoolUtil.invokeAll(connectStorageTasks);
 
             log.info("Submitting to the event queue pool refresh for hosts '{}'", handledHosts);
-            getEventQueue().submitEventSync(new Event(_storagePoolId,
+            getEventQueue().submitEventSync(new Event(storagePoolId,
                             null,
                             null,
                             EventType.POOLREFRESH,
@@ -1644,7 +1645,7 @@ public class IrsProxy {
                                            DomainMonitoringResult domainMonitoringResult) {
         log.debug("domain '{}' still in problem '{}'. vds: '{}'", getDomainIdTuple(domainId),
                 domainMonitoringResult, vdsName);
-        _domainsInProblem.get(domainId).add(vdsId);
+        domainsInProblem.get(domainId).add(vdsId);
     }
 
     private EventResult processDomainRecovery(final Guid domainId) {
@@ -1655,7 +1656,7 @@ public class IrsProxy {
         // Note - this method is used as it returns only hosts from VIRT supported clusters
         // (we use the domain monitoring results only from those clusters hosts).
         // every change to it should be inspected carefully.
-        List<VDS> allVds = vdsDao.getAllForStoragePoolAndStatus(_storagePoolId, null);
+        List<VDS> allVds = vdsDao.getAllForStoragePoolAndStatus(storagePoolId, null);
         Map<Guid, VDS> vdsMap = new HashMap<>();
         for (VDS tempVDS : allVds) {
             vdsMap.put(tempVDS.getId(), tempVDS);
@@ -1668,7 +1669,7 @@ public class IrsProxy {
         // on this domain as in problem.
         // Mark the above list as hosts we suspect are in
         // problem.
-        Set<Guid> hostsThatReportedDomainAsInProblem = _domainsInProblem.get(domainId);
+        Set<Guid> hostsThatReportedDomainAsInProblem = domainsInProblem.get(domainId);
         List<Guid> vdssInProblem = new ArrayList<>();
         for (Guid tempVDSId : vdssInPool) {
             if (!hostsThatReportedDomainAsInProblem.contains(tempVDSId)) {
@@ -1692,7 +1693,7 @@ public class IrsProxy {
                 // Moving all the hosts which reported on
                 // this domain as in problem to non
                 // operational.
-                for (final Guid vdsId : _domainsInProblem.get(domainId)) {
+                for (final Guid vdsId : domainsInProblem.get(domainId)) {
                     VDS vds = vdsMap.get(vdsId);
                     if (vds == null) {
                         log.warn(
@@ -1735,15 +1736,15 @@ public class IrsProxy {
             if (storageDomain.getStorageDomainType() != StorageDomainType.Master) {
                 log.error("Domain '{}' was reported by all hosts in status UP as problematic. Moving the domain to NonOperational.",
                         domainIdTuple);
-                result = getEventListener().storageDomainNotOperational(domainId, _storagePoolId);
+                result = getEventListener().storageDomainNotOperational(domainId, storagePoolId);
             } else {
                 log.warn("Domain '{}' was reported by all hosts in status UP as problematic. Not moving the domain to NonOperational because it is being reconstructed now.",
                         domainIdTuple);
-                result = getEventListener().masterDomainNotOperational(domainId, _storagePoolId, false, false);
+                result = getEventListener().masterDomainNotOperational(domainId, storagePoolId, false, false);
             }
         }
 
-        // clear from cache of _domainsInProblem
+        // clear from cache of domainsInProblem
         clearDomainFromCache(domainId, nonOpVdss);
         return result;
     }
@@ -1755,9 +1756,9 @@ public class IrsProxy {
      *            - the domain to clean the timer for
      */
     private void clearTimer(Guid domainId) {
-        String jobId = _timers.remove(domainId);
-        if (jobId != null) {
-            getSchedulUtil().deleteJob(jobId);
+        ScheduledFuture job = timersMap.remove(domainId);
+        if (job != null) {
+            cancelJob(job);
         }
     }
 
@@ -1771,7 +1772,7 @@ public class IrsProxy {
      */
     private void clearDomainFromCache(Guid domainId, List<Guid> nonOpVdss) {
         if (domainId != null) {
-            _domainsInProblem.remove(domainId);
+            domainsInProblem.remove(domainId);
         }
         removeVdsAsProblematic(nonOpVdss);
         removeVdsFromDomainMaintenance(nonOpVdss);
@@ -1779,7 +1780,7 @@ public class IrsProxy {
     }
 
     private void removeVdsAsProblematic(List<Guid> nonOpVdss) {
-        Iterator<Map.Entry<Guid, HashSet<Guid>>> iterDomainsInProblem = _domainsInProblem.entrySet().iterator();
+        Iterator<Map.Entry<Guid, HashSet<Guid>>> iterDomainsInProblem = domainsInProblem.entrySet().iterator();
         while (iterDomainsInProblem.hasNext()) {
             Map.Entry<Guid, HashSet<Guid>> entry = iterDomainsInProblem.next();
             entry.getValue().removeAll(nonOpVdss);
@@ -1816,19 +1817,19 @@ public class IrsProxy {
      * deletes all the jobs for the domains in the pool and clears the problematic entities caches.
      */
     public void clearCache() {
-        log.info("clearing cache for problematic entities in pool '{}'.", _storagePoolId);
+        log.info("clearing cache for problematic entities in pool '{}'.", storagePoolId);
         // clear lists
-        _timers.clear();
-        _domainsInProblem.clear();
+        timersMap.clear();
+        domainsInProblem.clear();
     }
 
     public void clearPoolTimers() {
-        log.info("clear domain error-timers for pool '{}'.", _storagePoolId);
-        for (String jobId : _timers.values()) {
+        log.info("clear domain error-timers for pool '{}'.", storagePoolId);
+        for (Map.Entry<Guid, ScheduledFuture> entry : timersMap.entrySet()) {
             try {
-                getSchedulUtil().deleteJob(jobId);
+                cancelJob(entry.getValue());
             } catch (Exception e) {
-                log.warn("failed deleting job '{}'.", jobId);
+                log.warn("failed deleting job for domain '{}'.", entry.getKey());
             }
         }
     }
@@ -1844,7 +1845,7 @@ public class IrsProxy {
      */
     public void clearVdsFromCache(Guid vdsId, String vdsName) {
         log.info("Clearing cache of pool: '{}' for problematic entities of VDS: '{}'.",
-                _storagePoolId, vdsName);
+                storagePoolId, vdsName);
 
         clearDomainFromCache(null, Arrays.asList(vdsId));
     }
@@ -1855,12 +1856,19 @@ public class IrsProxy {
         runInControlledConcurrency(() -> {
             log.info("IrsProxy::disposing");
             resetIrs();
-            getSchedulUtil().deleteJob(storagePoolRefreshJobId);
-            getSchedulUtil().deleteJob(domainRecoverOnHostJobId);
+            cancelJob(storagePoolRefreshJob);
+            cancelJob(domainRecoverOnHostJob);
             _disposed = true;
         });
     }
 
+    private void cancelJob(ScheduledFuture job) {
+       try {
+           job.cancel(true);
+       } catch (Throwable t) {
+           log.debug("Exception cancelling job: {}" , ExceptionUtils.getRootCauseMessage(t));
+       }
+    }
     private String getDomainIdTuple(Guid domainId) {
         StorageDomainStatic storage_domain = storageDomainStaticDao.get(domainId);
         if (storage_domain != null) {

@@ -25,7 +25,7 @@ public class JobWrapper implements Job {
 
     // static data members
     private static ConcurrentMap<String, Method> cachedMethods = new ConcurrentHashMap<>();
-    private final Logger log = LoggerFactory.getLogger(SchedulerUtilQuartzImpl.class);
+    private final Logger log = LoggerFactory.getLogger(JobWrapper.class);
 
     /**
      * execute a method within an instance. The instance and the method name are
