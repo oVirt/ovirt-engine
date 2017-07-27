@@ -9,14 +9,11 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 
 public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
-    private StoragePoolDao storagePoolDao;
     private StoragePoolIsoMapDao dao;
-    private StoragePool existingPool;
     private StoragePoolIsoMap existingStoragePoolIsoMap;
     private StoragePoolIsoMap newStoragePoolIsoMap;
 
@@ -25,12 +22,10 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getStoragePoolIsoMapDao();
-        storagePoolDao = dbFacade.getStoragePoolDao();
 
-        existingPool = storagePoolDao.get(FixturesTool.DATA_CENTER);
-        existingStoragePoolIsoMap = dao.get(new StoragePoolIsoMapId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, existingPool.getId()));
+        existingStoragePoolIsoMap = dao.get(new StoragePoolIsoMapId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DATA_CENTER));
         newStoragePoolIsoMap =
-                new StoragePoolIsoMap(FixturesTool.STORAGE_DOMAIN_SCALE_SD6, existingPool.getId(), StorageDomainStatus.Unattached);
+                new StoragePoolIsoMap(FixturesTool.STORAGE_DOMAIN_SCALE_SD6, FixturesTool.DATA_CENTER, StorageDomainStatus.Unattached);
     }
 
     @Test
@@ -83,12 +78,12 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllStoragePoolIsoMapsForStoragePool() {
-        List<StoragePoolIsoMap> result = dao.getAllForStoragePool(existingPool.getId());
+        List<StoragePoolIsoMap> result = dao.getAllForStoragePool(FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StoragePoolIsoMap mapping : result) {
-            assertEquals(existingPool.getId(), mapping.getStoragePoolId());
+            assertEquals(FixturesTool.DATA_CENTER, mapping.getStoragePoolId());
         }
     }
 
