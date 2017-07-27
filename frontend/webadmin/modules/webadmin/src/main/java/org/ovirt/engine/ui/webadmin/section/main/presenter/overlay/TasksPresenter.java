@@ -68,7 +68,7 @@ public class TasksPresenter extends AbstractOverlayPresenter<TasksPresenter.View
                             || JobExecutionStatus.ABORTED.equals(job.getStatus())) {
                         if (runningTasks.contains(id)) {
                             ToastNotification notification = ToastNotification.createNotification(
-                                    getPrefixText(job.getStatus()) + job.getDescription());
+                                    getPrefixText(job.getStatus()) + " " + job.getDescription());//$NON-NLS-1$
                             notification.setStatus(getNotificationStatus(job.getStatus()));
                         }
                         runningTasks.remove(id);
