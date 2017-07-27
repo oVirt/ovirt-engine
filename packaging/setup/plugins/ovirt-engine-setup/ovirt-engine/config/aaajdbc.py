@@ -402,6 +402,13 @@ class Plugin(plugin.PluginBase):
             oenginecons.ConfigEnv.ADMIN_USER
         ].rsplit('@', 1)[0]
 
+        self.logger.info(
+            _(
+                'Setting a password for internal user {admin}'
+            ).format(
+                admin=adminUser,
+            )
+        )
         self.execute(
             args=(
                 oenginecons.FileLocations.AAA_JDBC_TOOL,
