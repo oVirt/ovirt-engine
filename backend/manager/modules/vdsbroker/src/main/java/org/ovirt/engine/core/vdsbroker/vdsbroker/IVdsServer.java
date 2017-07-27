@@ -498,4 +498,6 @@ public interface IVdsServer {
     StatusOnlyReturn hotplugLease(Guid vmId, Guid storageDomainId);
 
     StatusOnlyReturn hotunplugLease(Guid vmId, Guid storageDomainId);
+
+    LldpReturn getLldp(String[] interfaces);
 }
