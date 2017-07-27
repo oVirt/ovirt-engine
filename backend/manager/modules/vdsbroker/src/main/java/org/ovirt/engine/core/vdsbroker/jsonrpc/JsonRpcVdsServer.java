@@ -50,6 +50,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.LldpReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneMapReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturn;
@@ -2312,5 +2313,16 @@ public class JsonRpcVdsServer implements IVdsServer {
         lease.put("lease_id", vmId.toString());
         lease.put("sd_id", storageDomainId.toString());
         return lease;
+    }
+
+    @Override
+    public LldpReturn getLldp(String[] interfaces) {
+        Map<String, Object> filter = new HashMap<>();
+        filter.put("devices", interfaces);
+
+        JsonRpcRequest request = new RequestBuilder("Host.getLldp")
+                .withParameter("filter", filter).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new LldpReturn(response);
     }
 }
