@@ -12,10 +12,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.compat.Guid;
 
 public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
-    private static final Guid FREE_ISO_ID = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ac");
     private StoragePoolDao storagePoolIsoMapDao;
     private StoragePoolIsoMapDao dao;
     private StoragePool existingPool;
@@ -32,7 +30,7 @@ public class StoragePoolIsoMapDaoTest extends BaseDaoTestCase {
         existingPool = storagePoolIsoMapDao.get(FixturesTool.DATA_CENTER);
         existingStoragePoolIsoMap = dao.get(new StoragePoolIsoMapId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5, existingPool.getId()));
         newStoragePoolIsoMap =
-                new StoragePoolIsoMap(FREE_ISO_ID, existingPool.getId(), StorageDomainStatus.Unattached);
+                new StoragePoolIsoMap(FixturesTool.STORAGE_DOMAIN_SCALE_SD6, existingPool.getId(), StorageDomainStatus.Unattached);
     }
 
     @Test
