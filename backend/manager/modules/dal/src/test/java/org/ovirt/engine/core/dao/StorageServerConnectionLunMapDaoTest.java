@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerCon
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 
 public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
-    private static final String FREE_LUN_ID = "1IET_00180002";
     private static final int NUM_LUN_MAPS = 6;
 
     private StorageServerConnectionLunMapDao dao;
@@ -26,7 +25,7 @@ public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
 
         existingLUNStorageMap =
                 dao.get(new LUNStorageServerConnectionMapId(FixturesTool.LUN_ID1, FixturesTool.STORAGE_CONNECTION_ID));
-        newLUNStorageMap = new LUNStorageServerConnectionMap(FREE_LUN_ID, FixturesTool.STORAGE_CONNECTION_ID);
+        newLUNStorageMap = new LUNStorageServerConnectionMap(FixturesTool.LUN_ID_FOR_DISK, FixturesTool.STORAGE_CONNECTION_ID);
     }
 
     @Test
