@@ -226,8 +226,14 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+DROP TYPE IF EXISTS entity_name_map_rs CASCADE;
+CREATE TYPE entity_name_map_rs AS (
+        entity_id UUID,
+        entity_name TEXT
+        );
+
 CREATE OR REPLACE FUNCTION GetEntitiesNameMap ()
-RETURNS TABLE(entity_id UUID, entity_name TEXT) STABLE AS $PROCEDURE$
+RETURNS SETOF entity_name_map_rs STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
