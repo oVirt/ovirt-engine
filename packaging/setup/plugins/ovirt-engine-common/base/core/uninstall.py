@@ -174,8 +174,21 @@ class Plugin(plugin.PluginBase):
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
             )
+        if self.environment[
+            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+        ]:
+            _addSection(
+                'unremovable',
+                'Unremovable files',
+                False,
+            )
+            _addFiles(
+                'unremovable',
+                self.environment[
+                    osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+                ],
+            )
 
-        allfiles = []
         for section, content in [
             (
                 key[len(osetupcons.CoreEnv.FILE_GROUP_PREFIX):],
@@ -189,7 +202,6 @@ class Plugin(plugin.PluginBase):
             fileList = []
             for x in content:
                 fileList.extend(x)
-            allfiles.extend(fileList)
             group_config = self.environment[
                 osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
             ].config[section]
@@ -203,22 +215,6 @@ class Plugin(plugin.PluginBase):
                     osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
                     fileList,
                 )
-
-        # Only add to unremovable those we actually created
-        unremovable = self.environment[
-            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ]
-        unremovable = list(set(unremovable) & set(allfiles))
-        if unremovable:
-            _addSection(
-                'unremovable',
-                'Unremovable files',
-                False,
-            )
-            _addFiles(
-                'unremovable',
-                unremovable,
-            )
 
         for section, changes in [
             (
