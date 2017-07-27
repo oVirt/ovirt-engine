@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 
@@ -24,13 +23,10 @@ public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getStorageServerConnectionLunMapDao();
-        StorageServerConnectionDao storageServerConnectionDao = dbFacade.getStorageServerConnectionDao();
-
-        StorageServerConnections existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297e");
 
         existingLUNStorageMap =
-                dao.get(new LUNStorageServerConnectionMapId("1IET_00180001", existingConnection.getId()));
-        newLUNStorageMap = new LUNStorageServerConnectionMap(FREE_LUN_ID, existingConnection.getId());
+                dao.get(new LUNStorageServerConnectionMapId("1IET_00180001", FixturesTool.STORAGE_CONNECTION_ID));
+        newLUNStorageMap = new LUNStorageServerConnectionMap(FREE_LUN_ID, FixturesTool.STORAGE_CONNECTION_ID);
     }
 
     @Test
