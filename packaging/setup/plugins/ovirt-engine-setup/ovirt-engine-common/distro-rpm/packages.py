@@ -368,9 +368,13 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='OVESETUP_RPMDISTRO_PACKAGE_UPGRADE',
                     note=_(
-                        'Setup has found updates for some packages:\n'
+                        'Setup needs to install or update the following '
+                        'packages:\n'
                         '{plist}\n'
-                        'do you wish to update them now? '
+                        'Replying "No" will abort Setup. You can pass the '
+                        'option "--offline" to prevent installing or updating '
+                        'packages.\n'
+                        'Do you wish to update them now? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ).format(
                         plist='\n'.join(plist)
@@ -462,7 +466,10 @@ class Plugin(plugin.PluginBase):
 
         if not self._enabled and upgradeAvailable:
             raise RuntimeError(
-                _('Aborted, packages must be updated')
+                _(
+                    'Aborted, packages must be updated. You can pass '
+                    '"--offline" to prevent checking for updates.'
+                )
             )
 
     @plugin.event(
