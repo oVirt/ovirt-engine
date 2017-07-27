@@ -95,6 +95,8 @@ public class VmInfoBuildUtils {
     private static final String CLOUD_INIT_VOL_ID = "config-2";
     private static final Base64 BASE_64 = new Base64(0, null);
 
+    public static final String VDSM_LIBGF_CAP_NAME = "libgfapi_supported";
+
     private final NetworkClusterDao networkClusterDao;
     private final NetworkDao networkDao;
     private final NetworkFilterDao networkFilterDao;
@@ -843,7 +845,7 @@ public class VmInfoBuildUtils {
         StorageType storageType = diskImage.getStorageTypes().get(0);
         if (storageType == StorageType.GLUSTERFS) {
             if (FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())
-                    || isFeatureSupportedAsAdditionalFeature(vm.getClusterId(), ConfigValues.LibgfApiSupported.name())) {
+                    || isFeatureSupportedAsAdditionalFeature(vm.getClusterId(), VDSM_LIBGF_CAP_NAME)) {
                 return Optional.of(VdsProperties.NETWORK);
             }
         }
