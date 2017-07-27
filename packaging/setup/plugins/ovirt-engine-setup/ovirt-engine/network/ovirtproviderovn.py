@@ -170,6 +170,7 @@ class Plugin(plugin.PluginBase):
         )
 
     def _add_client_secret_to_db(self):
+        self.logger.info(_('Adding OVN provider secret to database'))
         rc, stdout, stderr = self.execute(
             (
                 oenginecons.FileLocations.OVIRT_ENGINE_CRYPTO_TOOL,
