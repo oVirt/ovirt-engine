@@ -135,7 +135,7 @@ public class VmInfoBuildUtilsTest {
 
     private Set<SupportedAdditionalClusterFeature> getSupportedAdditionalClusterFeatures(Boolean enabled) {
         SupportedAdditionalClusterFeature clusterFeature = new SupportedAdditionalClusterFeature();
-        AdditionalFeature feature = new AdditionalFeature(Guid.newGuid(), ConfigValues.LibgfApiSupported.name(), Version.v4_1, null, null);
+        AdditionalFeature feature = new AdditionalFeature(Guid.newGuid(), VmInfoBuildUtils.VDSM_LIBGF_CAP_NAME, Version.v4_1, null, null);
         clusterFeature.setFeature(feature);
         clusterFeature.setEnabled(enabled);
         return Collections.singleton(clusterFeature);

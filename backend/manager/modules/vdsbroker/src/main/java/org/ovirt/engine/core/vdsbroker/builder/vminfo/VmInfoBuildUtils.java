@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -68,6 +67,8 @@ public class VmInfoBuildUtils {
     private static final Logger log = LoggerFactory.getLogger(VmInfoBuildUtils.class);
 
     private static final String FIRST_MASTER_MODEL = "ich9-ehci1";
+
+    public static final String VDSM_LIBGF_CAP_NAME = "libgfapi_supported";
 
     private final NetworkDao networkDao;
     private final NetworkFilterDao networkFilterDao;
@@ -571,7 +572,7 @@ public class VmInfoBuildUtils {
         StorageType storageType = diskImage.getStorageTypes().get(0);
         if (storageType == StorageType.GLUSTERFS) {
             if (FeatureSupported.libgfApiSupported(vm.getCompatibilityVersion())
-                    || isFeatureSupportedAsAdditionalFeature(vm.getClusterId(), ConfigValues.LibgfApiSupported.name())) {
+                    || isFeatureSupportedAsAdditionalFeature(vm.getClusterId(), VDSM_LIBGF_CAP_NAME)) {
                 return Optional.of(VdsProperties.NETWORK);
             }
         }
