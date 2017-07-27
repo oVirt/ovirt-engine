@@ -16,9 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
-
-    private static final Guid ANOTHER_EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
-
     private VdsNumaNodeDao vdsNumaNodeDao;
 
     private NumaNodeStatistics newNodeStatistics;
@@ -43,7 +40,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testMassSaveNumaNode() {
-        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(ANOTHER_EXISTING_VDS_ID);
+        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.HOST_ID);
         assertNotNull(result);
         assertEquals(0, result.size());
 
@@ -64,8 +61,8 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
         newVdsNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVdsNode.add(newVdsNumaNode);
 
-        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, ANOTHER_EXISTING_VDS_ID);
-        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(ANOTHER_EXISTING_VDS_ID);
+        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, FixturesTool.HOST_ID);
+        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.HOST_ID);
         assertNotNull(result);
         assertEquals(2, result.size());
     }
@@ -136,9 +133,9 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
         newVdsNumaNode.setNumaNodeStatistics(newNodeStatistics);
         newVdsNode.add(newVdsNumaNode);
 
-        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, ANOTHER_EXISTING_VDS_ID);
+        vdsNumaNodeDao.massSaveNumaNode(newVdsNode, FixturesTool.HOST_ID);
 
-        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(ANOTHER_EXISTING_VDS_ID);
+        List<VdsNumaNode> result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.HOST_ID);
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -148,7 +145,7 @@ public class VdsNumaNodeDaoTest extends BaseDaoTestCase {
 
         vdsNumaNodeDao.massRemoveNumaNodeByNumaNodeId(numaNodeIds);
 
-        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(ANOTHER_EXISTING_VDS_ID);
+        result = vdsNumaNodeDao.getAllVdsNumaNodeByVdsId(FixturesTool.HOST_ID);
         assertNotNull(result);
         assertEquals(0, result.size());
     }

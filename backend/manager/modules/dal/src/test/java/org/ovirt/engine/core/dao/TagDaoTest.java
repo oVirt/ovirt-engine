@@ -26,7 +26,6 @@ public class TagDaoTest extends BaseDaoTestCase {
     private static final int TAG_COUNT = 3;
     private static final Guid EXISTING_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid EXISTING_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
-    private static final Guid FREE_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
@@ -75,7 +74,7 @@ public class TagDaoTest extends BaseDaoTestCase {
         existingUserTag = dao.getTagUserByTagIdAndByuserId(EXISTING_TAG_ID, EXISTING_USER_ID);
 
         existingVdsTag = dao.getTagVdsByTagIdAndByVdsId(EXISTING_TAG_ID, FixturesTool.VDS_RHEL6_NFS_SPM);
-        newVdsTag = new TagsVdsMap(EXISTING_TAG_ID, FREE_VDS_ID);
+        newVdsTag = new TagsVdsMap(EXISTING_TAG_ID, FixturesTool.HOST_ID);
 
         existingVmTag = dao.getTagVmByTagIdAndByVmId(EXISTING_TAG_ID, EXISTING_VM_ID);
         existingTemplateTag = dao.getTagTemplateByTagIdAndByTemplateId(EXISTING_TAG_ID, EXISTING_TEMPLATE_ID);

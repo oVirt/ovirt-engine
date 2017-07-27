@@ -21,7 +21,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
     @Test
     public void getForExistingVds() {
         VdsKdumpStatus expected = new VdsKdumpStatus();
-        expected.setVdsId(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"));
+        expected.setVdsId(FixturesTool.HOST_ID);
         expected.setStatus(KdumpFlowStatus.DUMPING);
         expected.setAddress("[\"192.168.122.18\", 2222]");
 
@@ -85,7 +85,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
     @Test
     public void updateStatusForVds() {
         VdsKdumpStatus existing = new VdsKdumpStatus();
-        existing.setVdsId(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"));
+        existing.setVdsId(FixturesTool.HOST_ID);
         existing.setStatus(KdumpFlowStatus.FINISHED);
         existing.setAddress("[\"192.168.122.25\", 4444]");
 

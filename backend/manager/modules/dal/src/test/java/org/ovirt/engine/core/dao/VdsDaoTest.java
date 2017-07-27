@@ -28,8 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
-
     private static final Guid CLUSTER_WITH_FEDORA = FixturesTool.CLUSTER;
     private static final Guid CLUSTER_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
 
@@ -42,7 +40,7 @@ public class VdsDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getVdsDao();
-        existingVds = dao.get(EXISTING_VDS_ID);
+        existingVds = dao.get(FixturesTool.HOST_ID);
         existingVds2 = dao.get(FixturesTool.VDS_RHEL6_NFS_SPM);
         newVmId = Guid.newGuid();
     }

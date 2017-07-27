@@ -136,6 +136,11 @@ public class FixturesTool {
     protected static final Guid VDS_GLUSTER_SERVER2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
 
     /**
+     * Predefined vds
+     */
+    public static final Guid HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
+
+    /**
      * Predefined quota with general limitations. Its GUID is 88296e00-0cad-4e5a-9291-008a7b7f4399.<BR/>
      * The {@code Quota} has the following limitations:
      * <ul>Global limitation:
@@ -713,7 +718,7 @@ public class FixturesTool {
 
     public static final Guid NETWORK_ATTACHMENT_NIC2 = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9df");
 
-    public static final Guid NETWORK_ATTACHMENT_HOST = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
+    public static final Guid NETWORK_ATTACHMENT_HOST = HOST_ID;
 
     public static final Guid NETWORK_FILTER = new Guid("c477a4cc-f00e-45be-b61f-224766437091");
 

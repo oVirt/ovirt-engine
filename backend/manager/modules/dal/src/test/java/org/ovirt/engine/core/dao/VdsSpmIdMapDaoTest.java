@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final Guid FREE_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105e");
     private VdsSpmIdMapDao dao;
     private VdsSpmIdMap existingVdsSpmIdMap;
@@ -22,7 +21,7 @@ public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getVdsSpmIdMapDao();
-        existingVdsSpmIdMap = dao.get(EXISTING_VDS_ID);
+        existingVdsSpmIdMap = dao.get(FixturesTool.HOST_ID);
         newVdsSpmIdMap = new VdsSpmIdMap(FREE_STORAGE_POOL_ID, FixturesTool.VDS_RHEL6_NFS_SPM, 1);
     }
 

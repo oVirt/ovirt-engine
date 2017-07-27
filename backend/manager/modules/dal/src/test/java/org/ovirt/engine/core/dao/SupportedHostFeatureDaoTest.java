@@ -12,12 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
-import org.ovirt.engine.core.compat.Guid;
-
 
 public class SupportedHostFeatureDaoTest extends BaseDaoTestCase {
-
-    private static final Guid EXISTING_HOST_ID_1 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
     private SupportedHostFeatureDao dao;
 
@@ -29,7 +25,7 @@ public class SupportedHostFeatureDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetSupportedHostFeaturesByHostId() {
-        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(EXISTING_HOST_ID_1);
+        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
         assertNotNull("Failed to retrive supported addtional features in the host", featuresSupported);
         Set<String> expectedFeatures = new HashSet<>(Arrays.asList("TEST_FEATURE_1", "TEST_FEATURE_2"));
         assertEquals("Failed to retrive supported addtional features in the host",
@@ -40,25 +36,25 @@ public class SupportedHostFeatureDaoTest extends BaseDaoTestCase {
     @Test
     public void testAddSupportedHostFeature() {
         String newFeature = "NEW_FEATURE_1";
-        dao.addSupportedHostFeature(EXISTING_HOST_ID_1, newFeature);
-        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(EXISTING_HOST_ID_1);
+        dao.addSupportedHostFeature(FixturesTool.HOST_ID, newFeature);
+        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
         assertThat("Failed to add the feature", featuresSupported, hasItem(newFeature));
     }
 
     @Test
     public void testAddAllSupportedHostFeature() {
         Set<String> newFatures = new HashSet<>(Arrays.asList("NEW__FEATURE_1", "NEW__FEATURE_2", "NEW__FEATURE_3"));
-        dao.addAllSupportedHostFeature(EXISTING_HOST_ID_1, newFatures);
-        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(EXISTING_HOST_ID_1);
+        dao.addAllSupportedHostFeature(FixturesTool.HOST_ID, newFatures);
+        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
         assertTrue("Failed to add the feature", featuresSupported.containsAll(newFatures));
     }
 
     @Test
     public void testRemoveAllSupportedHostFeature() {
-        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(EXISTING_HOST_ID_1);
+        Set<String> featuresSupported = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
         assertFalse(featuresSupported.isEmpty());
-        dao.removeAllSupportedHostFeature(EXISTING_HOST_ID_1, featuresSupported);
-        Set<String> featuresSupportedAfterDeletion = dao.getSupportedHostFeaturesByHostId(EXISTING_HOST_ID_1);
+        dao.removeAllSupportedHostFeature(FixturesTool.HOST_ID, featuresSupported);
+        Set<String> featuresSupportedAfterDeletion = dao.getSupportedHostFeaturesByHostId(FixturesTool.HOST_ID);
         assertTrue("Failed to remove addtional supported features", featuresSupportedAfterDeletion.isEmpty());
     }
 }

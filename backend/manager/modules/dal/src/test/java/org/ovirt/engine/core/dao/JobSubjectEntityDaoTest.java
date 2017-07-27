@@ -14,7 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class JobSubjectEntityDaoTest extends BaseDaoTestCase {
 
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5111");
-    private static final Guid EXISTING_ENTITY_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
     private static final int TOTAL_JOBS_SUBJECT_ENTITIES = 1;
 
@@ -48,8 +47,7 @@ public class JobSubjectEntityDaoTest extends BaseDaoTestCase {
 
     @Test
     public void getJobIdByEntityIdAndEntityType() {
-        List<Guid> jobIdByEntityIdAndEntityType =
-                dao.getJobIdByEntityId(EXISTING_ENTITY_ID);
+        List<Guid> jobIdByEntityIdAndEntityType = dao.getJobIdByEntityId(FixturesTool.HOST_ID);
         assertTrue("Verify job subject entities exist for a given job",
                 jobIdByEntityIdAndEntityType.contains(EXISTING_JOB_ID));
     }

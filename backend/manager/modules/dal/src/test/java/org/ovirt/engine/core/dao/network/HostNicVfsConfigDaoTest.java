@@ -33,7 +33,6 @@ public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
         EXPECTED_GUIDS = Collections.unmodifiableMap(tmpMap);
     }
 
-    private static final Guid HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final Guid HOST_WITH_NO_VFS_CONFIGS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e8");
 
     @Override
@@ -348,7 +347,7 @@ public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetAllVfsConfigByHostId() {
-        List<HostNicVfsConfig> vfsConfigs = dao.getAllVfsConfigByHostId(HOST_ID);
+        List<HostNicVfsConfig> vfsConfigs = dao.getAllVfsConfigByHostId(FixturesTool.HOST_ID);
         assertEquals(2, vfsConfigs.size());
     }
 
