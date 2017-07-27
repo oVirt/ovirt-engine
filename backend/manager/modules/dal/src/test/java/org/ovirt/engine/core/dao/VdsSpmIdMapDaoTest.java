@@ -7,55 +7,54 @@ import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsSpmIdMap;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
+public class VdsSpmIdMapDaoTest extends BaseGenericDaoTestCase<Guid, VdsSpmIdMap, VdsSpmIdMapDao> {
     private static final Guid FREE_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105e");
-    private VdsSpmIdMapDao dao;
-    private VdsSpmIdMap existingVdsSpmIdMap;
-    private VdsSpmIdMap newVdsSpmIdMap;
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getVdsSpmIdMapDao();
-        existingVdsSpmIdMap = dao.get(FixturesTool.HOST_ID);
-        newVdsSpmIdMap = new VdsSpmIdMap(FREE_STORAGE_POOL_ID, FixturesTool.VDS_RHEL6_NFS_SPM, 1);
+    protected VdsSpmIdMap generateNewEntity() {
+        return new VdsSpmIdMap(FREE_STORAGE_POOL_ID, FixturesTool.VDS_RHEL6_NFS_SPM, 1);
     }
 
-    @Test
-    public void testGet() {
-        VdsSpmIdMap result = dao.get(existingVdsSpmIdMap.getId());
-
-        assertNotNull(result);
-        assertEquals(existingVdsSpmIdMap, result);
+    @Override
+    protected void updateExistingEntity() {
+        // Not supported
     }
 
-    @Test
-    public void testSave() {
-        dao.save(newVdsSpmIdMap);
-
-        VdsSpmIdMap result = dao.get(newVdsSpmIdMap.getId());
-
-        assertNotNull(result);
-        assertEquals(newVdsSpmIdMap, result);
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.HOST_ID;
     }
 
-    @Test
-    public void testRemove() {
-        dao.remove(existingVdsSpmIdMap.getId());
+    @Override
+    protected VdsSpmIdMapDao prepareDao() {
+        return dbFacade.getVdsSpmIdMapDao();
+    }
 
-        VdsSpmIdMap result = dao.get(existingVdsSpmIdMap.getId());
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
 
-        assertNull(result);
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 1;
+    }
+
+    @Ignore
+    @Override
+    public void testUpdate() {
+        // Not supported
     }
 
     @Test
     public void testDeleteByPoolVdsSpmIdMap() {
-        dao.removeByVdsAndStoragePool(existingVdsSpmIdMap.getId(), existingVdsSpmIdMap.getStoragePoolId());
-        VdsSpmIdMap result = dao.get(existingVdsSpmIdMap.getId());
+        dao.removeByVdsAndStoragePool(existingEntity.getId(), existingEntity.getStoragePoolId());
+        VdsSpmIdMap result = dao.get(existingEntity.getId());
 
         assertNull(result);
     }
@@ -73,11 +72,9 @@ public class VdsSpmIdMapDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetVdsSpmIdMapForStoragePoolAndVdsId() {
-        VdsSpmIdMap result =
-                dao.get(existingVdsSpmIdMap.getStoragePoolId(),
-                        existingVdsSpmIdMap.getVdsSpmId());
+        VdsSpmIdMap result = dao.get(existingEntity.getStoragePoolId(), existingEntity.getVdsSpmId());
 
         assertNotNull(result);
-        assertEquals(existingVdsSpmIdMap, result);
+        assertEquals(existingEntity, result);
     }
 }
