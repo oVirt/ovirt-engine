@@ -127,6 +127,15 @@ public final class VdsProperties {
     public static final String NETWORK_CUSTOM_PROPERTIES = "custom";
     public static final String BOND_XMIT_POLICY = "xmit_hash_policy";
 
+    // LLDP related properties
+    public static final String LLDP_ENABLED = "enabled";
+    public static final String LLDP_TLVS = "tlvs";
+    public static final String TLV_NAME = "name";
+    public static final String TLV_TYPE = "type";
+    public static final String TLV_OUI = "oui";
+    public static final String TLV_SUBTYPE = "subtype";
+    public static final String TLV_PROPERTIES = "properties";
+
     public static final String supported_cluster_levels = "clusterLevels";
     public static final String supported_engines = "supportedENGINEs";
     public static final String emulatedMachine = "emulatedMachine";
