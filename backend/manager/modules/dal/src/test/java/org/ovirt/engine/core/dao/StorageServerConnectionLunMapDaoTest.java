@@ -25,7 +25,7 @@ public class StorageServerConnectionLunMapDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getStorageServerConnectionLunMapDao();
 
         existingLUNStorageMap =
-                dao.get(new LUNStorageServerConnectionMapId("1IET_00180001", FixturesTool.STORAGE_CONNECTION_ID));
+                dao.get(new LUNStorageServerConnectionMapId(FixturesTool.LUN_ID1, FixturesTool.STORAGE_CONNECTION_ID));
         newLUNStorageMap = new LUNStorageServerConnectionMap(FREE_LUN_ID, FixturesTool.STORAGE_CONNECTION_ID);
     }
 

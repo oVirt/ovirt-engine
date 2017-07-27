@@ -35,7 +35,7 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
 
     @Override
     protected DiskLunMap generateNewEntity() {
-        return new DiskLunMap(new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34"), "1IET_00180001");
+        return new DiskLunMap(new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34"), FixturesTool.LUN_ID1);
     }
 
     @Override
