@@ -37,7 +37,6 @@ public class RefreshPanel extends ButtonGroup implements HasClickHandlers, HasEl
     /**
      * Create a Panel managed by the specified {@link RefreshManager}<BR>
      * used only by the Refresh Manager
-     *
      */
     protected RefreshPanel(AbstractRefreshManager<?> refreshManager) {
         this.refreshManager = refreshManager;
@@ -62,13 +61,11 @@ public class RefreshPanel extends ButtonGroup implements HasClickHandlers, HasEl
         setTooltipText(refreshManager.getRefreshStatus());
     }
 
-    public void hideRefreshMenuButton() {
-        refreshButton.setVisible(false);
-    }
-
+    /**
+     * Set the element id directly on the refresh button itself and ignore the dropdown bits.
+     */
     @Override
     public void setElementId(String elementId) {
-        // Set refresh button element ID
         refreshButton.getElement().setId(
                 ElementIdUtils.createElementId(elementId, "refreshButton")); //$NON-NLS-1$
     }
