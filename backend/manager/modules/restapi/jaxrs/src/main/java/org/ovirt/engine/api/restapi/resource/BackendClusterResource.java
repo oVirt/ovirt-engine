@@ -115,12 +115,6 @@ public class BackendClusterResource<P extends BackendClustersResource>
         return null;
     }
 
-    @Override
-    public ClusterEnabledFeaturesResource getEnabledFeaturesResource() {
-        // TODO: Implement this.
-        return null;
-    }
-
     protected Guid getDataCenterId(Cluster cluster) {
         return cluster.getStoragePoolId();
     }
@@ -142,5 +136,10 @@ public class BackendClusterResource<P extends BackendClustersResource>
     public Response remove() {
         get();
         return performAction(ActionType.RemoveCluster, new ClusterParametersBase(asGuid(id)));
+    }
+
+    @Override
+    public ClusterEnabledFeaturesResource getEnabledFeaturesResource() {
+       return inject(new BackendClusterEnabledFeaturesResource(guid));
     }
 }
