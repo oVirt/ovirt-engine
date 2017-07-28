@@ -10,15 +10,13 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsStaticDaoTest extends BaseDaoTestCase {
+    private static final Guid VDS_JUST_STATIC_ID = new Guid("09617c59-cd31-4878-9c23-5ac17d8e1e3a");
+
     private VdsStaticDao dao;
-    private VdsDynamicDao dynamicDao;
-    private VdsStatisticsDao statisticsDao;
     private VdsStatic existingVds;
     private VdsStatic newStaticVds;
 
@@ -26,9 +24,7 @@ public class VdsStaticDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getVdsStaticDao();
-        dynamicDao = dbFacade.getVdsDynamicDao();
-        statisticsDao = dbFacade.getVdsStatisticsDao();
-        existingVds = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
+        existingVds = dao.get(VDS_JUST_STATIC_ID);
         newStaticVds = new VdsStatic();
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setSshPort(22);
@@ -106,16 +102,10 @@ public class VdsStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        statisticsDao.remove(existingVds.getId());
-        dynamicDao.remove(existingVds.getId());
         dao.remove(existingVds.getId());
 
         VdsStatic resultStatic = dao.get(existingVds.getId());
         assertNull(resultStatic);
-        VdsDynamic resultDynamic = dynamicDao.get(existingVds.getId());
-        assertNull(resultDynamic);
-        VdsStatistics resultStatistics = statisticsDao.get(existingVds.getId());
-        assertNull(resultStatistics);
     }
 
     @Test
