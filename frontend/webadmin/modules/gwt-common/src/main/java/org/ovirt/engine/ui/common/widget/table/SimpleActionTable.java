@@ -93,8 +93,18 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     @Override
     protected void updateTableControls() {
         super.updateTableControls();
-        fromCount.getElement().setInnerText(String.valueOf(getDataProvider().getFromCount()));
-        toCount.getElement().setInnerText(String.valueOf(getDataProvider().getToCount()));
+
+        String from;
+        String to;
+        if (getDataProvider().getFromCount() == 1 && getDataProvider().getToCount() == 0) {
+            from = "0"; //$NON-NLS-1$
+            to = "0"; //$NON-NLS-1$
+        } else {
+            from = String.valueOf(getDataProvider().getFromCount());
+            to = String.valueOf(getDataProvider().getToCount());
+        }
+        fromCount.getElement().setInnerText(from);
+        toCount.getElement().setInnerText(to);
     }
 
     public void showRefreshButton() {
