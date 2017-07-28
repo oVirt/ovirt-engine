@@ -475,6 +475,9 @@ public enum EngineMessage {
     /**
      * "Cannot delete the server, there are desktop(s) running on the server.";
      */
+    NIC_ID_IS_NULL(ErrorType.BAD_PARAMETERS),
+    NIC_ID_NOT_EXIST(ErrorType.BAD_PARAMETERS),
+    INTERFACE_TYPE_NOT_SUPPORT_LLDP(ErrorType.BAD_PARAMETERS),
     VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING(ErrorType.CONFLICT),
     VM_CANNOT_CANCEL_CONVERSION_WHEN_VM_IS_NOT_BEING_CONVERTED(ErrorType.CONFLICT),
     VM_CANNOT_REMOVE_CLUSTER_VMS_DETECTED(ErrorType.CONFLICT),

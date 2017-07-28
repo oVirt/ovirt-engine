@@ -1151,6 +1151,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String STORAGE_DOMAIN_DOES_NOT_EXIST();
 
+    String NIC_ID_IS_NULL();
+
+    String NIC_ID_NOT_EXIST();
+
+    String INTERFACE_TYPE_NOT_SUPPORT_LLDP();
+
     String CLUSTER_CANNOT_CHANGE_STORAGE_POOL();
 
     String ACTION_TYPE_FAILED_SETUP_NETWORKS_OR_REFRESH_IN_PROGRESS();
