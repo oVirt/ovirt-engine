@@ -46,7 +46,6 @@ public class BackendClusterLevelResource extends BackendResource implements Clus
 
     @Override
     public ClusterFeaturesResource getClusterFeaturesResource() {
-        // TODO: Implement this.
-        return null;
+        return inject(new BackendClusterFeaturesResource(id));
     }
 }

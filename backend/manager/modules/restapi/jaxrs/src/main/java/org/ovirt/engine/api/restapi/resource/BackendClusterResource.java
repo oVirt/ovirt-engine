@@ -140,7 +140,6 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     @Override
     public ClusterEnabledFeaturesResource getEnabledFeaturesResource() {
-        // TODO: Implement this.
-        return null;
+       return inject(new BackendClusterEnabledFeaturesResource(guid));
     }
 }
