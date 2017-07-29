@@ -235,9 +235,6 @@ public class Frontend implements HasHandlers {
                         logger.log(Level.WARNING, "Failure while invoking runQuery [" + result.getExceptionString() + ", " + result.getExceptionMessage() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
                         if (getEventsHandler() != null) {
-                            ArrayList<QueryReturnValue> failedResult = new ArrayList<>();
-
-                            failedResult.add(result);
                             handleNotLoggedInEvent(result.getExceptionString());
                         }
                         if (callback.isHandleFailure()) {
