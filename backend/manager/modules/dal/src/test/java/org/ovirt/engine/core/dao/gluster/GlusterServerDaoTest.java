@@ -16,7 +16,6 @@ import org.ovirt.engine.core.dao.FixturesTool;
 
 public class GlusterServerDaoTest extends BaseDaoTestCase {
 
-    private static final Guid SERVER_ID1 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final Guid SERVER_ID2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
 
     private GlusterServerDao dao;
@@ -41,9 +40,9 @@ public class GlusterServerDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetById() {
-        GlusterServer entity = dao.getByServerId(SERVER_ID1);
+        GlusterServer entity = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNotNull(entity);
-        assertEquals(SERVER_ID1, entity.getId());
+        assertEquals(FixturesTool.GLUSTER_BRICK_SERVER1, entity.getId());
         assertEquals(FixturesTool.GLUSTER_SERVER_UUID1, entity.getGlusterServerUuid());
     }
 
@@ -51,14 +50,14 @@ public class GlusterServerDaoTest extends BaseDaoTestCase {
     public void testGetByGlusterServerUuid() {
         GlusterServer entity = dao.getByGlusterServerUuid(FixturesTool.GLUSTER_SERVER_UUID1);
         assertNotNull(entity);
-        assertEquals(SERVER_ID1, entity.getId());
+        assertEquals(FixturesTool.GLUSTER_BRICK_SERVER1, entity.getId());
         assertEquals(FixturesTool.GLUSTER_SERVER_UUID1, entity.getGlusterServerUuid());
     }
 
     @Test
     public void testRemove() {
-        dao.remove(SERVER_ID1);
-        GlusterServer entity = dao.getByServerId(SERVER_ID1);
+        dao.remove(FixturesTool.GLUSTER_BRICK_SERVER1);
+        GlusterServer entity = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNull(entity);
     }
 
@@ -71,24 +70,24 @@ public class GlusterServerDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateGlusterServerUuid() {
-        GlusterServer entityToUpdate = new GlusterServer(SERVER_ID1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
+        GlusterServer entityToUpdate = new GlusterServer(FixturesTool.GLUSTER_BRICK_SERVER1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
         dao.update(entityToUpdate);
-        GlusterServer entity = dao.getByServerId(SERVER_ID1);
+        GlusterServer entity = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNotNull(entity);
         assertEquals(FixturesTool.GLUSTER_SERVER_UUID_NEW, entity.getGlusterServerUuid());
     }
 
     @Test
     public void testAddKnownAddresses() {
-        GlusterServer entityToUpdate = new GlusterServer(SERVER_ID1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
+        GlusterServer entityToUpdate = new GlusterServer(FixturesTool.GLUSTER_BRICK_SERVER1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
         dao.update(entityToUpdate);
-        dao.addKnownAddress(SERVER_ID1, "a.1");
-        GlusterServer entity = dao.getByServerId(SERVER_ID1);
+        dao.addKnownAddress(FixturesTool.GLUSTER_BRICK_SERVER1, "a.1");
+        GlusterServer entity = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNotNull(entity);
         assertEquals(1, entity.getKnownAddresses().size());
         assertEquals("a.1", entity.getKnownAddresses().get(0));
-        dao.addKnownAddress(SERVER_ID1, "a.2");
-        entity = dao.getByServerId(SERVER_ID1);
+        dao.addKnownAddress(FixturesTool.GLUSTER_BRICK_SERVER1, "a.2");
+        entity = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNotNull(entity);
         assertEquals(2, entity.getKnownAddresses().size());
         assertEquals("a.2", entity.getKnownAddresses().get(1));
@@ -96,17 +95,17 @@ public class GlusterServerDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateKnownAddresses() {
-        GlusterServer entityToUpdate = new GlusterServer(SERVER_ID1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
+        GlusterServer entityToUpdate = new GlusterServer(FixturesTool.GLUSTER_BRICK_SERVER1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
         dao.update(entityToUpdate);
-        dao.addKnownAddress(SERVER_ID1, "a.1");
-        GlusterServer entity = dao.getByServerId(SERVER_ID1);
+        dao.addKnownAddress(FixturesTool.GLUSTER_BRICK_SERVER1, "a.1");
+        GlusterServer entity = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNotNull(entity);
         assertEquals(1, entity.getKnownAddresses().size());
         assertEquals("a.1", entity.getKnownAddresses().get(0));
         ArrayList<String> knownAddresses = new ArrayList<>();
         knownAddresses.add("a.2");
-        dao.updateKnownAddresses(SERVER_ID1, knownAddresses);
-        entity = dao.getByServerId(SERVER_ID1);
+        dao.updateKnownAddresses(FixturesTool.GLUSTER_BRICK_SERVER1, knownAddresses);
+        entity = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNotNull(entity);
         assertEquals(1, entity.getKnownAddresses().size());
         assertEquals("a.2", entity.getKnownAddresses().get(0));

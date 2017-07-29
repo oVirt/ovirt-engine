@@ -37,7 +37,7 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
             new ArrayList<>(Arrays.asList(FixturesTool.VDS_RHEL6_NFS_SPM,
                     FixturesTool.HOST_ID,
                     FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
-                    new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3"),
+                    FixturesTool.GLUSTER_BRICK_SERVER1,
                     new Guid("2001751e-549b-4e7a-aff6-32d36856c125")));
 
     @Override

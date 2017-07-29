@@ -43,7 +43,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     private static final Guid EXISTING_PROVIDER_ID = new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
     protected static final Guid[] HOST_GUIDS = { FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
             FixturesTool.HOST_ID,
-            new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3")};
+            FixturesTool.GLUSTER_BRICK_SERVER1};
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
     private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");

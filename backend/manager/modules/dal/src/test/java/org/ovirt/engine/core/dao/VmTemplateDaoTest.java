@@ -37,7 +37,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
     protected static final Guid[] HOST_GUIDS = {FixturesTool.VDS_RHEL6_NFS_SPM,
             FixturesTool.HOST_ID,
-            new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3")};
+            FixturesTool.GLUSTER_BRICK_SERVER1};
 
     private VmTemplateDao dao;
 

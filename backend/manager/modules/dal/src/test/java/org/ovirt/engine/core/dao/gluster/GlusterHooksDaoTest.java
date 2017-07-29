@@ -25,7 +25,6 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
     private static final String EXISTING_HOOK_NAME = "28cifs_config";
     private static final String HOOK_NAME = "georep";
     private static final Guid SERVER_ID = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
-    private static final Guid SERVER_ID2 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final String CHECKSUM = "0127f712fc008f857e77a2f3f179c710";
     private static final String CONTENT = "Sample text for hook content ";
     private static final String CHECKSUM_HOOK1_SERVER1 = "bf35fa420d3e0f669e27b337062bf19f510480d4";
@@ -99,7 +98,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
     public void testGetServerHooks() {
         GlusterServerHook serverHook1 = getGlusterServerHook(SERVER_ID,
                 GlusterHookStatus.ENABLED, GlusterHookContentType.TEXT, CHECKSUM_HOOK1_SERVER1);
-        GlusterServerHook serverHook2 = getGlusterServerHook(SERVER_ID2,
+        GlusterServerHook serverHook2 = getGlusterServerHook(FixturesTool.GLUSTER_BRICK_SERVER1,
                 GlusterHookStatus.MISSING, null, null);
         List<GlusterServerHook> serverHooks  = dao.getGlusterServerHooks(FixturesTool.HOOK_ID);
         assertNotNull(serverHooks);

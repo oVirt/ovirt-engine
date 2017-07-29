@@ -14,13 +14,13 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatu
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.FixturesTool;
 
 /**
  * Tests for Services Dao
  */
 public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
     private static final Guid NEW_SERVICE_ID = new Guid("d1745ef8-8369-43e5-b55a-b4fceea63877");
-    private static final Guid SERVER1_ID = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final Guid SERVER2_ID = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid SERVICE1_ID = new Guid("c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1");
@@ -51,7 +51,7 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
         assertEquals(2, services.size());
         for (GlusterServerService service : services) {
             Guid serverId = service.getServerId();
-            if (SERVER1_ID.equals(serverId)) {
+            if (FixturesTool.GLUSTER_BRICK_SERVER1.equals(serverId)) {
                 verifyServiceOnServer1(service);
             } else if (SERVER2_ID.equals(serverId)) {
                 verifyServiceOnServer2(service);
@@ -63,7 +63,7 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetByServerId() {
-        List<GlusterServerService> services = dao.getByServerId(SERVER1_ID);
+        List<GlusterServerService> services = dao.getByServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         assertNotNull(services);
         assertEquals(1, services.size());
         verifyServiceOnServer1(services.get(0));
@@ -79,7 +79,7 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetByServerIdAndServiceType() {
-        List<GlusterServerService> services = dao.getByServerIdAndServiceType(SERVER1_ID, SERVICE1_TYPE);
+        List<GlusterServerService> services = dao.getByServerIdAndServiceType(FixturesTool.GLUSTER_BRICK_SERVER1, SERVICE1_TYPE);
         assertNotNull(services);
         assertEquals(1, services.size());
         verifyServiceOnServer1(services.get(0));
@@ -145,7 +145,7 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
     private GlusterServerService insertTestService() {
         GlusterServerService service = new GlusterServerService();
         service.setId(NEW_SERVICE_ID);
-        service.setServerId(SERVER1_ID);
+        service.setServerId(FixturesTool.GLUSTER_BRICK_SERVER1);
         service.setServiceId(SERVICE2_ID);
         service.setServiceType(SERVICE2_TYPE);
         service.setStatus(GlusterServiceStatus.UNKNOWN);

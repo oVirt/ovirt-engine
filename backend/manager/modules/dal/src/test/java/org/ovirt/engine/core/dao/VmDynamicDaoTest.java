@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDynamicDaoTest extends BaseDaoTestCase {
-    private static final Guid VDS_STATIC_ID2 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final int DYNAMIC_RUNNING_COUNT = 3;
     private VmDynamicDao dao;
     private VmDynamic existingVm;
@@ -47,7 +46,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
     @Test
     public void testIsAnyVmRunOnVds() {
         assertTrue(dao.isAnyVmRunOnVds(FixturesTool.VDS_RHEL6_NFS_SPM));
-        assertFalse(dao.isAnyVmRunOnVds(VDS_STATIC_ID2));
+        assertFalse(dao.isAnyVmRunOnVds(FixturesTool.GLUSTER_BRICK_SERVER1));
     }
 
     /**
