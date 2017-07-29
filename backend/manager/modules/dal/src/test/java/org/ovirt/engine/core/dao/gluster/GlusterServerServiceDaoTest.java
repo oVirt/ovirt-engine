@@ -21,7 +21,6 @@ import org.ovirt.engine.core.dao.FixturesTool;
  */
 public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
     private static final Guid NEW_SERVICE_ID = new Guid("d1745ef8-8369-43e5-b55a-b4fceea63877");
-    private static final Guid SERVER2_ID = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid SERVICE1_ID = new Guid("c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1");
     private static final String SERVICE1_NAME = "gluster-swift-test-1";
@@ -53,7 +52,7 @@ public class GlusterServerServiceDaoTest extends BaseDaoTestCase {
             Guid serverId = service.getServerId();
             if (FixturesTool.GLUSTER_BRICK_SERVER1.equals(serverId)) {
                 verifyServiceOnServer1(service);
-            } else if (SERVER2_ID.equals(serverId)) {
+            } else if (FixturesTool.VDS_GLUSTER_SERVER2.equals(serverId)) {
                 verifyServiceOnServer2(service);
             } else {
                 fail("Unexpected server id: " + service.getServerId());

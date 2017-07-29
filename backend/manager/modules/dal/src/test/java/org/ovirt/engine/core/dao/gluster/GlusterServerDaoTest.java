@@ -9,15 +9,11 @@ import java.util.ArrayList;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 
 public class GlusterServerDaoTest extends BaseDaoTestCase {
-
-    private static final Guid SERVER_ID2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
-
     private GlusterServerDao dao;
 
     @Override
@@ -29,7 +25,7 @@ public class GlusterServerDaoTest extends BaseDaoTestCase {
     @Test
     public void testSave() {
         GlusterServer newEntity = new GlusterServer();
-        newEntity.setId(SERVER_ID2);
+        newEntity.setId(FixturesTool.VDS_GLUSTER_SERVER2);
         newEntity.setGlusterServerUuid(FixturesTool.GLUSTER_SERVER_UUID2);
         newEntity.setPeerStatus(PeerStatus.CONNECTED);
 

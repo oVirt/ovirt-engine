@@ -133,7 +133,7 @@ public class FixturesTool {
     /**
      * Predefined VDS gluster2-vdsc.redhat.com
      */
-    protected static final Guid VDS_GLUSTER_SERVER2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
+    public static final Guid VDS_GLUSTER_SERVER2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
 
     /**
      * Predefined vds

@@ -38,7 +38,7 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
                     FixturesTool.HOST_ID,
                     FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
                     FixturesTool.GLUSTER_BRICK_SERVER1,
-                    new Guid("2001751e-549b-4e7a-aff6-32d36856c125")));
+                    FixturesTool.VDS_GLUSTER_SERVER2));
 
     @Override
     public void setUp() throws Exception {

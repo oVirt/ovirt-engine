@@ -24,7 +24,6 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
     private static final GlusterHookStage STAGE = GlusterHookStage.POST;
     private static final String EXISTING_HOOK_NAME = "28cifs_config";
     private static final String HOOK_NAME = "georep";
-    private static final Guid SERVER_ID = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
     private static final String CHECKSUM = "0127f712fc008f857e77a2f3f179c710";
     private static final String CONTENT = "Sample text for hook content ";
     private static final String CHECKSUM_HOOK1_SERVER1 = "bf35fa420d3e0f669e27b337062bf19f510480d4";
@@ -96,7 +95,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetServerHooks() {
-        GlusterServerHook serverHook1 = getGlusterServerHook(SERVER_ID,
+        GlusterServerHook serverHook1 = getGlusterServerHook(FixturesTool.VDS_GLUSTER_SERVER2,
                 GlusterHookStatus.ENABLED, GlusterHookContentType.TEXT, CHECKSUM_HOOK1_SERVER1);
         GlusterServerHook serverHook2 = getGlusterServerHook(FixturesTool.GLUSTER_BRICK_SERVER1,
                 GlusterHookStatus.MISSING, null, null);
@@ -126,7 +125,7 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
         dao.remove(FixturesTool.HOOK_ID);
         GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID);
         assertNull(hook);
-        GlusterServerHook serverhook = dao.getGlusterServerHook(FixturesTool.HOOK_ID, SERVER_ID);
+        GlusterServerHook serverhook = dao.getGlusterServerHook(FixturesTool.HOOK_ID, FixturesTool.VDS_GLUSTER_SERVER2);
         assertNull(serverhook);
     }
 
@@ -175,8 +174,8 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testRemoveServerHook() {
-        dao.removeGlusterServerHook(FixturesTool.HOOK_ID, SERVER_ID);
-        GlusterServerHook serverhook = dao.getGlusterServerHook(FixturesTool.HOOK_ID, SERVER_ID);
+        dao.removeGlusterServerHook(FixturesTool.HOOK_ID, FixturesTool.VDS_GLUSTER_SERVER2);
+        GlusterServerHook serverhook = dao.getGlusterServerHook(FixturesTool.HOOK_ID, FixturesTool.VDS_GLUSTER_SERVER2);
         assertNull(serverhook);
     }
 
@@ -190,10 +189,12 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateGlusterServerHookStatus() {
-        GlusterServerHook serverhookExisting = dao.getGlusterServerHook(FixturesTool.HOOK_ID, SERVER_ID);
+        GlusterServerHook serverhookExisting = dao.getGlusterServerHook(FixturesTool.HOOK_ID,
+                FixturesTool.VDS_GLUSTER_SERVER2);
         assertEquals(GlusterHookStatus.ENABLED, serverhookExisting.getStatus());
-        dao.updateGlusterServerHookStatus(FixturesTool.HOOK_ID, SERVER_ID, GlusterHookStatus.DISABLED);
-        GlusterServerHook serverhookUpdated = dao.getGlusterServerHook(FixturesTool.HOOK_ID, SERVER_ID);
+        dao.updateGlusterServerHookStatus(FixturesTool.HOOK_ID, FixturesTool.VDS_GLUSTER_SERVER2, GlusterHookStatus.DISABLED);
+        GlusterServerHook serverhookUpdated = dao.getGlusterServerHook(FixturesTool.HOOK_ID,
+                FixturesTool.VDS_GLUSTER_SERVER2);
         assertNotNull(serverhookUpdated);
         assertEquals(GlusterHookStatus.DISABLED, serverhookUpdated.getStatus());
     }
@@ -208,8 +209,8 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateGlusterHookChecksum() {
-        dao.updateGlusterServerHookChecksum(FixturesTool.HOOK_ID, SERVER_ID, CHECKSUM);
-        GlusterServerHook serverhook = dao.getGlusterServerHook(FixturesTool.HOOK_ID, SERVER_ID);
+        dao.updateGlusterServerHookChecksum(FixturesTool.HOOK_ID, FixturesTool.VDS_GLUSTER_SERVER2, CHECKSUM);
+        GlusterServerHook serverhook = dao.getGlusterServerHook(FixturesTool.HOOK_ID, FixturesTool.VDS_GLUSTER_SERVER2);
         assertNotNull(serverhook);
         assertEquals(GlusterHookStatus.ENABLED, serverhook.getStatus());
         assertEquals(CHECKSUM, serverhook.getChecksum());
