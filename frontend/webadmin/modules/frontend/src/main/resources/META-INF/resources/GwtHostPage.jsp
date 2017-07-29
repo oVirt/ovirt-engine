@@ -42,13 +42,13 @@
     <div id="host-page-placeholder">
         <style>
             #host-page-placeholder-spinner {
-                margin-top: 20px;
+                margin-top: -100px;
                 margin-right: -50px;
             }
             #host-page-placeholder-loading {
                 font-size: 18px;
                 margin-left: 20px;
-                margin-top: 19px;
+                margin-top: -100px;
                 float: left;
             }
             .vertical-align {
