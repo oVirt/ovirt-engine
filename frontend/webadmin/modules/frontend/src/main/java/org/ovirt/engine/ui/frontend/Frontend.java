@@ -351,7 +351,7 @@ public class Frontend implements HasHandlers {
             QueryParametersBase parameters = queryParamsList.get(i);
             parameters.setRefresh(false); // Why do we do this?
             initQueryParamsFilter(parameters);
-            operationList.add(new VdcOperation<QueryType, QueryParametersBase>(queryTypeList.get(i),
+            operationList.add(new VdcOperation<>(queryTypeList.get(i),
                     parameters, true, multiCallback, false));
         }
 
@@ -645,7 +645,7 @@ public class Frontend implements HasHandlers {
         IFrontendActionAsyncCallback[] callbacks = new IFrontendActionAsyncCallback[n];
         callbacks[n - 1] = successCallback;
         runMultipleActions(actionType, parameters,
-                new LinkedList<IFrontendActionAsyncCallback>(Arrays.asList(callbacks)),
+                new LinkedList<>(Arrays.asList(callbacks)),
                 state,
                 true);
     }
@@ -701,7 +701,7 @@ public class Frontend implements HasHandlers {
 
         ActionType[] actionTypes = new ActionType[parameters.size()];
         Arrays.fill(actionTypes, actionType);
-        runMultipleActions(new LinkedList<ActionType>(Arrays.asList(actionTypes)),
+        runMultipleActions(new LinkedList<>(Arrays.asList(actionTypes)),
                 parameters,
                 callbacks,
                 null,
@@ -758,8 +758,8 @@ public class Frontend implements HasHandlers {
                 failureCallback,
                 state,
                 aggregateErrors,
-                aggregateErrors ? new ArrayList<ActionType>() : null,
-                aggregateErrors ? new ArrayList<ActionReturnValue>() : null);
+                aggregateErrors ? new ArrayList<>() : null,
+                aggregateErrors ? new ArrayList<>() : null);
     }
 
     private void runMultipleActions(final List<ActionType> actionTypes,
