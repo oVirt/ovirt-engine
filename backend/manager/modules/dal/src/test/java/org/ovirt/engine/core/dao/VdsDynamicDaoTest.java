@@ -21,13 +21,11 @@ import org.ovirt.engine.core.common.businessentities.network.DnsResolverConfigur
 import org.ovirt.engine.core.common.businessentities.network.NameServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.dao.network.DnsResolverConfigurationDao;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class VdsDynamicDaoTest extends BaseDaoTestCase {
     private VdsDynamicDao dao;
     private VdsStaticDao staticDao;
-    private DnsResolverConfigurationDao dnsResolverConfigurationDao;
     private VdsStatisticsDao statisticsDao;
     private VdsStatic existingVds;
     private VdsStatic newStaticVds;
@@ -46,7 +44,6 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getVdsDynamicDao();
         staticDao = dbFacade.getVdsStaticDao();
-        dnsResolverConfigurationDao = dbFacade.getDnsResolverConfigurationDao();
         statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
@@ -115,7 +112,6 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         assertNull(resultStatic);
         VdsDynamic resultDynamic = dao.get(existingVds.getId());
         assertNull(resultDynamic);
-        assertNull(dnsResolverConfigurationDao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION));
     }
 
     @Test
