@@ -49,7 +49,7 @@ public class VdsKdumpStatusDaoTest extends BaseDaoTestCase {
     @Test
     public void createStatusForVds() {
         VdsKdumpStatus newVdsKdumpStatus = new VdsKdumpStatus();
-        newVdsKdumpStatus.setVdsId(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e8"));
+        newVdsKdumpStatus.setVdsId(FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID);
         newVdsKdumpStatus.setStatus(KdumpFlowStatus.DUMPING);
         newVdsKdumpStatus.setAddress("[\"192.168.122.16\", 1111]");
 

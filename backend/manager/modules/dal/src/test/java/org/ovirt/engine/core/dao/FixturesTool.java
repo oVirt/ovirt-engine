@@ -140,6 +140,8 @@ public class FixturesTool {
      */
     public static final Guid HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
 
+    public static final Guid HOST_WITH_NO_VFS_CONFIGS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e8");
+
     /**
      * Predefined quota with general limitations. Its GUID is 88296e00-0cad-4e5a-9291-008a7b7f4399.<BR/>
      * The {@code Quota} has the following limitations:
