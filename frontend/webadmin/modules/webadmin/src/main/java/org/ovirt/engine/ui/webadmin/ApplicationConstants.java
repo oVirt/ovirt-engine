@@ -2717,6 +2717,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String disabledPolicyUnit();
 
+    String enabledPolicyUnit();
+
     String stopRebalance();
 
     String statusRebalance();
@@ -2804,6 +2806,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String policyUnitName();
 
     String policyUnitType();
+
+    String policyUnitEnabledStatus();
 
     String removePolicyUnit();
 

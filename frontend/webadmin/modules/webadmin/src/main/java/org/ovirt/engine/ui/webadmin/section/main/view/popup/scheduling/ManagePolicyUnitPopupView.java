@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -59,6 +60,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         policyUnitTable = new ListModelObjectCellTable<>();
         policyUnitTable.enableColumnResizing();
         policyUnitTableContainer.add(policyUnitTable);
+        policyUnitTable.addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
 
         policyUnitTable.addColumn(new AbstractImageResourceColumn<PolicyUnit>() {
             @Override
@@ -98,12 +100,9 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         policyUnitTable.addColumn(new AbstractTextColumn<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
-                if (!object.isEnabled()) {
-                    return constants.disabledPolicyUnit();
-                }
-                return constants.empty();
+                return object.isEnabled() ? constants.enabledPolicyUnit() : constants.disabledPolicyUnit();
             }
-        }, constants.empty(), "75px"); //$NON-NLS-1$
+        }, constants.policyUnitEnabledStatus(), "75px"); //$NON-NLS-1$
 
         Column<PolicyUnit, String> removeButtonColumn = new Column<PolicyUnit, String>(new NullableButtonCell()) {
             @Override
@@ -115,7 +114,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
             }
         };
 
-        policyUnitTable.addColumn(removeButtonColumn, constants.empty(), "80px"); //$NON-NLS-1$
+        policyUnitTable.addColumn(removeButtonColumn, constants.removePolicyUnit(), "80px"); //$NON-NLS-1$
         removeButtonColumn.setFieldUpdater((index, object, value) -> model.remove(object));
     }
 
