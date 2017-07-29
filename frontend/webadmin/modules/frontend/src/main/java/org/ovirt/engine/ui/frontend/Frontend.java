@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.frontend.IFrontendEventsHandler.MessageFormatter;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
-import org.ovirt.engine.ui.frontend.communication.StorageCallback;
 import org.ovirt.engine.ui.frontend.communication.UserCallback;
 import org.ovirt.engine.ui.frontend.communication.VdcOperation;
 import org.ovirt.engine.ui.frontend.communication.VdcOperationCallback;
@@ -830,14 +829,6 @@ public class Frontend implements HasHandlers {
     }
 
     /**
-     * Checks if the user is logged.
-     * @return {@code true} if the user is logged in, false otherwise.
-     */
-    public Boolean getIsUserLoggedIn() {
-        return getLoggedInUser() != null;
-    }
-
-    /**
      * Initializes the currently logged in user.
      * @param loggedUser A {@code DbUser} object.
      */
@@ -860,14 +851,6 @@ public class Frontend implements HasHandlers {
      */
     public void setLoggedInUser(final DbUser loggedInUser) {
         this.currentUser = loggedInUser;
-    }
-
-    public void storeInHttpSession(final String key, final String value) {
-        getOperationManager().storeInHttpSession(key, value);
-    }
-
-    public void retrieveFromHttpSession(final String key, final StorageCallback callback) {
-        getOperationManager().retrieveFromHttpSession(key, callback);
     }
 
     /**
