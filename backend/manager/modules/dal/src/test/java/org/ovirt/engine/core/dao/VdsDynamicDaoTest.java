@@ -7,8 +7,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
@@ -34,11 +34,11 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
     private VdsDynamic newDynamicVds;
 
     private static final List<Guid> HOSTS_WITH_UP_STATUS =
-            new ArrayList<>(Arrays.asList(FixturesTool.VDS_RHEL6_NFS_SPM,
+            Arrays.asList(FixturesTool.VDS_RHEL6_NFS_SPM,
                     FixturesTool.HOST_ID,
                     FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
                     FixturesTool.GLUSTER_BRICK_SERVER1,
-                    FixturesTool.VDS_GLUSTER_SERVER2));
+                    FixturesTool.VDS_GLUSTER_SERVER2);
 
     @Override
     public void setUp() throws Exception {
@@ -56,7 +56,7 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         newDynamicVds = new VdsDynamic();
         newDynamicVds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration());
         newDynamicVds.getReportedDnsResolverConfiguration().setNameServers(
-                new ArrayList<>(Arrays.asList(new NameServer("1.1.1.1"))));
+                Collections.singletonList(new NameServer("1.1.1.1")));
     }
 
     /**
