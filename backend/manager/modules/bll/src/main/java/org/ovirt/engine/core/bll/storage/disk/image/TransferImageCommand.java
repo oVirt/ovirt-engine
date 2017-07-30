@@ -446,9 +446,13 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         }
 
         String[] transferOps = new String[] {getParameters().getTransferType().getOp()};
-        AddImageTicketVDSCommandParameters
-                transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
-                        imagedTicketId, transferOps, timeout, getParameters().getTransferSize(), imagePath);
+        AddImageTicketVDSCommandParameters transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
+                imagedTicketId,
+                transferOps,
+                timeout,
+                getParameters().getTransferSize(),
+                imagePath,
+                getParameters().getDownloadFilename());
 
         // TODO This is called from doPolling(), we should run it async (runFutureVDSCommand?)
         VDSReturnValue vdsRetVal;

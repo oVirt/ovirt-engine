@@ -250,6 +250,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String uploadImageNoFileChosen();
 
+    String downloadImage();
+
+    String downloadImageStart();
+
+    String downloadImageCancel();
+
     String storageTypeShared();
 
     String storageTypeLocal();

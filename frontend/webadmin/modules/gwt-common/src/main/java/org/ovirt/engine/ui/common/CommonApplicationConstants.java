@@ -1053,6 +1053,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String imageUploadFinishedFailure();
 
+    String imageTransferringViaBrowser();
+
     String notAvailableLabel();
 
     String illegalStatus();

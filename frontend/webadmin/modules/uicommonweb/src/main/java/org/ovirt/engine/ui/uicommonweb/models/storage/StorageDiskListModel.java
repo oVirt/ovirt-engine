@@ -72,6 +72,26 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         privateResumeUploadCommand = value;
     }
 
+    private UICommand downloadCommand;
+
+    public UICommand getDownloadCommand() {
+        return downloadCommand;
+    }
+
+    private void setDownloadCommand(UICommand value) {
+        downloadCommand = value;
+    }
+
+    private UICommand stopDownloadCommand;
+
+    public UICommand getStopDownloadCommand() {
+        return stopDownloadCommand;
+    }
+
+    private void setStopDownloadCommand(UICommand value) {
+        stopDownloadCommand = value;
+    }
+
     public StorageDiskListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
         setHelpTag(HelpTag.disks);
@@ -82,6 +102,8 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         setCancelUploadCommand(new UICommand("CancelUpload", this)); //$NON-NLS-1$
         setPauseUploadCommand(new UICommand("PauseUpload", this)); //$NON-NLS-1$
         setResumeUploadCommand(new UICommand("ResumeUpload", this)); //$NON-NLS-1$
+        setDownloadCommand(new UICommand("Download", this)); //$NON-NLS-1$
+        setStopDownloadCommand(new UICommand("StopDownload", this)); //$NON-NLS-1$
 
         updateActionAvailability();
     }
@@ -141,6 +163,8 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         getCancelUploadCommand().setIsExecutionAllowed(UploadImageModel.isCancelAllowed(disks));
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
         getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
+        getDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isDownloadAllowed(disks));
+        getStopDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isStopDownloadAllowed(disks));
     }
 
     private boolean isRemoveCommandAvailable(List<DiskImage> disks) {
@@ -250,6 +274,13 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         UploadImageModel.pauseUploads(getSelectedItems());
     }
 
+    private void download() {
+        DownloadImageManager.getInstance().startDownload(getSelectedItems());
+    }
+
+    private void stopDownload() {
+        DownloadImageManager.getInstance().stopDownload(getSelectedItems());
+    }
 
     @Override
     public void executeCommand(UICommand command) {
@@ -278,6 +309,12 @@ public class StorageDiskListModel extends SearchableListModel<StorageDomain, Dis
         }
         else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
             cancel();
+        }
+        else if (command == getDownloadCommand()) {
+            download();
+        }
+        else if (command == getStopDownloadCommand()) {
+            stopDownload();
         }
     }
 

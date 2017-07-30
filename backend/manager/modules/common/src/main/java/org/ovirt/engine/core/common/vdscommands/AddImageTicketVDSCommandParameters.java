@@ -8,6 +8,7 @@ public class AddImageTicketVDSCommandParameters extends ImageTicketVDSCommandPar
     private String[] operations;
     private long size;
     private String url;
+    private String filename;
 
     public AddImageTicketVDSCommandParameters() {
     }
@@ -17,11 +18,13 @@ public class AddImageTicketVDSCommandParameters extends ImageTicketVDSCommandPar
             String[] operations,
             long timeout,
             long size,
-            String url) {
+            String url,
+            String filename) {
         super(vdsId, ticketId, timeout);
         this.operations = operations;
         this.size = size;
         this.url = url;
+        this.filename = filename;
     }
 
     public String[] getOperations() {
@@ -36,11 +39,16 @@ public class AddImageTicketVDSCommandParameters extends ImageTicketVDSCommandPar
         return url;
     }
 
+    public String getFilename() {
+        return filename;
+    }
+
     @Override
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return super.appendAttributes(tsb)
                 .append("operations", getOperations())
                 .append("size", getSize())
-                .append("url", getUrl());
+                .append("url", getUrl())
+                .append("filename", getFilename());
     }
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.disks;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -32,6 +33,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.DownloadImageHandler;
+import org.ovirt.engine.ui.uicommonweb.models.storage.DownloadImageManager;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ExportRepoImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.UploadImageModel;
@@ -167,6 +170,26 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         privateResumeUploadCommand = value;
     }
 
+    private UICommand downloadCommand;
+
+    public UICommand getDownloadCommand() {
+        return downloadCommand;
+    }
+
+    private void setDownloadCommand(UICommand value) {
+        downloadCommand = value;
+    }
+
+    private UICommand stopDownloadCommand;
+
+    public UICommand getStopDownloadCommand() {
+        return stopDownloadCommand;
+    }
+
+    private void setStopDownloadCommand(UICommand value) {
+        stopDownloadCommand = value;
+    }
+
     private EntityModel<DiskStorageType> diskViewType;
 
     public EntityModel<DiskStorageType> getDiskViewType() {
@@ -224,6 +247,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         setCancelUploadCommand(new UICommand("CancelUpload", this)); //$NON-NLS-1$
         setPauseUploadCommand(new UICommand("PauseUpload", this)); //$NON-NLS-1$
         setResumeUploadCommand(new UICommand("ResumeUpload", this)); //$NON-NLS-1$
+        setDownloadCommand(new UICommand("Download", this)); //$NON-NLS-1$
+        setStopDownloadCommand(new UICommand("StopDownload", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -510,6 +535,18 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         UploadImageModel.pauseUploads(getSelectedItems());
     }
 
+    private void download() {
+        DownloadImageManager.getInstance().startDownload(getSelectedDiskImages());
+    }
+
+    private void stopDownload() {
+        DownloadImageManager.getInstance().stopDownload(getSelectedDiskImages());
+    }
+
+    private List<DiskImage> getSelectedDiskImages() {
+        return getSelectedItems().stream().map(disk -> (DiskImage) disk).collect(Collectors.toList());
+    }
+
     private void updateActionAvailability() {
         Disk disk = getSelectedItem();
         ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
@@ -529,7 +566,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getCancelUploadCommand().setIsExecutionAllowed(UploadImageModel.isCancelAllowed(disks));
         getPauseUploadCommand().setIsExecutionAllowed(UploadImageModel.isPauseAllowed(disks));
         getResumeUploadCommand().setIsExecutionAllowed(UploadImageModel.isResumeAllowed(disks));
-
+        getDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isDownloadAllowed(disks));
+        getStopDownloadCommand().setIsExecutionAllowed(DownloadImageHandler.isStopDownloadAllowed(disks));
     }
 
     private boolean isDiskLocked(Disk disk) {
@@ -716,6 +754,12 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         }
         else if (command == getResumeUploadCommand()) {
             resumeUpload();
+        }
+        else if (command == getDownloadCommand()) {
+            download();
+        }
+        else if (command == getStopDownloadCommand()) {
+            stopDownload();
         }
     }
 

@@ -1777,13 +1777,14 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public StatusOnlyReturn add_image_ticket(String ticketId, String[] ops, long timeout,
-            long size, String url) {
+            long size, String url, String filename) {
         HashMap<String, Object> ticketDict = new HashMap<>();
         ticketDict.put("uuid", ticketId);
         ticketDict.put("timeout", timeout);
         ticketDict.put("ops", ops);
         ticketDict.put("size", size);
         ticketDict.put("url", url);
+        ticketDict.put("filename", filename);
 
         JsonRpcRequest request =
                 new RequestBuilder("Host.add_image_ticket")

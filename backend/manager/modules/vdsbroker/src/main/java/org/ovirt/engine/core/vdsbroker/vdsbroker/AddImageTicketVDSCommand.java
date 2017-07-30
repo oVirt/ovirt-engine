@@ -16,7 +16,8 @@ public class AddImageTicketVDSCommand<P extends AddImageTicketVDSCommandParamete
                         getParameters().getOperations(),
                         getParameters().getTimeout(),
                         getParameters().getSize(),
-                        getParameters().getUrl());
+                        getParameters().getUrl(),
+                        getParameters().getFilename());
 
         proceedProxyReturnValue();
         setReturnValue(retval);

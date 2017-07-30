@@ -15,6 +15,7 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
     long sessionExpiration;
     AuditLogType auditLogType;
     long lastPauseLogTime;
+    String downloadFilename;
 
     public TransferImageParameters() {
     }
@@ -74,5 +75,13 @@ public class TransferImageParameters extends ImagesActionsParametersBase {
 
     public void setTransferType(TransferType transferType) {
         this.transferType = transferType;
+    }
+
+    public String getDownloadFilename() {
+        return downloadFilename;
+    }
+
+    public void setDownloadFilename(String downloadFilename) {
+        this.downloadFilename = downloadFilename;
     }
 }
