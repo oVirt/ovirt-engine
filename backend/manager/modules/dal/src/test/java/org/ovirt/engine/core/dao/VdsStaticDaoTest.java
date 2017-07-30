@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsStaticDaoTest extends BaseGenericDaoTestCase<Guid, VdsStatic, VdsStaticDao> {
-    private static final Guid VDS_JUST_STATIC_ID = new Guid("09617c59-cd31-4878-9c23-5ac17d8e1e3a");
-
     @Override
     protected VdsStatic generateNewEntity() {
         VdsStatic newStaticVds = new VdsStatic();
@@ -37,7 +35,7 @@ public class VdsStaticDaoTest extends BaseGenericDaoTestCase<Guid, VdsStatic, Vd
 
     @Override
     protected Guid getExistingEntityId() {
-        return VDS_JUST_STATIC_ID;
+        return FixturesTool.VDS_JUST_STATIC_ID;
     }
 
     @Override

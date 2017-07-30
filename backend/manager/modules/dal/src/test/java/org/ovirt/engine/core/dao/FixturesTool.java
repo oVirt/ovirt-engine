@@ -136,6 +136,11 @@ public class FixturesTool {
     public static final Guid VDS_GLUSTER_SERVER2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
 
     /**
+     * Predefined VdsStatic record that doesn't have a corresponding VdsDynamic record
+     */
+    public static final Guid VDS_JUST_STATIC_ID = new Guid("09617c59-cd31-4878-9c23-5ac17d8e1e3a");
+
+    /**
      * Predefined vds
      */
     public static final Guid HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");

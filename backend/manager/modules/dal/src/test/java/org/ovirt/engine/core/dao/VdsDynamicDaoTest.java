@@ -27,7 +27,6 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
     private VdsDynamicDao dao;
     private VdsStaticDao staticDao;
     private VdsStatic existingVds;
-    private VdsStatic newStaticVds;
     private VdsDynamic newDynamicVds;
 
     private static final List<Guid> HOSTS_WITH_UP_STATUS =
@@ -45,10 +44,9 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         staticDao = dbFacade.getVdsStaticDao();
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
-        newStaticVds = new VdsStatic();
-        newStaticVds.setHostName("farkle.redhat.com");
-        newStaticVds.setClusterId(existingVds.getClusterId());
         newDynamicVds = new VdsDynamic();
+        newDynamicVds.setId(FixturesTool.VDS_JUST_STATIC_ID);
+        newDynamicVds.setUpdateAvailable(true);
         newDynamicVds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration());
         newDynamicVds.getReportedDnsResolverConfiguration().setNameServers(
                 Collections.singletonList(new NameServer("1.1.1.1")));
@@ -80,16 +78,10 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSave() {
-        staticDao.save(newStaticVds);
-        newDynamicVds.setId(newStaticVds.getId());
-        newDynamicVds.setUpdateAvailable(true);
         dao.save(newDynamicVds);
 
-        VdsStatic staticResult = staticDao.get(newStaticVds.getId());
         VdsDynamic dynamicResult = dao.get(newDynamicVds.getId());
 
-        assertNotNull(staticResult);
-        assertEquals(newStaticVds, staticResult);
         assertNotNull(dynamicResult);
         assertEquals(newDynamicVds, dynamicResult);
         assertEquals(newDynamicVds.isUpdateAvailable(), dynamicResult.isUpdateAvailable());
