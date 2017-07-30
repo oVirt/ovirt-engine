@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -136,7 +137,8 @@ public abstract class OvfWriter implements IOvfBuilder {
     public void buildNetwork() {
         _writer.writeStartElement("NetworkSection");
         _writer.writeElement("Info", "List of networks");
-        vmBase.getInterfaces().stream().map(VmNetworkInterface::getNetworkName).distinct().forEach(network -> {
+        vmBase.getInterfaces().stream().map(VmNetworkInterface::getNetworkName).filter(Objects::nonNull).distinct()
+        .forEach(network -> {
             _writer.writeStartElement("Network");
             _writer.writeAttributeString(OVF_URI, "name", network);
             _writer.writeEndElement();
