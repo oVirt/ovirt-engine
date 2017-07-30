@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.NetworkFilterDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
@@ -91,6 +92,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         Network net = new Network();
         net.setId(Guid.newGuid());
         net.setName(managementNetworkUtil.getDefaultManagementNetworkName());
+        NetworkUtils.setNetworkVdsmName(net);
         net.setDescription(AddClusterCommand.DefaultNetworkDescription);
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
