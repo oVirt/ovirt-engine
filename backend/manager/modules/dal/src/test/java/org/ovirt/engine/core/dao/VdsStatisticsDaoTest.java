@@ -5,16 +5,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsStatisticsDaoTest extends BaseDaoTestCase {
     private VdsStatisticsDao dao;
-    private VdsStaticDao staticDao;
-    private VdsDynamicDao dynamicDao;
-    private VdsStatic existingVds;
-    private VdsStatic newStaticVds;
     private VdsStatistics newStatistics;
 
     @Override
@@ -22,14 +17,8 @@ public class VdsStatisticsDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getVdsStatisticsDao();
-        staticDao = dbFacade.getVdsStaticDao();
-        dynamicDao =  dbFacade.getVdsDynamicDao();
-        existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-
-        newStaticVds = new VdsStatic();
-        newStaticVds.setHostName("farkle.redhat.com");
-        newStaticVds.setClusterId(existingVds.getClusterId());
         newStatistics = new VdsStatistics();
+        newStatistics.setId(FixturesTool.VDS_JUST_STATIC_ID);
 
     }
 
@@ -48,10 +37,10 @@ public class VdsStatisticsDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGet() {
-        VdsStatistics result = dao.get(existingVds.getId());
+        VdsStatistics result = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
         assertNotNull(result);
-        assertEquals(existingVds.getId(), result.getId());
+        assertEquals(FixturesTool.VDS_GLUSTER_SERVER2, result.getId());
     }
 
     /**
@@ -59,15 +48,9 @@ public class VdsStatisticsDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSave() {
-        staticDao.save(newStaticVds);
-        newStatistics.setId(newStaticVds.getId());
         dao.save(newStatistics);
-
-        VdsStatic staticResult = staticDao.get(newStaticVds.getId());
         VdsStatistics statisticsResult = dao.get(newStatistics.getId());
 
-        assertNotNull(staticResult);
-        assertEquals(newStaticVds, staticResult);
         assertNotNull(statisticsResult);
         assertEquals(newStatistics, statisticsResult);
     }
@@ -77,13 +60,9 @@ public class VdsStatisticsDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(existingVds.getId());
-        dynamicDao.remove(existingVds.getId());
-        staticDao.remove(existingVds.getId());
+        dao.remove(FixturesTool.VDS_GLUSTER_SERVER2);
 
-        VdsStatic resultStatic = staticDao.get(existingVds.getId());
-        assertNull(resultStatic);
-        VdsStatistics resultStatistics = dao.get(existingVds.getId());
+        VdsStatistics resultStatistics = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
         assertNull(resultStatistics);
     }
 }
