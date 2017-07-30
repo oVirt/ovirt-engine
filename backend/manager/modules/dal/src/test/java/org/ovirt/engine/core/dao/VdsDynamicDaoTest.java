@@ -185,22 +185,13 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testCheckIfExistsHostWithStatusInCluster() {
-        Guid clusterId = existingVds.getClusterId();
-        VdsDynamic existingVdsDynamic = dao.get(existingVds.getId());
-        VDSStatus existingHostStatus = existingVdsDynamic.getStatus();
-
-        boolean resultBeforeUpdateStatus = dao.checkIfExistsHostWithStatusInCluster(clusterId, existingHostStatus);
+        boolean resultBeforeUpdateStatus =
+                dao.checkIfExistsHostWithStatusInCluster(FixturesTool.GLUSTER_CLUSTER_ID, VDSStatus.Up);
         assertTrue(resultBeforeUpdateStatus);
 
-        updateStatusForAllHostsInCluster(clusterId, VDSStatus.Connecting);
-        boolean resultAfterUpdateStatus = dao.checkIfExistsHostWithStatusInCluster(clusterId, existingHostStatus);
+        boolean resultAfterUpdateStatus =
+                dao.checkIfExistsHostWithStatusInCluster(FixturesTool.GLUSTER_CLUSTER_ID, VDSStatus.Connecting);
         assertFalse(resultAfterUpdateStatus);
-    }
-
-    private void updateStatusForAllHostsInCluster(Guid clusterId, VDSStatus hostStatus) {
-        for (VdsStatic host : staticDao.getAllForCluster(clusterId)) {
-            dao.updateStatus(host.getId(), hostStatus);
-        }
     }
 
     @Test
