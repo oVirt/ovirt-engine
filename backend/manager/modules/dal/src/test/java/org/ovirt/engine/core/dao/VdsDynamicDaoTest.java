@@ -26,7 +26,6 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class VdsDynamicDaoTest extends BaseDaoTestCase {
     private VdsDynamicDao dao;
     private VdsStaticDao staticDao;
-    private VdsStatisticsDao statisticsDao;
     private VdsStatic existingVds;
     private VdsStatic newStaticVds;
     private VdsDynamic newDynamicVds;
@@ -44,7 +43,6 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getVdsDynamicDao();
         staticDao = dbFacade.getVdsStaticDao();
-        statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
         newStaticVds = new VdsStatic();
@@ -105,11 +103,6 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
     @Test
     public void testRemove() {
         dao.remove(existingVds.getId());
-        statisticsDao.remove(existingVds.getId());
-        staticDao.remove(existingVds.getId());
-
-        VdsStatic resultStatic = staticDao.get(existingVds.getId());
-        assertNull(resultStatic);
         VdsDynamic resultDynamic = dao.get(existingVds.getId());
         assertNull(resultDynamic);
     }
