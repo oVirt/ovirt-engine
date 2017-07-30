@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -42,8 +41,10 @@ public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, 
 
     @Override
     protected void updateExistingEntity() {
-        RpmVersion glusterVersion = new RpmVersion("glusterfs-3.4.0.34.1u2rhs-1.el6rhs");
-        existingEntity.setGlusterVersion(glusterVersion);
+        existingEntity.setGlusterVersion(new RpmVersion("glusterfs-3.4.0.34.1u2rhs-1.el6rhs"));
+        existingEntity.setLibrbdVersion(new RpmVersion("librbd1-0.80.9-1.fc21.x86_64_updated"));
+        existingEntity.getReportedDnsResolverConfiguration().setNameServers
+                (Collections.singletonList(new NameServer("1.1.1.1")));
     }
 
     @Override
@@ -116,17 +117,6 @@ public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, 
     }
 
     @Test
-    public void testUpdateLibrbdVersion() {
-        RpmVersion librbdVersion = new RpmVersion("librbd1-0.80.9-1.fc21.x86_64_updated");
-        VdsDynamic before = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-        assertNotEquals(librbdVersion, before.getLibrbdVersion());
-        before.setLibrbdVersion(librbdVersion);
-        dao.update(before);
-        VdsDynamic after = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-        assertEquals(librbdVersion, after.getLibrbdVersion());
-    }
-
-    @Test
     public void testGetIdsOfHostsWithStatus() {
         List<Guid> hostIds = dao.getIdsOfHostsWithStatus(VDSStatus.Up);
         assertEquals(5, hostIds.size());
@@ -155,14 +145,5 @@ public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, 
         boolean resultAfterUpdateStatus =
                 dao.checkIfExistsHostWithStatusInCluster(FixturesTool.GLUSTER_CLUSTER_ID, VDSStatus.Connecting);
         assertFalse(resultAfterUpdateStatus);
-    }
-
-    @Test
-    public void testUpdateDnsResolverConfiguration() {
-        VdsDynamic before = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-        before.getReportedDnsResolverConfiguration().getNameServers().add(new NameServer("1.1.1.1"));
-        dao.update(before);
-        VdsDynamic after = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-        assertEquals(before.getReportedDnsResolverConfiguration(), after.getReportedDnsResolverConfiguration());
     }
 }
