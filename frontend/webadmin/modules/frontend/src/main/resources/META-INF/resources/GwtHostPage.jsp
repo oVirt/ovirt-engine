@@ -40,7 +40,7 @@
 
     <!-- in the meantime... -->
     <div id="host-page-placeholder">
-        <style>
+        <style type="text/css">
             #host-page-placeholder-spinner {
                 margin-top: -100px;
                 margin-right: -50px;
@@ -62,14 +62,16 @@
                 align-items: center;
             }
         </style>
-        <nav class="navbar navbar-pf-vertical" role="navigation">
+        <nav class="navbar navbar-pf-vertical obrand_headerLogoBackgroundImage" role="navigation">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a href="javascript:;" class="navbar-brand"><img class="obrand_headerLogoImage" src="clear.cache.gif"></a>
+                <a href="javascript:;" class="navbar-brand obrand_headerLogoLink">
+                    <img class="obrand_headerLogoImage" src="clear.cache.gif">
+                </a>
             </div>
         </nav>
 

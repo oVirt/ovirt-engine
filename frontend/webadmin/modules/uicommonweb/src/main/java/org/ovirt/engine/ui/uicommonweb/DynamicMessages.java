@@ -14,11 +14,9 @@ public interface DynamicMessages {
      * Get the application version message using the {@code Dictionary} in the host page. With a fall back to the
      * standard GWT Message.
      *
-     * @param version
-     *            The version string to use to replace the place holder in the message.
      * @return The version about message
      */
-    String ovirtVersionAbout(String version);
+    String ovirtVersionAbout();
 
     /**
      * Get the copy right notice using the {@code Dictionary} in the host page. With a fall back to the standard GWT

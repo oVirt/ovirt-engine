@@ -9,34 +9,74 @@
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
     <ui:style>
-        .copyrightNotice {
-            font-weight: bold;
+        .container {
+            padding-top: 20px;
+            padding-right: 20px;
+            padding-left: 50px;
+            padding-right: 20px;
+            color: white;
+            font-size: 14px;
         }
 
-        .container {
-            text-align: center;
+        .applicationTitleRow {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+
+        .close {
+            color: white;
+            font-size: 22px;
+            font-weight: 600;
+            opacity: 1;
+        }
+
+        .label {
+            font-weight: bold;
+            padding-right: 5px;
+        }
+
+        .app-title {
+            color: white;
+            font-size: 22px;
+            font-weight:200;
         }
     </ui:style>
 
-    <d:SimpleDialogPanel header="{constants.aboutPopupCaption}" width="500px" height="300px">
-        <d:content>
-            <b:Container addStyleNames="{style.container}" fluid="true">
-                <b:Row>
-                    <b:Column size="SM_12">
-                        <g:InlineLabel ui:field="versionLabel" />
-                    </b:Column>
-                </b:Row>
-                <b:Row>
-                    <b:Column size="SM_12">
-                        <g:Label ui:field="copyrightNotice" addStyleNames="{style.copyrightNotice}"/>
-                    </b:Column>
-                </b:Row>
-            </b:Container>
-        </d:content>
-
-        <d:footerButton>
-            <d:SimpleDialogButton ui:field="closeButton" />
-        </d:footerButton>
-    </d:SimpleDialogPanel>
+    <d:OVirtBootstrapModal width="565px" height="355px" addStyleNames="obrand_aboutBackgroundImage">
+        <b:Container addStyleNames="{style.container}" fluid="true">
+            <b:Row>
+                <b:Column size="SM_12">
+                    <g:Button ui:field="closeIconButton" addStyleNames="close {style.close}"><span class="pficon pficon-close" /></g:Button>
+                </b:Column>
+            </b:Row>
+            <b:Row addStyleNames="{style.applicationTitleRow}">
+                <b:Column size="SM_12">
+                    <g:InlineLabel ui:field="applicationTitle" addStyleNames="{style.app-title}" />
+                </b:Column>
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_12">
+                    <g:InlineLabel ui:field="versionLabel" addStyleNames="{style.label}" />
+                    <g:InlineLabel ui:field="versionText" />
+                </b:Column>
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_12">
+                    <g:InlineLabel ui:field="serverNameLabel" addStyleNames="{style.label}" />
+                    <g:InlineLabel ui:field="serverNameText" />
+                </b:Column>
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_12">
+                    <g:Label ui:field="copyrightNotice" />
+                </b:Column>
+            </b:Row>
+            <b:Row>
+                <b:Column size="SM_12">
+                    <g:Label ui:field="logo" addStyleNames="obrand_aboutApplicationLogo" />
+                </b:Column>
+            </b:Row>
+        </b:Container>
+    </d:OVirtBootstrapModal>
 
 </ui:UiBinder>

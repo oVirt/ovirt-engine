@@ -202,8 +202,8 @@ public class BaseDynamicMessages implements DynamicMessages {
     }
 
     @Override
-    public final String ovirtVersionAbout(final String version) {
-        return formatString(DynamicMessageKey.VERSION_ABOUT, version);
+    public final String ovirtVersionAbout() {
+        return formatString(DynamicMessageKey.VERSION_ABOUT);
     }
 
     @Override
@@ -265,4 +265,5 @@ public class BaseDynamicMessages implements DynamicMessages {
                 ? url
                 : "/" + BaseContextPathData.getRelativePath() + url; //$NON-NLS-1$
     }
+
 }

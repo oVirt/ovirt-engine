@@ -1,8 +1,4 @@
-﻿.container {
-    padding-top: 10px !important;
-}
-
-.label-default {
+﻿.label-default {
     background-color: inherit;
 }
 
@@ -24,19 +20,6 @@
 .login-message-error {
     color: #b94a48;
     background-color: inherit;
-}
-
-.welcome-title-wrapper {
-    padding-bottom: 20px;
-}
-
-.welcome-title {
-    font-size: 18px;
-}
-
-.version-text {
-    margin-left: 30px;
-    color: #bbb;
 }
 
 .welcome-section-title {
@@ -65,12 +48,6 @@
     background-color: inherit;
 }
 
-#link-404 {
-    font-size: 13px;
-    display: block;
-    margin-bottom: 75px;
-}
-
 .ovirt-container .container {
     background-color: rgba(0, 0, 0, 0.25);
     padding-left: 80px;
@@ -84,9 +61,4 @@
 
 .ovirt-container select {
     color: black;
-}
-
-.ovirt-container #brand {
-    position: relative;
-    top: -70px;
 }

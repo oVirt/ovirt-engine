@@ -17,32 +17,37 @@
     <obrand:javascripts />
 </head>
 <body>
+    <div class="landing-bg-bottom-left"></div>
+    <div class="landing-bg-top-right"></div>
+
     <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
          <span class="obrand_loginPageLogoImage"></span>
     </a>
+
     <div class="ovirt-container">
-        <div class="container">
-            <div class="row">
-
+        <div class="container container-pad">
+            <div class="row" id="welcome-section">
                 <div class="col-sm-12">
-                    <div id="brand">
-                        <div class="obrand_loginFormLogoImage"></div>
-                    </div>
+                    <div class="obrand_loginFormLogoImage"></div>
                 </div>
-
+            </div>
+            <div class="row">
                 <div class="col-sm-12">
                     <fmt:message key="docs.missing.appears" bundle="${docs}">
                         <fmt:param value="${requestScope['locale'].getDisplayLanguage(requestScope['locale'])}" />
                     </fmt:message>
                     <fmt:message key="docs.missing.admin" bundle="${docs}" />
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-12">
                     <a href="${requestScope['englishHref']}"><fmt:message key="docs.missing.click_here" bundle="${docs}" /></a>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-sm-12">
                     <fmt:message key="docs.missing.appear_once" bundle="${docs}" />
                 </div>
-                <div style="clear: both;"></div>
             </div>
         </div>
     </div>

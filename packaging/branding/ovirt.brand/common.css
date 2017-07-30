@@ -1,27 +1,48 @@
 
-/* LoginPopupView.ui.xml:
-These classes allow you to modify the logo used in the login form. */
+/* LoginSectionView.ui.xml:
+   app logo, positioned in the top right of login screen */
+.obrand_loginPageLogoImage {
+    background-image: url(images/oVirt_Logo.png);
+    width: 80px;
+    height: 30px;
+    border: 0px;
+    display: block;
+}
+
+.obrand_loginPageLogoImageLink {
+    display: block;
+    float: right;
+    margin-right: 64px;
+    margin-top: 75px;
+    margin-bottom: 70px;
+    position: relative;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+  .obrand_loginPageLogoImage {
+    display: none;
+  }
+  .obrand_loginPageLogoImageLink {
+    display: none;
+  }
+}
+
+/* TODO rename */
 .obrand_loginFormLogoImage {
     background-image: url(images/ovirt_login_middle_logo.png);
     width: 440px;
-    height: 35px !important;
+    height: 35px;
     border: 0px;
     display: block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: left;
+    clear: left;
 }
 
 .obrand_diskTypePanel {
     background-color: #82AA32;
-}
-
-/* HeaderView.ui.xml:
-logo used in the application header */
-.obrand_headerLogoImage {
-    background-image: url(images/ovirt_top_logo.png);
-    width: 264px;
-    height: 22px !important;
-    border: 0px;
-    display: block;
-    margin-top: 8px !important
 }
 
 .obrand_ssoHeader {
@@ -32,7 +53,25 @@ logo used in the application header */
 }
 
 .obrand_main_tab {
-    height: calc(100vh - 98px);
-    min-height: calc(100vh - 98px);
+    height: calc(100vh - 96px);
+    min-height: calc(100vh - 96px);
 }
 
+.obrand_aboutBackgroundImage {
+    width: 565px;
+    height: 355px;
+    background-image: url(images/oVirt_About_BG_Flat_Image.png);
+}
+
+.obrand_aboutApplicationLogo {
+    background-image: url(images/oVirt_Logo.png);
+    width: 80px;
+    height: 30px;
+    border: 0px;
+    display: block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: right;
+    position: relative;
+    top: 140px;
+}

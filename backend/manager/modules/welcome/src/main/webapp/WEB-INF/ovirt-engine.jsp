@@ -15,19 +15,22 @@
     <script src="welcome-locale-selector.js" type="text/javascript"></script>
 </head>
 <body>
+    <div class="landing-bg-bottom-left"></div>
+    <div class="landing-bg-top-right"></div>
+
     <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
          <span class="obrand_loginPageLogoImage"></span>
     </a>
     <div class="ovirt-container">
         <obrand:header />
         <div class="container">
-            <div class="row">
+            <div id="welcome-section">
+                <div id="welcome-title"><fmt:message key="obrand.welcome.welcome.text" /></div>
+                <div class="obrand_loginFormLogoImage"></div>
+                <div id="welcome-version-text"><fmt:message key="obrand.welcome.version"><fmt:param value="${requestScope['version']}" /></fmt:message></div>
+            </div>
 
-                <div class="col-sm-12">
-                    <div id="brand">
-                        <div class="obrand_loginFormLogoImage"></div>
-                    </div>
-                </div>
+            <div class="row">
                 <noscript>
                     <div class="well col-sm-11 well-sm" id="well-error">
                         <span class="label label-default" id="well-error-label">
@@ -37,15 +40,6 @@
                     </div>
                     <div style="clear: both;"></div>
                 </noscript>
-
-                <div class="col-sm-12 welcome-title-wrapper">
-                    <span class="welcome-title"><fmt:message key="obrand.welcome.welcome.text" /></span>
-                    <script type="text/JavaScript">
-                    <!--
-                    document.write('<span class="version-text"><fmt:message key="obrand.welcome.version"><fmt:param value="${requestScope[\'version\']}" /> </fmt:message></span>')
-                    //-->
-                    </script>
-                </div>
 
                 <div class="col-sm-12">
                     <c:if test="${sessionScope.error_description != null && sessionScope.error_description != '' }">
@@ -63,7 +57,7 @@
 
                 <div style="clear: both;"></div>
 
-                <div class="col-sm-12">
+                <div id="welcome-band-top" class="col-sm-12">
                     ${requestScope['sections'].toString()}
                 </div>
 

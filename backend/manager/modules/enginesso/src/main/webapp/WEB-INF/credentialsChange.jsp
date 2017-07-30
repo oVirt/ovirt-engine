@@ -71,7 +71,7 @@
                             <input type="hidden" class="form-control" id="username" placeholder="username" name="username" value="${ssoUserName}">
                             <input type="hidden" class="form-control" id="profile" placeholder="profile" name="profile" value="${ssoUserProfile}">
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="oldPassword">
+                                <label class="col-sm-3 control-label" for="oldPassword">
                                 <fmt:message key="changepasswordpage.oldpassword" bundle="${changepasswordpage}" />
                                 </label>
                                 <div class="col-sm-9">
@@ -79,7 +79,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="newPassword1">
+                                <label class="col-sm-3 control-label" for="newPassword1">
                                 <fmt:message key="changepasswordpage.newpassword" bundle="${changepasswordpage}" />
                                 </label>
                                 <div class="col-sm-9">
@@ -87,7 +87,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-3 control-label" for="newPassword2">
+                                <label class="col-sm-3 control-label" for="newPassword2">
                                     <fmt:message key="changepasswordpage.retypepassword" bundle="${changepasswordpage}" />
                                 </label>
                                 <div class="col-sm-9">

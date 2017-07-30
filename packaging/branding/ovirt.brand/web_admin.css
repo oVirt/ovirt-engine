@@ -1,17 +1,26 @@
+/* HeaderView.ui.xml:
+logo used in the application header */
+.obrand_headerLogoImage {
+    background-image: url(images/ovirt_header_logo.png);
+    width: 272px;
+    height: 16px;
+    position: relative;
+    top: 6px;
+    border: 0px;
+    display: inline !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* background of application header */
+.obrand_headerLogoBackgroundImage {
+    background-image: url(images/oVirt_Banner_solid.png);
+    background-size: cover;
+}
+
 .obrand_menuBar {
     float: right;
     padding: 10px 10px 10px 10px;
-}
-
-/* StoragePopupView.ui.xml */
-.obrand_storageTypePanel {
-    background-color: #82aa32;
-    width: 100%;
-    height: 20px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding-top: 7px;
-    padding-bottom: 7px;
 }
 
 /* GuidePopupView.ui.xml:

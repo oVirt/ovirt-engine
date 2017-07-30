@@ -15,32 +15,36 @@
     <obrand:javascripts />
 </head>
 <body>
+
     <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
+
+    <c:if test="${ssoSession.status == 'authenticated'}">
+        <c:redirect url="/interactive-login" />
+    </c:if>
+
+    <c:if test="${ssoSession.clientId == null}">
+        <c:redirect url="${ssoSession.engineUrl}" />
+    </c:if>
+
+    <c:if test="${ssoSession.reauthenticate == true}">
+        <c:redirect url="/oauth/authorize?client_id=${ssoSession.clientId}&response_type=code&scope=${ssoSession.scope}&app_url=${ssoSession.appUrl}&redirect_uri=${ssoSession.redirectUri}?" />
+    </c:if>
+
+    <c:set target="${ssoSession}" property="reauthenticate" value="true" />
+
+    <div class="landing-bg-bottom-left"></div>
+    <div class="landing-bg-top-right"></div>
+
     <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoImageLink">
          <span class="obrand_loginPageLogoImage"></span>
     </a>
     <div class="ovirt-container">
         <div class="container">
+            <div id="welcome-section-login">
+                <div class="obrand_loginFormLogoImage"></div>
+            </div>
+
             <div class="row">
-                <div class="col-sm-12">
-                    <div id="brand">
-                        <div class="obrand_loginFormLogoImage"></div>
-                    </div>
-                </div>
-
-                <c:if test="${ssoSession.status == 'authenticated'}">
-                    <c:redirect url="/interactive-login" />
-                </c:if>
-
-                <c:if test="${ssoSession.clientId == null}">
-                    <c:redirect url="${ssoSession.engineUrl}" />
-                </c:if>
-
-                <c:if test="${ssoSession.reauthenticate == true}">
-                    <c:redirect url="/oauth/authorize?client_id=${ssoSession.clientId}&response_type=code&scope=${ssoSession.scope}&app_url=${ssoSession.appUrl}&redirect_uri=${ssoSession.redirectUri}?" />
-                </c:if>
-                <c:set target="${ssoSession}" property="reauthenticate" value="true" />
-
                 <div style="height:45px;vertical-align:top;display: table;">
                     <c:if test="${ssoSession.loginMessage != null && ssoSession.loginMessage != '' }">
                         <div class="alert alert-warning alert-dismissable">
@@ -58,15 +62,15 @@
                         <form class="form-horizontal" method="post" action="${pageContext.request.contextPath}/interactive-login">
                             <input type="hidden" class="form-control" id="sessionIdToken" placeholder="sessionIdToken" name="sessionIdToken" value="${ssoSession.sessionIdToken}">
                             <div class="form-group">
-                                <label class="col-sm-2 col-md-2 control-label" for="username">
+                                <label class="col-sm-2 control-label" for="username">
                                     <fmt:message key="loginpage.username" bundle="${loginpage}" />
                                 </label>
-                                <div class="col-sm-10 col-md-10">
+                                <div class="col-sm-10">
                                     <input type="text" id="username" name="username" class="form-control" autofocus tabIndex="1">
                                  </div>
                             </div>
                             <div class="form-group">
-                                 <label class="col-md-2 control-label" for="password">
+                                 <label class="col-sm-2 control-label" for="password">
                                      <fmt:message key="loginpage.password" bundle="${loginpage}" />
                                  </label>
                                  <div class="col-sm-10">
@@ -74,7 +78,7 @@
                                  </div>
                              </div>
                              <div class="form-group">
-                                 <label class="col-md-2 control-label" for="profile">
+                                 <label class="col-sm-2 control-label" for="profile">
                                      <fmt:message key="loginpage.profile" bundle="${loginpage}" />
                                  </label>
                                  <div class="col-sm-10">
