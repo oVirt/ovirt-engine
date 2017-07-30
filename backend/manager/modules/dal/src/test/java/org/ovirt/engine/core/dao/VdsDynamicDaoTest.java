@@ -3,14 +3,13 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ExternalStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -22,10 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class VdsDynamicDaoTest extends BaseDaoTestCase {
-    private VdsDynamicDao dao;
-    private VdsDynamic newDynamicVds;
-
+public class VdsDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VdsDynamic, VdsDynamicDao> {
     private static final List<Guid> HOSTS_WITH_UP_STATUS =
             Arrays.asList(FixturesTool.VDS_RHEL6_NFS_SPM,
                     FixturesTool.HOST_ID,
@@ -34,63 +30,46 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
                     FixturesTool.VDS_GLUSTER_SERVER2);
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getVdsDynamicDao();
-
-        newDynamicVds = new VdsDynamic();
+    protected VdsDynamic generateNewEntity() {
+        VdsDynamic newDynamicVds = new VdsDynamic();
         newDynamicVds.setId(FixturesTool.VDS_JUST_STATIC_ID);
         newDynamicVds.setUpdateAvailable(true);
         newDynamicVds.setReportedDnsResolverConfiguration(new DnsResolverConfiguration());
         newDynamicVds.getReportedDnsResolverConfiguration().setNameServers(
                 Collections.singletonList(new NameServer("1.1.1.1")));
+        return newDynamicVds;
     }
 
-    /**
-     * Ensures that an invalid id returns null.
-     */
-    @Test
-    public void testGetWithInvalidId() {
-        VdsDynamic result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected void updateExistingEntity() {
+        RpmVersion glusterVersion = new RpmVersion("glusterfs-3.4.0.34.1u2rhs-1.el6rhs");
+        existingEntity.setGlusterVersion(glusterVersion);
     }
 
-    /**
-     * Ensures that the right object is returned.
-     */
-    @Test
-    public void testGet() {
-        VdsDynamic result = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-
-        assertNotNull(result);
-        assertEquals(FixturesTool.VDS_GLUSTER_SERVER2, result.getId());
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.VDS_GLUSTER_SERVER2;
     }
 
-    /**
-     * Ensures saving a VDS instance works.
-     */
-    @Test
-    public void testSave() {
-        dao.save(newDynamicVds);
-
-        VdsDynamic dynamicResult = dao.get(newDynamicVds.getId());
-
-        assertNotNull(dynamicResult);
-        assertEquals(newDynamicVds, dynamicResult);
-        assertEquals(newDynamicVds.isUpdateAvailable(), dynamicResult.isUpdateAvailable());
-        assertEquals(newDynamicVds.getReportedDnsResolverConfiguration(),
-                dynamicResult.getReportedDnsResolverConfiguration());
+    @Override
+    protected VdsDynamicDao prepareDao() {
+        return dbFacade.getVdsDynamicDao();
     }
 
-    /**
-     * Ensures removing a VDS instance works.
-     */
-    @Test
-    public void testRemove() {
-        dao.remove(FixturesTool.VDS_GLUSTER_SERVER2);
-        VdsDynamic resultDynamic = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-        assertNull(resultDynamic);
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 5;
+    }
+
+    @Ignore
+    @Override
+    public void testGetAll() {
+        // Not Supported
     }
 
     @Test
@@ -134,16 +113,6 @@ public class VdsDynamicDaoTest extends BaseDaoTestCase {
         dao.updateNetConfigDirty(before.getId(), netConfigDirty);
         VdsDynamic after = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
         assertEquals(before, after);
-    }
-
-    @Test
-    public void testGlusterVersion() {
-        RpmVersion glusterVersion = new RpmVersion("glusterfs-3.4.0.34.1u2rhs-1.el6rhs");
-        VdsDynamic before = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-        before.setGlusterVersion(glusterVersion);
-        dao.update(before);
-        VdsDynamic after = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
-        assertEquals(glusterVersion, after.getGlusterVersion());
     }
 
     @Test
