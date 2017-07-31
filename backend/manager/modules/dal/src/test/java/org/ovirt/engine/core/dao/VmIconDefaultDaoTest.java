@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmIconDefaultDaoTest extends BaseGenericDaoTestCase<Guid, VmIconDefault, VmIconDefaultDao> {
 
     private static final Guid NEW_ID = new Guid("29df2e6a-d8bf-4025-8dec-f6a1d3e19131");
-    private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
     private static final Guid ALPS_LARGE_ICON_ID = new Guid("32a41e14-8ec0-4638-8c34-a8e2841efc7e");
     private static final Guid NONEXISTING_ID = new Guid("96dcabdb-a88e-43bc-ad49-76bbf2c6758a");
     private static final Guid EXISTING_ID = new Guid("99276847-fb86-4fc4-8c16-593802ef7a4d");
@@ -21,11 +20,11 @@ public class VmIconDefaultDaoTest extends BaseGenericDaoTestCase<Guid, VmIconDef
             new Guid("a9eda7a9-6a5e-4f52-8efc-033f39228fc8"),
             0,
             FixturesTool.SMALL_ICON_ID,
-            LARGE_ICON_ID);
+            FixturesTool.LARGE_ICON_ID);
 
     @Override
     protected VmIconDefault generateNewEntity() {
-        return new VmIconDefault(NEW_ID, 2, FixturesTool.SMALL_ICON_ID, LARGE_ICON_ID);
+        return new VmIconDefault(NEW_ID, 2, FixturesTool.SMALL_ICON_ID, FixturesTool.LARGE_ICON_ID);
     }
 
     @Override
@@ -62,7 +61,7 @@ public class VmIconDefaultDaoTest extends BaseGenericDaoTestCase<Guid, VmIconDef
 
     @Test
     public void testGetByLargeIconId() {
-        final List<VmIconDefault> result = prepareDao().getByLargeIconId(LARGE_ICON_ID);
+        final List<VmIconDefault> result = prepareDao().getByLargeIconId(FixturesTool.LARGE_ICON_ID);
         assertTrue(result.contains(OTHER_OS_VM_ICON_DEFAULT));
     }
 

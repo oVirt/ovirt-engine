@@ -897,4 +897,5 @@ public class FixturesTool {
                     Guid.createGuidFromString("d1083ae5-df27-44dc-a3b1-a818844db9e4");
 
     public static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
+    public static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
 }

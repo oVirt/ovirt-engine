@@ -33,7 +33,6 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     private static final Guid DELETABLE_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
     private static final Guid EXISTING_INSTANCE_TYPE_ID = new Guid("99408929-82cf-4dc7-a532-9d998063fa95");
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
-    private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");
     protected static final Guid[] HOST_GUIDS = {FixturesTool.VDS_RHEL6_NFS_SPM,
             FixturesTool.HOST_ID,
             FixturesTool.GLUSTER_BRICK_SERVER1};
@@ -63,7 +62,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         newVmTemplate.setClusterArch(ArchitectureType.x86_64);
         newVmTemplate.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         newVmTemplate.setSmallIconId(FixturesTool.SMALL_ICON_ID);
-        newVmTemplate.setLargeIconId(LARGE_ICON_ID);
+        newVmTemplate.setLargeIconId(FixturesTool.LARGE_ICON_ID);
     }
 
     /**
