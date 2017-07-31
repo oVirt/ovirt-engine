@@ -119,7 +119,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateAll() throws Exception {
-        VmDynamic existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        VmDynamic existingVm2 = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         existingVm.setStatus(VMStatus.Down);
         existingVm2.setIp("111");
         existingVm2.setFqdn("localhost.localdomain");
@@ -136,7 +136,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdateConsoleUserWithOptimisticLockingSuccess() throws Exception {
-        VmDynamic vmWithoutConsoleUser = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        VmDynamic vmWithoutConsoleUser = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         vmWithoutConsoleUser.setConsoleUserId(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
 
         boolean result = dao.updateConsoleUserWithOptimisticLocking(vmWithoutConsoleUser);
@@ -160,21 +160,20 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testClearMigratingToVds() throws Exception {
-        Guid vmId = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356");
-        VmDynamic vmDynamic = dao.get(vmId);
+        VmDynamic vmDynamic = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         assertNotNull("migrating_to_vds field should not be null before we clear it",
                 vmDynamic.getMigratingToVds());
 
-        dao.clearMigratingToVds(vmId);
+        dao.clearMigratingToVds(FixturesTool.VM_RHEL5_POOL_51);
 
-        vmDynamic = dao.get(vmId);
+        vmDynamic = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         assertNull("migrating_to_vds field should be null after we clear it",
                 vmDynamic.getMigratingToVds());
     }
 
     @Test
     public void testGuestAgentStatus() throws Exception {
-        Guid vmId = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356");
+        Guid vmId = FixturesTool.VM_RHEL5_POOL_51;
         VmDynamic vmDynamic = dao.get(vmId);
         vmDynamic.setGuestAgentStatus(GuestAgentStatus.UpdateNeeded);
         dao.update(vmDynamic);
@@ -184,7 +183,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateToUnknown() {
-        VmDynamic existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        VmDynamic existingVm2 = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         VmDynamic existingVm3 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354"));
         dao.updateVmsToUnknown(Arrays.asList(existingVm.getId(), existingVm2.getId()));
         assertEquals(VMStatus.Unknown, dao.get(existingVm.getId()).getStatus());

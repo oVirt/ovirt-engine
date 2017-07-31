@@ -97,7 +97,7 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
     @Test
     public void testUpdateAll() throws Exception {
         VmStatistics existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
-        VmStatistics existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        VmStatistics existingVm2 = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         existingVm.setCpuSys(50.0);
         existingVm2.setCpuUser(50.0);
 
