@@ -47,7 +47,7 @@ public class CreateBrokerVDSCommand<P extends CreateVDSCommandParameters> extend
     protected void executeVdsBrokerCommand() {
         buildVmData();
         log.info("VM {}", createInfo);
-        if ((boolean) Config.getValue(ConfigValues.DomainXML)) {
+        if ((boolean) Config.getValue(ConfigValues.DomainXML, vm.getClusterCompatibilityVersion().getValue())) {
             LibvirtVmXmlBuilder builder = Injector.injectMembers(new LibvirtVmXmlBuilder(
                     createInfo,
                     vm,

@@ -453,13 +453,19 @@ public class VmDevicesMonitoring {
             return null;
         }
 
-        VDSReturnValue vdsReturnValue = (boolean) Config.getValue(ConfigValues.DomainXML) ?
+        VDSReturnValue vdsReturnValue = isDomainXmlEnabledForVds(vdsId) ?
                 runVdsCommand(VDSCommandType.DumpXmls, new DumpXmlsVDSCommand.Params(vdsId, vmIds))
                 : runVdsCommand(VDSCommandType.FullList, new FullListVDSCommandParameters(vdsId, vmIds));
 
         return vdsReturnValue.getSucceeded() ?
             (Map<String, Object>[]) vdsReturnValue.getReturnValue()
             : new Map[0];
+    }
+
+    private boolean isDomainXmlEnabledForVds(Guid vdsId) {
+        return (boolean) Config.getValue(
+                ConfigValues.DomainXML,
+                resourceManager.getVdsManager(vdsId).getCompatibilityVersion().getValue());
     }
 
     /**
