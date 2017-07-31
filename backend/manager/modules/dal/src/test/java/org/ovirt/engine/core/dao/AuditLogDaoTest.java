@@ -26,7 +26,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
-    private static final String VM_NAME = "rhel5-pool-50";
+    private static final String VM_NAME = FixturesTool.VM_RHEL5_POOL_50_NAME;
     private static final String VM_TEMPLATE_NAME = "1";
     private static final String VDS_NAME = "magenta-vdsc";
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");

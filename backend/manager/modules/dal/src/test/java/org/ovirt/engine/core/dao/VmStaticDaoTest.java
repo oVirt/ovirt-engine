@@ -40,7 +40,6 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     protected static final Guid[] HOST_GUIDS = { FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
             FixturesTool.HOST_ID,
             FixturesTool.GLUSTER_BRICK_SERVER1};
-    private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
 
     private VmStaticDao dao;
@@ -91,12 +90,12 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllStaticByName() {
-        List<VmStatic> result = dao.getAllByName("rhel5-pool-50");
+        List<VmStatic> result = dao.getAllByName(FixturesTool.VM_RHEL5_POOL_50_NAME);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (VmStatic vm : result) {
-            assertEquals("rhel5-pool-50", vm.getName());
+            assertEquals(FixturesTool.VM_RHEL5_POOL_50_NAME, vm.getName());
         }
     }
 
@@ -343,7 +342,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetOrderedVmGuidsForRunMultipleActionsByPriority() {
-        List<VmStatic> vmStatics = dao.getAllByName(STATIC_VM_NAME);
+        List<VmStatic> vmStatics = dao.getAllByName(FixturesTool.VM_RHEL5_POOL_50_NAME);
         VmStatic[] vmStaticArrayInDescOrder = initVmStaticsOrderedByPriority(vmStatics);
 
         // execute
@@ -361,7 +360,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetOrderedVmGuidsForRunMultipleActionsByAutoStartup() {
-        List<VmStatic> vmStatics = dao.getAllByName(STATIC_VM_NAME);
+        List<VmStatic> vmStatics = dao.getAllByName(FixturesTool.VM_RHEL5_POOL_50_NAME);
         VmStatic[] vmStaticArrayInDescOrder = initVmStaticsOrderedByAutoStartup(vmStatics);
 
         // execute
@@ -379,7 +378,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetOrderedVmGuidsForRunMultipleActionsByMigrationSupport() {
-        List<VmStatic> vmStatics = dao.getAllByName(STATIC_VM_NAME);
+        List<VmStatic> vmStatics = dao.getAllByName(FixturesTool.VM_RHEL5_POOL_50_NAME);
         if (vmStatics.size() > 3) { // migration support has only 3 possible values
             vmStatics = vmStatics.subList(0, 3);
         }
