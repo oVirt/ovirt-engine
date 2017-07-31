@@ -37,7 +37,6 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     public static MockConfigRule mcr = new MockConfigRule();
 
     private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
-    private static final Guid EXISTING_PROVIDER_ID = new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
     protected static final Guid[] HOST_GUIDS = { FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
             FixturesTool.HOST_ID,
             FixturesTool.GLUSTER_BRICK_SERVER1};
@@ -178,7 +177,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdate() {
-        assertEquals(EXISTING_PROVIDER_ID, existingVmStatic.getProviderId());
+        assertEquals(FixturesTool.PROVIDER_ID, existingVmStatic.getProviderId());
         existingVmStatic.setDescription("updated");
         existingVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         existingVmStatic.setProviderId(null);
