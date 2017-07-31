@@ -895,4 +895,6 @@ public class FixturesTool {
             Guid.createGuidFromString("6de58dc3-171d-426d-99fc-295c25c091d3");
     public static final Guid EXISTING_DNS_RESOLVER_CONFIGURATION_TO_REMOVE =
                     Guid.createGuidFromString("d1083ae5-df27-44dc-a3b1-a818844db9e4");
+
+    public static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
 }
