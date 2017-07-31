@@ -40,7 +40,7 @@ public class EntityDaoImplTest extends BaseDaoTestCase {
     private static final Guid BOOKMARK_ID = new Guid("a4affabf-7b45-4a6c-b0a9-107d0bbe265e");
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final Guid ROLE_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
-    private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
+    private static final Guid QUOTA_ID = FixturesTool.QUOTA_GENERAL;
     private static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
     private static final Guid NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-023770607188");
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
