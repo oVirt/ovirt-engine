@@ -1645,9 +1645,10 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("link");
             writer.writeAttributeString("state", nic.isLinked() ? "up" : "down");
             writer.writeEndElement();
-            // The source element looks different when using legacy or OVS bridge
+            // The source element is different when using legacy or OVS bridge. We
+            // expect VDSM to replace the source element if it is a non legacy bridge
             writer.writeStartElement("source");
-            writer.writeAttributeString("bridge", String.format("NIC-BRIDGE:%s", nic.getNetworkName()));
+            writer.writeAttributeString("bridge", nic.getNetworkName());
             writer.writeEndElement();
 
             break;
