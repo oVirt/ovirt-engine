@@ -29,7 +29,6 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     private static final int NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER = 1;
     private static final int NUMBER_OF_INSTANCE_TYPES_FOR_PRIVELEGED_USER = 1;
     private static final int NUMBER_OF_TEMPLATES_IN_DB = 8;
-    private static final Guid EXISTING_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid DELETABLE_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b80");
     private static final Guid EXISTING_INSTANCE_TYPE_ID = new Guid("99408929-82cf-4dc7-a532-9d998063fa95");
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
@@ -49,8 +48,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getVmTemplateDao();
 
-        existingTemplate = dao.get(
-                new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
+        existingTemplate = dao.get(FixturesTool.VM_TEMPLATE_RHEL5);
 
         existingInstanceType = dao.get(
                 new Guid("99408929-82cf-4dc7-a532-9d998063fa95"));
@@ -80,7 +78,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGet() {
-        VmTemplate result = dao.get(EXISTING_TEMPLATE_ID);
+        VmTemplate result = dao.get(FixturesTool.VM_TEMPLATE_RHEL5);
 
         assertGetResult(result);
     }
@@ -119,10 +117,10 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetVmTemplatesByIds() {
-        List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(EXISTING_TEMPLATE_ID, DELETABLE_TEMPLATE_ID));
+        List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5, DELETABLE_TEMPLATE_ID));
         assertEquals("loaded templates list isn't in the expected size", 2, result.size());
         Collection<Guid> recieved = result.stream().map(VmTemplate::getId).collect(Collectors.toList());
-        assertTrue("the received list didn't contain an expected Template", recieved.contains(EXISTING_TEMPLATE_ID));
+        assertTrue("the received list didn't contain an expected Template", recieved.contains(FixturesTool.VM_TEMPLATE_RHEL5));
         assertTrue("the received list didn't contain an expected Template", recieved.contains(DELETABLE_TEMPLATE_ID));
     }
 
@@ -330,7 +328,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     */
     @Test
     public void testGetWithPermissionsForPriviligedUser() {
-        VmTemplate result = dao.get(EXISTING_TEMPLATE_ID, PRIVILEGED_USER_ID, true);
+        VmTemplate result = dao.get(FixturesTool.VM_TEMPLATE_RHEL5, PRIVILEGED_USER_ID, true);
         assertGetResult(result);
     }
 
@@ -339,7 +337,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     */
     @Test
     public void testGetWithPermissionsForUnpriviligedUser() {
-        VmTemplate result = dao.get(EXISTING_TEMPLATE_ID, UNPRIVILEGED_USER_ID, true);
+        VmTemplate result = dao.get(FixturesTool.VM_TEMPLATE_RHEL5, UNPRIVILEGED_USER_ID, true);
         assertNull(result);
     }
 
@@ -348,7 +346,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     */
     @Test
     public void testGetWithPermissionsDisabledForUnpriviligedUser() {
-        VmTemplate result = dao.get(EXISTING_TEMPLATE_ID, UNPRIVILEGED_USER_ID, false);
+        VmTemplate result = dao.get(FixturesTool.VM_TEMPLATE_RHEL5, UNPRIVILEGED_USER_ID, false);
         assertGetResult(result);
     }
 
@@ -382,7 +380,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
 
     private static void assertGetResult(VmTemplate result) {
         assertNotNull(result);
-        assertEquals(EXISTING_TEMPLATE_ID, result.getId());
+        assertEquals(FixturesTool.VM_TEMPLATE_RHEL5, result.getId());
         assertEquals("Template generation wasn't loaded as expected", 1, result.getDbGeneration());
     }
 

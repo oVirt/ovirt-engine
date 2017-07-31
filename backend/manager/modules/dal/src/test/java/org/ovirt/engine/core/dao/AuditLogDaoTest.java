@@ -30,7 +30,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     private static final String VM_TEMPLATE_NAME = "1";
     private static final String VDS_NAME = "magenta-vdsc";
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
-    private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
+    private static final Guid VM_TEMPLATE_ID = FixturesTool.VM_TEMPLATE_RHEL5;
     private static final Guid GLUSTER_VOLUME_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final long EXISTING_ENTRY_ID = 44291;
     private static final long EXTERNAL_ENTRY_ID = 44297;

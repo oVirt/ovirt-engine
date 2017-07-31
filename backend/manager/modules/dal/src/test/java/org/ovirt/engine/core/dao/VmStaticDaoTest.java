@@ -42,7 +42,6 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
             FixturesTool.GLUSTER_BRICK_SERVER1};
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
-    private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     private VmStaticDao dao;
     private VmStatic existingVmStatic;
@@ -58,7 +57,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         newVmStatic.setId(Guid.newGuid());
         newVmStatic.setName("New Virtual Machine");
         newVmStatic.setClusterId(FixturesTool.CLUSTER);
-        newVmStatic.setVmtGuid(VM_TEMPLATE_ID);
+        newVmStatic.setVmtGuid(FixturesTool.VM_TEMPLATE_RHEL5);
         newVmStatic.setOrigin(OriginType.OVIRT);
         newVmStatic.setQuotaId(FixturesTool.QUOTA_GENERAL);
         newVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
