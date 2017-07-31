@@ -12,12 +12,12 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
 @Singleton
 @Named
-final class ManagementNetworkAppointmentPredicate implements Predicate<NetworkCluster> {
+final class BecomingManagementNetworkPredicate implements Predicate<NetworkCluster> {
 
     private final NetworkClusterDao networkClusterDao;
 
     @Inject
-    ManagementNetworkAppointmentPredicate(NetworkClusterDao networkClusterDao) {
+    BecomingManagementNetworkPredicate(NetworkClusterDao networkClusterDao) {
         Objects.requireNonNull(networkClusterDao, "networkClusterDao cannot be null");
         this.networkClusterDao = networkClusterDao;
     }

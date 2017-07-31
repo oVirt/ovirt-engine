@@ -38,7 +38,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
 
     @Inject
     @Named
-    private Predicate<NetworkCluster> managementNetworkAppointmentPredicate;
+    private Predicate<NetworkCluster> becomingManagementNetworkPredicate;
 
     @Inject
     @Named
@@ -68,14 +68,14 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
         final Boolean dbUpdateResult = TransactionSupport.executeInNewTransaction(() -> {
             final Collection<NetworkCluster> attachments = getParameters().getAttachments();
             final List<NetworkCluster> managementNetworkAttachments =
-                    attachments.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
+                    attachments.stream().filter(becomingManagementNetworkPredicate).collect(Collectors.toList());
             final List<NetworkCluster> nonManagementNetworkAttachments =
-                    attachments.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
+                    attachments.stream().filter(becomingManagementNetworkPredicate.negate()).collect(Collectors.toList());
             final Collection<NetworkCluster> updates = getParameters().getUpdates();
             final List<NetworkCluster> managementNetworkUpdates =
-                    updates.stream().filter(managementNetworkAppointmentPredicate).collect(Collectors.toList());
+                    updates.stream().filter(becomingManagementNetworkPredicate).collect(Collectors.toList());
             final List<NetworkCluster> nonManagementNetworkUpdates =
-                    updates.stream().filter(managementNetworkAppointmentPredicate.negate()).collect(Collectors.toList());
+                    updates.stream().filter(becomingManagementNetworkPredicate.negate()).collect(Collectors.toList());
 
             boolean resultStatus = attachNetworks(managementNetworkAttachments);
             resultStatus = resultStatus && updateNetworkAttachments(managementNetworkUpdates);
@@ -89,7 +89,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
         setSucceeded(dbUpdateResult);
 
         if (dbUpdateResult) {
-            propagateLabeledNetworksChanges();
+            propagateNetworksChanges();
         }
     }
 
@@ -114,7 +114,7 @@ public final class ManageNetworkClustersCommand extends CommandBase<ManageNetwor
                 networkClusterParameterTransformer);
     }
 
-    private void propagateLabeledNetworksChanges() {
+    private void propagateNetworksChanges() {
         runInternalAction(ActionType.PropagateNetworksToClusterHosts, getParameters());
     }
 
