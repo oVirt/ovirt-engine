@@ -579,6 +579,7 @@ public class LibvirtVmXmlBuilder {
         VmDevice floppyDevice = null;
 
         boolean spiceExists = false;
+        boolean balloonExists = false;
         for (VmDevice device : devices) {
             if (!device.isPlugged()) {
                 continue;
@@ -586,6 +587,7 @@ public class LibvirtVmXmlBuilder {
 
             switch (device.getType()) {
             case BALLOON:
+                balloonExists = true;
                 writeBalloon(device);
                 break;
             case SMARTCARD:
@@ -664,6 +666,10 @@ public class LibvirtVmXmlBuilder {
             default:
                 break;
             }
+        }
+
+        if (!balloonExists) {
+            writeDefaultBalloon();
         }
 
         writeSerialConsole(serialConsolePath);
@@ -1726,9 +1732,16 @@ public class LibvirtVmXmlBuilder {
         // <memballoon model='virtio'>
         //   <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
         // </memballoon>
-        writer.writeStartElement("membaloon");
+        writer.writeStartElement("memballoon");
         writer.writeAttributeString("model", device.getSpecParams().get(VdsProperties.Model).toString());
         writeAddress(device);
+        writer.writeEndElement();
+    }
+
+    private void writeDefaultBalloon() {
+        // <memballoon model='none' />
+        writer.writeStartElement("memballoon");
+        writer.writeAttributeString("model", "none");
         writer.writeEndElement();
     }
 
