@@ -1643,7 +1643,7 @@ BEGIN
       DELETE FROM vm_statistics WHERE vm_guid = v_vm_guid;
       DELETE FROM vm_dynamic WHERE vm_guid = v_vm_guid;
       DELETE FROM vm_static WHERE vm_guid = v_vm_guid;
-      DELETE FROM permissions where object_id = v_vm_guid;
+      PERFORM DeletePermissionsByEntityId(v_vm_guid);
 END; $procedure$
 LANGUAGE plpgsql;
 
