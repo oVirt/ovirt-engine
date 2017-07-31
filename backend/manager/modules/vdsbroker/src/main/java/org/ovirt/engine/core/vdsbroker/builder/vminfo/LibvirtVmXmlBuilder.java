@@ -1564,7 +1564,7 @@ public class LibvirtVmXmlBuilder {
 
     private void writeCdRom(List<VmDevice> devices) {
         // <disk type='file' device='cdrom' snapshot='no'>
-        //   <driver name='qemu' type='raw'/>
+        //   <driver name='qemu' type='raw' error_policy='report' />
         //   <source file='<path>' startupPolicy='optional'/>
         //   <target dev='hdc' bus='ide'/>
         //   <readonly/>
@@ -1575,6 +1575,12 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("type", "file");
             writer.writeAttributeString("device", "cdrom");
             writer.writeAttributeString("snapshot", "no");
+
+            writer.writeStartElement("driver");
+            writer.writeAttributeString("name", "qemu");
+            writer.writeAttributeString("type", "raw");
+            writer.writeAttributeString("error_policy", "report");
+            writer.writeEndElement();
 
             writer.writeStartElement("source");
             writer.writeAttributeString("file", "PAYLOAD:");
@@ -1607,6 +1613,12 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("type", "file");
             writer.writeAttributeString("device", "cdrom");
             writer.writeAttributeString("snapshot", "no");
+
+            writer.writeStartElement("driver");
+            writer.writeAttributeString("name", "qemu");
+            writer.writeAttributeString("type", "raw");
+            writer.writeAttributeString("error_policy", "report");
+            writer.writeEndElement();
 
             writer.writeStartElement("source");
             writer.writeAttributeString("file", vm.getCdPath());
