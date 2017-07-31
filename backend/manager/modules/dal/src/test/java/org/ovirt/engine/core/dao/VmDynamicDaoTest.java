@@ -184,7 +184,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
     @Test
     public void testUpdateToUnknown() {
         VmDynamic existingVm2 = dao.get(FixturesTool.VM_RHEL5_POOL_51);
-        VmDynamic existingVm3 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354"));
+        VmDynamic existingVm3 = dao.get(FixturesTool.VM_RHEL5_POOL_50);
         dao.updateVmsToUnknown(Arrays.asList(existingVm.getId(), existingVm2.getId()));
         assertEquals(VMStatus.Unknown, dao.get(existingVm.getId()).getStatus());
         assertEquals(VMStatus.Unknown, dao.get(existingVm2.getId()).getStatus());

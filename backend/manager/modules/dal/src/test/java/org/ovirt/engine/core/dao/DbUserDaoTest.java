@@ -34,7 +34,7 @@ public class DbUserDaoTest extends BaseDaoTestCase {
         super.setUp();
 
         dao = dbFacade.getDbUserDao();
-        vm = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+        vm = FixturesTool.VM_RHEL5_POOL_50;
 
         existingUser = dao
                 .get(new Guid("9bf7c640-b620-456f-a550-0348f366544a"));

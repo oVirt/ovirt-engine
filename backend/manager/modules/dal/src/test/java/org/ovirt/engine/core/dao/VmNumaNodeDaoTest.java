@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmNumaNodeDaoTest extends BaseDaoTestCase {
 
-    private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+    private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_50;
     private static final Guid ANOTHER_EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
 
     private VmNumaNodeDao vmNumaNodeDao;
@@ -59,7 +59,7 @@ public class VmNumaNodeDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetVmNumaNodeInfoByBdsGroupId() {
         Guid vdsGroupId = FixturesTool.CLUSTER;
-        Guid vmId = Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4354");
+        Guid vmId = FixturesTool.VM_RHEL5_POOL_50;
         Map<Guid, List<VmNumaNode>> result = vmNumaNodeDao.getVmNumaNodeInfoByClusterId(vdsGroupId);
         assertNotNull(result);
         assertEquals(1, result.size());

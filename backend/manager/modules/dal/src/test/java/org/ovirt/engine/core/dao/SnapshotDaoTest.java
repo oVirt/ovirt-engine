@@ -23,7 +23,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, SnapshotDao> {
 
     private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
-    private static final Guid EXISTING_VM_ID2 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+    private static final Guid EXISTING_VM_ID2 = FixturesTool.VM_RHEL5_POOL_50;
     private static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
     private static final Guid EXISTING_SNAPSHOT_ID2 = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f11");
     private static final String EXISTING_MEMORY_VOLUME =
