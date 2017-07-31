@@ -1525,13 +1525,11 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeCdRom(List<VmDevice> devices) {
-        // <disk type='file' device='cdrom'>
+        // <disk type='file' device='cdrom' snapshot='no'>
         //   <driver name='qemu' type='raw'/>
-        //   <source startupPolicy='optional'/>
-        //   <backingStore/>
+        //   <source file='<path>' startupPolicy='optional'/>
         //   <target dev='hdc' bus='ide'/>
         //   <readonly/>
-        //   <alias name='ide0-1-0'/>
         //   <address type='drive' controller='0' bus='1' target='0' unit='0'/>
         // </disk>
         devices.stream().filter(d -> VmPayload.isPayload(d.getSpecParams())).forEach(device -> {
