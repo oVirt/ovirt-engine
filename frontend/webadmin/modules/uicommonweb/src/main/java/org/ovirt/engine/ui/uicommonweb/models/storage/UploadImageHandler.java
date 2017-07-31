@@ -377,6 +377,7 @@ public class UploadImageHandler {
         if (getUploadState() == UploadState.SUCCESS) {
             setProgressStr("Finalizing success..."); //$NON-NLS-1$
             statusParameters.getUpdates().setPhase(ImageTransferPhase.FINALIZING_SUCCESS);
+            raiseUploadFinishedEvent(ImageTransferPhase.FINALIZING_SUCCESS);
         }
         else if (getUploadState() == UploadState.CLIENT_ERROR) {
             setProgressStr("Pausing due to client error"); //$NON-NLS-1$
@@ -387,6 +388,7 @@ public class UploadImageHandler {
         else {
             setProgressStr("Finalizing failure..."); //$NON-NLS-1$
             statusParameters.getUpdates().setPhase(ImageTransferPhase.FINALIZING_FAILURE);
+            raiseUploadFinishedEvent(ImageTransferPhase.FINALIZING_FAILURE);
         }
 
         log.info("Updating status to " + statusParameters.getUpdates().getPhase()); //$NON-NLS-1$
@@ -401,8 +403,10 @@ public class UploadImageHandler {
                         }
                     }
                 });
+    }
 
-        uploadFinishedEvent.raise(this, new ValueEventArgs<>(statusParameters.getUpdates().getPhase()));
+    private void raiseUploadFinishedEvent(ImageTransferPhase phase) {
+        uploadFinishedEvent.raise(this, new ValueEventArgs<>(phase));
     }
 
     private void logDebug(String txt) {
