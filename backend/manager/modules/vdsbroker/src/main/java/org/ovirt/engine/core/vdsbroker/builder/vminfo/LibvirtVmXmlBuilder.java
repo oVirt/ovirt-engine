@@ -1191,7 +1191,7 @@ public class LibvirtVmXmlBuilder {
             String displayIp = (String) device.getSpecParams().get("displayIp");
             if (displayIp == null) {
                 writer.writeAttributeString("type", "network");
-                writer.writeAttributeString("network", String.format("DISPLAY-NETWORK:%s", displayNetwork.getName()));
+                writer.writeAttributeString("network", String.format("vdsm-%s", displayNetwork.getName()));
             } else {
                 writer.writeAttributeString("type", "address");
                 writer.writeAttributeString("address", displayIp);
