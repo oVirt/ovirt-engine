@@ -26,7 +26,7 @@ public class TagDaoTest extends BaseDaoTestCase {
     private static final int TAG_COUNT = 3;
     private static final Guid EXISTING_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid EXISTING_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
-    private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
     private static final Guid EXISTING_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid FREE_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid FREE_TEMPLATE_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
@@ -58,7 +58,7 @@ public class TagDaoTest extends BaseDaoTestCase {
         existingTag = dao.get(new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"));
         parent = FixturesTool.DATA_CENTER;
         user = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
-        vm = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+        vm = EXISTING_VM_ID;
         template = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
         vmPool = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
 

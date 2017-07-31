@@ -25,7 +25,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getVmDynamicDao();
-        existingVm = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
+        existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         existingVm.setStatus(VMStatus.Up);
     }
 
@@ -150,7 +150,7 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdateConsoleUserWithOptimisticLockingFailure() throws Exception {
-        VmDynamic vmWithoutConsoleUser = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
+        VmDynamic vmWithoutConsoleUser = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         vmWithoutConsoleUser.setConsoleUserId(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
 
         boolean result = dao.updateConsoleUserWithOptimisticLocking(vmWithoutConsoleUser);

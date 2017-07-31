@@ -36,7 +36,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
-    private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
     private static final Guid SMALL_ICON_ID = new Guid("38fc5e1a-f96b-339b-9894-def6f366daf5");
     private static final Guid LARGE_ICON_ID = new Guid("a3b954f0-31ff-3166-b7a1-28b23202b198");

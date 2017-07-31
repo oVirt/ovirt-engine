@@ -12,7 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.dao.DataIntegrityViolationException;
 
 public class VmStatisticsDaoTest extends BaseDaoTestCase {
-    private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid NEW_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
 
     private VmStatisticsDao dao;
@@ -28,10 +27,10 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGet() {
-        VmStatistics result = dao.get(EXISTING_VM_ID);
+        VmStatistics result = dao.get(FixturesTool.VM_RHEL5_POOL_57);
 
         assertNotNull(result);
-        assertEquals(EXISTING_VM_ID, result.getId());
+        assertEquals(FixturesTool.VM_RHEL5_POOL_57, result.getId());
     }
 
     @Test
@@ -70,23 +69,23 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateStatistics() {
-        VmStatistics before = dao.get(EXISTING_VM_ID);
+        VmStatistics before = dao.get(FixturesTool.VM_RHEL5_POOL_57);
 
         before.setUsageMemPercent(17);
         before.setDisksUsage("java.util.map { [ ] }");
         dao.update(before);
 
-        VmStatistics after = dao.get(EXISTING_VM_ID);
+        VmStatistics after = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         assertEquals(before, after);
     }
 
     @Test
     public void testRemoveStatistics() {
-        VmStatistics before = dao.get(EXISTING_VM_ID);
+        VmStatistics before = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         // make sure we're using a real example
         assertNotNull(before);
-        dao.remove(EXISTING_VM_ID);
-        VmStatistics after = dao.get(EXISTING_VM_ID);
+        dao.remove(FixturesTool.VM_RHEL5_POOL_57);
+        VmStatistics after = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         assertNull(after);
     }
 
@@ -97,7 +96,7 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateAll() throws Exception {
-        VmStatistics existingVm = dao.get(EXISTING_VM_ID);
+        VmStatistics existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
         VmStatistics existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
         existingVm.setCpuSys(50.0);
         existingVm2.setCpuUser(50.0);

@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class VmDeviceDaoTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice, VmDeviceDao> {
 
-    private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
     private static final Guid EXISTING_VM_ID_2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final Guid EXISTING_VM_ID_3 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5002");
     private static final Guid EXISTING_DEVICE_ID = new Guid("e14ed6f0-3b12-11e1-b614-63d00126418d");
