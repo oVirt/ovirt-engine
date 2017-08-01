@@ -170,7 +170,8 @@ public class AddDiskCommandTest extends BaseCommandTest {
         mockInterfaceList();
         mockMaxPciSlots();
 
-        runAndAssertValidateSuccess();
+        ValidateTestUtils.runAndAssertValidateFailure
+                (command, EngineMessage.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
     }
 
     @Test
