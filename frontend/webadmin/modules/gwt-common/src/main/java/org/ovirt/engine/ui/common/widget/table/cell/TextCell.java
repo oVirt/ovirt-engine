@@ -26,7 +26,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class TextCell extends AbstractCell<String> implements HasStyleClass {
 
-    interface CellTemplate extends SafeHtmlTemplates {
+    public static final int UNLIMITED_LENGTH = -1;
+    private static final String ELLIPSE = "..."; //$NON-NLS-1$
+
+    protected interface CellTemplate extends SafeHtmlTemplates {
         @Template("<div class=\"{0}\" style='overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' id=\"{1}\">{2}</div>")
         SafeHtml textContainerWithDetection(String style, String id, SafeHtml text);
 
@@ -34,18 +37,15 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
         SafeHtml textContainer(String style, String id, SafeHtml text);
     }
 
-    private String styleClass = ""; //$NON-NLS-1$
+    private static CellTemplate template = GWT.create(CellTemplate.class);
 
-    public static final int UNLIMITED_LENGTH = -1;
-    private static final String ELLIPSE = "..."; //$NON-NLS-1$
+    private String styleClass = ""; //$NON-NLS-1$
 
     // Text longer than this value will be shortened
     private final int maxTextLength;
 
     // by default, detect overflow and truncate with an ellipse
-    boolean useOverflowTruncation = true;
-
-    private static CellTemplate template = GWT.create(CellTemplate.class);
+    private boolean useOverflowTruncation = true;
 
     public TextCell() {
         this(UNLIMITED_LENGTH, true);
@@ -65,6 +65,7 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
         this.useOverflowTruncation = useOverflowTruncation;
     }
 
+    @Override
     public void setStyleClass(String styleClass) {
         this.styleClass = styleClass == null ? "" : styleClass; //$NON-NLS-1$
     }
@@ -81,22 +82,26 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
                 // using manual truncation
                 SafeHtml renderedValue = getRenderedValue(safeHtmlValue);
                 sb.append(template.textContainer(getStyleClass(),
-                        ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context),
+                        getRenderElementId(context),
                         renderedValue));
             }
             else if (useOverflowTruncation) {
                 // using overflow truncation
                 sb.append(template.textContainerWithDetection(getStyleClass(),
-                        ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context),
+                        getRenderElementId(context),
                         safeHtmlValue));
             }
             else {
                 // no truncation at all
                 sb.append(template.textContainer(getStyleClass(),
-                        ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context),
+                        getRenderElementId(context),
                         SafeHtmlUtils.fromString(value)));
             }
         }
+    }
+
+    protected String getRenderElementId(Context context) {
+        return ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context);
     }
 
     @Override

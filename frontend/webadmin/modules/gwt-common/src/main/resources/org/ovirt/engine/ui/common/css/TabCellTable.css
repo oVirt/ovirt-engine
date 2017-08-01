@@ -33,6 +33,11 @@
     margin-top: 2px;
 }
 
+.cellTableCell > div > a {
+    margin-top: 2px;
+    display: block;
+}
+
 .cellTableEvenRow {
     background-color: #ffffff;
 }
