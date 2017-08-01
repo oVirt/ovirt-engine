@@ -30,7 +30,8 @@
         }
 
         .tableOverhead {
-            clear: both;
+            padding-top: 10px;
+            padding-bottom: 10px;
         }
 
         .pagerButton>i {
@@ -38,15 +39,16 @@
             vertical-align: top;
             margin: 2px 0;
         }
-
-        .ofSpan {
-            padding-right: 5px;
-            padding-top: 2px;
-        }
     </ui:style>
 
     <g:FlowPanel>
-        <g:SimplePanel ui:field="tableOverhead" addStyleNames="{style.tableOverhead}" />
+        <b:Container fluid="true" ui:field="tableOverheadContainer" addStyleNames="toolbar-pf {style.tableOverhead}" visible="false">
+            <b:Row>
+                <b:Column size="SM_12">
+                    <g:SimplePanel ui:field="tableOverhead"></g:SimplePanel>
+                </b:Column>
+            </b:Row>
+        </b:Container>
         <g:FlowPanel addStyleNames="content-view-pf-pagination table-view-pf-pagination clearfix">
             <b:FormGroup>
                 <r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table;
 
+import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -27,6 +28,9 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
 
     @UiField
     Style style;
+
+    @UiField
+    Container tableOverheadContainer;
 
     @UiField
     SimplePanel tableOverhead;
@@ -122,6 +126,7 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public void setTableOverhead(Widget widget) {
+        tableOverheadContainer.setVisible(true);
         tableOverhead.setWidget(widget);
     }
 

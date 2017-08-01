@@ -46,6 +46,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         initTable();
         initTableOverhead();
         initWidget(getTable());
+        userTypeChanged(UserOrGroup.User);
     }
 
     private void initTableOverhead() {
@@ -71,13 +72,11 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         getTable().addColumn(firstNameColumn, constants.firstnameUser(), "150px"); //$NON-NLS-1$
 
         groupNameColumn = new AbstractLinkColumn<DbUser>(new FieldUpdater<DbUser, String>() {
-
             @Override
             public void update(int index, DbUser user, String value) {
                 //The link was clicked, now fire an event to switch to details.
                 transitionHandler.handlePlaceTransition(true);
             }
-
         }) {
             @Override
             public String getValue(DbUser object) {
@@ -97,13 +96,11 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         getTable().addColumn(lastNameColumn, constants.lastNameUser(), "150px"); //$NON-NLS-1$
 
         userNameColumn = new AbstractLinkColumn<DbUser>(new FieldUpdater<DbUser, String>() {
-
             @Override
             public void update(int index, DbUser user, String value) {
                 //The link was clicked, now fire an event to switch to details.
                 transitionHandler.handlePlaceTransition(true);
             }
-
         }) {
             @Override
             public String getValue(DbUser object) {

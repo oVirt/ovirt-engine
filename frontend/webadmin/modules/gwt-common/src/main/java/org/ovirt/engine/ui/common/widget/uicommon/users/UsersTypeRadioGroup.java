@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.users;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gwtbootstrap3.client.ui.RadioButton;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter.UserOrGroup;
 
 import com.google.gwt.core.client.GWT;
@@ -11,7 +12,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.Widget;
 
 public class UsersTypeRadioGroup extends Composite {
@@ -30,7 +30,6 @@ public class UsersTypeRadioGroup extends Composite {
 
     public UsersTypeRadioGroup() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        users.setValue(true, true);
     }
 
     @UiHandler("users")
