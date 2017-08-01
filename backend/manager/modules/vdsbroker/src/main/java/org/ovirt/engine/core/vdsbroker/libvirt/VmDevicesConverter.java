@@ -294,14 +294,25 @@ public class VmDevicesConverter {
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.DISK)) {
             Map<String, Object> dev = new HashMap<>();
             dev.put(VdsProperties.Type, VmDeviceGeneralType.DISK.getValue());
-            dev.put(VdsProperties.Device, parseAttribute(node, DEVICE));
+            String diskType = parseAttribute(node, DEVICE);
+            dev.put(VdsProperties.Device, diskType);
             dev.put(VdsProperties.Address, parseAddress(node));
             dev.put(VdsProperties.Alias, parseAlias(node));
 
             String path = parseDiskPath(node);
             VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
-                    .filter(d -> path.isEmpty() || path.contains(d.getId().getDeviceId().toString()))
+                    .filter(d -> d.getDevice().equals(diskType))
+                    .filter(d -> {
+                        switch(diskType) {
+                        case "cdrom":
+                            String devicePath = (String) d.getSpecParams().get("path");
+                            return devicePath == null || path.contains(devicePath);
+                        case "floppy":
+                            return true;
+                        default:
+                            return path.contains(d.getId().getDeviceId().toString());
+                        }
+                    })
                     .findFirst()
                     .orElse(null);
 
