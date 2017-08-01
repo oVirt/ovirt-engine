@@ -11,12 +11,12 @@ import com.gwtplatform.mvp.client.TabData;
 public abstract class TabFactory {
 
     public static TabDefinition createTab(TabData tabData, AbstractTabPanel tabPanel, EventBus eventBus) {
-        if (tabData instanceof GroupedTabData) {
-            // normal tab
-            return new GroupedTab((GroupedTabData) tabData, tabPanel);
-        } else if (tabData instanceof DynamicTabData) {
+        if (tabData instanceof DynamicTabData) {
             // Tab widget added dynamically during runtime
             return new DynamicTab((DynamicTabData) tabData, tabPanel, eventBus);
+        } else  if (tabData instanceof GroupedTabData) {
+            // normal tab
+            return new GroupedTab((GroupedTabData) tabData, tabPanel);
         } else {
             // Fall back to default tab widget implementation
             return new SimpleTab(tabData, tabPanel);
