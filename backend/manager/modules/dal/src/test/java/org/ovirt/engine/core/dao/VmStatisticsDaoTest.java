@@ -12,8 +12,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.dao.DataIntegrityViolationException;
 
 public class VmStatisticsDaoTest extends BaseDaoTestCase {
-    private static final Guid NEW_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
-
     private VmStatisticsDao dao;
     private VmStatistics newVmStatistics;
 
@@ -41,7 +39,7 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testSave() {
-        newVmStatistics.setId(NEW_VM_ID);
+        newVmStatistics.setId(FixturesTool.VM_RHEL5_POOL_50_ID);
         newVmStatistics.setCpuSys(22D);
         newVmStatistics.setCpuUser(35D);
         newVmStatistics.setUsageCpuPercent(44);
@@ -51,7 +49,7 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
         newVmStatistics.setGuestMemoryCached(34L);
         dao.save(newVmStatistics);
 
-        VmStatistics stats = dao.get(NEW_VM_ID);
+        VmStatistics stats = dao.get(FixturesTool.VM_RHEL5_POOL_50_ID);
 
         assertNotNull(stats);
         assertEquals(newVmStatistics, stats);

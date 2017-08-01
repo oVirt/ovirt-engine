@@ -33,7 +33,7 @@ import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 public class EntityDaoImplTest extends BaseDaoTestCase {
 
     // entity IDs for testing retrieving an entity by id and type
-    private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
+    private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_50_ID;
     private static final Guid VM_TEMPLATE_ID = new Guid("00000000-0000-0000-0000-000000000000");
     private static final Guid VM_POOL_ID = new Guid("103cfd1d-18b1-4790-8a0c-1e52621b0076");
     private static final Guid TAG_ID = new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c");

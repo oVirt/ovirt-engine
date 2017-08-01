@@ -192,6 +192,7 @@ public class FixturesTool {
      * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li></ul>
      */
     public static final Guid VM_RHEL5_POOL_50 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
+    public static final Guid VM_RHEL5_POOL_50_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5001");
     public static final String VM_RHEL5_POOL_50_NAME = "rhel5-pool-50";
 
     /**
