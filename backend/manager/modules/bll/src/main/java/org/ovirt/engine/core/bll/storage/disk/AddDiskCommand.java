@@ -395,17 +395,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     public Guid getStorageDomainId() {
         if (super.getStorageDomainId() == null) {
             Guid storageDomainId = getParameters().getStorageDomainId();
-            if (Guid.Empty.equals(storageDomainId) &&
-                    getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE &&
-                    getVm() != null) {
-
-                updateDisksFromDb();
-                storageDomainId = getDisksStorageDomainId();
-
-                // this set is done so that in case we will execute an async task
-                // the correct storage domain id will be set during the call to the end methods
-                getParameters().setStorageDomainId(storageDomainId);
-            } else if (storageDomainId == null) {
+            if (storageDomainId == null) {
                 storageDomainId = Guid.Empty;
 
                 // this set is done so that in case we will execute an async task
