@@ -1,3 +1,4 @@
+<%@ taglib prefix="obrand" uri="obrand" %>
 <!DOCTYPE html>
 <html>
 <!--
@@ -19,11 +20,8 @@
     <script src="files/novnc/include/util.js"></script>
     <link rel="stylesheet" href="files/novnc/include/base.css" title="plain">
 
-    <script src="theme/00-ovirt.brand/patternfly/components/jquery/dist/jquery.min.js"></script>
-    <script src="theme/00-ovirt.brand/patternfly/components/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="theme/00-ovirt.brand/patternfly/js/patternfly.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="theme/00-ovirt.brand/patternfly/components/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="theme/00-ovirt.brand/patternfly/css/patternfly.min.css" />
+    <obrand:stylesheets />
+    <obrand:javascripts />
 
     <%@ include file="WEB-INF/warning-template.html"%>
     <script src="html-console-common.js"></script>
