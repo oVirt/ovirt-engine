@@ -284,6 +284,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
         setClusterId(parameters.getClusterId());
         setVm(parameters.getVm());
+        if (parameters.getVm() != null) {
+            setVmId(parameters.getVm().getId());
+        }
         initEffectiveCompatibilityVersion();
     }
 
