@@ -796,10 +796,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @Path(value = "minAllocatedMemory.entity")
     @WithElementId("minAllocatedMemory")
-    public EntityModelTextBoxEditor<Integer> minAllocatedMemoryEditor;
+    @UiField(provided=true)
+    public MemorySizeEntityModelTextBoxEditor minAllocatedMemoryEditor;
 
     @UiField(provided = true)
-    public EntityModelDetachableWidgetWithLabel detachableMinAllocatedMemoryEditor;
+    public EntityModelDetachableWidget detachableMinAllocatedMemoryEditor;
 
     @UiField(provided = true)
     @Path(value = "ioThreadsEnabled.entity")
@@ -956,6 +957,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         memSizeEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
         minAllocatedMemoryEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        minAllocatedMemoryEditor.hideLabel();
 
         numOfIoThreadsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
@@ -1087,7 +1089,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         detachablePriorityEditor = new EntityModelDetachableWidgetWithLabel(priorityEditor);
         isMemoryBalloonDeviceEnabledDetachable = new EntityModelDetachableWidget(isMemoryBalloonDeviceEnabled);
         isIoThreadsEnabledDetachable = new EntityModelDetachableWidget(isIoThreadsEnabled);
-        detachableMinAllocatedMemoryEditor = new EntityModelDetachableWidgetWithLabel(minAllocatedMemoryEditor);
+        detachableMinAllocatedMemoryEditor = new EntityModelDetachableWidget(minAllocatedMemoryEditor);
         overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.IGNORE);
         overrideMigrationDowntimeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
