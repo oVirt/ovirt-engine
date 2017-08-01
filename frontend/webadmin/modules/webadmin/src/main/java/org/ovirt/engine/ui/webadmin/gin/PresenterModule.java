@@ -52,12 +52,16 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.gin.BasePresenterModule;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.QuotaBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.VnicProfileBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.ActionPanelView;
+import org.ovirt.engine.ui.common.view.NetworkBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.OvirtBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.QuotaBreadCrumbsView;
+import org.ovirt.engine.ui.common.view.VnicProfileBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
@@ -69,7 +73,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -1345,10 +1348,9 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<NetworkView, NetworkListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<NetworkListModel>>(){},
                 new TypeLiteral<SearchPanelView<NetworkListModel>>(){});
-        bindPresenterWidget(
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel>>(){},
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<NetworkView>>(){},
-                new TypeLiteral<OvirtBreadCrumbsView<NetworkView, NetworkListModel>>(){});
+        bindPresenterWidget(NetworkBreadCrumbsPresenterWidget.class,
+                NetworkBreadCrumbsPresenterWidget.NetworkBreadCrumbsViewDef.class,
+                NetworkBreadCrumbsView.class);
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<NetworkView>>(){},
             new TypeLiteral<ActionPanelView<NetworkView>>(){});
 
@@ -1411,10 +1413,9 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVnicProfileTemplatePresenter.ViewDef.class,
                 SubTabVnicProfileTemplateView.class,
                 SubTabVnicProfileTemplatePresenter.ProxyDef.class);
-        bindPresenterWidget(
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<VnicProfileView, VnicProfileListModel>>(){},
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<VnicProfileView>>(){},
-                new TypeLiteral<OvirtBreadCrumbsView<VnicProfileView, VnicProfileListModel>>(){});
+        bindPresenterWidget(VnicProfileBreadCrumbsPresenterWidget.class,
+                VnicProfileBreadCrumbsPresenterWidget.VnicProfileBreadCrumbsViewDef.class,
+                VnicProfileBreadCrumbsView.class);
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<VnicProfileView>>(){},
             new TypeLiteral<ActionPanelView<VnicProfileView>>(){});
 

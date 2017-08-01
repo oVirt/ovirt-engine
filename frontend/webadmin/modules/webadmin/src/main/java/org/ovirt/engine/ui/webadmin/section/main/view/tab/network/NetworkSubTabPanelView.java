@@ -1,11 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.DetailTabLayout;
-import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkActionPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabPanelView;
@@ -23,7 +21,7 @@ public class NetworkSubTabPanelView extends AbstractSubTabPanelView implements N
     private final SimpleTabPanel tabPanel;
 
     @Inject
-    public NetworkSubTabPanelView(OvirtBreadCrumbsPresenterWidget<NetworkView, NetworkListModel> breadCrumbs,
+    public NetworkSubTabPanelView(NetworkBreadCrumbsPresenterWidget breadCrumbs,
             NetworkActionPanelPresenterWidget actionPanel, DetailTabLayout detailTabLayout) {
         tabPanel = new SimpleTabPanel(breadCrumbs, actionPanel, detailTabLayout);
         initWidget(getTabPanel());
