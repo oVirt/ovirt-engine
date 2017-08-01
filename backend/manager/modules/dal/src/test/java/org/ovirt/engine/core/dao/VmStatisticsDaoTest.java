@@ -1,44 +1,17 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.springframework.dao.DataIntegrityViolationException;
 
-public class VmStatisticsDaoTest extends BaseDaoTestCase {
-    private VmStatisticsDao dao;
-    private VmStatistics newVmStatistics;
-
+public class VmStatisticsDaoTest extends BaseGenericDaoTestCase<Guid, VmStatistics, VmStatisticsDao > {
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getVmStatisticsDao();
-        newVmStatistics = new VmStatistics();
-    }
-
-    @Test
-    public void testGet() {
-        VmStatistics result = dao.get(FixturesTool.VM_RHEL5_POOL_57);
-
-        assertNotNull(result);
-        assertEquals(FixturesTool.VM_RHEL5_POOL_57, result.getId());
-    }
-
-    @Test
-    public void testGetNonExistingId() {
-        VmStatistics result = dao.get(Guid.newGuid());
-        assertNull(result);
-    }
-
-    @Test
-    public void testSave() {
+    protected VmStatistics generateNewEntity() {
+        VmStatistics newVmStatistics = new VmStatistics();
         newVmStatistics.setId(FixturesTool.VM_RHEL5_POOL_50_ID);
         newVmStatistics.setCpuSys(22D);
         newVmStatistics.setCpuUser(35D);
@@ -47,44 +20,34 @@ public class VmStatisticsDaoTest extends BaseDaoTestCase {
         newVmStatistics.setDisksUsage("disk_usage");
         newVmStatistics.setGuestMemoryBuffered(32L);
         newVmStatistics.setGuestMemoryCached(34L);
-        dao.save(newVmStatistics);
-
-        VmStatistics stats = dao.get(FixturesTool.VM_RHEL5_POOL_50_ID);
-
-        assertNotNull(stats);
-        assertEquals(newVmStatistics, stats);
+        return newVmStatistics;
     }
 
-    @Test(expected = DataIntegrityViolationException.class)
-    public void testSaveStaticDoesNotExist() {
-        Guid newGuid = Guid.newGuid();
-        newVmStatistics.setId(newGuid);
-        dao.save(newVmStatistics);
-
-        VmStatistics stats = dao.get(newGuid);
-        assertNull(stats);
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setUsageMemPercent(17);
+        existingEntity.setDisksUsage("java.util.map { [ ] }");
     }
 
-    @Test
-    public void testUpdateStatistics() {
-        VmStatistics before = dao.get(FixturesTool.VM_RHEL5_POOL_57);
-
-        before.setUsageMemPercent(17);
-        before.setDisksUsage("java.util.map { [ ] }");
-        dao.update(before);
-
-        VmStatistics after = dao.get(FixturesTool.VM_RHEL5_POOL_57);
-        assertEquals(before, after);
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.VM_RHEL5_POOL_57;
     }
 
-    @Test
-    public void testRemoveStatistics() {
-        VmStatistics before = dao.get(FixturesTool.VM_RHEL5_POOL_57);
-        // make sure we're using a real example
-        assertNotNull(before);
-        dao.remove(FixturesTool.VM_RHEL5_POOL_57);
-        VmStatistics after = dao.get(FixturesTool.VM_RHEL5_POOL_57);
-        assertNull(after);
+    @Override
+    protected VmStatisticsDao prepareDao() {
+        return dbFacade.getVmStatisticsDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        // Not used
+        return 0;
     }
 
     @Test(expected = UnsupportedOperationException.class)
