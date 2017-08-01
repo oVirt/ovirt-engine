@@ -488,7 +488,7 @@ public class VmDevicesConverter {
 
     private String parseAlias(XmlNode node) {
         XmlNode aliasNode = node.selectSingleNode("alias");
-        return aliasNode.attributes.get("name").getValue();
+        return aliasNode != null ? aliasNode.attributes.get("name").getValue() : "";
     }
 
     private String parseDiskPath(XmlNode node) {
