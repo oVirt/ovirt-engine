@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -77,14 +78,21 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
         assertEquals(existingVm.getId(), result.getId());
     }
 
+    /**
+     * Test the {@link VmDynamicDao#save(BusinessEntity)} method by adding a vm_dynamic record to a template.
+     * While this doesn't make any sense from a business logic perspective, it's perfectly legal from a database
+     * perspective, and helps avoid dependencies on the {@link VmDynamicDao#remove(Guid)} method.
+     */
     @Test
     public void testSave() {
-        dao.remove(existingVm.getId());
-        dao.save(existingVm);
-        VmDynamic vmdynamic = dao.get(existingVm.getId());
+        VmDynamic newEntity = new VmDynamic();
+        newEntity.setId(FixturesTool.VM_TEMPLATE_RHEL5);
+        newEntity.setStatus(VMStatus.NotResponding);
+        dao.save(newEntity);
+        VmDynamic vmdynamic = dao.get(newEntity.getId());
 
         assertNotNull(vmdynamic);
-        assertEquals(vmdynamic, existingVm);
+        assertEquals(vmdynamic, newEntity);
     }
 
     /**
