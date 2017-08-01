@@ -654,6 +654,11 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
         return false;
     }
 
+    @Override
+    public boolean hasItemsSorted() {
+        return (sortBy != null) || super.hasItemsSorted();
+    }
+
     /**
      * Returns {@code true} if this model's {@linkplain #getSearchString search string}
      * allows the use of server-side sorting.

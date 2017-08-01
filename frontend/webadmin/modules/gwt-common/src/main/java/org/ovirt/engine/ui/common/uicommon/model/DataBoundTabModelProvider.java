@@ -1,8 +1,13 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
+import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.Queryable;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -24,6 +29,7 @@ import com.google.inject.Provider;
 public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel> extends TabModelProvider<M> implements SearchableTableModelProvider<T, M> {
 
     private AsyncDataProvider<T> dataProvider;
+    private Comparator<T> defaultItemComparator;
 
     public DataBoundTabModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
@@ -126,6 +132,11 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         List<T> items = getModel().getItems() == null ? null : new ArrayList<T>(getModel().getItems());
 
         if (items != null) {
+            // use default item order, unless the items are already sorted
+            if (!getModel().hasItemsSorted()) {
+                items.sort(getDefaultItemComparator());
+            }
+
             updateDataProvider(items);
         }
     }
@@ -149,6 +160,27 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
             };
         }
         return dataProvider;
+    }
+
+    /**
+     * Returns the default {@link Comparator} to use when setting new data.
+     */
+    protected Comparator<T> getDefaultItemComparator() {
+        if (defaultItemComparator == null) {
+            Comparator<T> nameComparator = (o1, o2) -> {
+                String name1 = (o1 instanceof Nameable) ? ((Nameable) o1).getName() : null;
+                String name2 = (o2 instanceof Nameable) ? ((Nameable) o2).getName() : null;
+                return LexoNumericComparator.comp(name1, name2);
+            };
+
+            Comparator<T> idComparator = Comparator.comparing((Function<T, Comparable>) item -> {
+                Object id = (item instanceof Queryable) ? ((Queryable) item).getQueryableId() : null;
+                return (id instanceof Comparable) ? (Comparable) id : null;
+            }, Comparator.nullsLast(Comparator.naturalOrder()));
+
+            defaultItemComparator = nameComparator.thenComparing(idComparator);
+        }
+        return defaultItemComparator;
     }
 
     @Override

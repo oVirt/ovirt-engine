@@ -67,6 +67,13 @@ public class SortedListModel<T> extends ListModel<T> {
         this.comparator = (comparator != null) ? new SortSensitiveComparator<>(comparator, sortAscending) : null;
     }
 
+    /**
+     * Returns {@code true} if this model's {@code items} collection is already sorted.
+     */
+    public boolean hasItemsSorted() {
+        return comparator != null;
+    }
+
     @Override
     public void setItems(Collection<T> value) {
         Collection<T> sortedItems = sortItems(value);
