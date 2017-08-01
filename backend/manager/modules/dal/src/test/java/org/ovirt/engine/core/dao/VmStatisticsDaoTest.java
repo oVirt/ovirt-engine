@@ -13,8 +13,8 @@ public class VmStatisticsDaoTest extends BaseGenericDaoTestCase<Guid, VmStatisti
     protected VmStatistics generateNewEntity() {
         VmStatistics newVmStatistics = new VmStatistics();
         newVmStatistics.setId(FixturesTool.VM_RHEL5_POOL_50_ID);
-        newVmStatistics.setCpuSys(22D);
-        newVmStatistics.setCpuUser(35D);
+        newVmStatistics.setCpuSys(22.0D);
+        newVmStatistics.setCpuUser(35.0D);
         newVmStatistics.setUsageCpuPercent(44);
         newVmStatistics.setUsageMemPercent(67);
         newVmStatistics.setDisksUsage("disk_usage");
