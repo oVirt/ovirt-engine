@@ -17,17 +17,46 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmDynamicDaoTest extends BaseDaoTestCase {
+public class VmDynamicDaoTest extends BaseGenericDaoTestCase<Guid, VmDynamic, VmDynamicDao> {
     private static final int DYNAMIC_RUNNING_COUNT = 3;
-    private VmDynamicDao dao;
-    private VmDynamic existingVm;
+
+    /**
+     * Test the {@link VmDynamicDao#save(BusinessEntity)} method by adding a vm_dynamic record to a template.
+     * While this doesn't make any sense from a business logic perspective, it's perfectly legal from a database
+     * perspective, and helps avoid dependencies on the {@link VmDynamicDao#remove(Guid)} method.
+     */
+    @Override
+    protected VmDynamic generateNewEntity() {
+        VmDynamic newEntity = new VmDynamic();
+        newEntity.setId(FixturesTool.VM_TEMPLATE_RHEL5);
+        newEntity.setStatus(VMStatus.NotResponding);
+        return newEntity;
+    }
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        dao = dbFacade.getVmDynamicDao();
-        existingVm = dao.get(FixturesTool.VM_RHEL5_POOL_57);
-        existingVm.setStatus(VMStatus.Up);
+    protected void updateExistingEntity() {
+        existingEntity.setVmHost("farkle.redhat.com");
+        existingEntity.setRunOnce(!existingEntity.isRunOnce());
+    }
+
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.VM_RHEL5_POOL_57;
+    }
+
+    @Override
+    protected VmDynamicDao prepareDao() {
+        return dbFacade.getVmDynamicDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 8;
     }
 
     /**
@@ -55,86 +84,22 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdateStatus() {
-        VmDynamic before = dao.get(existingVm.getId());
-        before.setStatus(VMStatus.Down);
-        dao.updateStatus(before.getId(), before.getStatus());
-        VmDynamic after = dao.get(existingVm.getId());
-        assertEquals(before, after);
-    }
-
-    /**
-     * Ensures that null is returned when the id is invalid.
-     */
-    @Test
-    public void testGetWithInvalidId() {
-        VmDynamic result = dao.get(Guid.newGuid());
-        assertNull(result);
-    }
-
-    @Test
-    public void testGet() {
-        VmDynamic result = dao.get(existingVm.getId());
-        assertNotNull(result);
-        assertEquals(existingVm.getId(), result.getId());
-    }
-
-    /**
-     * Test the {@link VmDynamicDao#save(BusinessEntity)} method by adding a vm_dynamic record to a template.
-     * While this doesn't make any sense from a business logic perspective, it's perfectly legal from a database
-     * perspective, and helps avoid dependencies on the {@link VmDynamicDao#remove(Guid)} method.
-     */
-    @Test
-    public void testSave() {
-        VmDynamic newEntity = new VmDynamic();
-        newEntity.setId(FixturesTool.VM_TEMPLATE_RHEL5);
-        newEntity.setStatus(VMStatus.NotResponding);
-        dao.save(newEntity);
-        VmDynamic vmdynamic = dao.get(newEntity.getId());
-
-        assertNotNull(vmdynamic);
-        assertEquals(vmdynamic, newEntity);
-    }
-
-    /**
-     * Ensures deleting the dynamic portion of a VM works.
-     */
-    @Test
-    public void testRemoveDynamic() {
-        VmDynamic before = dao.get(existingVm.getId());
-
-        // make sure we're using a real example
-        assertNotNull(before);
-        dao.remove(existingVm.getId());
-        VmDynamic after = dao.get(existingVm.getId());
-        assertNull(after);
-    }
-
-    /**
-     * Ensures updating the dynamic aspect of the VM works.
-     */
-    @Test
-    public void testUpdate() {
-        VmDynamic before = dao.get(existingVm.getId());
-
-        before.setVmHost("farkle.redhat.com");
-        before.setRunOnce(!before.isRunOnce());
-        dao.update(before);
-
-        VmDynamic after = dao.get(existingVm.getId());
-
-        assertEquals(before, after);
+        existingEntity.setStatus(VMStatus.Down);
+        dao.updateStatus(existingEntity.getId(), existingEntity.getStatus());
+        VmDynamic after = dao.get(existingEntity.getId());
+        assertEquals(existingEntity, after);
     }
 
     @Test
     public void testUpdateAll() throws Exception {
         VmDynamic existingVm2 = dao.get(FixturesTool.VM_RHEL5_POOL_51);
-        existingVm.setStatus(VMStatus.Down);
+        existingEntity.setStatus(VMStatus.Down);
         existingVm2.setIp("111");
         existingVm2.setFqdn("localhost.localdomain");
 
-        dao.updateAll(Arrays.asList(existingVm, existingVm2));
+        dao.updateAll(Arrays.asList(existingEntity, existingVm2));
 
-        assertEquals(existingVm, dao.get(existingVm.getId()));
+        assertEquals(existingEntity, dao.get(existingEntity.getId()));
         assertEquals(existingVm2, dao.get(existingVm2.getId()));
     }
 
@@ -193,8 +158,8 @@ public class VmDynamicDaoTest extends BaseDaoTestCase {
     public void testUpdateToUnknown() {
         VmDynamic existingVm2 = dao.get(FixturesTool.VM_RHEL5_POOL_51);
         VmDynamic existingVm3 = dao.get(FixturesTool.VM_RHEL5_POOL_50);
-        dao.updateVmsToUnknown(Arrays.asList(existingVm.getId(), existingVm2.getId()));
-        assertEquals(VMStatus.Unknown, dao.get(existingVm.getId()).getStatus());
+        dao.updateVmsToUnknown(Arrays.asList(existingEntity.getId(), existingVm2.getId()));
+        assertEquals(VMStatus.Unknown, dao.get(existingEntity.getId()).getStatus());
         assertEquals(VMStatus.Unknown, dao.get(existingVm2.getId()).getStatus());
         assertNotEquals(VMStatus.Unknown, dao.get(existingVm3.getId()).getStatus());
     }
