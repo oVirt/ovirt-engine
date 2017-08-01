@@ -42,7 +42,7 @@ public class SnapshotActionPanelPresenterWidget extends ActionPanelPresenterWidg
                 return getDataProvider().getModel().getCustomPreviewCommand();
             }
         });
-        addActionButton(new UiCommandButtonDefinition<Snapshot>(getSharedEventBus(), constants.previewSnapshot()) {
+        addComboActionButton(new UiCommandButtonDefinition<Snapshot>(getSharedEventBus(), constants.previewSnapshot()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDataProvider().getModel().getPreviewCommand();
