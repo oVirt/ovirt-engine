@@ -8,6 +8,7 @@ import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.FormGroup;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
@@ -31,6 +32,10 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
 
     public interface ViewUiBinder extends UiBinder<Widget, ActionPanelView<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<ActionPanelView<?>> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     @UiField
@@ -58,6 +63,7 @@ public class ActionPanelView<T> extends AbstractView implements ActionPanelPrese
 
     public ActionPanelView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override
