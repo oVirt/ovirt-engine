@@ -104,11 +104,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllStaticByStoragePool() {
-        Guid spID = dbFacade.getClusterDao().get(newVmStatic.getClusterId()).getStoragePoolId();
-
-        assertNotNull(spID);
-
-        List<VmStatic> result = dao.getAllByStoragePoolId(spID);
+        List<VmStatic> result = dao.getAllByStoragePoolId(FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
