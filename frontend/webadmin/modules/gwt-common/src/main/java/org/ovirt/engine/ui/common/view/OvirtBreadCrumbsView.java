@@ -61,8 +61,6 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
     public void buildCrumbs(String modelTitle, String modelHref) {
         // Clear the existing path.
         breadCrumbs.clear();
-        // Add starting >>
-        breadCrumbs.add(new AnchorListItem());
 
         // Add primary menu label.
         String primaryLabel = menuLayout.getPrimaryGroupTitle(modelTitle);
