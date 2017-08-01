@@ -9,13 +9,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -32,27 +30,17 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class VmStaticDaoTest extends BaseDaoTestCase {
+public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmStaticDao> {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule();
 
-    private static final Guid EXISTING_VM_ID = FixturesTool.VM_RHEL5_POOL_57;
     protected static final Guid[] HOST_GUIDS = { FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
             FixturesTool.HOST_ID,
             FixturesTool.GLUSTER_BRICK_SERVER1};
-    private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
-
-    private VmStaticDao dao;
-    private VmStatic existingVmStatic;
-    private VmStatic newVmStatic;
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getVmStaticDao();
-        existingVmStatic = dao.get(EXISTING_VM_ID);
-        newVmStatic = new VmStatic();
+    protected VmStatic generateNewEntity() {
+        VmStatic newVmStatic = new VmStatic();
         newVmStatic.setId(Guid.newGuid());
         newVmStatic.setName("New Virtual Machine");
         newVmStatic.setClusterId(FixturesTool.CLUSTER);
@@ -62,27 +50,38 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         newVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
         newVmStatic.setSmallIconId(FixturesTool.SMALL_ICON_ID);
         newVmStatic.setLargeIconId(FixturesTool.LARGE_ICON_ID);
+        newVmStatic.setConsoleDisconnectAction(ConsoleDisconnectAction.REBOOT);
+        return newVmStatic;
     }
 
-    /**
-     * Ensures that get requires a valid id.
-     */
-    @Test
-    public void testGetWithInvalidId() {
-        VmStatic result = dao.get(Guid.newGuid());
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setDescription("updated");
+        existingEntity.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
+        existingEntity.setProviderId(null);
 
-        assertNull(result);
+        List<Guid> hostGuidsList = Arrays.asList(HOST_GUIDS);
+        existingEntity.setDedicatedVmForVdsList(hostGuidsList);
     }
 
-    /**
-     * Ensures that get works as expected.
-     */
-    @Test
-    public void testGet() {
-        VmStatic result = dao.get(existingVmStatic.getId());
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.VM_RHEL5_POOL_57;
+    }
 
-        assertNotNull(result);
-        assertEquals(result, existingVmStatic);
+    @Override
+    protected VmStaticDao prepareDao() {
+        return dbFacade.getVmStaticDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 3;
     }
 
     /**
@@ -159,54 +158,17 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
     }
 
     @Test
-    public void testSave() {
-        newVmStatic.setDedicatedVmForVdsList(Arrays.asList(HOST_GUIDS));
-        dao.save(newVmStatic);
-        VmStatic result = dao.get(newVmStatic.getId());
-        assertNotNull(result);
-        assertTrue("Add 3 dedicated hosts", CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
-                newVmStatic.getDedicatedVmForVdsList()));
-        assertEquals(newVmStatic, result);
-    }
-
-    @Test
-    public void testUpdate() {
-        assertEquals(FixturesTool.PROVIDER_ID, existingVmStatic.getProviderId());
-        existingVmStatic.setDescription("updated");
-        existingVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
-        existingVmStatic.setProviderId(null);
-        List<Guid> hostGuidsList = Arrays.asList(HOST_GUIDS);
-        existingVmStatic.setDedicatedVmForVdsList(hostGuidsList);
-        dao.update(existingVmStatic);
-        VmStatic result = dao.get(EXISTING_VM_ID);
-        assertNotNull(result);
-        assertTrue("Update dedicated hosts", CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
-                existingVmStatic.getDedicatedVmForVdsList()));
-        assertEquals(existingVmStatic, result);
-        assertNull(result.getProviderId());
-
-        hostGuidsList = new LinkedList<>();
-        hostGuidsList.add(HOST_GUIDS[0]);
-        hostGuidsList.add(HOST_GUIDS[1]);
-        existingVmStatic.setDedicatedVmForVdsList(hostGuidsList);
-        dao.update(existingVmStatic);
-        result = dao.get(EXISTING_VM_ID);
-        // assert 1 dedicated hosts
-        assertTrue("Reduce dedicated hosts", CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
-                existingVmStatic.getDedicatedVmForVdsList()));
-    }
-
-    @Test
+    @Override
     public void testRemove() {
         for (Snapshot s : dbFacade.getSnapshotDao().getAll()) {
             dbFacade.getSnapshotDao().remove(s.getId());
         }
 
-        dao.remove(EXISTING_VM_ID);
-        VmStatic result = dao.get(EXISTING_VM_ID);
+        dao.remove(getExistingEntityId());
+        VmStatic result = dao.get(getExistingEntityId());
         assertNull(result);
         PermissionDao permissionsDao = dbFacade.getPermissionDao();
-        assertEquals("vm permissions wasn't removed", 0, permissionsDao.getAllForEntity(EXISTING_VM_ID).size());
+        assertEquals("vm permissions wasn't removed", 0, permissionsDao.getAllForEntity(getExistingEntityId()).size());
     }
 
     @Test
@@ -216,13 +178,13 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         }
 
         PermissionDao permissionsDao = dbFacade.getPermissionDao();
-        int numberOfPermissionsBeforeRemove = permissionsDao.getAllForEntity(EXISTING_VM_ID).size();
+        int numberOfPermissionsBeforeRemove = permissionsDao.getAllForEntity(getExistingEntityId()).size();
 
-        dao.remove(EXISTING_VM_ID, false);
-        VmStatic result = dao.get(EXISTING_VM_ID);
+        dao.remove(getExistingEntityId(), false);
+        VmStatic result = dao.get(getExistingEntityId());
         assertNull(result);
 
-        assertEquals("vm permissions changed during remove although shouldnt have.", numberOfPermissionsBeforeRemove, permissionsDao.getAllForEntity(EXISTING_VM_ID).size());
+        assertEquals("vm permissions changed during remove although shouldnt have.", numberOfPermissionsBeforeRemove, permissionsDao.getAllForEntity(getExistingEntityId()).size());
     }
 
     private void checkDisks(Guid id, boolean hasDisks) {
@@ -330,7 +292,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
         List<String> namesPinnedToHost = dao.getAllNamesPinnedToHost(FixturesTool.VDS_RHEL6_NFS_SPM);
 
         assertFalse(namesPinnedToHost.isEmpty());
-        assertTrue(namesPinnedToHost.contains(existingVmStatic.getName()));
+        assertTrue(namesPinnedToHost.contains(existingEntity.getName()));
     }
 
     /**
@@ -404,7 +366,7 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
      *         The MigrationSupport is the one being checked.<br>
      */
     private VmStatic[] initVmStaticsOrderedByMigrationSupport(List<VmStatic> vmStatics) {
-        VmStatic[] vmStaticArray = new VmStatic[NUM_OF_VM_STATIC_IN_FIXTURES];
+        VmStatic[] vmStaticArray = new VmStatic[getEntitiesTotalCount()];
 
         vmStaticArray = vmStatics.toArray(vmStaticArray);
 
@@ -514,19 +476,6 @@ public class VmStaticDaoTest extends BaseDaoTestCase {
             allValues &= Objects.equals(vmStatic.getCpuProfileId(), cpuProfileId);
         }
         assertEquals(isAllNull, allValues);
-    }
-
-    @Test
-    public void testConsoleDisconnectActionDefault() {
-        assertEquals(ConsoleDisconnectAction.LOCK_SCREEN, newVmStatic.getConsoleDisconnectAction());
-    }
-
-    @Test
-    public void testConsoleDisconnectActionSaved() {
-        newVmStatic.setConsoleDisconnectAction(ConsoleDisconnectAction.REBOOT);
-        dao.save(newVmStatic);
-        VmStatic loaded = dao.get(newVmStatic.getId());
-        assertEquals(ConsoleDisconnectAction.REBOOT, loaded.getConsoleDisconnectAction());
     }
 
     @Test
