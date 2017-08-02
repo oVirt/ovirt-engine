@@ -53,6 +53,7 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
     private Version spiceDriverVersion;
     private boolean transparentHugePages;
     private boolean trustedService;
+    private boolean hasIllegalImages;
 
     public VM() {
         this(new VmStatic(), new VmDynamic(), new VmStatistics());
@@ -1747,6 +1748,14 @@ public class VM implements Queryable, BusinessEntityWithStatus<Guid, VMStatus>, 
 
     public void setRuntimeDeviceCustomProperties(Map<VmDeviceId, Map<String, String>> runtimeDeviceCustomProperties) {
         this.runtimeDeviceCustomProperties = runtimeDeviceCustomProperties;
+    }
+
+    public boolean hasIllegalImages() {
+        return hasIllegalImages;
+    }
+
+    public void setHasIllegalImages(boolean hasIllegalImages) {
+        this.hasIllegalImages = hasIllegalImages;
     }
 
 }
