@@ -53,9 +53,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    @UiField(provided = true)
-    @WithElementId
-    AnchorListItem configureLink;
+    Anchor configureLink;
 
     @UiField
     @WithElementId
@@ -64,10 +62,6 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     @UiField
     @WithElementId
     AnchorButton help;
-
-    @UiField
-    @WithElementId
-    AnchorButton settings;
 
     @UiField
     @WithElementId
@@ -92,7 +86,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
 
     @Inject
     public HeaderView(ApplicationDynamicMessages dynamicMessages) {
-        this.configureLink = new AnchorListItem(constants.configureLinkLabel());
+        configureLink = new Anchor();
         this.logoutLink = new AnchorListItem(constants.logoutLinkLabel());
         this.optionsLink = new AnchorListItem(constants.optionsLinkLabel());
         this.aboutLink = new AnchorListItem(constants.aboutLinkLabel());
@@ -111,7 +105,6 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         mainNavBar.removeStyleName(PatternflyStyles.NAVBAR_DEFAULT);
 
         AnchorElement.as(help.getElement()).addClassName(NAV_ITEM_ICONIC);
-        AnchorElement.as(settings.getElement()).addClassName(NAV_ITEM_ICONIC);
         tasks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
         tags.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
         bookmarks.getWidget(0).addStyleName(NAV_ITEM_ICONIC);
@@ -218,8 +211,13 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
                         FlowPanel groupContainer = (FlowPanel) group.getWidget(2);
                         ListGroup listGroup = (ListGroup) groupContainer.getWidget(1);
                         ListGroupItem item = new ListGroupItem();
-                        Anchor itemAnchor = createTextAnchor(id, title);
-                        itemAnchor.setHref(href);
+                        Anchor itemAnchor;
+                        if (HeaderPresenterWidget.CONFIGURE_HREF.equals(href.substring(1))) {
+                            itemAnchor = createConfigureMenuItem(title, id);
+                        } else {
+                            itemAnchor = createTextAnchor(id, title);
+                            itemAnchor.setHref(href);
+                        }
                         item.add(itemAnchor);
                         listGroup.insert(item, Math.min(index, listGroup.getWidgetCount() - 1 >= 0
                                 ? listGroup.getWidgetCount() - 1 : 0));
@@ -227,6 +225,19 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
                 }
             }
         }
+    }
+
+    private Anchor createConfigureMenuItem(String title, String id) {
+        Anchor itemAnchor = configureLink;
+        Span titleSpan = new Span();
+        titleSpan.addStyleName(PatternflyStyles.LIST_GROUP_ITEM_VALUE);
+        titleSpan.setText(title);
+        itemAnchor.add(titleSpan);
+        itemAnchor.setId(id);
+        itemAnchor.addClickHandler(e -> {
+            e.preventDefault();
+        });
+        return itemAnchor;
     }
 
     private void ensureGroupIsInserted(String groupTitle, int groupIndex, HasCssName icon) {

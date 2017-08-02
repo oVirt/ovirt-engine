@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.tab;
 
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 
@@ -39,7 +40,10 @@ public enum GlusterModeSubMenu implements SecondaryMenuItem {
     VIRTUAL_MACHINE(AssetProvider.getConstants().virtualMachineMainTabLabel(), 8, GlusterModeMenuLayout.STORAGE,
             WebAdminApplicationPlaces.virtualMachineMainTabPlace),
     VNIC_PROFILE(AssetProvider.getConstants().vnicProfilesMainTabLabel(), 9, GlusterModeMenuLayout.STORAGE,
-            WebAdminApplicationPlaces.vnicProfileMainTabPlace);
+            WebAdminApplicationPlaces.vnicProfileMainTabPlace),
+    // TODO: Turn this into a proper tertiary menu, so we don't have to use a popup.
+    CONFIGURE(AssetProvider.getConstants().configureLinkLabel(), 5, AllModesMenuLayout.ADMIN,
+            HeaderPresenterWidget.CONFIGURE_HREF);
 
     private String title;
     private int priority;

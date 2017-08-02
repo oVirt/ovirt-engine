@@ -58,12 +58,6 @@
                         </b:DropDownMenu>
                     </b:ListDropDown>
                 </t:WidgetTooltip>
-                <b:ListDropDown>
-                    <b:AnchorButton ui:field="settings" dataToggle="DROPDOWN" icon="GEAR" />
-                    <b:DropDownMenu>
-                        <b:AnchorListItem ui:field="configureLink" addStyleNames="{style.topLinks}" />
-                    </b:DropDownMenu>
-                </b:ListDropDown>
             </b:NavbarNav>
         </b:NavbarCollapse>
     </b:Navbar>

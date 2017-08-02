@@ -8,8 +8,10 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
+import org.ovirt.engine.ui.common.uicommon.model.GroupedTabData;
 import org.ovirt.engine.ui.common.uicommon.model.OptionsProvider;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTab;
+import org.ovirt.engine.ui.common.widget.tab.GroupedTab;
 import org.ovirt.engine.ui.common.widget.tab.TabDefinition;
 import org.ovirt.engine.ui.common.widget.tab.TabWidgetHandler;
 import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
@@ -27,7 +29,9 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.alert.ActionWidget;
+import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.HasCssName;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
@@ -74,6 +78,8 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
 
     }
 
+    public static final String CONFIGURE_HREF = "configure"; // $NON-NLS-1$
+
     private final ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Provider<AboutPopupPresenterWidget> aboutPopupProvider;
@@ -81,6 +87,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     private final TaskModelProvider taskModelProvider;
     private final AlertModelProvider alertModelProvider;
     private final EventModelProvider eventModelProvider;
+    private final WebadminMenuLayout menuLayout;
 
     @Inject
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
@@ -90,6 +97,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
             ApplicationDynamicMessages dynamicMessages,
             @Named("notification") EventModelProvider eventModelProvider,
             AlertModelProvider alertModelProvider,
+            WebadminMenuLayout menuLayout,
             TaskModelProvider taskModelProvider) {
         super(eventBus, view, user, optionsProvider, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.aboutPopupProvider = aboutPopupProvider;
@@ -97,6 +105,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
         this.taskModelProvider = taskModelProvider;
         this.alertModelProvider = alertModelProvider;
         this.eventModelProvider = eventModelProvider;
+        this.menuLayout = menuLayout;
         eventModelProvider.addDataDisplay(getView().getEventDropdown());
         alertModelProvider.addDataDisplay(getView().getAlertDropdown());
     }
@@ -106,6 +115,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     protected void onBind() {
         super.onBind();
 
+        insertConfigureMenu();
         registerHandler(getView().getConfigureLink().addClickHandler(event ->
                 RevealRootPopupContentEvent.fire(HeaderPresenterWidget.this, configurePopupProvider.get())));
 
@@ -169,6 +179,16 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                 getView().setAlertCount((int) count);
             }
 
+        });
+    }
+
+    private void insertConfigureMenu() {
+        Scheduler.get().scheduleDeferred(() -> {
+            // TODO: This is a hack for adding the configure menu.
+            TabDefinition configureMenu = new GroupedTab(new GroupedTabData(menuLayout.getDetails(CONFIGURE_HREF)), null);
+            configureMenu.setTargetHistoryToken(CONFIGURE_HREF);
+            configureMenu.setText(menuLayout.getDetails(CONFIGURE_HREF).getSecondaryTitle());
+            addTabWidget(configureMenu, 5);
         });
     }
 

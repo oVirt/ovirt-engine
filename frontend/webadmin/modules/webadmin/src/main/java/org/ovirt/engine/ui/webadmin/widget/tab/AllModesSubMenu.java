@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.tab;
 
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 
 import com.google.gwt.dom.client.Style.HasCssName;
 
@@ -43,7 +44,10 @@ public enum AllModesSubMenu implements SecondaryMenuItem {
     USERS(AssetProvider.getConstants().userMainTabLabel(), 3, AllModesMenuLayout.ADMIN,
             WebAdminApplicationPlaces.userMainTabPlace),
     ERRATA(AssetProvider.getConstants().errataMainTabLabel(), 4, AllModesMenuLayout.ADMIN,
-            WebAdminApplicationPlaces.errataMainTabPlace);
+            WebAdminApplicationPlaces.errataMainTabPlace),
+    // TODO: Turn this into a proper tertiary menu, so we don't have to use a popup.
+    CONFIGURE(AssetProvider.getConstants().configureLinkLabel(), 5, AllModesMenuLayout.ADMIN,
+            HeaderPresenterWidget.CONFIGURE_HREF);
 
     private String title;
     private int priority;
