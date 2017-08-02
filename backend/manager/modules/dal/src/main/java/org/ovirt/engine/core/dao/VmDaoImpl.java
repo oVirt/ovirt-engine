@@ -339,6 +339,7 @@ public class VmDaoImpl extends BaseDao implements VmDao {
         entity.setClusterSpiceProxy(rs.getString("cluster_spice_proxy"));
         entity.setNextRunConfigurationExists(rs.getBoolean("next_run_config_exists"));
         entity.setPreviewSnapshot(rs.getBoolean("is_previewing_snapshot"));
+        entity.setHasIllegalImages(rs.getBoolean("has_illegal_images"));
         return entity;
     };
 

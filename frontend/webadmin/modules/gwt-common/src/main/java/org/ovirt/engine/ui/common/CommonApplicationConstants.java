@@ -1683,4 +1683,5 @@ public interface CommonApplicationConstants extends Constants {
 
     String kvmUriInfo();
 
+    String vmHasIllegalImages();
 }

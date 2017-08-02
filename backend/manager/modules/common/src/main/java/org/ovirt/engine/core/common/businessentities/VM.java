@@ -1513,6 +1513,7 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     }
 
     private boolean trustedService;
+    private boolean hasIllegalImages;
 
     public void setTrustedService(boolean trustedService) {
         this.trustedService = trustedService;
@@ -1978,4 +1979,12 @@ public class VM implements IVdcQueryable, BusinessEntityWithStatus<Guid, VMStatu
     public void setLeaseStorageDomainId(Guid leaseStorageDomainId) {
         vmStatic.setLeaseStorageDomainId(leaseStorageDomainId);
     }
+    public boolean hasIllegalImages() {
+        return hasIllegalImages;
+    }
+
+    public void setHasIllegalImages(boolean hasIllegalImages) {
+        this.hasIllegalImages = hasIllegalImages;
+    }
+
 }

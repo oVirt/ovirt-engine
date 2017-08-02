@@ -83,6 +83,10 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
                 tooltip += "<br/><br/>" + translator.translate(vm.getVmPauseStatus()); //$NON-NLS-1$
             }
 
+            if (hasIllegalImages(vm)) {
+                tooltip += "<br/><br/>" + constants.vmHasIllegalImages(); //$NON-NLS-1$
+            }
+
             if (vm.getStatus() == VMStatus.Up) {
                 if (hasGuestAgent(vm)) {
                     if (hasDifferentTimezone(vm)) {
@@ -114,7 +118,7 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
         if (vm.getStatus() == VMStatus.Up) {
             alertRequired = !hasGuestAgent(vm) || hasDifferentTimezone(vm) || hasDifferentOSType(vm);
         }
-        return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm);
+        return alertRequired || isUpdateNeeded(vm) || hasPauseError(vm)  || hasIllegalImages(vm);
     }
 
     private static boolean hasDifferentOSType(VM vm) {
@@ -148,6 +152,10 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
 
     private static boolean hasPauseError(VM vm) {
         return vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR;
+    }
+
+    private static boolean hasIllegalImages(VM vm) {
+        return vm.hasIllegalImages();
     }
 
     private String getStatusTooltipText(VMStatus status) {

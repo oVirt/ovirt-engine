@@ -1436,7 +1436,8 @@ SELECT vm_static.vm_name AS vm_name,
     vm_dynamic.guestos_type AS guestos_type,
     vm_dynamic.guestos_version AS guestos_version,
     vm_static.custom_compatibility_version as custom_compatibility_version,
-    vm_dynamic.guest_containers AS guest_containers
+    vm_dynamic.guest_containers AS guest_containers,
+    image_details.has_illegal_images
 FROM vm_static
 INNER JOIN vm_dynamic
     ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1469,6 +1470,14 @@ LEFT JOIN (
     GROUP BY vm_id
     ) vm_snapshots
     ON vm_static.vm_guid = vm_snapshots.vm_id
+LEFT JOIN (
+  SELECT vm_id, COUNT(CASE imagestatus WHEN 4 THEN 1 END) > 0 AS has_illegal_images
+  FROM disk_vm_element
+    JOIN images
+      ON images.image_group_id = disk_vm_element.disk_id
+  GROUP BY vm_id
+  HAVING BOOL_OR(images.active) = TRUE
+  ) image_details ON image_details.vm_id = vm_static.vm_guid
 WHERE vm_static.entity_type = 'VM';
 
 
@@ -1635,7 +1644,8 @@ SELECT DISTINCT vms.vm_name,
     vms.guestos_type AS guestos_type,
     vms.guestos_version AS guestos_version,
     vms.custom_compatibility_version as custom_compatibility_version,
-    vms.guest_containers as guest_containers
+    vms.guest_containers as guest_containers,
+    vms.has_illegal_images
 FROM vms
 LEFT JOIN tags_vm_map_view
     ON vms.vm_guid = tags_vm_map_view.vm_id
