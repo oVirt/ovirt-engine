@@ -92,16 +92,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
                 "75px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> hostColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>(){
-
-            @Override
-            public void update(int index, VM vm, String value) {
-                //The link was clicked, now find cluster and switch to it.
-                getModelProvider().getModel().setSearchString("vms: host = " + value + " and status=up"); // $NON-NLS-1$ $NON-NLS-2$
-                getModelProvider().getModel().search();
-            }
-
-        }) {
+        AbstractTextColumn<VM> hostColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getRunOnVdsName();
@@ -130,15 +121,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         fqdnColumn.makeSortable(VmConditionFieldAutoCompleter.FQDN);
         getTable().addColumn(fqdnColumn, constants.fqdn(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> clusterColumn = new AbstractLinkColumn<VM>(new FieldUpdater<VM, String>(){
-
-            @Override
-            public void update(int index, VM vm, String value) {
-                //The link was clicked, now find cluster and switch to it.
-                getModelProvider().getModel().setSearchString("vms: cluster = " + value); // $NON-NLS-1$
-            }
-
-        }) {
+        AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getClusterName();
