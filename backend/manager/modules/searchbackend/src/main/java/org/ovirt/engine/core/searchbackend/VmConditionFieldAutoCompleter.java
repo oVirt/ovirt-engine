@@ -45,6 +45,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String COMPATIBILITY_LEVEL = "COMPATIBILITY_LEVEL";
     public static final String CREATED_BY_USER_ID = "CREATED_BY_USER_ID";
     public static final String NEXT_RUN_CONFIG_EXISTS = "NEXT_RUN_CONFIG_EXISTS";
+    public static final String HAS_ILLEGAL_IMAGES = "HAS_ILLEGAL_IMAGES";
     private static final int MILISECOND = 1000;
 
     public VmConditionFieldAutoCompleter() {
@@ -80,6 +81,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         verbs.add(COMPATIBILITY_LEVEL);
         verbs.add(CREATED_BY_USER_ID);
         verbs.add(NEXT_RUN_CONFIG_EXISTS);
+        verbs.add(HAS_ILLEGAL_IMAGES);
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -115,6 +117,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(COMPATIBILITY_LEVEL, String.class);
         getTypeDictionary().put(CREATED_BY_USER_ID, UUID.class);
         getTypeDictionary().put(NEXT_RUN_CONFIG_EXISTS, Boolean.class);
+        getTypeDictionary().put(HAS_ILLEGAL_IMAGES, Boolean.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vm_name");
@@ -148,6 +151,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(COMPATIBILITY_LEVEL, "cluster_compatibility_version");
         columnNameDict.put(CREATED_BY_USER_ID, "created_by_user_id");
         columnNameDict.put(NEXT_RUN_CONFIG_EXISTS, "next_run_config_exists");
+        columnNameDict.put(HAS_ILLEGAL_IMAGES, "has_illegal_images");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put(IP, Collections.singletonList(
@@ -189,6 +193,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         } else if (ARCHITECTURE.equals(fieldName)) {
             return new EnumValueAutoCompleter(ArchitectureType.class);
         } else if (NEXT_RUN_CONFIG_EXISTS.equals(fieldName)) {
+            return new BitValueAutoCompleter();
+        } else if (HAS_ILLEGAL_IMAGES.equals(fieldName)) {
             return new BitValueAutoCompleter();
         }
         return null;
