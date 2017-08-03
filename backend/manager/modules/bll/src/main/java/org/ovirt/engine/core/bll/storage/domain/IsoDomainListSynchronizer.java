@@ -130,7 +130,7 @@ public class IsoDomainListSynchronizer implements BackendService {
      */
     public List<RepoImage> getUserRequestForStorageDomainRepoFileList(Guid storageDomainId,
             ImageFileType imageType,
-            boolean forceRefresh) {
+            Boolean forceRefresh) {
         // Query for storageDoaminId is looking for Active ISO domain
         if (!isStorageDomainIdValid(storageDomainId)) {
             throw new EngineException(EngineError.GetIsoListError);
@@ -142,13 +142,13 @@ public class IsoDomainListSynchronizer implements BackendService {
         return getCachedIsoListByDomainId(storageDomainId, imageType);
     }
 
-    private void refreshReposIfNeeded(Guid storageDomainId, ImageFileType imageType, boolean forceRefresh) {
+    private void refreshReposIfNeeded(Guid storageDomainId, ImageFileType imageType, Boolean forceRefresh) {
         MutableLong lastRefreshed = domainsLastRefreshedTime.computeIfAbsent(storageDomainId, k -> new MutableLong(-1));
 
-        if (forceRefresh || shouldInvalidateCache(lastRefreshed.longValue())) {
+        if (shouldForceRefresh(forceRefresh) || shouldInvalidateCache(lastRefreshed.longValue())) {
             synchronized (lastRefreshed) {
                 // Double check as another thread might have already finished a refresh and released the lock
-                if (forceRefresh || shouldInvalidateCache(lastRefreshed.longValue())) {
+                if (shouldForceRefresh(forceRefresh) || shouldInvalidateCache(lastRefreshed.longValue())) {
                     boolean refreshSucceeded = refreshRepos(storageDomainId, imageType);
                     lastRefreshed.setValue(System.currentTimeMillis());
                     if (!refreshSucceeded) {
@@ -157,6 +157,10 @@ public class IsoDomainListSynchronizer implements BackendService {
                 }
             }
         }
+    }
+
+    private boolean shouldForceRefresh(Boolean forceRefresh) {
+        return Boolean.TRUE.equals(forceRefresh) || (forceRefresh == null && getShouldForceRefreshByDefault());
     }
 
     private boolean shouldInvalidateCache(long lastRefreshed) {
@@ -804,5 +808,9 @@ public class IsoDomainListSynchronizer implements BackendService {
 
     private int getInvalidateCachePeriodFromConfig() {
         return Config.<Integer> getValue(ConfigValues.RepoDomainInvalidateCacheTimeInMinutes) * 60 * 1000;
+    }
+
+    private boolean getShouldForceRefreshByDefault() {
+        return Config.getValue(ConfigValues.ForceRefreshDomainFilesListByDefault);
     }
 }

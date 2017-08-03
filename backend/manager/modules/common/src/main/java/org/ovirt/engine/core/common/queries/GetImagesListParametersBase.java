@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 
 /** A base class for parameters of queries that retrieve images lists */
 public abstract class GetImagesListParametersBase extends QueryParametersBase {
-    private static final long serialVersionUID = 2562476365144558247L;
-    private boolean forceRefresh;
+    private static final long serialVersionUID = 2209924540414198112L;
+    private Boolean forceRefresh;
     private ImageFileType imageType;
 
     public GetImagesListParametersBase() {
@@ -16,11 +16,11 @@ public abstract class GetImagesListParametersBase extends QueryParametersBase {
         setImageType(imageType);
     }
 
-    public boolean getForceRefresh() {
+    public Boolean getForceRefresh() {
         return forceRefresh;
     }
 
-    public void setForceRefresh(boolean forceRefresh) {
+    public void setForceRefresh(Boolean forceRefresh) {
         this.forceRefresh = forceRefresh;
     }
 

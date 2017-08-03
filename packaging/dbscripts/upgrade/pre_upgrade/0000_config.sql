@@ -653,6 +653,7 @@ select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 select fn_db_add_config_value('AdPartnerMacSupported','false','3.6');
 select fn_db_add_config_value('OvsSupported','false','3.6');
 
+select fn_db_add_config_value('ForceRefreshDomainFilesListByDefault','true','general');
 
 -- Monitoring
 select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');

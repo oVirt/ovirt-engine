@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
+import org.ovirt.engine.api.restapi.util.ParametersHelper;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
@@ -19,6 +20,8 @@ import org.ovirt.engine.core.common.queries.QueryType;
 public class BackendFilesResource
     extends AbstractBackendCollectionResource<File, String>
     implements FilesResource {
+
+    private static final String FORCE_REFRESH = "refresh";
 
     protected String storageDomainId;
 
@@ -69,8 +72,8 @@ public class BackendFilesResource
 
     protected List<String> listFiles() {
         GetImagesListParameters queryParams = new GetImagesListParameters(asGuid(storageDomainId), ImageFileType.All);
-        queryParams.setForceRefresh(true);
-
+        Boolean forceRefresh = ParametersHelper.getBooleanParameter(httpHeaders, uriInfo, FORCE_REFRESH, null, null);
+        queryParams.setForceRefresh(forceRefresh);
         List<RepoImage> files = getBackendCollection(RepoImage.class, QueryType.GetImagesList,
                                     queryParams);
         return files.stream().map(RepoImage::getRepoImageId).collect(toList());

@@ -284,6 +284,13 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
     RepoDomainInvalidateCacheTimeInMinutes,
+    /**
+     * When retrieving a file list from a domain without explicitly stating whether should we force refresh or not
+     * then whether a force refresh will be done is decided according to this value
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ForceRefreshDomainFilesListByDefault,
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     InstallVds,
