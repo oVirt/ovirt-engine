@@ -149,6 +149,7 @@ public enum EngineMessage {
     VAR__ACTION__AMEND,
     VAR__ACTION__SEAL,
     VAR__ACTION__SCHEDULE,
+    VAR__ACTION__TRANSFER,
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,

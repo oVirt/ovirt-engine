@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.action.TransferDiskImageParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.ImageActionsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.PrepareImageVDSCommandParameters;
@@ -50,6 +51,12 @@ public class TransferDiskImageCommand<T extends TransferDiskImageParameters> ext
 
     public TransferDiskImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addValidationMessage(EngineMessage.VAR__TYPE__DISK);
+        addValidationMessage(EngineMessage.VAR__ACTION__TRANSFER);
     }
 
     @Override
