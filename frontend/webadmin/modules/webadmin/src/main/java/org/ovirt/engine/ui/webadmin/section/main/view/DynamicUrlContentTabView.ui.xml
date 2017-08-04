@@ -8,11 +8,12 @@
         .iframe {
             width: 100%;
             border-style: none;
+            border-width: 0;
         }
     </ui:style>
 
     <g:HTMLPanel>
-        <g:Frame ui:field="frame" addStyleNames="{style.iframe} obrand_main_tab" />
+        <g:Frame ui:field="frame" addStyleNames="{style.iframe}" />
     </g:HTMLPanel>
 
 </ui:UiBinder>

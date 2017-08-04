@@ -53,8 +53,8 @@
 }
 
 .obrand_main_tab {
-    height: calc(100vh - 96px);
-    min-height: calc(100vh - 96px);
+    height: calc(100vh - 66px);
+    min-height: calc(100vh - 66px);
 }
 
 .obrand_aboutBackgroundImage {

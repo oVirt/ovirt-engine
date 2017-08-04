@@ -12,7 +12,7 @@
 
     <g:FlowPanel addStyleNames="{style.mainContainer}">
         <g:SimplePanel ui:field="headerPanel" />
-        <g:FlowPanel ui:field="mainContentPanel" addStyleNames="container-fluid container-cards-pf container-pf-nav-pf-vertical" />
+        <g:FlowPanel ui:field="mainContentPanel" addStyleNames="container-pf-nav-pf-vertical" />
     </g:FlowPanel>
 
 </ui:UiBinder>

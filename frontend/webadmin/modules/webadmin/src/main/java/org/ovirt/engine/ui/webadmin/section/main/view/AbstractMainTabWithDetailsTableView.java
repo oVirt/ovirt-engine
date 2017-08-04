@@ -64,6 +64,7 @@ public abstract class AbstractMainTabWithDetailsTableView<T, M extends ListWithD
         addBreadCrumbs(tableContainer);
         addActionSearchPanel(tableContainer);
         table.addStyleName(OBRAND_MAIN_TAB);
+        table.addStyleName(Styles.CONTAINER_FLUID);
     }
 
     @Override
