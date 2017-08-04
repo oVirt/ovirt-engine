@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.libvirt;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -190,7 +191,7 @@ public class VmDevicesConverter {
             String devNode = target.selectSingleNode(NODE).innerText;
             String devSize = target.selectSingleNode(SIZE).innerText;
             VmDevice dbDev = dbDevices.stream()
-                    .sorted((d1, d2) -> d1.isManaged() ? -1 : 1) // try to match managed devices first
+                    .sorted(Comparator.comparing(VmDevice::isManaged).reversed()) // try to match managed devices first
                     .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
                     .filter(d -> Objects.equals(d.getSpecParams().get(NODE).toString(), devNode))
                     .filter(d -> Objects.equals(d.getSpecParams().get(SIZE).toString(), devSize))
