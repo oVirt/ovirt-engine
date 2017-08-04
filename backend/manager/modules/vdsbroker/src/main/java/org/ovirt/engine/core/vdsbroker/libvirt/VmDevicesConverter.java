@@ -76,7 +76,7 @@ public class VmDevicesConverter {
         result.addAll(parseControllers(document, devices));
         result.addAll(parseVideos(document, devices));
         result.addAll(parseInterfaces(document, devices, vmId));
-        result.addAll(parseDisks(document, devices, vmId));
+        result.addAll(parseDisks(document, devices));
         result.addAll(parseRedirs(document, devices));
         result.addAll(parseMemories(document, devices));
         result.addAll(parseHostDevices(document, devices, hostId));
@@ -288,7 +288,7 @@ public class VmDevicesConverter {
         return result;
     }
 
-    private List<Map<String, Object>> parseDisks(XmlDocument document, List<VmDevice> devices, Guid vmId) {
+    private List<Map<String, Object>> parseDisks(XmlDocument document, List<VmDevice> devices) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.DISK);
 
         List<Map<String, Object>> result = new ArrayList<>();
