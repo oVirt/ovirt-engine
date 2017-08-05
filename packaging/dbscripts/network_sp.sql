@@ -1643,7 +1643,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION InsertVnicProfile (
     v_id UUID,
-    v_name VARCHAR(50),
+    v_name VARCHAR(256),
     v_network_id UUID,
     v_network_qos_id UUID,
     v_port_mirroring BOOLEAN,
@@ -1684,7 +1684,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION UpdateVnicProfile (
     v_id UUID,
-    v_name VARCHAR(50),
+    v_name VARCHAR(256),
     v_network_id UUID,
     v_network_qos_id UUID,
     v_port_mirroring BOOLEAN,
