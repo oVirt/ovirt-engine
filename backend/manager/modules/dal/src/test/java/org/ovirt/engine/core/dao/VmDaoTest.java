@@ -214,7 +214,7 @@ public class VmDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetVmsByInstanceTypeId() {
-        List<VM> result = dao.getVmsListByInstanceType(new Guid("99408929-82cf-4dc7-a532-9d998063fa95"));
+        List<VM> result = dao.getVmsListByInstanceType(FixturesTool.INSTANCE_TYPE);
         assertEquals(1, result.size());
         assertEquals(result.iterator().next().getId(), FixturesTool.VM_RHEL5_POOL_50);
     }

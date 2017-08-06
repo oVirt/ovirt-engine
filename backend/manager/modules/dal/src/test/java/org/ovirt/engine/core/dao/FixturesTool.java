@@ -287,6 +287,8 @@ public class FixturesTool {
      */
     public static final Guid VM_TEMPLATE_RHEL5_V2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b83");
 
+    public static final Guid INSTANCE_TYPE = new Guid("99408929-82cf-4dc7-a532-9d998063fa95");
+
     /**
      * Predefined unregistered Template related to Storage Domain STORAGE_DOMAIN_NFS2_1
      * (d9ede37f-e6c3-4bf9-a984-19174070aa31)

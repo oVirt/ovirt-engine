@@ -30,7 +30,6 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     private static final int NUMBER_OF_INSTANCE_TYPES_FOR_PRIVELEGED_USER = 1;
     private static final int NUMBER_OF_TEMPLATES_IN_DB = 8;
     private static final Guid DELETABLE_TEMPLATE_ID = FixturesTool.VM_TEMPLATE_RHEL5_2;
-    private static final Guid EXISTING_INSTANCE_TYPE_ID = new Guid("99408929-82cf-4dc7-a532-9d998063fa95");
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
     protected static final Guid[] HOST_GUIDS = {FixturesTool.VDS_RHEL6_NFS_SPM,
             FixturesTool.HOST_ID,
@@ -50,8 +49,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
 
         existingTemplate = dao.get(FixturesTool.VM_TEMPLATE_RHEL5);
 
-        existingInstanceType = dao.get(
-                new Guid("99408929-82cf-4dc7-a532-9d998063fa95"));
+        existingInstanceType = dao.get(FixturesTool.INSTANCE_TYPE);
 
         newVmTemplate = new VmTemplate();
         newVmTemplate.setId(Guid.newGuid());
@@ -88,10 +86,10 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetInstanceType() {
-        InstanceType result = dao.getInstanceType(EXISTING_INSTANCE_TYPE_ID);
+        InstanceType result = dao.getInstanceType(FixturesTool.INSTANCE_TYPE);
 
         assertNotNull(result);
-        assertEquals(EXISTING_INSTANCE_TYPE_ID, result.getId());
+        assertEquals(FixturesTool.INSTANCE_TYPE, result.getId());
     }
 
     /**
