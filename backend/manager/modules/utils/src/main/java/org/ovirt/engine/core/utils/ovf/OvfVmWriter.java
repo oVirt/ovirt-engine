@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.Version;
 
-public class OvfVmWriter extends OvfWriter {
+public class OvfVmWriter extends OvfOvirtWriter {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
     private VM vm;
 

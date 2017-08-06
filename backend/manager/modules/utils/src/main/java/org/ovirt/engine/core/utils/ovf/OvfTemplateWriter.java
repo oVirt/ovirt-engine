@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class OvfTemplateWriter extends OvfWriter {
+public class OvfTemplateWriter extends OvfOvirtWriter {
     protected VmTemplate vmTemplate;
 
     public OvfTemplateWriter(VmTemplate vmTemplate, List<DiskImage> images, Version version, OsRepository osRepository) {

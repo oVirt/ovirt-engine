@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -16,10 +15,8 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,17 +32,14 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected XmlTextWriter _writer;
     protected XmlDocument _document;
     protected VmBase vmBase;
-    private Version version;
+    protected Version version;
 
-    private OsRepository osRepository;
-
-    public OvfWriter(VmBase vmBase, List<DiskImage> images, Version version, OsRepository osRepository) {
+    public OvfWriter(VmBase vmBase, List<DiskImage> images, Version version) {
         _document = new XmlDocument();
         _images = images;
         _writer = new XmlTextWriter();
         this.vmBase = vmBase;
         this.version = version;
-        this.osRepository = osRepository;
         writeHeader();
     }
 
@@ -53,7 +47,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         return version;
     }
 
-    private void writeHeader() {
+    protected void writeHeader() {
         _instanceId = 0;
         _writer.writeStartDocument(false);
 
@@ -67,9 +61,6 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeNamespace(RASD_PREFIX, RASD_URI);
         _writer.writeNamespace(VSSD_PREFIX, VSSD_URI);
         _writer.writeNamespace(XSI_PREFIX, XSI_URI);
-
-        // Setting the OVF version according to ENGINE (in 2.2 , version was set to "0.9")
-        _writer.writeAttributeString(OVF_URI, "version", Config.getValue(ConfigValues.VdcVersion));
     }
 
     protected long bytesToGigabyte(long bytes) {
@@ -79,18 +70,15 @@ public abstract class OvfWriter implements IOvfBuilder {
     @Override
     public void buildReference() {
         _writer.writeStartElement("References");
-        for (DiskImage image : _images) {
+        _images.forEach(image -> {
             _writer.writeStartElement("File");
-            _writer.writeAttributeString(OVF_URI, "href", OvfParser.createImageFile(image));
-            _writer.writeAttributeString(OVF_URI, "id", image.getImageId().toString());
-            _writer.writeAttributeString(OVF_URI, "size", String.valueOf(image.getActualSizeInBytes()));
-            _writer.writeAttributeString(OVF_URI, "description", StringUtils.defaultString(image.getDescription()));
-            _writer.writeAttributeString(OVF_URI, "disk_storage_type", image.getDiskStorageType().name());
-            _writer.writeAttributeString(OVF_URI, "cinder_volume_type", StringUtils.defaultString(image.getCinderVolumeType()));
+            writeFile(image);
             _writer.writeEndElement();
-        }
+        });
         _writer.writeEndElement();
     }
+
+    protected abstract void writeFile(DiskImage image);
 
     protected void writeVmInit() {
         if (vmBase.getVmInit() != null) {
@@ -148,84 +136,23 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     @Override
     public void buildDisk() {
-        _writer.writeStartElement("Section");
-        _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":DiskSection_Type");
+        startDiskSection();
         _writer.writeStartElement("Info");
         _writer.writeRaw("List of Virtual Disks");
         _writer.writeEndElement();
-        for (DiskImage image : _images) {
-            DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
+        _images.forEach(image -> {
             _writer.writeStartElement("Disk");
-            _writer.writeAttributeString(OVF_URI, "diskId", image.getImageId().toString());
-            _writer.writeAttributeString(OVF_URI, "size", String.valueOf(bytesToGigabyte(image.getSize())));
-            _writer.writeAttributeString(OVF_URI,
-                    "actual_size",
-                    String.valueOf(bytesToGigabyte(image.getActualSizeInBytes())));
-            _writer.writeAttributeString(OVF_URI, "vm_snapshot_id", (image.getVmSnapshotId() != null) ? image
-                    .getVmSnapshotId().toString() : "");
-
-            if (image.getParentId().equals(Guid.Empty)) {
-                _writer.writeAttributeString(OVF_URI, "parentRef", "");
-            } else {
-                int i = 0;
-                while (_images.get(i).getImageId().equals(image.getParentId())) {
-                    i++;
-                }
-                List<DiskImage> res = _images.subList(i, _images.size() - 1);
-
-                if (res.size() > 0) {
-                    _writer.writeAttributeString(OVF_URI, "parentRef", OvfParser.createImageFile(res.get(0)));
-                } else {
-                    _writer.writeAttributeString(OVF_URI, "parentRef", "");
-                }
-            }
-
-            _writer.writeAttributeString(OVF_URI, "fileRef", OvfParser.createImageFile(image));
-
-            String format = "";
-            switch (image.getVolumeFormat()) {
-            case RAW:
-                format = "http://www.vmware.com/specifications/vmdk.html#sparse";
-                break;
-
-            case COW:
-                format = "http://www.gnome.org/~markmc/qcow-image-format.html";
-                break;
-
-            case Unassigned:
-                break;
-
-            default:
-                break;
-            }
-            _writer.writeAttributeString(OVF_URI, "format", format);
-            _writer.writeAttributeString(OVF_URI, "volume-format", image.getVolumeFormat().toString());
-            _writer.writeAttributeString(OVF_URI, "volume-type", image.getVolumeType().toString());
-            _writer.writeAttributeString(OVF_URI, "disk-interface", dve.getDiskInterface().toString());
-            _writer.writeAttributeString(OVF_URI, "boot", String.valueOf(dve.isBoot()));
-            if (FeatureSupported.passDiscardSupported(version)) {
-                _writer.writeAttributeString(OVF_URI, "pass-discard", String.valueOf(dve.isPassDiscard()));
-            }
-            if (image.getDiskAlias() != null) {
-                _writer.writeAttributeString(OVF_URI, "disk-alias", image.getDiskAlias());
-            }
-            if (image.getDiskDescription() != null) {
-                _writer.writeAttributeString(OVF_URI, "disk-description", image.getDiskDescription());
-            }
-            _writer.writeAttributeString(OVF_URI,
-                    "wipe-after-delete",
-                    String.valueOf(image.isWipeAfterDelete()));
+            writeDisk(image);
             _writer.writeEndElement();
-        }
+        });
         _writer.writeEndElement();
     }
 
+    protected abstract void writeDisk(DiskImage image);
+
     @Override
     public void buildVirtualSystem() {
-        // General Vm
-        _writer.writeStartElement("Content");
-        _writer.writeAttributeString(OVF_URI, "id", "out");
-        _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":VirtualSystem_Type");
+        startVirtualSystem();
 
         // General Data
         writeGeneralData();
@@ -492,20 +419,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         return _writer.getStringXML();
     }
 
-    protected void writeOS() {
-        _writer.writeStartElement("Section");
-        _writer.writeAttributeString(OVF_URI, "id", vmBase.getId().toString());
-        _writer.writeAttributeString(OVF_URI, "required", "false");
-        _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":OperatingSystemSection_Type");
-        _writer.writeElement("Info", "Guest Operating System");
-        _writer.writeElement("Description", osRepository.getUniqueOsNames().get(vmBase.getOsId()));
-        _writer.writeEndElement();
-    }
-
-    protected void startHardware() {
-        _writer.writeStartElement("Section");
-        _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":VirtualHardwareSection_Type");
-    }
+    protected abstract void writeOS();
+    protected abstract void startHardware();
+    protected abstract void startDiskSection();
+    protected abstract void startVirtualSystem();
 
     protected void endHardware() {
         _writer.writeEndElement();
