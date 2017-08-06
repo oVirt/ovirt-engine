@@ -15,32 +15,24 @@ import org.ovirt.engine.core.compat.Guid;
 public class IscsiBondDaoTest extends BaseDaoTestCase {
 
     private IscsiBondDao dao;
-    private Guid storagePoolId;
     private IscsiBond newIscsiBond;
-    private Guid iscsiBondId;
-    private Guid networkId;
-    private String connectionId;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
 
         dao = dbFacade.getIscsiBondDao();
-        storagePoolId = FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER;
-        networkId = FixturesTool.NETWORK_ENGINE_2;
-        iscsiBondId = FixturesTool.ISCSI_BOND_ID;
-        connectionId = FixturesTool.STORAGE_CONNECTION_ID;
 
         newIscsiBond = new IscsiBond();
         newIscsiBond.setId(Guid.newGuid());
         newIscsiBond.setName("Multipath");
         newIscsiBond.setDescription("New iscsi bond for multipathing");
-        newIscsiBond.setStoragePoolId(storagePoolId);
+        newIscsiBond.setStoragePoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
     }
 
     @Test
     public void testGetAllByStoragePoolId() {
-        List<IscsiBond> iscsiBonds = dao.getAllByStoragePoolId(storagePoolId);
+        List<IscsiBond> iscsiBonds = dao.getAllByStoragePoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
         assertEquals(1, iscsiBonds.size());
     }
 
@@ -58,7 +50,7 @@ public class IscsiBondDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetIscsiBondByIscsiBondId() {
-        IscsiBond iscsiBond = dao.get(iscsiBondId);
+        IscsiBond iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
         assertNotNull(iscsiBond);
     }
 
@@ -74,26 +66,26 @@ public class IscsiBondDaoTest extends BaseDaoTestCase {
     public void testUpdateIscsiBond() {
         final String newDescription = "10GB iscsi bond";
 
-        IscsiBond iscsiBond = dao.get(iscsiBondId);
+        IscsiBond iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
         assertFalse(newDescription.equals(iscsiBond.getDescription()));
 
         iscsiBond.setDescription(newDescription);
         dao.update(iscsiBond);
 
-        iscsiBond = dao.get(iscsiBondId);
+        iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
         assertEquals(newDescription, iscsiBond.getDescription());
     }
 
     @Test
     public void testRemoveIscsiBond() {
-        IscsiBond iscsiBond = dao.get(iscsiBondId);
+        IscsiBond iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
         assertNotNull(iscsiBond);
 
-        dao.remove(iscsiBondId);
+        dao.remove(FixturesTool.ISCSI_BOND_ID);
 
-        iscsiBond = dao.get(iscsiBondId);
-        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(iscsiBondId);
-        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(iscsiBondId);
+        iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
+        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
+        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
 
         assertNull(iscsiBond);
         assertTrue(networks.isEmpty());
@@ -102,11 +94,11 @@ public class IscsiBondDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testAddNetworkToIscsiBond() {
-        dao.addNetworkToIscsiBond(iscsiBondId, networkId);
+        dao.addNetworkToIscsiBond(FixturesTool.ISCSI_BOND_ID, FixturesTool.NETWORK_ENGINE_2);
 
-        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(iscsiBondId);
+        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
         assertEquals(2, networks.size());
-        assertTrue(networks.contains(networkId));
+        assertTrue(networks.contains(FixturesTool.NETWORK_ENGINE_2));
     }
 
     @Test
@@ -118,7 +110,7 @@ public class IscsiBondDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetEmptyIscsiBondIdByNetworkId() {
-        List<IscsiBond> fetchedIscsiBonds = dao.getIscsiBondsByNetworkId(networkId);
+        List<IscsiBond> fetchedIscsiBonds = dao.getIscsiBondsByNetworkId(FixturesTool.NETWORK_ENGINE_2);
         assertEquals(0, fetchedIscsiBonds.size());
     }
 
@@ -130,32 +122,32 @@ public class IscsiBondDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testRemoveNetworkFromIscsiBond() {
-        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(iscsiBondId);
-        networkId = networks.get(0);
+        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
+        Guid networkId = networks.get(0);
 
-        dao.removeNetworkFromIscsiBond(iscsiBondId, networkId);
+        dao.removeNetworkFromIscsiBond(FixturesTool.ISCSI_BOND_ID, networkId);
 
-        networks = dao.getNetworkIdsByIscsiBondId(iscsiBondId);
+        networks = dao.getNetworkIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
         assertTrue(networks.isEmpty());
     }
 
     @Test
     public void testAddStorageConnectionToIscsiBond() {
-        dao.addStorageConnectionToIscsiBond(iscsiBondId, connectionId);
+        dao.addStorageConnectionToIscsiBond(FixturesTool.ISCSI_BOND_ID, FixturesTool.STORAGE_CONNECTION_ID);
 
-        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(iscsiBondId);
+        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
         assertEquals(3, connections.size());
-        assertTrue(connections.contains(connectionId));
+        assertTrue(connections.contains(FixturesTool.STORAGE_CONNECTION_ID));
     }
 
     @Test
     public void testRemoveStorageConnectionFromIscsiBond() {
-        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(iscsiBondId);
-        connectionId = connections.get(0);
+        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
+        String connectionId = connections.get(0);
 
-        dao.removeStorageConnectionFromIscsiBond(iscsiBondId, connectionId);
+        dao.removeStorageConnectionFromIscsiBond(FixturesTool.ISCSI_BOND_ID, connectionId);
 
-        connections = dao.getStorageConnectionIdsByIscsiBondId(iscsiBondId);
+        connections = dao.getStorageConnectionIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
         assertEquals(1, connections.size());
         assertFalse(connections.contains(connectionId));
     }
