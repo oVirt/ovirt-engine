@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmInit;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmInitDaoTest extends BaseDaoTestCase {
@@ -14,8 +13,6 @@ public class VmInitDaoTest extends BaseDaoTestCase {
 
     private VmInit vmInit;
     private VmInitDao vmInitDao;
-    private VmStaticDao vmStaticDao;
-    private VmStatic vmStatic;
 
     @Override
     public void setUp() throws Exception {
@@ -24,10 +21,6 @@ public class VmInitDaoTest extends BaseDaoTestCase {
         vmInitDao = dbFacade.getVmInitDao();
         vmInit = new VmInit();
         vmInit.setId(EXISTING_VM);
-
-        vmStaticDao = dbFacade.getVmStaticDao();
-        vmStatic = vmStaticDao.get(EXISTING_VM);
-        vmStatic.setVmInit(vmInit);
     }
 
     /**
