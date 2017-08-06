@@ -8,13 +8,9 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.VmCpuCountHelper;
-import org.ovirt.engine.core.compat.Match;
-import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.Version;
 
 public class OvfVmWriter extends OvfOvirtWriter {
@@ -90,44 +86,9 @@ public class OvfVmWriter extends OvfOvirtWriter {
     }
 
     @Override
-    protected void writeAppList() {
-        if (_images.size() > 0) {
-            if (StringUtils.isBlank(_images.get(0).getAppList())) {
-                return;
-            }
-
-            String[] apps = _images.get(0).getAppList().split("[,]", -1);
-            for (String app : apps) {
-                String product = app;
-                String version = "";
-                Match match = Regex.match(app, "(.*) ([0-9.]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
-
-                if (match.groups().size() > 1) {
-                    product = match.groups().get(1).getValue();
-                }
-                if (match.groups().size() > 2) {
-                    version = match.groups().get(2).getValue();
-                }
-
-                _writer.writeStartElement("ProductSection");
-                _writer.writeAttributeString(OVF_URI, "class", product);
-                _writer.writeElement("Info", app);
-                _writer.writeElement("Product", product);
-                _writer.writeElement("Version", version);
-                _writer.writeEndElement();
-            }
-        }
-    }
-
-    @Override
     protected void writeHardware() {
         super.writeHardware();
         writeSnapshotsSection();
-    }
-
-    @Override
-    protected void writeMacAddress(VmNetworkInterface iface) {
-        _writer.writeElement(RASD_URI, "MACAddress", iface.getMacAddress());
     }
 
     /**

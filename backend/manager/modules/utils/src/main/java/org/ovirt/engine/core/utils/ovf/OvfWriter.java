@@ -21,6 +21,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Match;
+import org.ovirt.engine.core.compat.Regex;
+import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
@@ -288,7 +291,34 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     }
 
-    protected abstract void writeAppList();
+    protected void writeAppList() {
+        if (!_images.isEmpty()) {
+            if (StringUtils.isBlank(_images.get(0).getAppList())) {
+                return;
+            }
+
+            String[] apps = _images.get(0).getAppList().split("[,]", -1);
+            for (String app : apps) {
+                String product = app;
+                String version = "";
+                Match match = Regex.match(app, "(.*) ([0-9.]+)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+                if (match.groups().size() > 1) {
+                    product = match.groups().get(1).getValue();
+                }
+                if (match.groups().size() > 2) {
+                    version = match.groups().get(2).getValue();
+                }
+
+                _writer.writeStartElement("ProductSection");
+                _writer.writeAttributeString(OVF_URI, "class", product);
+                _writer.writeElement("Info", app);
+                _writer.writeElement("Product", product);
+                _writer.writeElement("Version", version);
+                _writer.writeEndElement();
+            }
+        }
+    }
 
     protected void writeHardware() {
         startHardware();
@@ -546,7 +576,9 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected abstract void writeMacAddress(VmNetworkInterface iface);
+    protected void writeMacAddress(VmNetworkInterface iface) {
+        _writer.writeElement(RASD_URI, "MACAddress", iface.getMacAddress());
+    }
 
     protected String getVolumeImageFormat(VolumeFormat format) {
         switch (format) {
