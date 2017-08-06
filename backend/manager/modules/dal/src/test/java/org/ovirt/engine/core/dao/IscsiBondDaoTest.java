@@ -2,8 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -12,22 +10,40 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.compat.Guid;
 
-public class IscsiBondDaoTest extends BaseDaoTestCase {
-
-    private IscsiBondDao dao;
-    private IscsiBond newIscsiBond;
-
+public class IscsiBondDaoTest extends BaseGenericDaoTestCase<Guid, IscsiBond, IscsiBondDao> {
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getIscsiBondDao();
-
-        newIscsiBond = new IscsiBond();
+    protected IscsiBond generateNewEntity() {
+        IscsiBond newIscsiBond = new IscsiBond();
         newIscsiBond.setId(Guid.newGuid());
         newIscsiBond.setName("Multipath");
         newIscsiBond.setDescription("New iscsi bond for multipathing");
         newIscsiBond.setStoragePoolId(FixturesTool.STORAGE_POOL_RHEL6_ISCSI_OTHER);
+        return newIscsiBond;
+    }
+
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setDescription("10GB iscsi bond");
+    }
+
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.ISCSI_BOND_ID;
+    }
+
+    @Override
+    protected IscsiBondDao prepareDao() {
+        return dbFacade.getIscsiBondDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 2;
     }
 
     @Test
@@ -44,50 +60,17 @@ public class IscsiBondDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetNetworkIdsByIscsiBondId() {
-        List<Guid> networkIds = dao.getNetworkIdsByIscsiBondId(newIscsiBond.getId());
+        List<Guid> networkIds = dao.getNetworkIdsByIscsiBondId(Guid.newGuid());
         assertTrue(networkIds.isEmpty());
     }
 
+    @Override
     @Test
-    public void testGetIscsiBondByIscsiBondId() {
-        IscsiBond iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
-        assertNotNull(iscsiBond);
-    }
+    public void testRemove() {
+        super.testRemove();
+        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(getExistingEntityId());
+        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(getExistingEntityId());
 
-    @Test
-    public void testAddNewIscsiBond() {
-        dao.save(newIscsiBond);
-
-        IscsiBond iscsiBond = dao.get(newIscsiBond.getId());
-        assertEquals(newIscsiBond, iscsiBond);
-    }
-
-    @Test
-    public void testUpdateIscsiBond() {
-        final String newDescription = "10GB iscsi bond";
-
-        IscsiBond iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
-        assertFalse(newDescription.equals(iscsiBond.getDescription()));
-
-        iscsiBond.setDescription(newDescription);
-        dao.update(iscsiBond);
-
-        iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
-        assertEquals(newDescription, iscsiBond.getDescription());
-    }
-
-    @Test
-    public void testRemoveIscsiBond() {
-        IscsiBond iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
-        assertNotNull(iscsiBond);
-
-        dao.remove(FixturesTool.ISCSI_BOND_ID);
-
-        iscsiBond = dao.get(FixturesTool.ISCSI_BOND_ID);
-        List<Guid> networks = dao.getNetworkIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
-        List<String> connections = dao.getStorageConnectionIdsByIscsiBondId(FixturesTool.ISCSI_BOND_ID);
-
-        assertNull(iscsiBond);
         assertTrue(networks.isEmpty());
         assertTrue(connections.isEmpty());
     }
