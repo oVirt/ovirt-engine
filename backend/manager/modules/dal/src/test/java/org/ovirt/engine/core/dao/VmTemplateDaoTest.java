@@ -405,7 +405,7 @@ public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, 
     @Test
     public void testGetAllWithLeaseOnStorageDomain() {
         List<Guid> vmAndTemplatesWithLeasesIds = dao.getAllWithLeaseOnStorageDomain(FixturesTool.STORAGE_DOMAIN_NFS2_1)
-                .stream().map(t -> t.getId()).collect(Collectors.toList());
+                .stream().map(VmTemplate::getId).collect(Collectors.toList());
         assertThat(vmAndTemplatesWithLeasesIds,
                 Matchers.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
     }
