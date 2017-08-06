@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -21,10 +22,12 @@ public class RemoveProvidersModel extends ConfirmationModel {
 
     private final ProviderListModel sourceListModel;
     private final List<Provider> providers;
+    private final boolean force;
 
     @SuppressWarnings("unchecked")
-    public RemoveProvidersModel(ProviderListModel sourceListModel) {
+    public RemoveProvidersModel(ProviderListModel sourceListModel, boolean force) {
         this.sourceListModel = sourceListModel;
+        this.force = force;
         providers = (List<Provider>) sourceListModel.getSelectedItems();
 
         setTitle(ConstantsManager.getInstance().getConstants().removeProviderTitle());
@@ -37,6 +40,18 @@ public class RemoveProvidersModel extends ConfirmationModel {
         }
         setItems(providerNames);
 
+        if (force) {
+            getLatch().setIsAvailable(true);
+            getLatch().setIsChangeable(true);
+            setMessage(ConstantsManager.getInstance().getConstants().forceRemoveProvider());
+            ProviderType providerType = providers.get(0).getType();
+            switch (providerType) {
+                case OPENSTACK_VOLUME:
+                    setNote(ConstantsManager.getInstance().getConstants().forceRemoveCinderProvider());
+                    break;
+            }
+        }
+
         UICommand tempVar = UICommand.createDefaultOkUiCommand(CMD_REMOVE, this);
         getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
@@ -47,10 +62,10 @@ public class RemoveProvidersModel extends ConfirmationModel {
         sourceListModel.setConfirmWindow(null);
     }
 
-    private void onRemove() {
+    private void onRemove(boolean force) {
         List<ActionParametersBase> parameterList = new LinkedList<>();
         for (Provider provider : providers) {
-            parameterList.add(new ProviderParameters(provider));
+            parameterList.add(new ProviderParameters(provider, force));
         }
 
         sourceListModel.selectNextItem();
@@ -64,7 +79,7 @@ public class RemoveProvidersModel extends ConfirmationModel {
         super.executeCommand(command);
 
         if (CMD_REMOVE.equals(command.getName())) {
-            onRemove();
+            onRemove(force);
         } else if (CMD_CANCEL.equals(command.getName())) {
             cancel();
         }

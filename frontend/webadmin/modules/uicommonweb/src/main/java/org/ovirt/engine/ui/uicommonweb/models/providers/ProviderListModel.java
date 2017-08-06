@@ -26,10 +26,12 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
     private static final String CMD_ADD = "Add"; //$NON-NLS-1$
     private static final String CMD_EDIT = "Edit"; //$NON-NLS-1$
     private static final String CMD_REMOVE = "Remove"; //$NON-NLS-1$
+    private static final String CMD_FORCE_REMOVE = "ForceRemove"; //$NON-NLS-1$
 
     private UICommand addCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
+    private UICommand forceRemoveCommand;
 
     private final ProviderNetworkListModel networkListModel;
     private final ProviderSecretListModel secretListModel;
@@ -57,6 +59,7 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
         setAddCommand(new UICommand(CMD_ADD, this));
         setEditCommand(new UICommand(CMD_EDIT, this));
         setRemoveCommand(new UICommand(CMD_REMOVE, this));
+        setForceRemoveCommand(new UICommand(CMD_FORCE_REMOVE, this));
 
         updateActionAvailability();
 
@@ -97,6 +100,14 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
         removeCommand = value;
     }
 
+    public UICommand getForceRemoveCommand() {
+        return forceRemoveCommand;
+    }
+
+    public void setForceRemoveCommand(UICommand forceRemoveCommand) {
+        this.forceRemoveCommand = forceRemoveCommand;
+    }
+
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
@@ -132,9 +143,16 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
+        getForceRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
 
         getAddCommand().setIsAvailable(true);
         getRemoveCommand().setIsAvailable(true);
+        getForceRemoveCommand().setIsAvailable(isSelectedProviderOfType(ProviderType.OPENSTACK_VOLUME));
+    }
+
+    private boolean isSelectedProviderOfType(ProviderType providerType) {
+        return getSelectedItems() != null && getSelectedItems().size() == 1 &&
+                getSelectedItems().get(0).getType() == providerType;
     }
 
     @Override
@@ -173,7 +191,14 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
         if (getConfirmWindow() != null) {
             return;
         }
-        setConfirmWindow(new RemoveProvidersModel(this));
+        setConfirmWindow(new RemoveProvidersModel(this, false));
+    }
+
+    private void forceRemove() {
+        if (getConfirmWindow() != null) {
+            return;
+        }
+        setConfirmWindow(new RemoveProvidersModel(this, true));
     }
 
     @Override
@@ -186,6 +211,8 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
             edit();
         } else if (command == getRemoveCommand()) {
             remove();
+        } else if (command == getForceRemoveCommand()) {
+            forceRemove();
         }
     }
 

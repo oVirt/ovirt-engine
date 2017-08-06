@@ -61,7 +61,8 @@ public class ProviderModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ProviderListModel source,
                             UICommand lastExecutedCommand) {
 
-                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()
+                                || lastExecutedCommand == getModel().getForceRemoveCommand()) {
                             return removeConfirmPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getAddCommand()
                                 || lastExecutedCommand == getModel().getEditCommand()) {

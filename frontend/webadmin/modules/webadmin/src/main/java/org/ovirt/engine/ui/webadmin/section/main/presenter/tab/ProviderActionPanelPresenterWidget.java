@@ -49,6 +49,13 @@ public class ProviderActionPanelPresenterWidget extends ActionPanelPresenterWidg
                 return getModel().getRemoveCommand();
             }
         });
+
+        addMenuListItem(new WebAdminButtonDefinition<Provider>(constants.forceRemoveProvider()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getForceRemoveCommand();
+            }
+        });
     }
 
     public WebAdminButtonDefinition<Provider> getNewButtonDefinition() {

@@ -2544,6 +2544,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String removeProvider();
 
+    String forceRemoveProvider();
+
     String providerGeneralSubTabLabel();
 
     String providerNetworksSubTabLabel();
