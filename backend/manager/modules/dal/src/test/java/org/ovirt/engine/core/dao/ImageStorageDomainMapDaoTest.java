@@ -18,7 +18,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
 
-    private static final Guid EXISTING_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35");
     private static final Guid EXISTING_IMAGE_ID = new Guid("c9a559d9-8666-40d1-9967-759502b19f0b");
     private static final Guid EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY = new Guid("f9a559d9-8666-40d1-9967-759502b19f0f");
     private ImageStorageDomainMapDao dao;
@@ -97,7 +96,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
             fail("Same source and dest quota id, cannot perform test");
         }
         // change quota to the new quota 91
-        dao.updateQuotaForImageAndSnapshots(EXISTING_DISK_ID, FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DEFAULT_QUOTA_GENERAL);
+        dao.updateQuotaForImageAndSnapshots(FixturesTool.IMAGE_GROUP_ID, FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DEFAULT_QUOTA_GENERAL);
         // fetch the image again
         imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         quotaId = imageStorageDomainMap.getQuotaId();
@@ -113,7 +112,7 @@ public class ImageStorageDomainMapDaoTest extends BaseDaoTestCase {
         assertThat("Same source and dest disk profile id, cannot perform test",
                 imageStorageDomainMap.getDiskProfileId(), not(equalTo(FixturesTool.DISK_PROFILE_2)));
         // change to newDiskProfileId
-        dao.updateDiskProfileByImageGroupIdAndStorageDomainId(EXISTING_DISK_ID,
+        dao.updateDiskProfileByImageGroupIdAndStorageDomainId(FixturesTool.IMAGE_GROUP_ID,
                 FixturesTool.STORAGE_DOMAIN_SCALE_SD5, FixturesTool.DISK_PROFILE_2);
         // fetch the image again
         imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
