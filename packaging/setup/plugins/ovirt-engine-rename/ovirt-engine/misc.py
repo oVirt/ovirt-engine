@@ -80,7 +80,8 @@ class Plugin(plugin.PluginBase):
                 '\n'
                 'More details about the operation and possible implications\n'
                 'of running this utility can be found here:\n'
-                'http://www.ovirt.org/Changing_Engine_Hostname\n'
+                'http://www.ovirt.org/documentation/how-to/networking/'
+                'changing-engine-hostname/\n'
                 '\n'
             ),
         )
