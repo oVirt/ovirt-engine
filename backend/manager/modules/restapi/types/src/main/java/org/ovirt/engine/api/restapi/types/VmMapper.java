@@ -369,6 +369,10 @@ public class VmMapper extends VmBaseMapper {
             }
         }
 
+        if (entity.hasIllegalImages()) {
+            model.setHasIllegalImages(true);
+        }
+
         // fill dynamic data
         if (entity.getDynamicData() != null && !entity.getStatus().isNotRunning()) {
             if(entity.getRunOnVds() != null) {
