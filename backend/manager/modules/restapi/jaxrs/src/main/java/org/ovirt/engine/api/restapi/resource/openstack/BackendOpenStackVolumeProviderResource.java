@@ -79,7 +79,7 @@ public class BackendOpenStackVolumeProviderResource
     @Override
     public Response remove() {
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
-        ProviderParameters parameters = new ProviderParameters(provider);
+        ProviderParameters parameters = new ProviderParameters(provider, isForce());
         return performAction(ActionType.RemoveProvider, parameters);
     }
 

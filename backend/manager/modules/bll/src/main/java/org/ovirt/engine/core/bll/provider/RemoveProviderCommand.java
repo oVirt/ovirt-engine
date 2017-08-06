@@ -61,7 +61,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     }
 
     protected boolean validateRemoveProvider() {
-        if (getProviderProxy() != null) {
+        if (getProviderProxy() != null && !getParameters().isForce()) {
             ProviderValidator providerValidator = getProviderProxy().getProviderValidator();
             return validate(providerValidator.validateRemoveProvider());
         }

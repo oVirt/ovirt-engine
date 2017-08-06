@@ -13,11 +13,18 @@ public class ProviderParameters extends ActionParametersBase {
     @NotNull
     private Provider<?> provider;
 
+    private boolean force;
+
     public ProviderParameters() {
     }
 
     public ProviderParameters(Provider<?> provider) {
+        this(provider, false);
+    }
+
+    public ProviderParameters(Provider<?> provider, boolean force) {
         this.provider = provider;
+        this.force = force;
     }
 
     public Provider<?> getProvider() {
@@ -26,5 +33,13 @@ public class ProviderParameters extends ActionParametersBase {
 
     public void setProvider(Provider<?> provider) {
         this.provider = provider;
+    }
+
+    public boolean isForce() {
+        return force;
+    }
+
+    public void setForce(boolean force) {
+        this.force = force;
     }
 }
