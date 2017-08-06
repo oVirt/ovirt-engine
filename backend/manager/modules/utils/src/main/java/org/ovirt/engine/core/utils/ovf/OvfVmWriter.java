@@ -71,7 +71,6 @@ public class OvfVmWriter extends OvfOvirtWriter {
             _writer.writeElement(BOOT_TIME, OvfParser.localDateToUtcDateString(vm.getBootTime()));
             _writer.writeElement(DOWNTIME, String.valueOf(vm.getDowntime()));
         }
-
     }
 
     private void writeLogEvent(String name, String value) {

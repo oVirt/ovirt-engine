@@ -53,7 +53,7 @@ public abstract class OvfOvirtWriter extends OvfWriter {
     }
 
     @Override
-    protected void startHardware() {
+    protected void startHardwareSection() {
         _writer.writeStartElement("Section");
         _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":VirtualHardwareSection_Type");
     }
@@ -118,5 +118,10 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeStartElement("Content");
         _writer.writeAttributeString(OVF_URI, "id", "out");
         _writer.writeAttributeString(XSI_URI, "type", OVF_PREFIX + ":VirtualSystem_Type");
+    }
+
+    @Override
+    protected String getDriveHostResource(DiskImage image) {
+        return OvfParser.createImageFile(image);
     }
 }

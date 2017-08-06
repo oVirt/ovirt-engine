@@ -321,7 +321,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected void writeHardware() {
-        startHardware();
+        startHardwareSection();
         writeInfo();
         writeSystem();
         writeCpu();
@@ -443,7 +443,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected abstract void writeOS();
-    protected abstract void startHardware();
+    protected abstract void startHardwareSection();
     protected abstract void startDiskSection();
     protected abstract void startVirtualSystem();
 
@@ -492,7 +492,7 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeElement(RASD_URI, "Caption", image.getDiskAlias());
             _writer.writeElement(RASD_URI, "InstanceId", image.getImageId().toString());
             _writer.writeElement(RASD_URI, "ResourceType", OvfHardware.DiskImage);
-            _writer.writeElement(RASD_URI, "HostResource", OvfParser.createImageFile(image));
+            _writer.writeElement(RASD_URI, "HostResource", getDriveHostResource(image));
             _writer.writeElement(RASD_URI, "Parent", image.getParentId().toString());
             _writer.writeElement(RASD_URI, "Template", image.getImageTemplateId().toString());
             _writer.writeElement(RASD_URI, "ApplicationList", image.getAppList());
@@ -511,6 +511,8 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.writeEndElement(); // item
         }
     }
+
+    protected abstract String getDriveHostResource(DiskImage image);
 
     private void writeUsb() {
         _writer.writeStartElement("Item");

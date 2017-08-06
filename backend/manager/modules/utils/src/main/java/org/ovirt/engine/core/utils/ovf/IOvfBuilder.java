@@ -6,12 +6,14 @@ public interface IOvfBuilder extends OvfProperties {
     String RASD_URI = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData";
     String VSSD_URI = "http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData";
     String XSI_URI = "http://www.w3.org/2001/XMLSchema-instance";
+    String OVIRT_URI = "http://www.ovirt.org/ovf";
 
     // Namespace prefixes:
     String OVF_PREFIX = "ovf";
     String RASD_PREFIX = "rasd";
     String VSSD_PREFIX = "vssd";
     String XSI_PREFIX = "xsi";
+    String OVIRT_PREFIX = "ovirt";
 
     void buildReference();
 
