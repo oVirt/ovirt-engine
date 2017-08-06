@@ -120,16 +120,14 @@ public class OvfVmWriter extends OvfOvirtWriter {
     }
 
     @Override
-    protected void writeContentItems() {
-        super.writeContentItems();
+    protected void writeHardware() {
+        super.writeHardware();
         writeSnapshotsSection();
     }
 
     @Override
     protected void writeMacAddress(VmNetworkInterface iface) {
-        _writer.writeStartElement(RASD_URI, "MACAddress");
-        _writer.writeRaw(iface.getMacAddress());
-        _writer.writeEndElement();
+        _writer.writeElement(RASD_URI, "MACAddress", iface.getMacAddress());
     }
 
     /**

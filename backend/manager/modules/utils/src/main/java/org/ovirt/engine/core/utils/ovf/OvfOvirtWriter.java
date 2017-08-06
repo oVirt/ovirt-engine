@@ -74,42 +74,9 @@ public abstract class OvfOvirtWriter extends OvfWriter {
                 String.valueOf(bytesToGigabyte(image.getActualSizeInBytes())));
         _writer.writeAttributeString(OVF_URI, "vm_snapshot_id", (image.getVmSnapshotId() != null) ? image
                 .getVmSnapshotId().toString() : "");
-
-        if (image.getParentId().equals(Guid.Empty)) {
-            _writer.writeAttributeString(OVF_URI, "parentRef", "");
-        } else {
-            int i = 0;
-            while (_images.get(i).getImageId().equals(image.getParentId())) {
-                i++;
-            }
-            List<DiskImage> res = _images.subList(i, _images.size() - 1);
-
-            if (res.size() > 0) {
-                _writer.writeAttributeString(OVF_URI, "parentRef", OvfParser.createImageFile(res.get(0)));
-            } else {
-                _writer.writeAttributeString(OVF_URI, "parentRef", "");
-            }
-        }
-
+        writeDiskParentRef(image);
         _writer.writeAttributeString(OVF_URI, "fileRef", OvfParser.createImageFile(image));
-
-        String format = "";
-        switch (image.getVolumeFormat()) {
-        case RAW:
-            format = "http://www.vmware.com/specifications/vmdk.html#sparse";
-            break;
-
-        case COW:
-            format = "http://www.gnome.org/~markmc/qcow-image-format.html";
-            break;
-
-        case Unassigned:
-            break;
-
-        default:
-            break;
-        }
-        _writer.writeAttributeString(OVF_URI, "format", format);
+        _writer.writeAttributeString(OVF_URI, "format", getVolumeImageFormat(image.getVolumeFormat()));
         _writer.writeAttributeString(OVF_URI, "volume-format", image.getVolumeFormat().toString());
         _writer.writeAttributeString(OVF_URI, "volume-type", image.getVolumeType().toString());
         _writer.writeAttributeString(OVF_URI, "disk-interface", dve.getDiskInterface().toString());
@@ -126,6 +93,24 @@ public abstract class OvfOvirtWriter extends OvfWriter {
         _writer.writeAttributeString(OVF_URI,
                 "wipe-after-delete",
                 String.valueOf(image.isWipeAfterDelete()));
+    }
+
+    private void writeDiskParentRef(DiskImage image) {
+        if (image.getParentId().equals(Guid.Empty)) {
+            _writer.writeAttributeString(OVF_URI, "parentRef", "");
+        } else {
+            int i = 0;
+            while (_images.get(i).getImageId().equals(image.getParentId())) {
+                i++;
+            }
+            List<DiskImage> res = _images.subList(i, _images.size() - 1);
+
+            if (res.size() > 0) {
+                _writer.writeAttributeString(OVF_URI, "parentRef", OvfParser.createImageFile(res.get(0)));
+            } else {
+                _writer.writeAttributeString(OVF_URI, "parentRef", "");
+            }
+        }
     }
 
     @Override

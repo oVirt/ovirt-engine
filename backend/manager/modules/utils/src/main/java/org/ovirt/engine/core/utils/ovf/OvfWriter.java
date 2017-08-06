@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
@@ -27,7 +28,7 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
 
 public abstract class OvfWriter implements IOvfBuilder {
-    protected int _instanceId;
+    private int _instanceId;
     protected List<DiskImage> _images;
     protected XmlTextWriter _writer;
     protected XmlDocument _document;
@@ -137,9 +138,7 @@ public abstract class OvfWriter implements IOvfBuilder {
     @Override
     public void buildDisk() {
         startDiskSection();
-        _writer.writeStartElement("Info");
-        _writer.writeRaw("List of Virtual Disks");
-        _writer.writeEndElement();
+        _writer.writeElement("Info", "List of Virtual Disks");
         _images.forEach(image -> {
             _writer.writeStartElement("Disk");
             writeDisk(image);
@@ -154,16 +153,12 @@ public abstract class OvfWriter implements IOvfBuilder {
     public void buildVirtualSystem() {
         startVirtualSystem();
 
-        // General Data
         writeGeneralData();
-
-        // Application List
         writeAppList();
+        writeOS();
+        writeHardware();
 
-        // Content Items
-        writeContentItems();
-
-        _writer.writeEndElement(); // End Content tag
+        _writer.writeEndElement();
     }
 
     protected void writeGeneralData() {
@@ -295,9 +290,7 @@ public abstract class OvfWriter implements IOvfBuilder {
 
     protected abstract void writeAppList();
 
-    protected void writeContentItems() {
-        writeOS();
-
+    protected void writeHardware() {
         startHardware();
         writeInfo();
         writeSystem();
@@ -310,17 +303,17 @@ public abstract class OvfWriter implements IOvfBuilder {
         writeGraphics();
         writeCd();
         writeOtherDevices();
-        endHardware();
+        _writer.writeEndElement();
     }
 
-    protected void writeManagedDeviceInfo(VmBase vmBase, Guid deviceId) {
+    private void writeManagedDeviceInfo(VmBase vmBase, Guid deviceId) {
         VmDevice vmDevice = vmBase.getManagedDeviceMap().get(deviceId);
         if (deviceId != null && vmDevice != null && vmDevice.getAddress() != null) {
             writeVmDeviceInfo(vmDevice);
         }
     }
 
-    protected void writeOtherDevices() {
+    private void writeOtherDevices() {
         List<VmDevice> devices = vmBase.getUnmanagedDeviceList();
 
         Collection<VmDevice> managedDevices = vmBase.getManagedDeviceMap().values();
@@ -339,7 +332,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected void writeMonitors() {
+    private void writeMonitors() {
         Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
         int numOfMonitors = vmBase.getNumOfMonitors();
         int i = 0;
@@ -361,7 +354,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected void writeGraphics() {
+    private void writeGraphics() {
         Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getType() == VmDeviceGeneralType.GRAPHICS) {
@@ -375,7 +368,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected void writeCd() {
+    private void writeCd() {
         Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
         for (VmDevice vmDevice : devices) {
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())) {
@@ -424,10 +417,6 @@ public abstract class OvfWriter implements IOvfBuilder {
     protected abstract void startDiskSection();
     protected abstract void startVirtualSystem();
 
-    protected void endHardware() {
-        _writer.writeEndElement();
-    }
-
     protected void writeInfo() {
         _writer.writeElement("Info",
                 String.format("%1$s CPU, %2$s Memory", vmBase.getNumOfCpus(), vmBase.getMemSizeMb()));
@@ -441,7 +430,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeEndElement();
     }
 
-    protected void writeCpu() {
+    private void writeCpu() {
         _writer.writeStartElement("Item");
         _writer.writeElement(RASD_URI, "Caption", String.format("%1$s virtual cpu", vmBase.getNumOfCpus()));
         _writer.writeElement(RASD_URI, "Description", "Number of virtual CPU");
@@ -451,12 +440,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeElement(RASD_URI, "cpu_per_socket", String.valueOf(vmBase.getCpuPerSocket()));
         _writer.writeElement(RASD_URI, "threads_per_cpu", String.valueOf(vmBase.getThreadsPerCpu()));
         _writer.writeElement(RASD_URI, "max_num_of_vcpus", String.valueOf(maxNumOfVcpus()));
-        _writer.writeEndElement(); // item
+        _writer.writeEndElement();
     }
 
     protected abstract Integer maxNumOfVcpus();
 
-    protected void writeMemory() {
+    private void writeMemory() {
         _writer.writeStartElement("Item");
         _writer.writeElement(RASD_URI, "Caption", String.format("%1$s MB of memory", vmBase.getMemSizeMb()));
         _writer.writeElement(RASD_URI, "Description", "Memory Size");
@@ -467,7 +456,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeEndElement(); // item
     }
 
-    protected void writeDrive() {
+    private void writeDrive() {
         for (DiskImage image : _images) {
             _writer.writeStartElement("Item");
             _writer.writeElement(RASD_URI, "Caption", image.getDiskAlias());
@@ -493,7 +482,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
-    protected void writeUsb() {
+    private void writeUsb() {
         _writer.writeStartElement("Item");
         _writer.writeElement(RASD_URI, "Caption", "USB Controller");
         _writer.writeElement(RASD_URI, "InstanceId", String.valueOf(++_instanceId));
@@ -504,7 +493,7 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.writeEndElement(); // item
     }
 
-    protected void writeNetwork() {
+    private void writeNetwork() {
         for (VmNetworkInterface iface : vmBase.getInterfaces()) {
             _writer.writeStartElement("Item");
             _writer.writeStartElement(RASD_URI, "Caption");
@@ -558,4 +547,16 @@ public abstract class OvfWriter implements IOvfBuilder {
     }
 
     protected abstract void writeMacAddress(VmNetworkInterface iface);
+
+    protected String getVolumeImageFormat(VolumeFormat format) {
+        switch (format) {
+        case RAW:
+            return "http://www.vmware.com/specifications/vmdk.html#sparse";
+        case COW:
+            return "http://www.gnome.org/~markmc/qcow-image-format.html";
+        case Unassigned:
+        default:
+            return "";
+        }
+    }
 }
