@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -25,33 +24,18 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmTemplateDaoTest extends BaseDaoTestCase {
+public class VmTemplateDaoTest extends BaseGenericDaoTestCase<Guid, VmTemplate, VmTemplateDao> {
     private static final int NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER = 1;
     private static final int NUMBER_OF_INSTANCE_TYPES_FOR_PRIVELEGED_USER = 1;
     private static final int NUMBER_OF_TEMPLATES_IN_DB = 8;
-    private static final Guid DELETABLE_TEMPLATE_ID = FixturesTool.VM_TEMPLATE_RHEL5_2;
     private static final Guid EXISTING_IMAGE_TYPE_ID = new Guid("5849b030-626e-47cb-ad90-3ce782d831b3");
     protected static final Guid[] HOST_GUIDS = {FixturesTool.VDS_RHEL6_NFS_SPM,
             FixturesTool.HOST_ID,
             FixturesTool.GLUSTER_BRICK_SERVER1};
 
-    private VmTemplateDao dao;
-
-    private VmTemplate newVmTemplate;
-    private VmTemplate existingTemplate;
-    private VmTemplate existingInstanceType;
-
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getVmTemplateDao();
-
-        existingTemplate = dao.get(FixturesTool.VM_TEMPLATE_RHEL5);
-
-        existingInstanceType = dao.get(FixturesTool.INSTANCE_TYPE);
-
-        newVmTemplate = new VmTemplate();
+    protected VmTemplate generateNewEntity() {
+        VmTemplate newVmTemplate = new VmTemplate();
         newVmTemplate.setId(Guid.newGuid());
         newVmTemplate.setName("NewVmTemplate");
         newVmTemplate.setClusterId(FixturesTool.CLUSTER);
@@ -59,26 +43,39 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         newVmTemplate.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         newVmTemplate.setSmallIconId(FixturesTool.SMALL_ICON_ID);
         newVmTemplate.setLargeIconId(FixturesTool.LARGE_ICON_ID);
+        return newVmTemplate;
+    }
+
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setDescription("This is an updated description");
+
+        List<Guid> hostGuidsList = Collections.singletonList(HOST_GUIDS[0]);
+        existingEntity.setDedicatedVmForVdsList(hostGuidsList);
+    }
+
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.VM_TEMPLATE_RHEL5;
+    }
+
+    @Override
+    protected VmTemplateDao prepareDao() {
+        return dbFacade.getVmTemplateDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
     }
 
     /**
-     * Ensures an id is required.
+     * Note the {@link VmTemplateDao#getAll()} returns only <strong>templates</strong>, while
+     * {@link VmTemplateDao#getCount()} also includes image types and and instance types.
      */
-    @Test
-    public void testGetWithInvalidId() {
-        VmTemplate result = dao.get(Guid.newGuid());
-
-        assertNull(result);
-    }
-
-    /**
-     * Ensures that the right template is returned.
-     */
-    @Test
-    public void testGet() {
-        VmTemplate result = dao.get(FixturesTool.VM_TEMPLATE_RHEL5);
-
-        assertGetResult(result);
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 6;
     }
 
     /**
@@ -103,23 +100,14 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         assertEquals(EXISTING_IMAGE_TYPE_ID, result.getId());
     }
 
-    /**
-     * Ensures that all templates are returned.
-     */
-    @Test
-    public void testGetAll() {
-        List<VmTemplate> result = dao.getAll();
-
-        assertGetAllResult(result);
-    }
-
     @Test
     public void testGetVmTemplatesByIds() {
-        List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5, DELETABLE_TEMPLATE_ID));
+        List<VmTemplate> result = dao.getVmTemplatesByIds(Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5,
+                FixturesTool.VM_TEMPLATE_RHEL5_2));
         assertEquals("loaded templates list isn't in the expected size", 2, result.size());
         Collection<Guid> recieved = result.stream().map(VmTemplate::getId).collect(Collectors.toList());
         assertTrue("the received list didn't contain an expected Template", recieved.contains(FixturesTool.VM_TEMPLATE_RHEL5));
-        assertTrue("the received list didn't contain an expected Template", recieved.contains(DELETABLE_TEMPLATE_ID));
+        assertTrue("the received list didn't contain an expected Template", recieved.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
     }
 
     /**
@@ -131,7 +119,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
 
         assertNotNull(result);
         assertEquals(NUMBER_OF_TEMPLATES_FOR_PRIVELEGED_USER, result.size());
-        assertEquals(result.iterator().next(), existingTemplate);
+        assertEquals(result.iterator().next(), existingEntity);
     }
 
     /**
@@ -158,6 +146,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllInstanceTypesWithPermissionsForPriviligedUser() {
+        VmTemplate existingInstanceType = dao.get(FixturesTool.INSTANCE_TYPE);
         List<VmTemplate> result = dao.getAll(PRIVILEGED_USER_ID, true, VmEntityType.INSTANCE_TYPE);
 
         assertNotNull(result);
@@ -256,51 +245,16 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     }
 
     /**
-     * Ensures that saving a template works as expected.
-     */
-    @Test
-    public void testSave() {
-        newVmTemplate.setDedicatedVmForVdsList(Arrays.asList(HOST_GUIDS));
-        dao.save(newVmTemplate);
-
-        VmTemplate result = dbFacade.getVmTemplateDao().get(newVmTemplate.getId());
-
-        assertNotNull(result);
-        assertTrue(CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
-                newVmTemplate.getDedicatedVmForVdsList()));
-        assertEquals(newVmTemplate, result);
-    }
-
-    /**
-     * Ensures that updating a template works as expected.
-     */
-    @Test
-    public void testUpdate() {
-        existingTemplate.setDescription("This is an updated description");
-
-        List<Guid> hostGuidsList = Collections.singletonList(HOST_GUIDS[0]);
-        existingTemplate.setDedicatedVmForVdsList(hostGuidsList);
-        dao.update(existingTemplate);
-
-        VmTemplate result = dbFacade.getVmTemplateDao().get(existingTemplate.getId());
-
-        assertNotNull(result);
-        assertTrue(CollectionUtils.isEqualCollection(result.getDedicatedVmForVdsList(),
-                existingTemplate.getDedicatedVmForVdsList()));
-        assertEquals(existingTemplate, result);
-    }
-
-    /**
      * Ensures updating the status aspect of the VM Template works.
      */
     @Test
     public void testUpdateStatus() {
-        VmTemplate before = dao.get(existingTemplate.getId());
+        VmTemplate before = dao.get(existingEntity.getId());
 
         before.setStatus(VmTemplateStatus.Locked);
-        dao.updateStatus(existingTemplate.getId(), VmTemplateStatus.Locked);
+        dao.updateStatus(existingEntity.getId(), VmTemplateStatus.Locked);
 
-        VmTemplate after = dao.get(existingTemplate.getId());
+        VmTemplate after = dao.get(existingEntity.getId());
 
         assertEquals(before, after);
     }
@@ -310,13 +264,13 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        VmTemplate before = dbFacade.getVmTemplateDao().get(DELETABLE_TEMPLATE_ID);
+        VmTemplate before = dao.get(FixturesTool.VM_TEMPLATE_RHEL5_2);
 
         assertNotNull(before);
 
-        dao.remove(DELETABLE_TEMPLATE_ID);
+        dao.remove(FixturesTool.VM_TEMPLATE_RHEL5_2);
 
-        VmTemplate after = dbFacade.getVmTemplateDao().get(DELETABLE_TEMPLATE_ID);
+        VmTemplate after = dao.get(FixturesTool.VM_TEMPLATE_RHEL5_2);
 
         assertNull(after);
     }
@@ -354,7 +308,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllForNetwork() {
         List<VmTemplate> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
-        assertEquals(existingTemplate, result.get(0));
+        assertEquals(existingEntity, result.get(0));
     }
 
     /**
@@ -363,7 +317,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllVnicProfile() {
         List<VmTemplate> result = dao.getAllForVnicProfile(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
-        assertEquals(existingTemplate, result.get(0));
+        assertEquals(existingEntity, result.get(0));
     }
 
     /**
