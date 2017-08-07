@@ -25,10 +25,8 @@ import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskVmElement;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -85,8 +83,12 @@ public abstract class OvfReader implements IOvfBuilder {
         _xmlNS.addNamespace("rasd", RASD_URI);
         _xmlNS.addNamespace("vssd", VSSD_URI);
         _xmlNS.addNamespace("xsi", XSI_URI);
-        readHeader();
 
+        XmlNode header = selectSingleNode(_document, "//ovf:Envelope", _xmlNS);
+        if (header == null) {
+            header = selectSingleNode(_document, "//Envelope", _xmlNS);
+        }
+        readHeader(header);
     }
 
     public String getName() {
@@ -97,21 +99,19 @@ public abstract class OvfReader implements IOvfBuilder {
         return version;
     }
 
+    protected void setVersion(String version) {
+        this.version = version;
+    }
+
     /**
      * reads the OVF header
      */
-    private void readHeader() {
-        XmlNode node = selectSingleNode(_document, "//ovf:Envelope", _xmlNS);
-        if (node == null) {
-            node = selectSingleNode(_document, "//Envelope", _xmlNS);
-        }
-        version = node != null ? node.attributes.get("ovf:version").getValue() : "";
+    protected void readHeader(XmlNode header) {
     }
 
     @Override
     public void buildReference() {
         buildFileReference();
-        buildNicReference();
     }
 
     @Override
@@ -123,92 +123,74 @@ public abstract class OvfReader implements IOvfBuilder {
         return gb * BYTES_IN_GB;
     }
 
-    @Override
-    public void buildDisk() {
-        XmlNodeList list = selectNodes(_document, "//*/Section/Disk");
-        for (XmlNode node : list) {
-            final Guid guid = new Guid(node.attributes.get("ovf:diskId").getValue());
+    protected void readDisk(XmlNode node, DiskImage image) {
+        image.setDiskVmElements(Collections.singletonList(new DiskVmElement(image.getId(), vmBase.getId())));
+        DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
 
-            _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().ifPresent(image -> {
-                image.setDiskVmElements(Collections.singletonList(new DiskVmElement(image.getId(), vmBase.getId())));
+        // Default values:
+        image.setActive(true);
+        image.setImageStatus(ImageStatus.OK);
 
-                DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
-
-                if (node.attributes.get("ovf:vm_snapshot_id") != null) {
-                    image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
-                }
-
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:size").getValue())) {
-                    image.setSize(convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:size").getValue())));
-                }
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:actual_size").getValue())) {
-                    image.setActualSizeInBytes(
-                            convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:actual_size").getValue())));
-                }
-
-                if (node.attributes.get("ovf:volume-format") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
-                        image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format")
-                                .getValue()));
-                    } else {
-                        image.setVolumeFormat(VolumeFormat.Unassigned);
-                    }
-                } else {
-                    image.setVolumeFormat(VolumeFormat.Unassigned);
-                }
-
-                if (node.attributes.get("ovf:volume-type") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
-                        image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
-                    } else {
-                        image.setVolumeType(VolumeType.Unassigned);
-                    }
-                } else {
-                    image.setVolumeType(VolumeType.Unassigned);
-                }
-                if (node.attributes.get("ovf:disk-interface") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-interface").getValue())) {
-                        dve.setDiskInterface(DiskInterface.valueOf(node.attributes.get("ovf:disk-interface")
-                                .getValue()));
-                    }
-                } else {
-                    dve.setDiskInterface(DiskInterface.IDE);
-                }
-                if (node.attributes.get("ovf:boot") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:boot").getValue())) {
-                        dve.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
-                    }
-                }
-                if (node.attributes.get("ovf:pass-discard") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:pass-discard").getValue())) {
-                        dve.setPassDiscard(Boolean.parseBoolean(node.attributes.get("ovf:pass-discard").getValue()));
-                    }
-                }
-                if (node.attributes.get("ovf:wipe-after-delete") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
-                        image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")
-                                .getValue()));
-                    }
-                }
-                if (node.attributes.get("ovf:disk-alias") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-alias").getValue())) {
-                        image.setDiskAlias(String.valueOf(node.attributes.get("ovf:disk-alias")
-                                .getValue()));
-                    }
-                }
-                if (node.attributes.get("ovf:disk-description") != null) {
-                    if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-description").getValue())) {
-                        image.setDiskDescription(String.valueOf(node.attributes.get("ovf:disk-description")
-                                .getValue()));
-                    }
-                }
-            });
+        if (node.attributes.get("ovf:vm_snapshot_id") != null) {
+            image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
         }
-    }
 
-    @Override
-    public void buildVirtualSystem() {
-        readGeneralData();
+        if (node.attributes.get("ovf:volume-format") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
+                image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format")
+                        .getValue()));
+            } else {
+                image.setVolumeFormat(VolumeFormat.Unassigned);
+            }
+        } else {
+            image.setVolumeFormat(VolumeFormat.Unassigned);
+        }
+
+        if (node.attributes.get("ovf:volume-type") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
+                image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
+            } else {
+                image.setVolumeType(VolumeType.Unassigned);
+            }
+        } else {
+            image.setVolumeType(VolumeType.Unassigned);
+        }
+        if (node.attributes.get("ovf:disk-interface") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-interface").getValue())) {
+                dve.setDiskInterface(DiskInterface.valueOf(node.attributes.get("ovf:disk-interface")
+                        .getValue()));
+            }
+        } else {
+            dve.setDiskInterface(DiskInterface.IDE);
+        }
+        if (node.attributes.get("ovf:boot") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:boot").getValue())) {
+                dve.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
+            }
+        }
+        if (node.attributes.get("ovf:pass-discard") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:pass-discard").getValue())) {
+                dve.setPassDiscard(Boolean.parseBoolean(node.attributes.get("ovf:pass-discard").getValue()));
+            }
+        }
+        if (node.attributes.get("ovf:wipe-after-delete") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
+                image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")
+                        .getValue()));
+            }
+        }
+        if (node.attributes.get("ovf:disk-alias") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-alias").getValue())) {
+                image.setDiskAlias(String.valueOf(node.attributes.get("ovf:disk-alias")
+                        .getValue()));
+            }
+        }
+        if (node.attributes.get("ovf:disk-description") != null) {
+            if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-description").getValue())) {
+                image.setDiskDescription(String.valueOf(node.attributes.get("ovf:disk-description")
+                        .getValue()));
+            }
+        }
     }
 
     protected VmDevice readManagedVmDevice(XmlNode node, Guid deviceId) {
@@ -302,21 +284,7 @@ public abstract class OvfReader implements IOvfBuilder {
      *            the xml node
      * @return VmNetworkInterface
      */
-    public VmNetworkInterface getNetworkInterface(XmlNode node) {
-        // prior to 3.0 the instanceId is int , in 3.1 and on this is Guid
-        String str = selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText;
-        if (!StringUtils.isNumeric(str)) { // 3.1 and above OVF format
-            final Guid guid = new Guid(str);
-            VmNetworkInterface iface = interfaces.stream().filter(i -> i.getId().equals(guid)).findFirst().orElse(null);
-            if (iface == null) {
-                iface = new VmNetworkInterface();
-                iface.setId(guid);
-            }
-            return iface;
-        } else { // 3.0 and below OVF format
-            return new VmNetworkInterface();
-        }
-    }
+    protected abstract VmNetworkInterface getNetworkInterface(XmlNode node);
 
     /**
      * This method should return the string representation of 'default display type' property in the ovf file. this
@@ -444,13 +412,8 @@ public abstract class OvfReader implements IOvfBuilder {
                 : readUnmanagedVmDevice(node, Guid.newGuid());
     }
 
-    protected void readGeneralData() {
-        XmlNode content = selectSingleNode(_document, "//*/Content");
-        XmlNode node;
+    protected void readGeneralData(XmlNode content) {
         vmBase.setVmInit(new VmInit());
-
-        // set ovf version to the ovf object
-        vmBase.setOvfVersion(getVersion());
 
         consumeReadProperty(content, DESCRIPTION, val -> vmBase.setDescription(val));
         consumeReadProperty(content, COMMENT, val -> vmBase.setComment(val));
@@ -472,7 +435,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 val -> vmBase.setDbGeneration(Long.parseLong(val)),
                 () -> vmBase.setDbGeneration(1L));
 
-        node = selectSingleNode(content, CUSTOM_COMPATIBILITY_VERSION);
+        XmlNode node = selectSingleNode(content, CUSTOM_COMPATIBILITY_VERSION);
         if (node != null) {
             vmBase.setCustomCompatibilityVersion(new Version(node.innerText));
         }
@@ -489,30 +452,6 @@ public abstract class OvfReader implements IOvfBuilder {
         consumeReadProperty(content,
                 getDefaultDisplayTypeStringRepresentation(),
                 val -> vmBase.setDefaultDisplayType(DisplayType.forValue(Integer.parseInt(val))));
-
-        XmlNodeList list = selectNodes(content, "Section");
-
-        if (list != null) {
-            // The Os need to be read before the hardware
-            node = getNode(list, "xsi:type", "ovf:OperatingSystemSection_Type");
-            if (node != null) {
-                readOsSection(node);
-                if (!osRepository.isLinux(vmBase.getOsId())
-                        || vmBase.getDefaultDisplayType() != DisplayType.qxl) {
-                    vmBase.setSingleQxlPci(false);
-                }
-            }
-
-            node = getNode(list, "xsi:type", "ovf:VirtualHardwareSection_Type");
-            if (node != null) {
-                readHardwareSection(node);
-            }
-
-            node = getNode(list, "xsi:type", "ovf:SnapshotsSection_Type");
-            if (node != null) {
-                readSnapshotsSection(node);
-            }
-        }
 
         // after reading the hardware section, if graphics device is still absent, add a default one
         addDefaultGraphicsDevice();
@@ -586,8 +525,6 @@ public abstract class OvfReader implements IOvfBuilder {
 
         consumeReadProperty(content, VM_LEASE, val -> vmBase.setLeaseStorageDomainId(new Guid(val)));
 
-        readGeneralData(content);
-
         readVmInit(content);
     }
 
@@ -658,48 +595,6 @@ public abstract class OvfReader implements IOvfBuilder {
         }
     }
 
-    private XmlNode getNode(XmlNodeList nodeList, String attributeName, String attributeValue) {
-
-        for (XmlNode section : nodeList) {
-            String value = section.attributes.get(attributeName).getValue();
-
-            if (value.equals(attributeValue)) {
-                return section;
-            }
-        }
-
-        return null;
-    }
-
-    protected void readSnapshotsSection(@SuppressWarnings("unused") XmlNode section) {
-        // The snapshot section only has meaning for VMs, and is overridden in OvfVmReader.
-    }
-
-    protected abstract void readGeneralData(XmlNode content);
-
-    protected void buildNicReference() {
-        XmlNodeList list = selectNodes(_document, "//*/Nic", _xmlNS);
-        for (XmlNode node : list) {
-            VmNetworkInterface iface = new VmNetworkInterface();
-            iface.setId(new Guid(node.attributes.get("ovf:id").getValue()));
-            interfaces.add(iface);
-        }
-        if (!list.iterator().hasNext()) {
-            String pattern = "//*/Item[" +
-                    VMD_RESOURCE_TYPE +
-                    "=" +
-                    OvfHardware.Network +
-                    "]";
-            list = selectNodes(_document, pattern, _xmlNS);
-            for (XmlNode node : list) {
-                VmNetworkInterface iface = new VmNetworkInterface();
-                iface.setId(Guid.newGuid());
-                updateSingleNic(node, iface);
-                interfaces.add(iface);
-            }
-        }
-    }
-
     protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
         String networkName = selectSingleNode(node, VMD_CONNECTION, _xmlNS).innerText;
         iface.setNetworkName(StringUtils.defaultIfEmpty(networkName, null));
@@ -724,37 +619,7 @@ public abstract class OvfReader implements IOvfBuilder {
 
     }
 
-    private void buildFileReference() {
-        XmlNodeList list = selectNodes(_document, "//*/File", _xmlNS);
-        for (XmlNode node : list) {
-            // If the disk storage type is Cinder then override the disk image with Cinder object, otherwise use the
-            // disk image.
-            DiskImage disk = new DiskImage();
-
-            // If the OVF is old and does not contain any storage type reference then we assume we can only have disk
-            // image.
-            if (node.attributes.get("ovf:disk_storage_type") != null) {
-                String diskStorageType = node.attributes.get("ovf:disk_storage_type").getValue();
-                if (diskStorageType != null && diskStorageType.equals(DiskStorageType.CINDER.name())) {
-                    disk = new CinderDisk();
-                    if (node.attributes.get("ovf:cinder_volume_type") != null) {
-                        String cinderVolumeType = node.attributes.get("ovf:cinder_volume_type").getValue();
-                        disk.setCinderVolumeType(cinderVolumeType);
-                    }
-                }
-            }
-            disk.setImageId(new Guid(node.attributes.get("ovf:id").getValue()));
-            disk.setId(OvfParser.getImageGroupIdFromImageFile(node.attributes.get("ovf:href").getValue()));
-            // Default values:
-            disk.setActive(true);
-            disk.setImageStatus(ImageStatus.OK);
-            disk.setDescription(node.attributes.get("ovf:description").getValue());
-
-            disk.setDiskVmElements(Collections.singletonList(new DiskVmElement(disk.getId(), vmBase.getId())));
-
-            _images.add(disk);
-        }
-    }
+    protected abstract void buildFileReference();
 
     private int getResourceType(XmlNode node, String resource) {
         if (selectSingleNode(node, resource, _xmlNS) != null

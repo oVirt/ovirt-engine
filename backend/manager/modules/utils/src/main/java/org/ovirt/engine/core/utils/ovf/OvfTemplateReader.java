@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 
-public class OvfTemplateReader extends OvfReader {
+public class OvfTemplateReader extends OvfOvirtReader {
     protected VmTemplate _vmTemplate;
 
     public OvfTemplateReader(XmlDocument document,
@@ -79,6 +79,7 @@ public class OvfTemplateReader extends OvfReader {
 
     @Override
     protected void readGeneralData(XmlNode content) {
+        super.readGeneralData(content);
         // General Vm
         consumeReadProperty(content, NAME, val -> {
             _vmTemplate.setName(val);

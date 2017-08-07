@@ -23,7 +23,7 @@ import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 
-public class OvfVmReader extends OvfReader {
+public class OvfVmReader extends OvfOvirtReader {
     private static final String EXPORT_ONLY_PREFIX = "exportonly_";
     protected VM _vm;
 
@@ -103,6 +103,7 @@ public class OvfVmReader extends OvfReader {
 
     @Override
     protected void readGeneralData(XmlNode content) {
+        super.readGeneralData(content);
         // General Vm
         consumeReadProperty(content, NAME, val -> {
             _vm.getStaticData().setName(val);
