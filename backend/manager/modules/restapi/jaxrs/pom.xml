@@ -64,6 +64,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>metamodel-server</artifactId>
+      <version>${metamodel.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>
       <artifactId>jboss-servlet-api_3.1_spec</artifactId>
     </dependency>

@@ -27,6 +27,7 @@ import org.ovirt.engine.api.restapi.resource.validation.IOExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MappingExceptionMapper;
+import org.ovirt.engine.api.restapi.resource.validation.ValidationExceptionMapper;
 
 @ApplicationPath("/v4")
 public class BackendApplication extends Application {
@@ -42,6 +43,7 @@ public class BackendApplication extends Application {
         singletons.add(new JsonExceptionMapper());
         singletons.add(new MappingExceptionMapper());
         singletons.add(new IOExceptionMapper());
+        singletons.add(new ValidationExceptionMapper());
     }
 
     @Override
