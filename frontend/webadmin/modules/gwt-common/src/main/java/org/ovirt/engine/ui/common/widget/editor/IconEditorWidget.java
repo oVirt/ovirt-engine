@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.gwtbootstrap3.client.ui.Alert;
+import org.gwtbootstrap3.client.ui.Button;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.editor.UiCommonEditor;
@@ -20,7 +21,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.ImageElement;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
@@ -35,7 +35,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -120,10 +119,6 @@ public class IconEditorWidget extends AbstractValidatedWidget
         uploadInfoIcon = new InfoIcon(
                 SafeHtmlUtils.fromTrustedString(constants.iconLimitationsIconVmPopup()));
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        KeyPressHandler preventEnterKeyPressHandler = createPreventEnterKeyPressHandler();
-        uploadButton.addKeyPressHandler(preventEnterKeyPressHandler);
-        defaultButton.addKeyPressHandler(preventEnterKeyPressHandler);
-
         setEnabled(true);
         setAccessible(true);
     }
@@ -154,16 +149,6 @@ public class IconEditorWidget extends AbstractValidatedWidget
         imageElement.addEventListener('error', callback);
         imageElement.src = imageUrl;
     }-*/;
-
-    private KeyPressHandler createPreventEnterKeyPressHandler() {
-        return event -> {
-            if (!event.isAnyModifierKeyDown()
-                    && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        };
-    }
 
     @Override
     public void setValue(IconWithOsDefault value) {
@@ -244,6 +229,7 @@ public class IconEditorWidget extends AbstractValidatedWidget
     private void updateErrorIconLabel(List<String> reasons) {
         if (reasons.isEmpty()) {
             errorMessage.setText(SafeHtmlUtils.EMPTY_SAFE_HTML.asString());
+            errorMessage.setVisible(false);
         } else {
             final SafeHtml htmlReasons = toList(reasons);
             errorMessage.setText(htmlReasons.asString());
@@ -368,25 +354,20 @@ public class IconEditorWidget extends AbstractValidatedWidget
         setVisible(accessible);
     }
 
+    // None of these are called anywhere, not sure what they are doing.
     @Override
     public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
-        return CompositeHandlerRegistration.of(
-                uploadButton.addKeyDownHandler(handler),
-                defaultButton.addKeyDownHandler(handler));
+        return null;
     }
 
     @Override
     public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
-        return CompositeHandlerRegistration.of(
-                uploadButton.addKeyPressHandler(handler),
-                defaultButton.addKeyPressHandler(handler));
+        return null;
     }
 
     @Override
     public HandlerRegistration addKeyUpHandler(KeyUpHandler handler) {
-        return CompositeHandlerRegistration.of(
-                uploadButton.addKeyUpHandler(handler),
-                defaultButton.addKeyUpHandler(handler));
+        return null;
     }
 
     private abstract class ImageElementCallback {

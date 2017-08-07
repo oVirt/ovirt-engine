@@ -12,7 +12,6 @@ import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiChild;
@@ -30,17 +29,6 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     private static final int HEADER_FOOTER_HEIGHT = 100;
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
-
-    public interface InfoIconStyle extends CssResource {
-        String infoIconColor();
-    }
-
-    public interface InfoIconResources extends ClientBundle {
-        @Source("org/ovirt/engine/ui/common/css/InfoIcon.css")
-        InfoIconStyle iconStyle();
-    }
-
-    private static final InfoIconResources RESOURCES = GWT.create(InfoIconResources.class);
 
     interface WidgetUiBinder extends UiBinder<Widget, SimpleDialogPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -77,15 +65,10 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     @UiField
     Style style;
 
-    private final InfoIconStyle infoIconStyle;
-
     private UICommand helpCommand;
 
     public SimpleDialogPanel() {
-        infoIconStyle = RESOURCES.iconStyle();
-        infoIconStyle.ensureInjected();
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        infoAnchor.addStyleName(infoIconStyle.infoIconColor());
         addAttachHandler(event -> setDraggable(event.isAttached()));
     }
 

@@ -38,6 +38,7 @@
 
         .iconInfoIcon {
             margin: 0px 7px;
+            float: left;
         }
 
         .noBorder {
@@ -61,10 +62,10 @@
     <g:HTMLPanel addStyleNames="{style.noBorder}">
         <g:FlowPanel>
             <g:Image ui:field="image" addStyleNames="{style.iconImage} {style.floatLeft}"/>
-            <g:Button ui:field="uploadButton" text="{constants.uploadIconVmPopup}" addStyleNames="{style.iconButton}"/>
+            <b:Button ui:field="uploadButton" text="{constants.uploadIconVmPopup}" addStyleNames="{style.iconButton}"/>
             <d:InfoIcon ui:field="uploadInfoIcon" addStyleNames="{style.iconInfoIcon}"/>
             <g:HTMLPanel ui:field="hiddenPanel" addStyleNames="{style.hidden}" />
-            <g:Button ui:field="defaultButton" text="{constants.useDefaultIconVmPopup}" addStyleNames="{style.iconButton}"/>
+            <b:Button ui:field="defaultButton" text="{constants.useDefaultIconVmPopup}" addStyleNames="{style.iconButton}"/>
         </g:FlowPanel>
         <g:FlowPanel addStyleNames="{style.clearBoth}" />
         <b:Alert type="DANGER" ui:field="errorMessage" addStyleNames="{style.warningMargin}" />
