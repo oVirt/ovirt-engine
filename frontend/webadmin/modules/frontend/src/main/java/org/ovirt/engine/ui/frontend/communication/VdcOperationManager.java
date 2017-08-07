@@ -41,19 +41,17 @@ public class VdcOperationManager {
     /**
      * Add operation to the queue.
      * @param operation The {@code VdcOperation} to add.
-     * @return {@code true} if the user was allowed to add the operation, {@code false} otherwise
      */
-    public boolean addOperation(final VdcOperation<?, ?> operation) {
-        return addOperationImpl(operation);
+    public void addOperation(final VdcOperation<?, ?> operation) {
+        addOperationImpl(operation);
     }
 
     /**
      * Add operation to the queue. Fire event when operation is successfully added if fireEvent is true.
      * If the operation determined by equals is already in the queue, do not add it again.
      * @param operation The {@code VdcOperation} to add.
-     * @return {@code true} if the user was allowed to add the operation, {@code false} otherwise
      */
-    private boolean addOperationImpl(final VdcOperation<?, ?> operation) {
+    private void addOperationImpl(final VdcOperation<?, ?> operation) {
         // If the operation is not already in the queue || the operation is an action (allows duplicates).
         // Then add this operation to the queue, and process the queue immediately.
         final boolean operationCanBeAdded = !operationQueue.contains(operation) || operation.allowDuplicates();
@@ -65,27 +63,18 @@ public class VdcOperationManager {
                 EngineSessionRefreshedEvent.fire(eventBus);
             }
         }
-
-        return true;
     }
 
     /**
      * Add a list of operations to the queue. Once all the operations are added, fire an event that something
      * is in the queue.
      * @param operationList The list of {@code VdcOperation}
-     * @return {@code true} if the user was allowed to add the operation, {@code false} otherwise
      */
-    public boolean addOperationList(final List<VdcOperation<?, ?>> operationList) {
-        boolean allowed = true;
-        for (VdcOperation<?, ?> operation: operationList) {
-            if (!addOperationImpl(operation)) {
-                allowed = false;
-            }
-        }
+    public void addOperationList(final List<VdcOperation<?, ?>> operationList) {
+        operationList.stream().forEach(this::addOperation);
 
         // Call the processor.
         processor.processOperation(this);
-        return allowed;
     }
 
     /**
