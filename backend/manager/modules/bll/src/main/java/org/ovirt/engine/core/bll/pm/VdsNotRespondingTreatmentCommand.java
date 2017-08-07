@@ -188,6 +188,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                     getVdsName(), getVdsId());
         }
         if (restartVdsResult != null
+                && restartVdsResult.<RestartVdsResult>getActionReturnValue() != null
                 && restartVdsResult.<RestartVdsResult>getActionReturnValue().isSkippedDueToFencingPolicy()) {
             // fencing was skipped, fire an alert and suppress standard command logging
             AuditLogable alb = createAuditLogableForHost(getVds());
