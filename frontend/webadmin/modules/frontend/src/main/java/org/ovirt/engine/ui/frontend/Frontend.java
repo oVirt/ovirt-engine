@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
@@ -556,13 +557,10 @@ public class Frontend implements HasHandlers {
                     final List<ActionReturnValue> resultObject) {
                 logger.finer("Frontend: successfully executed runMultipleAction, determining result!"); //$NON-NLS-1$
 
-                ArrayList<ActionReturnValue> failed = new ArrayList<>();
-
-                for (ActionReturnValue v : resultObject) {
-                    if (!v.isValid()) {
-                        failed.add(v);
-                    }
-                }
+                List<ActionReturnValue> failed =
+                        resultObject.stream()
+                                .filter(v -> !v.isValid())
+                                .collect(Collectors.toList());
 
                 if (showErrorDialog && !failed.isEmpty()) {
                     translateErrors(failed);
@@ -593,12 +591,9 @@ public class Frontend implements HasHandlers {
             }
         };
 
-        List<VdcOperation<?, ?>> operationList = new ArrayList<>();
-        for (ActionParametersBase parameter: parameters) {
-            VdcOperation<ActionType, ActionParametersBase> operation = new VdcOperation<>(
-                actionType, parameter, !waitForResult, multiCallback, isRunOnlyIfAllValidationPass);
-                operationList.add(operation);
-        }
+        List<VdcOperation<?, ?>> operationList = parameters.stream()
+                .map(p -> new VdcOperation<>(actionType, p, !waitForResult, multiCallback, isRunOnlyIfAllValidationPass))
+                .collect(Collectors.toList());
         fireAsyncOperationStartedEvent(state);
         if (operationList.isEmpty()) {
             //Someone called run multiple actions with a single action without parameters. The backend will return
@@ -1062,11 +1057,8 @@ public class Frontend implements HasHandlers {
      * @param errorMessages A list of error messages.
      */
     private void failureEventHandler(final String description, final List<String> errorMessages) {
-        ArrayList<Message> messages = new ArrayList<>();
-        for (String errorMessage : errorMessages) {
-            handleNotLoggedInEvent(errorMessage);
-            messages.add(new Message(description, errorMessage));
-        }
+        List<Message> messages = errorMessages.stream().peek(this::handleNotLoggedInEvent)
+                .map(e -> new Message(description, e)).collect(Collectors.toList());
 
         frontendFailureEvent.raise(Frontend.class, new FrontendFailureEventArgs(messages));
     }
@@ -1120,10 +1112,7 @@ public class Frontend implements HasHandlers {
      * Translate and show popup for the actions errors
      */
     public void runMultipleActionsFailed(Map<ActionType, List<ActionReturnValue>> failedActionsMap, MessageFormatter messageFormatter) {
-        Collection<ActionReturnValue> failedResults = new ArrayList<>();
-        for (List<ActionReturnValue> actionTypeResults : failedActionsMap.values()) {
-            failedResults.addAll(actionTypeResults);
-        }
+        Collection<ActionReturnValue> failedResults = failedActionsMap.values().stream().flatMap(Collection::stream).collect(Collectors.toList());
         translateErrors(failedResults);
         getEventsHandler().runMultipleActionsFailed(failedActionsMap, messageFormatter);
     }
