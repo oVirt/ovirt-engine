@@ -530,7 +530,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     public CommandCallback getCallback() {
-        if (getVm().isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback() ||
+        VM vm = getVm();
+        if (vm == null) {
+            // We are getting here probably due to a fail of merge process of a VM that already deleted.
+            log.warn("The VM that was involved in the merge process doesn't exists anymore. Please cleanup the command_entities table in the database.");
+            return null;
+        }
+
+        if (vm.isQualifiedForLiveSnapshotMerge() || getParameters().isUseCinderCommandCallback() ||
                 isQemuimgCommitSupported()) {
             return new ConcurrentChildCommandsExecutionCallback();
         }
