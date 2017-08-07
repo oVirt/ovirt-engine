@@ -26,6 +26,7 @@ public class Network implements Queryable, BusinessEntity<Guid>, Nameable, Comme
 
     private Guid id;
 
+    @Size(max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
     private String name;
 
     private String vdsmName;
