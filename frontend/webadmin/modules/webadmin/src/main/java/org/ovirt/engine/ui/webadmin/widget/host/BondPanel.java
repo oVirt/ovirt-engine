@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.dialog.TooltippedIcon;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -99,7 +98,7 @@ public class BondPanel extends HostInterfaceHorizontalPanel {
             String nicAggregatorId = Objects.toString(nic.getInterface().getAdAggregatorId(), "");
             bondProperties.add(messages.bondSlaveAdAggregatorId(nicName, nicAggregatorId));
         }
-        return StringUtils.join(bondProperties, "\n");//$NON-NLS-1$
+        return String.join("\n", bondProperties);//$NON-NLS-1$
     }
 
     private void addAdPartnerMacIfNeeded(Bond bond, VDS vds, boolean isAdPartnerMacValid) {

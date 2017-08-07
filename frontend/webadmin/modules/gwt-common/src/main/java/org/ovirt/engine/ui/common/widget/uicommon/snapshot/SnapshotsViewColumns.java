@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -71,7 +70,7 @@ public class SnapshotsViewColumns {
                 List<String> previewedItems = new ArrayList<>(Arrays.asList(constants.vmConfiguration()));
                 previewedItems.addAll(Linq.getDiskAliases(snapshot.getDiskImages()));
                 descriptionStr = messages.snapshotPreviewing(
-                        descriptionStr, StringUtils.join(previewedItems, ", ")); //$NON-NLS-1$
+                        descriptionStr, String.join(", ", previewedItems)); //$NON-NLS-1$
                 description = templates.snapshotDescription("color:orange", descriptionStr); //$NON-NLS-1$
             }
             else if (snapshot.getType() == SnapshotType.STATELESS) {
@@ -88,7 +87,7 @@ public class SnapshotsViewColumns {
             }
             else if (snapshot.getType() == SnapshotType.REGULAR && !snapshot.getDiskImages().isEmpty()) {
                 descriptionStr = messages.snapshotPreviewing(
-                        descriptionStr, StringUtils.join(Linq.getDiskAliases(snapshot.getDiskImages()), ", ")); //$NON-NLS-1$
+                        descriptionStr, String.join(", ", Linq.getDiskAliases(snapshot.getDiskImages()))); //$NON-NLS-1$
                 description = templates.snapshotDescription("color:gold", descriptionStr); //$NON-NLS-1$
             }
             else if (snapshot.isVmConfigurationBroken()) {

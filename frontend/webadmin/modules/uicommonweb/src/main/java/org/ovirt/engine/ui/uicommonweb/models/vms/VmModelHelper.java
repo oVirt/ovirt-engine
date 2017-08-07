@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class VmModelHelper {
 
@@ -108,7 +107,7 @@ public class VmModelHelper {
             labels.add(disk.getDiskAlias());
         }
 
-        return StringUtils.join(labels, ", "); //$NON-NLS-1$
+        return String.join(", ", labels); //$NON-NLS-1$
     }
 
 }

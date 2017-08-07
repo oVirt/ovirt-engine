@@ -45,7 +45,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E, T> implements HasDiskWindow {
 
@@ -242,7 +241,7 @@ public abstract class VmBaseListModel<E, T> extends ListWithSimpleDetailsModel<E
             list.add(extractNameFromEntity(t));
         }
 
-        return StringUtils.join(list, ", "); //$NON-NLS-1$
+        return String.join(", ", list); //$NON-NLS-1$
     }
 
     protected void setupExportModel(ExportVmModel model) {

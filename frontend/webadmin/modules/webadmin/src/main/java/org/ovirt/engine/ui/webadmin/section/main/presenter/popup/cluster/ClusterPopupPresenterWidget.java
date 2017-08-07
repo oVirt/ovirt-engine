@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
@@ -73,8 +72,8 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
                 getView().getMigrationBandwidthLimitTypeEditor().setEnabled(true);
                 updateCustomMigrationBandwidthLimitEnabledState(model, null);
             } else {
-                final String supportedVersions = StringUtils.join(
-                        AsyncDataProvider.getInstance().getMigrationPoliciesSupportedVersions(), ", "); //$NON-NLS-1$
+                final String supportedVersions = String.join(", ", AsyncDataProvider.getInstance() //$NON-NLS-1$
+                        .getMigrationPoliciesSupportedVersions());
                 final String message = messages.onlyAvailableInCompatibilityVersions(supportedVersions);
                 getView().getMigrationBandwidthLimitTypeEditor().disable(message);
                 getView().getMigrationBandwidthLimitTypeEditor().setEnabled(false);

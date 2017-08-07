@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestContainerListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.event.shared.EventBus;
 
@@ -37,7 +36,7 @@ public class VmGuestContainerListModelTable extends AbstractModelBoundTableWidge
         getTable().addColumn(new AbstractTextColumn<GuestContainer>() {
             @Override
             public String getValue(GuestContainer row) {
-                return StringUtils.join(row.getNames(), ", "); //$NON-NLS-1$
+                return String.join(", ", row.getNames()); //$NON-NLS-1$
             }
         }, constants.namesContainer());
         getTable().addColumn(new AbstractTextColumn<GuestContainer>() {

@@ -104,7 +104,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -1757,7 +1756,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         if (!disksAliases.isEmpty()) {
             generalWarningMessage.setText(messages.disksStatusWarning(
                     EnumTranslator.getInstance().translate(imageStatus),
-                    StringUtils.join(disksAliases, ", "))); //$NON-NLS-1$
+                    String.join(", ", disksAliases))); //$NON-NLS-1$
             generalWarningMessage.setVisible(true);
         }
     }

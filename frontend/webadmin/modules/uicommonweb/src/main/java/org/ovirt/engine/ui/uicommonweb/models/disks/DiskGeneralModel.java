@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
@@ -208,8 +207,8 @@ public class DiskGeneralModel extends EntityModel<Disk> {
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
-            setDiskProfileName(StringUtils.join(diskImage.getDiskProfileNames(), ", ")); //$NON-NLS-1$
-            setQuotaName(StringUtils.join(diskImage.getQuotaNames(), ", ")); //$NON-NLS-1$
+            setDiskProfileName(String.join(", ", diskImage.getDiskProfileNames())); //$NON-NLS-1$
+            setQuotaName(String.join(", ", diskImage.getQuotaNames())); //$NON-NLS-1$
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         }
         else if (isLun()) {

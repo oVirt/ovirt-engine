@@ -62,7 +62,7 @@ public class TooltipConfig {
         Set<String> classNames = new LinkedHashSet<>();
         classNames.add(Defaults.TEMPLATE_CLASS_OUTER);
         classNames.addAll(extraTooltipClassNames);
-        return StringUtils.join(classNames, " "); //$NON-NLS-1$
+        return String.join(" ", classNames); //$NON-NLS-1$
     }
 
     public TooltipConfig setForceShow() {

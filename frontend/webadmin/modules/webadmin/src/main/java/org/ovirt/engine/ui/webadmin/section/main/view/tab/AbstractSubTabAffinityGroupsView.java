@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.AffinityGroupListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -70,7 +69,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         AbstractTextColumn<AffinityGroup> vmMembersColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup group) {
-                String vmNames = StringUtils.join(getVmNames(group), ", "); //$NON-NLS-1$
+                String vmNames = String.join(", ", getVmNames(group)); //$NON-NLS-1$
                 if (vmNames.isEmpty()) {
                     return constants.noMembersAffinityGroup();
                 }
@@ -83,7 +82,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         AbstractTextColumn<AffinityGroup> hostMembersColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup group) {
-                String hostNames = StringUtils.join(getHostNames(group), ", "); //$NON-NLS-1$
+                String hostNames = String.join(", ", getHostNames(group)); //$NON-NLS-1$
                 if (hostNames.isEmpty()) {
                     return constants.noMembersAffinityGroup();
                 }

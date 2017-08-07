@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class RemoveStorageQosModel extends RemoveQosModel<StorageQos> {
 
@@ -51,7 +50,7 @@ public class RemoveStorageQosModel extends RemoveQosModel<StorageQos> {
                     diskProfileNames.add(diskProfileName);
                 }
 
-                String diskProfileNamesAsString = StringUtils.join(diskProfileNames, ", "); //$NON-NLS-1$
+                String diskProfileNamesAsString = String.join(", ", diskProfileNames); //$NON-NLS-1$
                 list.add(ConstantsManager.getInstance().getMessages().removeStorageQoSItem(qosName, diskProfileNamesAsString));
             }
             index++;

@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -39,6 +38,6 @@ public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements Co
     @Override
     public SafeHtml getTooltip(Disk object) {
         DiskImage diskImage = (DiskImage) object;
-        return SafeHtmlUtils.fromString(StringUtils.join(diskImage.getStoragesNames(), ", "));  //$NON-NLS-1$
+        return SafeHtmlUtils.fromString(String.join(", ", diskImage.getStoragesNames()));  //$NON-NLS-1$
     }
 }

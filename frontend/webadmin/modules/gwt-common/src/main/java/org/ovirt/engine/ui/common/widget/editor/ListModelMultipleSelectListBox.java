@@ -80,7 +80,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
         for (T val: value) {
             renderedValues.add(getRenderer().render(Arrays.asList(val)));
         }
-        String renderedValue = StringUtils.join(renderedValues, ","); //$NON-NLS-1$
+        String renderedValue = String.join(",", renderedValues); //$NON-NLS-1$
         if (StringUtils.isEmpty(renderedValue)) {
             renderedValue = NBSP;
         } else {

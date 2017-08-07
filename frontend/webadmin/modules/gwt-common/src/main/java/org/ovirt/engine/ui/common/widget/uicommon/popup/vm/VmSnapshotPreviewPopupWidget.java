@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -109,9 +108,9 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
         horizontalSeparator.setVisible(model.isShowPartialSnapshotWarning() && model.isShowMemorySnapshotWarning());
 
         vmDisksLabel.setText(messages.vmDisksLabel(model.getVmDisks().size(),
-                StringUtils.join(Linq.getDiskAliases(model.getVmDisks()), ", "))); //$NON-NLS-1$
+                String.join(", ", Linq.getDiskAliases(model.getVmDisks())))); //$NON-NLS-1$
         snapshotDisksLabel.setText(messages.snapshotDisksLabel(model.getDisks().size(),
-                StringUtils.join(Linq.getDiskAliases(model.getDisks()), ", "))); //$NON-NLS-1$
+                String.join(", ", Linq.getDiskAliases(model.getDisks())))); //$NON-NLS-1$
     }
 
     @Override

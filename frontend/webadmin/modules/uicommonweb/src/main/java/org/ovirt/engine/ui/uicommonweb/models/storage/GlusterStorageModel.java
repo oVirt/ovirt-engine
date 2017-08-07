@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
 public class GlusterStorageModel extends PosixStorageModel {
@@ -66,7 +65,7 @@ public class GlusterStorageModel extends PosixStorageModel {
         }
         if (addressList.size() > 0) {
             mountOptions = StorageConstants.GLUSTER_BACKUP_SERVERS_MNT_OPTION
-                    + "=" + StringUtils.join(addressList, ":"); //$NON-NLS-1$ //$NON-NLS-2$
+                    + "=" + String.join(":", addressList); //$NON-NLS-1$ //$NON-NLS-2$
         }
         getMountOptions().setEntity(mountOptions);
     }

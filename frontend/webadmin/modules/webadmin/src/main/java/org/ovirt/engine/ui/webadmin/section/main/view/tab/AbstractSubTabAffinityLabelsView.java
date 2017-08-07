@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.labels.list.AffinityLabelListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
@@ -55,7 +54,7 @@ public abstract class AbstractSubTabAffinityLabelsView<I, M extends ListWithDeta
         AbstractTextColumn<Label> vmMembersColumn = new AbstractTextColumn<Label>() {
             @Override
             public String getValue(Label label) {
-                String vmNames = StringUtils.join(getVmNames(label), ", "); //$NON-NLS-1$
+                String vmNames = String.join(", ", getVmNames(label)); //$NON-NLS-1$
                 if (vmNames.isEmpty()) {
                     return constants.affinityLabelsNoMembers();
                 }
@@ -69,7 +68,7 @@ public abstract class AbstractSubTabAffinityLabelsView<I, M extends ListWithDeta
         AbstractTextColumn<Label> hostMembersColumn = new AbstractTextColumn<Label>() {
             @Override
             public String getValue(Label label) {
-                String hostNames = StringUtils.join(getHostNames(label), ", "); //$NON-NLS-1$
+                String hostNames = String.join(", ", getHostNames(label)); //$NON-NLS-1$
                 if (hostNames.isEmpty()) {
                     return constants.affinityLabelsNoMembers();
                 }

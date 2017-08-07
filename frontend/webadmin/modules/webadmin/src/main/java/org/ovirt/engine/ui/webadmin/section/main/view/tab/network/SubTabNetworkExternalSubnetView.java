@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkExternalSubnetListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkExternalSubnetPresenter;
@@ -86,7 +85,7 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                 new AbstractTextColumn<ExternalSubnet>() {
                     @Override
                     public String getValue(ExternalSubnet object) {
-                        return StringUtils.join(object.getDnsServers(), ", "); //$NON-NLS-1$
+                        return String.join(", ", object.getDnsServers()); //$NON-NLS-1$
                     }
                 };
         dnsServersColumn.makeSortable();

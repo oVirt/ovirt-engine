@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -300,7 +299,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         containersTable.addColumn(new AbstractTextColumn<GuestContainer>() {
             @Override
             public String getValue(GuestContainer row) {
-                return StringUtils.join(row.getNames(), ", "); //$NON-NLS-1$
+                return String.join(", ", row.getNames()); //$NON-NLS-1$
             }
         }, constants.namesContainer());
         containersTable.addColumn(new AbstractTextColumn<GuestContainer>() {

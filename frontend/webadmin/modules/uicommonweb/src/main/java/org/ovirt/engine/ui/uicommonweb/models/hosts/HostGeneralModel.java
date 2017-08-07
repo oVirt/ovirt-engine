@@ -32,7 +32,6 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel<VDS> {
@@ -886,13 +885,11 @@ public class HostGeneralModel extends EntityModel<VDS> {
         setAutomaticLargePage(vds.getTransparentHugePagesState());
         if (vds.getHugePages() != null) {
             setHugePages(
-                    StringUtils.join(
-                            vds.getHugePages().stream().map(
+                    vds.getHugePages().stream().map(
                                     page -> messages.hugePages(
                                             String.valueOf(page.getSizeKB()),
                                             String.valueOf(page.getAmount() != null ? page.getAmount() : constants.notAvailableLabel()))
-                            ).collect(Collectors.toList()),
-                            ", ")); //$NON-NLS-1$
+                            ).collect(Collectors.joining(", "))); //$NON-NLS-1$
         } else {
             setHugePages(constants.notAvailableLabel());
         }

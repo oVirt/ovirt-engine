@@ -217,7 +217,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             List<String> previewedItems = new ArrayList<>(Arrays.asList(constants.vmConfiguration()));
             previewedItems.addAll(Linq.getDiskAliases(snapshot.getDiskImages()));
             description = messages.snapshotPreviewing(
-                    description, StringUtils.join(previewedItems, ", ")); //$NON-NLS-1$
+                    description, String.join(", ", previewedItems)); //$NON-NLS-1$
         }
         else if (snapshot.getType() == SnapshotType.STATELESS) {
             description = description + " (" + constants.readonlyLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -230,7 +230,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
         }
         else if (snapshot.getType() == SnapshotType.REGULAR && !snapshot.getDiskImages().isEmpty()) {
             description = messages.snapshotPreviewing(
-                    description, StringUtils.join(Linq.getDiskAliases(snapshot.getDiskImages()), ", ")); //$NON-NLS-1$
+                    description, String.join(", ", Linq.getDiskAliases(snapshot.getDiskImages()))); //$NON-NLS-1$
         }
         else if (snapshot.isVmConfigurationBroken()) {
             description = description + " (" + constants.brokenVmConfiguration() + ")"; //$NON-NLS-1$ //$NON-NLS-2$

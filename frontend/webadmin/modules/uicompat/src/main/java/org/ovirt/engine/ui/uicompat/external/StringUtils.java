@@ -16,8 +16,6 @@ package org.ovirt.engine.ui.uicompat.external;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import java.util.Iterator;
-
 public class StringUtils {
 
     /**
@@ -65,28 +63,5 @@ public class StringUtils {
      */
     public static boolean isNotEmpty(String str) {
         return !StringUtils.isEmpty(str);
-    }
-
-    /**
-     * Joins the Strings of the provided array into a single String.
-     *
-     * @param array the array of Strings to join together
-     * @param delimiter the separator string to use
-     */
-    public static String join(Iterable<String> list, String delimiter) {
-        if (list == null) {
-            return "";
-        }
-
-        StringBuilder builder = new StringBuilder();
-        Iterator<String> iter = list.iterator();
-        while (iter.hasNext()) {
-            builder.append(iter.next());
-            if (!iter.hasNext()) {
-                break;
-            }
-            builder.append(delimiter);
-        }
-        return builder.toString();
     }
 }

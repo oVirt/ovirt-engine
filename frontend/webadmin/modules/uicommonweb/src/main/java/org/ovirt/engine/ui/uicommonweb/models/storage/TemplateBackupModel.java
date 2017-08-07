@@ -51,7 +51,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -139,7 +138,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         List<String> missingTemplatesFromVms = problematicVmNames
                 .entrySet()
                 .stream()
-                .map(e -> messages.templatesWithDependentVMs(e.getKey(), StringUtils.join(e.getValue(), ", ")))  //$NON-NLS-1$
+                .map(e -> messages.templatesWithDependentVMs(e.getKey(), String.join(", ", e.getValue())))  //$NON-NLS-1$
                 .collect(Collectors.toList());
 
         setConfirmWindow(null);

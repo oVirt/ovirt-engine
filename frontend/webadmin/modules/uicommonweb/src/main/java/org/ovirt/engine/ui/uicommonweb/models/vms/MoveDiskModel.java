@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class MoveDiskModel extends MoveOrCopyDiskModel {
     protected List<String> problematicDisksForWarning = new ArrayList<>();
@@ -78,7 +77,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             }
         }
         if (!liveMigrateDisks.isEmpty()) {
-            setMessage(messages.moveDisksWhileVmRunning(StringUtils.join(liveMigrateDisks, ", "))); //$NON-NLS-1$
+            setMessage(messages.moveDisksWhileVmRunning(String.join(", ", liveMigrateDisks))); //$NON-NLS-1$
         }
     }
 
