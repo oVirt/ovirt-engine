@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -134,7 +133,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
 
         if (!problematicDisksForWarning.isEmpty()) {
             getDynamicWarning().setEntity(messages.moveDisksPreallocatedWarning(
-                    StringHelper.join(", ", problematicDisksForWarning.toArray()))); //$NON-NLS-1$
+                    String.join(", ", problematicDisksForWarning))); //$NON-NLS-1$
             getDynamicWarning().setIsAvailable(true);
         } else {
             getDynamicWarning().setIsAvailable(false);
@@ -148,7 +147,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
 
     @Override
     protected String getWarning(List<String> disks) {
-        return messages.cannotMoveDisks(StringHelper.join(", ", disks.toArray())); //$NON-NLS-1$
+        return messages.cannotMoveDisks(String.join(", ", disks)); //$NON-NLS-1$
     }
 
     @Override

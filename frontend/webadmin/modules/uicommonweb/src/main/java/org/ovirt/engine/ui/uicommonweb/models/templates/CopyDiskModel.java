@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
@@ -66,7 +65,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel {
 
     @Override
     protected String getWarning(List<String> disks) {
-        return messages.cannotCopyDisks(StringHelper.join(", ", disks.toArray())); //$NON-NLS-1$
+        return messages.cannotCopyDisks(String.join(", ", disks)); //$NON-NLS-1$
     }
 
     @Override

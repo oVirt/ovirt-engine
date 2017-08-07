@@ -215,7 +215,7 @@ public class SearchSuggestModel extends SearchableListModel {
                 items.add(i.getPartString());
             }
 
-            String searchString = StringHelper.join("", items.toArray(new String[] {})); //$NON-NLS-1$
+            String searchString = String.join("", items); //$NON-NLS-1$
             // If there prefix exist, don't transfer it back as a part of search string.
             if (getPrefix() != null) {
                 searchString = searchString.substring(getPrefix().length());

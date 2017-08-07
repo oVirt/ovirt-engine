@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.MissingResourceException;
 
-import org.ovirt.engine.core.compat.StringHelper;
-
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
@@ -99,7 +97,7 @@ public class ErrorTranslator {
                         errorMsg = errMsgCopy;
                         // just a message that doesn't have a value in the resource:
                         String[] splitted = errorMsg.toLowerCase().split("_"); //$NON-NLS-1$
-                        ret = StringHelper.join(" ", splitted); //$NON-NLS-1$
+                        ret = String.join(" ", splitted); //$NON-NLS-1$
                     }
                 }
             }

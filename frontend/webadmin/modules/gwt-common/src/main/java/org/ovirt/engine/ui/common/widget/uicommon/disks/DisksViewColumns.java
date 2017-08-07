@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -95,7 +94,7 @@ public class DisksViewColumns {
                     DiskImage diskImage = (DiskImage) object;
                     ArrayList<String> quotaNamesArr = diskImage.getQuotaNames();
                     if (quotaNamesArr != null) {
-                        value = StringHelper.join(", ", quotaNamesArr.toArray());//$NON-NLS-1$
+                        value = String.join(", ", quotaNamesArr);//$NON-NLS-1$
                     }
                 }
                 return value;

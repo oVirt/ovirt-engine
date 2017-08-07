@@ -13,43 +13,6 @@ public final class StringHelper {
     }
 
     // ------------------------------------------------------------------------------------
-    // This method replaces the .NET static string method 'Join' (2 parameter
-    // version).
-    // ------------------------------------------------------------------------------------
-    public static String join(String separator, Object[] values) {
-        if (values == null) {
-            return null;
-        } else {
-            return join(separator, values, 0, values.length);
-        }
-    }
-
-    // ------------------------------------------------------------------------------------
-    // This method replaces the .NET static string method 'Join' (4 parameter
-    // version).
-    // ------------------------------------------------------------------------------------
-    public static String join(final String separator, final Object[] objectArray, final int startindex, final int count) {
-        //pre-allocate some space for better concatenation speed
-        final StringBuilder result = new StringBuilder((count - startindex) * 32);
-
-        if (objectArray == null) {
-            return null;
-        }
-
-        for (int index = startindex; index < objectArray.length && index - startindex < count; index++) {
-            if (separator != null && index > startindex) {
-                result.append(separator);
-            }
-
-            if (objectArray[index] != null) {
-                result.append(objectArray[index].toString());
-            }
-        }
-
-        return result.toString();
-    }
-
-    // ------------------------------------------------------------------------------------
     // This method replaces the .NET static string method 'TrimEnd'.
     // ------------------------------------------------------------------------------------
     public static String trimEnd(String string, Character... charsToTrim) {
