@@ -163,7 +163,7 @@
        .infoIcon {
            float: left;
            padding-left: 2px;
-           line-height: 30px;
+           display: inline-block;
        }
 
         .warningLabel {
@@ -188,7 +188,6 @@
         }
 
         .controlLabelWithInfoIcon {
-            padding-top: 5px;
             padding-right: 5px;
         }
     </ui:style>
