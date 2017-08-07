@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 import org.gwtbootstrap3.client.ui.Row;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -13,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -99,7 +99,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
                     if (brick == null) {
                         return glusterVolume.getName();
                     }
-                    String server = brick.getNetworkId() != null && !StringUtils.isEmpty(brick.getNetworkAddress()) ? brick.getNetworkAddress() : brick.getServerName();
+                    String server = brick.getNetworkId() != null && StringHelper.isNotNullOrEmpty(brick.getNetworkAddress()) ? brick.getNetworkAddress() : brick.getServerName();
                     return server + ":/" + glusterVolume.getName(); //$NON-NLS-1$
                 }
             }

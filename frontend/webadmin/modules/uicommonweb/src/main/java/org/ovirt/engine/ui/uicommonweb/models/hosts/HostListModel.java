@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
@@ -89,7 +90,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -1097,7 +1097,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
             cockpitUrl.append(Uri.SCHEME_HTTPS);
             cockpitUrl.append("://"); //$NON-NLS-1$
             cockpitUrl.append(item.getHostName());
-            if (!StringUtils.isEmpty(cockpitPort)) {
+            if (StringHelper.isNotNullOrEmpty(cockpitPort)) {
                 cockpitUrl.append(':');
                 cockpitUrl.append(cockpitPort);
             }
@@ -1545,7 +1545,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
     private void configureLocalStorage2(ConfigureLocalStorageModel model) {
         String prefix = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigValues.RhevhLocalFSPath);
-        if (!StringUtils.isEmpty(prefix)) {
+        if (StringHelper.isNotNullOrEmpty(prefix)) {
             EntityModel<String> pathModel = model.getStorage().getPath();
             pathModel.setEntity(prefix);
             pathModel.setIsChangeable(false);

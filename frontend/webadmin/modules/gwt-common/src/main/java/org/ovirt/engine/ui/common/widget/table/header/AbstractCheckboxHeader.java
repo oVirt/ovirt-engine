@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.common.widget.table.header;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -68,7 +68,7 @@ public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
             } else {
                 sb.append(INPUT_UNCHECKED_DISABLED);
             }
-            if (getLabel() != null && !StringUtils.isEmpty(getLabel())) {
+            if (getLabel() != null && StringHelper.isNotNullOrEmpty(getLabel())) {
                 sb.append(SafeHtmlUtils.fromString(getLabel()));
             }
         } else {

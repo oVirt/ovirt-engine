@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -34,7 +35,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class FenceAgentModel extends EntityModel<FenceAgent> {
 
@@ -153,7 +153,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
      */
     private void updateFormStatus() {
         String pmType = getPmType().getSelectedItem();
-        if (!StringUtils.isEmpty(pmType)) {
+        if (StringHelper.isNotNullOrEmpty(pmType)) {
             String version = AsyncDataProvider.getInstance().getDefaultConfigurationVersion();
             if (getHost().getCluster().getSelectedItem() != null) {
                 version = getHost().getCluster().getSelectedItem().getCompatibilityVersion().toString();
@@ -209,18 +209,18 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
 
             if (PM_PORT_KEY.equals(k)) {
                 try {
-                    port.setEntity(StringUtils.isEmpty(value.get(k)) ? 0 : Integer.parseInt(value.get(k)));
+                    port.setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? 0 : Integer.parseInt(value.get(k)));
                 } catch (NumberFormatException e) {
                     port.setEntity(0);
                 }
             } else if (PM_SLOT_KEY.equals(k)) {
-                slot.setEntity(StringUtils.isEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
+                slot.setEntity(StringHelper.isNullOrEmpty(value.get(k)) ? "" : value.get(k)); //$NON-NLS-1$
 
             } else if (PM_SECURE_KEY.equals(k)) {
                 secure.setEntity(Boolean.parseBoolean(value.get(k)));
             } else {
                 // Compose custom string from unknown pm options.
-                if (StringUtils.isEmpty(v)) {
+                if (StringHelper.isNullOrEmpty(v)) {
                     pmOptions.append(k).append(","); //$NON-NLS-1$
                 } else {
                     pmOptions.append(k).append("=").append(v).append(","); //$NON-NLS-1$ //$NON-NLS-2$
@@ -228,7 +228,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
             }
         }
         String pmOptionsValue = pmOptions.toString();
-        if (!StringUtils.isEmpty(pmOptionsValue)) {
+        if (StringHelper.isNotNullOrEmpty(pmOptionsValue)) {
             options.setEntity(pmOptionsValue.substring(0, pmOptionsValue.length() - 1));
         }
     }
@@ -252,7 +252,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
         // Add unknown pm options.
         // Assume Validate method was called before this getter.
         String pmOptions = options.getEntity();
-        if (!StringUtils.isEmpty(pmOptions)) {
+        if (StringHelper.isNotNullOrEmpty(pmOptions)) {
             for (String pair : pmOptions.split("[,]", -1)) { //$NON-NLS-1$
                 String[] array = pair.split("[=]", -1); //$NON-NLS-1$
                 if (array.length == 2) {
@@ -505,7 +505,7 @@ public class FenceAgentModel extends EntityModel<FenceAgent> {
      * @return True if the address is set, false otherwise.
      */
     public boolean hasAddress() {
-        return getManagementIp() != null && !StringUtils.isEmpty(getManagementIp().getEntity());
+        return getManagementIp() != null && StringHelper.isNotNullOrEmpty(getManagementIp().getEntity());
     }
 
     /**

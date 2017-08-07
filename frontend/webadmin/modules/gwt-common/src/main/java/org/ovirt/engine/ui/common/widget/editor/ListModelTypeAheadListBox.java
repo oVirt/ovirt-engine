@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor.SuggestBoxRenderer;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -258,7 +258,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     @Override
     protected void render(T value, boolean fireEvents) {
         String replacementString = renderer.getReplacementString(value);
-        boolean empty = StringUtils.isEmpty(replacementString);
+        boolean empty = StringHelper.isNullOrEmpty(replacementString);
         asSuggestBox().setValue(empty ? constants.emptyListBoxText() : replacementString, fireEvents);
         grayOutPlaceholderText(empty);
     }

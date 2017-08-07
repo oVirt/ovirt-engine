@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -24,7 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
 
@@ -120,7 +120,7 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
             if (importAsTemplate) {
                 importParameters.setClusterId(getCluster().getSelectedItem().getId());
                 String templateName = getTemplateName().getEntity();
-                if (StringUtils.isNotEmpty(templateName)) {
+                if (StringHelper.isNotNullOrEmpty(templateName)) {
                     importParameters.setTemplateName(templateName);
                 }
             }

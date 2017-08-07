@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.validation.VmActionByVmOriginTypeValidator;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class InstanceImageLineModel extends EntityModel {
 
@@ -326,7 +326,7 @@ public class InstanceImageLineModel extends EntityModel {
             ((NewDiskModel)model).updateSuggestedDiskAliasFromServer();
         } else {
             String currentVmName = parentModel.getUnitVmModel().getName().getEntity();
-            if (!StringUtils.isEmpty(currentVmName)) {
+            if (StringHelper.isNotNullOrEmpty(currentVmName)) {
                 // if already set the VM name on the new VM dialog, suggest the name according to the name
                 model.getAlias().setEntity(suggestAliasForNewVm(currentVmName));
             }

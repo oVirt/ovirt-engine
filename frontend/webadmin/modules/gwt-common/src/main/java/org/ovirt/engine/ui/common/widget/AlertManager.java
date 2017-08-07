@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel;
 import org.ovirt.engine.ui.common.widget.panel.AlertPanel.Type;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
@@ -83,7 +83,7 @@ public class AlertManager {
                 .appendHtmlConstant(MESSAGES.uncaughtExceptionAlertMessage(RELOAD_LINK));
 
         String errorDetails = t.getMessage();
-        if (!StringUtils.isEmpty(errorDetails)) {
+        if (StringHelper.isNotNullOrEmpty(errorDetails)) {
             alertMessage.appendEscaped(CONSTANTS.space());
             alertMessage.appendEscaped(MESSAGES.uncaughtExceptionAlertMessageDetails(errorDetails));
             //new line

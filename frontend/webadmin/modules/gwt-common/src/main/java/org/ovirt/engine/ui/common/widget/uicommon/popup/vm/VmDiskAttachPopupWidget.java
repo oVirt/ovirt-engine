@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -31,7 +32,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -463,7 +463,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                     attachDiskPanel.markAsInvalid(disk.getInvalidityReasons());
                 }
             } else if ("Message".equals(propName)) { //$NON-NLS-1$
-                if (StringUtils.isNotEmpty(disk.getMessage())) {
+                if (StringHelper.isNotNullOrEmpty(disk.getMessage())) {
                     messageLabel.setHTML(wrapInUnorderedList(disk.getMessage()));
                 } else {
                     messageLabel.setHTML(""); //$NON-NLS-1$

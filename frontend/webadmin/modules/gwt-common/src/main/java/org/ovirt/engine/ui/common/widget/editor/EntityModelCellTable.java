@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxH
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
@@ -354,7 +354,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             assert element != null : "element shouldn't be null if errors is the same size as the contents of the table!"; //$NON-NLS-1$
 
             String error = errors.get(i);
-            boolean valid = StringUtils.isEmpty(error);
+            boolean valid = StringHelper.isNullOrEmpty(error);
 
             if (!valid) {
                 ElementTooltipUtils.setTooltipOnElement(element, SafeHtmlUtils.fromString(error));

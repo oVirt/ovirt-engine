@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.PairQueryable;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -19,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQueryable<VdsNetworkInterface, VDS>> {
     private UICommand setupNetworksCommand;
@@ -89,7 +89,7 @@ public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQ
     }
 
     private void initAttachedInterfaces(final Collection<PairQueryable<VdsNetworkInterface, VDS>> items) {
-        if (getEntity() == null || StringUtils.isEmpty(getEntity().getLabel()) || items == null || items.isEmpty()) {
+        if (getEntity() == null || StringHelper.isNullOrEmpty(getEntity().getLabel()) || items == null || items.isEmpty()) {
             setItems(items);
             return;
         }

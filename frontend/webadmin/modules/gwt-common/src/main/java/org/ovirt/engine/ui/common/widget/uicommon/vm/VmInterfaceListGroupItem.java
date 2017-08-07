@@ -13,6 +13,7 @@ import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
@@ -69,7 +69,7 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.profileNameInterface()),
                 networkInterface.getVnicProfileName(), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.vmNetworkQosName()),
-                StringUtils.isEmpty(networkInterface.getQosName())
+                StringHelper.isNullOrEmpty(networkInterface.getQosName())
                     ? constants.notAvailableLabel() : networkInterface.getQosName(), dl);
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.linkStateNetworkInterface()),
                 renderLinkState(networkInterface.isLinked()), dl);

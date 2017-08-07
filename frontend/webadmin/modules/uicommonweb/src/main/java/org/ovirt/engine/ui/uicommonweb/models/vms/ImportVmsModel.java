@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -59,7 +60,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.http.client.URL;
 import com.google.inject.Inject;
@@ -735,7 +735,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         }
 
         return "vpx://" + //$NON-NLS-1$
-                (StringUtils.isEmpty(username) ? "" : username + "@") + //$NON-NLS-1$ //$NON-NLS-2$
+                (StringHelper.isNullOrEmpty(username) ? "" : username + "@") + //$NON-NLS-1$ //$NON-NLS-2$
                 vcenter +
                 "/" + //$NON-NLS-1$
                 mergeDcAndCluster(dataCenter, cluster, true) +
@@ -761,7 +761,7 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     }
 
     public static String mergeDcAndCluster(String dataCenter, String cluster, boolean toEncode) {
-        if (StringUtils.isEmpty(cluster)) {
+        if (StringHelper.isNullOrEmpty(cluster)) {
             return toEncode ? URL.encodePathSegment(dataCenter) : dataCenter;
         }
 

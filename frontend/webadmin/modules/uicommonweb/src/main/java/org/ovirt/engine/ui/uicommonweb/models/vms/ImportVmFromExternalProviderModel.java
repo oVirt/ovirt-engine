@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -37,7 +38,6 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
@@ -82,7 +82,7 @@ public abstract class ImportVmFromExternalProviderModel extends ImportVmModel {
         }
 
         boolean attachDrivers = getAttachDrivers().getEntity();
-        boolean someDriverSelected = !StringUtils.isEmpty(getIso().getSelectedItem());
+        boolean someDriverSelected = StringHelper.isNotNullOrEmpty(getIso().getSelectedItem());
         boolean isWindows = AsyncDataProvider.getInstance().isWindowsOsType(selectedOS);
 
         if (isWindows && sourceIsNotKvm &&  (!attachDrivers || !someDriverSelected)) {

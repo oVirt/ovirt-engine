@@ -5,11 +5,11 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.InputGroupAddon;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestOracle;
@@ -115,7 +115,7 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
 
     @Override
     public void setSearchString(String searchString) {
-        if (StringUtils.isNotEmpty(searchString)
+        if (StringHelper.isNotNullOrEmpty(searchString)
                 && searchString.trim().toUpperCase().startsWith(searchStringPrefixLabel.getText().toUpperCase())) {
             searchStringInput.setText(searchString.trim().substring(searchStringPrefixLabel.getText().length()));
         } else {

@@ -9,9 +9,9 @@ import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -119,7 +119,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
     private void startSearch(final String searchText) {
         currentSearch = searchText;
         M model = listModelProvider.getModel();
-        if (!StringUtils.isEmpty(searchText)) {
+        if (StringHelper.isNotNullOrEmpty(searchText)) {
             model.setSearchString(model.getDefaultSearchString()
                     + "name = *" + searchText + "*"); // $NON-NLS-1$ $NON-NLS-2$
         } else {
@@ -257,7 +257,7 @@ public class ListModelSearchBox<T, M extends SearchableListModel<?, T>> extends 
                 Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                     @Override
                     public void execute() {
-                        if (!StringUtils.isEmpty(currentSearch)) {
+                        if (StringHelper.isNotNullOrEmpty(currentSearch)) {
                             String newText = text.replaceAll(currentSearch, "<strong>" // $NON-NLS-1$
                                 + currentSearch + "</strong>"); // $NON-NLS-1$
                             item.getWidget(0).getElement().setInnerHTML(newText);

@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVersion;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.CidrValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.Ipv4AddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class ExternalSubnetModel extends Model {
 
@@ -108,7 +108,7 @@ public class ExternalSubnetModel extends Model {
 
         List<String> dnsServers = new ArrayList<>();
         for (EntityModel<String> dnsServer : getDnsServers().getItems()) {
-            if (StringUtils.isNotEmpty(dnsServer.getEntity())) {
+            if (StringHelper.isNotNullOrEmpty(dnsServer.getEntity())) {
                 dnsServers.add(dnsServer.getEntity());
             }
         }
@@ -123,14 +123,14 @@ public class ExternalSubnetModel extends Model {
                 : new NotEmptyValidation() });
         getIpVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getGateway().setIsValid(true);
-        if (StringUtils.isNotEmpty(getGateway().getEntity()) && ipv4) {
+        if (StringHelper.isNotNullOrEmpty(getGateway().getEntity()) && ipv4) {
             getGateway().validateEntity(new IValidation[] { new Ipv4AddressValidation() });
         }
 
         boolean dnsServersValid = true;
         for (EntityModel<String> dnsServer : getDnsServers().getItems()) {
             dnsServer.setIsValid(true);
-            if (StringUtils.isNotEmpty(dnsServer.getEntity()) && ipv4) {
+            if (StringHelper.isNotNullOrEmpty(dnsServer.getEntity()) && ipv4) {
                 dnsServer.validateEntity(new IValidation[] { new Ipv4AddressValidation() });
             }
             dnsServersValid &= dnsServer.getIsValid();

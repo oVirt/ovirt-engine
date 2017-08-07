@@ -5,12 +5,12 @@ import java.util.Objects;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.i18n.client.NumberFormat;
 
@@ -98,7 +98,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
 
         VM vm = (VM) entity;
         setClientIp(vm.getClientIp());
-        setConsoleUserName(!StringUtils.isEmpty(vm.getClientIp())
+        setConsoleUserName(StringHelper.isNotNullOrEmpty(vm.getClientIp())
                 ? vm.getConsoleCurentUserName()
                 : null);
         setGuestUserName(vm.getGuestCurentUserName());
@@ -243,7 +243,7 @@ public class VmGuestInfoModel extends EntityModel<VM> {
     private void setGuestOsNamedVersion() {
         if (guestOsType == OsType.Linux) {
             String optional = ""; // $NON-NLS-1$
-            if (!StringUtils.isEmpty(guestOsCodename)) {
+            if (StringHelper.isNotNullOrEmpty(guestOsCodename)) {
                 optional = messages.guestOSVersionOptional(guestOsCodename);
             }
             guestOsNamedVersion = messages.guestOSVersionLinux(guestOsDistribution, guestOsVersion, optional);

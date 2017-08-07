@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -32,7 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class AdElementListModel extends SearchableListModel<Object, EntityModel<DbUser>> {
 
@@ -329,7 +329,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         asyncQuery.setHandleFailure(true);
 
         findUsers("allnames=" //$NON-NLS-1$
-                + (StringUtils.isEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$
+                + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$
                 asyncQuery);
     }
 
@@ -351,7 +351,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         });
         asyncQuery.setHandleFailure(true);
 
-        findGroups("name=" + (StringUtils.isEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$ //$NON-NLS-2$
+        findGroups("name=" + (StringHelper.isNullOrEmpty(getSearchString()) ? "*" : getSearchString()), //$NON-NLS-1$ //$NON-NLS-2$
                 asyncQuery);
     }
 

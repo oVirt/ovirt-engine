@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -45,7 +46,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -664,7 +664,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 diskTable.asEditor().edit(object.getImportDiskListModel());
             } else if (args.propertyName.equals("Message")) { //$NON-NLS-1$
                 message.setText(object.getMessage());
-                message.setVisible(StringUtils.isNotEmpty(object.getMessage()));
+                message.setVisible(StringHelper.isNotNullOrEmpty(object.getMessage()));
             }
             else if (args.propertyName.equals("InvalidVm")) { //$NON-NLS-1$
                 table.redraw();

@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -237,7 +237,7 @@ public class ListModelListBox<T> extends Composite implements EditorWidget<T, Ta
     private void updateCurrentValue(final T value, boolean fireEvents) {
         setChanging(!ignoreChanging());
         String renderedValue = renderer.render(value);
-        if (StringUtils.isEmpty(renderedValue)) {
+        if (StringHelper.isNullOrEmpty(renderedValue)) {
             renderedValue = NBSP;
             dropdownButton.setTitle(""); //$NON-NLS-1$
         } else {

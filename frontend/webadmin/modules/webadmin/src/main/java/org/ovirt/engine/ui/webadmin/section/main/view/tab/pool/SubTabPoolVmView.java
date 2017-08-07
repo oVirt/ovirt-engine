@@ -5,13 +5,13 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
@@ -107,7 +107,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         AbstractTextColumn<VM> consoleConnectedUserColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM vm) {
-                return !StringUtils.isEmpty(vm.getClientIp())
+                return StringHelper.isNotNullOrEmpty(vm.getClientIp())
                        ? vm.getConsoleCurentUserName()
                        : null;
             }

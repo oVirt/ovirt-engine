@@ -1,15 +1,15 @@
 package org.ovirt.engine.core.compat;
 
-/**
- * @deprecated Please use #org.apache.commons.lang.StringUtils and avoid further usage of this class.
- */
-@Deprecated
 public final class StringHelper {
     // ------------------------------------------------------------------------------------
     // This method replaces the .NET static string method 'IsNullOrEmpty'.
     // ------------------------------------------------------------------------------------
     public static boolean isNullOrEmpty(String string) {
         return string == null || string.isEmpty();
+    }
+
+    public static boolean isNotNullOrEmpty(String string) {
+        return !isNullOrEmpty(string);
     }
 
     // ------------------------------------------------------------------------------------

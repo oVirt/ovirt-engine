@@ -8,6 +8,7 @@ import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.FenceAgentModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
@@ -137,7 +137,7 @@ public class FenceAgentWidget extends AbstractModelBoundPopupWidget<FenceAgentMo
     }
 
     private void determineLabelValue(FenceAgentModel model) {
-        if (StringUtils.isEmpty(model.getManagementIp().getEntity())) {
+        if (StringHelper.isNullOrEmpty(model.getManagementIp().getEntity())) {
             showControls(false);
         } else if (model.isInConcurrentGroup()) {
             agentLabel.setVisible(false);

@@ -10,8 +10,8 @@ import java.util.Set;
 
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.Placement;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
@@ -275,7 +275,7 @@ public final class ElementTooltipUtils {
 
             // Assign unique ID to the parent TD/TH element.
             String parentTableCellElementId = parentTableCellElement.getId();
-            if (StringUtils.isEmpty(parentTableCellElementId)) {
+            if (StringHelper.isNullOrEmpty(parentTableCellElementId)) {
                 parentTableCellElementId = DOM.createUniqueId();
                 parentTableCellElement.setId(parentTableCellElementId);
             }

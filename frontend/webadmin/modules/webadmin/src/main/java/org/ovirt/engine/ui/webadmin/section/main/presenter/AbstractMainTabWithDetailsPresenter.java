@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
@@ -17,7 +18,6 @@ import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -119,7 +119,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
         if (modelProvider.getModel() instanceof SearchableListModel) {
             @SuppressWarnings("unchecked")
             SearchableListModel<?, ? extends EntityModel<?>> listModel = modelProvider.getModel();
-            if (!StringUtils.isEmpty(searchString)
+            if (StringHelper.isNotNullOrEmpty(searchString)
                     && searchString.startsWith(listModel.getDefaultSearchString())) {
                 // search string for this model found.
                 listModel.setSearchString(searchString);

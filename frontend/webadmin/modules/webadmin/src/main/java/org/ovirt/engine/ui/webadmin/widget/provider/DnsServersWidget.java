@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.dnsconfiguration.NameServerModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -43,7 +43,7 @@ public class DnsServersWidget extends AddRemoveRowWidget<ListModel<NameServerMod
 
     @Override
     protected boolean isGhost(NameServerModel value) {
-        return StringUtils.isEmpty(value.getEntity());
+        return StringHelper.isNullOrEmpty(value.getEntity());
     }
 
     public void setDnsServerWidth(double value) {

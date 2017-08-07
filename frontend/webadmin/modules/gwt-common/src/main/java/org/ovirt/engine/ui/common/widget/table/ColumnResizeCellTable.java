@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -27,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.TextCell;
@@ -431,7 +431,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
             // Might return empty string (header's HTML contains no text)
             title = JqueryUtils.getTextFromHtml(((SafeHtmlHeader) header).getValue().asString());
         }
-        if (StringUtils.isEmpty(title)) {
+        if (StringHelper.isNullOrEmpty(title)) {
             title = constants.missingColumnContextMenuTitle();
             logger.warning("Column with missing context menu title at index " + getColumnIndex(column)); //$NON-NLS-1$
         }

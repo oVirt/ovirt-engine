@@ -7,6 +7,7 @@ import java.util.Map;
 import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.compat.DayOfWeek;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -27,7 +28,6 @@ import org.ovirt.engine.ui.common.widget.label.EnableableFormLabel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel.EndDateOptions;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -247,7 +247,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
 
     public void setMessage(String msg, Alert alert) {
         alert.setText(msg);
-        alert.setVisible(!StringUtils.isEmpty(msg));
+        alert.setVisible(StringHelper.isNotNullOrEmpty(msg));
     }
 
     @Override

@@ -2,12 +2,12 @@ package org.ovirt.engine.ui.common.widget;
 
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.IsEditor;
@@ -57,7 +57,7 @@ public abstract class AbstractItemSelectionWidget<T> extends Composite implement
     }
 
     protected String typeAheadNameTemplateNullSafe(String name) {
-        if (StringUtils.isNotEmpty(name)) {
+        if (StringHelper.isNotNullOrEmpty(name)) {
             return templates.typeAheadName(name).asString();
         } else {
             return templates.typeAheadEmptyContent().asString();

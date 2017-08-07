@@ -46,7 +46,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class RunOnceModel extends Model {
 
@@ -759,7 +758,7 @@ public abstract class RunOnceModel extends Model {
 
         // kernel params
         String selectedKernelImage = getKernelImage().getSelectedItem();
-        if (!StringUtils.isEmpty(selectedKernelImage)) {
+        if (StringHelper.isNotNullOrEmpty(selectedKernelImage)) {
             params.setKernelUrl(selectedKernelImage);
         }
 
@@ -768,7 +767,7 @@ public abstract class RunOnceModel extends Model {
         }
 
         String selectedInitrdImage = getInitrdImage().getSelectedItem();
-        if (!StringUtils.isEmpty(selectedInitrdImage)) {
+        if (StringHelper.isNotNullOrEmpty(selectedInitrdImage)) {
             params.setInitrdUrl(selectedInitrdImage);
         }
 

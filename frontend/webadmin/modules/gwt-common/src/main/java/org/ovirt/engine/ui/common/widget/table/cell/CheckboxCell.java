@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.ProvidesTooltipForObject;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
@@ -91,7 +91,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
             sb.append(templates.inputUnchecked(id, getAdditionalStyles()));
         }
 
-        if (getLabel() != null && !StringUtils.isEmpty(getLabel().asString())) {
+        if (getLabel() != null && StringHelper.isNotNullOrEmpty(getLabel().asString())) {
             sb.append(getLabel());
         }
     }

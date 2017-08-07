@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
+import org.ovirt.engine.core.compat.StringHelper;
 
 public class TooltipConfig {
 
@@ -44,7 +44,7 @@ public class TooltipConfig {
     }
 
     public TooltipConfig addTooltipClassName(String className) {
-        if (StringUtils.isNotEmpty(className)) {
+        if (StringHelper.isNotNullOrEmpty(className)) {
             extraTooltipClassNames.add(className);
         }
         return this;

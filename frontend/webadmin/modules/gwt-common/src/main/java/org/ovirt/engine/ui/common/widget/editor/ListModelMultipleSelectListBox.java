@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
+import org.ovirt.engine.core.compat.StringHelper;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
@@ -81,7 +81,7 @@ public class ListModelMultipleSelectListBox<T> extends ListModelListBox<List<T>>
             renderedValues.add(getRenderer().render(Arrays.asList(val)));
         }
         String renderedValue = String.join(",", renderedValues); //$NON-NLS-1$
-        if (StringUtils.isEmpty(renderedValue)) {
+        if (StringHelper.isNullOrEmpty(renderedValue)) {
             renderedValue = NBSP;
         } else {
             renderedValue = SafeHtmlUtils.htmlEscape(renderedValue);

@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
@@ -601,7 +600,7 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
                         }
 
                         private String getUserName(DbUser dbUser) {
-                            if (StringUtils.isNotEmpty(dbUser.getFirstName()) || StringUtils.isNotEmpty(dbUser.getLastName())) {
+                            if (StringHelper.isNotNullOrEmpty(dbUser.getFirstName()) || StringHelper.isNotNullOrEmpty(dbUser.getLastName())) {
                                 return messages.userName(
                                         nullToEmpty(dbUser.getFirstName()),
                                         nullToEmpty(dbUser.getLastName()));

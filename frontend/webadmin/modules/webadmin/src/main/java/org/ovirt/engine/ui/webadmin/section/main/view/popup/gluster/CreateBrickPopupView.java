@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -27,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.CreateBrickModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -220,6 +220,6 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     public void setMessage(String message) {
         super.setMessage(message);
         this.message.setText(message);
-        this.message.setVisible(!StringUtils.isEmpty(message));
+        this.message.setVisible(StringHelper.isNotNullOrEmpty(message));
     }
 }

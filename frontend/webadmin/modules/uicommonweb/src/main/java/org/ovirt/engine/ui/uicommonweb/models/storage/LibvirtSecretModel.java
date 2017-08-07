@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecret;
 import org.ovirt.engine.core.common.businessentities.storage.LibvirtSecretUsageType;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -21,7 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
 
@@ -90,7 +90,7 @@ public class LibvirtSecretModel extends EntityModel<LibvirtSecret> {
         secret.setDescription(getDescription().getEntity());
         secret.setProviderId(Guid.createGuidFromString(getProviderId().getEntity()));
         secret.setId(Guid.createGuidFromString(uuid.getEntity()));
-        if (StringUtils.isNotEmpty(getValue().getEntity())) {
+        if (StringHelper.isNotNullOrEmpty(getValue().getEntity())) {
             secret.setValue(getValue().getEntity());
         }
         setEntity(secret);

@@ -4,6 +4,7 @@ import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
@@ -245,7 +245,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         super.setMessage(message);
         this.message.setText(message);
         this.message.setVisible(false);
-        if (!StringUtils.isEmpty(message)) {
+        if (StringHelper.isNotNullOrEmpty(message)) {
             this.message.setVisible(true);
         }
     }

@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.common.widget.form;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -186,7 +186,7 @@ public class FormItem {
         Widget resolvedValueWidget = showDefaultValue ? defaultValueLabel : valueWidget;
 
         boolean showEmptyValue = (resolvedValueWidget instanceof HasText)
-                && StringUtils.isEmpty(((HasText) resolvedValueWidget).getText());
+                && StringHelper.isNullOrEmpty(((HasText) resolvedValueWidget).getText());
         return showEmptyValue ? emptyValueLabel : resolvedValueWidget;
     }
 

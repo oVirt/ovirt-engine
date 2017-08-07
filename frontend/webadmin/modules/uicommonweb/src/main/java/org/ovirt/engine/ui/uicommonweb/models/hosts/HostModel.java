@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.utils.CpuVendor;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.pm.PowerManagementUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -55,7 +56,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class HostModel extends Model implements HasValidatedTabs {
     public static final int HostNameMaxLength = 255;
@@ -1096,7 +1096,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs {
         getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
         getUserName().setEntity(vds.getSshUsername());
         getAuthSshPort().setEntity(vds.getSshPort());
-        if (StringUtils.isNotEmpty(vds.getKernelArgs())) {
+        if (StringHelper.isNotNullOrEmpty(vds.getKernelArgs())) {
             getCurrentKernelCmdLine().setEntity(constants.currentKernelCmdLine() + vds.getKernelArgs());
         }
         setPort(vds);

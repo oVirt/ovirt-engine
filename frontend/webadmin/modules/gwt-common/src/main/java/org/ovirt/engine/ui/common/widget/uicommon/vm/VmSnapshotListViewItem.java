@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -32,7 +33,6 @@ import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.dom.client.DListElement;
 import com.google.gwt.dom.client.Document;
@@ -155,7 +155,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.typeDisk()),
                     String.valueOf(image.getDiskStorageType()), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.descriptionDisk()),
-                    StringUtils.isNotEmpty(image.getDiskDescription()) ? image.getDiskDescription()
+                    StringHelper.isNotNullOrEmpty(image.getDiskDescription()) ? image.getDiskDescription()
                             : constants.notAvailableLabel(), dl);
             column.getElement().appendChild(dl);
         }

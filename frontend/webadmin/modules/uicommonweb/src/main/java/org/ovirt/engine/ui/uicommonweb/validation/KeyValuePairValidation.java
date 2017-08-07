@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class KeyValuePairValidation implements IValidation {
     private final boolean allowAlsoKey;
@@ -50,7 +50,7 @@ public class KeyValuePairValidation implements IValidation {
                     }
 
                     for (String t : array) {
-                        if (StringUtils.isEmpty(t.trim())) {
+                        if (StringHelper.isNullOrEmpty(t.trim())) {
                             result.setSuccess(false);
                             break;
                         }

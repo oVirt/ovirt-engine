@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor.SuggestBoxRenderer;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 /**
  * SuggestBox widget that adapts to UiCommon list model items and looks like a list box. The suggestion content can be rich (html).
@@ -40,7 +40,7 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
     @Override
     protected void render(String value, boolean fireEvents) {
         boolean isEmptyReplace =
-                StringUtils.isEmpty(value) || value.equals(nullReplacementText);
+                StringHelper.isNullOrEmpty(value) || value.equals(nullReplacementText);
         // handle null replacement
         asSuggestBox().setValue(isEmptyReplace ? nullReplacementText : value, fireEvents);
         grayOutPlaceholderText(isEmptyReplace);

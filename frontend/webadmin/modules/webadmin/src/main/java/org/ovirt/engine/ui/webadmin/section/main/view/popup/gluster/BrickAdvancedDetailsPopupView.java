@@ -4,6 +4,7 @@ import org.gwtbootstrap3.client.ui.Alert;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.Mempool;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -21,7 +22,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextCol
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.BrickAdvancedDetailsModel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
@@ -307,6 +307,6 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     public void setMessage(String message) {
         super.setMessage(message);
         this.message.setText(message);
-        this.message.setVisible(!StringUtils.isEmpty(message));
+        this.message.setVisible(StringHelper.isNotNullOrEmpty(message));
     }
 }
