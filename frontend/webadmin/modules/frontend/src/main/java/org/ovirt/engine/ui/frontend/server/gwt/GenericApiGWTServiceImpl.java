@@ -190,27 +190,6 @@ public class GenericApiGWTServiceImpl extends OvirtXsrfProtectedServiceServlet i
     }
 
     @Override
-    public void storeInHttpSession(String key, String value) {
-        HttpServletRequest request = this.getThreadLocalRequest();
-        HttpSession session = request.getSession();
-        session.setAttribute(UI_PREFIX + key, value);
-    }
-
-    @Override
-    public String retrieveFromHttpSession(String key) {
-        HttpServletRequest request = this.getThreadLocalRequest();
-        HttpSession session = request.getSession();
-        Object value = session.getAttribute(UI_PREFIX + key);
-        String result = null;
-        if (value instanceof String) {
-            result = (String) value;
-        } else if (value != null) {
-            log.error("Retrieving non string value from session"); //$NON-NLS-1$
-        }
-        return result;
-    }
-
-    @Override
     protected void doUnexpectedFailure(Throwable error) {
         // If the user is using a version of the application different to what
         // the server expects the names of the RPC serialization policy files

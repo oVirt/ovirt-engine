@@ -39,9 +39,4 @@ public interface GenericApiGWTService extends XsrfProtectedService {
             ActionType actionType,
             ArrayList<ActionParametersBase> multipleParams,
             boolean isRunOnlyIfAllValidationPass, boolean isWaitForResult);
-
-    void storeInHttpSession(String key, String value);
-
-    String retrieveFromHttpSession(String key);
-
 }
