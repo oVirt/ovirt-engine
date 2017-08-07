@@ -38,6 +38,10 @@ public class DiskImage extends DiskImageBase {
     private List<String> diskProfileNames;
     private String vmSnapshotDescription;
 
+    /** when this object represents a disk that resides within an OVA,
+     *  this field contains the path of the volume within the OVA */
+    private String remotePath;
+
     public DiskImage() {
         setParentId(Guid.Empty);
         setCreationDate(new Date());
@@ -499,6 +503,14 @@ public class DiskImage extends DiskImageBase {
                 && Objects.equals(flushLatency, other.flushLatency)
                 && ObjectUtils.haveSameElements(diskProfileIds, other.diskProfileIds)
                 && ObjectUtils.haveSameElements(diskProfileNames, other.diskProfileNames);
+    }
+
+    public String getRemotePath() {
+        return remotePath;
+    }
+
+    public void setRemotePath(String remotePath) {
+        this.remotePath = remotePath;
     }
 
 }

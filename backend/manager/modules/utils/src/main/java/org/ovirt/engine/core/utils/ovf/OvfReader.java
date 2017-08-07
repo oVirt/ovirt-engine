@@ -401,7 +401,7 @@ public abstract class OvfReader implements IOvfBuilder {
         return defaultValue;
     }
 
-    private void readCpuItem(XmlNode node) {
+    protected void readCpuItem(XmlNode node) {
         vmBase.setNumOfSockets(
                 Integer.parseInt(selectSingleNode(node, "rasd:num_of_sockets", _xmlNS).innerText));
         vmBase.setCpuPerSocket(
