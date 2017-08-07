@@ -13,10 +13,8 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -26,12 +24,9 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
@@ -49,7 +44,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
     private static AbstractTextColumn<Disk> aliasColumn;
     private static AbstractTextColumn<Disk> idColumn;
-    private static AbstractDiskSizeColumn sizeColumn;
+    private static AbstractDiskSizeColumn<Disk> sizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
     private static AbstractTextColumn<Disk> dateCreatedColumn;
     private static AbstractColumn<Disk, Disk> statusColumn;
@@ -77,22 +72,20 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         initWidget(getTable());
     }
 
-    final ClickHandler clickHandler = new ClickHandler() {
-        @Override
-        public void onClick(ClickEvent event) {
-            if (((RadioButton) event.getSource()).getValue()) {
-                getMainModel().getDiskViewType().setEntity(disksViewRadioGroup.getDiskStorageType());
-            }
-        }
+    /**
+     * Listen to disk type changes from the UI button group - push the change through the model.
+     */
+    final DisksViewRadioGroup.DisksViewChangeHandler diskViewTypeChange = newType -> {
+        getMainModel().getDiskViewType().setEntity(newType);
     };
 
-    final IEventListener<EventArgs> diskTypeChangedEventListener = new IEventListener<EventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            EntityModel diskViewType = (EntityModel) sender;
-            disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
-            onDiskViewTypeChanged();
-        }
+    /**
+     * Listen to disk type changes from the model adjusting the view as appropriate.
+     */
+    final IEventListener<EventArgs> diskTypeChangedEventListener = (ev, sender, args) -> {
+        DiskStorageType diskType = getMainModel().getDiskViewType().getEntity();
+        disksViewRadioGroup.setDiskStorageType(diskType);
+        onDiskViewTypeChanged(diskType);
     };
 
     @Override
@@ -109,16 +102,21 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 isQuotaVisible = true;
             }
         }
-        onDiskViewTypeChanged();
+
+        onDiskViewTypeChanged(disksViewRadioGroup.getDiskStorageType());
     }
 
-    void onDiskViewTypeChanged() {
-        boolean all = disksViewRadioGroup.getAllButton().getValue();
-        boolean images = disksViewRadioGroup.getImagesButton().getValue();
-        boolean luns = disksViewRadioGroup.getLunsButton().getValue();
-        boolean cinder = disksViewRadioGroup.getCinderButton().getValue();
+    /**
+     * When the disk type is changed, update the table columns based on the disk type
+     * and update the search string.
+     */
+    void onDiskViewTypeChanged(DiskStorageType diskType) {
+        boolean all = diskType == null;
+        boolean images = diskType == DiskStorageType.IMAGE;
+        boolean luns = diskType == DiskStorageType.LUN;
+        boolean cinder = diskType == DiskStorageType.CINDER;
 
-        searchByDiskViewType(disksViewRadioGroup.getDiskStorageType());
+        searchByDiskViewType(diskType);
 
         getTable().ensureColumnVisible(
                 aliasColumn, constants.aliasDisk(), all || images || luns || cinder,
@@ -196,14 +194,13 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().enableColumnResizing();
 
         aliasColumn = DisksViewColumns.getAliasColumn(new FieldUpdater<Disk, String>() {
-
             @Override
             public void update(int index, Disk disk, String value) {
                 //The link was clicked, now fire an event to switch to details.
                 transitionHandler.handlePlaceTransition(true);
             }
-
         }, DiskConditionFieldAutoCompleter.ALIAS);
+
         idColumn = DisksViewColumns.getIdColumn(DiskConditionFieldAutoCompleter.ID);
         sizeColumn = DisksViewColumns.getSizeColumn(DiskConditionFieldAutoCompleter.PROVISIONED_SIZE);
         allocationColumn = DisksViewColumns.getAllocationColumn(constants.empty());
@@ -221,11 +218,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
     void initTableOverhead() {
         disksViewRadioGroup = new DisksViewRadioGroup();
-        disksViewRadioGroup.setClickHandler(clickHandler);
+        disksViewRadioGroup.addChangeHandler(diskViewTypeChange);
         getTable().setTableOverhead(disksViewRadioGroup);
     }
 
-    void searchByDiskViewType(Object diskViewType) {
+    void searchByDiskViewType(DiskStorageType diskViewType) {
         final String disksSearchPrefix = "Disks:"; //$NON-NLS-1$
         final String diskTypeSearchPrefix = "disk_type = "; //$NON-NLS-1$
         final String searchConjunctionAnd = "and "; //$NON-NLS-1$
@@ -238,7 +235,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         RegExp searchPatternDisksSearchPrefix = RegExp.compile(searchRegexDisksSearchPrefix, searchRegexFlags);
 
         String diskTypePostfix = diskViewType != null ?
-                ((DiskStorageType) diskViewType).name().toLowerCase() + space : null;
+                diskViewType.name().toLowerCase() + space : null;
         String diskTypeClause = diskTypePostfix != null ?
                 diskTypeSearchPrefix + diskTypePostfix : empty;
 

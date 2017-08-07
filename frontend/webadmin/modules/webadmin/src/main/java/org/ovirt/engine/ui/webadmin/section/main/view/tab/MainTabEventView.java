@@ -23,7 +23,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -33,12 +32,6 @@ public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditL
     interface ViewUiBinder extends UiBinder<Widget, MainTabEventView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
-
-    @UiField
-    RadioButton basicViewButton;
-
-    @UiField
-    RadioButton advancedViewButton;
 
     @UiField
     FlowPanel radioButtonPanel;
@@ -61,21 +54,21 @@ public class MainTabEventView extends AbstractMainTabWithDetailsTableView<AuditL
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         getTable().setTableOverhead(radioButtonPanel);
-        localize();
 
         tablePanel.add(getTable());
-        basicViewButton.setValue(true);
     }
 
-    void localize() {
-        basicViewButton.setText(constants.eventBasicViewLabel());
-        advancedViewButton.setText(constants.eventAdvancedViewLabel());
+    @UiHandler("basicViewButton")
+    void onBasicView(ClickEvent event) {
+        handleViewChange(false);
     }
 
-    @UiHandler({ "basicViewButton", "advancedViewButton" })
-    void handleViewButtonClick(ClickEvent event) {
-        boolean advancedViewEnabled = advancedViewButton.getValue();
+    @UiHandler("advancedViewButton")
+    void onAdvancedView(ClickEvent event) {
+        handleViewChange(true);
+    }
 
+    void handleViewChange(boolean advancedViewEnabled) {
         getTable().ensureColumnVisible(AdvancedViewColumns.logTypeColumn, constants.eventIdEvent(),
                 advancedViewEnabled,
                 "80px"); //$NON-NLS-1$

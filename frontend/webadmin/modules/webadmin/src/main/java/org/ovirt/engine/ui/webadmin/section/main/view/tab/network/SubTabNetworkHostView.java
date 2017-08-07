@@ -32,12 +32,10 @@ import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.RadioButton;
 
 public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>
         implements SubTabNetworkHostPresenter.ViewDef {
@@ -56,11 +54,13 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     @Inject
     public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider) {
         super(modelProvider);
+
         viewRadioGroup = new ViewRadioGroup<>(Arrays.asList(NetworkHostFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkHostFilter.attached);
-        viewRadioGroup.addStyleName("stnhv_radioGroup_pfly_fix"); //$NON-NLS-1$
-        labelImage =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.tagImage()).getHTML());
+        viewRadioGroup.addChangeHandler(selected -> onRadioButtonChange(selected));
+
+        labelImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.tagImage()).getHTML());
+
         initTable();
         initWidget(getTableContainer());
     }
@@ -71,12 +71,6 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     }
 
     void initTableOverhead() {
-        viewRadioGroup.addClickHandler(event -> {
-            if (((RadioButton) event.getSource()).getValue()) {
-                handleRadioButtonClick(event);
-            }
-        });
-
         getTable().setTableOverhead(viewRadioGroup);
     }
 
@@ -217,10 +211,10 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 }
             };
 
-    private void handleRadioButtonClick(ClickEvent event) {
-        getDetailModel().setViewFilterType(viewRadioGroup.getSelectedValue());
+    private void onRadioButtonChange(NetworkHostFilter selected) {
+        getDetailModel().setViewFilterType(selected);
 
-        boolean attached = viewRadioGroup.getSelectedValue() == NetworkHostFilter.attached;
+        boolean attached = selected == NetworkHostFilter.attached;
 
         getTable().ensureColumnVisible(hostStatus, constants.empty(), true, "30px"); //$NON-NLS-1$
         getTable().ensureColumnVisible(nameColumn, constants.nameHost(), true, "200px"); //$NON-NLS-1$
@@ -254,7 +248,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     void initTable() {
         getTable().enableColumnResizing();
         initTableOverhead();
-        handleRadioButtonClick(null);
+        onRadioButtonChange(viewRadioGroup.getSelectedValue());
         initSorting();
     }
 

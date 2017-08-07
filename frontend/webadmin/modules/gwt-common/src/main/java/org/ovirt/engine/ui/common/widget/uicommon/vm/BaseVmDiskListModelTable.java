@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
@@ -15,11 +16,8 @@ import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.RadioButton;
 
 public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends AbstractModelBoundTableWidget<Disk, T> {
 
@@ -27,8 +25,8 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private DisksViewRadioGroup disksViewRadioGroup;
 
     private static AbstractTextColumn<Disk> aliasColumn;
-    private static AbstractDiskSizeColumn sizeColumn;
-    private static AbstractDiskSizeColumn actualSizeColumn;
+    private static AbstractDiskSizeColumn<Disk> sizeColumn;
+    private static AbstractDiskSizeColumn<Disk> actualSizeColumn;
     private static AbstractTextColumn<Disk> allocationColumn;
     private static AbstractTextColumn<Disk> dateCreatedColumn;
     private static AbstractColumn<Disk, Disk> statusColumn;
@@ -47,40 +45,34 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
             ActionPanelPresenterWidget<Disk, T> actionPanel,
             ClientStorage clientStorage) {
         super(modelProvider, eventBus, actionPanel, clientStorage, false);
-
-        disksViewRadioGroup = new DisksViewRadioGroup();
-    }
-
-    final ClickHandler clickHandler = event -> {
-        if (((RadioButton) event.getSource()).getValue()) {
-            handleRadioButtonClick(event);
-        }
-    };
-
-    void initTableOverhead() {
-        disksViewRadioGroup.setClickHandler(clickHandler);
-        disksViewRadioGroup.addStyleName("dvrg_radioGroup_pfly_fix"); //$NON-NLS-1$
-        getTable().setTableOverhead(disksViewRadioGroup);
     }
 
     @Override
     public void initTable() {
-
         initTableColumns();
         initTableOverhead();
-        handleRadioButtonClick(null);
+        onDiskViewTypeChanged(null);
 
-        getModel().getItemsChangedEvent().addListener((ev, sender, args) -> disksViewRadioGroup.setDiskStorageType(getModel().getDiskViewType().getEntity()));
+        getModel().getDiskViewType().getEntityChangedEvent().addListener((ev, sender, args) -> {
+            DiskStorageType diskType = getModel().getDiskViewType().getEntity();
+            disksViewRadioGroup.setDiskStorageType(diskType);
+            onDiskViewTypeChanged(diskType);
+        });
     }
 
-    void handleRadioButtonClick(ClickEvent event) {
-        boolean all = disksViewRadioGroup.getAllButton().getValue();
-        boolean images = disksViewRadioGroup.getImagesButton().getValue();
-        boolean luns = disksViewRadioGroup.getLunsButton().getValue();
-        boolean cinder = disksViewRadioGroup.getCinderButton().getValue();
+    void initTableOverhead() {
+        disksViewRadioGroup = new DisksViewRadioGroup();
+        disksViewRadioGroup.addChangeHandler(newType -> getModel().getDiskViewType().setEntity(newType));
+        getTable().setTableOverhead(disksViewRadioGroup);
+    }
+
+    void onDiskViewTypeChanged(DiskStorageType diskType) {
+        boolean all = diskType == null;
+        boolean images = diskType == DiskStorageType.IMAGE;
+        boolean luns = diskType == DiskStorageType.LUN;
+        boolean cinder = diskType == DiskStorageType.CINDER;
 
         getTable().getSelectionModel().clear();
-        getModel().getDiskViewType().setEntity(disksViewRadioGroup.getDiskStorageType());
         getModel().setItems(null);
         getModel().search();
 

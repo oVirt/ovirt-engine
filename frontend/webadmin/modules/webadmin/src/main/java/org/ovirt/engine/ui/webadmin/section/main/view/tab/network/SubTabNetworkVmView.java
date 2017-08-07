@@ -26,10 +26,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.RadioButton;
 
 public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel>
         implements SubTabNetworkVmPresenter.ViewDef {
@@ -48,7 +46,8 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         super(modelProvider);
         viewRadioGroup = new ViewRadioGroup<>(Arrays.asList(NetworkVmFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkVmFilter.running);
-        viewRadioGroup.addStyleName("stnvmv_radioGroup_pfly_fix"); //$NON-NLS-1$
+        viewRadioGroup.addChangeHandler(selected -> onRadioButtonChange(selected));
+
         initTable();
         initWidget(getTableContainer());
     }
@@ -59,19 +58,13 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     }
 
     private void initTableOverhead() {
-        viewRadioGroup.addClickHandler(event -> {
-            if (((RadioButton) event.getSource()).getValue()) {
-                handleRadioButtonClick(event);
-            }
-        });
-
         getTable().setTableOverhead(viewRadioGroup);
     }
 
-    private void handleRadioButtonClick(ClickEvent event) {
-        getDetailModel().setViewFilterType(viewRadioGroup.getSelectedValue());
+    private void onRadioButtonChange(NetworkVmFilter selected) {
+        getDetailModel().setViewFilterType(selected);
 
-        boolean running = viewRadioGroup.getSelectedValue() == NetworkVmFilter.running;
+        boolean running = selected == NetworkVmFilter.running;
 
         getTable().ensureColumnVisible(vmStatusColumn, constants.empty(), true, "30px"); //$NON-NLS-1$
 
@@ -224,7 +217,7 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     private void initTable() {
         getTable().enableColumnResizing();
         initTableOverhead();
-        handleRadioButtonClick(null);
+        onRadioButtonChange(viewRadioGroup.getSelectedValue());
         initSorting();
     }
 

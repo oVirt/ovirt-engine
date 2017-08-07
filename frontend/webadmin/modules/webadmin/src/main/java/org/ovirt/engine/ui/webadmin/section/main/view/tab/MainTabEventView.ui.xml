@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder
+    xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-    <ui:style>
-        .viewButton {
-            margin-right: 10px;
-        }
-    </ui:style>
+    <ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
 
     <g:FlowPanel>
         <g:FlowPanel ui:field="radioButtonPanel">
-            <g:RadioButton ui:field="basicViewButton" name="view" addStyleNames="{style.viewButton}" />
-            <g:RadioButton ui:field="advancedViewButton" name="view" addStyleNames="{style.viewButton}" />
+            <b:ButtonGroup dataToggle="BUTTONS">
+                <b:RadioButton ui:field="basicViewButton" name="view" text="{constants.eventBasicViewLabel}" active="true" />
+                <b:RadioButton ui:field="advancedViewButton" name="view" text="{constants.eventAdvancedViewLabel}" />
+            </b:ButtonGroup>
         </g:FlowPanel>
         <g:FlowPanel ui:field="tablePanel" />
     </g:FlowPanel>
