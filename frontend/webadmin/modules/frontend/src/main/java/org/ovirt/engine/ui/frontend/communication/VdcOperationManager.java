@@ -105,24 +105,6 @@ public class VdcOperationManager {
     }
 
     /**
-     * Store a value on the back-end in the session.
-     * @param key The key.
-     * @param value The value.
-     */
-    public void storeInHttpSession(final String key, final String value) {
-        processor.storeInHttpSession(key, value);
-    }
-
-    /**
-     * Retrieve a stored value from the back-end session.
-     * @param key The key.
-     * @param callback The callback to call with the value.
-     */
-    public void retrieveFromHttpSession(final String key, final StorageCallback callback) {
-        processor.retrieveFromHttpSession(key, callback);
-    }
-
-    /**
      * Returns {@code true} if execution of given operation caused the Engine session to be refreshed.
      */
     boolean engineSessionRefreshed(VdcOperation<?, ?> operation) {
