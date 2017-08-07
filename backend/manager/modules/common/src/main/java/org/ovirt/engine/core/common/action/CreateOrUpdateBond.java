@@ -23,7 +23,7 @@ public class CreateOrUpdateBond implements BusinessEntity<Guid>, Nameable {
 
     private Guid id;
 
-    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
+    @Size(min = 1, max = BusinessEntitiesDefinitions.BOND_NAME_SIZE)
     @Pattern(regexp = BusinessEntitiesDefinitions.BOND_NAME_PATTERN, message = "NETWORK_BOND_NAME_BAD_FORMAT")
     private String name;
 

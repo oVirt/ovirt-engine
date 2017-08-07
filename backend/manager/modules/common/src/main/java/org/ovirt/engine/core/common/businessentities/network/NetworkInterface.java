@@ -20,7 +20,7 @@ public abstract class NetworkInterface<T extends NetworkStatistics>
 
     protected Guid id;
 
-    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
+    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_INTERFACE_NAME_SIZE)
     private String name;
 
     private String macAddress;
