@@ -26,9 +26,7 @@ public class Network implements IVdcQueryable, BusinessEntity<Guid>, Nameable, C
 
     private Guid id;
 
-    @Pattern(regexp = "^[-_a-zA-Z0-9]{1,15}$", message = "NETWORK_ILEGAL_NETWORK_NAME", groups = { CreateEntity.class,
-            UpdateEntity.class })
-    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
+    @Size(max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
     private String name;
 
     private String vdsmName;
