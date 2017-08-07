@@ -46,11 +46,6 @@ public class OvfVmReader extends OvfOvirtReader {
     @Override
     protected void readGeneralData(XmlNode content) {
         super.readGeneralData(content);
-        // General Vm
-        consumeReadProperty(content, NAME, val -> {
-            _vm.getStaticData().setName(val);
-            name = val;
-        });
         consumeReadProperty(content, TEMPLATE_ID, val -> _vm.getStaticData().setVmtGuid(new Guid(val)));
         consumeReadProperty(content, TEMPLATE_NAME, val -> _vm.setVmtName(val));
         consumeReadProperty(content, INSTANCE_TYPE_ID, val -> _vm.setInstanceTypeId(new Guid(val)));

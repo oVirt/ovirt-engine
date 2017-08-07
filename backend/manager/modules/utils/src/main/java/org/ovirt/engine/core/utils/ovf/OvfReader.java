@@ -64,7 +64,6 @@ public abstract class OvfReader implements IOvfBuilder {
     protected XmlNamespaceManager _xmlNS;
     private static final int BYTES_IN_GB = 1024 * 1024 * 1024;
     public static final String EmptyName = "[Empty Name]";
-    protected String name = EmptyName;
     private String version;
     private final VmBase vmBase;
     private String lastReadEntry = "";
@@ -95,7 +94,7 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     public String getName() {
-        return name;
+        return StringUtils.isNotEmpty(vmBase.getName()) ? vmBase.getName() : EmptyName;
     }
 
     public String getVersion() {
@@ -448,7 +447,6 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected void readGeneralData(XmlNode content) {
         vmBase.setVmInit(new VmInit());
-
         consumeReadProperty(content, DESCRIPTION, val -> vmBase.setDescription(val));
         consumeReadProperty(content, COMMENT, val -> vmBase.setComment(val));
         consumeReadProperty(content, DOMAIN, val -> vmBase.getVmInit().setDomain(val));

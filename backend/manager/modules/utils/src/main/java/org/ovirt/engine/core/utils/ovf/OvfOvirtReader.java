@@ -38,6 +38,7 @@ public abstract class OvfOvirtReader extends OvfReader {
     @Override
     public void buildVirtualSystem() {
         XmlNode virtualSystem = selectSingleNode(_document, "//*/Content");
+        consumeReadProperty(virtualSystem, NAME, val -> vmBase.setName(val));
 
         // set ovf version to the ovf object
         vmBase.setOvfVersion(getVersion());
