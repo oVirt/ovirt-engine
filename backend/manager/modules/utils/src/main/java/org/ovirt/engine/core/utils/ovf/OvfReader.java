@@ -294,8 +294,6 @@ public abstract class OvfReader implements IOvfBuilder {
      */
     protected abstract String getDefaultDisplayTypeStringRepresentation();
 
-    protected abstract void readOsSection(XmlNode section);
-
     protected void readHardwareSection(XmlNode section) {
         boolean readVirtioSerial = false;
 

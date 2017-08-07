@@ -29,19 +29,6 @@ public class OvfTemplateReader extends OvfOvirtReader {
     }
 
     @Override
-    protected void readOsSection(XmlNode section) {
-        _vmTemplate.setId(new Guid(section.attributes.get("ovf:id").getValue()));
-        XmlNode node = selectSingleNode(section, "Description");
-        if (node != null) {
-            int osId = osRepository.getOsIdByUniqueName(node.innerText);
-            _vmTemplate.setOsId(osId);
-            _vmTemplate.setClusterArch(osRepository.getArchitectureFromOS(osId));
-        } else {
-            _vmTemplate.setClusterArch(ArchitectureType.undefined);
-        }
-    }
-
-    @Override
     protected void readDiskImageItem(XmlNode node) {
         final Guid guid = new Guid(selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText);
 
@@ -106,5 +93,9 @@ public class OvfTemplateReader extends OvfOvirtReader {
     @Override
     protected String getDefaultDisplayTypeStringRepresentation() {
         return TEMPLATE_DEFAULT_DISPLAY_TYPE;
+    }
+
+    protected void setClusterArch(ArchitectureType arch) {
+        _vmTemplate.setClusterArch(arch);
     }
 }

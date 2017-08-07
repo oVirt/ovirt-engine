@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils.ovf;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -177,4 +178,19 @@ public abstract class OvfOvirtReader extends OvfReader {
             }
         }
     }
+
+    protected void readOsSection(XmlNode section) {
+        vmBase.setId(new Guid(section.attributes.get("ovf:id").getValue()));
+        XmlNode node = selectSingleNode(section, "Description");
+        if (node != null) {
+            int osId = osRepository.getOsIdByUniqueName(node.innerText);
+            vmBase.setOsId(osId);
+            setClusterArch(osRepository.getArchitectureFromOS(osId));
+        } else {
+            setClusterArch(ArchitectureType.undefined);
+        }
+    }
+
+    protected abstract void setClusterArch(ArchitectureType arch);
+
 }

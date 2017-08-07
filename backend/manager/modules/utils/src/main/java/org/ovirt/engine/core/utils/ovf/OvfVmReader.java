@@ -38,19 +38,6 @@ public class OvfVmReader extends OvfOvirtReader {
     }
 
     @Override
-    protected void readOsSection(XmlNode section) {
-        _vm.getStaticData().setId(new Guid(section.attributes.get("ovf:id").getValue()));
-        XmlNode node = selectSingleNode(section, "Description");
-        if (node != null) {
-            int osId = osRepository.getOsIdByUniqueName(node.innerText);
-            _vm.getStaticData().setOsId(osId);
-            _vm.setClusterArch(osRepository.getArchitectureFromOS(osId));
-        } else {
-            _vm.setClusterArch(ArchitectureType.undefined);
-        }
-    }
-
-    @Override
     protected void readDiskImageItem(XmlNode node) {
         final Guid guid = new Guid(selectSingleNode(node, "rasd:InstanceId", _xmlNS).innerText);
 
@@ -241,5 +228,9 @@ public class OvfVmReader extends OvfOvirtReader {
 
     @Override
     protected void buildNicReference() {
+    }
+
+    protected void setClusterArch(ArchitectureType arch) {
+        _vm.setClusterArch(arch);
     }
 }
