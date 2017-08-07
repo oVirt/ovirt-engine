@@ -140,8 +140,8 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                 }
         });
         getView().getAlertActionWidget().addAllAction(constants.clearAllDismissedAlerts(),
-                this.alertModelProvider.getModel().getDismissCommand(), (command, log) -> {
-                alertModelProvider.getModel().clearAllAlerts();
+                this.alertModelProvider.getModel().getClearAllCommand(), (command, log) -> {
+                alertModelProvider.getModel().executeCommand(command);
         });
 
         getView().getEventActionWidget().addAction(constants.dismissEvent(),
@@ -153,7 +153,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                 }
         });
         getView().getEventActionWidget().addAllAction(constants.clearAllDismissedEvents(),
-                this.eventModelProvider.getModel().getDismissCommand(), (command, log) -> {
+                this.eventModelProvider.getModel().getClearAllCommand(), (command, log) -> {
                 eventModelProvider.getModel().executeCommand(command);
         });
 
