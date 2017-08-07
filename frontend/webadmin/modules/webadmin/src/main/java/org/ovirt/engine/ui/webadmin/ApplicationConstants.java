@@ -31,6 +31,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String searchLabel();
 
+    String clearSearch();
+
+    String applySearch();
+
+    String bookmarkSearch();
+
+    String existingBookmarks();
+
     String searchButtonLabel();
 
     String dataCenterMainTabLabel();

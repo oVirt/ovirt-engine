@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.InputGroupAddon;
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
@@ -12,6 +15,7 @@ import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestOracle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.resources.client.CssResource;
@@ -19,6 +23,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
 /**
  * Provide search within a list view. The search panel has 3 visible parts:
@@ -76,6 +81,13 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
     @UiField
     @WithElementId("searchButton")
     Button searchBoxSearch;
+
+    @UiField
+    @WithElementId("searchBoxBookmarkListDropDownButton")
+    Button searchBoxBookmarkListDropDownButton;
+
+    @UiField
+    DropDownMenu searchBoxBookmarkListDropDown;
 
     @UiField
     Style style;
@@ -164,5 +176,21 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
     @Override
     public void enableSearchBar(boolean status) {
         searchStringInput.setEnabled(status);
+    }
+
+    @Override
+    public void clearBookmarks() {
+        searchBoxBookmarkListDropDown.clear();
+        searchBoxBookmarkListDropDownButton.setEnabled(false);
+    }
+
+    @Override
+    public HandlerRegistration addAvailableBookmarks(Bookmark bookmark, ClickHandler handler) {
+        AnchorListItem bookmarkItem = new AnchorListItem();
+        bookmarkItem.setText(bookmark.getName());
+        HandlerRegistration registration = bookmarkItem.addClickHandler(handler);
+        searchBoxBookmarkListDropDown.add(bookmarkItem);
+        searchBoxBookmarkListDropDownButton.setEnabled(searchBoxBookmarkListDropDown.getWidgetCount() > 0);
+        return registration;
     }
 }

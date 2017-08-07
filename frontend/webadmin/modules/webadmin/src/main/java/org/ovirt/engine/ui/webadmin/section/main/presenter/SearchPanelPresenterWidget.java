@@ -2,18 +2,22 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
@@ -43,6 +47,9 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
 
         void setModel(SearchableListModel model);
 
+        void clearBookmarks();
+
+        HandlerRegistration addAvailableBookmarks(Bookmark bookmark, ClickHandler handler);
     }
 
     private final M model;
@@ -93,6 +100,30 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
                 getView().hideSuggestionBox();
             }
         }));
+        BookmarkListModel bookmarkListModel = bookmarkModelProvider.getModel();
+        bookmarkListModel.getItemsChangedEvent().addListener((ev, sender, args) -> bookmarkItemsChanged());
+        if (bookmarkListModel.getItems() == null) {
+            bookmarkListModel.search();
+        }
+        // Have to call this to initially populate the values.
+        bookmarkItemsChanged();
+    }
+
+    private void bookmarkItemsChanged() {
+        BookmarkListModel bookmarkListModel = bookmarkModelProvider.getModel();
+        if (bookmarkListModel.getItems() != null) {
+            getView().clearBookmarks();
+            List<Bookmark> items = new ArrayList<>(bookmarkListModel.getItems());
+            final String filterString = model.getDefaultSearchString();
+            List<Bookmark> result = items.stream().filter(bookmark -> bookmark.getValue().startsWith(filterString))
+                    .collect(Collectors.toList());
+            result.forEach(bookmark -> {
+                registerHandler(getView().addAvailableBookmarks(bookmark, e -> {
+                    model.setSearchString(bookmark.getValue());
+                    model.search();
+                }));
+            });
+        }
     }
 
     void updateModelSearchString() {
