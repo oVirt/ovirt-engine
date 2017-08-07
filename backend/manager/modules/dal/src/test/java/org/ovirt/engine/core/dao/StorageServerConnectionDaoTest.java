@@ -34,7 +34,6 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
     private StorageServerConnectionDao dao;
     private StorageServerConnections newServerConnection;
     private StorageServerConnections existingConnection;
-    private StorageServerConnections existingNfsAutoConnection;
 
     @Override
     public void setUp() throws Exception {
@@ -43,7 +42,6 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         dao = dbFacade.getStorageServerConnectionDao();
 
         existingConnection = dao.get("0cc146e8-e5ed-482c-8814-270bc48c297f");
-        existingNfsAutoConnection = dao.get(FixturesTool.EXISTING_STORAGE_CONNECTION_NFS_AUTO_ID.toString());
 
         newServerConnection = new StorageServerConnections();
         newServerConnection.setId("0cc146e8-e5ed-482c-8814-270bc48c2980");
@@ -391,7 +389,7 @@ public class StorageServerConnectionDaoTest extends BaseDaoTestCase {
         assertEquals(Short.valueOf((short) 5), result.getNfsRetrans());
         assertNull(result.getNfsTimeo());
 
-        result = dao.get(existingNfsAutoConnection.getId());
+        result = dao.get(FixturesTool.EXISTING_STORAGE_CONNECTION_NFS_AUTO_ID.toString());
         assertEquals(NfsVersion.AUTO, result.getNfsVersion());
         assertEquals(Short.valueOf((short) 7), result.getNfsRetrans());
         assertEquals(Short.valueOf((short) 42), result.getNfsTimeo());
