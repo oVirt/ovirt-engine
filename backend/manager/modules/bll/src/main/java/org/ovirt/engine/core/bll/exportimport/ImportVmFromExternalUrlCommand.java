@@ -124,8 +124,10 @@ public class ImportVmFromExternalUrlCommand<P extends ImportVmFromExternalUrlPar
 
             prm.setForceOverride(true);
             prm.setCopyCollapse(true);
-            boolean existsInTheSystem = vmStaticDao.get(vm.getId()) != null;
-            prm.setImportAsNewEntity(existsInTheSystem);
+//            boolean existsInTheSystem = vmStaticDao.get(vm.getId()) != null;
+//            prm.setImportAsNewEntity(existsInTheSystem);
+            // A workaround to make the import command reallocate mac addresses, yuck!
+            prm.setImportAsNewEntity(true);
 
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
                 DiskImage disk = (DiskImage) entry.getValue();
