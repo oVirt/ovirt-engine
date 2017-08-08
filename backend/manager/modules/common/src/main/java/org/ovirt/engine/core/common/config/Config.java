@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.config;
 
+import java.util.Map;
+
 /**
  * Config Class
  */
@@ -16,6 +18,10 @@ public final class Config {
 
     public static <T> T getValue(ConfigValues value) {
         return Config.getValue(value, ConfigCommon.defaultConfigurationVersion);
+    }
+
+    public static <T> Map<String, T> getValuesForAllVersions(ConfigValues value) {
+        return getConfigUtils().getValuesForAllVersions(value);
     }
 
     public static <T> T getValue(ConfigValues value, String version) {
