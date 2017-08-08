@@ -46,10 +46,9 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
      * Create specParams from the parameters.
      */
     protected HashMap<String, Object> getSpecParams() {
-        HashMap<String, Object> specParams = new HashMap<>();
-        specParams.put("action", getParameters().getAction().name().toLowerCase());
-        specParams.put("model", getParameters().getModel().name());
-        return specParams;
+        VmWatchdog watchdog = new VmWatchdog(getParameters().getModel(), getParameters().getAction());
+
+        return watchdog.getSpecParams();
     }
 
     @Override

@@ -61,6 +61,8 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -887,6 +889,10 @@ public class VmHandler implements BackendService {
             if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, (VmDevice) value)) {
                 updates.add(new VmDeviceUpdate(generalType, type, readOnly, name, (VmDevice) value));
             }
+        } else if (value instanceof VmWatchdog) {
+            if (vmDeviceUtils.vmDeviceChanged(vmId, generalType, typeName, ((VmWatchdog) value).getVmDevice())) {
+                updates.add(new VmDeviceUpdate(generalType, type, readOnly, name,  ((VmWatchdog) value).getVmDevice()));
+            }
         } else {
             log.warn("addDeviceUpdateOnNextRun: Unsupported value type: " +
                     value.getClass().getName());
@@ -1097,10 +1103,17 @@ public class VmHandler implements BackendService {
 
     public void autoSelectUsbPolicy(VmBase fromParams) {
         if (fromParams.getUsbPolicy() == null) {
-            fromParams.setUsbPolicy(UsbPolicy.ENABLED_NATIVE);
+            fromParams.setUsbPolicy(fromParams.getVmType() == VmType.HighPerformance ? UsbPolicy.DISABLED : UsbPolicy.ENABLED_NATIVE);
         }
     }
 
+    public ValidationResult validateSmartCardDevice(VmBase parametersStaticData) {
+        if (parametersStaticData.isSmartcardEnabled() && parametersStaticData.getUsbPolicy() == UsbPolicy.DISABLED
+                && parametersStaticData.getVmType() == VmType.HighPerformance) {
+            return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VM_SMARTCARD_NOT_SUPPORTED_WITHOUT_USB);
+        }
+        return ValidationResult.VALID;
+    }
 
     /**
      * Automatic selection of display type based on its graphics types in parameters.

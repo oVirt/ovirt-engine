@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -806,6 +807,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateCpuPinningVisibility() {
+        if (getModel().getIsAutoAssign().getEntity() == null) {
+            return;
+        }
+
         if (getModel().getSelectedCluster() != null) {
             boolean isLocalSD = getModel().getSelectedDataCenter() != null
                     && getModel().getSelectedDataCenter().isLocal();
@@ -857,6 +862,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         int pinToHostSize = allowedHosts == null ? 0 : allowedHosts.size();
         boolean isHighlyAvailable = getModel().getIsHighlyAvailable().getEntity();
         Boolean isAutoAssign = getModel().getIsAutoAssign().getEntity();
+
+        if (isAutoAssign == null) {
+            return;
+        }
 
         // This is needed for the unittests to not crash..
         if (presentHosts == null) {
@@ -1282,6 +1291,30 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         getModel().getAllowConsoleReconnect().setEntity(vmType == VmType.Server);
+
+        // High Performance
+        if(vmType == VmType.HighPerformance) {
+            // Conosole tab
+            getModel().getIsHeadlessModeEnabled().setEntity(true);
+            getModel().getIsConsoleDeviceEnabled().setEntity(true);
+            getModel().getUsbPolicy().setSelectedItem(UsbPolicy.DISABLED);
+
+            // High Availability tab
+            getModel().getWatchdogModel().setSelectedItem(null);
+            getModel().getWatchdogAction().setSelectedItem(getModel().getWatchdogAction().getItems().iterator().next());
+
+            getModel().getIsHighlyAvailable().setEntity(false);
+
+            // Random Generator tab
+            getModel().getIsRngEnabled().setEntity(true);
+
+            // Host tab
+            getModel().getMigrationMode().setSelectedItem(MigrationSupport.PINNED_TO_HOST);
+            getModel().getHostCpu().setEntity(true);
+
+            // Resouce allocation tab
+            getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
+        }
     }
 
     public void enableSinglePCI(boolean enabled) {
@@ -1465,6 +1498,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected final void updateNumaEnabledHelper() {
         boolean enabled = true;
+        if (getModel().getIsAutoAssign().getEntity() == null) {
+            return;
+        }
         if (getModel().getMigrationMode().getSelectedItem() != MigrationSupport.PINNED_TO_HOST ||
                 getModel().getIsAutoAssign().getEntity() ||
                 getModel().getDefaultHost().getSelectedItem() == null ||

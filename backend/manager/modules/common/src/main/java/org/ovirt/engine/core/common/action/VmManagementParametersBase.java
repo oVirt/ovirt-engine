@@ -84,6 +84,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.BALLOON, type = VmDeviceType.MEMBALLOON)
     private Boolean balloonEnabled;
 
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.WATCHDOG, type = VmDeviceType.WATCHDOG)
     private Optional<VmWatchdog> watchdog = new Optional<>();
 
     @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.RNG, type = VmDeviceType.VIRTIO)

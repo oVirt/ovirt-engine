@@ -184,7 +184,8 @@ public class VmBase implements Queryable, BusinessEntity<Guid>, Nameable, Commen
     private String timeZone;
 
     @CopyOnNewVersion
-    @EditableVmField
+    @EditableVmField(onStatuses = VMStatus.Down)
+    @EditableVmTemplateField
     private VmType vmType;
 
     @CopyOnNewVersion

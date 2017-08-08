@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.HotUnplugMemoryParameters;
+import org.ovirt.engine.core.common.businessentities.UsbControllerModel;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.ui.frontend.AsyncCallback;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -29,6 +31,9 @@ public class VmDevicesListModel<E extends VM>
         extends SearchableListModel<E, VmDeviceFeEntity> {
 
     private static final int UNPLUGGING_LABEL_DURATION_SEC = 15;
+    // USB controller model
+    public static final String MODEL = "model";  //$NON-NLS-1$
+
 
     private final UICommand memoryHotUnplugCommand =
             UICommand.createOkUiCommand("memoryHotUnplug", this); //$NON-NLS-1$
@@ -64,6 +69,14 @@ public class VmDevicesListModel<E extends VM>
                             final Collection<VmDevice> vmDevices = returnValue.getReturnValue();
                             final ArrayList<VmDeviceFeEntity> frontendDevices = new ArrayList<>();
                             for (VmDevice vmDevice : vmDevices) {
+                                // exclude USB controller devices with model property set to 'none'
+                                if (vmDevice.getDevice().equals(VmDeviceType.USB.getName())
+                                        && vmDevice.getType() == VmDeviceGeneralType.CONTROLLER
+                                        && (vmDevice.getSpecParams().get(MODEL)) != null
+                                        && vmDevice.getSpecParams().get(MODEL).equals(UsbControllerModel.NONE.libvirtName)) {
+                                    continue;
+                                }
+
                                 frontendDevices.add(new VmDeviceFeEntity(
                                         vmDevice,
                                         vm,

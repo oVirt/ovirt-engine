@@ -653,6 +653,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
+        if (!validate(vmHandler.validateSmartCardDevice(getParameters().getVmStaticData()))) {
+            return false;
+        }
+
         if (!FeatureSupported.isMigrationSupported(getCluster().getArchitecture(), getEffectiveCompatibilityVersion())
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
             return failValidation(EngineMessage.VM_MIGRATION_IS_NOT_SUPPORTED);

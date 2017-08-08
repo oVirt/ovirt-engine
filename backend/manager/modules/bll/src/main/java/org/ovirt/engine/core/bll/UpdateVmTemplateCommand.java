@@ -163,6 +163,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             }
         }
 
+        if (!validate(vmHandler.validateSmartCardDevice(getParameters().getVmTemplateData()))) {
+            return false;
+        }
+
         if(!setAndValidateCpuProfile()) {
             return false;
         }
@@ -417,7 +421,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getParameters().isSoundDeviceEnabled());
 
         getVmDeviceUtils().updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
-        if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy()) {
+        if (oldTemplate.getUsbPolicy() != getVmTemplate().getUsbPolicy() || oldTemplate.getVmType() != getVmTemplate().getVmType()) {
             getVmDeviceUtils().updateUsbSlots(oldTemplate, getVmTemplate());
         }
         getVmDeviceUtils().updateVirtioScsiController(getVmTemplate(), getParameters().isVirtioScsiEnabled());

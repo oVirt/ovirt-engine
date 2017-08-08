@@ -708,6 +708,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        if (!validate(vmHandler.validateSmartCardDevice(getParameters().getMasterVm()))) {
+            return false;
+        }
+
         // Check if the watchdog model is supported
         if (getParameters().getWatchdog() != null) {
             if (!validate(new VmWatchdogValidator.VmWatchdogClusterDependentValidator(getParameters().getMasterVm().getOsId(),

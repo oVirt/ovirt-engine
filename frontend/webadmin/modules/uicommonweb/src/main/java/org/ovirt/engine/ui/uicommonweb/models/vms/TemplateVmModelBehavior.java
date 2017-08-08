@@ -187,6 +187,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
             getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
             getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
 
+            getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
+
             initPriority(template.getPriority());
         });
     }

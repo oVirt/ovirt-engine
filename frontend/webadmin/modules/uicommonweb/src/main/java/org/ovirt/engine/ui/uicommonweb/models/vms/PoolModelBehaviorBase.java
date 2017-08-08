@@ -101,6 +101,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             buildModel(vmBase, (source, destination) -> {
                 setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
                 getModel().getVmType().setSelectedItem(vmBase.getVmType());
+                getModel().getUsbPolicy().setSelectedItem(vmBase.getUsbPolicy());
                 getModel().getIsRunAndPause().setEntity(false);
 
                 boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());

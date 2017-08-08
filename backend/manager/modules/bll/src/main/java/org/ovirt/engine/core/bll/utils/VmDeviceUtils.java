@@ -724,6 +724,10 @@ public class VmDeviceUtils {
 
         final int newNumberOfUsbSlots = Config.<Integer> getValue(ConfigValues.NumberOfUSBSlots);
 
+        if (UsbPolicy.DISABLED == newUsbPolicy && newVm.getVmType() == VmType.HighPerformance) {
+            disableAnyUsb(oldVm, newVm);
+            return;
+        }
         if (UsbPolicy.DISABLED == oldUsbPolicy && UsbPolicy.ENABLED_NATIVE == newUsbPolicy) {
             disableNormalUsb(newVm.getId());
             enableSpiceUsb(newVm.getId(), newNumberOfUsbSlots);
@@ -744,6 +748,34 @@ public class VmDeviceUtils {
         }
         throw new RuntimeException(
                 format("Unexpected state: oldUsbPolicy=%s, newUsbPolicy=%s", oldUsbPolicy, newUsbPolicy));
+    }
+
+    private void disableAnyUsb(VmBase oldVm, VmBase newVm) {
+        final List<VmDevice> usbControllers;
+
+        if (UsbPolicy.DISABLED == oldVm.getUsbPolicy() && VmType.HighPerformance == oldVm.getVmType()
+                && (usbControllers = getUsbControllers(newVm.getId())) != null && usbControllers.size() == 1
+                && UsbControllerModel.NONE.libvirtName.equals(getUsbControllerModelName(usbControllers.get(0)))) {
+            return;
+        }
+
+        switch (oldVm.getUsbPolicy()) {
+        case ENABLED_NATIVE:
+            disableSpiceUsb(newVm.getId());
+            break;
+
+        case DISABLED:
+            disableNormalUsb(newVm.getId());
+            break;
+        }
+
+        addManagedDevice(
+                new VmDeviceId(Guid.newGuid(), newVm.getId()),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.USB,
+                createUsbControllerSpecParams(UsbControllerModel.NONE.libvirtName, 0),
+                true,
+                false);
     }
 
     private void disableNormalUsb(Guid vmId) {

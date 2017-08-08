@@ -446,6 +446,8 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
        }
         BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());
 
+        param.getVmStaticData().setUseHostCpuFlags(model.getHostCpu().getEntity());
+
         if (model.getQuota().getSelectedItem() != null) {
             vm.setQuotaId(model.getQuota().getSelectedItem().getId());
         }

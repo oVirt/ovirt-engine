@@ -2154,7 +2154,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             if (policies.contains(prevSelectedUsbPolicy)) {
                 getUsbPolicy().setSelectedItem(prevSelectedUsbPolicy);
             } else if (policies.size() > 0) {
-                getUsbPolicy().setSelectedItem(policies.iterator().next());
+                getUsbPolicy().setSelectedItem(getVmType().getSelectedItem() == VmType.HighPerformance ?
+                        UsbPolicy.DISABLED : policies.iterator().next());
             }
         }
     }

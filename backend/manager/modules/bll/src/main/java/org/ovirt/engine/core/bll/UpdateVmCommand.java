@@ -68,6 +68,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -830,8 +831,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (!validate(vmHandler.validateSmartCardDevice(getParameters().getVmStaticData()))) {
+            return false;
+        }
+
         if (vmFromParams.isAutoStartup() && vmFromDB.isHostedEngine()) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE);
+        }
+
+        if (vmFromParams.getVmType() == VmType.HighPerformance && vmFromDB.isHostedEngine()) {
+            return failValidation(EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGH_PERFORMANCE_AND_HOSTED_ENGINE);
         }
 
         if (!areUpdatedFieldsLegal()) {

@@ -1,10 +1,17 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmWatchdog implements Queryable {
 
     private static final long serialVersionUID = -4515288688595577429L;
+    private static final String WATCHDOG_MODEL_PARAM_NAME = "model";
+    private static final String WATCHDOG_ACTION_PARAM_NAME = "action";
+
     Guid vmId;
     Guid id;
     VmWatchdogAction action;
@@ -18,6 +25,11 @@ public class VmWatchdog implements Queryable {
         setVmId(device.getVmId());
         setAction(VmWatchdogAction.getByName((String) device.getSpecParams().get("action")));
         setModel(VmWatchdogType.getByName((String) device.getSpecParams().get("model")));
+    }
+
+    public VmWatchdog(VmWatchdogType model, VmWatchdogAction action) {
+        this.model = model;
+        this.action = action;
     }
 
     @Override
@@ -55,5 +67,32 @@ public class VmWatchdog implements Queryable {
 
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    public VmDevice getVmDevice() {
+        Map<String, Object> specParams = getSpecParams();
+
+        return new VmDevice(
+                new VmDeviceId(Guid.newGuid(), id),
+                VmDeviceGeneralType.WATCHDOG,
+                VmDeviceType.WATCHDOG.getName(),
+                "",
+                specParams,
+                true,
+                true,
+                false,
+                "",
+                null,
+                null,
+                null);
+    }
+
+    public HashMap<String, Object> getSpecParams() {
+        HashMap<String, Object> specParams = new HashMap<>();
+
+        specParams.put(WATCHDOG_MODEL_PARAM_NAME, model.name());
+        specParams.put(WATCHDOG_ACTION_PARAM_NAME, action.name().toLowerCase());
+
+        return specParams;
     }
 }
