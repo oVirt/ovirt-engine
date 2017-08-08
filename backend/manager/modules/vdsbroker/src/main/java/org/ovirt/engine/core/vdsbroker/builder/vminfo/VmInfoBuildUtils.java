@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.builder.vminfo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -394,12 +395,12 @@ public class VmInfoBuildUtils {
         return getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.SPAPR_VSCSI, true);
     }
 
-    private Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForScsiDisks(VM vm,
+    protected Map<Integer, Map<VmDevice, Integer>> getVmDeviceUnitMapForScsiDisks(VM vm,
             DiskInterface scsiInterface,
             boolean reserveFirstTwoLuns) {
-        List<Disk> disks = new ArrayList<>(vm.getDiskMap().values());
+        List<Disk> disks = getSortedDisks(vm);
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap = new HashMap<>();
-        Map<VmDevice, Disk> vmDeviceDiskMap = new HashMap<>();
+        LinkedList<VmDevice> vmDeviceList = new LinkedList<>();
 
         for (Disk disk : disks) {
             DiskVmElement dve = disk.getDiskVmElementForVm(vm.getId());
@@ -410,7 +411,7 @@ public class VmInfoBuildUtils {
                 String controllerStr = address.get(VdsProperties.Controller);
 
                 // If unit property is available adding to 'vmDeviceUnitMap';
-                // Otherwise, adding to 'vmDeviceDiskMap' for setting the unit property later.
+                // Otherwise, adding to 'vmDeviceList' for setting the unit property later.
                 if (StringUtils.isNotEmpty(unitStr) && StringUtils.isNotEmpty(controllerStr)) {
                     Integer controllerInt = Integer.valueOf(controllerStr);
 
@@ -427,25 +428,25 @@ public class VmInfoBuildUtils {
                     } else {
                         // controller id not correct, generate the address again later
                         vmDevice.setAddress(null);
-                        vmDeviceDiskMap.put(vmDevice, disk);
+                        vmDeviceList.add(vmDevice);
                     }
                 } else {
-                    vmDeviceDiskMap.put(vmDevice, disk);
+                    vmDeviceList.add(vmDevice);
                 }
             }
         }
 
         // Find available unit (disk's index in VirtIO-SCSI controller) for disks with empty address
         int increment = 0;
-        for (Entry<VmDevice, Disk> entry : vmDeviceDiskMap.entrySet()) {
-            int controller = getControllerForScsiDisk(entry.getKey(), vm, increment);
+        for (VmDevice vmDevice : vmDeviceList) {
+            int controller = getControllerForScsiDisk(vmDevice, vm, increment);
             increment++;
             if (!vmDeviceUnitMap.containsKey(controller)) {
                 vmDeviceUnitMap.put(controller, new HashMap<>());
             }
 
             int unit = getAvailableUnitForScsiDisk(vmDeviceUnitMap.get(controller), reserveFirstTwoLuns);
-            vmDeviceUnitMap.get(controller).put(entry.getKey(), unit);
+            vmDeviceUnitMap.get(controller).put(vmDevice, unit);
         }
 
         return vmDeviceUnitMap;
