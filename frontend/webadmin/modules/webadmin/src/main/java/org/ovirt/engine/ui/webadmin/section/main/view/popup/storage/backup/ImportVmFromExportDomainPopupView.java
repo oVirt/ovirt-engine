@@ -715,7 +715,9 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     @Override
     public void cleanup() {
         driver.cleanup();
-        generalView.cleanup();
+        if (generalView != null) {
+            generalView.cleanup();
+        }
     }
 
 }
