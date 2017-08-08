@@ -142,6 +142,7 @@ select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'gener
 select fn_db_add_config_value('GlusterRefreshRateHealInfo', '600', 'general');
 select fn_db_add_config_value('GlusterUnSyncedEntriesHistoryLimit', '40', 'general');
 select fn_db_add_config_value('GlusterSelfHealMonitoringSupported', 'false', '3.6');
+select fn_db_add_config_value_for_versions_up_to('GlusterSelfHealMonitoringSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('LibgfApiSupported', 'false', '4.1');
 select fn_db_add_config_value('LibgfApiSupported', 'true', '4.2');
 -- Gluster Geo-replication --
@@ -159,6 +160,7 @@ select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks',
 
 -- Gluster Arbiter Volume --
 select fn_db_add_config_value_for_versions_up_to('GlusterSupportArbiterVolume', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('GlusterSupportArbiterVolume', 'true', '4.2');
 
 -- OpenStack related
 
@@ -175,12 +177,16 @@ select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86
 select fn_db_add_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.1');
 select fn_db_add_config_value('HotUnplugCpuSupported', '{"x86_64":"true","ppc64":"true"}', '4.2');
 select fn_db_add_config_value('HotPlugMemorySupported', '{"x86_64":"true","ppc64":"false"}', '3.6');
+select fn_db_add_config_value_for_versions_up_to('HotPlugMemorySupported', '{"x86:"true","ppc":"true"}', '4.2');
 select fn_db_add_config_value('MaxMemorySlots','16','general');
 select fn_db_add_config_value('HotPlugMemoryMultiplicationSizeMb','256','general');
 select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('QemuimgCommitSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('AgentChannelNamingSupported', 'false', '4.1');
+select fn_db_add_config_value('AgentChannelNamingSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('HotUnplugMemorySupported', '{"x86_64":"false","ppc64":"false"}', '4.0');
 select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86_64":"true","ppc64":"false"}', '4.1');
+select fn_db_add_config_value('HotUnplugMemorySupported', '{"x86":"true""ppc":"true"}', '4.2');
 
 -- migration support per architecture
 select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
@@ -197,6 +203,7 @@ select fn_db_add_config_value('Ipv6MigrationProperlyHandled', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('Ipv6MigrationProperlyHandled', 'false', '4.2');
 
 select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('DataOperationsByHSM', 'true', '4.2');
 
 -- default requirement for rng sources (comma-separated string of 'RANDOM' and 'HWRNG')
 select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', 'RANDOM', '4.2');
@@ -231,6 +238,7 @@ select fn_db_add_config_value('SpiceProxyDefault','','general');
 select fn_db_add_config_value('RemapCtrlAltDelDefault','true','general');
 
 select fn_db_add_config_value('MigrationPoliciesSupported', 'false', '3.6');
+select fn_db_add_config_value_for_versions_up_to('MigrationPoliciesSupported', 'true', '4.2');
 
 --Handling Install virtualization software on Add Host
 
@@ -325,13 +333,21 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 
 
 select fn_db_add_config_value_for_versions_up_to('Ipv6Supported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('Ipv6Supported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('VirtIOScsiIOThread', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('VirtIOScsiIOThread', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('PassDiscardSupported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('PassDiscardSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('DiscardAfterDeleteSupported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('DiscardAfterDeleteSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('QcowCompatSupported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('QcowCompatSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('ReduceDeviceFromStorageDomain', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('ReduceDeviceFromStorageDomain', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('VmLeasesSupported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('VmLeasesSupported', 'true', '4.2');
 select fn_db_add_config_value_for_versions_up_to('DomainXML', 'false', '4.1');
+select fn_db_add_config_value('DomainXML', 'true', '4.2');
 select fn_db_add_config_value('IPTablesConfigSiteCustom','','general');
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
@@ -626,10 +642,13 @@ select fn_db_add_config_value('MigrationPolicies','[{"id":{"uuid":"80554327-0569
 select fn_db_add_config_value('MigrationPolicies','[{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827b"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Minimal downtime","description":"A policy that lets the VM migrate in typical situations. The VM should not experience any significant downtime. If the VM migration is not converging for a long time, the migration will be aborted. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"abort","params":[]}]}},{"id":{"uuid":"80554327-0569-496b-bdeb-fcbbf52b827c"},"maxMigrations":1,"autoConvergence":true,"migrationCompression":true,"enableGuestEvents":true,"name":"Suspend workload if needed","description":"A policy that lets the VM migrate in most situations, including VMs running heavy workloads. On the other hand, the VM may experience a more significant downtime. The migration may still be aborted for extreme workloads. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}},{"stallingLimit":3,"convergenceItem":{"action":"setDowntime","params":["300"]}},{"stallingLimit":4,"convergenceItem":{"action":"setDowntime","params":["400"]}},{"stallingLimit":6,"convergenceItem":{"action":"setDowntime","params":["500"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"setDowntime","params":["5000"]},{"action":"abort","params":[]}]}},{"id":{"uuid":"a7aeedb2-8d66-4e51-bb22-32595027ce71"},"maxMigrations":2,"autoConvergence":true,"migrationCompression":false,"enableGuestEvents":true,"name":"Post-copy migration","description":"The VM should not experience any significant downtime. If the VM migration is not converging for a long time, the migration will be switched to post-copy. The guest agent hook mechanism is enabled.","config":{"convergenceItems":[{"stallingLimit":1,"convergenceItem":{"action":"setDowntime","params":["150"]}},{"stallingLimit":2,"convergenceItem":{"action":"setDowntime","params":["200"]}}],"initialItems":[{"action":"setDowntime","params":["100"]}],"lastItems":[{"action":"postcopy","params":[]},{"action":"abort","params":[]}]}}]','4.2');
 
 select fn_db_add_config_value('SriovHotPlugSupported','false','3.6');
+select fn_db_add_config_value_for_versions_up_to('SriovHotPlugSupported', 'true', '4.2');
 
 select fn_db_add_config_value('LegacyGraphicsDisplay','true','3.6');
+select fn_db_add_config_value_for_versions_up_to('LegacyGraphicsDisplay', 'false', '4.2');
 
 select fn_db_add_config_value_for_versions_up_to('DestroyOnRebootSupported','false','4.1');
+select fn_db_add_config_value('DestroyOnRebootSupported', 'true', '4.2');
 
 -- Hosted Engine
 select fn_db_add_config_value('HostedEngineVmName','HostedEngine','general');
@@ -651,7 +670,9 @@ select fn_db_add_config_value('UploadImageXhrRetryIntervalInSeconds','3','genera
 select fn_db_add_config_value('UploadImageXhrMaxRetries','3','general');
 
 select fn_db_add_config_value('AdPartnerMacSupported','false','3.6');
+select fn_db_add_config_value_for_versions_up_to('AdPartnerMacSupported', 'true', '4.2');
 select fn_db_add_config_value('OvsSupported','false','3.6');
+select fn_db_add_config_value_for_versions_up_to('OvsSupported', 'true', '4.2');
 
 select fn_db_add_config_value('ForceRefreshDomainFilesListByDefault','true','general');
 
@@ -659,8 +680,10 @@ select fn_db_add_config_value('ForceRefreshDomainFilesListByDefault','true','gen
 select fn_db_add_config_value('HystrixMonitoringEnabled','false','general');
 
 select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'false', '4.0');
+select fn_db_add_config_value_for_versions_up_to('GetNamesOfVmsFromExternalProviderSupported', 'true', '4.2');
 
 -- engine-backup
+-- not in ConfigValues enum, used on python side, do not delete
 select fn_db_add_config_value('DbJustRestored','0','general');
 
 select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$', '4.0');
@@ -674,7 +697,69 @@ select fn_db_add_config_value('PredefinedVMProperties', 'sap_agent=^(true|false)
 select fn_db_add_config_value('UseHostNameIdentifier', 'false', 'general');
 
 
-
+select fn_db_add_config_value('AffinityRulesEnforcementManagerInitialDelay', '1', 'general');
+select fn_db_add_config_value('AttestationSecondStageSize', '20', 'general');
+select fn_db_add_config_value('BootstrapCacheRefreshInterval', '10000', 'general');
+select fn_db_add_config_value('BootstrapCommand',
+                              'umask 0077; MYTMP="$(TMPDIR="${OVIRT_TMPDIR}" mktemp -d -t ovirt-XXXXXXXXXX)"; trap "chmod -R u+rwX \"${MYTMP}\" > /dev/null 2>&1; rm -fr \"${MYTMP}\" > /dev/null 2>&1" 0; tar --warning=no-timestamp -C "${MYTMP}" -x && @ENVIRONMENT@ "${MYTMP}"/@ENTRY@ DIALOG/dialect=str:machine DIALOG/customization=bool:True',
+                              'general');
+select fn_db_add_config_value('BootstrapPackageDirectory', '/usr/share/ovirt-host-deploy/interface-3', 'general');
+select fn_db_add_config_value('BootstrapPackageName', 'ovirt-host-deploy.tar', 'general');
+select fn_db_add_config_value('CertExpirationAlertPeriodInDays', '7', 'general');
+select fn_db_add_config_value('CertExpirationWarnPeriodInDays', '30', 'general');
+select fn_db_add_config_value('ChangeNetworkUnderBridgeInUseSupported', 'true', 'general');
+select fn_db_add_config_value('DBI18NPrefix', '', 'general');
+select fn_db_add_config_value('DBLikeSyntax', 'ILIKE', 'general');
+select fn_db_add_config_value('DBPagingSyntax', ' WHERE RowNum BETWEEN %1$s AND %2$s', 'general');
+select fn_db_add_config_value('DBPagingType', 'Range', 'general');
+select fn_db_add_config_value('DBSearchTemplate',
+                              'SELECT * FROM (SELECT *, ROW_NUMBER() OVER(%1$s) as RowNum FROM (%2$s)) as T1 ) as T2 %3$s',
+                              'general');
+select fn_db_add_config_value('DnsResolverConfigurationSupported', 'true', 'general');
+select fn_db_add_config_value('EnableAutomaticHostPowerManagement', 'false', 'general');
+select fn_db_add_config_value('ExternalNetworkProviderConnectionTimeout', '20', 'general');
+select fn_db_add_config_value('ExternalNetworkProviderTimeout', '30', 'general');
+select fn_db_add_config_value('GetVdsmIdByVdsmToolCommand', '/usr/bin/vdsm-tool vdsm-id', 'general');
+select fn_db_add_config_value('GlusterPeerStatusCommand', 'gluster peer status --xml', 'general');
+select fn_db_add_config_value('GlusterServicesEnabled', 'false', 'general');
+select fn_db_add_config_value('GlusterTunedProfile', '', 'general');
+select fn_db_add_config_value('HighUtilizationForScheduling', '90', 'general');
+select fn_db_add_config_value('HighVmCountForEvenGuestDistribute', '10', 'general');
+select fn_db_add_config_value('HostsInReserve', '0', 'general');
+select fn_db_add_config_value('HotPlugMemoryBlockSizeMb', '256', 'general');
+select fn_db_add_config_value('MaxCpuLimitQosValue', '100', 'general');
+select fn_db_add_config_value('MaxIopsUpperBoundQosValue', '1000000', 'general');
+select fn_db_add_config_value('MaxReadIopsUpperBoundQosValue', '1000000', 'general');
+select fn_db_add_config_value('MaxReadThroughputUpperBoundQosValue', '1000000', 'general');
+select fn_db_add_config_value('MaxThroughputUpperBoundQosValue', '1000000', 'general');
+select fn_db_add_config_value('MaxVmNameLength', '64', 'general');
+select fn_db_add_config_value('MaxVmNameLengthSysprep', '15', 'general');
+select fn_db_add_config_value('MaxWriteIopsUpperBoundQosValue', '1000000', 'general');
+select fn_db_add_config_value('MaxWriteThroughputUpperBoundQosValue', '1000000', 'general');
+select fn_db_add_config_value('MigrationThresholdForEvenGuestDistribute', '5', 'general');
+select fn_db_add_config_value('MinimumPercentageToUpdateQuotaCache', '60', 'general');
+select fn_db_add_config_value('PgMajorRelease', '9', 'general');
+select fn_db_add_config_value('QuotaCacheIntervalInMinutes', '10', 'general');
+select fn_db_add_config_value('RepoDomainInvalidateCacheTimeInMinutes', '1', 'general');
+select fn_db_add_config_value('SSHDefaultKeyDigest', 'SHA-256', 'general');
+select fn_db_add_config_value('SSHKeyAlias', 'ovirt-engine', 'general');
+select fn_db_add_config_value('SpiceSecureChannels',
+                              'smain,sinputs,scursor,splayback,srecord,sdisplay,ssmartcard,susbredir',
+                              'general');
+select fn_db_add_config_value('SpmVmGraceForEvenGuestDistribute', '5', 'general');
+select fn_db_add_config_value('SshHostRebootCommand', 'systemctl reboot', 'general');
+select fn_db_add_config_value('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', 'general');
+select fn_db_add_config_value('SshVdsPowerdownCommand', '/sbin/poweroff', 'general');
+select fn_db_add_config_value('UnsupportedLocalesFilterOverrides', '', 'general');
+select fn_db_add_config_value('VMConsoleTicketTolerance', '10000', 'general');
+select fn_db_add_config_value('VMPpc64BitMaxMemorySizeInMB', '1048576', 'general');
+select fn_db_add_config_value('VdsFenceOptionMapping',
+                              'apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;ilo_ssh:port=port;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port',
+                              'general');
+select fn_db_add_config_value('VdsFenceType',
+                              'apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ilo_ssh,ipmilan,rsa,rsb,wti',
+                              'general');
+select fn_db_add_config_value('MultiFirewallSupportSince', '4.0', 'general');
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
