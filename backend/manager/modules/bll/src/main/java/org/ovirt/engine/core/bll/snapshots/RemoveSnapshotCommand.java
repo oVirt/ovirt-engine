@@ -546,7 +546,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     public CommandCallback getCallback() {
         VM vm = getVm();
         if (vm == null) {
-            // We are getting here probably due to a faile of merge process of a VM that already deleted.
+            // We are getting here probably due to a fail of merge process of a VM that already deleted.
             log.warn("The VM that was involved in the merge process doesn't exists anymore. Please cleanup the command_entities table in the database.");
             return null;
         }
