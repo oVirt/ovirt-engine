@@ -4,14 +4,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 
 @Singleton
 public class MacPoolFactory {
 
     @Inject
-    private MacPoolDao macPoolDao;
+    private MacsUsedAcrossWholeSystem macsUsedAcrossWholeSystem;
 
     @Inject
     private AuditLogDirector auditLogDirector;
@@ -22,7 +21,8 @@ public class MacPoolFactory {
                 macPool.isAllowDuplicateMacAddresses(),
                 auditLogDirector);
 
-        macPoolUsingRanges.initialize(engineStartup, macPoolDao.getAllMacsForMacPool(macPool.getId()));
+        macPoolUsingRanges.initialize(engineStartup, macsUsedAcrossWholeSystem.getMacsForMacPool(macPool.getId()));
+
         return macPoolUsingRanges;
     }
 }
