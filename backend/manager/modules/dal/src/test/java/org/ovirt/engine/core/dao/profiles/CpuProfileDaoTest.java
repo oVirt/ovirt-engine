@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao.profiles;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -11,45 +10,44 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.BaseGenericDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class CpuProfileDaoTest extends BaseDaoTestCase {
-
-    private CpuProfile cpuProfile;
-    private CpuProfileDao dao;
-
+public class CpuProfileDaoTest extends BaseGenericDaoTestCase<Guid, CpuProfile, CpuProfileDao> {
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getCpuProfileDao();
-        cpuProfile = new CpuProfile();
+    protected CpuProfile generateNewEntity() {
+        CpuProfile cpuProfile = new CpuProfile();
         cpuProfile.setId(Guid.newGuid());
         cpuProfile.setName("new_profile");
         cpuProfile.setClusterId(FixturesTool.CLUSTER_RHEL6_ISCSI);
         cpuProfile.setQosId(FixturesTool.QOS_ID_4);
+        return cpuProfile;
     }
 
-    /**
-     * Ensures null is returned.
-     */
-    @Test
-    public void testGetWithNonExistingId() {
-        CpuProfile result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setQosId(FixturesTool.QOS_ID_5);
+        existingEntity.setDescription("desc1");
     }
 
-    /**
-     * Ensures that the interface profile is returned.
-     */
-    @Test
-    public void testGet() {
-        CpuProfile result = dao.get(FixturesTool.CPU_PROFILE_2);
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.CPU_PROFILE_2;
+    }
 
-        assertNotNull(result);
-        assertEquals(FixturesTool.CPU_PROFILE_2, result.getId());
+    @Override
+    protected CpuProfileDao prepareDao() {
+        return dbFacade.getCpuProfileDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 6;
     }
 
     /**
@@ -77,53 +75,6 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
         for (CpuProfile cpuProfile : result) {
             assertEquals(FixturesTool.CLUSTER_RHEL6_ISCSI, cpuProfile.getClusterId());
         }
-    }
-
-    @Test
-    public void testGetAll() {
-        List<CpuProfile> result = dao.getAll();
-
-        assertNotNull(result);
-        assertEquals(6, result.size());
-    }
-
-    /**
-     * Ensures that the save is working correctly
-     */
-    @Test
-    public void testSave() {
-        assertNull(dao.get(cpuProfile.getId()));
-        dao.save(cpuProfile);
-        CpuProfile result = dao.get(cpuProfile.getId());
-        assertNotNull(result);
-        assertEquals(cpuProfile, result);
-    }
-
-    /**
-     * Ensures that the update is working correctly
-     */
-    @Test
-    public void testUpdate() {
-        CpuProfile profile = dao.get(FixturesTool.CPU_PROFILE_2);
-        assertNotNull(profile);
-        assertEquals(FixturesTool.QOS_ID_4, profile.getQosId());
-        profile.setQosId(FixturesTool.QOS_ID_5);
-        profile.setDescription("desc1");
-        dao.update(profile);
-        CpuProfile result = dao.get(profile.getId());
-        assertNotNull(result);
-        assertEquals(profile, result);
-    }
-
-    /**
-     * Ensures that the remove is working correctly
-     */
-    @Test
-    public void testRemove() {
-        CpuProfile result = dao.get(FixturesTool.CPU_PROFILE_2);
-        assertNotNull(result);
-        dao.remove(FixturesTool.CPU_PROFILE_2);
-        assertNull(dao.get(FixturesTool.CPU_PROFILE_2));
     }
 
     @Test
