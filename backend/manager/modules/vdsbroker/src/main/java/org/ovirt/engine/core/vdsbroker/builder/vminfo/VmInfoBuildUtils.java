@@ -249,21 +249,24 @@ public class VmInfoBuildUtils {
         VnicProfile vnicProfile = null;
         Network network = null;
         String networkName = "";
+        String vdsmName = "";
         List<VnicProfileProperties> unsupportedFeatures = new ArrayList<>();
         if (nic.getVnicProfileId() != null) {
             vnicProfile = vnicProfileDao.get(nic.getVnicProfileId());
             if (vnicProfile != null) {
                 network = networkDao.get(vnicProfile.getNetworkId());
                 networkName = network.getName();
-                log.debug("VNIC '{}' is using profile '{}' on network '{}'",
+                vdsmName = network.getVdsmName();
+                log.debug("VNIC '{}' is using profile '{}' on network '{}' with vdsmName '{}'",
                         nic.getName(),
                         vnicProfile,
-                        networkName);
+                        networkName,
+                        vdsmName);
                 addQosForDevice(struct, vnicProfile);
             }
         }
 
-        struct.put(VdsProperties.NETWORK, networkName);
+        struct.put(VdsProperties.NETWORK, vdsmName);
 
         addPortMirroringToVmInterface(struct, vnicProfile, network);
 
