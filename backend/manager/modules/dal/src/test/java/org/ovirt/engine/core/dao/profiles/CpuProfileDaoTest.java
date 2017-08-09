@@ -46,10 +46,10 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGet() {
-        CpuProfile result = dao.get(FixturesTool.CPU_PROFILE_1);
+        CpuProfile result = dao.get(FixturesTool.CPU_PROFILE_2);
 
         assertNotNull(result);
-        assertEquals(FixturesTool.CPU_PROFILE_1, result.getId());
+        assertEquals(FixturesTool.CPU_PROFILE_2, result.getId());
     }
 
     /**
@@ -104,7 +104,7 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdate() {
-        CpuProfile profile = dao.get(FixturesTool.CPU_PROFILE_1);
+        CpuProfile profile = dao.get(FixturesTool.CPU_PROFILE_2);
         assertNotNull(profile);
         assertEquals(FixturesTool.QOS_ID_4, profile.getQosId());
         profile.setQosId(FixturesTool.QOS_ID_5);
@@ -120,11 +120,10 @@ public class CpuProfileDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testRemove() {
-        dao.save(cpuProfile);
-        CpuProfile result = dao.get(cpuProfile.getId());
+        CpuProfile result = dao.get(FixturesTool.CPU_PROFILE_2);
         assertNotNull(result);
-        dao.remove(cpuProfile.getId());
-        assertNull(dao.get(cpuProfile.getId()));
+        dao.remove(FixturesTool.CPU_PROFILE_2);
+        assertNull(dao.get(FixturesTool.CPU_PROFILE_2));
     }
 
     @Test
