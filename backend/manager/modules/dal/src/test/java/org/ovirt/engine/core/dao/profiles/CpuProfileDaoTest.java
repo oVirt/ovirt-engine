@@ -54,7 +54,7 @@ public class CpuProfileDaoTest extends BaseGenericDaoTestCase<Guid, CpuProfile, 
      * Ensures that an empty collection is returned.
      */
     @Test
-    public void testGetAllForStorageEmpty() {
+    public void testGetAllForClusterEmpty() {
         List<CpuProfile> result = dao.getAllForCluster(Guid.newGuid());
 
         assertNotNull(result);
