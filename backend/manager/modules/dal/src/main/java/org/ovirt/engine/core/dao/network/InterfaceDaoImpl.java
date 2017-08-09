@@ -269,7 +269,8 @@ public class InterfaceDaoImpl extends BaseDao implements InterfaceDao {
                 .collect(Collectors.toList());
     }
 
-    private List<VdsNetworkInterface> getAllInterfacesByDataCenterId(Guid dataCenterId) {
+    @Override
+    public List<VdsNetworkInterface> getAllInterfacesByDataCenterId(Guid dataCenterId) {
         return getCallsHandler().executeReadList("GetInterfacesByDataCenterId",
                 vdsNetworkInterfaceRowMapper,
                 getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));

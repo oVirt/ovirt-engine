@@ -25,6 +25,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends NetworkCommon<T> {
 
     @Inject
+    private NetworkHelper networkHelper;
+    @Inject
     private NetworkClusterHelper networkClusterHelper;
 
     private Network network;
@@ -62,6 +64,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
         TransactionSupport.executeInNewTransaction(() -> {
             removeVnicProfiles();
             removeFromClusters();
+            networkHelper.setVdsmNamesInVdsInterfaces(getNetwork());
             getCompensationContext().snapshotEntity(getNetwork());
             networkDao.remove(getNetwork().getId());
             getCompensationContext().stateChanged();

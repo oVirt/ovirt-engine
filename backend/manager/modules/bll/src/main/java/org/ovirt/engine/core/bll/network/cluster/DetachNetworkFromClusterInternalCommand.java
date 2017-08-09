@@ -26,6 +26,8 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
 
     @Inject
     private NetworkClusterHelper networkClusterHelper;
+    @Inject
+    private NetworkHelper networkHelper;
 
     public DetachNetworkFromClusterInternalCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -34,6 +36,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
     @Override
     protected void executeCommand() {
         networkClusterHelper.removeNetworkAndReassignRoles(getParameters().getNetworkCluster());
+        networkHelper.setVdsmNamesInVdsInterfaces(getNetwork(), getClusterId());
 
         setSucceeded(true);
     }

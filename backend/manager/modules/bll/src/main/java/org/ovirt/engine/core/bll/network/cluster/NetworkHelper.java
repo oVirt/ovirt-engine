@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
@@ -139,5 +141,23 @@ public class NetworkHelper {
 
     public static boolean shouldRemoveNetworkFromHostUponNetworkRemoval(Network persistedNetwork) {
         return !persistedNetwork.isExternal() && NetworkUtils.isLabeled(persistedNetwork);
+    }
+
+    public void setVdsmNamesInVdsInterfaces(Network network, Guid clusterId) {
+        setVdsmNamesInVdsInterfaces(network, DbFacade.getInstance().getInterfaceDao().getAllInterfacesByClusterId(clusterId));
+    }
+
+    public void setVdsmNamesInVdsInterfaces(Network network) {
+        setVdsmNamesInVdsInterfaces(network, DbFacade.getInstance().getInterfaceDao().getAllInterfacesByDataCenterId(network.getDataCenterId()));
+    }
+
+    private void setVdsmNamesInVdsInterfaces(Network network, List<VdsNetworkInterface> interfaces) {
+        List<VdsNetworkInterface> interfacesToUpdate = new LinkedList<>();
+
+        interfaces.stream().filter(iface -> Objects.equals(iface.getNetworkName(), network.getName())).forEach(iface -> {
+            iface.setNetworkName(network.getVdsmName());
+            interfacesToUpdate.add(iface);
+        });
+        DbFacade.getInstance().getInterfaceDao().massUpdateInterfacesForVds(interfacesToUpdate);
     }
 }
