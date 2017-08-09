@@ -27,11 +27,6 @@ public abstract class Disk extends BaseDisk {
     private int numberOfVms;
     private ArrayList<String> vmNames;
     private List<String> templateVersionNames;
-
-    /**
-     * Plugged and readOnly are of type Boolean (as opposed to boolean) since they are optional.
-     * In case the disk is not in a vm context, null will ensure they are invisible.
-     */
     private boolean plugged;
     private String logicalName;
 
