@@ -64,10 +64,6 @@ public class PatternflyConstants {
     public static final String PF_TOOLBAR_FILTER = "toolbar-pf-filter"; // $NON-NLS-1$
     public static final String PF_TOOLBAR_RESULTS = "toolbar-pf-results"; // $NON-NLS-1$
 
-    // things in ovirt-patternfly-compat.css
-
-    public static final String TEMP_LINK_COLOR = "temp-link-color"; // $NON-NLS-1$
-
     public static final String PF_LIST_VIEW_MAIN_INFO = "list-view-pf-main-info"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_BODY = "list-view-pf-body"; // $NON-NLS-1$
     public static final String PF_LIST_VIEW_DESCRIPTION = "list-view-pf-description"; // $NON-NLS-1$

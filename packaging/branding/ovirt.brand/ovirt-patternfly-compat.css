@@ -24,10 +24,6 @@
     border-spacing: 10px;
     border-collapse: separate;
 }
-.ts15 {
-    border-spacing: 15px;
-    border-collapse: separate;
-}
 
 /* alternatives to padding="" */
 .tp3 {
@@ -48,43 +44,11 @@ label {
     top: 6px;
 }
 
-/* this is for links that arent picking up the correct light blue color.
-   remove temp-link-color from everywhere when we are switched over. */
-.temp-link-color a, .temp-link-color a:visited, .temp-link-color a:hover {
-    color: #0099d3;
-}
-.closeIconButton_fix {
-    margin-top: -4px !important;
-}
-.dialogTab_fix {
-    padding-top: 1px !important;
-    padding-bottom: 1px !important;
-}
-.buttonStyle_pfly_fix {
-    width: 18px !important;
-    height: 18px !important;
-}
-.buttonStyle_pfly_fix img {
-    position: relative !important;
-    top: -7px !important;
-}
 .avw_contentWidgetContainer_pfly_fix {
     /* used for other selectors */
 }
 .avw_wrapper_pfly_fix {
     /* used for other selectors */
-}
-.avw_label_pfly_fix {
-    /* used for other selectors */
-}
-.lmtalb_listbox_pfly_fix {
-    height: 19px !important;
-}
-.lmtalb_listbox_pfly_fix input {
-    height: 17px !important;
-}
-.lmtalb_suggestboxWrapper_pfly_fix {
-    height: 17px !important;
 }
 #VmPopupWidget_name, #PoolNewPopupWidget_name, #PoolNewPopupWidget_prestartedVms, #PoolNewPopupWidget_maxAssignedVmsPerUser,
     #PoolEditPopupWidget_name, #PoolEditPopupWidget_editPrestartedVms, #PoolEditPopupWidget_incraseNumOfVms,
@@ -111,23 +75,13 @@ label {
     position: relative !important;
     top: 6px !important;
 }
-.ape_expander_pfly_fix div span span:first-child {
-    top: 4px;
-    padding-right: 2px;
-}
 #InstanceTypesPopupWidget .avmpw_nameEditor_pfly_fix input {
     line-height: 16px !important;
-}
-.connect-automatically-checkbox_pfly_fix {
-    margin-left: 3px;
 }
 .avw_contentWidgetContainer_pfly_fix span.gwt-RadioButton label {
     padding-left: 5px !important;
     position: relative;
     top: -2px;
-}
-.avmpw_monitorsLabel_pfly_fix {
-    width: 320px !important;
 }
 #InstanceTypesPopupWidget .avmpw_smartcard_pfly_fix {
     position: relative;
@@ -137,29 +91,6 @@ div.avw_contentWidgetContainer_pfly_fix {
     position: relative;
     top: 6px;
 }
-.vmiw_networkAddButton_pfly_fix {
-    width: 18px !important;
-    height: 18px !important;
-    position: relative;
-    top: 3px;
-}
-.vmiw_networkAddButton_pfly_fix img {
-    position: relative;
-    top: -7px;
-}
-.vmiw_networkComboBox_pfly_fix {
-    padding-bottom: 10px;
-}
-.avmpw_specificHostLabel_pfly_fix {
-    padding-left: 5px !important;
-}
-.avmpw_migrationFieldsLabel_pfly_fix {
-    padding-left: 7px;
-}
-.avmpw_overrideMigrationFields_pfly_fix {
-    position: relative;
-    top: -3px;
-}
 .avmpw_cpuSahresValueTextBox_pfly_fix, .avmpw_cpuPinningTextBox_pfly_fix {
     line-height: 16px !important;
     padding-top: 5px !important;
@@ -167,30 +98,8 @@ div.avw_contentWidgetContainer_pfly_fix {
 .avmpw_cdImageEditor_pfly_fix .avw_contentWidgetContainer_pfly_fix {
     left: -6px;
 }
-.avmpw_refreshButton_pfly_fix {
-    position: relative;
-    top: -3px;
-    left: -8px;
-}
 .cvp_consoleContent_pfly_fix, .cvp_fencingPolicyContent_pfly_fix {
     padding-top: 5px;
-}
-.cpv_spiceProxyEnabledCheckbox_pfly_fix span.gwt-CheckBox {
-    position: relative;
-    top: -5px;
-}
-.hpv_pmVariantsEditor_pfly_fix {
-    padding-bottom: 10px;
-    padding-top: 5px;
-}
-.hpv_spmPanel_pfly_fix label {
-    padding-left: 5px;
-    position: relative;
-    top: -2px;
-}
-.hpv_consoleAddressHelpIcon_pfly_fix {
-    padding-top: 0 !important;
-    padding-left: 5px;
 }
 .atpv_tree_pfly_fix span:nth-child(1) { /* checkbox */
     position: relative;
@@ -200,73 +109,16 @@ div.avw_contentWidgetContainer_pfly_fix {
     padding-left: 5px;
 }
 
-.avmpw_infoIcon_pfly_fix {
-    padding-top: 0 !important;
-    padding-left: 5px !important;
-}
 
-.avmpw_poolEditVms_pfly_fix {
-    padding-bottom: 30px !important;
-}
-.table_contentWidget_pfly_fix .avw_contentWidgetContainer_pfly_fix {
-    top: 0 !important;
-}
-.rv_showLabel_pfly_fix {
-    padding-right: 7px;
-    position: relative;
-    top: -1px;
-}
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .rv_showLabel_pfly_fix {
         top: -2px;
     }
 }
 
-.rv_radio_pfly_fix label {
-    padding-left: 3px;
-    position: relative;
-    top: -2px;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-.footerButton_pfly_fix {
-    height: 22px;
-}
-.footerButton_pfly_fix div {
-    position: relative;
-    top: -2px;
-}
-.rpv_buttonPanel_pfly_fix button {
-    line-height: 12px;
-    margin-right: 5px;
-}
-.rpv_treePanel_pfly_fix img {
-    position: relative;
-    top: -4px;
-}
-.rpv_radioPanel_pfly_fix label {
-    padding-left: 3px !important;
-    padding-right: 10px !important;
-    position: relative !important;
-    top: 5px !important;
-}
-.rpv_titleLabel_pfly_fix {
-    padding-right: 5px;
-}
-.rpv_treePanel_pfly_fix input {
-    margin-right: 3px;
-}
-.mtev_buttonPanel_pfly_fix label {
-    padding-left: 3px !important;
-    position: relative;
-    top: -2px;
-}
 .db_text {
     position: relative !important;
     top: -1px;
-}
-.tslp_sliderButton_pfly_fix {
-    top: -3px !important;
 }
 .sap_refreshButton_pfly_fix {
     position: relative !important;
@@ -280,9 +132,6 @@ div.avw_contentWidgetContainer_pfly_fix {
 }
 input[readonly="readonly"], input[readonly=""] {
     background-color: #fff;
-}
-.formPanel_detailView {
-    line-height: 22px !important;
 }
 .dvrg_radioGroup_pfly_fix, .stnhv_radioGroup_pfly_fix, .stnvmv_radioGroup_pfly_fix, .mtdv_radioGroup_pfly_fix {
     clear: left;
@@ -301,11 +150,6 @@ a.dropdown-toggle {
     position: relative !important;
     top: 6px !important;
 }
-.hpv_radio_pfly_fix label {
-    padding-left: 3px !important;
-    position: relative;
-    top: -2px;
-}
 #PermissionsPopupView_specificUserOrGroupRadio input, #PermissionsPopupView_everyoneRadio input {
     margin-left: 3px !important;
     margin-right: 3px !important;
@@ -322,30 +166,10 @@ a.dropdown-toggle {
     border-width: 1px;
     width: 100%;
 }
-.generalTabTopDecorator_pfly_fix {
-    margin-top: 0 !important;
-    margin-right: 0 !important;
-}
-.vpv_transportType_pfly_fix td:nth-child(2) div {
-    position: relative;
-    left: 12px;
-}
-.vpv_bricks_pfly_fix > tbody > tr > td:nth-child(2) > table {
-    margin-left: 20px;
-}
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .vpv_bricks_pfly_fix > tbody > tr > td:nth-child(2) > table {
         margin-left: 15px;
     }
-}
-.prevPageButton_pfly_fix {
-    padding-right: 11px !important;
-}
-.nextPageButton_pfly_fix {
-   padding-right: 25px !important;
-}
-.epv_closeButton_pfly_fix {
-    line-height: 12px !important;
 }
 .gpv_flowPanel_pfly_fix {
     padding: 4px;
@@ -370,53 +194,16 @@ a.dropdown-toggle {
     position: relative !important;
     top: 2px !important;
 }
-.cpv_infoIcon_pfly_fix {
-    position: relative;
-    top: -3px;
-    left: 5px;
-}
 .cpv_fencingEnabledInfo_pfly_fix, .cpv_skipFencingIfSDActiveInfo_pfly_fix {
     position: relative;
     top: 5px;
     left: 5px;
-}
-.cpv_skipFencingIfSDActiveInfo_line_pfly_fix {
-    position: relative;
-    left: 20px;
-    top: 5px;
-}
-.cpv_hostsWithBrokenConnectivityThresholdEditor_line_pfly_fix {
-    position: relative;
-    left: 20px;
-    top: 8px;
-    line-height: 40px;
-}
-.cpv_skipFencingIfConnectivityBrokenInfo_pfly_fix {
-    position: relative;
-    top: 5px;
-    left: 5px;
-}
-.cpv_hostsWithBrokenConnectivityThresholdEditor_pfly_fix {
-    position: relative;
-    top: 5px;
-    left: 20px;
-}
-.appv_searchButton_pfly_fix {
-    position: relative !important;
-    top: 2px !important;
-}
-.spv_searchStringPrefixLabel_pfly_fix {
-    height: 26px;
-    line-height: 26px;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .spv_searchStringPrefixLabel_pfly_fix {
         height: 25px;
         line-height: 25px;
     }
-}
-.nlw_mainPanel_pfly_fix .avw_wrapper_pfly_fix {
-    line-height: 0 !important;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .nlw_mainPanel_pfly_fix .avw_wrapper_pfly_fix {
@@ -434,14 +221,6 @@ a.dropdown-toggle {
     left: 3px !important;
     top: -3px !important;
     cursor: pointer;
-}
-.cppv_labelStyle_pfly_fix {
-    position: relative !important;
-    top: 4px !important;
-}
-.cppv_infoIcon_pfly_fix {
-    position: relative !important;
-    top: 3px !important;
 }
 
 /*
