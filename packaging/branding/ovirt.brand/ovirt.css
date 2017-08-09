@@ -1356,5 +1356,11 @@ td.datePickerYear {
 
 .detailMainActionPanelContainer .toolbar-pf {
   margin-top: 10px;
-  height: 73px;
+  height: 57px;
+}
+
+.breadcrumb {
+  margin-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 0;
 }
