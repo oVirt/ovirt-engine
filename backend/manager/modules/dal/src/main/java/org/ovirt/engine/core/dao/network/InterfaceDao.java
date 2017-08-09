@@ -169,6 +169,13 @@ public interface InterfaceDao extends Dao {
      */
     List<VdsNetworkInterface> getAllInterfacesByClusterId(Guid clusterId);
 
+    /**
+     * Retrieves all interfaces within a specific data center
+     *
+     * @param dataCenterId
+     *            the data center where the hosts reside in
+     */
+    List<VdsNetworkInterface> getAllInterfacesByDataCenterId(Guid dataCenterId);
 
     /**
      * @param dataCenterId the date center where the hosts reside in

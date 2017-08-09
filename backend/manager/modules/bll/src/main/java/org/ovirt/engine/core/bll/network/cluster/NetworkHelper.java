@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -164,5 +166,23 @@ public class NetworkHelper {
 
     public static boolean shouldRemoveNetworkFromHostUponNetworkRemoval(Network persistedNetwork) {
         return !persistedNetwork.isExternal() && NetworkUtils.isLabeled(persistedNetwork);
+    }
+
+    public void setVdsmNamesInVdsInterfaces(Network network, Guid clusterId) {
+        setVdsmNamesInVdsInterfaces(network, interfaceDao.getAllInterfacesByClusterId(clusterId));
+    }
+
+    public void setVdsmNamesInVdsInterfaces(Network network) {
+        setVdsmNamesInVdsInterfaces(network, interfaceDao.getAllInterfacesByDataCenterId(network.getDataCenterId()));
+    }
+
+    private void setVdsmNamesInVdsInterfaces(Network network, List<VdsNetworkInterface> interfaces) {
+        List<VdsNetworkInterface> interfacesToUpdate = new LinkedList<>();
+
+        interfaces.stream().filter(iface -> Objects.equals(iface.getNetworkName(), network.getName())).forEach(iface -> {
+            iface.setNetworkName(network.getVdsmName());
+            interfacesToUpdate.add(iface);
+        });
+        interfaceDao.massUpdateInterfacesForVds(interfacesToUpdate);
     }
 }

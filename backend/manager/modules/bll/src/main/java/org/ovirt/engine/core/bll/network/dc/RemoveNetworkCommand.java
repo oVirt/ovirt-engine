@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -28,6 +29,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends NetworkCommon<T> {
 
+    @Inject
+    private InterfaceDao interfaceDao;
     @Inject
     private NetworkClusterHelper networkClusterHelper;
     @Inject
@@ -76,6 +79,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
         TransactionSupport.executeInNewTransaction(() -> {
             removeVnicProfiles();
             removeFromClusters();
+            networkHelper.setVdsmNamesInVdsInterfaces(getNetwork());
             getCompensationContext().snapshotEntity(getNetwork());
             networkDao.remove(getNetwork().getId());
             getCompensationContext().stateChanged();

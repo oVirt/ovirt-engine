@@ -31,6 +31,8 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
     @Inject
     private NetworkClusterHelper networkClusterHelper;
     @Inject
+    private NetworkHelper networkHelper;
+    @Inject
     private VmStaticDao vmStaticDao;
     @Inject
     private VmTemplateDao vmTemplateDao;
@@ -48,6 +50,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToCl
     @Override
     protected void executeCommand() {
         networkClusterHelper.removeNetworkAndReassignRoles(getParameters().getNetworkCluster());
+        networkHelper.setVdsmNamesInVdsInterfaces(getNetwork(), getClusterId());
 
         setSucceeded(true);
     }
