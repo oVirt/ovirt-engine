@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao.profiles;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -11,45 +10,46 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.BaseGenericDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class DiskProfileDaoTest extends BaseDaoTestCase {
-
-    private DiskProfile diskProfile;
-    private DiskProfileDao dao;
-
+public class DiskProfileDaoTest extends BaseGenericDaoTestCase<Guid, DiskProfile, DiskProfileDao> {
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getDiskProfileDao();
-        diskProfile = new DiskProfile();
+    protected DiskProfile generateNewEntity() {
+        DiskProfile diskProfile = new DiskProfile();
         diskProfile.setId(Guid.newGuid());
         diskProfile.setName("new_profile");
         diskProfile.setStorageDomainId(FixturesTool.STORAGE_DOMAIN_SCALE_SD5);
         diskProfile.setQosId(FixturesTool.QOS_ID_1);
+        return diskProfile;
     }
 
-    /**
-     * Ensures null is returned.
-     */
-    @Test
-    public void testGetWithNonExistingId() {
-        DiskProfile result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setQosId(FixturesTool.QOS_ID_2);
+        existingEntity.setDescription("Kramer goes to a fantasy camp? His whole life is a fantasy camp. "
+                + "People should plunk down $2000 to live like him for a week. Sleep, do nothing, "
+                + "fall ass-backwards into money, mooch food off your neighbors and have sex without dating... THAT'S a fantasy camp.");
     }
 
-    /**
-     * Ensures that the interface profile is returned.
-     */
-    @Test
-    public void testGet() {
-        DiskProfile result = dao.get(FixturesTool.DISK_PROFILE_1);
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.DISK_PROFILE_1;
+    }
 
-        assertNotNull(result);
-        assertEquals(FixturesTool.DISK_PROFILE_1, result.getId());
+    @Override
+    protected DiskProfileDao prepareDao() {
+        return dbFacade.getDiskProfileDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 5;
     }
 
     /**
@@ -85,48 +85,6 @@ public class DiskProfileDaoTest extends BaseDaoTestCase {
 
         assertNotNull(result);
         assertEquals(5, result.size());
-    }
-
-    /**
-     * Ensures that the save is working correctly
-     */
-    @Test
-    public void testSave() {
-        assertNull(dao.get(diskProfile.getId()));
-        dao.save(diskProfile);
-        DiskProfile result = dao.get(diskProfile.getId());
-        assertNotNull(result);
-        assertEquals(diskProfile, result);
-    }
-
-    /**
-     * Ensures that the update is working correctly
-     */
-    @Test
-    public void testUpdate() {
-        DiskProfile profile = dao.get(FixturesTool.DISK_PROFILE_1);
-        assertNotNull(profile);
-        assertFalse(FixturesTool.QOS_ID_2.equals(profile.getQosId()));
-        profile.setQosId(FixturesTool.QOS_ID_2);
-        profile.setDescription("Kramer goes to a fantasy camp? His whole life is a fantasy camp. "
-                + "People should plunk down $2000 to live like him for a week. Sleep, do nothing, "
-                + "fall ass-backwards into money, mooch food off your neighbors and have sex without dating... THAT'S a fantasy camp.");
-        dao.update(profile);
-        DiskProfile result = dao.get(profile.getId());
-        assertNotNull(result);
-        assertEquals(profile, result);
-    }
-
-    /**
-     * Ensures that the remove is working correctly
-     */
-    @Test
-    public void testRemove() {
-        dao.save(diskProfile);
-        DiskProfile result = dao.get(diskProfile.getId());
-        assertNotNull(result);
-        dao.remove(diskProfile.getId());
-        assertNull(dao.get(diskProfile.getId()));
     }
 
     @Test
