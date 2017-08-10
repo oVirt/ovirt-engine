@@ -17,10 +17,13 @@ import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.MemoizingSupplier;
 import org.ovirt.engine.core.utils.ovf.xml.XmlAttribute;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
@@ -38,6 +41,8 @@ public class VmDevicesConverter {
     private HostDeviceDao hostDeviceDao;
     @Inject
     private VmNetworkInterfaceDao vmNetworkInterfaceDao;
+    @Inject
+    private DiskLunMapDao diskLunMapDao;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -290,6 +295,10 @@ public class VmDevicesConverter {
 
     private List<Map<String, Object>> parseDisks(XmlDocument document, List<VmDevice> devices) {
         List<VmDevice> dbDevices = filterDevices(devices, VmDeviceGeneralType.DISK);
+        MemoizingSupplier<Map<Guid, String>> diskToLunSupplier = new MemoizingSupplier<>(
+                () -> diskLunMapDao.getAll().stream().collect(Collectors.toMap(
+                        DiskLunMap::getDiskId,
+                        DiskLunMap::getLunId)));
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (XmlNode node : selectNodes(document, VmDeviceGeneralType.DISK)) {
@@ -302,16 +311,20 @@ public class VmDevicesConverter {
 
             String path = parseDiskPath(node);
             VmDevice dbDev = dbDevices.stream()
-                    .filter(d -> d.getDevice().equals(diskType))
                     .filter(d -> {
                         switch(diskType) {
                         case "cdrom":
+                            if (!diskType.equals(d.getDevice())) {
+                                return false;
+                            }
                             String devicePath = (String) d.getSpecParams().get("path");
                             return devicePath == null || path.contains(devicePath);
                         case "floppy":
-                            return true;
+                            return diskType.equals(d.getDevice());
                         default:
-                            return path.contains(d.getId().getDeviceId().toString());
+                            Guid diskId = d.getId().getDeviceId();
+                            return path.contains(diskId.toString()) ||
+                                    isPathContainsLunIdOfDisk(path, diskId, diskToLunSupplier);
                         }
                     })
                     .findFirst()
@@ -329,6 +342,12 @@ public class VmDevicesConverter {
             result.add(dev);
         }
         return result;
+    }
+
+    private boolean isPathContainsLunIdOfDisk(String path, Guid diskId,
+            MemoizingSupplier<Map<Guid, String>> diskToLunSupplier) {
+        String lunId = diskToLunSupplier.get().get(diskId);
+        return lunId != null && path.contains(lunId);
     }
 
     private List<Map<String, Object>> parseInterfaces(XmlDocument document, List<VmDevice> devices, Guid vmId) {
