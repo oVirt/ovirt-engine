@@ -15,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetworkStatistics> {
-    private static final Guid INTERFACE_ID = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
     private static final Guid NEW_INTERFACE_ID = new Guid("14550e82-1e1f-47b5-ae41-b009348dabfa");
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_57;
 
@@ -59,10 +58,10 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
      */
     @Test
     public void testGet() {
-        VmNetworkStatistics result = dao.get(INTERFACE_ID);
+        VmNetworkStatistics result = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
 
         assertNotNull(result);
-        assertEquals(INTERFACE_ID, result.getId());
+        assertEquals(FixturesTool.VM_NETWORK_INTERFACE, result.getId());
     }
 
     /**
@@ -103,11 +102,11 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
      */
     @Test
     public void testRemove() {
-        assertNotNull(dao.get(INTERFACE_ID));
+        assertNotNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
 
-        dao.remove(INTERFACE_ID);
+        dao.remove(FixturesTool.VM_NETWORK_INTERFACE);
 
-        assertNull(dao.get(INTERFACE_ID));
+        assertNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -117,7 +116,7 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
 
     @Test
     public void testUpdateAll() throws Exception {
-        VmNetworkStatistics existingStats = dao.get(INTERFACE_ID);
+        VmNetworkStatistics existingStats = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
         VmNetworkStatistics existingStats2 = dao.get(new Guid("e2817b12-f873-4046-b0da-0098293c0000"));
         existingStats.setReceiveDropRate(10.0);
         existingStats2.setStatus(InterfaceStatus.DOWN);
