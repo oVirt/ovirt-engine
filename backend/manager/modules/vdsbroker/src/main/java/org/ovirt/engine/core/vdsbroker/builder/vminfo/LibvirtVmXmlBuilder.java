@@ -165,6 +165,7 @@ public class LibvirtVmXmlBuilder {
         writePowerEvents();
         writeFeatures();
         writeCpu();
+        writeCpuTune();
         writeNumaTune();
         writeDevices();
         // note that this must be called after writeDevices to get the serial console, if exists
@@ -266,20 +267,6 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
         }
 
-        if (StringUtils.isNotEmpty(vm.getCpuPinning())) {
-            writer.writeStartElement("cputune");
-            for (String pin : vm.getCpuPinning().split("_")) {
-                writer.writeStartElement("vcpupin");
-                final String[] split = pin.split("#");
-                writer.writeAttributeString("vcpu", split[0]);
-                writer.writeAttributeString("cpuset", split[1]);
-                writer.writeEndElement();
-            }
-            writer.writeEndElement();
-        } else {
-            // TODO Map<String, Object> cpuPinDict = NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
-        }
-
         if (createInfo.containsKey(VdsProperties.VM_NUMA_NODES)) {
             writer.writeStartElement("numa");
             @SuppressWarnings("unchecked")
@@ -294,6 +281,22 @@ public class LibvirtVmXmlBuilder {
         }
 
         writer.writeEndElement();
+    }
+
+    private void writeCpuTune() {
+        if (StringUtils.isNotEmpty(vm.getCpuPinning())) {
+            writer.writeStartElement("cputune");
+            for (String pin : vm.getCpuPinning().split("_")) {
+                writer.writeStartElement("vcpupin");
+                final String[] split = pin.split("#");
+                writer.writeAttributeString("vcpu", split[0]);
+                writer.writeAttributeString("cpuset", split[1]);
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+        } else {
+            // TODO Map<String, Object> cpuPinDict = NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
+        }
     }
 
     private void writeSystemInfo() {
