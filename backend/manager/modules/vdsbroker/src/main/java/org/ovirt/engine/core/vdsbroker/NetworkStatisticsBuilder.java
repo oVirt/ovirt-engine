@@ -97,7 +97,7 @@ public class NetworkStatisticsBuilder {
             return null;
         }
 
-        long megabitDiff = BITS_IN_BYTE * byteDiff / BITS_IN_MEGABIT;
+        double megabitDiff = BITS_IN_BYTE * (double)byteDiff / BITS_IN_MEGABIT;
         double timeDiffInSeconds = currentTime - previousTime;
         double rateInMbps = megabitDiff / timeDiffInSeconds;
         return truncatePercentage(100 * rateInMbps / speed);
