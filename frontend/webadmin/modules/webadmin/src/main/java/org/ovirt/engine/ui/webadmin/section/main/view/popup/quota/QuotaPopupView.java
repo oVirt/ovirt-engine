@@ -27,9 +27,6 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -39,11 +36,9 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaUtilizationStatusCo
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 
@@ -65,9 +60,6 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             new DiskSizeRenderer<>(SizeConverter.SizeUnit.GiB);
 
     @UiField
-    WidgetStyle style;
-
-    @UiField
     @Path(value = "name.entity")
     @WithElementId
     StringEntityModelTextBoxEditor nameEditor;
@@ -87,27 +79,11 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     @WithElementId("copyPermissions")
     EntityModelCheckBoxEditor copyPermissionsEditor;
 
-    @UiField
-    @Ignore
-    Label memAndCpuLabel;
-
-    @UiField
-    @Ignore
-    Label storageLabel;
-
     @UiField(provided = true)
     Slider clusterGraceSlider;
 
     @UiField(provided = true)
     Slider clusterThresholdSlider;
-
-    @UiField
-    @Ignore
-    Label clusterThresholdLabel;
-
-    @UiField
-    @Ignore
-    Label clusterGraceLabel;
 
     @UiField(provided = true)
     Slider storageGraceSlider;
@@ -116,29 +92,21 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     Slider storageThresholdSlider;
 
     @UiField
-    @Ignore
-    Label storageThresholdLabel;
-
-    @UiField
-    @Ignore
-    Label storageGraceLabel;
-
-    @UiField(provided = true)
     @Path(value = "globalClusterQuota.entity")
     @WithElementId
     EntityModelRadioButtonEditor globalClusterQuotaRadioButtonEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Path(value = "specificClusterQuota.entity")
     @WithElementId
     EntityModelRadioButtonEditor specificClusterQuotaRadioButtonEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Path(value = "globalStorageQuota.entity")
     @WithElementId
     EntityModelRadioButtonEditor globalStorageQuotaRadioButtonEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Path(value = "specificStorageQuota.entity")
     @WithElementId
     EntityModelRadioButtonEditor specificStorageQuotaRadioButtonEditor;
@@ -148,10 +116,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     ScrollPanel clusterQuotaTableContainer;
 
     @Ignore
-    ListModelObjectCellTable<QuotaCluster, ListModel> quotaClusterTable;
+    ListModelObjectCellTable<QuotaCluster, ListModel<QuotaCluster>> quotaClusterTable;
 
     @Ignore
-    ListModelObjectCellTable<QuotaStorage, ListModel> quotaStorageTable;
+    ListModelObjectCellTable<QuotaStorage, ListModel<QuotaStorage>> quotaStorageTable;
 
     @UiField
     @Ignore
@@ -187,23 +155,17 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     public QuotaPopupView(EventBus eventBus) {
         super(eventBus);
         initListBoxEditors();
-        initRadioButtonEditors();
         initCheckBoxes();
         initSliders();
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize();
-        addStyles();
         driver.initialize(this);
         initTables();
     }
 
     private void initCheckBoxes() {
         copyPermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-    }
-
-    private void addStyles() {
-      copyPermissionsEditor.addContentWidgetContainerStyleName(style.textBoxWidth());
     }
 
     private void initSliders() {
@@ -227,8 +189,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         quotaStorageTable = new ListModelObjectCellTable<>();
         storageQuotaTableContainer.add(quotaStorageTable);
 
-        isStorageInQuotaColumn = new Column<QuotaStorage, Boolean>(
-                new CheckboxCell(true, true)) {
+        isStorageInQuotaColumn = new Column<QuotaStorage, Boolean>(new CheckboxCell(true, true)) {
             @Override
             public Boolean getValue(QuotaStorage object) {
                 if (selectedStorageGuid.contains(object.getStorageId()) || object.getStorageSizeGB() != null) {
@@ -260,7 +221,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaStorage object) {
                 if (object.getStorageName() == null || object.getStorageName().length() == 0) {
-                    return constants.utlQuotaAllStoragesQuotaPopup(); //$NON-NLS-1$
+                    return constants.utlQuotaAllStoragesQuotaPopup();
                 }
                 return object.getStorageName();
             }
@@ -286,8 +247,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             }
         }, constants.quota());
 
-        NullableButtonCell editCellButton = new NullableButtonCell();
-        Column<QuotaStorage, String> editColumn = new Column<QuotaStorage, String>(editCellButton) {
+        Column<QuotaStorage, String> editColumn = new Column<QuotaStorage, String>(new NullableButtonCell()) {
             @Override
             public String getValue(QuotaStorage object) {
                 if (model.getGlobalStorageQuota().getEntity()
@@ -297,9 +257,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 return null;
             }
         };
+        editColumn.setFieldUpdater((index, object, value) -> model.editQuotaStorage(object));
 
         quotaStorageTable.addColumn(editColumn, constants.empty(), "50px"); //$NON-NLS-1$
-        editColumn.setFieldUpdater((index, object, value) -> model.editQuotaStorage(object));
     }
 
     private void initQuotaClusterTable() {
@@ -342,7 +302,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             @Override
             public String getValue(QuotaCluster object) {
                 if (object.getClusterName() == null || object.getClusterName().length() == 0) {
-                    return constants.ultQuotaForAllClustersQuotaPopup(); //$NON-NLS-1$
+                    return constants.ultQuotaForAllClustersQuotaPopup();
                 }
                 return object.getClusterName();
             }
@@ -392,32 +352,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         editColumn.setFieldUpdater((index, object, value) -> model.editQuotaCluster(object));
     }
 
-    private void initRadioButtonEditors() {
-        globalClusterQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
-        specificClusterQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
-        globalStorageQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
-        specificStorageQuotaRadioButtonEditor = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
-    }
-
     private void initListBoxEditors() {
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
-    }
-
-    void localize() {
-        nameEditor.setLabel(constants.nameQuotaPopup());
-        descriptionEditor.setLabel(constants.descriptionQuotaPopup());
-        dataCenterEditor.setLabel(constants.dataCenterQuotaPopup());
-        copyPermissionsEditor.setLabel(constants.copyQuotaPermissionsQuotaPopup());
-        memAndCpuLabel.setText(constants.memAndCpuQuotaPopup());
-        storageLabel.setText(constants.storageQuotaPopup());
-        globalClusterQuotaRadioButtonEditor.setLabel(constants.ultQuotaForAllClustersQuotaPopup());
-        specificClusterQuotaRadioButtonEditor.setLabel(constants.useQuotaSpecificClusterQuotaPopup());
-        globalStorageQuotaRadioButtonEditor.setLabel(constants.utlQuotaAllStoragesQuotaPopup());
-        specificStorageQuotaRadioButtonEditor.setLabel(constants.usedQuotaSpecStoragesQuotaPopup());
-        clusterGraceLabel.setText(constants.quotaClusterGrace());
-        clusterThresholdLabel.setText(constants.quotaClusterThreshold());
-        storageGraceLabel.setText(constants.quotaStorageGrace());
-        storageThresholdLabel.setText(constants.quotaStorageThreshold());
     }
 
     @Override
@@ -451,15 +387,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             }
         });
 
-        model.getSpecificClusterQuota().getEntityChangedEvent().addListener(clusterListener);
-
-        model.getSpecificStorageQuota().getEntityChangedEvent().addListener(storageListener);
-    }
-
-    final IEventListener<EventArgs> clusterListener = new IEventListener<EventArgs>() {
-
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        model.getSpecificClusterQuota().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (model.getSpecificClusterQuota().getEntity()) {
                 quotaClusterTable.insertColumn(0, isClusterInQuotaColumn);
                 quotaClusterTable.setColumnWidth(isClusterInQuotaColumn, "30px"); //$NON-NLS-1$
@@ -468,13 +396,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 quotaClusterTable.removeColumn(isClusterInQuotaColumn);
                 quotaClusterTable.asEditor().edit(model.getQuotaClusters());
             }
-        }
-    };
+        });
 
-    final IEventListener<EventArgs> storageListener = new IEventListener<EventArgs>() {
-
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+        model.getSpecificStorageQuota().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (model.getSpecificStorageQuota().getEntity()) {
                 quotaStorageTable.insertColumn(0, isStorageInQuotaColumn);
                 quotaStorageTable.setColumnWidth(isStorageInQuotaColumn, "30px"); //$NON-NLS-1$
@@ -483,8 +407,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 quotaStorageTable.removeColumn(isStorageInQuotaColumn);
                 quotaStorageTable.asEditor().edit(model.getQuotaStorages());
             }
-        }
-    };
+        });
+    }
 
     @Override
     public QuotaModel flush() {
@@ -496,10 +420,6 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     @Override
     public void cleanup() {
         driver.cleanup();
-    }
-
-    interface WidgetStyle extends CssResource {
-        String textBoxWidth();
     }
 
     private void updateSliders() {

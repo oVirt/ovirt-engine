@@ -16,6 +16,7 @@ import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.IsEditor;
+import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.RadioButton;
 
 /**
@@ -28,6 +29,7 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
 
     private final boolean useRadioButtonWidgetLabel;
 
+    @UiConstructor
     public EntityModelRadioButtonEditor(String group) {
         this(group, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
