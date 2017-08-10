@@ -36,7 +36,7 @@
     <div class="landing-bg-top-right"></div>
 
     <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoImageLink">
-         <span class="obrand_loginPageLogoImage"></span>
+        <span class="obrand_loginPageLogoImage"></span>
     </a>
     <div class="ovirt-container">
         <div class="container">

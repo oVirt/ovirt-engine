@@ -18,7 +18,7 @@
     <div class="landing-bg-top-right"></div>
 
     <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
-         <span class="obrand_loginPageLogoImage"></span>
+        <span class="obrand_loginPageLogoImage"></span>
     </a>
 
     <div class="ovirt-container">
