@@ -284,19 +284,21 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeCpuTune() {
-        if (StringUtils.isNotEmpty(vm.getCpuPinning())) {
-            writer.writeStartElement("cputune");
-            for (String pin : vm.getCpuPinning().split("_")) {
-                writer.writeStartElement("vcpupin");
-                final String[] split = pin.split("#");
-                writer.writeAttributeString("vcpu", split[0]);
-                writer.writeAttributeString("cpuset", split[1]);
-                writer.writeEndElement();
-            }
-            writer.writeEndElement();
-        } else {
-            // TODO Map<String, Object> cpuPinDict = NumaSettingFactory.buildCpuPinningWithNumaSetting(vmNumaNodes, totalVdsNumaNodes);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> cpuPinning = (Map<String, Object>) createInfo.get(VdsProperties.cpuPinning);
+
+        if (cpuPinning == null) {
+            return;
         }
+
+        writer.writeStartElement("cputune");
+        cpuPinning.forEach((vcpu, cpuset) -> {
+            writer.writeStartElement("vcpupin");
+            writer.writeAttributeString("vcpu", vcpu);
+            writer.writeAttributeString("cpuset", (String) cpuset);
+            writer.writeEndElement();
+        });
+        writer.writeEndElement();
     }
 
     private void writeSystemInfo() {
