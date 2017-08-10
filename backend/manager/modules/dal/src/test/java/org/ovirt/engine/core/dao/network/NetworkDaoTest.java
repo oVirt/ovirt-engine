@@ -23,8 +23,6 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     private static final Guid MANAGEMENT_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-1234567890ab");
 
     private NetworkDao dao;
-    private Guid cluster;
-    private Guid datacenter;
     private Network new_net;
     private static final String EXISTING_NETWORK_NAME1 = "engine";
     private static final String EXISTING_NETWORK_NAME2 = "engine3";
@@ -38,14 +36,11 @@ public class NetworkDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getNetworkDao();
 
-        cluster = FixturesTool.CLUSTER;
-        datacenter = FixturesTool.DATA_CENTER;
-
         new_net = new Network();
         new_net.setName("newnet1");
         new_net.setVdsmName("newnet1");
         new_net.setDescription("New network");
-        new_net.setDataCenterId(datacenter);
+        new_net.setDataCenterId(FixturesTool.DATA_CENTER);
     }
 
     /**
@@ -74,7 +69,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByNameAndDataCenter() {
-        Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME1, datacenter);
+        Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME1, FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
         assertEquals(EXISTING_NETWORK_NAME1, result.getName());
@@ -85,7 +80,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByNameAndCluster() {
-        Network result = dao.getByNameAndCluster(EXISTING_NETWORK_NAME1, cluster);
+        Network result = dao.getByNameAndCluster(EXISTING_NETWORK_NAME1, FixturesTool.CLUSTER);
 
         assertNotNull(result);
         assertEquals(EXISTING_NETWORK_NAME1, result.getName());
@@ -96,7 +91,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetManagementNetworkByCluster() {
-        Network result = dao.getManagementNetwork(cluster);
+        Network result = dao.getManagementNetwork(FixturesTool.CLUSTER);
 
         assertNotNull(result);
         assertEquals(MANAGEMENT_NETWORK_ID, result.getId());
@@ -107,7 +102,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetManagementNetworks() {
-        List<Network> result = dao.getManagementNetworks(datacenter);
+        List<Network> result = dao.getManagementNetworks(FixturesTool.DATA_CENTER);
 
         assertEquals(NUM_OF_MANAGEMENT_NETWORKS, result.size());
     }
@@ -171,7 +166,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForCluster() {
-        List<Network> result = dao.getAllForCluster(cluster);
+        List<Network> result = dao.getAllForCluster(FixturesTool.CLUSTER);
 
         assertGetAllForClusterResult(result);
     }
@@ -183,7 +178,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllForClusterFilteredWithPermissions() {
         // A use with permissions
-        List<Network> result = dao.getAllForCluster(cluster, PRIVILEGED_USER_ID, true);
+        List<Network> result = dao.getAllForCluster(FixturesTool.CLUSTER, PRIVILEGED_USER_ID, true);
 
         assertGetAllForClusterResult(result);
     }
@@ -195,7 +190,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllForClusterFilteredWithPermissionsNoPermissions() {
         // A use with permissions
-        List<Network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, true);
+        List<Network> result = dao.getAllForCluster(FixturesTool.CLUSTER, UNPRIVILEGED_USER_ID, true);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -208,7 +203,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     @Test
     public void testGetAllForClusterFilteredWithPermissionsNoPermissionsAndNoFilter() {
         // A use with permissions
-        List<Network> result = dao.getAllForCluster(cluster, UNPRIVILEGED_USER_ID, false);
+        List<Network> result = dao.getAllForCluster(FixturesTool.CLUSTER, UNPRIVILEGED_USER_ID, false);
 
         assertGetAllForClusterResult(result);
     }
@@ -250,7 +245,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllForDataCenter() {
-        List<Network> result = dao.getAllForDataCenter(datacenter);
+        List<Network> result = dao.getAllForDataCenter(FixturesTool.DATA_CENTER);
         verifyDataCenterNetworks(result);
     }
 
@@ -260,7 +255,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testFilteredGetAllForDataCenter() {
-        List<Network> result = dao.getAllForDataCenter(datacenter, PRIVILEGED_USER_ID, true);
+        List<Network> result = dao.getAllForDataCenter(FixturesTool.DATA_CENTER, PRIVILEGED_USER_ID, true);
         verifyDataCenterNetworks(result);
     }
 
@@ -270,7 +265,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testFilteredGetAllForDataCenterWithNoPermissions() {
-        List<Network> result = dao.getAllForDataCenter(datacenter, UNPRIVILEGED_USER_ID, true);
+        List<Network> result = dao.getAllForDataCenter(FixturesTool.DATA_CENTER, UNPRIVILEGED_USER_ID, true);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -280,7 +275,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUnFilteredGetAllForDataCenterWithNoPermissions() {
-        List<Network> result = dao.getAllForDataCenter(datacenter, PRIVILEGED_USER_ID, false);
+        List<Network> result = dao.getAllForDataCenter(FixturesTool.DATA_CENTER, PRIVILEGED_USER_ID, false);
         verifyDataCenterNetworks(result);
     }
 
@@ -288,7 +283,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Network net : result) {
-            assertEquals(datacenter, net.getDataCenterId());
+            assertEquals(FixturesTool.DATA_CENTER, net.getDataCenterId());
         }
     }
 
@@ -332,7 +327,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetAllNetworkLabelsForDataCenter() {
-        Set<String> result = dao.getAllNetworkLabelsForDataCenter(datacenter);
+        Set<String> result = dao.getAllNetworkLabelsForDataCenter(FixturesTool.DATA_CENTER);
         assertNotNull(result);
         assertFalse(result.isEmpty());
     }
@@ -342,7 +337,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void getAllByLabelForCluster() {
-        List<Network> result = dao.getAllByLabelForCluster(NETWORK_LABEL, cluster);
+        List<Network> result = dao.getAllByLabelForCluster(NETWORK_LABEL, FixturesTool.CLUSTER);
         assertNotNull(result);
         assertFalse(result.isEmpty());
 
@@ -356,7 +351,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testSave() {
-        List<NetworkCluster> clustersFromDB = dbFacade.getNetworkClusterDao().getAllForCluster(cluster);
+        List<NetworkCluster> clustersFromDB = dbFacade.getNetworkClusterDao().getAllForCluster(FixturesTool.CLUSTER);
         DnsResolverConfiguration dnsResolverConfiguration =
                 dbFacade.getDnsResolverConfigurationDao().get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION);
 
