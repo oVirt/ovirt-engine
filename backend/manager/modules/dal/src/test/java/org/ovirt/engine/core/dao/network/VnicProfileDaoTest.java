@@ -3,29 +3,22 @@ package org.ovirt.engine.core.dao.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.BaseGenericDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 
-public class VnicProfileDaoTest extends BaseDaoTestCase {
-
-    private VnicProfile vnicProfile;
-    private VnicProfileDao dao;
-
+public class VnicProfileDaoTest extends BaseGenericDaoTestCase<Guid, VnicProfile, VnicProfileDao> {
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        dao = dbFacade.getVnicProfileDao();
-        vnicProfile = new VnicProfile();
+    protected VnicProfile generateNewEntity() {
+        VnicProfile vnicProfile = new VnicProfile();
         vnicProfile.setId(Guid.newGuid());
         vnicProfile.setName("new_profile");
         vnicProfile.setNetworkId(FixturesTool.NETWORK_ENGINE);
@@ -34,30 +27,35 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         vnicProfile.setPassthrough(false);
         vnicProfile.setNetworkFilterId(FixturesTool.VNIC_PROFILE_NETWORK_FILTER);
         vnicProfile.setMigratable(true);
+        vnicProfile.setCustomProperties(Collections.emptyMap());
+        return vnicProfile;
     }
 
-    /**
-     * Ensures null is returned.
-     */
-    @Test
-    public void testGetWithNonExistingId() {
-        VnicProfile result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setPortMirroring(true);
+        existingEntity.setPassthrough(true);
+        existingEntity.setMigratable(true);
     }
 
-    /**
-     * Ensures that the network interface profile is returned.
-     */
-    @Test
-    public void testGet() {
-        VnicProfile result = dao.get(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.VM_NETWORK_INTERFACE_PROFILE;
+    }
 
-        assertNotNull(result);
-        assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, result.getId());
-        assertFalse(result.isPortMirroring());
-        assertFalse(result.isPassthrough());
-        assertTrue(result.isMigratable());
+    @Override
+    protected VnicProfileDao prepareDao() {
+        return dbFacade.getVnicProfileDao();
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return 5;
     }
 
     /**
@@ -119,62 +117,4 @@ public class VnicProfileDaoTest extends BaseDaoTestCase {
         assertNotNull(result);
         assertEquals(2, result.size());
     }
-
-    /**
-     * Ensures that an empty collection is returned.
-     */
-    @Test
-    public void testGetAll() {
-        List<VnicProfile> result = dao.getAll();
-
-        assertNotNull(result);
-        assertEquals(5, result.size());
-    }
-
-    /**
-     * Ensures that the save is working correctly
-     */
-    @Test
-    public void testSave() {
-        dao.save(vnicProfile);
-        VnicProfile result = dao.get(vnicProfile.getId());
-        assertNotNull(result);
-        assertEquals(vnicProfile.getId(), result.getId());
-        assertFalse(result.isPortMirroring());
-        assertFalse(result.isPassthrough());
-        assertEquals(vnicProfile.getNetworkFilterId(), result.getNetworkFilterId());
-        assertTrue(result.isMigratable());
-    }
-
-    /**
-     * Ensures that the update is working correctly
-     */
-    @Test
-    public void testUpdate() {
-        dao.save(vnicProfile);
-        vnicProfile.setPortMirroring(true);
-        vnicProfile.setPassthrough(true);
-        vnicProfile.setMigratable(true);
-        dao.update(vnicProfile);
-        VnicProfile result = dao.get(vnicProfile.getId());
-        assertNotNull(result);
-        assertEquals(vnicProfile.getId(), result.getId());
-        assertTrue(result.isPortMirroring());
-        assertTrue(result.isPassthrough());
-        assertEquals(vnicProfile.getNetworkFilterId(), result.getNetworkFilterId());
-        assertTrue(result.isMigratable());
-    }
-
-    /**
-     * Ensures that the remove is working correctly
-     */
-    @Test
-    public void testRemove() {
-        dao.save(vnicProfile);
-        VnicProfile result = dao.get(vnicProfile.getId());
-        assertNotNull(result);
-        dao.remove(vnicProfile.getId());
-        assertNull(dao.get(vnicProfile.getId()));
-    }
-
 }
