@@ -17,10 +17,3 @@ logo used in the application header */
     background-image: url(images/oVirt_Banner_solid.png);
     background-size: cover;
 }
-
-.obrand_menuBar {
-    float: right;
-    padding: 10px 10px 10px 10px;
-}
-
-
