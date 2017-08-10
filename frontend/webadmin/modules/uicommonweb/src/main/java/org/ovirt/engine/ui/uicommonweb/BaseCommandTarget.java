@@ -8,11 +8,12 @@ public abstract class BaseCommandTarget implements ICommandTarget {
     @Override
     public abstract void executeCommand(UICommand uiCommand);
 
-    /*
-     * (non-Javadoc) This implementation discards the parameters
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation discards the parameters.
      *
-     * @see org.ovirt.engine.ui.uicommonweb.ICommandTarget#ExecuteCommand(org.ovirt.engine.ui.uicommonweb.UICommand,
-     * java.lang.Object[])
+     * @see ICommandTarget#executeCommand(UICommand,Object[])
      */
     @Override
     public void executeCommand(UICommand uiCommand, Object... parameters) {

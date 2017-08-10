@@ -76,9 +76,6 @@ public class SubTabHostErrataPresenter
         updateModel();
     }
 
-    /* (non-Javadoc)
-     * @see org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter#initializeHandlers()
-     */
     @Override
     public void initializeHandlers() {
         super.initializeHandlers();

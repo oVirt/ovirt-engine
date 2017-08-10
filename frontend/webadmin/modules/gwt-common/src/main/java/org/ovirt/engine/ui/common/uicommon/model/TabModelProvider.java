@@ -127,9 +127,6 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
         source.setConfirmWindow(null);
     }
 
-    /* (non-Javadoc)
-     * @see org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver#getModelPopup(org.ovirt.engine.ui.uicommonweb.models.IModel, org.ovirt.engine.ui.uicommonweb.UICommand, org.ovirt.engine.ui.uicommonweb.models.Model)
-     */
     @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(M sourceModel,
             UICommand lastExecutedCommand, Model windowModel) {
@@ -140,9 +137,6 @@ public abstract class TabModelProvider<M extends HasEntity> implements ModelProv
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver#getConfirmModelPopup(org.ovirt.engine.ui.uicommonweb.models.IModel, org.ovirt.engine.ui.uicommonweb.UICommand)
-     */
     @Override
     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(M sourceModel,
             UICommand lastExecutedCommand) {
