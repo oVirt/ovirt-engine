@@ -92,4 +92,13 @@ public final class StringHelper {
 
         return trim(s, chars);
     }
+
+    public static String nullSafeJoin(String delimiter, Iterable<String> elements, String nullValue) {
+        // delimiter being null is an error and we should throw exception
+        // elements being null is acceptable and we should return nullValue
+        return (elements != null) ? String.join(delimiter, elements) : nullValue;
+    }
+    public static String nullSafeJoin(String delimiter, Iterable<String> elements) {
+        return nullSafeJoin(delimiter, elements, "");
+    }
 }

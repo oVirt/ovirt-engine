@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -207,8 +208,8 @@ public class DiskGeneralModel extends EntityModel<Disk> {
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
-            setDiskProfileName(String.join(", ", diskImage.getDiskProfileNames())); //$NON-NLS-1$
-            setQuotaName(String.join(", ", diskImage.getQuotaNames())); //$NON-NLS-1$
+            setDiskProfileName(StringHelper.nullSafeJoin(",", diskImage.getDiskProfileNames())); //$NON-NLS-1$
+            setQuotaName(StringHelper.nullSafeJoin(",", diskImage.getQuotaNames())); //$NON-NLS-1$
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         }
         else if (isLun()) {
