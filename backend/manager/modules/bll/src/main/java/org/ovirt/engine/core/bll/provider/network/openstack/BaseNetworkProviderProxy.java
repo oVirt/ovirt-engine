@@ -336,7 +336,8 @@ public abstract class BaseNetworkProviderProxy<P extends OpenstackNetworkProvide
         if (port.getSecurityGroups() != null && !port.getSecurityGroups().isEmpty()) {
             runtimeProperties.put("security_groups", StringUtils.join(port.getSecurityGroups(), ','));
         }
-
+        runtimeProperties.put("plugin_type", StringUtils.defaultString(
+            provider.getAdditionalProperties().getPluginType()));
         return runtimeProperties;
     }
 
