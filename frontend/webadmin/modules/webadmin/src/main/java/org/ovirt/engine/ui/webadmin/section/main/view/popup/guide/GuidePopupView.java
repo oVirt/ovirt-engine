@@ -2,7 +2,11 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.guide;
 
 import java.util.stream.Stream;
 
+import org.gwtbootstrap3.client.ui.Column;
+import org.gwtbootstrap3.client.ui.Row;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.html.Div;
 import org.ovirt.engine.ui.common.editor.UiCommonEditorDriver;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -16,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 
@@ -26,7 +29,6 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
 public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> implements GuidePopupPresenterWidget.ViewDef {
@@ -65,23 +67,22 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
     Label compulsoryActionsLabel;
 
     @UiField
-    VerticalPanel compulsoryActionsPanel;
+    Div compulsoryActionsPanel;
 
     @UiField
-    VerticalPanel optionalActionsPanel;
+    Div optionalActionsPanel;
 
     @UiField
-    VerticalPanel compulsorySection;
+    Row compulsorySection;
 
     @UiField
-    VerticalPanel optionalSection;
+    Row optionalSection;
 
     @UiField
     Style style;
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
@@ -190,17 +191,23 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel<?>> i
         optionalSection.add(optionalActionsPanel);
     }
 
-    private void addButton(final UICommand command, VerticalPanel buttonsPanel, IconType buttonImage) {
-        UiCommandButton guideButton = new UiCommandButton(command.getTitle(), buttonImage);
-        guideButton.setCommand(command);
-        guideButton.getElement().setId("UiCommandButton_guideButton_" + command.getTitle()); //$NON-NLS-1$
-        guideButton.setCustomContentStyle(style.actionButtonContent());
-        guideButton.addStyleName(style.actionButton());
-        guideButton.addClickHandler(event -> command.execute());
+    private void addButton(final UICommand command, Div buttonsPanel, IconType buttonImage) {
+        UiCommandButton button = new UiCommandButton(command.getTitle(), buttonImage);
 
-        VerticalPanel buttonContainer = new VerticalPanel();
-        buttonContainer.add(guideButton);
-        buttonsPanel.add(buttonContainer);
+        button.setCommand(command);
+        button.getElement().setId("UiCommandButton_guideButton_" + command.getTitle()); //$NON-NLS-1$
+
+        button.setCustomContentStyle(style.actionButtonContent());
+        button.addStyleName(style.actionButton());
+
+        button.addClickHandler(event -> command.execute());
+
+        Row row = new Row();
+        Column column = new Column(ColumnSize.SM_12);
+        column.add(button);
+        row.add(column);
+
+        buttonsPanel.add(row);
     }
 
     private void updateCreatedLabel(GuideModel<?> object) {

@@ -23,14 +23,4 @@ logo used in the application header */
     padding: 10px 10px 10px 10px;
 }
 
-/* GuidePopupView.ui.xml:
-This class allows you to change the error icon on the guide popup window. */
-.obrand_dialogLogoGuideImage {
-    background: url(images/dialog/guide.png);
-    background-repeat: no-repeat;
-    width: 24px;
-    height: 27px;
-    position: relative;
-    left: -7px;
-    border: 0px;
-}
+
