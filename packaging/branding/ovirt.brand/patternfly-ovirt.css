@@ -69,3 +69,6 @@
   margin-left: 9px;
 }
 
+.list-view-pf .list-group-item.active:hover {
+  background-color: #def3ff;
+}
