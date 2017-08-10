@@ -27,9 +27,9 @@ public class HostNicVfsConfigDaoTest extends BaseDaoTestCase {
     private static final Map<Guid, Pair<Integer, Integer>> EXPECTED_GUIDS;
     static {
         Map<Guid, Pair<Integer, Integer>> tmpMap = new HashMap<>();
-        tmpMap.put(new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c1"), new Pair<>(0, 0));
-        tmpMap.put(new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c2"), new Pair<>(2, 2));
-        tmpMap.put(new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c3"), new Pair<>(1, 3));
+        tmpMap.put(FixturesTool.HOST_NIC_VFS_CONFIG, new Pair<>(0, 0));
+        tmpMap.put(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_1, new Pair<>(2, 2));
+        tmpMap.put(FixturesTool.HOST_NIC_VFS_CONFIG_NOT_ALL_NETWORKS_ALLOWED_2, new Pair<>(1, 3));
         EXPECTED_GUIDS = Collections.unmodifiableMap(tmpMap);
     }
 
