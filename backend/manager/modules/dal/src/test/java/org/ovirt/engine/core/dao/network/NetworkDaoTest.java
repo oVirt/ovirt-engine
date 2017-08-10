@@ -23,7 +23,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     private static final Guid MANAGEMENT_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-1234567890ab");
 
     private NetworkDao dao;
-    private Network new_net;
+    private Network newNet;
     private static final String EXISTING_NETWORK_NAME1 = "engine";
     private static final String EXISTING_NETWORK_NAME2 = "engine3";
     private static final int NUM_OF_NETWORKS = 7;
@@ -36,11 +36,11 @@ public class NetworkDaoTest extends BaseDaoTestCase {
 
         dao = dbFacade.getNetworkDao();
 
-        new_net = new Network();
-        new_net.setName("newnet1");
-        new_net.setVdsmName("newnet1");
-        new_net.setDescription("New network");
-        new_net.setDataCenterId(FixturesTool.DATA_CENTER);
+        newNet = new Network();
+        newNet.setName("newnet1");
+        newNet.setVdsmName("newnet1");
+        newNet.setDescription("New network");
+        newNet.setDataCenterId(FixturesTool.DATA_CENTER);
     }
 
     /**
@@ -357,15 +357,15 @@ public class NetworkDaoTest extends BaseDaoTestCase {
 
         NetworkCluster clusterFromDB = clustersFromDB.get(0);
         assertNotNull(clusterFromDB);
-        new_net.setCluster(clusterFromDB);
-        new_net.setId(Guid.newGuid());
-        new_net.setDnsResolverConfiguration(dnsResolverConfiguration);
-        dao.save(new_net);
+        newNet.setCluster(clusterFromDB);
+        newNet.setId(Guid.newGuid());
+        newNet.setDnsResolverConfiguration(dnsResolverConfiguration);
+        dao.save(newNet);
 
-        Network result = dao.getByName(new_net.getName());
+        Network result = dao.getByName(newNet.getName());
 
         assertNotNull(result);
-        assertEquals(new_net, result);
+        assertEquals(newNet, result);
     }
 
     /**
