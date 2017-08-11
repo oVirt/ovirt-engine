@@ -6,8 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.Nameable;
-import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -32,7 +30,7 @@ import com.google.inject.Provider;
 public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel> extends TabModelProvider<M> implements SearchableTableModelProvider<T, M> {
 
     private final AsyncDataProvider<T> dataProvider;
-    private Comparator<T> defaultItemComparator;
+    private final Comparator<T> defaultComparator = new DefaultModelItemComparator<>();
 
     public DataBoundTabModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
@@ -146,9 +144,9 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         List<T> items = getModel().getItems() == null ? null : new ArrayList<T>(getModel().getItems());
 
         if (items != null) {
-            // use default item order, unless the items are already sorted
+            // Apply default item order, unless the items are already sorted
             if (!getModel().hasItemsSorted()) {
-                Collections.sort(items, getDefaultItemComparator());
+                Collections.sort(items, defaultComparator);
             }
 
             updateDataProvider(items);
@@ -165,57 +163,6 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
 
     protected AsyncDataProvider<T> getDataProvider() {
         return dataProvider;
-    }
-
-    /**
-     * Returns the default {@link Comparator} to use when setting new data.
-     */
-    protected Comparator<T> getDefaultItemComparator() {
-        if (defaultItemComparator == null) {
-            final Comparator<T> nameComparator = new Comparator<T>() {
-                @Override
-                public int compare(T a, T b) {
-                    String name1 = (a instanceof Nameable) ? ((Nameable) a).getName() : null;
-                    String name2 = (b instanceof Nameable) ? ((Nameable) b).getName() : null;
-                    return LexoNumericComparator.comp(name1, name2);
-                }
-            };
-
-            final Comparator<T> idComparator = new Comparator<T>() {
-                // inspired by Java 8 Comparators.NullComparator (nullFirst = false)
-                private final Comparator<Comparable> nullComparator = new Comparator<Comparable>() {
-                    @Override
-                    public int compare(Comparable a, Comparable b) {
-                        if (a == null) {
-                            return (b == null) ? 0 : 1;
-                        } else if (b == null) {
-                            return -1;
-                        } else {
-                            return a.compareTo(b);
-                        }
-                    }
-                };
-
-                @Override
-                public int compare(T a, T b) {
-                    Object id1 = (a instanceof IVdcQueryable) ? ((IVdcQueryable) a).getQueryableId() : null;
-                    Object id2 = (b instanceof IVdcQueryable) ? ((IVdcQueryable) b).getQueryableId() : null;
-                    Comparable idComp1 = (id1 instanceof Comparable) ? (Comparable) id1 : null;
-                    Comparable idComp2 = (id2 instanceof Comparable) ? (Comparable) id2 : null;
-                    return nullComparator.compare(idComp1, idComp2);
-                }
-            };
-
-            // chain comparators like in Java 8 Comparator.thenComparing
-            defaultItemComparator = new Comparator<T>() {
-                @Override
-                public int compare(T a, T b) {
-                    int res = nameComparator.compare(a, b);
-                    return (res != 0) ? res : idComparator.compare(a, b);
-                }
-            };
-        }
-        return defaultItemComparator;
     }
 
     @Override
