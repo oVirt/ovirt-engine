@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.uicommon.model.DefaultModelItemComparator;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
@@ -638,13 +639,17 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
             if (column instanceof SortableColumn) {
                 SortableColumn<T, ?> sortableColumn = (SortableColumn<T, ?>) column;
                 boolean sortApplied = false;
-                Comparator<? super T> comparator = sortableColumn.getComparator();
                 boolean supportsServerSideSorting = searchableModel != null && searchableModel.supportsServerSideSorting();
+
+                // Ensure consistent item order with fallback comparator
+                Comparator<? super T> columnComparator = sortableColumn.getComparator();
+                Comparator<? super T> realComparator = (columnComparator != null)
+                        ? DefaultModelItemComparator.fallbackFor(columnComparator) : null;
 
                 // If server-side sorting is supported by the model, but the column
                 // uses Comparator for client-side sorting, use client-side sorting
-                if (supportsServerSideSorting && comparator != null) {
-                    sortedModel.setComparator(comparator, event.isSortAscending());
+                if (supportsServerSideSorting && realComparator != null) {
+                    sortedModel.setComparator(realComparator, event.isSortAscending());
                     sortApplied = true;
                 }
 
@@ -662,8 +667,8 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
                 }
 
                 // Otherwise, fall back to client-side sorting
-                else if (comparator != null) {
-                    sortedModel.setComparator(comparator, event.isSortAscending());
+                else if (realComparator != null) {
+                    sortedModel.setComparator(realComparator, event.isSortAscending());
                     sortApplied = true;
 
                     // SortedListModel.setComparator does not sort the items
