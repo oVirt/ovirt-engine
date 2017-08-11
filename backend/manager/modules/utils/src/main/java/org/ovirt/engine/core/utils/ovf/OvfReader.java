@@ -129,77 +129,80 @@ public abstract class OvfReader implements IOvfBuilder {
         for (XmlNode node : list) {
             final Guid guid = new Guid(node.attributes.get("ovf:diskId").getValue());
 
-            DiskImage image = _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().orElse(null);
-            image.setDiskVmElements(Collections.singletonList(new DiskVmElement(image.getId(), vmBase.getId())));
+            _images.stream().filter(d -> d.getImageId().equals(guid)).findFirst().ifPresent(image -> {
+                image.setDiskVmElements(Collections.singletonList(new DiskVmElement(image.getId(), vmBase.getId())));
 
-            DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
+                DiskVmElement dve = image.getDiskVmElementForVm(vmBase.getId());
 
-            if (node.attributes.get("ovf:vm_snapshot_id") != null) {
-                image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
-            }
+                if (node.attributes.get("ovf:vm_snapshot_id") != null) {
+                    image.setVmSnapshotId(new Guid(node.attributes.get("ovf:vm_snapshot_id").getValue()));
+                }
 
-            if (!StringUtils.isEmpty(node.attributes.get("ovf:size").getValue())) {
-                image.setSize(convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:size").getValue())));
-            }
-            if (!StringUtils.isEmpty(node.attributes.get("ovf:actual_size").getValue())) {
-                image.setActualSizeInBytes(
-                        convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:actual_size").getValue())));
-            }
+                if (!StringUtils.isEmpty(node.attributes.get("ovf:size").getValue())) {
+                    image.setSize(convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:size").getValue())));
+                }
+                if (!StringUtils.isEmpty(node.attributes.get("ovf:actual_size").getValue())) {
+                    image.setActualSizeInBytes(
+                            convertGigabyteToBytes(Long.parseLong(node.attributes.get("ovf:actual_size").getValue())));
+                }
 
-            if (node.attributes.get("ovf:volume-format") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
-                    image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format").getValue()));
+                if (node.attributes.get("ovf:volume-format") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-format").getValue())) {
+                        image.setVolumeFormat(VolumeFormat.valueOf(node.attributes.get("ovf:volume-format")
+                                .getValue()));
+                    } else {
+                        image.setVolumeFormat(VolumeFormat.Unassigned);
+                    }
                 } else {
                     image.setVolumeFormat(VolumeFormat.Unassigned);
                 }
-            } else {
-                image.setVolumeFormat(VolumeFormat.Unassigned);
-            }
 
-            if (node.attributes.get("ovf:volume-type") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
-                    image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
+                if (node.attributes.get("ovf:volume-type") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:volume-type").getValue())) {
+                        image.setVolumeType(VolumeType.valueOf(node.attributes.get("ovf:volume-type").getValue()));
+                    } else {
+                        image.setVolumeType(VolumeType.Unassigned);
+                    }
                 } else {
                     image.setVolumeType(VolumeType.Unassigned);
                 }
-            } else {
-                image.setVolumeType(VolumeType.Unassigned);
-            }
-            if (node.attributes.get("ovf:disk-interface") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-interface").getValue())) {
-                    dve.setDiskInterface(DiskInterface.valueOf(node.attributes.get("ovf:disk-interface").getValue()));
+                if (node.attributes.get("ovf:disk-interface") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-interface").getValue())) {
+                        dve.setDiskInterface(DiskInterface.valueOf(node.attributes.get("ovf:disk-interface")
+                                .getValue()));
+                    }
+                } else {
+                    dve.setDiskInterface(DiskInterface.IDE);
                 }
-            } else {
-                dve.setDiskInterface(DiskInterface.IDE);
-            }
-            if (node.attributes.get("ovf:boot") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:boot").getValue())) {
-                    dve.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
+                if (node.attributes.get("ovf:boot") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:boot").getValue())) {
+                        dve.setBoot(Boolean.parseBoolean(node.attributes.get("ovf:boot").getValue()));
+                    }
                 }
-            }
-            if (node.attributes.get("ovf:pass-discard") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:pass-discard").getValue())) {
-                    dve.setPassDiscard(Boolean.parseBoolean(node.attributes.get("ovf:pass-discard").getValue()));
+                if (node.attributes.get("ovf:pass-discard") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:pass-discard").getValue())) {
+                        dve.setPassDiscard(Boolean.parseBoolean(node.attributes.get("ovf:pass-discard").getValue()));
+                    }
                 }
-            }
-            if (node.attributes.get("ovf:wipe-after-delete") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
-                    image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")
-                            .getValue()));
+                if (node.attributes.get("ovf:wipe-after-delete") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:wipe-after-delete").getValue())) {
+                        image.setWipeAfterDelete(Boolean.parseBoolean(node.attributes.get("ovf:wipe-after-delete")
+                                .getValue()));
+                    }
                 }
-            }
-            if (node.attributes.get("ovf:disk-alias") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-alias").getValue())) {
-                    image.setDiskAlias(String.valueOf(node.attributes.get("ovf:disk-alias")
-                            .getValue()));
+                if (node.attributes.get("ovf:disk-alias") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-alias").getValue())) {
+                        image.setDiskAlias(String.valueOf(node.attributes.get("ovf:disk-alias")
+                                .getValue()));
+                    }
                 }
-            }
-            if (node.attributes.get("ovf:disk-description") != null) {
-                if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-description").getValue())) {
-                    image.setDiskDescription(String.valueOf(node.attributes.get("ovf:disk-description")
-                            .getValue()));
+                if (node.attributes.get("ovf:disk-description") != null) {
+                    if (!StringUtils.isEmpty(node.attributes.get("ovf:disk-description").getValue())) {
+                        image.setDiskDescription(String.valueOf(node.attributes.get("ovf:disk-description")
+                                .getValue()));
+                    }
                 }
-            }
+            });
         }
     }
 
