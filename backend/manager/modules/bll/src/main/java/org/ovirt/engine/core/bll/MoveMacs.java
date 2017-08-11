@@ -63,7 +63,7 @@ public class MoveMacs {
     List<String> getMacsFromAllClusters(List<Cluster> oldClusters, Guid targetMacPoolId) {
         //all macs combined from all clusters.
         return oldClusters.stream()
-                .filter(cluster -> cluster.getMacPoolId() != targetMacPoolId)
+                .filter(cluster -> !Objects.equals(cluster.getMacPoolId(), targetMacPoolId))
                 .map(Cluster::getId)
                 .map(this::getMacsForClusterId)
                 .flatMap(Collection::stream)
