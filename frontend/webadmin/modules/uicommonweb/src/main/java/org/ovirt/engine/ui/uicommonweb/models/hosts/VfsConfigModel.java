@@ -26,7 +26,7 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
     private VfsNicLabelModel labelsModel;
 
     public VfsConfigModel() {
-        this(new HostNicVfsConfig(), Collections.emptyList(), new TreeSet<String>());
+        this(new HostNicVfsConfig(), Collections.emptyList(), new TreeSet<>());
     }
 
     public VfsConfigModel(HostNicVfsConfig vfsConfig, List<Network> allClusterNetworks, SortedSet<String> dcLabels) {
