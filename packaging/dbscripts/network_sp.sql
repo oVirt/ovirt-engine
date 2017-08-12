@@ -186,17 +186,6 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetnetworkByName (v_networkName VARCHAR(256))
-RETURNS SETOF network STABLE AS $PROCEDURE$
-BEGIN
-    RETURN QUERY
-
-    SELECT *
-    FROM network
-    WHERE name = v_networkName;
-END;$PROCEDURE$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetNetworkByNameAndDataCenter (
     v_name VARCHAR(256),
     v_storage_pool_id UUID

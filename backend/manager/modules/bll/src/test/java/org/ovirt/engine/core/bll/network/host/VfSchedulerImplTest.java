@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -46,6 +48,9 @@ public class VfSchedulerImplTest {
 
     @Mock
     private InterfaceDao interfaceDao;
+
+    @Mock
+    private VdsDao hostDao;
 
     @Mock
     private HostDeviceDao hostDeviceDao;
@@ -62,13 +67,22 @@ public class VfSchedulerImplTest {
     @Mock
     private Guid hostId;
 
+    @Mock
+    private Guid dataCenterId;
+
+    @Mock
+    private VDS host;
+
     private VfSchedulerImpl vfScheduler;
 
     private Map<Guid, String> expectedVnicToVfMap;
 
     @Before
     public void setUp() {
-        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostDeviceDao, vmDeviceDao, networkDeviceHelper);
+        when(hostDao.get(hostId)).thenReturn(host);
+        when(host.getStoragePoolId()).thenReturn(dataCenterId);
+
+        vfScheduler = new VfSchedulerImpl(networkDao, interfaceDao, hostDao, hostDeviceDao, vmDeviceDao, networkDeviceHelper);
         expectedVnicToVfMap = new HashMap<>();
     }
 
@@ -433,13 +447,13 @@ public class VfSchedulerImplTest {
         network.setName(networkName);
         network.setLabel(getRandomString());
 
-        when(networkDao.getByName(network.getName())).thenReturn(network);
+        when(networkDao.getByNameAndDataCenter(network.getName(), dataCenterId)).thenReturn(network);
 
         return network;
     }
 
     private Network getVnicNetwork(VmNetworkInterface vnic) {
-        return networkDao.getByName(vnic.getNetworkName());
+        return networkDao.getByNameAndDataCenter(vnic.getNetworkName(), dataCenterId);
     }
 
     private HostDevice createVf() {

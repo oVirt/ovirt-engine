@@ -48,7 +48,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByNameWithInvalidName() {
-        Network result = dao.getByName("farkle");
+        Network result = dao.getByNameAndCluster("farkle", FixturesTool.CLUSTER);
 
         assertNull(result);
     }
@@ -58,7 +58,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testGetByName() {
-        Network result = dao.getByName(EXISTING_NETWORK_NAME1);
+        Network result = dao.getByNameAndCluster(EXISTING_NETWORK_NAME1, FixturesTool.CLUSTER);
 
         assertNotNull(result);
         assertEquals(EXISTING_NETWORK_NAME1, result.getName());
@@ -361,9 +361,7 @@ public class NetworkDaoTest extends BaseDaoTestCase {
         newNet.setId(Guid.newGuid());
         newNet.setDnsResolverConfiguration(dnsResolverConfiguration);
         dao.save(newNet);
-
-        Network result = dao.getByName(newNet.getName());
-
+        Network result = dao.getByNameAndDataCenter(newNet.getName(), FixturesTool.DATA_CENTER);
         assertNotNull(result);
         assertEquals(newNet, result);
     }
@@ -373,14 +371,14 @@ public class NetworkDaoTest extends BaseDaoTestCase {
      */
     @Test
     public void testUpdate() {
-        Network before = dao.getByName(EXISTING_NETWORK_NAME1);
+        Network before = dao.getByNameAndCluster(EXISTING_NETWORK_NAME1, FixturesTool.CLUSTER);
 
         before.setDescription("This is a completely changed description");
         before.getDnsResolverConfiguration().getNameServers().add(new NameServer("1.1.1.1"));
 
         dao.update(before);
 
-        Network after = dao.getByName(EXISTING_NETWORK_NAME1);
+        Network after = dao.getByNameAndCluster(EXISTING_NETWORK_NAME1, FixturesTool.CLUSTER);
 
         assertNotNull(after);
         assertEquals(before, after);
@@ -393,14 +391,14 @@ public class NetworkDaoTest extends BaseDaoTestCase {
     public void testRemove() {
         DnsResolverConfigurationDao dnsResolverConfigurationDao = dbFacade.getDnsResolverConfigurationDao();
 
-        Network result = dao.getByName(EXISTING_NETWORK_NAME2);
+        Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME2, FixturesTool.DATA_CENTER);
 
         assertNotNull(result);
         assertEquals(result.getDnsResolverConfiguration().getId(), FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION_TO_REMOVE);
 
         dao.remove(result.getId());
 
-        assertNull(dao.getByName(EXISTING_NETWORK_NAME2));
+        assertNull(dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME2, FixturesTool.DATA_CENTER));
         assertNull(dnsResolverConfigurationDao.get(FixturesTool.EXISTING_DNS_RESOLVER_CONFIGURATION_TO_REMOVE));
     }
 }

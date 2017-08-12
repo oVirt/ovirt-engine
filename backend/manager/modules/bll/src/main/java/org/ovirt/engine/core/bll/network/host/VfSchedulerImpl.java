@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -29,6 +30,8 @@ public class VfSchedulerImpl implements VfScheduler {
     private NetworkDao networkDao;
 
     private InterfaceDao interfaceDao;
+
+    private VdsDao hostDao;
 
     private HostDeviceDao hostDeviceDao;
 
@@ -41,11 +44,13 @@ public class VfSchedulerImpl implements VfScheduler {
     @Inject
     public VfSchedulerImpl(NetworkDao networkDao,
             InterfaceDao interfaceDao,
+            VdsDao hostDao,
             HostDeviceDao hostDeviceDao,
             VmDeviceDao vmDeviceDao,
             NetworkDeviceHelper vfsConfigHelper) {
         this.networkDao = networkDao;
         this.interfaceDao = interfaceDao;
+        this.hostDao = hostDao;
         this.hostDeviceDao = hostDeviceDao;
         this.vmDeviceDao = vmDeviceDao;
         this.networkDeviceHelper = vfsConfigHelper;
@@ -55,7 +60,6 @@ public class VfSchedulerImpl implements VfScheduler {
     public List<String> validatePassthroughVnics(Guid vmId, Guid hostId, List<VmNetworkInterface> allVmNics) {
 
         List<VmNetworkInterface> pluggedPassthroughVnics = getPluggedPassthroughVnics(allVmNics);
-
         if (pluggedPassthroughVnics.isEmpty()) {
             return Collections.emptyList();
         }
@@ -74,12 +78,12 @@ public class VfSchedulerImpl implements VfScheduler {
 
         Map<Guid, String> vnicToVfMap = new HashMap<>();
         hostToVnicToVfMap.put(hostId, vnicToVfMap);
-
         for (final VmNetworkInterface vnic : pluggedPassthroughVnics) {
             String freeVf = findFreeVfForVnic(vfsConfigs,
                     nicToUsedVfs,
                     fetchedNics,
-                    vnic.getNetworkName() == null ? null : networkDao.getByName(vnic.getNetworkName()),
+                    vnic.getNetworkName() == null ? null : networkDao.getByNameAndDataCenter(
+                            vnic.getNetworkName(), hostDao.get(hostId).getStoragePoolId()),
                     vnic.getVmId(),
                     true);
             if (freeVf == null) {

@@ -238,11 +238,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
         networkIdNetworkNameCompleter.completeNetworkAttachments(
                 getParameters().getNetworkAttachments(),
-                getNetworkBusinessEntityMap());
+                getNetworkBusinessEntityMap(),
+                getStoragePoolId());
 
         networkIdNetworkNameCompleter.completeNetworkAttachments(
                 getExistingAttachments(),
-                getNetworkBusinessEntityMap());
+                getNetworkBusinessEntityMap(),
+                getStoragePoolId());
 
         NicLabelsCompleter labelsCompleter = new NicLabelsCompleter(getParameters(),
                 getExistingAttachments(),

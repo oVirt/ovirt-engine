@@ -41,7 +41,7 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
         NicNameNicIdCompleter completer = new NicNameNicIdCompleter(getHostInterfaces());
         completer.completeNetworkAttachment(getParameters().getNetworkAttachment());
 
-        this.networkIdNameCompleter.completeNetworkAttachment(getParameters().getNetworkAttachment());
+        this.networkIdNameCompleter.completeNetworkAttachment(getParameters().getNetworkAttachment(), getStoragePoolId());
 
         NetworkAttachment networkAttachment = getParameters().getNetworkAttachment();
         if (networkAttachment == null) {

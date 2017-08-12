@@ -76,8 +76,12 @@ public class GetNetworkAttachmentsByHostIdQuery<P extends IdQueryParameters> ext
     }
 
     private void completeNetworkNames(List<NetworkAttachment> attachments, BusinessEntityMap<Network> networkMap) {
+        Guid hostId = getParameters().getId();
+        VDS host = hostDao.get(hostId);
+
         networkIdNetworkNameCompleter.completeNetworkAttachments(
                 attachments,
-                networkMap);
+                networkMap,
+                host.getStoragePoolId());
     }
 }

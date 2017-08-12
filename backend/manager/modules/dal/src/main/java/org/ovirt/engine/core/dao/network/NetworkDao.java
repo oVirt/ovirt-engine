@@ -21,15 +21,6 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
     List<Network> getAll(Guid userID, boolean isFiltered);
 
     /**
-     * Retrieves the network with the specified name.
-     *
-     * @param name
-     *            the network name
-     * @return the network
-     */
-    Network getByName(String name);
-
-    /**
      * Retrieves the network with the specified name and storage pool id.
      *
      * @param name

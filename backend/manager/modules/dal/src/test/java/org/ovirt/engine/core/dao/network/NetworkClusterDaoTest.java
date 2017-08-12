@@ -19,6 +19,7 @@ import org.ovirt.engine.core.dao.FixturesTool;
 
 public class NetworkClusterDaoTest extends BaseDaoTestCase {
     private static final int NETWORK_CLUSTER_COUNT = 4;
+    private Guid datacenter;
     private NetworkClusterDao dao;
     private Cluster cluster;
     private Network network;
@@ -31,6 +32,8 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
+        datacenter = FixturesTool.DATA_CENTER;
+
         dao = dbFacade.getNetworkClusterDao();
 
         ClusterDao clusterDao = dbFacade.getClusterDao();
@@ -40,8 +43,8 @@ public class NetworkClusterDaoTest extends BaseDaoTestCase {
 
         NetworkDao networkDao = dbFacade.getNetworkDao();
 
-        network = networkDao.getByName("engine");
-        networkNoCluster = networkDao.getByName("engine3");
+        network = networkDao.getByNameAndDataCenter("engine", datacenter);
+        networkNoCluster = networkDao.getByNameAndDataCenter("engine3", datacenter);
 
         createNewNetworkCluster();
 

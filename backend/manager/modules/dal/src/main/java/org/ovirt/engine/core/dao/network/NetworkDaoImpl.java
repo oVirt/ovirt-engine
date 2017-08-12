@@ -63,13 +63,6 @@ public class NetworkDaoImpl extends DefaultGenericDao<Network, Guid> implements 
     }
 
     @Override
-    public Network getByName(String name) {
-        return getCallsHandler().executeRead("GetnetworkByName",
-                networkRowMapper,
-                getCustomMapSqlParameterSource().addValue("networkName", name));
-    }
-
-    @Override
     public Network getByNameAndDataCenter(String name, Guid storagePoolId) {
         return getCallsHandler().executeRead("GetNetworkByNameAndDataCenter",
                 networkRowMapper,

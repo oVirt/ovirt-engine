@@ -22,17 +22,17 @@ public class NetworkIdNetworkNameCompleter {
         this.networkDao = networkDao;
     }
 
-    public void completeNetworkAttachment(NetworkAttachment networkAttachment) {
-        completeNetworkAttachment(networkAttachment, null);
+    public void completeNetworkAttachment(NetworkAttachment networkAttachment, Guid dataCenterId) {
+        completeNetworkAttachment(networkAttachment, null, dataCenterId);
     }
 
-    public void completeNetworkAttachments(List<NetworkAttachment> networkAttachments, BusinessEntityMap<Network> clusterNetworks) {
+    public void completeNetworkAttachments(List<NetworkAttachment> networkAttachments, BusinessEntityMap<Network> clusterNetworks, Guid dataCenterId) {
         for (NetworkAttachment networkAttachment : networkAttachments) {
-            completeNetworkAttachment(networkAttachment, clusterNetworks);
+            completeNetworkAttachment(networkAttachment, clusterNetworks, dataCenterId);
         }
     }
 
-    private void completeNetworkAttachment(NetworkAttachment networkAttachment, BusinessEntityMap<Network> clusterNetworks) {
+    private void completeNetworkAttachment(NetworkAttachment networkAttachment, BusinessEntityMap<Network> clusterNetworks, Guid dataCenterId) {
         Guid networkId = networkAttachment.getNetworkId();
         String networkName = networkAttachment.getNetworkName();
 
@@ -45,7 +45,7 @@ public class NetworkIdNetworkNameCompleter {
         }
 
         if (networkNameSpecified) {
-            Network network = getNetworkByName(networkName, clusterNetworks);
+            Network network = getNetworkByName(networkName, clusterNetworks, dataCenterId);
             boolean networkByNameExists = network != null;
             if (networkByNameExists) {
                 networkAttachment.setNetworkId(network.getId());
@@ -69,11 +69,11 @@ public class NetworkIdNetworkNameCompleter {
         }
     }
 
-    private Network getNetworkByName(String networkName, BusinessEntityMap<Network> clusterNetworks) {
+    private Network getNetworkByName(String networkName, BusinessEntityMap<Network> clusterNetworks, Guid dataCenterId) {
         if (clusterNetworks != null) {
             return clusterNetworks.get(networkName);
         } else {
-            return networkDao.getByName(networkName);
+            return networkDao.getByNameAndDataCenter(networkName, dataCenterId);
         }
     }
 }
