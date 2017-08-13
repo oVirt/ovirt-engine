@@ -18,7 +18,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyDownHandlers;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,10 +42,6 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
 
     interface ViewIdHandler extends ElementIdHandler<SearchPanelView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
-    }
-
-    protected interface Style extends CssResource {
-        String hasSelectedTags();
     }
 
     /**
@@ -89,9 +84,6 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
     @UiField
     DropDownMenu searchBoxBookmarkListDropDown;
 
-    @UiField
-    Style style;
-
     private final SearchSuggestOracle oracle;
 
     @Inject
@@ -127,20 +119,6 @@ public class SearchPanelView<M extends SearchableListModel> extends AbstractView
     public void setSearchStringPrefix(String searchStringPrefix) {
         searchStringPrefixLabel.setText(searchStringPrefix);
         oracle.setSearchPrefix(searchStringPrefix);
-    }
-
-    @Override
-    public void setHasSelectedTags(boolean hasSelectedTags) {
-        if (hasSelectedTags) {
-            searchStringPrefixLabel.addStyleName(style.hasSelectedTags());
-            searchStringInput.addStyleName(style.hasSelectedTags());
-            searchBoxClear.addStyleName(style.hasSelectedTags());
-        }
-        else {
-            searchStringPrefixLabel.removeStyleName(style.hasSelectedTags());
-            searchStringInput.removeStyleName(style.hasSelectedTags());
-            searchBoxClear.removeStyleName(style.hasSelectedTags());
-        }
     }
 
     @Override

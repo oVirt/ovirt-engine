@@ -7,7 +7,7 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView.Style">
+    <ui:style>
         @external gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner;
         @external gwt-SuggestBoxPopup .suggestPopupContent;
         @external gwt-SuggestBoxPopup .suggestPopupTop;
@@ -38,10 +38,6 @@
         .gwt-SuggestBoxPopup .suggestPopupMiddleLeft,
         .gwt-SuggestBoxPopup .suggestPopupMiddleRight {
             display: none;
-        }
-
-        .hasSelectedTags {
-            background-image: url(images/search_bar_middle_HasSelectedTags.png);
         }
     </ui:style>
 

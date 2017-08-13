@@ -31,8 +31,6 @@ public class SearchPanelPresenterWidget<T, M extends SearchableListModel> extend
 
         void setSearchStringPrefix(String searchStringPrefix);
 
-        void setHasSelectedTags(boolean hasSelectedTags);
-
         HasClickHandlers getBookmarkButton();
 
         HasClickHandlers getClearButton();
