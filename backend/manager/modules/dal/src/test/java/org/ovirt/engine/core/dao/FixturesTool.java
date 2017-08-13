@@ -783,6 +783,8 @@ public class FixturesTool {
 
     public static final Guid GLUSTER_BRICK_UUID2 = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a754");
 
+    public static final Guid GLUSTER_BRICK_UUID3 = new Guid("2ab384da-6190-4668-aa2e-37bc5c5ff014");
+
     /**
      * Gluster brick directories
      */

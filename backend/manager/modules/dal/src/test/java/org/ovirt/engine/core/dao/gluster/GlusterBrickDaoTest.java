@@ -195,9 +195,8 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetBrickProperties() {
-        Guid GLUSTER_BRICK_UUID1 = new Guid("2ab384da-6190-4668-aa2e-37bc5c5ff014");
         Guid GLUSTER_BRICK_UUID2 = new Guid("2702bb49-3037-405c-81c5-14a38793164e");
-        GlusterBrickEntity brick = dao.getById(GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity brick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID3);
         assertNotNull(brick);
         assertNotNull(brick.getBrickProperties());
         assertEquals(20000, brick.getBrickProperties().getFreeSize(), 0.0);
@@ -212,19 +211,18 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateBrickProperties() {
-        Guid GLUSTER_BRICK_UUID1 = new Guid("2ab384da-6190-4668-aa2e-37bc5c5ff014");
-        GlusterBrickEntity existingBrick = dao.getById(GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID3);
         assertNotNull(existingBrick);
         assertNotNull(existingBrick.getBrickProperties());
 
         BrickProperties brickProperties = existingBrick.getBrickProperties();
-        brickProperties.setBrickId(GLUSTER_BRICK_UUID1);
+        brickProperties.setBrickId(FixturesTool.GLUSTER_BRICK_UUID3);
         brickProperties.setFreeSize(100000);
         brickProperties.setTotalSize(200000);
 
         dao.updateBrickProperties(brickProperties);
 
-        existingBrick = dao.getById(GLUSTER_BRICK_UUID1);
+        existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID3);
         assertNotNull(existingBrick);
         assertNotNull(existingBrick.getBrickProperties());
         assertEquals(100000, existingBrick.getBrickProperties().getFreeSize(), 0.0);
@@ -233,10 +231,8 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testUpdateMultiBrickProperties() {
-
-        Guid GLUSTER_BRICK_UUID1 = new Guid("2ab384da-6190-4668-aa2e-37bc5c5ff014");
         Guid GLUSTER_BRICK_UUID2 = new Guid("65d327f8-5864-4330-be04-fe27e1ffb553");
-        GlusterBrickEntity existingBrick1 = dao.getById(GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity existingBrick1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID3);
         assertNotNull(existingBrick1);
         assertNotNull(existingBrick1.getBrickProperties());
 
@@ -245,7 +241,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         assertNotNull(existingBrick2.getBrickProperties());
 
         BrickProperties brickProperties1 = existingBrick1.getBrickProperties();
-        brickProperties1.setBrickId(GLUSTER_BRICK_UUID1);
+        brickProperties1.setBrickId(FixturesTool.GLUSTER_BRICK_UUID3);
         brickProperties1.setFreeSize(1000);
         brickProperties1.setTotalSize(2000);
 
@@ -260,7 +256,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
 
         dao.updateBrickProperties(bricksList);
 
-        existingBrick1 = dao.getById(GLUSTER_BRICK_UUID1);
+        existingBrick1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID3);
         assertNotNull(existingBrick1);
         assertNotNull(existingBrick1.getBrickProperties());
         assertEquals(1000, existingBrick1.getBrickProperties().getFreeSize(), 0.0);
