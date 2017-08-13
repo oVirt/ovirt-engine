@@ -49,20 +49,20 @@
                 <b:SuggestBox ui:field="searchStringInput" />
 
                 <b:InputGroupButton>
-                  <!-- NOTE: To avoid ugly hacks, we're just using gwt-bootstrap3 default FontAwesome icons. -->
-                  <t:WidgetTooltip text="{constants.clearSearch}">
-                    <b:Button ui:field="searchBoxClear" icon="CLOSE" />
-                  </t:WidgetTooltip>
-                  <t:WidgetTooltip text="{constants.bookmarkSearch}">
-                    <b:Button ui:field="searchBoxBookmark" icon="STAR_O" />
-                  </t:WidgetTooltip>
-                  <t:WidgetTooltip text="{constants.existingBookmarks}">
-                    <b:Button ui:field="searchBoxBookmarkListDropDownButton" dataToggle="DROPDOWN" />
-                  </t:WidgetTooltip>
-                  <b:DropDownMenu ui:field="searchBoxBookmarkListDropDown" />
-                  <t:WidgetTooltip text="{constants.applySearch}">
-                    <b:Button ui:field="searchBoxSearch" icon="SEARCH" />
-                  </t:WidgetTooltip>
+                    <!-- NOTE: To avoid ugly hacks, we're just using gwt-bootstrap3 default FontAwesome icons. -->
+                    <t:WidgetTooltip text="{constants.clearSearch}">
+                        <b:Button ui:field="searchBoxClear" icon="CLOSE" />
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip text="{constants.bookmarkSearch}">
+                        <b:Button ui:field="searchBoxBookmark" icon="STAR_O" />
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip text="{constants.existingBookmarks}">
+                        <b:Button ui:field="searchBoxBookmarkListDropDownButton" dataToggle="DROPDOWN" />
+                    </t:WidgetTooltip>
+                    <b:DropDownMenu ui:field="searchBoxBookmarkListDropDown" />
+                    <t:WidgetTooltip text="{constants.applySearch}">
+                        <b:Button ui:field="searchBoxSearch" icon="SEARCH" />
+                    </t:WidgetTooltip>
                 </b:InputGroupButton>
             </b:InputGroup>
         </b:Column>
