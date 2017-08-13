@@ -713,6 +713,15 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     }
 
     @Override
+    protected void endWithFailure() {
+        if (getParameters().getTransferType() == TransferType.Upload) {
+            // Do rollback only for upload
+            super.endWithFailure();
+        }
+        setSucceeded(true);
+    }
+
+    @Override
     public CommandCallback getCallback() {
         return new TransferImageCommandCallback();
     }
