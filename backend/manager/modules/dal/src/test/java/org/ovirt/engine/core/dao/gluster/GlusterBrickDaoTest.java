@@ -50,7 +50,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testAddBrickProperties() {
-        Guid brickId = new Guid("6ccdc294-d77b-4929-809d-8afe7634b47d");
+        Guid brickId = FixturesTool.GLUSTER_BRICK_UUID1;
         GlusterBrickEntity brickBefore = dao.getById(brickId);
         assertNotNull(brickBefore);
         assertNull(brickBefore.getBrickProperties());
@@ -71,7 +71,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
     @Test
     public void testAddAllBrickProperties() {
         // 61c94fc7-26b0-43e3-9d26-fc9d8cd6a754
-        Guid brickId1 = new Guid("6ccdc294-d77b-4929-809d-8afe7634b47d");
+        Guid brickId1 = FixturesTool.GLUSTER_BRICK_UUID1;
         Guid brickId2 = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a754");
         GlusterBrickEntity brick1 = dao.getById(brickId1);
         GlusterBrickEntity brick2 = dao.getById(brickId2);
