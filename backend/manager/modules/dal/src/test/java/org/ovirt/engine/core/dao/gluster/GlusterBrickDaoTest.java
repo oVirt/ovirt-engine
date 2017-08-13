@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -22,21 +21,19 @@ import org.ovirt.engine.core.dao.FixturesTool;
 public class GlusterBrickDaoTest extends BaseDaoTestCase {
     private static final String BRICK_EXPORT_DIR = "/export/test-vol-distribute-1/dir3";
     private GlusterBrickDao dao;
-    private VdsStatic server;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getGlusterBrickDao();
-        server = dbFacade.getVdsStaticDao().get(FixturesTool.GLUSTER_SERVER_UUID3);
     }
 
     @Test
     public void testSaveAndGetById() {
         GlusterBrickEntity brickToAdd = new GlusterBrickEntity();
         brickToAdd.setVolumeId(FixturesTool.GLUSTER_VOLUME_UUID1);
-        brickToAdd.setServerId(server.getId());
-        brickToAdd.setServerName(server.getHostName());
+        brickToAdd.setServerId(FixturesTool.GLUSTER_SERVER_UUID3);
+        brickToAdd.setServerName(FixturesTool.GLUSTER_SERVER_NAME3);
         brickToAdd.setBrickDirectory(BRICK_EXPORT_DIR);
         brickToAdd.setStatus(GlusterStatus.UP);
         brickToAdd.setBrickOrder(0);
@@ -160,8 +157,8 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
 
         GlusterBrickEntity newBrick = new GlusterBrickEntity();
         newBrick.setVolumeId(FixturesTool.GLUSTER_VOLUME_UUID1);
-        newBrick.setServerId(server.getId());
-        newBrick.setServerName(server.getHostName());
+        newBrick.setServerId(FixturesTool.GLUSTER_SERVER_UUID3);
+        newBrick.setServerName(FixturesTool.GLUSTER_SERVER_NAME3);
         newBrick.setBrickDirectory(BRICK_EXPORT_DIR);
         GlusterAsyncTask asyncTask = new GlusterAsyncTask();
         asyncTask.setTaskId(FixturesTool.GLUSTER_ASYNC_TASK_ID1);

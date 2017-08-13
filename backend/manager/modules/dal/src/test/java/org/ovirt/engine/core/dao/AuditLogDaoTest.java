@@ -28,7 +28,6 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
 
     private static final String VM_NAME = FixturesTool.VM_RHEL5_POOL_50_NAME;
     private static final String VM_TEMPLATE_NAME = "1";
-    private static final String VDS_NAME = "magenta-vdsc";
     private static final Guid VM_ID = FixturesTool.VM_RHEL5_POOL_50;
     private static final Guid VM_TEMPLATE_ID = FixturesTool.VM_TEMPLATE_RHEL5;
     private static final Guid GLUSTER_VOLUME_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
@@ -63,7 +62,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
         newAuditLog.setVmTemplateId(VM_TEMPLATE_ID);
         newAuditLog.setVmTemplateName(VM_TEMPLATE_NAME);
         newAuditLog.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
-        newAuditLog.setVdsName("magenta-vdsc");
+        newAuditLog.setVdsName(FixturesTool.GLUSTER_SERVER_NAME3);
         newAuditLog.setLogTime(EXPECTED_DATE_FORMAT.parse("2010-12-22 14:00:00"));
         newAuditLog.setLogType(AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
         newAuditLog.setSeverity(AuditLogSeverity.ERROR);
@@ -329,7 +328,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     public void testMultipleAlertsWithSameTypeAndHostAreIgnored() {
         AuditLog entry = new AuditLog(AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY, AuditLogSeverity.ALERT);
         entry.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
-        entry.setVdsName(VDS_NAME);
+        entry.setVdsName(FixturesTool.GLUSTER_SERVER_NAME3);
         entry.setMessage("Testing alert");
 
         // test if no alert of the same type for the same host exists
@@ -359,7 +358,7 @@ public class AuditLogDaoTest extends BaseDaoTestCase {
     public void testMultipleAlertsWithSameTypeAndHostAreSavedIfRepeatableTrue() {
         AuditLog entry = new AuditLog(AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY, AuditLogSeverity.ALERT);
         entry.setVdsId(FixturesTool.VDS_RHEL6_NFS_SPM);
-        entry.setVdsName(VDS_NAME);
+        entry.setVdsName(FixturesTool.GLUSTER_SERVER_NAME3);
         entry.setMessage("Testing alert");
         entry.setRepeatable(true);
 

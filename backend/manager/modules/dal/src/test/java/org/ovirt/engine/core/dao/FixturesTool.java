@@ -765,6 +765,8 @@ public class FixturesTool {
 
     public static final Guid GLUSTER_SERVER_UUID3 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
+    public static final String GLUSTER_SERVER_NAME3 = "magenta-vdsc";
+
     public static final Guid GLUSTER_BRICK_SERVER1 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
 
     public static final Guid GLUSTER_SERVER_UUID_NEW = new Guid("da9e2f09-2835-4530-9bf5-576c52b11943");

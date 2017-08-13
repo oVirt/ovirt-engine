@@ -99,7 +99,7 @@ public class AffinityGroupDaoTest extends BaseDaoTestCase {
         ag.setVdsIds(new ArrayList<>());
         ag.getVdsIds().add(FixturesTool.VDS_RHEL6_NFS_SPM);
         ag.setVdsEntityNames(new ArrayList<>());
-        ag.getVdsEntityNames().add("magenta-vdsc");
+        ag.getVdsEntityNames().add(FixturesTool.GLUSTER_SERVER_NAME3);
         dao.save(ag);
         AffinityGroup fetched = dao.get(ag.getId());
         assertTrue(equals(ag, fetched));
