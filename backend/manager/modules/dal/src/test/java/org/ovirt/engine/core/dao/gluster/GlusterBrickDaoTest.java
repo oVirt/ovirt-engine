@@ -288,7 +288,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
     public void testUpdateBrickTask() {
         GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
         GlusterAsyncTask asyncTask = new GlusterAsyncTask();
-        asyncTask.setTaskId(new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a763"));
+        asyncTask.setTaskId(FixturesTool.GLUSTER_ASYNC_TASK_ID1);
 
         assertNotNull(existingBrick);
         assertEquals(GlusterStatus.UP, existingBrick.getStatus());
@@ -306,7 +306,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         GlusterBrickEntity existingBrick2 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID2);
 
         GlusterAsyncTask asyncTask = new GlusterAsyncTask();
-        asyncTask.setTaskId(new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a763"));
+        asyncTask.setTaskId(FixturesTool.GLUSTER_ASYNC_TASK_ID1);
 
         assertNotNull(existingBrick1);
         assertNotNull(existingBrick2);
