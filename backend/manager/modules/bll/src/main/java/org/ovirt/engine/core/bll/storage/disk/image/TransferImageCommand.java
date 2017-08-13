@@ -295,9 +295,14 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
         // If stopping the session did not succeed, don't change the transfer state.
         if (stopImageTransferSession(context.entity)) {
-            // We want to use the transferring vds for image actions for having a coherent log when transferring.
             Guid transferingVdsId = context.entity.getVdsId();
-            if (verifyImage(transferingVdsId)) {
+            // Verify image is relevant only on upload
+            if (getParameters().getTransferType() == TransferType.Download) {
+                unLockImage();
+                updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
+            }
+            // We want to use the transferring vds for image actions for having a coherent log when transferring.
+            else if (verifyImage(transferingVdsId)) {
                 setVolumeLegalityInStorage(LEGAL_IMAGE);
                 if (getImage().getVolumeFormat().equals(VolumeFormat.COW)) {
                     setQcowCompat(getImage().getImage(),
