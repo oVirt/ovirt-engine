@@ -58,9 +58,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/btn_guide_hover.png")
     ImageResource guideHoverMediumImage();
 
-    @Source("images/guide.png")
-    ImageResource guideImage();
-
     @Source("images/btn_guide.png")
     ImageResource guideMediumImage();
 
