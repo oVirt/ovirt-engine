@@ -26,7 +26,7 @@
         <div class="container">
             <div id="welcome-section">
                 <div id="welcome-title"><fmt:message key="obrand.welcome.welcome.text" /></div>
-                <div class="obrand_loginFormLogoImage"></div>
+                <div class="obrand_middleLogoName"></div>
                 <div id="welcome-version-text"><fmt:message key="obrand.welcome.version"><fmt:param value="${requestScope['version']}" /></fmt:message></div>
             </div>
 

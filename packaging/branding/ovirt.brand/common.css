@@ -28,9 +28,8 @@
   }
 }
 
-/* TODO rename */
-.obrand_loginFormLogoImage {
-    background-image: url(images/ovirt_login_middle_logo.png);
+.obrand_middleLogoName {
+    background-image: url(images/ovirt_middle_logo_name.png);
     width: 440px;
     height: 35px;
     border: 0px;

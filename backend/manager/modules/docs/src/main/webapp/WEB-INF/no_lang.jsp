@@ -28,7 +28,7 @@
         <div class="container container-pad">
             <div class="row" id="welcome-section">
                 <div class="col-sm-12">
-                    <div class="obrand_loginFormLogoImage"></div>
+                    <div class="obrand_middleLogoName"></div>
                 </div>
             </div>
             <div class="row">
