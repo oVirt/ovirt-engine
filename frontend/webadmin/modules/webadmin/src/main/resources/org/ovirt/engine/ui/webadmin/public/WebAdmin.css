@@ -8,46 +8,6 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
     outline: none;
 }
 
-/* oVirt legacy styles */
-.rhev-Masthead {
-    background-image: url(images/tbl_middle.gif);
-    background-repeat: repeat-x;
-    cellpadding: 0px;
-}
-
-.rhev-Masthead-Logo { /* height: 48px;
-  width: 48px; */
-    padding-top: 4px;
-    padding-left: 8px;
-}
-
-.rhev-MastHead-Name {
-    color: #FFFFFF;
-    font-size: 14px;
-    font-weight: bold;
-    overflow: hidden;
-    padding-top: 12px;
-    padding-left: 2px;
-    text-align: left;
-}
-
-.engine-MasterHead-Right {
-    background-image: url(images/tbl_right.gif);
-}
-
-.rhev-MastHead-SignedInUser {
-    color: #FFFFFF;
-    font-size: 10px;
-    font-weight: normal;
-    overflow: hidden;
-    padding-right: 4px;
-    text-align: right;
-}
-
-.engine-footer-text {
-    color: white;
-}
-
 .engine-progress-box, .engine-progress-box-migration {
     border: 1px solid #AAAAAA;
     height: 1em;
@@ -63,32 +23,6 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
     text-align: center;
     font-size: 0.8em;
     position: relative;
-}
-
-.subTabPanelContainer {
-    border-top: 1px dashed #7C7C7C;
-    border-left: 1px dashed #7C7C7C;
-}
-
-.subTabGeneralItemValue {
-    color: #777777
-}
-
-.dialog-button-text-disabled,
-.dialog-button-text {
-    font-size:13px;
-    padding-left: 5px;
-    padding-right: 5px;
-    color: black;
-    white-space: nowrap;
-}
-
-.dialog-button-text {
-    cursor: pointer;
-}
-
-.dialog-button-text-disabled {
-    color: #888888;
 }
 
 .gwt-ListBox {
