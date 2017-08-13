@@ -20,6 +20,7 @@ import org.ovirt.engine.core.dao.BaseDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 public class GlusterBrickDaoTest extends BaseDaoTestCase {
+    private static final String BRICK_EXPORT_DIR = "/export/test-vol-distribute-1/dir3";
     private GlusterBrickDao dao;
     private VdsStatic server;
 
@@ -36,7 +37,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         brickToAdd.setVolumeId(FixturesTool.GLUSTER_VOLUME_UUID1);
         brickToAdd.setServerId(server.getId());
         brickToAdd.setServerName(server.getHostName());
-        brickToAdd.setBrickDirectory("/export/test-vol-distribute-1/dir3");
+        brickToAdd.setBrickDirectory(BRICK_EXPORT_DIR);
         brickToAdd.setStatus(GlusterStatus.UP);
         brickToAdd.setBrickOrder(0);
 
@@ -162,7 +163,7 @@ public class GlusterBrickDaoTest extends BaseDaoTestCase {
         newBrick.setVolumeId(FixturesTool.GLUSTER_VOLUME_UUID1);
         newBrick.setServerId(server.getId());
         newBrick.setServerName(server.getHostName());
-        newBrick.setBrickDirectory("/export/test-vol-distribute-1/dir3");
+        newBrick.setBrickDirectory(BRICK_EXPORT_DIR);
         GlusterAsyncTask asyncTask = new GlusterAsyncTask();
         asyncTask.setTaskId(FixturesTool.GLUSTER_ASYNC_TASK_ID1);
         newBrick.setAsyncTask(asyncTask);
