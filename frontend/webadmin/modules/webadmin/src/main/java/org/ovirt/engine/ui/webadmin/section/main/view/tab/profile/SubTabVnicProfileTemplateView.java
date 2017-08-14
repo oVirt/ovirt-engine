@@ -49,6 +49,15 @@ public class SubTabVnicProfileTemplateView extends AbstractSubTabTableView<VnicP
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "300px"); //$NON-NLS-1$
 
+        AbstractTextColumn<VmTemplate> versionColumn = new AbstractTextColumn<VmTemplate>() {
+            @Override
+            public String getValue(VmTemplate object) {
+                return String.valueOf(object.getTemplateVersionNumber());
+            }
+        };
+        versionColumn.makeSortable();
+        getTable().addColumn(versionColumn, constants.versionTemplate(), "100px"); //$NON-NLS-1$
+
     }
 
 }

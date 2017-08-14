@@ -53,6 +53,15 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "400px"); //$NON-NLS-1$
 
+        AbstractTextColumn<PairQueryable<VmNetworkInterface, VmTemplate>> versionColumn = new AbstractTextColumn<PairQueryable<VmNetworkInterface, VmTemplate>>() {
+            @Override
+            public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
+                return String.valueOf(object.getSecond().getTemplateVersionNumber());
+            }
+        };
+        versionColumn.makeSortable();
+        getTable().addColumn(versionColumn, constants.versionTemplate(), "100px"); //$NON-NLS-1$
+
         AbstractTextColumn<PairQueryable<VmNetworkInterface, VmTemplate>> statusColumn = new AbstractEnumColumn<PairQueryable<VmNetworkInterface, VmTemplate>, VmTemplateStatus>() {
             @Override
             protected VmTemplateStatus getRawValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
