@@ -10,7 +10,6 @@ public class HwOnlyVmBaseToUnitBuilder extends BaseSyncBuilder<VmBase, UnitVmMod
         model.getMemSize().setEntity(vm.getMemSizeMb());
         model.getMaxMemorySize().setEntity(vm.getMaxMemorySizeMb()  );
         model.getIoThreadsEnabled().setEntity(vm.getNumOfIoThreads() != 0);
-        model.getNumOfIoThreads().setEntity(vm.getNumOfIoThreads());
         model.getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
         model.getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
         model.getNumOfMonitors().setSelectedItem(vm.getNumOfMonitors());

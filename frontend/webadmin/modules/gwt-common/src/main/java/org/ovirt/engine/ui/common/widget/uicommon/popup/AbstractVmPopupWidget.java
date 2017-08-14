@@ -788,11 +788,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     public FlowPanel cpuAllocationPanel;
 
-    @UiField(provided = true)
-    @Path(value = "numOfIoThreads.entity")
-    @WithElementId("numOfIoThreadsEditor")
-    public IntegerEntityModelTextBoxEditor numOfIoThreadsEditor;
-
     @Path(value = "minAllocatedMemory.entity")
     @WithElementId("minAllocatedMemory")
     @UiField(provided=true)
@@ -957,8 +952,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         minAllocatedMemoryEditor = new MemorySizeEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         minAllocatedMemoryEditor.hideLabel();
-
-        numOfIoThreadsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
 
         // TODO: How to align right without creating the widget manually?
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -1913,7 +1906,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = resourceAllocationTab.setTabIndexes(nextTabIndex);
         cpuProfilesEditor.setTabIndex(nextTabIndex++);
         minAllocatedMemoryEditor.setTabIndex(nextTabIndex++);
-        numOfIoThreadsEditor.setTabIndex(nextTabIndex++);
         provisioningThinEditor.setTabIndex(nextTabIndex++);
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
         cpuPinning.setTabIndex(nextTabIndex++);

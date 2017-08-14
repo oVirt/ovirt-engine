@@ -74,9 +74,6 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
-    // no need to have this configurable
-    public static final int DEFAULT_NUM_OF_IOTHREADS = 1;
-
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
@@ -1314,6 +1311,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             // Resouce allocation tab
             getModel().getMemoryBalloonDeviceEnabled().setEntity(false);
+            getModel().getIoThreadsEnabled().setEntity(true);
         }
     }
 
@@ -1386,16 +1384,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getOSType().setSelectedItem(osIdList);
                 break;
             }
-        }
-    }
-
-    public void updateNumOfIoThreads() {
-        getModel().getIoThreadsEnabled().setIsChangeable(true);
-        getModel().getNumOfIoThreads().setIsChangeable(true);
-
-        getModel().getNumOfIoThreads().setIsAvailable(getModel().getIoThreadsEnabled().getEntity());
-        if (getModel().getIoThreadsEnabled().getEntity() && getModel().getNumOfIoThreads().getEntity() == 0) {
-            getModel().getNumOfIoThreads().setEntity(DEFAULT_NUM_OF_IOTHREADS);
         }
     }
 

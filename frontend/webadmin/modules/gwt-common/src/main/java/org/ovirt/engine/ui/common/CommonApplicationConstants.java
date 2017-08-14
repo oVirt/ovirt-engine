@@ -517,8 +517,6 @@ public interface CommonApplicationConstants extends Constants {
 
     String physMemGuarVmPopup();
 
-    String numOfIoThreadsVmPopup();
-
     String firstDeviceVmPopup();
 
     String secondDeviceVmPopup();

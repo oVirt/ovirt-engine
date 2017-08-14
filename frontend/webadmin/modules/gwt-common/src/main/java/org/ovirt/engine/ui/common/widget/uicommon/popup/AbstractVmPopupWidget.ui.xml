@@ -582,9 +582,6 @@
                     <ge:EntityModelDetachableWidget ui:field="isIoThreadsEnabledDetachable" usePatternFly="true" />
                   </b:Column>
                 </b:Row>
-                <b:Row>
-                  <ge:IntegerEntityModelTextBoxEditor ui:field="numOfIoThreadsEditor" label="{constants.numOfIoThreadsVmPopup}" usePatternFly="true" labelColSize="SM_6" widgetColSize="SM_6" />
-                </b:Row>
                 <g:FlowPanel ui:field="storageAllocationPanel">
                   <b:Row>
                     <b:Column size="SM_12">
