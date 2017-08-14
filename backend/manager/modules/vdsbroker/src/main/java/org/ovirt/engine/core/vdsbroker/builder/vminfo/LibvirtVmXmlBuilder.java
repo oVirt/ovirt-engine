@@ -545,6 +545,14 @@ public class LibvirtVmXmlBuilder {
         writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);
         writer.writeStartElement(OVIRT_VM_URI, "vm");
         writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
+        writeMinGuaranteedMemoryMetadata();
+        writer.writeEndElement();
+    }
+
+    private void writeMinGuaranteedMemoryMetadata() {
+        writer.writeStartElement("minGuaranteedMemoryMb");
+        writer.writeAttributeString("type", "int");
+        writer.writeRaw(String.valueOf(vm.getMinAllocatedMem()));
         writer.writeEndElement();
     }
 
