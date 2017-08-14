@@ -1,9 +1,7 @@
 package org.ovirt.engine.core.dao.network;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -13,44 +11,52 @@ import javax.inject.Inject;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.VmNicFilterParameter;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDaoTestCase;
+import org.ovirt.engine.core.dao.BaseGenericDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 
-public class VmNicFilterParameterDaoTest extends BaseDaoTestCase {
+public class VmNicFilterParameterDaoTest
+        extends BaseGenericDaoTestCase<Guid, VmNicFilterParameter, VmNicFilterParameterDao> {
 
     @Inject
     private VmNicFilterParameterDao dao;
 
-    /**
-     * Ensures null is returned.
-     */
-    @Test
-    public void testGetWithNonExistingId() {
-        VmNicFilterParameter result = dao.get(Guid.newGuid());
-
-        assertNull(result);
+    @Override
+    protected VmNicFilterParameter generateNewEntity() {
+        VmNicFilterParameter parameter = new VmNicFilterParameter();
+        parameter.setId(Guid.newGuid());
+        parameter.setName("IP");
+        parameter.setValue("192.168.122.2");
+        parameter.setVmInterfaceId(FixturesTool.VM_NETWORK_INTERFACE);
+        return  parameter;
     }
 
-    /**
-     * Ensures that the network filter parameter is returned.
-     */
-    @Test
-    public void testGet() {
-        VmNicFilterParameter result = dao.get(FixturesTool.VM_NETWORK_FILTER_PARAMETER);
-
-        assertNotNull(result);
-        assertEquals(FixturesTool.VM_NETWORK_FILTER_PARAMETER, result.getId());
+    @Override
+    protected void updateExistingEntity() {
+        existingEntity.setId(FixturesTool.VM_NETWORK_FILTER_PARAMETER);
+        existingEntity.setName("IP");
+        existingEntity.setValue("192.168.122.1");
+        existingEntity.setVmInterfaceId(FixturesTool.VM_NETWORK_INTERFACE);
     }
 
-    /**
-     * Ensures that the expected number of network filter parameters is returned.
-     */
-    @Test
-    public void testGetAll() {
-        List<VmNicFilterParameter> parameters = dao.getAll();
-        assertNotNull(parameters);
-        assertEquals(FixturesTool.NUMBER_OF_VM_NETWORK_FILTER_PARAMETERS, parameters.size());
+    @Override
+    protected Guid getExistingEntityId() {
+        return FixturesTool.VM_NETWORK_FILTER_PARAMETER;
+    }
+
+    @Override
+    protected VmNicFilterParameterDao prepareDao() {
+        return dao;
+    }
+
+    @Override
+    protected Guid generateNonExistingId() {
+        return Guid.newGuid();
+    }
+
+    @Override
+    protected int getEntitiesTotalCount() {
+        return FixturesTool.NUMBER_OF_VM_NETWORK_FILTER_PARAMETERS;
     }
 
     /**
@@ -75,47 +81,5 @@ public class VmNicFilterParameterDaoTest extends BaseDaoTestCase {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
-    }
-
-    /**
-     * Ensures that after an update, the network filter parameter is indeed persisted with new values.
-     */
-    @Test
-    public void testUpdate() {
-        VmNicFilterParameter updatedParameter = new VmNicFilterParameter();
-        updatedParameter.setId(FixturesTool.VM_NETWORK_FILTER_PARAMETER);
-        updatedParameter.setName("IP");
-        updatedParameter.setValue("192.168.122.1");
-        updatedParameter.setVmInterfaceId(FixturesTool.VM_NETWORK_INTERFACE);
-
-        assertNotEquals(updatedParameter, dao.get(FixturesTool.VM_NETWORK_FILTER_PARAMETER));
-        dao.update(updatedParameter);
-        assertEquals(updatedParameter, dao.get(FixturesTool.VM_NETWORK_FILTER_PARAMETER));
-    }
-
-    /**
-     * Ensures that a pre-existing network filter parameter is removed.
-     */
-    @Test
-    public void testRemove() {
-        assertNotNull(dao.get(FixturesTool.VM_NETWORK_FILTER_PARAMETER));
-        dao.remove(FixturesTool.VM_NETWORK_FILTER_PARAMETER);
-        assertNull(dao.get(FixturesTool.VM_NETWORK_FILTER_PARAMETER));
-    }
-
-    /**
-     * Ensures that a newly-created network filter parameter is properly persisted.
-     */
-    @Test
-    public void testSave() {
-        VmNicFilterParameter parameter = new VmNicFilterParameter();
-        parameter.setId(Guid.newGuid());
-        parameter.setName("IP");
-        parameter.setValue("192.168.122.2");
-        parameter.setVmInterfaceId(FixturesTool.VM_NETWORK_INTERFACE);
-
-        assertNull(dao.get(parameter.getId()));
-        dao.save(parameter);
-        assertEquals(parameter, dao.get(parameter.getId()));
     }
 }
