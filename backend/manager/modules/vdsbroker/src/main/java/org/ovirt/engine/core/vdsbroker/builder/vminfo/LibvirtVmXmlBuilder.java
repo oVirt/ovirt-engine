@@ -1644,7 +1644,8 @@ public class LibvirtVmXmlBuilder {
         Map<String, String> properties = VmPropertiesUtils.getInstance().getVMProperties(
                 vm.getCompatibilityVersion(),
                 vm.getStaticData());
-        // TODO: driver
+        VnicProfile vnicProfile = vnicProfileDao.get(nic.getVnicProfileId());
+
         switch (device.getDevice()) {
         case "bridge":
             writer.writeAttributeString("type", "bridge");
@@ -1662,6 +1663,20 @@ public class LibvirtVmXmlBuilder {
             writer.writeAttributeString("bridge", nic.getNetworkName());
             writer.writeEndElement();
 
+            String queues = vnicProfile.getCustomProperties().get("queues");
+            String driverName = getDriverNameForNetwork(nic.getNetworkName(), properties);
+            if (queues != null || driverName != null) {
+                writer.writeStartElement("driver");
+                if (queues != null) {
+                    writer.writeAttributeString("queues", queues);
+                    if (driverName == null) {
+                        driverName = "vhost";
+                    }
+                }
+                writer.writeAttributeString("name", driverName);
+                writer.writeEndElement();
+            }
+
             break;
 
         case "hostdev":
@@ -1670,7 +1685,6 @@ public class LibvirtVmXmlBuilder {
             writer.writeStartElement("driver");
             writer.writeAttributeString("name", "vfio");
             writer.writeEndElement();
-            VnicProfile vnicProfile = vnicProfileDao.get(nic.getVnicProfileId());
             Network network = networkDao.get(vnicProfile.getNetworkId());
             if (NetworkUtils.isVlan(network)) {
                 writer.writeStartElement("vlan");
@@ -1742,6 +1756,29 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
 
         writer.writeEndElement();
+    }
+
+    private String getDriverNameForNetwork(String network, Map<String, String> properties) {
+        String vhostProp = properties.get("vhost");
+        if (vhostProp == null) {
+            return null;
+        }
+
+        for (String vhost : vhostProp.split(",")) {
+            String[] bridgeAndstatus = vhost.split(":");
+            if (network.equals(bridgeAndstatus[0])) {
+                if ("true".equalsIgnoreCase(bridgeAndstatus[1])) {
+                    return "vhost";
+                }
+                if ("false".equalsIgnoreCase(bridgeAndstatus[1])) {
+                    return "qemu";
+                }
+                log.warn("invalid vhost setting for network {}: {}", network, bridgeAndstatus[1]);
+                break;
+            }
+        }
+
+        return null;
     }
 
     private void writeBalloon(VmDevice device) {
