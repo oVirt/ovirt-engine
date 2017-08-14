@@ -968,13 +968,15 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             NetworkOperation operation = NetworkOperationFactory.operationFor(networkModel, desiredNicModel);
             UIMessages messages = ConstantsManager.getInstance().getMessages();
             // Should be attached but can't due to conflict
-            if (operation.isNullOperation()) {
-                networkModel.setErrorMessage(messages.networkLabelConflict(desiredNicModel.getName(),
-                        networkModel.getNetwork().getLabel())
-                        + " " + operation.getMessage(networkModel, desiredNicModel)); //$NON-NLS-1$
-            } else {
-                networkModel.setErrorMessage(messages.labeledNetworkNotAttached(desiredNicModel.getName(),
-                        networkModel.getNetwork().getLabel()));
+            if (desiredNicModel != null) {
+                if (operation.isNullOperation()) {
+                    networkModel.setErrorMessage(messages.networkLabelConflict(desiredNicModel.getName(),
+                            networkModel.getNetwork().getLabel())
+                            + " " + operation.getMessage(networkModel, desiredNicModel)); //$NON-NLS-1$
+                } else {
+                    networkModel.setErrorMessage(messages.labeledNetworkNotAttached(desiredNicModel.getName(),
+                            networkModel.getNetwork().getLabel()));
+                }
             }
         }
     }
