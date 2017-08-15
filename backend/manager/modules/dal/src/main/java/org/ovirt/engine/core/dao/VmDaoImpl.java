@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -26,6 +27,7 @@ import org.springframework.jdbc.core.RowMapper;
  */
 @Named
 @Singleton
+@InvocationLogger
 public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override

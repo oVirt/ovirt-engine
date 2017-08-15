@@ -56,6 +56,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
@@ -425,6 +426,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     @Override
+    @InvocationLogger
     public ActionReturnValue runAction(ActionType actionType, ActionParametersBase parameters) {
         ActionReturnValue returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
@@ -531,6 +533,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return runQueryImpl(actionType, parameters, false, engineContext);
     }
 
+    @InvocationLogger
     @Override
     public QueryReturnValue runQuery(QueryType actionType, QueryParametersBase parameters) {
         return runQueryImpl(actionType,

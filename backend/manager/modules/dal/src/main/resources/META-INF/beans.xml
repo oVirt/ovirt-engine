@@ -16,4 +16,9 @@
     -->
     <exclude name="org.ovirt.engine.core.dal.dbbroker.PostgresDbEngineDialect" />
   </scan>
+  <interceptors>
+    <class>org.ovirt.engine.core.common.di.interceptor.InfoLoggingInterceptor</class>
+    <class>org.ovirt.engine.core.common.di.interceptor.DebugLoggingInterceptor</class>
+  </interceptors>
+
 </beans>

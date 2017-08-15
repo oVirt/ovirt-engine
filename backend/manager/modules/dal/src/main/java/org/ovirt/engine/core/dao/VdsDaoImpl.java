@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.comparators.HostSpmPriorityComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
+import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.pm.FenceProxySourceTypeHelper;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -39,6 +40,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 @Named
 @Singleton
+@InvocationLogger
 public class VdsDaoImpl extends BaseDao implements VdsDao {
 
     @Inject

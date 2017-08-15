@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
@@ -57,6 +58,7 @@ import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@InvocationLogger
 @Singleton
 public class ResourceManager implements BackendService {
 
@@ -69,7 +71,7 @@ public class ResourceManager implements BackendService {
     private static final String VDSCommandPrefix = "VDSCommand";
 
     private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
-    private int parallelism;
+    private int parallelism = Config.getValue(ConfigValues.EventProcessingPoolSize);
 
     @Inject
     private Instance<IVdsEventListener> eventListener;
@@ -94,10 +96,6 @@ public class ResourceManager implements BackendService {
 
     @Inject
     private VdsManagerFactory vdsManagerFactory;
-
-    private ResourceManager() {
-        this.parallelism = Config.getValue(ConfigValues.EventProcessingPoolSize);
-    }
 
     @PostConstruct
     private void init() {
