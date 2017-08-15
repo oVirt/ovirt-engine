@@ -174,6 +174,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             final String mtu = templates.strongTextWithColor(constants.mtuItemInfo(), WHITE_TEXT_COLOR).asString() + ": " +templates.coloredText(mtuValue, TEXT_COLOR).asString();//$NON-NLS-1$
             addRow(SafeHtmlUtils.fromTrustedString(mtu));
         }
+
+        // Boot protocol and IP info
+        if (networkModel.isAttached()) {
+            insertHorizontalLine();
+            addBootProtoAndIpInfo(networkModel.getAttachedToNic().getOriginalIface());
+        }
     }
 
     /***
@@ -210,19 +216,26 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     private void showNic(NetworkInterfaceModel nic) {
         contents.removeAllRows();
         VdsNetworkInterface entity = nic.getOriginalIface();
-        Ipv4BootProtocol bootProtocol = entity.getIpv4BootProtocol();
         addRow(templates.titleSetupNetworkTooltip(nic.getName(), BACKGROUND_COLOR));
-        addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
-        if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
-            addRow(constants.addressItemInfo(), entity.getIpv4Address());
-            addRow(constants.subnetItemInfo(), entity.getIpv4Subnet());
-            addRow(constants.gatewayItemInfo(), entity.getIpv4Gateway());
+
+        if (nic.getItems().isEmpty()) {
+            addBootProtoAndIpInfo(entity);
         }
         if (nic instanceof BondNetworkInterfaceModel) {
             addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());
         }
         if (nic.isVf()) {
             addRow(constants.physicalFunction(), nic.getPhysicalFunction());
+        }
+    }
+
+    private void addBootProtoAndIpInfo(VdsNetworkInterface iface) {
+        Ipv4BootProtocol bootProtocol = iface.getIpv4BootProtocol();
+        addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));
+        if (bootProtocol == Ipv4BootProtocol.STATIC_IP) {
+            addRow(constants.addressItemInfo(), iface.getIpv4Address());
+            addRow(constants.subnetItemInfo(), iface.getIpv4Subnet());
+            addRow(constants.gatewayItemInfo(), iface.getIpv4Gateway());
         }
     }
 
