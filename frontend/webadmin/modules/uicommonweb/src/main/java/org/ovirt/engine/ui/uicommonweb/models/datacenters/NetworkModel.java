@@ -9,6 +9,7 @@ import java.util.SortedSet;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -476,9 +477,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     private boolean validate() {
-        RegexValidation tempVar = new RegexValidation();
-        tempVar.setExpression("^[A-Za-z0-9_-]{1,15}$"); //$NON-NLS-1$
-        tempVar.setMessage(ConstantsManager.getInstance().getConstants().nameMustContainAlphanumericMaxLenMsg());
+        LengthValidation tempVar = new LengthValidation();
+        tempVar.setMaxLength(BusinessEntitiesDefinitions.NETWORK_NAME_SIZE);
         RegexValidation tempVar2 = new RegexValidation();
         tempVar2.setIsNegate(true);
         tempVar2.setExpression("^(bond)"); //$NON-NLS-1$
