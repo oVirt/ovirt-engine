@@ -121,7 +121,7 @@ public class BackendVmDiskResource
         innerParams.setImageGroupID(asGuid(disk.getId()));
         MoveDisksParameters params =
                 new MoveDisksParameters(Collections.singletonList(innerParams));
-        return doAction(ActionType.MoveDisks, params, action);
+        return doAction(ActionType.MoveDisk, params, action);
     }
 
     protected Disk getDisk() {

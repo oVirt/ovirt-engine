@@ -46,6 +46,6 @@ public enum LockingGroup {
     VM_POOL,
     VM_POOL_NAME,
     /** This group is used when examining whether the last VM is detached from the pool */
-    VM_POOL_DETACH;
-
+    VM_POOL_DETACH,
+    LIVE_STORAGE_MIGRATION;
 }

@@ -11,6 +11,8 @@ public class RemoveSnapshotParameters extends VmOperationParameterBase implement
 
     private boolean needsLocking = true;
 
+    private boolean freeLockNeeded = true;
+
     public RemoveSnapshotParameters(Guid snapshotId, Guid vmGuid) {
         super(vmGuid);
         this.snapshotId = snapshotId;
@@ -34,5 +36,14 @@ public class RemoveSnapshotParameters extends VmOperationParameterBase implement
 
     public void setNeedsLocking(boolean needsLocking) {
         this.needsLocking = needsLocking;
+    }
+
+
+    public boolean isFreeLockNeeded() {
+        return freeLockNeeded;
+    }
+
+    public void setFreeLockNeeded(boolean freeLockNeeded) {
+        this.freeLockNeeded = freeLockNeeded;
     }
 }

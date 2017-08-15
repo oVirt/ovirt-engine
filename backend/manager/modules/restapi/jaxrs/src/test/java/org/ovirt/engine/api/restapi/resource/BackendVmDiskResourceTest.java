@@ -417,7 +417,7 @@ public class BackendVmDiskResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                ActionType.MoveDisks,
+                ActionType.MoveDisk,
                 MoveDisksParameters.class,
                 new String[] {},
                 new Object[] {}
@@ -468,7 +468,7 @@ public class BackendVmDiskResourceTest
         );
         setUriInfo(
             setUpActionExpectations(
-                ActionType.MoveDisks,
+                ActionType.MoveDisk,
                 MoveDisksParameters.class,
                 new String[] {},
                 new Object[] {}

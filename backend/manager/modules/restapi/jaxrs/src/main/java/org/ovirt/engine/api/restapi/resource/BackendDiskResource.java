@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,7 +29,6 @@ import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AmendImageGroupVolumesCommandParameters;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
-import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.StorageJobCommandParameters;
@@ -115,14 +113,12 @@ public class BackendDiskResource
         Disk disk = get();
         Guid imageId = getDiskImageId(disk.getImageId());
         Guid sourceStorageDomainId = getSourceStorageDomainId(disk);
-        MoveDiskParameters innerParams = new MoveDiskParameters(
+        MoveDiskParameters params = new MoveDiskParameters(
                 imageId,
                 sourceStorageDomainId,
                 storageDomainId);
-        innerParams.setImageGroupID(asGuid(disk.getId()));
-        MoveDisksParameters params =
-                new MoveDisksParameters(Collections.singletonList(innerParams));
-        return doAction(ActionType.MoveDisks, params, action);
+        params.setImageGroupID(asGuid(disk.getId()));
+        return doAction(ActionType.MoveDisk, params, action);
     }
 
     protected Guid getSourceStorageDomainId(Disk disk) {

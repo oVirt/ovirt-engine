@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
-import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -142,7 +141,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
 
     @Override
     protected ActionType getActionType() {
-        return ActionType.MoveDisks;
+        return ActionType.MoveDisk;
     }
 
     @Override
@@ -181,12 +180,10 @@ public class MoveDiskModel extends MoveOrCopyDiskModel {
             return;
         }
 
-        MoveDisksParameters moveDisksParameters = new MoveDisksParameters((List) parameters);
-        Frontend.getInstance().runAction(getActionType(), moveDisksParameters,
-                result -> {
-                    MoveDiskModel localModel = (MoveDiskModel) result.getState();
-                    localModel.cancel();
-                }, this);
+        Frontend.getInstance().runMultipleAction(getActionType(), parameters, result -> {
+            MoveDiskModel localModel = (MoveDiskModel) result.getState();
+            localModel.cancel();
+        }, this);
     }
 
     @Override

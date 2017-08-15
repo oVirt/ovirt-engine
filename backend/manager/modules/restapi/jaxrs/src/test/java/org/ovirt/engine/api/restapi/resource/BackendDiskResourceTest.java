@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
-import org.ovirt.engine.core.common.action.MoveDisksParameters;
+import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
@@ -68,8 +68,8 @@ public class BackendDiskResourceTest
                 new String[] {"Id"},
                 new Object[] {DISK_ID},
                 getEntity(1));
-        setUriInfo(setUpActionExpectations(ActionType.MoveDisks,
-                MoveDisksParameters.class,
+        setUriInfo(setUpActionExpectations(ActionType.MoveDisk,
+                MoveDiskParameters.class,
                 new String[] {},
                 new Object[] {},
                 true, true, null, null, true));
