@@ -87,10 +87,10 @@ public class LibvirtVmXmlBuilder {
 
     private static final Logger log = LoggerFactory.getLogger(LibvirtVmXmlBuilder.class);
     // Namespace URIs:
-    public static final String OVIRT_URI = "http://ovirt.org/vm/tune/1.0";
+    public static final String OVIRT_TUNE_URI = "http://ovirt.org/vm/tune/1.0";
     public static final String OVIRT_VM_URI = "http://ovirt.org/vm/1.0";
     // Namespace prefixes:
-    public static final String OVIRT_PREFIX = "ovirt";
+    public static final String OVIRT_TUNE_PREFIX = "ovirt-tune";
     public static final String OVIRT_VM_PREFIX = "ovirt-vm";
 
     /** Timeout for the boot menu, in milliseconds */
@@ -174,11 +174,13 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeHeader() {
+        writer.setPrefix(OVIRT_TUNE_PREFIX, OVIRT_TUNE_URI);
+        writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);
         writer.writeStartDocument(false);
-        writer.setPrefix(OVIRT_PREFIX, OVIRT_URI);
         writer.writeStartElement("domain");
         writer.writeAttributeString("type", "kvm");
-        writer.writeNamespace(OVIRT_PREFIX, OVIRT_URI);
+        writer.writeNamespace(OVIRT_TUNE_PREFIX, OVIRT_TUNE_URI);
+        writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
     }
 
     private void writeName() {
@@ -527,24 +529,27 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeMetadata() {
-        // <domain xmlns:ovirt="http://ovirt.org/vm/tune/1.0">
+        // <domain>
         // ...
         //   <metadata>
-        //     <ovirt:qos xmlns:ovirt=>
+        //     <ovirt-tune:qos/>
+        //     <ovirt-vm:vm/>
         //   </metadata>
         // ...
         // </domain>
         writer.writeStartElement("metadata");
-        writer.writeStartElement(OVIRT_URI, "qos");
-        writer.writeEndElement();
+        writeQosMetadata();
         writeVmMetadata();
         writer.writeEndElement();
     }
 
+    private void writeQosMetadata() {
+        writer.writeStartElement(OVIRT_TUNE_URI, "qos");
+        writer.writeEndElement();
+    }
+
     private void writeVmMetadata() {
-        writer.setPrefix(OVIRT_VM_PREFIX, OVIRT_VM_URI);
         writer.writeStartElement(OVIRT_VM_URI, "vm");
-        writer.writeNamespace(OVIRT_VM_PREFIX, OVIRT_VM_URI);
         writeMinGuaranteedMemoryMetadata();
         writer.writeEndElement();
     }
