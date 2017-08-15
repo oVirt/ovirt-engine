@@ -84,7 +84,11 @@ public class VmStatusColumn<T> extends AbstractColumn<T, VM> {
             }
 
             if (hasIllegalImages(vm)) {
-                tooltip += "<br/><br/>" + constants.vmHasIllegalImages(); //$NON-NLS-1$
+                if (vm.getStatus() == VMStatus.Up) {
+                    tooltip += "<br/><br/>" + constants.runningVmHasIllegalImages(); //$NON-NLS-1$
+                } else {
+                    tooltip += "<br/><br/>" + constants.shutdownVmHasIllegalImages(); //$NON-NLS-1$
+                }
             }
 
             if (vm.getStatus() == VMStatus.Up) {
