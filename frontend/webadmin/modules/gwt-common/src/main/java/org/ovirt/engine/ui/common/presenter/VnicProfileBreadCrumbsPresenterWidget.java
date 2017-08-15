@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.MenuLayout;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 
 import com.google.web.bindery.event.shared.EventBus;
@@ -17,9 +16,8 @@ public class VnicProfileBreadCrumbsPresenterWidget
 
     @Inject
     public VnicProfileBreadCrumbsPresenterWidget(EventBus eventBus, VnicProfileBreadCrumbsViewDef view,
-            MainModelProvider<VnicProfileView, VnicProfileListModel> listModelProvider,
-            MenuLayout menuLayout) {
-        super(eventBus, view, listModelProvider, menuLayout);
+            MainModelProvider<VnicProfileView, VnicProfileListModel> listModelProvider) {
+        super(eventBus, view, listModelProvider);
     }
 
 }

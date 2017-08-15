@@ -5,8 +5,15 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
     <ui:style>
+        .iframe {
+            width: 100%;
+            border-style: none;
+            border-width: 0;
+        }
     </ui:style>
 
-    <g:SimplePanel ui:field="tabContentContainer" />
+    <g:HTMLPanel>
+        <g:Frame ui:field="frame" addStyleNames="{style.iframe}" />
+    </g:HTMLPanel>
 
 </ui:UiBinder>

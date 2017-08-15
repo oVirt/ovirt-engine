@@ -57,7 +57,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {
-        if (slot == MainContentPresenter.TYPE_SetMainTabPanelContent) {
+        if (slot == MainContentPresenter.TYPE_SetContent) {
             container.insert(content, 0);
         } else if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
             if (content != null) {

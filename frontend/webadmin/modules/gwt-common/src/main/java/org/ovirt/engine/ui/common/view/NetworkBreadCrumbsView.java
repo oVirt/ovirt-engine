@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget.NetworkBreadCrumbsViewDef;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.MenuLayout;
+import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -15,9 +15,9 @@ public class NetworkBreadCrumbsView extends OvirtBreadCrumbsView<NetworkView, Ne
     implements NetworkBreadCrumbsViewDef {
 
     @Inject
-    public NetworkBreadCrumbsView(MenuLayout menuLayout,
+    public NetworkBreadCrumbsView(MenuDetailsProvider menu,
             MainModelProvider<NetworkView, NetworkListModel> listModelProvider) {
-        super(menuLayout, listModelProvider);
+        super(listModelProvider, menu);
     }
 
     @Override

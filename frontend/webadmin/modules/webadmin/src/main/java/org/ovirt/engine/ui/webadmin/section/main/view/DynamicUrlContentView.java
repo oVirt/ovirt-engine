@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
 import org.ovirt.engine.ui.common.view.AbstractView;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentPresenter;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -12,15 +12,16 @@ import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class DynamicUrlContentTabView extends AbstractView implements DynamicUrlContentTabPresenter.ViewDef {
+public class DynamicUrlContentView extends AbstractView implements DynamicUrlContentPresenter.ViewDef {
 
     private static final String GWT_FRAME = "gwt-Frame"; // $NON-NLS-1$
+
     // For some reason all browsers have some size around the iframe that you cannot hide. But you need to
     // subtract 6 pixels otherwise a second scrollbar will appear. This will result in some white space below the
     // iframe.
     private static final int IFRAME_SUBTRACT = 6;
 
-    interface ViewUiBinder extends UiBinder<Widget, DynamicUrlContentTabView> {
+    interface ViewUiBinder extends UiBinder<Widget, DynamicUrlContentView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -28,7 +29,7 @@ public class DynamicUrlContentTabView extends AbstractView implements DynamicUrl
     Frame frame;
 
     @Inject
-    public DynamicUrlContentTabView() {
+    public DynamicUrlContentView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         Window.addResizeHandler(e -> resizeFrame());
         frame.removeStyleName(GWT_FRAME);

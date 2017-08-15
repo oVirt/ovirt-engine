@@ -1,15 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import org.ovirt.engine.ui.common.presenter.AbstractTabPresenter;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.UpdateMainContentLayout.ContentDisplayType;
 
 import com.google.gwt.event.shared.EventBus;
+import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
@@ -25,15 +24,17 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  *            Proxy type.
  */
 public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel, V extends View,
-    P extends TabContentProxyPlace<?>> extends AbstractTabPresenter<V, P> {
+    P extends ProxyPlace<?>> extends Presenter<V, P> {
 
     protected final PlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
+    private final ActionPanelPresenterWidget<?, ?> actionPanel;
 
     public AbstractMainTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider,
             ActionPanelPresenterWidget<T, M> actionPanel) {
-        super(eventBus, view, proxy, actionPanel, MainTabPanelPresenter.TYPE_SetTabContent);
+        super(eventBus, view, proxy, MainContentPresenter.TYPE_SetContent);
+        this.actionPanel = actionPanel;
         this.placeManager = placeManager;
         this.modelProvider = modelProvider;
     }
@@ -76,12 +77,8 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
      */
     protected abstract PlaceRequest getMainTabRequest();
 
-    /**
-     * Controls the sub tab panel visibility.
-     */
-    protected void setSubTabPanelVisible(boolean subTabPanelVisible) {
-        UpdateMainContentLayoutEvent.fire(this, subTabPanelVisible ? ContentDisplayType.SUB : ContentDisplayType.MAIN,
-                null);
+    public ActionPanelPresenterWidget<?, ?> getActionPanelPresenterWidget() {
+        return actionPanel;
     }
 
 }

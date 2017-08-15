@@ -61,7 +61,7 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {
-        if (slot == MainContentPresenter.TYPE_SetMainTabPanelContent) {
+        if (slot == MainContentPresenter.TYPE_SetContent) {
             actionPanelContainer.add(content);
         } else if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
             if (content != null) {

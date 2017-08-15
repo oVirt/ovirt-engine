@@ -62,9 +62,4 @@ public class TagsPresenter extends AbstractOverlayPresenter<TagsPresenter.ViewDe
         super.onReveal();
         tagModelProvider.getModel().search();
     }
-
-    @Override
-    public OverlayType getOverlayType() {
-        return OverlayType.TAGS;
-    }
 }

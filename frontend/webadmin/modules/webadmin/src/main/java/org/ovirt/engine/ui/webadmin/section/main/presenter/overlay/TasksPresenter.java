@@ -99,9 +99,4 @@ public class TasksPresenter extends AbstractOverlayPresenter<TasksPresenter.View
             return NotificationStatus.INFO;
         }
     }
-
-    @Override
-    public OverlayType getOverlayType() {
-        return OverlayType.TASKS;
-    }
 }

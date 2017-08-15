@@ -37,18 +37,14 @@ public class DynamicUrlContentTabProxyFactory implements HasHandlers {
             Type<ChangeTabHandler> changeTabEventType,
             Type<RevealContentHandler<?>> slot,
             String label, float priority, String historyToken,
-            boolean isMainTab, String contentUrl, Align align,
+            String contentUrl, Align align,
             String searchPrefix) {
-        if (isMainTab) {
-            DynamicMainTabAddedEvent.fire(this, historyToken,
-                    searchPrefix != null ? searchPrefix : label.replace(":", "")); //$NON-NLS-1$ //$NON-NLS-2$
-        }
         return new DynamicUrlContentTabProxy(
                 placeManager, eventBus, gatekeeper,
                 requestTabsEventType, changeTabEventType,
                 slot, viewProvider,
                 label, priority, historyToken,
-                isMainTab, contentUrl, align);
+                contentUrl, align);
     }
 
     @Override

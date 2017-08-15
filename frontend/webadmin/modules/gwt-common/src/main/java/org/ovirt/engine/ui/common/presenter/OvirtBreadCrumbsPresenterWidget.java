@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSelectedCallback;
-import org.ovirt.engine.ui.common.widget.tab.MenuLayout;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.core.client.Scheduler;
@@ -40,7 +39,7 @@ public class OvirtBreadCrumbsPresenterWidget<T, M extends SearchableListModel>
 
     @Inject
     public OvirtBreadCrumbsPresenterWidget(EventBus eventBus, ViewDef<T> view,
-            MainModelProvider<T, M> listModelProvider, MenuLayout menuLayout) {
+            MainModelProvider<T, M> listModelProvider) {
         super(eventBus, view);
         this.listModelProvider = listModelProvider;
         view.setSelectionCallback(this);

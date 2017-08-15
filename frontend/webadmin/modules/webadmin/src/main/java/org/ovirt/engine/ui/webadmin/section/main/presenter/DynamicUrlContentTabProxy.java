@@ -18,7 +18,6 @@ public class DynamicUrlContentTabProxy extends DynamicTabProxy<DynamicUrlContent
     private final Type<RevealContentHandler<?>> slot;
     private final Provider<DynamicUrlContentTabPresenter.ViewDef> viewProvider;
 
-    private final boolean isMainTab;
     private final String contentUrl;
 
     public DynamicUrlContentTabProxy(PlaceManager placeManager,
@@ -28,14 +27,13 @@ public class DynamicUrlContentTabProxy extends DynamicTabProxy<DynamicUrlContent
             Type<RevealContentHandler<?>> slot,
             Provider<DynamicUrlContentTabPresenter.ViewDef> viewProvider,
             String label, float priority, String historyToken,
-            boolean isMainTab, String contentUrl, Align align) {
+            String contentUrl, Align align) {
         super(placeManager, eventBus, gatekeeper,
                 requestTabsEventType, changeTabEventType,
                 label, priority, historyToken, align);
         this.eventBus = eventBus;
         this.slot = slot;
         this.viewProvider = viewProvider;
-        this.isMainTab = isMainTab;
         this.contentUrl = contentUrl;
     }
 
@@ -43,7 +41,7 @@ public class DynamicUrlContentTabProxy extends DynamicTabProxy<DynamicUrlContent
     protected DynamicUrlContentTabPresenter createPresenter() {
         return new DynamicUrlContentTabPresenter(
                 eventBus, viewProvider.get(), this,
-                getPlaceManager(), slot, isMainTab, contentUrl);
+                getPlaceManager(), slot, contentUrl);
     }
 
 }

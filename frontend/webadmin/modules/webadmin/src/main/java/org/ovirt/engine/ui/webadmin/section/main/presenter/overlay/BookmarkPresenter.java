@@ -47,9 +47,4 @@ public class BookmarkPresenter extends AbstractOverlayPresenter<BookmarkPresente
             }
         });
     }
-
-    @Override
-    public OverlayType getOverlayType() {
-        return OverlayType.BOOKMARK;
-    }
 }

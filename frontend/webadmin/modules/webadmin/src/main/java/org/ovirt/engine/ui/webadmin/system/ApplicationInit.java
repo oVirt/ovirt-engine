@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager.PluginsReadyCallback;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
-import org.ovirt.engine.ui.webadmin.widget.tab.WebadminMenuLayout;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Window;
@@ -29,8 +28,6 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
     private final ApplicationDynamicMessages dynamicMessages;
 
     private boolean pluginsReady = false;
-
-    private final WebadminMenuLayout menuLayout;
 
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
@@ -44,13 +41,11 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
             AlertManager alertManager,
             ApplicationDynamicMessages dynamicMessages,
             CurrentUserRole currentUserRole,
-            WebadminMenuLayout menuLayout,
             PluginManager pluginManager) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener, user,
                 loginModelProvider, lockInteractionManager, frontend, currentUserRole,
                 applicationLogManager, alertManager);
         this.dynamicMessages = dynamicMessages;
-        this.menuLayout = menuLayout;
         pluginManager.setPluginsReadyCallback(this);
     }
 
@@ -63,7 +58,6 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> implements 
         ApplicationMode uiMode = UiModeData.getUiMode();
         if (uiMode != null) {
             ApplicationModeHelper.setUiMode(uiMode);
-            menuLayout.setUiMode(uiMode);
         }
     }
 

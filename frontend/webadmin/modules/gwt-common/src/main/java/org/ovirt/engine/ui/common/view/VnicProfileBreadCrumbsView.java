@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.presenter.VnicProfileBreadCrumbsPresenterWidget.VnicProfileBreadCrumbsViewDef;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.MenuLayout;
+import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -15,9 +15,9 @@ public class VnicProfileBreadCrumbsView extends OvirtBreadCrumbsView<VnicProfile
     implements VnicProfileBreadCrumbsViewDef {
 
     @Inject
-    public VnicProfileBreadCrumbsView(MenuLayout menuLayout,
+    public VnicProfileBreadCrumbsView(MenuDetailsProvider menu,
             MainModelProvider<VnicProfileView, VnicProfileListModel> listModelProvider) {
-        super(menuLayout, listModelProvider);
+        super(listModelProvider, menu);
     }
 
     @Override

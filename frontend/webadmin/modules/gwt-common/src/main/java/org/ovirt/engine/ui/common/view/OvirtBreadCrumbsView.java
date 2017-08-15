@@ -13,9 +13,9 @@ import org.gwtbootstrap3.client.ui.constants.Trigger;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSearchBox;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSelectedCallback;
-import org.ovirt.engine.ui.common.widget.tab.MenuLayout;
 import org.ovirt.engine.ui.common.widget.tooltip.OvirtPopover;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
@@ -45,16 +45,16 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
     private ListModelSearchBox<T, ?> searchBox;
     private ListModelSelectedCallback<T> selectionCallback;
 
-    private final MenuLayout menuLayout;
     private final MainModelProvider<T, M> listModelProvider;
+    private final MenuDetailsProvider menuDetailsProvider;
 
     IsWidget currentSelectedItemWidget;
 
     @Inject
-    public OvirtBreadCrumbsView(MenuLayout menuLayout, MainModelProvider<T, M> listModelProvider) {
-        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        this.menuLayout = menuLayout;
+    public OvirtBreadCrumbsView(MainModelProvider<T, M> listModelProvider, MenuDetailsProvider menuDetailsProvider) {
+        this.menuDetailsProvider = menuDetailsProvider;
         this.listModelProvider = listModelProvider;
+        initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
         breadCrumbs.clear();
 
         // Add primary menu label.
-        String primaryLabel = menuLayout.getPrimaryGroupTitle(modelTitle);
+        String primaryLabel = menuDetailsProvider.getLabelFromHref(modelHref);
         if (primaryLabel != null) {
             breadCrumbs.add(new ListItem(primaryLabel));
         }

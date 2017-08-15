@@ -36,6 +36,9 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     SimplePanel headerPanel;
 
     @UiField
+    SimplePanel menuPanel;
+
+    @UiField
     FlowPanel mainContentPanel;
 
     @Inject
@@ -66,6 +69,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             setPanelContent(headerPanel, content);
         } else if (slot == MainSectionPresenter.TYPE_SetMainContent) {
             setPanelContent(mainContentPanel, content);
+        } else if (slot == MainSectionPresenter.TYPE_SetMenu) {
+            setPanelContent(menuPanel, content);
         } else {
             super.setInSlot(slot, content);
         }

@@ -25,8 +25,8 @@ import com.google.gwt.event.shared.HasHandlers;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
@@ -42,7 +42,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  *            Proxy type.
  */
 public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithDetailsModel,
-    V extends AbstractMainTabWithDetailsPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
+    V extends AbstractMainTabWithDetailsPresenter.ViewDef<T>, P extends ProxyPlace<?>>
         extends AbstractMainTabPresenter<T, M, V, P> implements DetailsTransitionHandler<T> {
 
     public interface ViewDef<T> extends View, HasActionTable<T> {
@@ -136,8 +136,6 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
             // the 'flicker' effect due to the panel still showing previous content
             placeManager.revealPlace(getSubTabRequest());
         } else {
-            // Hide sub tab panel when there is nothing selected
-            setSubTabPanelVisible(false);
             placeManager.revealPlace(getMainTabRequest());
         }
     }
@@ -150,7 +148,6 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     protected void onReveal() {
         super.onReveal();
 
-        setSubTabPanelVisible(false);
         getTable().resetScrollPosition();
         setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
         setInSlot(TYPE_SetBreadCrumbs, breadCrumbsPresenterWidget);

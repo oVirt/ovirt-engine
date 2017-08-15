@@ -48,7 +48,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Type<ChangeTabHandler> changeTabEventType,
             AbstractMainTabSelectedItems<?> selectedItems) {
         this(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
-                selectedItems, MainContentPresenter.TYPE_SetSubTabPanelContent);
+                selectedItems, MainContentPresenter.TYPE_SetContent);
     }
 
     public AbstractSubTabPanelPresenter(EventBus eventBus, V view, P proxy,
@@ -86,9 +86,6 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
     @Override
     protected void onReveal() {
         super.onReveal();
-
-        // Show sub tab
-        UpdateMainContentLayoutEvent.fire(this, UpdateMainContentLayout.ContentDisplayType.SUB, null);
 
         // make sure all detail tabs have their visibility updated
         for (Map.Entry<TabData, Model> entry : detailTabToModelMapping.entrySet()) {

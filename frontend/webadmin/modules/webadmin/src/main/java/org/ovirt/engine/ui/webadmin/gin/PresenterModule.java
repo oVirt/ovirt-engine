@@ -65,6 +65,7 @@ import org.ovirt.engine.ui.common.view.OvirtBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.QuotaBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.VnicProfileBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
+import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
@@ -87,7 +88,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWi
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.BookmarkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.overlay.TagsPresenter;
@@ -365,7 +366,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AboutPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.HeaderView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainContentView;
 import org.ovirt.engine.ui.webadmin.section.main.view.MainSectionView;
-import org.ovirt.engine.ui.webadmin.section.main.view.MainTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.MenuView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.overlay.BookmarkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.overlay.TagsView;
@@ -659,6 +660,12 @@ public class PresenterModule extends BasePresenterModule {
         // Common stuff
         bindCommonPresenters();
 
+        //Menu
+        bindSingletonPresenterWidget(MenuPresenterWidget.class,
+                MenuPresenterWidget.ViewDef.class,
+                MenuView.class);
+        bind(MenuDetailsProvider.class).to(MenuPresenterWidget.class).in(Singleton.class);
+
         // Main section: common stuff
         bindPresenter(MainSectionPresenter.class,
                 MainSectionPresenter.ViewDef.class,
@@ -697,10 +704,6 @@ public class PresenterModule extends BasePresenterModule {
                 AffinityLabelPopupView.class);
 
         // Main section: main tabs
-        bindPresenter(MainTabPanelPresenter.class,
-                MainTabPanelPresenter.ViewDef.class,
-                MainTabPanelView.class,
-                MainTabPanelPresenter.ProxyDef.class);
         bindPresenter(MainTabDataCenterPresenter.class,
                 MainTabDataCenterPresenter.ViewDef.class,
                 MainTabDataCenterView.class,

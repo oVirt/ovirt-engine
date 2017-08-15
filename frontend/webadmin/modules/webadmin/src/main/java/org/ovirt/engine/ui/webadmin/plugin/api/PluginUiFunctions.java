@@ -15,8 +15,9 @@ import org.ovirt.engine.ui.webadmin.plugin.entity.EntityObject;
 import org.ovirt.engine.ui.webadmin.plugin.entity.EntityType;
 import org.ovirt.engine.ui.webadmin.plugin.entity.TagObject;
 import org.ovirt.engine.ui.webadmin.plugin.jsni.JsFunctionResultHelper;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.MenuPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SetDynamicTabContentUrlEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopupEvent;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
@@ -48,25 +49,31 @@ public class PluginUiFunctions implements HasHandlers {
     private final EventBus eventBus;
 
     private final DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory;
+    private final DynamicUrlContentProxyFactory dynamicUrlContentProxyFactory;
     private final Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider;
 
     private final TagModelProvider tagModelProvider;
     private final PlaceManager placeManager;
     private final AlertManager alertManager;
+    private final MenuPresenterWidget menuPresenterWidget;
 
     @Inject
     public PluginUiFunctions(EventBus eventBus,
             DynamicUrlContentTabProxyFactory dynamicUrlContentTabProxyFactory,
+            DynamicUrlContentProxyFactory dynamicUrlContentProxyFactory,
             Provider<DynamicUrlContentPopupPresenterWidget> dynamicUrlContentPopupPresenterWidgetProvider,
             PlaceManager placeManager,
             AlertManager alertManager,
+            MenuPresenterWidget menuPresenterWidget,
             TagModelProvider tagModelProvider) {
         this.eventBus = eventBus;
         this.dynamicUrlContentTabProxyFactory = dynamicUrlContentTabProxyFactory;
+        this.dynamicUrlContentProxyFactory = dynamicUrlContentProxyFactory;
         this.dynamicUrlContentPopupPresenterWidgetProvider = dynamicUrlContentPopupPresenterWidgetProvider;
         this.tagModelProvider = tagModelProvider;
         this.placeManager = placeManager;
         this.alertManager = alertManager;
+        this.menuPresenterWidget = menuPresenterWidget;
     }
 
     @Override
@@ -75,14 +82,22 @@ public class PluginUiFunctions implements HasHandlers {
     }
 
     /**
-     * Adds new dynamic main tab that shows contents of the given URL.
+     * Adds new dynamic main content view that shows contents of the given URL.
      */
+    @Deprecated
     public void addMainTab(String label, String historyToken,
             String contentUrl, TabOptions options) {
-        addTab(MainTabPanelPresenter.TYPE_RequestTabs,
-                MainTabPanelPresenter.TYPE_ChangeTab,
-                MainTabPanelPresenter.TYPE_SetTabContent,
-                label, historyToken, true, contentUrl, options);
+        addMainContentView(label, historyToken, contentUrl, options.getPriority().intValue());
+    }
+
+    /**
+     * Adds new dynamic main content view that shows contents of the given URL.
+     */
+    public void addMainContentView(String label, String historyToken,
+            String contentUrl, int priority) {
+        menuPresenterWidget.addMenuItem(priority, label, historyToken);
+        // Not interested in the actual proxy, it will register itself.
+        dynamicUrlContentProxyFactory.create(historyToken, contentUrl);
     }
 
     /**
@@ -96,20 +111,20 @@ public class PluginUiFunctions implements HasHandlers {
 
         if (requestTabsEventType != null && changeTabEventType != null && slot != null) {
             addTab(requestTabsEventType, changeTabEventType, slot,
-                    label, historyToken, false, contentUrl, options);
+                    label, historyToken, contentUrl, options);
         }
     }
 
     void addTab(Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
             Type<RevealContentHandler<?>> slot,
-            String label, String historyToken, boolean isMainTab,
+            String label, String historyToken,
             String contentUrl, TabOptions options) {
         // Create and bind tab presenter proxy
         dynamicUrlContentTabProxyFactory.create(
                 requestTabsEventType, changeTabEventType, slot,
                 label, options.getPriority().floatValue(),
-                historyToken, isMainTab, contentUrl,
+                historyToken, contentUrl,
                 options.getAlignRight() ? Align.RIGHT : Align.LEFT,
                 options.getSearchPrefix());
 

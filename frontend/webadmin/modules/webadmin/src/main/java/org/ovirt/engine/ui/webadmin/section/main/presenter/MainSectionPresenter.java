@@ -26,16 +26,21 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     public static final Type<RevealContentHandler<?>> TYPE_SetHeader = new Type<>();
 
     @ContentSlot
+    public static final Type<RevealContentHandler<?>> TYPE_SetMenu = new Type<>();
+
+    @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetMainContent = new Type<>();
 
     private final HeaderPresenterWidget header;
+    private final MenuPresenterWidget menu;
     private final AlertManager alertManager;
 
     @Inject
     public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            HeaderPresenterWidget header, AlertManager alertManager) {
+            HeaderPresenterWidget header, MenuPresenterWidget menu, AlertManager alertManager) {
         super(eventBus, view, proxy, RevealType.Root);
         this.header = header;
+        this.menu = menu;
         this.alertManager = alertManager;
     }
 
@@ -44,6 +49,7 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
         super.onReveal();
 
         setInSlot(TYPE_SetHeader, header);
+        setInSlot(TYPE_SetMenu, menu);
 
         // Remove the loading page placeholder
         removeHostPagePlaceholder();
