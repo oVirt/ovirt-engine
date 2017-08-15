@@ -20,6 +20,7 @@
 
 
 import gettext
+import os
 import tempfile
 
 from M2Crypto import X509
@@ -30,8 +31,8 @@ from otopi import plugin
 from otopi import util
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
 def _(m):
@@ -119,13 +120,30 @@ class Plugin(plugin.PluginBase):
                 name=oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY,
                 content=privkey,
                 mode=0o600,
-                owner=self.environment[oengcommcons.SystemEnv.USER_ROOT],
+                owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
                 enforcePermissions=True,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
             )
         )
+        if os.path.exists(
+            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY
+        ):
+            # Previous versions created it as root:root 0600.
+            # We now want to use it also from the engine (for ansible).
+            # The filetransaction above will not change ownership
+            # if content is not changed. So do this here. We do not
+            # do this in a transaction, should be ok.
+            os.chown(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY,
+                osetuputil.getUid(
+                    self.environment[osetupcons.SystemEnv.USER_ENGINE],
+                ),
+                osetuputil.getGid(
+                    self.environment[osetupcons.SystemEnv.GROUP_ENGINE],
+                ),
+            )
         self.environment[
             oenginecons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
         ] = self._getSSHPublicKey(self._getEnginePublicKey())
