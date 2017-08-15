@@ -1719,7 +1719,9 @@ public interface CommonApplicationConstants extends Constants {
 
     String volatileRunInfo();
 
-    String vmHasIllegalImages();
+    String runningVmHasIllegalImages();
+
+    String shutdownVmHasIllegalImages();
 
     String expandAll();
 
