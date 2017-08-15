@@ -33,11 +33,11 @@ import org.ovirt.engine.core.common.errors.EngineError;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.queries.QueryType;
-import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageDomainVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -119,16 +119,20 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                                     getVds().getId());
                 }
                 if (!isStoragePoolCreated) {
-                    retVal = addStoragePoolInIrs();
-                    if (!retVal.getSucceeded()
-                            && retVal.getVdsError().getCode() == EngineError.StorageDomainAccessError) {
-                        log.warn("Error creating storage pool on vds '{}' - continuing",
-                                vds.getName());
-                        continue;
-                    }
                     // storage pool creation succeeded or failed
                     // but didn't throw exception
-                    result = retVal.getSucceeded();
+                    if (!cleanDirtyMetaDataIfNeeded()) {
+                        result = false;
+                    } else {
+                        retVal = addStoragePoolInIrs();
+                        if (!retVal.getSucceeded()
+                                && retVal.getVdsError().getCode() == EngineError.StorageDomainAccessError) {
+                            log.warn("Error creating storage pool on vds '{}' - continuing",
+                                    vds.getName());
+                            continue;
+                        }
+                        result = retVal.getSucceeded();
+                    }
                     isStoragePoolCreated = true;
                 }
             }
@@ -321,7 +325,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     protected boolean validate() {
         boolean returnValue = super.validate() && checkStoragePool()
                 && checkStoragePoolStatus(StoragePoolStatus.Uninitialized) && initializeVds()
-                && checkStorageDomainsInPool() && isDomainAttachedToDifferentStoragePool();
+                && checkStorageDomainsInPool();
         return returnValue;
     }
 
@@ -331,26 +335,63 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, EngineMessage.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
-    private boolean isDomainAttachedToDifferentStoragePool() {
-        if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
+    private boolean cleanDirtyMetaDataIfNeeded() {
+        if (getStoragePool().getStatus() == StoragePoolStatus.Maintenance) {
             for (Guid storageDomainId : getParameters().getStorages()) {
                 StorageDomain domain = storageDomainDao.get(storageDomainId);
-                if (domain.getStorageDomainType().isDataDomain() && isStorageDomainAttachedToStoragePool(domain)) {
-                    return failValidation(EngineMessage.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+                if (domain.getStorageDomainType().isDataDomain() &&
+                        isStorageDomainAttachedToStoragePool(domain) &&
+                        !detachStorageDomainSucceeded(storageDomainId)) {
+                    return false;
                 }
             }
         }
         return true;
     }
 
+    private boolean detachStorageDomainSucceeded(Guid storageDomainId) {
+        log.info("Domain '{}' is already attached to a different storage pool, clean the storage domain metadata.",
+                storageDomainId);
+        StorageDomainVdsCommandParameters params =
+                new StorageDomainVdsCommandParameters(storageDomainId, getVds().getId());
+        VDSReturnValue ret = runVdsCommand(VDSCommandType.CleanStorageDomainMetaData, params);
+        if (!ret.getSucceeded()) {
+            log.error("Failed to clean metadata for storage domain '{}'.",
+                    storageDomainId);
+            return false;
+        }
+        log.info("Successfully cleaned metadata for storage domain '{}'.",
+                storageDomainId);
+        return true;
+    }
+
     private boolean isStorageDomainAttachedToStoragePool(StorageDomain storageDomain) {
-        List<StorageDomain> storageDomainList =
-                getBackend().runInternalQuery(QueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
-                        new StorageDomainsAndStoragePoolIdQueryParameters(storageDomain,
-                                getStoragePoolId(),
-                                getVds().getId(),
-                                false))
-                        .getReturnValue();
-        return !storageDomainList.isEmpty();
+        try {
+            VDSReturnValue vdsReturnValue =
+                    runVdsCommand(VDSCommandType.HSMGetStorageDomainInfo,
+                            new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), storageDomain.getId()));
+            if (!vdsReturnValue.getSucceeded()) {
+                logErrorMessage(storageDomain);
+            }
+            Pair<StorageDomainStatic, Guid> domainFromIrs =
+                    (Pair<StorageDomainStatic, Guid>) vdsReturnValue.getReturnValue();
+            if (domainFromIrs.getSecond() != null) {
+                return true;
+            }
+        } catch (RuntimeException e) {
+            logErrorMessage(storageDomain);
+        }
+        return false;
+    }
+
+    private void logErrorMessage(StorageDomain storageDomain) {
+        if (storageDomain != null) {
+            log.error("Could not get Storage Domain info for Storage Domain (name:'{}', id:'{}') with VDS '{}'. ",
+                    storageDomain.getName(),
+                    storageDomain.getId(),
+                    getVdsId());
+        } else {
+            log.error("Could not get Storage Domain info with VDS '{}'. ", getVdsId());
+        }
     }
 }

@@ -909,6 +909,18 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturn(response);
     }
 
+    @Override
+    public StatusOnlyReturn cleanStorageDomainMetaData(String sdUUID, String spUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("StorageDomain.detach").withParameter("storagedomainID", sdUUID)
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("force", true)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturn(response);
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public StatusOnlyReturn hotplugDisk(Map info) {

@@ -205,6 +205,8 @@ public interface IVdsServer {
 
     StatusOnlyReturn revertTask(String taskUUID);
 
+    StatusOnlyReturn cleanStorageDomainMetaData(String sdUUID, String spUUID);
+
     StatusOnlyReturn hotplugDisk(Map info);
 
     StatusOnlyReturn hotunplugDisk(Map info);
