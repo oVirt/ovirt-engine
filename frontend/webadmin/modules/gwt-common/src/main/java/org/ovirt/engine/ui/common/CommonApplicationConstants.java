@@ -1722,4 +1722,8 @@ public interface CommonApplicationConstants extends Constants {
     String expandAll();
 
     String collapseAll();
+
+    String diskType();
+
+    String diskContentType();
 }

@@ -46,6 +46,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<Disk> {
 
         IEventListener<EventArgs> getDiskTypeChangedEventListener();
+        IEventListener<EventArgs> getDiskContentTypeChangedEventListener();
 
         void handleQuotaColumnVisibility();
 
@@ -78,12 +79,18 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     }
 
     @Override
-    protected void onReveal() {
-        Event<EventArgs> entityChangedEvent = getModel().getDiskViewType().getEntityChangedEvent();
-        if (!entityChangedEvent.getListeners().contains(getView().getDiskTypeChangedEventListener())) {
-            entityChangedEvent.addListener(getView().getDiskTypeChangedEventListener());
-        }
+    protected void onBind() {
+        super.onBind();
 
+        Event<EventArgs> entityChangedEvent = getModel().getDiskViewType().getEntityChangedEvent();
+        entityChangedEvent.addListener(getView().getDiskTypeChangedEventListener());
+
+        Event<EventArgs> diskContentTypeEntityChangedEvent = getModel().getDiskContentType().getEntityChangedEvent();
+        diskContentTypeEntityChangedEvent.addListener(getView().getDiskContentTypeChangedEventListener());
+    }
+
+    @Override
+    protected void onReveal() {
         super.onReveal();
         getView().handleQuotaColumnVisibility();
     }

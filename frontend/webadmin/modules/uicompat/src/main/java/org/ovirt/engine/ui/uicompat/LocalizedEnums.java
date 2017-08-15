@@ -1681,5 +1681,13 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String ImageInfoModel$QemuCompat___V2();
 
     String ImageInfoModel$QemuCompat___V3();
+
+    String DiskContentType___DATA();
+
+    String DiskContentType___OVF_STORE();
+
+    String DiskContentType___MEMORY_DUMP_VOLUME();
+
+    String DiskContentType___MEMORY_METADATA_VOLUME();
 }
 

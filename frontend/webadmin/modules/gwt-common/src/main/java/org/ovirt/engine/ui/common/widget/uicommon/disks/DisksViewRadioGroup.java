@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DisksViewRadioGroup extends Composite {
+public class DisksViewRadioGroup extends FlowPanel {
 
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final String GROUP_NAME = "diskTypeView"; //$NON-NLS-1$
@@ -34,7 +34,11 @@ public class DisksViewRadioGroup extends Composite {
     RadioButton cinderButton;
 
     public DisksViewRadioGroup() {
-        initWidget(getRadioGroupPanel());
+        Label label = new Label();
+        label.setText(constants.diskType() + ":"); //$NON-NLS-1$
+        label.addStyleName("disk-storage-type-group-label"); //$NON-NLS-1$
+        add(label);
+        add(getRadioGroupPanel());
     }
 
     private Widget getRadioGroupPanel() {
@@ -62,9 +66,8 @@ public class DisksViewRadioGroup extends Composite {
         buttonGroup.add(lunsButton);
         buttonGroup.add(cinderButton);
 
-        FlowPanel buttonsPanel = new FlowPanel();
-        buttonsPanel.add(buttonGroup);
-        return buttonsPanel;
+        buttonGroup.addStyleName("disk-type-buttons-group"); //$NON-NLS-1$
+        return buttonGroup;
     }
 
     public void addChangeHandler(DisksViewChangeHandler handler) {

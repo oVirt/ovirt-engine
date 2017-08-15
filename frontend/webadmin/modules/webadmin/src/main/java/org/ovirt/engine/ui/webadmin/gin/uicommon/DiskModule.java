@@ -91,6 +91,7 @@ public class DiskModule extends AbstractGinModule {
                     public void onMainTabSelected() {
                         super.onMainTabSelected();
                         getModel().getDiskViewType().setEntity(null);
+                        getModel().getDiskContentType().setEntity(null);
                     }
                 };
         result.setModelProvider(modelProvider);

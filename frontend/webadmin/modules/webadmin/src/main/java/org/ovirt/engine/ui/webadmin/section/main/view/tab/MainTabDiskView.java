@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -11,10 +12,13 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksContentTypeRadioGroup;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
+import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -27,6 +31,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
 
@@ -40,6 +45,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     SimplePanel tablePanel;
 
     private DisksViewRadioGroup disksViewRadioGroup;
+    private DisksContentTypeRadioGroup disksContentTypeRadioGroup;
     private boolean isQuotaVisible;
 
     private static AbstractTextColumn<Disk> aliasColumn;
@@ -80,6 +86,13 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     };
 
     /**
+     * Listen to disk content type changes from the UI button group - push the change through the model.
+     */
+    final DisksContentTypeRadioGroup.DisksContentViewChangeHandler diskContentViewTypeChange = newType -> {
+        getMainModel().getDiskContentType().setEntity(newType);
+    };
+
+    /**
      * Listen to disk type changes from the model adjusting the view as appropriate.
      */
     final IEventListener<EventArgs> diskTypeChangedEventListener = (ev, sender, args) -> {
@@ -88,10 +101,26 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         onDiskViewTypeChanged(diskType);
     };
 
+    final IEventListener<EventArgs> diskContentTypeChangedEventListener = new IEventListener<EventArgs>() {
+        @Override
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+            EntityModel diskContentType = (EntityModel) sender;
+            disksContentTypeRadioGroup.setDiskContentType((DiskContentType) diskContentType.getEntity());
+            onDiskContentTypeChanged();
+        }
+    };
+
+
     @Override
     public IEventListener<EventArgs> getDiskTypeChangedEventListener() {
         return diskTypeChangedEventListener;
     }
+
+    @Override
+    public IEventListener<EventArgs> getDiskContentTypeChangedEventListener() {
+        return diskContentTypeChangedEventListener;
+    }
+
 
     @Override
     public void handleQuotaColumnVisibility() {
@@ -116,7 +145,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         boolean luns = diskType == DiskStorageType.LUN;
         boolean cinder = diskType == DiskStorageType.CINDER;
 
-        searchByDiskViewType(diskType);
+        searchByDiskViewType(disksViewRadioGroup.getDiskStorageType(), disksContentTypeRadioGroup.getDiskContentType());
 
         getTable().ensureColumnVisible(
                 aliasColumn, constants.aliasDisk(), all || images || luns || cinder,
@@ -190,6 +219,10 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 "90px"); //$NON-NLS-1$
     }
 
+    private void onDiskContentTypeChanged() {
+        searchByDiskViewType(disksViewRadioGroup.getDiskStorageType(), disksContentTypeRadioGroup.getDiskContentType());
+    }
+
     void initTableColumns() {
         getTable().enableColumnResizing();
 
@@ -219,12 +252,20 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     void initTableOverhead() {
         disksViewRadioGroup = new DisksViewRadioGroup();
         disksViewRadioGroup.addChangeHandler(diskViewTypeChange);
-        getTable().setTableOverhead(disksViewRadioGroup);
+
+        disksContentTypeRadioGroup = new DisksContentTypeRadioGroup();
+        disksContentTypeRadioGroup.addChangeHandler(diskContentViewTypeChange);
+
+        FlowPanel overheadPanel = new FlowPanel();
+        overheadPanel.add(disksViewRadioGroup);
+        overheadPanel.add(disksContentTypeRadioGroup);
+        getTable().setTableOverhead(overheadPanel);
     }
 
-    void searchByDiskViewType(DiskStorageType diskViewType) {
+    void searchByDiskViewType(DiskStorageType diskViewType, DiskContentType diskContentType) {
         final String disksSearchPrefix = "Disks:"; //$NON-NLS-1$
         final String diskTypeSearchPrefix = "disk_type = "; //$NON-NLS-1$
+        final String diskContentTypeSearchPrefix = "disk_content_type = "; //$NON-NLS-1$
         final String searchConjunctionAnd = "and "; //$NON-NLS-1$
         final String searchRegexDisksSearchPrefix = "^\\s*(disk(s)?\\s*(:)+)+\\s*"; //$NON-NLS-1$
         final String searchRegexFlags = "ig"; //$NON-NLS-1$
@@ -239,20 +280,26 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         String diskTypeClause = diskTypePostfix != null ?
                 diskTypeSearchPrefix + diskTypePostfix : empty;
 
+        String diskContentTypePostfix = diskContentType != null ?
+                diskContentType.name().toLowerCase() + space : null;
+        String diskContentTypeClause = diskContentTypePostfix != null ?
+                diskContentTypeSearchPrefix + diskContentTypePostfix : empty;
+
         String inputSearchString = this.getMainModel().getSearchString().trim();
         String inputSearchStringPrefix = this.getMainModel().getDefaultSearchString();
         String userSearchString = inputSearchString.substring(inputSearchStringPrefix.length());
 
         String searchStringPrefix;
-        if (diskTypeClause.equals(empty)) {
+        if (diskTypeClause.isEmpty() && diskContentTypeClause.isEmpty()) {
             searchStringPrefix = disksSearchPrefix.trim();
             if (userSearchString.trim().toLowerCase().startsWith(searchConjunctionAnd)) {
                 userSearchString = userSearchString.trim().substring(searchConjunctionAnd.length());
             }
         } else {
+            boolean filteringBoth = !diskTypeClause.isEmpty() && !diskContentTypeClause.isEmpty();
             searchStringPrefix = disksSearchPrefix + space
                     + (searchPatternDisksSearchPrefix.test(inputSearchStringPrefix) ? empty : searchConjunctionAnd)
-                    + diskTypeClause;
+                    + diskTypeClause + (filteringBoth ? searchConjunctionAnd : empty) + diskContentTypeClause + space;
             if (!userSearchString.isEmpty() && !userSearchString.trim().toLowerCase().startsWith(searchConjunctionAnd)) {
                 userSearchString = searchConjunctionAnd + userSearchString.trim();
             }

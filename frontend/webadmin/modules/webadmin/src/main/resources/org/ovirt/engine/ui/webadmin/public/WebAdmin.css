@@ -52,3 +52,18 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 .cellTableSelectedRow.cellTableDisabledRow {
     color: white;
 }
+
+.disk-storage-type-group-label,
+.disk-content-type-group-label {
+  margin-right: 5px;
+  margin-top: 3px;
+  float: left;
+}
+
+.disk-content-type-group-label {
+  margin-left: 10px;
+}
+
+.disk-type-buttons-group {
+  float: left;
+}

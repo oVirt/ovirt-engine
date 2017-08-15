@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -176,6 +177,16 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         this.diskViewType = diskViewType;
     }
 
+    private EntityModel<DiskContentType> diskContentType;
+
+    public EntityModel<DiskContentType> getDiskContentType() {
+        return diskContentType;
+    }
+
+    public void setDiskContentType(EntityModel<DiskContentType> diskContentType) {
+        this.diskContentType = diskContentType;
+    }
+
     private final DiskVmListModel vmListModel;
     private final DiskTemplateListModel templateListModel;
     private final DiskStorageListModel storageListModel;
@@ -220,6 +231,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         getSearchPreviousPageCommand().setIsAvailable(true);
 
         setDiskViewType(new EntityModel<DiskStorageType>());
+        setDiskContentType(new EntityModel<>());
     }
 
     private void setDetailList() {
