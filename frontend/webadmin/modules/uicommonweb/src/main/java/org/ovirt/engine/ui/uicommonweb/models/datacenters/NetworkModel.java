@@ -8,6 +8,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddVnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -457,29 +458,31 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs {
     }
 
     private boolean validate() {
-        RegexValidation tempVar = new RegexValidation();
-        tempVar.setIsNegate(true);
-        tempVar.setExpression("^(bond)"); //$NON-NLS-1$
-        tempVar.setMessage(ConstantsManager.getInstance().getConstants().networkNameStartMsg());
-        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar });
+        LengthValidation tempVar = new LengthValidation();
+        tempVar.setMaxLength(BusinessEntitiesDefinitions.NETWORK_NAME_SIZE);
+        RegexValidation tempVar2 = new RegexValidation();
+        tempVar2.setIsNegate(true);
+        tempVar2.setExpression("^(bond)"); //$NON-NLS-1$
+        tempVar2.setMessage(ConstantsManager.getInstance().getConstants().networkNameStartMsg());
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar, tempVar2 });
 
-        LengthValidation tempVar2 = new LengthValidation();
-        tempVar2.setMaxLength(40);
-        getDescription().validateEntity(new IValidation[] { tempVar2 });
+        LengthValidation tempVar3 = new LengthValidation();
+        tempVar3.setMaxLength(40);
+        getDescription().validateEntity(new IValidation[] { tempVar3 });
 
         getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
 
         getVLanTag().setIsValid(true);
         if (getHasVLanTag().getEntity()) {
-            IntegerValidation tempVar3 = new IntegerValidation();
-            tempVar3.setMinimum(0);
-            tempVar3.setMaximum(4094);
-            getVLanTag().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar3 });
+            IntegerValidation tempVar4 = new IntegerValidation();
+            tempVar4.setMinimum(0);
+            tempVar4.setMaximum(4094);
+            getVLanTag().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
         }
 
-        IntegerValidation tempVar4 = new IntegerValidation();
-        tempVar4.setMinimum(68);
-        getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
+        IntegerValidation tempVar5 = new IntegerValidation();
+        tempVar5.setMinimum(68);
+        getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
 
         getDnsConfigurationModel().validate();
 
