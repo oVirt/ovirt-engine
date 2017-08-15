@@ -1712,26 +1712,30 @@ public class LibvirtVmXmlBuilder {
             writer.writeEndElement();
             writer.writeEndElement();
         }
+
+        Map<String, Object> profileData = new HashMap<>();
+        vmInfoBuildUtils.addProfileDataToNic(profileData, vm, device, nic);
+
         writer.writeStartElement("bandwidth");
-        if (device.getSpecParams().containsKey("inbound") || device.getSpecParams().containsKey("outbound")) {
-            Map<String, Object> map = new HashMap<>();
-            vmInfoBuildUtils.addProfileDataToNic(map, vm, device, nic);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> specParams = (Map<String, Object>) profileData.get("specParams");
+        if (specParams != null && (specParams.containsKey("inbound") || specParams.containsKey("outbound"))) {
             @SuppressWarnings("unchecked")
-            Map<String, String> inboundMap = (Map<String, String>) map.get("inbound");
+            Map<String, String> inboundMap = (Map<String, String>) specParams.get("inbound");
             if (inboundMap != null && !inboundMap.isEmpty()) {
                 writer.writeStartElement("inbound");
-                writer.writeAttributeString("average", inboundMap.get("average"));
-                writer.writeAttributeString("burst", inboundMap.get("burst"));
-                writer.writeAttributeString("peak", inboundMap.get("peak"));
+                writer.writeAttributeString("average", String.valueOf(inboundMap.get("average")));
+                writer.writeAttributeString("burst", String.valueOf(inboundMap.get("burst")));
+                writer.writeAttributeString("peak", String.valueOf(inboundMap.get("peak")));
                 writer.writeEndElement();
             }
             @SuppressWarnings("unchecked")
-            Map<String, String> outboundMap = (Map<String, String>) map.get("outbound");
+            Map<String, String> outboundMap = (Map<String, String>) specParams.get("outbound");
             if (outboundMap != null && !outboundMap.isEmpty()) {
                 writer.writeStartElement("outbound");
-                writer.writeAttributeString("average", outboundMap.get("average"));
-                writer.writeAttributeString("burst", outboundMap.get("burst"));
-                writer.writeAttributeString("peak", outboundMap.get("peak"));
+                writer.writeAttributeString("average", String.valueOf(outboundMap.get("average")));
+                writer.writeAttributeString("burst", String.valueOf(outboundMap.get("burst")));
+                writer.writeAttributeString("peak", String.valueOf(outboundMap.get("peak")));
                 writer.writeEndElement();
             }
         }
