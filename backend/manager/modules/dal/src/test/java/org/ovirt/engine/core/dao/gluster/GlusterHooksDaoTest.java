@@ -21,7 +21,6 @@ import org.ovirt.engine.core.dao.FixturesTool;
 
 public class GlusterHooksDaoTest extends BaseDaoTestCase {
     private static final String GLUSTER_COMMAND = "start volume";
-    private static final GlusterHookStage STAGE = GlusterHookStage.POST;
     private static final String EXISTING_HOOK_NAME = "28cifs_config";
     private static final String HOOK_NAME = "georep";
     private static final String CHECKSUM = "0127f712fc008f857e77a2f3f179c710";
@@ -88,7 +87,8 @@ public class GlusterHooksDaoTest extends BaseDaoTestCase {
 
     @Test
     public void testGetHook() {
-        GlusterHookEntity hook = dao.getGlusterHook(FixturesTool.GLUSTER_CLUSTER_ID, GLUSTER_COMMAND, STAGE, EXISTING_HOOK_NAME);
+        GlusterHookEntity hook = dao.getGlusterHook(FixturesTool.GLUSTER_CLUSTER_ID, GLUSTER_COMMAND,
+                GlusterHookStage.POST, EXISTING_HOOK_NAME);
         assertNotNull(hook);
         assertEquals(EXISTING_HOOK_NAME, hook.getName());
     }
