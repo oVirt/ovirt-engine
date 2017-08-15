@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -29,15 +30,20 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
     @Inject
     private SessionDataContainer sessionDataContainer;
 
+    private static final String UNKNOWN = "UNKNOWN";
+
+    private String sessionId;
+    private String sourceIp;
+
     public TerminateSessionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 
     @Override
     protected void executeCommand() {
-        String terminatedSessionId = sessionDataContainer.getSessionIdBySeqId(getParameters().getTerminatedSessionDbId());
+        sessionId = sessionDataContainer.getSessionIdBySeqId(getParameters().getTerminatedSessionDbId());
 
-        if (terminatedSessionId == null) {
+        if (sessionId == null) {
             log.info(
                     "Cannot terminate session with database id '{}', it doesn't exist anymore.",
                     getParameters().getTerminatedSessionDbId());
@@ -45,8 +51,10 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
             return;
         }
 
+        sourceIp = sessionDataContainer.getSourceIp(sessionId);
+
         // store terminated user username for audit log
-        DbUser terminatedUser = sessionDataContainer.getUser(terminatedSessionId, false);
+        DbUser terminatedUser = sessionDataContainer.getUser(sessionId, false);
         if (terminatedUser != null) {
             addCustomValue(
                     "TerminatedSessionUsername",
@@ -55,7 +63,7 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
         setReturnValue(
                 getBackend().logoff(
-                        new ActionParametersBase(terminatedSessionId)));
+                        new ActionParametersBase(sessionId)));
     }
 
     @Override
@@ -75,6 +83,9 @@ public class TerminateSessionCommand<T extends TerminateSessionParameters> exten
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        addCustomValue("SessionID", StringUtils.isEmpty(sessionId) ? UNKNOWN : sessionId);
+        addCustomValue("SourceIP", StringUtils.isEmpty(sourceIp) ? UNKNOWN : sourceIp);
+
         return getSucceeded()
                 ? AuditLogType.USER_VDC_SESSION_TERMINATED
                 : AuditLogType.USER_VDC_SESSION_TERMINATION_FAILED;

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,12 +21,19 @@ public class LogoutSessionCommand<T extends ActionParametersBase> extends Comman
     @Inject
     private SessionDataContainer sessionDataContainer;
 
+    private static final String UNKNOWN = "UNKNOWN";
+
+    private String sessionId;
+    private String sourceIp;
+
     public LogoutSessionCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        addCustomValue("SessionID", StringUtils.isEmpty(sessionId) ? UNKNOWN : sessionId);
+        addCustomValue("SourceIP", StringUtils.isEmpty(sourceIp) ? UNKNOWN : sourceIp);
         return getSucceeded() ? AuditLogType.USER_VDC_LOGOUT : AuditLogType.USER_VDC_LOGOUT_FAILED;
     }
 
@@ -37,6 +45,8 @@ public class LogoutSessionCommand<T extends ActionParametersBase> extends Comman
     @Override
     protected void executeCommand() {
         AuthenticationProfile profile = sessionDataContainer.getProfile(getParameters().getSessionId());
+        sessionId = getParameters().getSessionId();
+        sourceIp = sessionDataContainer.getSourceIp(getParameters().getSessionId());
         if (profile == null) {
             setSucceeded(false);
         } else {

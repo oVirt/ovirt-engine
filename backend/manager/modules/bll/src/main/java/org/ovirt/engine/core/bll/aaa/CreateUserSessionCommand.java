@@ -46,6 +46,11 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     @Inject
     private RoleDao roleDao;
 
+    private static final String UNKNOWN = "UNKNOWN";
+
+    private String sessionId;
+    private String sourceIp;
+
     public CreateUserSessionCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
@@ -92,6 +97,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
     protected void executeCommand() {
         final AuthenticationProfile profile = AuthenticationProfileRepository.getInstance()
                 .getProfile(getParameters().getProfileName());
+        sourceIp = getParameters().getSourceIp();
         if (profile == null) {
             setSucceeded(false);
         } else {
@@ -122,6 +128,7 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
                 sessionDataContainer.setSsoOvirtAppApiScope(engineSessionId, getParameters().getSsoScope());
                 getReturnValue().setActionReturnValue(engineSessionId);
                 setSucceeded(true);
+                sessionId = engineSessionId;
             }
         }
     }
@@ -156,6 +163,8 @@ public class CreateUserSessionCommand<T extends CreateUserSessionParameters> ext
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        addCustomValue("SessionID", StringUtils.isEmpty(sessionId) ? UNKNOWN : sessionId);
+        addCustomValue("SourceIP", StringUtils.isEmpty(sourceIp) ? UNKNOWN : sourceIp);
         return getSucceeded() ? AuditLogType.USER_VDC_LOGIN : AuditLogType.USER_VDC_LOGIN_FAILED;
     }
 }
