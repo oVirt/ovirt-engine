@@ -592,7 +592,7 @@ class Plugin(plugin.PluginBase):
             ),
             _(
                 'Failed to import provider certificate into '
-                'the external provider keystore.)'
+                'the external provider keystore'
             )
         )
 
