@@ -200,7 +200,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     }
 
     @Override
-    public void setItems(Collection value) {
+    public void setItems(Collection<Snapshot> value) {
         ArrayList<Snapshot> snapshots = value != null ? new ArrayList<>(value) : new ArrayList<Snapshot>();
 
         Collections.sort(snapshots, Linq.SnapshotByCreationDateCommparer.reversed());
