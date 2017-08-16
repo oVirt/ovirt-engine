@@ -205,7 +205,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         snapshots.sort(Linq.SnapshotByCreationDateCommparer.reversed());
         ArrayList<Snapshot> sortedSnapshots = new ArrayList<>();
-        boolean hasNoPreviewSnapshot = getInType(SnapshotType.PREVIEW, snapshots) == null;
+        boolean hasNoPreviewSnapshot = snapshots.stream().noneMatch(s -> s.getType() == SnapshotType.PREVIEW);
 
         for (Snapshot snapshot : snapshots) {
             SnapshotModel snapshotModel = snapshotsMap.get(snapshot.getId());
@@ -794,15 +794,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
         getCloneTemplateCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
                 && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
-    }
-
-    public Snapshot getInType(SnapshotType snapshotType, ArrayList<Snapshot> snapshots) {
-        for (Snapshot snapshot : snapshots) {
-            if (snapshot.getType() == snapshotType) {
-                return snapshot;
-            }
-        }
-        return null;
     }
 
     private void updateIsMemorySnapshotSupported(Object entity) {
