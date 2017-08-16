@@ -1498,6 +1498,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         vmInitEditor.edit(model.getVmInitModel());
         serialNumberPolicyEditor.edit(model.getSerialNumberPolicy());
         affinityLabelSelectionWidget.getListWidget().init(model.getLabelList());
+        quotaEditor.setEnabled(!model.isHostedEngine());
         initTabAvailabilityListeners(model);
         initListeners(model);
         hideAlwaysHiddenFields();
