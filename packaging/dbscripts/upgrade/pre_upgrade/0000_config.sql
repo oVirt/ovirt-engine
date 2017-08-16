@@ -66,6 +66,7 @@ select fn_db_add_config_value('CommandEntityAgingThreshold','30','general');
 select fn_db_add_config_value('CommandEntityCleanupTime','03:35:35','general');
 select fn_db_add_config_value('OnlyRequiredNetworksMandatoryForVdsSelection','false','general');
 select fn_db_add_config_value_for_versions_up_to('BackupSupported','true','general');
+select fn_db_add_config_value('RepeatEndMethodsOnFailMaxRetries','5','general');
 --Handling Auto Approve Patterns
 select fn_db_add_config_value('AutoApprovePatterns','','general');
 select fn_db_add_config_value('AutoInstallCertificateOnApprove','true','general');

@@ -1517,6 +1517,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     BackupSupported,
 
+    @TypeConverterAttribute(Integer.class)
+    RepeatEndMethodsOnFailMaxRetries,
+
     /**
      * Timeout in seconds for establishment of connections with external network providers. This
      * should be quite small, a few seconds at most, as it the TCP handshake with

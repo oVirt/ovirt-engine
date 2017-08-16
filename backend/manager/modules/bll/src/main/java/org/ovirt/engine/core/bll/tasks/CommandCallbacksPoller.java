@@ -3,7 +3,10 @@ package org.ovirt.engine.core.bll.tasks;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
@@ -34,10 +37,15 @@ public class CommandCallbacksPoller implements BackendService {
     @Inject
     private CommandsRepository commandsRepository;
 
+    private ConcurrentMap<Guid, AtomicInteger> callbackInvocationMap = new ConcurrentHashMap<>();
+
+    private int repeatEndMethodsOnFailMaxRetries;
+
     @PostConstruct
     private void init() {
         log.info("Start initializing {}", getClass().getSimpleName());
         pollingRate = Config.<Long>getValue(ConfigValues.AsyncCommandPollingLoopInSeconds);
+        repeatEndMethodsOnFailMaxRetries = Config.<Integer>getValue(ConfigValues.RepeatEndMethodsOnFailMaxRetries);
         initCommandExecutor();
         executor.scheduleWithFixedDelay(this::invokeCallbackMethods,
                 pollingRate,
@@ -48,13 +56,32 @@ public class CommandCallbacksPoller implements BackendService {
 
     private boolean endCallback(Guid cmdId, CommandCallback callback, CommandStatus status) {
         try {
+            boolean shouldRepeatEndMethodsOnFail = callback.shouldRepeatEndMethodsOnFail(cmdId);
+            if (shouldRepeatEndMethodsOnFail) {
+                callbackInvocationMap.putIfAbsent(cmdId, new AtomicInteger(0));
+                callbackInvocationMap.get(cmdId).getAndIncrement();
+            }
             if (status == CommandStatus.FAILED) {
                 callback.onFailed(cmdId, getChildCommandIds(cmdId));
             } else {
                 callback.onSucceeded(cmdId, getChildCommandIds(cmdId));
             }
+            if (shouldRepeatEndMethodsOnFail) {
+                callbackInvocationMap.remove(cmdId);
+            }
         } catch (Exception ex) {
             if (callback.shouldRepeatEndMethodsOnFail(cmdId)) {
+                if (callbackInvocationMap.getOrDefault(cmdId, new AtomicInteger(0)).get() >
+                        repeatEndMethodsOnFailMaxRetries) {
+                    callbackInvocationMap.remove(cmdId);
+                    log.error("Failed invoking callback end method '{}' for command '{}' with exception '{}', the"
+                                    + " callback is marked for end method retries but max number of retries have been"
+                                    + " attempted. The command will be marked as Failed.",
+                            getCallbackMethod(status),
+                            cmdId,
+                            ex.getMessage());
+                    throw ex;
+                }
                 log.error("Failed invoking callback end method '{}' for command '{}' with exception '{}', the callback"
                         + " is marked for end method retries",
                         getCallbackMethod(status),
