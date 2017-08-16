@@ -4,8 +4,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.NotEmpty;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.Queryable;
@@ -20,7 +21,7 @@ public class VnicProfile implements Queryable, BusinessEntity<Guid>, Nameable {
 
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })
     private Guid id;
-    @NotEmpty
+    @Size(max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
     private String name;
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     private Guid networkId;
