@@ -54,24 +54,24 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     // This constant is intended to be exported to a generic UTILS class later on
     private static final String DATE_FORMAT = "yyyy-MM-dd, HH:mm"; //$NON-NLS-1$
 
-    private UICommand privateNewCommand;
+    private UICommand newCommand;
 
     public UICommand getNewCommand() {
-        return privateNewCommand;
+        return newCommand;
     }
 
     private void setNewCommand(UICommand value) {
-        privateNewCommand = value;
+        newCommand = value;
     }
 
-    private UICommand privatePreviewCommand;
+    private UICommand previewCommand;
 
     public UICommand getPreviewCommand() {
-        return privatePreviewCommand;
+        return previewCommand;
     }
 
     private void setPreviewCommand(UICommand value) {
-        privatePreviewCommand = value;
+        previewCommand = value;
     }
 
     private UICommand customPreviewCommand;
@@ -84,44 +84,44 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         customPreviewCommand = value;
     }
 
-    private UICommand privateCommitCommand;
+    private UICommand commitCommand;
 
     public UICommand getCommitCommand() {
-        return privateCommitCommand;
+        return commitCommand;
     }
 
     private void setCommitCommand(UICommand value) {
-        privateCommitCommand = value;
+        commitCommand = value;
     }
 
-    private UICommand privateUndoCommand;
+    private UICommand undoCommand;
 
     public UICommand getUndoCommand() {
-        return privateUndoCommand;
+        return undoCommand;
     }
 
     private void setUndoCommand(UICommand value) {
-        privateUndoCommand = value;
+        undoCommand = value;
     }
 
-    private UICommand privateRemoveCommand;
+    private UICommand removeCommand;
 
     public UICommand getRemoveCommand() {
-        return privateRemoveCommand;
+        return removeCommand;
     }
 
     private void setRemoveCommand(UICommand value) {
-        privateRemoveCommand = value;
+        removeCommand = value;
     }
 
-    private UICommand privateCloneVmCommand;
+    private UICommand cloneVmCommand;
 
     public UICommand getCloneVmCommand() {
-        return privateCloneVmCommand;
+        return cloneVmCommand;
     }
 
     private void setCloneVmCommand(UICommand value) {
-        privateCloneVmCommand = value;
+        cloneVmCommand = value;
     }
 
     private UICommand cloneTemplateCommand;
@@ -134,14 +134,14 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         this.cloneTemplateCommand = cloneTemplateCommand;
     }
 
-    private EntityModel privateCanSelectSnapshot;
+    private EntityModel canSelectSnapshot;
 
     public EntityModel getCanSelectSnapshot() {
-        return privateCanSelectSnapshot;
+        return canSelectSnapshot;
     }
 
     private void setCanSelectSnapshot(EntityModel value) {
-        privateCanSelectSnapshot = value;
+        canSelectSnapshot = value;
     }
 
     private HashMap<Guid, SnapshotModel> snapshotsMap;
