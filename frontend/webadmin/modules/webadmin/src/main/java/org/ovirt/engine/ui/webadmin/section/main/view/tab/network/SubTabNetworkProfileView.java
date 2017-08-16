@@ -104,7 +104,16 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
                     }
                 };
         portMirroringColumn.makeSortable();
-        getTable().addColumn(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
+        getTable().addColumn(portMirroringColumn, constants.portMirroringVnicProfile(), "100px"); //$NON-NLS-1$
+
+        AbstractTextColumn<VnicProfileView> passthroughColumn = new AbstractTextColumn<VnicProfileView>() {
+            @Override
+            public String getValue(VnicProfileView object) {
+                return object.isPassthrough() ? constants.yes() : constants.no();
+            }
+        };
+        passthroughColumn.makeSortable();
+        getTable().addColumn(passthroughColumn, constants.passthroughVnicProfile(), "100px"); //$NON-NLS-1$
 
         AbstractTextColumn<VnicProfileView> descriptionColumn =
                 new AbstractTextColumn<VnicProfileView>() {
