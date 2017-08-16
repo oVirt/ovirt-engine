@@ -1784,7 +1784,10 @@ public class JsonRpcVdsServer implements IVdsServer {
         ticketDict.put("ops", ops);
         ticketDict.put("size", size);
         ticketDict.put("url", url);
-        ticketDict.put("filename", filename);
+        // filename is null by default, and only specified by the UI
+        if (filename != null) {
+            ticketDict.put("filename", filename);
+        }
 
         JsonRpcRequest request =
                 new RequestBuilder("Host.add_image_ticket")
