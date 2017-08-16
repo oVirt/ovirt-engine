@@ -731,7 +731,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         AddVmFromSnapshotParameters parameters =
                 new AddVmFromSnapshotParameters(vm.getStaticData(), snapshot.getId());
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
-        setupAddVmFromSnapshotParameters(parameters);
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         parameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
@@ -760,10 +759,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     protected static void buildVmOnClone(UnitVmModel model, VM vm) {
         BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
-    }
-
-    protected void setupAddVmFromSnapshotParameters(AddVmFromSnapshotParameters parameters) {
-        // do nothing - no additional setup needed
     }
 
     public void updateActionAvailability() {
