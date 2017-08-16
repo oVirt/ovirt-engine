@@ -534,17 +534,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         model.initialize();
     }
 
-    public void postOnNew(List<ActionReturnValue> returnValues) {
-
-        SnapshotModel model = (SnapshotModel) getWindow();
-
-        model.stopProgress();
-
-        if (returnValues != null && returnValues.stream().allMatch(ActionReturnValue::isValid)) {
-            cancel();
-        }
-    }
-
     private void addCommands(Model model, String okCommandName) {
         model.getCommands().add(UICommand.createDefaultOkUiCommand(okCommandName, this)); //$NON-NLS-1$
         model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
@@ -839,15 +828,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     public Snapshot getInPreview(Collection<Snapshot> snapshots) {
         for (Snapshot snapshot : snapshots) {
             if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
-                return snapshot;
-            }
-        }
-        return null;
-    }
-
-    public Snapshot getInStatus(SnapshotStatus snapshotStatus, ArrayList<Snapshot> snapshots) {
-        for (Snapshot snapshot : snapshots) {
-            if (snapshot.getStatus() == snapshotStatus) {
                 return snapshot;
             }
         }
