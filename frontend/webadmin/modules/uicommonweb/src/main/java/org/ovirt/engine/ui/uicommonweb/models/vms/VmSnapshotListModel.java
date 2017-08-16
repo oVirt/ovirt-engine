@@ -785,7 +785,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         VM vm = getEntity();
         Snapshot snapshot = getSelectedItem();
-        List<VM> vmList = vm != null ? Collections.singletonList(vm) : Collections.<VM> emptyList();
+        List<VM> vmList = vm != null ? Collections.singletonList(vm) : Collections.emptyList();
 
         boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
         boolean isVmImageLocked = vm != null && vm.getStatus() == VMStatus.ImageLocked;
