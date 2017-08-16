@@ -223,7 +223,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             }
         }
 
-        if (getInPreview(sortedSnapshots) != null) {
+        if (sortedSnapshots.stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW)) {
             updatePreviewedDiskSnapshots(sortedSnapshots);
         }
         else {
@@ -774,8 +774,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
         boolean isVmImageLocked = vm != null && vm.getStatus() == VMStatus.ImageLocked;
         boolean isVmQualifiedForSnapshotMerge = vm != null && vm.getStatus().isQualifiedForSnapshotMerge();
-        boolean isPreviewing = getIsPreviewing();
-        boolean isLocked = getIsLocked();
+        boolean isPreviewing = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW);
+        boolean isLocked = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.LOCKED);
         boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
         boolean isStateless = getIsStateless();
         boolean isVmConfigurationBroken = snapshot != null && snapshot.isVmConfigurationBroken();
@@ -795,38 +795,8 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
     }
 
-    public boolean getIsPreviewing() {
-        return getInPreview() != null;
-    }
-
-    public boolean getIsLocked() {
-        return getLocked() != null;
-    }
-
     public boolean getIsStateless() {
         return getInType(SnapshotType.STATELESS, (ArrayList<Snapshot>) getItems()) != null;
-    }
-
-    public Snapshot getLocked() {
-        for (Snapshot snapshot : getItems()) {
-            if (snapshot.getStatus() == SnapshotStatus.LOCKED) {
-                return snapshot;
-            }
-        }
-        return null;
-    }
-
-    public Snapshot getInPreview() {
-        return getInPreview(getItems());
-    }
-
-    public Snapshot getInPreview(Collection<Snapshot> snapshots) {
-        for (Snapshot snapshot : snapshots) {
-            if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
-                return snapshot;
-            }
-        }
-        return null;
     }
 
     public Snapshot getInType(SnapshotType snapshotType, ArrayList<Snapshot> snapshots) {
