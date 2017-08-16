@@ -780,7 +780,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isStateless = getIsStateless();
         boolean isVmConfigurationBroken = snapshot != null && snapshot.isVmConfigurationBroken();
 
-                getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
+        getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
                 && ActionUtils.canExecute(vmList, VM.class, ActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
