@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.ActionReturnValue;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.VersionQueryParameters;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -37,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -430,7 +432,8 @@ public abstract class VnicProfileModel extends Model {
     }
 
     public boolean validate() {
-        getName().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(),
+                new LengthValidation(BusinessEntitiesDefinitions.NETWORK_NAME_SIZE) });
 
         return getName().getIsValid() && getCustomPropertySheet().validate();
     }
