@@ -413,7 +413,7 @@ install-packaging-files: \
 	$(MAKE) copy-recursive SOURCEDIR=packaging/sys-etc TARGETDIR="$(DESTDIR)$(SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/etc TARGETDIR="$(DESTDIR)$(PKG_SYSCONF_DIR)" EXCLUDE_GEN="$(GENERATED)"
 	$(MAKE) copy-recursive SOURCEDIR=packaging/pki TARGETDIR="$(DESTDIR)$(PKG_PKI_DIR)" EXCLUDE_GEN="$(GENERATED)"
-	for d in bin branding conf files firewalld services icons; do \
+	for d in bin conf files firewalld services icons; do \
 		$(MAKE) copy-recursive SOURCEDIR="packaging/$${d}" TARGETDIR="$(DESTDIR)$(DATA_DIR)/$${d}" EXCLUDE_GEN="$(GENERATED)"; \
 	done
 	$(MAKE) copy-recursive SOURCEDIR=packaging/doc TARGETDIR="$(DESTDIR)$(PKG_DOC_DIR)" EXCLUDE_GEN="$(GENERATED)"
@@ -439,12 +439,17 @@ endif
 		echo "ENGINE_JAVA_MODULEPATH=\"$(WILDFLY_OVERLAY_MODULES):\$${ENGINE_JAVA_MODULEPATH}\"" > "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d/20-setup-jboss-overlay.conf"; \
 	fi
 
+install-brands:
+	install -dm 0755 "$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand"; \
+	$(MAKE) copy-recursive SOURCEDIR="$(MAVEN_OUTPUT_DIR)/frontend/brands/ovirt-brand/target/ovirt.brand" TARGETDIR="$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand" EXCLUDE_GEN="$(GENERATED)"; \
+
 install-gwt-symbols:
 	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/webadmin"; \
 	find "$(MAVEN_OUTPUT_DIR)" -name "webadmin-*-gwt-symbols.zip" -type f | grep -v tmp.repos | head -n 1 | xargs -I{} cp {} "$(DESTDIR)$(DATA_DIR)/gwt-symbols/webadmin/symbolMaps.zip"; \
 
 install-layout: \
 		install-packaging-files \
+		install-brands \
 		install-gwt-symbols \
 		$(NULL)
 
@@ -476,10 +481,10 @@ install-layout: \
 
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	-rm -f "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
-	ln -s "$(DATA_DIR)/branding/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
+	ln -s "$(DATA_DIR)/brands/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 
-	-rm -f "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/ovirt-js-dependencies"
-	ln -s "$(JS_DEPS_DIR)" "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/ovirt-js-dependencies"
+	-rm -f "$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand/ovirt-js-dependencies"
+	ln -s "$(JS_DEPS_DIR)" "$(DESTDIR)$(DATA_DIR)/brands/ovirt.brand/ovirt-js-dependencies"
 
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 

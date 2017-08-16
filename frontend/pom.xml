@@ -12,6 +12,7 @@
   <name>oVirt Modules :: Frontend</name>
   <description>An aggregator module for all frontend modules.</description>
   <modules>
+    <module>brands</module>
     <module>webadmin</module>
   </modules>
   <properties>

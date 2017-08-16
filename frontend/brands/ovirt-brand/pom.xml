@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.ui</groupId>
+    <artifactId>brands-all</artifactId>
+    <version>4.2.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>ovirt-brand</artifactId>
+  <name>oVirt Engine brand</name>
+  <description>oVirt Engine default brand package</description>
+
+  <build>
+    <plugins>
+      <plugin>
+         <groupId>com.github.warmuuh</groupId>
+         <artifactId>libsass-maven-plugin</artifactId>
+         <version>${libsass-maven-plugin.version}</version>
+         <executions>
+            <execution>
+               <phase>generate-resources</phase>
+               <goals>
+                  <goal>compile</goal>
+               </goals>
+            </execution>
+         </executions>
+         <configuration>
+            <inputPath>${basedir}/src/main/sass/</inputPath>
+            <outputPath>${basedir}/target/ovirt.brand/</outputPath>
+         </configuration>
+      </plugin>
+
+      <!-- override the default-resources copy to skip .sass files -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>default-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/ovirt.brand/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/src/main/resources/</directory>
+                  <excludes>
+                    <exclude>**/*.sass</exclude>
+                  </excludes>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
+</project>

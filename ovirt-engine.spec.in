@@ -872,7 +872,7 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/dump
 %dir %{engine_data}
 %dir %{engine_data}/bin
-%dir %{engine_data}/branding
+%dir %{engine_data}/brands
 %dir %{engine_data}/conf
 %dir %{engine_data}/engine.ear
 %dir %{engine_data}/extensions.d
@@ -882,7 +882,7 @@ fi
 %dir %{engine_etc}/extensions.d
 %dir %{engine_java}
 %license LICENSE
-%{engine_data}/branding/ovirt.brand/
+%{engine_data}/brands/ovirt.brand/
 %{engine_etc}/branding/00-ovirt.brand
 %{engine_etc}/engine.conf.d/
 

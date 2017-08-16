@@ -90,6 +90,8 @@
     <rxjava.version>1.0.8</rxjava.version>
     <!-- OpenStack -->
     <openstack-client.version>3.1.2</openstack-client.version>
+    <!-- libsass -->
+    <libsass-maven-plugin.version>0.2.8-libsass_3.4.4</libsass-maven-plugin.version>
 
     <!-- Plugins Versions -->
     <maven-surefire-plugin.version>2.12.3</maven-surefire-plugin.version>
