@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.network.NetworkIcon;
 
 import com.google.gwt.dom.client.DListElement;
@@ -259,8 +260,11 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
             IconType.ARROW_CIRCLE_O_DOWN);
         iconStatusPanel.addStyleName(DOUBLE_SIZE);
         iconStatusPanel.getElement().getStyle().setColor(isLinked ? GREEN : RED);
-        return iconStatusPanel;
 
+        String tooltipText = isLinked ? constants.linkedNetworkInterface() : constants.unlinkedNetworkInterface();
+        WidgetTooltip tooltip = new WidgetTooltip(iconStatusPanel);
+        tooltip.setHtml(SafeHtmlUtils.fromString(tooltipText));
+        return tooltip;
     }
 
     private IsWidget createCardPluggedStatusPanel(boolean isPlugged) {
@@ -283,7 +287,11 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         }
         linkStatusPanel.add(icon);
         linkStatusPanel.addStyleName(DOUBLE_SIZE);
-        return linkStatusPanel;
+
+        String tooltipText = isPlugged ? constants.pluggedNetworkInterface() : constants.unpluggedNetworkInterface();
+        WidgetTooltip tooltip = new WidgetTooltip(linkStatusPanel);
+        tooltip.setHtml(SafeHtmlUtils.fromString(tooltipText));
+        return tooltip;
     }
 
     @Override
