@@ -22,18 +22,19 @@
       <plugin>
          <groupId>com.github.warmuuh</groupId>
          <artifactId>libsass-maven-plugin</artifactId>
-         <version>${libsass-maven-plugin.version}</version>
+         <version>0.2.8-libsass_3.4.4</version>
          <executions>
-            <execution>
-               <phase>generate-resources</phase>
-               <goals>
-                  <goal>compile</goal>
-               </goals>
-            </execution>
+           <execution>
+             <phase>generate-resources</phase>
+             <goals>
+               <goal>compile</goal>
+             </goals>
+           </execution>
          </executions>
          <configuration>
-            <inputPath>${basedir}/src/main/sass/</inputPath>
-            <outputPath>${basedir}/target/ovirt.brand/</outputPath>
+           <outputStyle>compressed</outputStyle>
+           <inputPath>${basedir}/src/main/sass/</inputPath>
+           <outputPath>${basedir}/target/ovirt.brand/</outputPath>
          </configuration>
       </plugin>
 
