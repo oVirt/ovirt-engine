@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.mockito.Mock;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
@@ -29,7 +31,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest extends BaseCommandTest {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.UserSessionTimeOutInterval, 30));
 
     protected String session = "someSession";
 
@@ -49,7 +51,6 @@ public class CommandBaseTest extends BaseCommandTest {
         DbUser user = mock(DbUser.class);
 
         when(engineSessionDao.remove(anyLong())).thenReturn(1);
-
         sessionDataContainer.setUser(session, user);
     }
 

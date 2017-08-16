@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,13 +27,14 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class VmStaticDaoTest extends BaseGenericDaoTestCase<Guid, VmStatic, VmStaticDao> {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ApplicationMode, 255));
 
     protected static final Guid[] HOST_GUIDS = { FixturesTool.HOST_WITH_NO_VFS_CONFIGS_ID,
             FixturesTool.HOST_ID,

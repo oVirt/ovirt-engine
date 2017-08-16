@@ -31,6 +31,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -86,6 +87,12 @@ public class VmDevicesMonitoringTest {
         doReturn(vdsManager).when(resourceManager).getVdsManager(any(Guid.class));
 
         injectorRule.bind(TransactionManager.class, transactionManager);
+
+        mcr.mockConfigValue(
+            ConfigValues.DomainXML,
+            resourceManager.getVdsManager(VDS_ID).getCompatibilityVersion(),
+            true
+        );
     }
 
     private static Map<String, Object> getDeviceInfo(Guid id, String deviceType, String device, String address) {

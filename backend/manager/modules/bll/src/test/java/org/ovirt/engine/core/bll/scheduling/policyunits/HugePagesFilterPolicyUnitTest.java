@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.bll.scheduling.pending.PendingResourceManager;
 import org.ovirt.engine.core.common.businessentities.HugePage;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -27,7 +29,7 @@ public class HugePagesFilterPolicyUnitTest {
     PendingResourceManager pendingResourceManager;
 
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule();
+    public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
 
     @Before
     public void setUp() {

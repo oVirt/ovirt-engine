@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.QcowCompat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,7 +48,7 @@ import org.ovirt.engine.core.utils.ovf.OvfVmIconDefaultsProvider;
 
 public class RemoveImageCommandTest extends BaseCommandTest {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VdcVersion, "3.0.0.0"));
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
@@ -106,6 +108,13 @@ public class RemoveImageCommandTest extends BaseCommandTest {
         DiskVmElement dve2 = new DiskVmElement(disk2.getId(), vm.getId());
         dve2.setDiskInterface(DiskInterface.IDE);
         disk2.setDiskVmElements(Collections.singletonList(dve2));
+
+        mcr.mockConfigValue(ConfigValues.PassDiscardSupported, Version.getLast(), true);
+        mcr.mockConfigValue(ConfigValues.PassDiscardSupported, Version.ALL.get(0), true);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmSockets, Version.ALL.get(0), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmCpus, Version.ALL.get(0), 16);
 
         ArrayList<DiskImage> disks = new ArrayList<>(Arrays.asList(disk1, disk2));
         String ovf = ovfManager.exportVm(vm, disks, Version.getLast());

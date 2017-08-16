@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit.BAD_WEIGHT;
 import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit.BEST_WEIGHT;
 import static org.ovirt.engine.core.bll.scheduling.policyunits.InClusterUpgradeWeightPolicyUnit.BETTER_WEIGHT;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDynamicDao;
@@ -31,7 +33,7 @@ import junit.framework.TestCase;
 public class InClusterUpgradeWeightPolicyUnitTest extends TestCase {
 
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule();
+    public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
 
     @Mock
     private VdsDynamicDao vdsDynamicDao;

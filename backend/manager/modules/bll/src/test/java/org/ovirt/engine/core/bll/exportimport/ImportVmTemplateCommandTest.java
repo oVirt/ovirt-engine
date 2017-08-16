@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
@@ -84,7 +86,11 @@ public class ImportVmTemplateCommandTest extends BaseCommandTest {
     private OsRepository osRepository;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(
+        mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
+        mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 4194304),
+        mockConfig(ConfigValues.VMPpc64BitMaxMemorySizeInMB, 1048576)
+    );
 
     @Before
     public void injectOsRepository() {

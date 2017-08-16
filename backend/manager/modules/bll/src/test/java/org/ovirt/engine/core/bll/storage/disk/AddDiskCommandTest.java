@@ -14,6 +14,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +82,7 @@ public class AddDiskCommandTest extends BaseCommandTest {
     private static final Guid vmId = Guid.newGuid();
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.MaxBlockDiskSize, 8192));
 
     @Mock
     private DiskVmElementDao diskVmElementDao;
@@ -931,6 +932,11 @@ public class AddDiskCommandTest extends BaseCommandTest {
                 any(Disk.class), any(DiskVmElement.class));
         doReturn(new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE))
                 .when(diskVmElementValidator).isPassDiscardSupported(any(Guid.class));
+        mcr.mockConfigValue(
+            ConfigValues.PassDiscardSupported,
+            command.getStoragePool().getCompatibilityVersion(),
+            true
+        );
 
         ValidateTestUtils.runAndAssertValidateFailure(
                 command, EngineMessage.ACTION_TYPE_FAILED_PASS_DISCARD_NOT_SUPPORTED_BY_DISK_INTERFACE);

@@ -4,8 +4,12 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.CommandAssertUtils.checkSucceeded;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +23,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dao.VdsDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoVirtISOsQuery<IdQueryParameters>> {
@@ -28,6 +33,17 @@ public class GetoVirtISOsTest extends AbstractQueryTest<IdQueryParameters, GetoV
 
     @Mock
     private VdsDao vdsDao;
+
+    @Override
+    protected Set<MockConfigRule.MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
+        return new HashSet<>(Arrays.asList(
+            mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, "2.5.5:5.8"),
+            mockConfig(ConfigValues.OvirtIsoPrefix, "^ovirt-node-iso-([0-9].*)\\.iso$:^rhevh-([0-9].*)\\.iso$"),
+            mockConfig(ConfigValues.OvirtNodeOS, "^ovirt.*$:^rhev.*$"),
+            mockConfig(ConfigValues.DataDir, "/usr/share/engine"),
+            mockConfig(ConfigValues.oVirtISOsRepositoryPath, "/usr/share/ovirt-node-iso:/usr/share/rhev-hypervisor"))
+        );
+    }
 
     @Test
     public void testQueryWithHostId() {

@@ -2,10 +2,14 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolParameters;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
 
@@ -17,6 +21,11 @@ public class AddVmPoolCommandTest extends CommonVmPoolCommandTestAbstract {
         AddVmPoolParameters param = new AddVmPoolParameters(vmPools, testVm, VM_COUNT);
         param.setStorageDomainId(firstStorageDomainId);
         return new AddVmPoolCommand<>(param, null);
+    }
+
+    @Before
+    public void setUp() {
+        mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"));
     }
 
     @Test

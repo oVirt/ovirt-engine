@@ -12,10 +12,15 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -39,7 +45,12 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmParameters>> {
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(
+        mockConfig(ConfigValues.MaxIoThreadsPerVm, 127),
+        mockConfig(ConfigValues.MaxVmNameLength, 64),
+        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
+        mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4"))
+    );
 
     @Mock
     private QuotaDao quotaDao;
@@ -171,7 +182,11 @@ public class AddVmCommandTest extends AddVmCommandTestBase<AddVmCommand<AddVmPar
         cmd.getParameters().getVm().setClusterId(cluster.getId());
         cmd.getParameters().getVm().setVmOs(OsType.Other.ordinal());
         cmd.init();
-
+        Map<String, String> migrationMap = new HashMap<>();
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86", "true");
+        migrationMap.put("ppc", "true");
+        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, cmd.getEffectiveCompatibilityVersion(), migrationMap);
         ValidateTestUtils.runAndAssertValidateFailure(cmd, EngineMessage.USE_HOST_CPU_REQUESTED_ON_UNSUPPORTED_ARCH);
     }
 

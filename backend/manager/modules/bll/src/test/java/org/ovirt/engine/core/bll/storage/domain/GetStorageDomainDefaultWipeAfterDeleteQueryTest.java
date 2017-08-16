@@ -26,7 +26,7 @@ public class GetStorageDomainDefaultWipeAfterDeleteQueryTest
     public static StorageType[] types = StorageType.values();
 
     @Override
-    public Set<MockConfigRule.MockConfigDescriptor<Boolean>> getExtraConfigDescriptors() {
+    public Set<MockConfigRule.MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
         return Collections.singleton(MockConfigRule.mockConfig(ConfigValues.SANWipeAfterDelete, true));
     }
 

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -33,6 +34,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.ui.frontend.server.gwt.plugin.PluginData;
 
@@ -42,7 +44,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     private static final String APPLICATION_MODE = "{ \"value\": \"123\" }"; //$NON-NLS-1$
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DisplayUncaughtUIExceptions, true));
 
     @Mock
     private ObjectNode mockApplicationModeObject;

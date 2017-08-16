@@ -8,6 +8,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
 
@@ -53,7 +54,7 @@ public class HostValidatorTest {
     private StoragePoolDao storagePoolDao;
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
+    public MockConfigRule mockConfigRule = new MockConfigRule(mockConfig(ConfigValues.EncryptHostCommunication, true));
 
     @Mock
     private VDS host;

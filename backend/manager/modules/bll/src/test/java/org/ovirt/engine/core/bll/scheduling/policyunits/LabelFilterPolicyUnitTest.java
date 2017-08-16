@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.Label;
 import org.ovirt.engine.core.common.businessentities.LabelBuilder;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LabelDao;
@@ -30,7 +32,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class LabelFilterPolicyUnitTest {
 
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule();
+    public static MockConfigRule configRule = new MockConfigRule(mockConfig(ConfigValues.MaxSchedulerWeight, 1000));
 
     @Mock
     LabelDao labelDao;

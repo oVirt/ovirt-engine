@@ -15,8 +15,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_EDITING_HOSTED_ENGINE_IS_DISABLED;
 import static org.ovirt.engine.core.common.errors.EngineMessage.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_HOSTED_ENGINE;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -131,7 +133,12 @@ public class UpdateVmCommandTest extends BaseCommandTest {
     private VmHandler vmHandler;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(
+        mockConfig(ConfigValues.MaxVmNameLength, 64),
+        mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1", "2", "4")),
+        mockConfig(ConfigValues.VmPriorityMaxValue, 100),
+        mockConfig(ConfigValues.MaxIoThreadsPerVm, 127)
+    );
 
     private static VmManagementParametersBase initParams() {
         VmStatic vmStatic = new VmStatic();
@@ -236,6 +243,19 @@ public class UpdateVmCommandTest extends BaseCommandTest {
         mockSameNameQuery(true);
         mockVmValidator();
         command.initEffectiveCompatibilityVersion();
+
+        Map<String, String> migrationMap = new HashMap<>();
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86", "true");
+        migrationMap.put("ppc", "true");
+        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, command.getEffectiveCompatibilityVersion(), migrationMap);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfCpuPerSocket, command.getEffectiveCompatibilityVersion(), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfThreadsPerCpu, command.getEffectiveCompatibilityVersion(), 8);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmCpus, command.getEffectiveCompatibilityVersion(), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmSockets, command.getEffectiveCompatibilityVersion(), 16);
+        mcr.mockConfigValue(ConfigValues.VM32BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 20480);
+        mcr.mockConfigValue(ConfigValues.VM64BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 4194304);
+        mcr.mockConfigValue(ConfigValues.VMPpc64BitMaxMemorySizeInMB, command.getEffectiveCompatibilityVersion(), 1048576);
 
         assertTrue("validate should have passed.", command.validate());
     }

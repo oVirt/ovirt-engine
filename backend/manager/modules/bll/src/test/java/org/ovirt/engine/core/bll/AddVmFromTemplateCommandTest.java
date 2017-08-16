@@ -12,9 +12,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner.Strict;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependencyInjector;
@@ -35,7 +40,10 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
     private static final int MAX_PCI_SLOTS = 26;
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(
+        mockConfig(ConfigValues.MaxVmNameLength, 64),
+        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0))))
+    );
 
     @Override
     protected AddVmFromTemplateCommand<AddVmParameters> createCommand() {
@@ -119,6 +127,17 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTestBase<AddVmFrom
         mockGetAllSnapshots();
 
         cmd.initEffectiveCompatibilityVersion();
+
+        Map<String, String> migrationMap = new HashMap<>();
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86", "true");
+        migrationMap.put("ppc", "true");
+        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, cmd.getEffectiveCompatibilityVersion(), migrationMap);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmCpus, cmd.getEffectiveCompatibilityVersion(), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfVmSockets, cmd.getEffectiveCompatibilityVersion(), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfCpuPerSocket, cmd.getEffectiveCompatibilityVersion(), 16);
+        mcr.mockConfigValue(ConfigValues.MaxNumOfThreadsPerCpu, cmd.getEffectiveCompatibilityVersion(), 8);
+
         ValidateTestUtils.runAndAssertValidateFailure(cmd,
                 EngineMessage.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
     }

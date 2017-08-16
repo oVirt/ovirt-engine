@@ -176,6 +176,7 @@ public class StorageDomainValidatorTest {
     @Test
     public void discardAfterDeleteSupportedByDcVersion() {
         domain.setDiscardAfterDelete(true);
+        mcr.mockConfigValue(ConfigValues.DiscardAfterDeleteSupported, Version.v4_1, true);
         assertThat(validator.isDiscardAfterDeleteSupportedByDcVersion(Version.v4_1), isValid());
     }
 

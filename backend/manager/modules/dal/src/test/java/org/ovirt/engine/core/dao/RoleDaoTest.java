@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.List;
 
@@ -12,13 +13,14 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class RoleDaoTest extends BaseGenericDaoTestCase<Guid, Role, RoleDao> {
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ApplicationMode, 255));
 
     private static final String GROUP_IDS = "26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7";
     private static final int ROLE_COUNT = 7;

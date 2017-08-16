@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NetworkImplementationDetailsUtilsUsingVlanNicTest extends BaseNetworkImplementationDetailsUtilsTest {
@@ -23,7 +24,7 @@ public class NetworkImplementationDetailsUtilsUsingVlanNicTest extends BaseNetwo
         VdsNetworkInterface vlanIface = createVlanInterface(baseIface, networkName, qosA);
 
         setTestIface(vlanIface);
-
+        mcr.mockConfigValue(ConfigValues.DefaultMTU, 1500);
         when(calculateBaseNic.getBaseNic(vlanIface)).thenReturn(baseIface);
     }
 

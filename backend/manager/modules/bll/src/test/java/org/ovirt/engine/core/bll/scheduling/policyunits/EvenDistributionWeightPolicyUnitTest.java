@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +31,11 @@ public class EvenDistributionWeightPolicyUnitTest extends AbstractPolicyUnitTest
     private static final Guid DESTINATION_HOST = new Guid("087fc691-de02-11e4-8830-0800200c9a66");
 
     @ClassRule
-    public static MockConfigRule configRule = new MockConfigRule();
+    public static MockConfigRule configRule = new MockConfigRule(
+        mockConfig(ConfigValues.MaxSchedulerWeight, 1000),
+        mockConfig(ConfigValues.VcpuConsumptionPercentage, 10),
+        mockConfig(ConfigValues.SpmVCpuConsumption, 1)
+    );
 
     @Test
     public void testScoreForCpuLoad() throws Exception {

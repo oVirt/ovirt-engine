@@ -258,6 +258,7 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         initializeCommand();
         mockVdsCommandSetVolumeDescription();
         mockInterfaceList();
+        mockDefaultDiscardSupported();
 
         ValidateTestUtils.runAndAssertValidateSuccess(command);
         command.executeVmCommand();
@@ -890,5 +891,9 @@ public class UpdateVmDiskCommandTest extends BaseCommandTest {
         VmDevice vmDevice = createVmDevice(diskId, vmId);
         doReturn(vmDevice).when(command).getVmDeviceForVm();
         return vmDevice;
+    }
+
+    private void mockDefaultDiscardSupported() {
+        mcr.mockConfigValue(ConfigValues.PassDiscardSupported, command.getStoragePool().getCompatibilityVersion(), true);
     }
 }

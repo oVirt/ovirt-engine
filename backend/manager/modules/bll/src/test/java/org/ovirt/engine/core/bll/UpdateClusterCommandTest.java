@@ -16,8 +16,10 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -623,6 +625,12 @@ public class UpdateClusterCommandTest {
         List<Cluster> clusterList = new ArrayList<>();
         clusterList.add(createDefaultCluster());
         when(clusterDao.getByName(any(), anyBoolean())).thenReturn(clusterList);
+
+        Map<String, String> migrationMap = new HashMap<>();
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86", "true");
+        migrationMap.put("ppc", "true");
+        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, cmd.getCluster().getCompatibilityVersion(), migrationMap);
     }
 
     private void createCommandWithDifferentName() {

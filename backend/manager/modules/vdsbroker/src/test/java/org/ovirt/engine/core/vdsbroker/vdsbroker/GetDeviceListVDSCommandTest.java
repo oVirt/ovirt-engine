@@ -28,7 +28,9 @@ public class GetDeviceListVDSCommandTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false));
+            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, false),
+            mockConfig(ConfigValues.PassDiscardSupported, Version.v4_1, true)
+    );
 
     @Test
     public void parseLunReturnsIscsiByDefault() throws Exception {

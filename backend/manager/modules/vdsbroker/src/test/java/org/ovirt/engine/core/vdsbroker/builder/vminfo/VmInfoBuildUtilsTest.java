@@ -277,6 +277,8 @@ public class VmInfoBuildUtilsTest {
         vm.setClusterArch(ArchitectureType.x86_64);
         vm.setClusterCompatibilityVersion(Version.v4_1);
 
+        mcr.mockConfigValue(ConfigValues.VirtIOScsiIOThread, Version.v4_1, true);
+
         Map<Integer, Map<VmDevice, Integer>> vmDeviceUnitMap =
                 underTest.getVmDeviceUnitMapForScsiDisks(vm, DiskInterface.VirtIO_SCSI, false);
 

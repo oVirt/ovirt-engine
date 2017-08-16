@@ -6,6 +6,7 @@ import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVdsNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.createVmNumaNode;
 import static org.ovirt.engine.core.bll.utils.NumaTestUtils.mockVdsNumaNodeDao;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDao;
@@ -33,7 +35,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class NumaValidatorTest {
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule();
+    public MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.SupportNUMAMigration, false));
 
     @Mock
     private VdsNumaNodeDao vdsNumaNodeDao;

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -12,6 +13,7 @@ import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaCluster;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.QuotaDao;
@@ -28,7 +30,12 @@ public class AddQuotaCommandTest extends BaseCommandTest {
     private AddQuotaCommand command = createCommand();
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(
+        mockConfig(ConfigValues.QuotaGraceStorage, 20),
+        mockConfig(ConfigValues.QuotaGraceCluster, 20),
+        mockConfig(ConfigValues.QuotaThresholdStorage, 80),
+        mockConfig(ConfigValues.QuotaThresholdCluster, 80)
+    );
 
     @Before
     public void testSetup() {

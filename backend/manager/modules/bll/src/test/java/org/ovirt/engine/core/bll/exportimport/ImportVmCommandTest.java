@@ -15,6 +15,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +59,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -91,7 +93,11 @@ public class ImportVmCommandTest extends BaseCommandTest {
     private ImportVmCommand<ImportVmParameters> cmd = new ImportVmCommand<>(createParameters(), null);
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
+    public static MockConfigRule mcr = new MockConfigRule(
+        mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, 20480),
+        mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, 4194304),
+        mockConfig(ConfigValues.VMPpc64BitMaxMemorySizeInMB, 1048576)
+    );
 
     @BeforeClass
     public static void setUpOsRepository() {

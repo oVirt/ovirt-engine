@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Image;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.VmIconIdSizePair;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -75,7 +77,16 @@ public class OvfManagerTest {
     private static final int MAX_ENTITY_NAME_LENGTH = 30;
 
     @ClassRule
-    public static MockConfigRule mockConfigRule = new MockConfigRule();
+    public static MockConfigRule mockConfigRule = new MockConfigRule(
+        mockConfig(ConfigValues.VdcVersion, "3.0.0.0"),
+        mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v3_6, 16),
+        mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v3_6, 16),
+        mockConfig(ConfigValues.MaxNumOfVmSockets, Version.v4_0, 16),
+        mockConfig(ConfigValues.MaxNumOfVmCpus, Version.v4_0, 16),
+        mockConfig(ConfigValues.MaxNumOfVmSockets, Version.getLast(), 16),
+        mockConfig(ConfigValues.MaxNumOfVmCpus, Version.getLast(), 16),
+        mockConfig(ConfigValues.PassDiscardSupported, Version.v4_0, true)
+    );
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();

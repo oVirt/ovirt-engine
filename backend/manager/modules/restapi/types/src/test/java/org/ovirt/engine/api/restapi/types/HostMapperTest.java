@@ -13,6 +13,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 
@@ -20,6 +21,12 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
 
     public HostMapperTest() {
         super(Host.class, VdsStatic.class, VDS.class);
+    }
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        mcr.mockConfigValue(ConfigValues.OrganizationName, "oVirt");
     }
 
     @Override

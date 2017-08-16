@@ -10,9 +10,13 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -34,6 +38,7 @@ import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryReturnValue;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 import org.ovirt.engine.core.utils.MockEngineLocalConfigRule.KeyValue;
 
@@ -68,6 +73,17 @@ public class ConfigureConsoleOptionsQueryTest extends
 
     @Mock
     SessionDataContainer sessionDataContainer;
+
+    @Override
+    protected Set<MockConfigRule.MockConfigDescriptor<Object>> getExtraConfigDescriptors() {
+        return new HashSet<>(Arrays.asList(
+            mockConfig(ConfigValues.ConsoleToggleFullScreenKeys, "shift+f11"),
+            mockConfig(ConfigValues.ConsoleReleaseCursorKeys, "shift+f12"),
+            mockConfig(ConfigValues.RemapCtrlAltDelDefault, true),
+            mockConfig(ConfigValues.FullScreenWebadminDefault, false),
+            mockConfig(ConfigValues.EnableSpiceRootCertificateValidation, true))
+        );
+    }
 
     @Test
     public void shouldFailtWhenNoId() {

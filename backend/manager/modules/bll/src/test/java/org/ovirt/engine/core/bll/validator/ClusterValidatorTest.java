@@ -9,8 +9,10 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collections;
+import java.util.HashSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
@@ -57,7 +59,9 @@ public class ClusterValidatorTest {
     private CpuFlagsManagerHandler cpuFlagsManagerHandler;
 
     @Rule
-    public MockConfigRule mockConfigRule = new MockConfigRule();
+    public MockConfigRule mockConfigRule = new MockConfigRule(
+        mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0))))
+    );
 
     @Before
     public void setup() {

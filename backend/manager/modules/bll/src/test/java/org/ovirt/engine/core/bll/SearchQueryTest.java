@@ -6,6 +6,8 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Before;
@@ -47,6 +49,8 @@ public class SearchQueryTest extends AbstractQueryTest<SearchParameters, SearchQ
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.UserSessionTimeOutInterval, 30),
+            mockConfig(ConfigValues.SupportedClusterLevels, new HashSet<>(Collections.singletonList(new Version(3, 0)))),
             mockConfig(ConfigValues.DBEngine, null),
             mockConfig(ConfigValues.DBPagingType, null),
             mockConfig(ConfigValues.DBSearchTemplate,
