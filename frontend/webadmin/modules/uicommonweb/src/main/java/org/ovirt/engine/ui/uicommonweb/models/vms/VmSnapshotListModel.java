@@ -208,11 +208,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean hasNoPreviewSnapshot = snapshots.stream().noneMatch(s -> s.getType() == SnapshotType.PREVIEW);
 
         for (Snapshot snapshot : snapshots) {
-            SnapshotModel snapshotModel = snapshotsMap.get(snapshot.getId());
-            if (snapshotModel == null) {
-                snapshotModel = new SnapshotModel();
-                snapshotsMap.put(snapshot.getId(), snapshotModel);
-            }
+            SnapshotModel snapshotModel = snapshotsMap.computeIfAbsent(snapshot.getId(), id -> new SnapshotModel());
             snapshotModel.setEntity(snapshot);
 
             if ((snapshot.getType() == SnapshotType.ACTIVE && hasNoPreviewSnapshot)
