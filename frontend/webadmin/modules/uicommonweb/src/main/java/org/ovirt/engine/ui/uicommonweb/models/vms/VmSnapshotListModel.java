@@ -195,13 +195,13 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         setCanSelectSnapshot(new EntityModel<>());
         getCanSelectSnapshot().setEntity(true);
 
-        setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
-        setVmDisks(new ArrayList<DiskImage>());
+        setSnapshotsMap(new HashMap<>());
+        setVmDisks(new ArrayList<>());
     }
 
     @Override
     public void setItems(Collection<Snapshot> value) {
-        ArrayList<Snapshot> snapshots = value != null ? new ArrayList<>(value) : new ArrayList<Snapshot>();
+        ArrayList<Snapshot> snapshots = value != null ? new ArrayList<>(value) : new ArrayList<>();
 
         Collections.sort(snapshots, Linq.SnapshotByCreationDateCommparer.reversed());
         ArrayList<Snapshot> sortedSnapshots = new ArrayList<>();
