@@ -22,7 +22,7 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
 
     @NotNull(groups = { UpdateEntity.class, RemoveEntity.class })
     private Guid id;
-    @Size(min = 1, max = BusinessEntitiesDefinitions.VNIC_PROFILE_NAME_SIZE, groups = { CreateEntity.class,
+    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE, groups = { CreateEntity.class,
             UpdateEntity.class })
     @ValidName(message = "VALIDATION_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
