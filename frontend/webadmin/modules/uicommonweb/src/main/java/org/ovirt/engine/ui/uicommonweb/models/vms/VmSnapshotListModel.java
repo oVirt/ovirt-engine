@@ -134,13 +134,13 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         this.cloneTemplateCommand = cloneTemplateCommand;
     }
 
-    private EntityModel canSelectSnapshot;
+    private EntityModel<Boolean> canSelectSnapshot;
 
-    public EntityModel getCanSelectSnapshot() {
+    public EntityModel<Boolean> getCanSelectSnapshot() {
         return canSelectSnapshot;
     }
 
-    private void setCanSelectSnapshot(EntityModel value) {
+    private void setCanSelectSnapshot(EntityModel<Boolean> value) {
         canSelectSnapshot = value;
     }
 
@@ -192,7 +192,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         setCloneVmCommand(new UICommand("CloneVM", this)); //$NON-NLS-1$
         setCloneTemplateCommand(new UICommand("CloneTemplate", this)); //$NON-NLS-1$
 
-        setCanSelectSnapshot(new EntityModel());
+        setCanSelectSnapshot(new EntityModel<>());
         getCanSelectSnapshot().setEntity(true);
 
         setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
