@@ -551,6 +551,17 @@ public class LibvirtVmXmlBuilder {
     private void writeVmMetadata() {
         writer.writeStartElement(OVIRT_VM_URI, "vm");
         writeMinGuaranteedMemoryMetadata();
+        writeVmCustomMetadata();
+        writer.writeEndElement();
+    }
+
+    private void writeVmCustomMetadata() {
+        writer.writeStartElement(OVIRT_VM_URI, "custom");
+        Map<String, String> vmCustomProperties = VmPropertiesUtils.getInstance().getVMProperties(
+                vm.getCompatibilityVersion(),
+                vm.getStaticData());
+        vmCustomProperties.entrySet().forEach(
+                property -> writer.writeElement(OVIRT_VM_URI, property.getKey(), property.getValue()));
         writer.writeEndElement();
     }
 
