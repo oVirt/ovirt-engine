@@ -777,7 +777,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
         boolean isPreviewing = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.IN_PREVIEW);
         boolean isLocked = getItems().stream().anyMatch(s -> s.getStatus() == SnapshotStatus.LOCKED);
         boolean isSelected = snapshot != null && snapshot.getType() != SnapshotType.ACTIVE;
-        boolean isStateless = getIsStateless();
+        boolean isStateless = getItems().stream().anyMatch(s -> s.getType() == SnapshotType.STATELESS);
         boolean isVmConfigurationBroken = snapshot != null && snapshot.isVmConfigurationBroken();
 
         getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
@@ -793,10 +793,6 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
                 && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
         getCloneTemplateCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing
                 && !isVmImageLocked && !isStateless && !isVmConfigurationBroken);
-    }
-
-    public boolean getIsStateless() {
-        return getInType(SnapshotType.STATELESS, (ArrayList<Snapshot>) getItems()) != null;
     }
 
     public Snapshot getInType(SnapshotType snapshotType, ArrayList<Snapshot> snapshots) {
