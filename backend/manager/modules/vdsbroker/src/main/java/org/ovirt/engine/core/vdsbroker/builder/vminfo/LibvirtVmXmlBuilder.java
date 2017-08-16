@@ -1808,10 +1808,14 @@ public class LibvirtVmXmlBuilder {
 
     private void writeBalloon(VmDevice device) {
         // <memballoon model='virtio'>
+        //   <stats period='5' />
         //   <address type='pci' domain='0x0000' bus='0x00' slot='0x04' function='0x0'/>
         // </memballoon>
         writer.writeStartElement("memballoon");
         writer.writeAttributeString("model", device.getSpecParams().get(VdsProperties.Model).toString());
+        writer.writeStartElement("stats");
+        writer.writeAttributeString("period", "5");
+        writer.writeEndElement();
         writeAddress(device);
         writer.writeEndElement();
     }
