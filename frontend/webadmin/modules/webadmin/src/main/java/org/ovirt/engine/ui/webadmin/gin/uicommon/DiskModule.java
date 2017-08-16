@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportE
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.UploadImagePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -54,8 +54,8 @@ public class DiskModule extends AbstractGinModule {
             final Provider<ImportExportImagePopupPresenterWidget> importExportImagePopupPresenterWidgetProvider,
             final Provider<DiskListModel> modelProvider) {
 
-        MainTabModelProvider<Disk, DiskListModel> result =
-                new MainTabModelProvider<Disk, DiskListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<Disk, DiskListModel> result =
+                new MainViewModelProvider<Disk, DiskListModel>(eventBus, defaultConfirmPopupProvider) {
 
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskListModel source,
@@ -88,8 +88,8 @@ public class DiskModule extends AbstractGinModule {
                     }
 
                     @Override
-                    public void onMainTabSelected() {
-                        super.onMainTabSelected();
+                    public void onMainViewSelected() {
+                        super.onMainViewSelected();
                         getModel().getDiskViewType().setEntity(null);
                         getModel().getDiskContentType().setEntity(null);
                     }
@@ -106,7 +106,7 @@ public class DiskModule extends AbstractGinModule {
         bind(DiskTemplateListModel.class).in(Singleton.class);
         bind(DiskStorageListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<Disk>>(){}).in(Singleton.class);
-        bind(DiskMainTabSelectedItems.class).asEagerSingleton();
+        bind(DiskMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<DiskListModel, DiskGeneralModel>>(){})

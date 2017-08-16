@@ -37,7 +37,7 @@ public class SubTabVolumeEventPresenter
 
     @Inject
     public SubTabVolumeEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VolumeMainSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> modelProvider) {
         // View has no actionPanel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

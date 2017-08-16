@@ -153,7 +153,7 @@ public class PluginUiFunctions implements HasHandlers {
      */
     public void addMainTabActionButton(EntityType entityType, String label,
             ActionButtonInterface actionButtonInterface) {
-        String historyToken = entityType.getMainTabHistoryToken();
+        String historyToken = entityType.getMainHistoryToken();
 
         if (historyToken != null) {
             AddTabActionButtonEvent.fire(this, historyToken,

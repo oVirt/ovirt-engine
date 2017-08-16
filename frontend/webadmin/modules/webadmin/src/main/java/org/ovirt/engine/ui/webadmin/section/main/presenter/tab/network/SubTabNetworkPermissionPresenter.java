@@ -37,7 +37,7 @@ public class SubTabNetworkPermissionPresenter
 
     @Inject
     public SubTabNetworkPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, NetworkMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

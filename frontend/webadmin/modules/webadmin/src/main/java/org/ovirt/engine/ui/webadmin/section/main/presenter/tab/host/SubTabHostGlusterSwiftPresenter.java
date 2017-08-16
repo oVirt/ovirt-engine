@@ -38,7 +38,7 @@ public class SubTabHostGlusterSwiftPresenter
 
     @Inject
     public SubTabHostGlusterSwiftPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             HostGlusterSwiftActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

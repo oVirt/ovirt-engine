@@ -21,14 +21,14 @@ public abstract class AbstractSubTabTemplatePresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <VmTemplate, TemplateListModel, D, V, P> {
 
     public AbstractSubTabTemplatePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<TemplateListModel, D> modelProvider, TemplateMainTabSelectedItems selectedItems,
+            DetailModelProvider<TemplateListModel, D> modelProvider, TemplateMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, TemplateListModel, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.templateMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.templateMainPlace);
     }
 }

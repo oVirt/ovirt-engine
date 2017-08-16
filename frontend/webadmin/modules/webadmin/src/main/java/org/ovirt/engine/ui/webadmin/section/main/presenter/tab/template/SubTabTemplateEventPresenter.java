@@ -37,7 +37,7 @@ public class SubTabTemplateEventPresenter
 
     @Inject
     public SubTabTemplateEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, TemplateMainSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, TemplateListModel, TemplateEventListModel> modelProvider) {
         // View has no actionPanel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

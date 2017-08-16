@@ -115,7 +115,7 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> {
 
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().poolsTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.poolMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.poolMainPlace);
 
         setDefaultSearchString("Pools:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

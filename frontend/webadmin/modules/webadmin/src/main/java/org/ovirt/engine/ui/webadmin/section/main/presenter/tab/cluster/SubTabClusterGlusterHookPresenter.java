@@ -37,7 +37,7 @@ public class SubTabClusterGlusterHookPresenter
 
     @Inject
     public SubTabClusterGlusterHookPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, ClusterMainSelectedItems selectedItems,
             ClusterGlusterHookActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

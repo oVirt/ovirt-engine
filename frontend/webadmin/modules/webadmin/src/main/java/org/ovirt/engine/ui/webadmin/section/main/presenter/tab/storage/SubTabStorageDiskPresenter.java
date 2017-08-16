@@ -37,7 +37,7 @@ public class SubTabStorageDiskPresenter
 
     @Inject
     public SubTabStorageDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             StorageDiskActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

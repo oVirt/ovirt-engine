@@ -55,7 +55,7 @@ public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfile
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHelpTag(HelpTag.vnicProfiles);
-        setApplicationPlace(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.vnicProfileMainPlace);
         setHashName("vnicProfiles"); //$NON-NLS-1$)
 
         setDefaultSearchString("VnicProfile:"); //$NON-NLS-1$

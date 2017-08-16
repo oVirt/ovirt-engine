@@ -31,7 +31,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
  */
 public enum EntityType {
 
-    DataCenter(WebAdminApplicationPlaces.dataCenterMainTabPlace,
+    DataCenter(WebAdminApplicationPlaces.dataCenterMainPlace,
             DataCenterSubTabPanelPresenter.TYPE_RequestTabs,
             DataCenterSubTabPanelPresenter.TYPE_ChangeTab,
             DataCenterSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -40,12 +40,12 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.dataCenterEventSubTabPlace);
         }
     },
-    Cluster(WebAdminApplicationPlaces.clusterMainTabPlace,
+    Cluster(WebAdminApplicationPlaces.clusterMainPlace,
             ClusterSubTabPanelPresenter.TYPE_RequestTabs,
             ClusterSubTabPanelPresenter.TYPE_ChangeTab,
             ClusterSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    Host(WebAdminApplicationPlaces.hostMainTabPlace,
+    Host(WebAdminApplicationPlaces.hostMainPlace,
             HostSubTabPanelPresenter.TYPE_RequestTabs,
             HostSubTabPanelPresenter.TYPE_ChangeTab,
             HostSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -54,17 +54,17 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.hostEventSubTabPlace);
         }
     },
-    Network(WebAdminApplicationPlaces.networkMainTabPlace,
+    Network(WebAdminApplicationPlaces.networkMainPlace,
             NetworkSubTabPanelPresenter.TYPE_RequestTabs,
             NetworkSubTabPanelPresenter.TYPE_ChangeTab,
             NetworkSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    VnicProfile(WebAdminApplicationPlaces.vnicProfileMainTabPlace,
+    VnicProfile(WebAdminApplicationPlaces.vnicProfileMainPlace,
             VnicProfileSubTabPanelPresenter.TYPE_RequestTabs,
             VnicProfileSubTabPanelPresenter.TYPE_ChangeTab,
             VnicProfileSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    Storage(WebAdminApplicationPlaces.storageMainTabPlace,
+    Storage(WebAdminApplicationPlaces.storageMainPlace,
             StorageSubTabPanelPresenter.TYPE_RequestTabs,
             StorageSubTabPanelPresenter.TYPE_ChangeTab,
             StorageSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -73,12 +73,12 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.storageEventSubTabPlace);
         }
     },
-    Disk(WebAdminApplicationPlaces.diskMainTabPlace,
+    Disk(WebAdminApplicationPlaces.diskMainPlace,
             DiskSubTabPanelPresenter.TYPE_RequestTabs,
             DiskSubTabPanelPresenter.TYPE_ChangeTab,
             DiskSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    VirtualMachine(WebAdminApplicationPlaces.virtualMachineMainTabPlace,
+    VirtualMachine(WebAdminApplicationPlaces.virtualMachineMainPlace,
             VirtualMachineSubTabPanelPresenter.TYPE_RequestTabs,
             VirtualMachineSubTabPanelPresenter.TYPE_ChangeTab,
             VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -87,12 +87,12 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.virtualMachineEventSubTabPlace);
         }
     },
-    Pool(WebAdminApplicationPlaces.poolMainTabPlace,
+    Pool(WebAdminApplicationPlaces.poolMainPlace,
             PoolSubTabPanelPresenter.TYPE_RequestTabs,
             PoolSubTabPanelPresenter.TYPE_ChangeTab,
             PoolSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    Template(WebAdminApplicationPlaces.templateMainTabPlace,
+    Template(WebAdminApplicationPlaces.templateMainPlace,
             TemplateSubTabPanelPresenter.TYPE_RequestTabs,
             TemplateSubTabPanelPresenter.TYPE_ChangeTab,
             TemplateSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -101,7 +101,7 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.templateEventSubTabPlace);
         }
     },
-    GlusterVolume(WebAdminApplicationPlaces.volumeMainTabPlace,
+    GlusterVolume(WebAdminApplicationPlaces.volumeMainPlace,
             VolumeSubTabPanelPresenter.TYPE_RequestTabs,
             VolumeSubTabPanelPresenter.TYPE_ChangeTab,
             VolumeSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -110,12 +110,12 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.volumeEventSubTabPlace);
         }
     },
-    Provider(WebAdminApplicationPlaces.providerMainTabPlace,
+    Provider(WebAdminApplicationPlaces.providerMainPlace,
             ProviderSubTabPanelPresenter.TYPE_RequestTabs,
             ProviderSubTabPanelPresenter.TYPE_ChangeTab,
             ProviderSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    User(WebAdminApplicationPlaces.userMainTabPlace,
+    User(WebAdminApplicationPlaces.userMainPlace,
             UserSubTabPanelPresenter.TYPE_RequestTabs,
             UserSubTabPanelPresenter.TYPE_ChangeTab,
             UserSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -124,7 +124,7 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.userEventSubTabPlace);
         }
     },
-    Quota(WebAdminApplicationPlaces.quotaMainTabPlace,
+    Quota(WebAdminApplicationPlaces.quotaMainPlace,
             QuotaSubTabPanelPresenter.TYPE_RequestTabs,
             QuotaSubTabPanelPresenter.TYPE_ChangeTab,
             QuotaSubTabPanelPresenter.TYPE_SetTabContent) {
@@ -133,7 +133,7 @@ public enum EntityType {
             map.put(Event, WebAdminApplicationPlaces.quotaEventSubTabPlace);
         }
     },
-    Event(WebAdminApplicationPlaces.eventMainTabPlace),
+    Event(WebAdminApplicationPlaces.eventMainPlace),
 
     Undefined; // Null object
 
@@ -149,7 +149,7 @@ public enum EntityType {
         return result;
     }
 
-    private final String mainTabHistoryToken;
+    private final String mainHistoryToken;
 
     private final Type<RequestTabsHandler> subTabPanelRequestTabs;
     private final Type<ChangeTabHandler> subTabPanelChangeTab;
@@ -161,7 +161,7 @@ public enum EntityType {
             Type<RequestTabsHandler> subTabPanelRequestTabs,
             Type<ChangeTabHandler> subTabPanelChangeTab,
             Type<RevealContentHandler<?>> subTabPanelContentSlot) {
-        this.mainTabHistoryToken = mainTabHistoryToken;
+        this.mainHistoryToken = mainTabHistoryToken;
         this.subTabPanelRequestTabs = subTabPanelRequestTabs;
         this.subTabPanelChangeTab = subTabPanelChangeTab;
         this.subTabPanelContentSlot = subTabPanelContentSlot;
@@ -178,8 +178,8 @@ public enum EntityType {
     /**
      * Returns the history token used to access main tab presenter.
      */
-    public String getMainTabHistoryToken() {
-        return mainTabHistoryToken;
+    public String getMainHistoryToken() {
+        return mainHistoryToken;
     }
 
     /**

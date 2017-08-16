@@ -37,7 +37,7 @@ public class SubTabStorageRegisterTemplatePresenter
 
     @Inject
     public SubTabStorageRegisterTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             StorageRegisterTemplateActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VmTemplate, StorageListModel,
                 StorageRegisterTemplateListModel> modelProvider) {

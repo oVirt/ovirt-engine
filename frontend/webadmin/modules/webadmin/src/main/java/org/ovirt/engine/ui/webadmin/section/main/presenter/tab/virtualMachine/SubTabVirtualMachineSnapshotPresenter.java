@@ -40,7 +40,7 @@ public class SubTabVirtualMachineSnapshotPresenter
 
     @Inject
     public SubTabVirtualMachineSnapshotPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider) {
         // View uses a VmSnapshotListModelTable which gets its action panel from a different location. passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -49,7 +49,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
@@ -74,8 +74,8 @@ public class NetworkModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<HostNetworkQosPopupPresenterWidget> addQosPopupProvider,
             final Provider<NetworkListModel> modelProvider) {
-        MainTabModelProvider<NetworkView, NetworkListModel> result =
-                new MainTabModelProvider<NetworkView, NetworkListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<NetworkView, NetworkListModel> result =
+                new MainViewModelProvider<NetworkView, NetworkListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -338,7 +338,7 @@ public class NetworkModule extends AbstractGinModule {
         bind(NetworkVmListModel.class).in(Singleton.class);
         bind(NetworkTemplateListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<NetworkView>>(){}).in(Singleton.class);
-        bind(NetworkMainTabSelectedItems.class).asEagerSingleton();
+        bind(NetworkMainSelectedItems.class).asEagerSingleton();
 
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>>>(){})

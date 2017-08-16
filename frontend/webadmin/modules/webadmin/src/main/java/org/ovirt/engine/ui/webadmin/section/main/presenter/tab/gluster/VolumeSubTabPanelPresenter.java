@@ -47,7 +47,7 @@ public class VolumeSubTabPanelPresenter extends
 
     @Inject
     public VolumeSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            VolumeMainTabSelectedItems selectedItems) {
+            VolumeMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

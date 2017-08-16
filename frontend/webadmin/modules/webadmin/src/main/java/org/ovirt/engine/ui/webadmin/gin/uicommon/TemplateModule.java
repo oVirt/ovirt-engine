@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -39,7 +39,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelect
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.TemplateMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.TemplateMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -65,8 +65,8 @@ public class TemplateModule extends AbstractGinModule {
             final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
             final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider) {
 
-        MainTabModelProvider<VmTemplate, TemplateListModel> result =
-                new MainTabModelProvider<VmTemplate, TemplateListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<VmTemplate, TemplateListModel> result =
+                new MainViewModelProvider<VmTemplate, TemplateListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -239,7 +239,7 @@ public class TemplateModule extends AbstractGinModule {
         bind(TemplateVmListModel.class).in(Singleton.class);
         bind(TemplateEventListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VmTemplate>>(){}).in(Singleton.class);
-        bind(TemplateMainTabSelectedItems.class).asEagerSingleton();
+        bind(TemplateMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<TemplateListModel, TemplateGeneralModel>>(){})

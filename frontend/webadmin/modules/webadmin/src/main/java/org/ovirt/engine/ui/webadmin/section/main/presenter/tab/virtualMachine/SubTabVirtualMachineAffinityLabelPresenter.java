@@ -38,7 +38,7 @@ public class SubTabVirtualMachineAffinityLabelPresenter
 
     @Inject
     public SubTabVirtualMachineAffinityLabelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             AffinityLabelsActionPanelPresenterWidget<VmListModel<Void>, VmAffinityLabelListModel> actionPanel,
             SearchableDetailModelProvider<Label, VmListModel<Void>, VmAffinityLabelListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

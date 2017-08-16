@@ -48,7 +48,7 @@ public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider
 
         setTitle(ConstantsManager.getInstance().getConstants().providersTitle());
         setHelpTag(HelpTag.providers);
-        setApplicationPlace(WebAdminApplicationPlaces.providerMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.providerMainPlace);
         setHashName("providers"); //$NON-NLS-1$
 
         setDefaultSearchString("Provider:"); //$NON-NLS-1$

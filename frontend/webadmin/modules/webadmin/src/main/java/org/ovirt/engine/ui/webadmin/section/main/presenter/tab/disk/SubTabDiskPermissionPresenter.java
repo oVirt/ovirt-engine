@@ -37,7 +37,7 @@ public class SubTabDiskPermissionPresenter
 
     @Inject
     public SubTabDiskPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DiskMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, DiskListModel, PermissionListModel<Disk>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

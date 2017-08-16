@@ -37,7 +37,7 @@ public class SubTabVirtualMachineVirtualDiskPresenter
 
     @Inject
     public SubTabVirtualMachineVirtualDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> modelProvider) {
         // View uses VmDiskListModelTable which gets its action panel from somewhere, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

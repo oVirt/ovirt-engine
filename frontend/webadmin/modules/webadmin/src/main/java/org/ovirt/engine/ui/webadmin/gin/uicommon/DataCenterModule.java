@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -51,7 +51,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Reco
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -75,8 +75,8 @@ public class DataCenterModule extends AbstractGinModule {
             final Provider<RecoveryStoragePopupPresenterWidget> recoveryStorageConfirmPopupProvider,
             final Provider<DataCenterForceRemovePopupPresenterWidget> forceRemovePopupProvider,
             final Provider<DataCenterListModel> modelProvider) {
-        MainTabModelProvider<StoragePool, DataCenterListModel> result =
-                new MainTabModelProvider<StoragePool, DataCenterListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<StoragePool, DataCenterListModel> result =
+                new MainViewModelProvider<StoragePool, DataCenterListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -478,7 +478,7 @@ public class DataCenterModule extends AbstractGinModule {
         bind(DataCenterStorageQosListModel.class).in(Singleton.class);
         bind(DataCenterCpuQosListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<StoragePool>>(){}).in(Singleton.class);
-        bind(DataCenterMainTabSelectedItems.class).asEagerSingleton();
+        bind(DataCenterMainSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<Cluster, DataCenterListModel, DataCenterClusterListModel>>(){})

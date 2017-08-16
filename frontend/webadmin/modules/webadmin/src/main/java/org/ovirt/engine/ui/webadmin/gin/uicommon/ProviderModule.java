@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderSecretListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderSecretPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.ProviderMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.ProviderMainSelectedItems;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -41,8 +41,8 @@ public class ProviderModule extends AbstractGinModule {
             final Provider<ProviderPopupPresenterWidget> providerPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ProviderListModel> modelProvider) {
-        MainTabModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> result =
-                new MainTabModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel>(
+        MainViewModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> result =
+                new MainViewModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ProviderListModel source,
@@ -149,7 +149,7 @@ public class ProviderModule extends AbstractGinModule {
         bind(ProviderGeneralModel.class).in(Singleton.class);
         bind(ProviderNetworkListModel.class).in(Singleton.class);
         bind(ProviderSecretListModel.class).in(Singleton.class);
-        bind(ProviderMainTabSelectedItems.class).asEagerSingleton();
+        bind(ProviderMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<ProviderListModel, ProviderGeneralModel>>() {})

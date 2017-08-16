@@ -176,7 +176,7 @@ public class StorageListModel extends ListWithSimpleDetailsModel<Void, StorageDo
 
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.storageMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.storageMainPlace);
 
         setDefaultSearchString("Storage:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

@@ -168,7 +168,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
 
     @Override
     protected void setGeneralViewSelection(Object selectedItem) {
-        generalView.setMainTabSelectedItem((VmTemplate) selectedItem);
+        generalView.setMainSelectedItem((VmTemplate) selectedItem);
     }
 
     @Override

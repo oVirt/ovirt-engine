@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -49,7 +49,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityL
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -74,7 +74,7 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<SharedMacPoolPopupPresenterWidget> macPoolPopupProvider,
             final Provider<ClusterListModel<Void>> clusterProvider,
             final Provider<ClusterWarningsPopupPresenterWidget> clusterWarningsPopupProvider) {
-        MainTabModelProvider<Cluster, ClusterListModel<Void>> result = new MainTabModelProvider<Cluster, ClusterListModel<Void>>
+        MainViewModelProvider<Cluster, ClusterListModel<Void>> result = new MainViewModelProvider<Cluster, ClusterListModel<Void>>
                 (eventBus, defaultConfirmPopupProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel<Void> source,
@@ -345,7 +345,7 @@ public class ClusterModule extends AbstractGinModule {
         bind(new TypeLiteral<PermissionListModel<Cluster>>(){}).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<CpuProfile>>(){}).in(Singleton.class);
         bind(ClusterAffinityLabelListModel.class).in(Singleton.class);
-        bind(ClusterMainTabSelectedItems.class).asEagerSingleton();
+        bind(ClusterMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel>>(){})

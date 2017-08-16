@@ -105,7 +105,7 @@ public abstract class AbstractSubTabErrataCountView<I extends HasErrata, M exten
     }
 
     @Override
-    public void setMainTabSelectedItem(I selectedItem) {
+    public void setMainSelectedItem(I selectedItem) {
         formBuilder.update(getDetailModel());
     }
 

@@ -172,7 +172,7 @@ public class DataCenterListModel extends ListWithSimpleDetailsModel<Void, Storag
         setDetailList(dataCenterNetworkQoSListModel, dataCenterHostNetworkQosListModel,
                 dataCenterCpuQosListModel);
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.dataCenterMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.dataCenterMainPlace);
 
         setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

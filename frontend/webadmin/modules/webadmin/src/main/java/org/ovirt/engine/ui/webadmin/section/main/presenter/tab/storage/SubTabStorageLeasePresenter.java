@@ -37,7 +37,7 @@ public class SubTabStorageLeasePresenter
 
     @Inject
     public SubTabStorageLeasePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VmBase, StorageListModel, StorageLeaseListModel> modelProvider) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

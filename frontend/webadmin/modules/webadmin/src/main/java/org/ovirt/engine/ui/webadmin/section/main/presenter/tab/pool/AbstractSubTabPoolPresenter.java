@@ -21,14 +21,14 @@ public abstract class AbstractSubTabPoolPresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <VmPool, PoolListModel, D, V, P> {
 
     public AbstractSubTabPoolPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<PoolListModel, D> modelProvider, PoolMainTabSelectedItems selectedItems,
+            DetailModelProvider<PoolListModel, D> modelProvider, PoolMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, PoolListModel, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.poolMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.poolMainPlace);
     }
 }

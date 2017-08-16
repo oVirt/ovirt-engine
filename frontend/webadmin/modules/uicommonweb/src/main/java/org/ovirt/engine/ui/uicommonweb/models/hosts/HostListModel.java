@@ -465,7 +465,7 @@ public class HostListModel<E> extends ListWithSimpleDetailsModel<E, VDS> impleme
 
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
         setHelpTag(HelpTag.hosts);
-        setApplicationPlace(WebAdminApplicationPlaces.hostMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.hostMainPlace);
         setHashName("hosts"); //$NON-NLS-1$
 
         setDefaultSearchString("Host:"); //$NON-NLS-1$

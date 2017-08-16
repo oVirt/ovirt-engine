@@ -271,7 +271,7 @@ public class HostGeneralSubTabView extends AbstractSubTabFormView<VDS, HostListM
     }
 
     @Override
-    public void setMainTabSelectedItem(VDS selectedItem) {
+    public void setMainSelectedItem(VDS selectedItem) {
         driver.edit(getDetailModel());
 
         automaticLargePage.setValue((VdsTransparentHugePagesState) getDetailModel().getAutomaticLargePage());

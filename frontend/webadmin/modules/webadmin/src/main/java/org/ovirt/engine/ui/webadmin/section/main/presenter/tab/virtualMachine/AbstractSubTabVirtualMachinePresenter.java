@@ -21,14 +21,14 @@ public abstract class AbstractSubTabVirtualMachinePresenter<D extends HasEntity<
         extends AbstractSubTabPresenter<VM, VmListModel<Void>, D, V, P> {
 
     public AbstractSubTabVirtualMachinePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<VmListModel<Void>, D> modelProvider, VirtualMachineMainTabSelectedItems selectedItems,
+            DetailModelProvider<VmListModel<Void>, D> modelProvider, VirtualMachineMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, VmListModel<Void>, D> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.virtualMachineMainPlace);
     }
 }

@@ -37,7 +37,7 @@ public class SubTabStorageVmBackupPresenter
 
     @Inject
     public SubTabStorageVmBackupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             StorageVmBackupActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

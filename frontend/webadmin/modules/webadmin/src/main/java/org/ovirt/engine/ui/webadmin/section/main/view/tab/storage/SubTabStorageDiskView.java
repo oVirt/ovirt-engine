@@ -48,7 +48,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
     }
 
     @Override
-    public void setMainTabSelectedItem(StorageDomain storageDomain) {
+    public void setMainSelectedItem(StorageDomain storageDomain) {
         initTable(storageDomain);
     }
 

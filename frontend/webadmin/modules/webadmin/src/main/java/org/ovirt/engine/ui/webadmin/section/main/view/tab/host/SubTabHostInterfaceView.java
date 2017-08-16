@@ -66,7 +66,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     }
 
     @Override
-    public void setMainTabSelectedItem(VDS selectedItem) {
+    public void setMainSelectedItem(VDS selectedItem) {
         currentMainModel = selectedItem;
     }
 

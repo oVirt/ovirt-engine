@@ -53,7 +53,7 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM, RegisterVmD
         VM vm = importVmData.getVm();
 
         vmImportGeneralModel.setEntity(importVmData);
-        generalView.setMainTabSelectedItem(vm);
+        generalView.setMainSelectedItem(vm);
 
         disksTable.setRowData((List) Arrays.asList(vm.getDiskMap().values().toArray()));
         nicsTable.setRowData((List) Arrays.asList(vm.getInterfaces().toArray()));

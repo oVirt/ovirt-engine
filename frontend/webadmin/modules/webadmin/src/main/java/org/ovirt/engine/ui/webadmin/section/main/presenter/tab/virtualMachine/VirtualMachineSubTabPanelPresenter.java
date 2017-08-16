@@ -47,7 +47,7 @@ public class VirtualMachineSubTabPanelPresenter extends
 
     @Inject
     public VirtualMachineSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            VirtualMachineMainTabSelectedItems selectedItems) {
+            VirtualMachineMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

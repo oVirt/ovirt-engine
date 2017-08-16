@@ -21,14 +21,14 @@ public abstract class AbstractSubTabVnicProfilePresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <VnicProfileView, VnicProfileListModel, D, V, P> {
 
     public AbstractSubTabVnicProfilePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<VnicProfileListModel, D> modelProvider, VnicProfileMainTabSelectedItems selectedItems,
+            DetailModelProvider<VnicProfileListModel, D> modelProvider, VnicProfileMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, VnicProfileListModel, D> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.vnicProfileMainPlace);
     }
 }

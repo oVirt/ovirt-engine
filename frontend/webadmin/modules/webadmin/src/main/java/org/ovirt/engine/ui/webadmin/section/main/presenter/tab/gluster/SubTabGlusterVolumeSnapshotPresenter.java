@@ -37,7 +37,7 @@ public class SubTabGlusterVolumeSnapshotPresenter
 
     @Inject
     public SubTabGlusterVolumeSnapshotPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VolumeMainSelectedItems selectedItems,
             GlusterVolumeSnapshotActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

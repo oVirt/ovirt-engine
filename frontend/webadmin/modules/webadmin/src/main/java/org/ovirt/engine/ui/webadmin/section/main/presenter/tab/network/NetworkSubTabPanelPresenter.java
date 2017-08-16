@@ -47,7 +47,7 @@ public class NetworkSubTabPanelPresenter extends
 
     @Inject
     public NetworkSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            NetworkMainTabSelectedItems selectedItems) {
+            NetworkMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

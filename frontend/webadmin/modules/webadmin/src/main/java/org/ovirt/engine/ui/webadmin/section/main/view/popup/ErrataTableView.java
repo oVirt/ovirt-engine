@@ -134,7 +134,7 @@ public class ErrataTableView extends ResizeComposite {
     }
 
     /**
-     * Setup the columns in the errata grid. This configuration is also used in MainTabEngineErrataView.
+     * Setup the columns in the errata grid. This configuration is also used in MainEngineErrataView.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void initErrataGrid(HasColumns grid) {

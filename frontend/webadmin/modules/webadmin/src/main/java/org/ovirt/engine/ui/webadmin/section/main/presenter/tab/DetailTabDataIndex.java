@@ -118,7 +118,7 @@ public final class DetailTabDataIndex {
 
     public static final TabData NETWORK_GENERAL = new GroupedTabData(constants.networkGeneralSubTabLabel(), 0); //$NON-NLS-1$
 
-    public static final TabData NETWORK_PROFILE = new GroupedTabData(constants.vnicProfilesMainTabLabel(), 1); //$NON-NLS-1$
+    public static final TabData NETWORK_PROFILE = new GroupedTabData(constants.vnicProfilesMainViewLabel(), 1); //$NON-NLS-1$
 
     public static final TabData NETWORK_EXTERNAL_SUBNET = new GroupedTabData(constants.networkExternalSubnetSubTabLabel(), 2); //$NON-NLS-1$
 

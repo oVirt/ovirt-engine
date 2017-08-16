@@ -42,7 +42,7 @@ public class SubTabHostInterfacePresenter
 
     @Inject
     public SubTabHostInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             HostInterfaceActionPanelPresenterWidget actionPanel,
             ExpandAllButtonPresenterWidget expandAll,
             SearchableDetailModelProvider<HostInterfaceLineModel,

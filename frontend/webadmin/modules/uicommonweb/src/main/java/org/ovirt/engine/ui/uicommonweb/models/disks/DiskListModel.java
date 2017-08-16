@@ -228,7 +228,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
         setDetailList();
 
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.diskMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.diskMainPlace);
 
         setDefaultSearchString("Disks: disk_type = image"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

@@ -229,7 +229,7 @@ public class ClusterListModel<E> extends ListWithSimpleDetailsModel<E, Cluster> 
 
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
         setHelpTag(HelpTag.clusters);
-        setApplicationPlace(WebAdminApplicationPlaces.clusterMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.clusterMainPlace);
         setHashName("clusters"); //$NON-NLS-1$
 
         setDefaultSearchString("Cluster:"); //$NON-NLS-1$

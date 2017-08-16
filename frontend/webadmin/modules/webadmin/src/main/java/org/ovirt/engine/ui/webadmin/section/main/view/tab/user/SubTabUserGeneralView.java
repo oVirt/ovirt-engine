@@ -90,7 +90,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
     }
 
     @Override
-    public void setMainTabSelectedItem(DbUser selectedItem) {
+    public void setMainSelectedItem(DbUser selectedItem) {
         driver.edit(getDetailModel());
         formBuilder.update(getDetailModel());
     }

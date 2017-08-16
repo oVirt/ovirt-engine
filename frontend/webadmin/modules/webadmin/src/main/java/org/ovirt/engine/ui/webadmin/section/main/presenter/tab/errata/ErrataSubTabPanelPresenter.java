@@ -47,7 +47,7 @@ public class ErrataSubTabPanelPresenter extends
 
     @Inject
     public ErrataSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ErrataMainTabSelectedItems selectedItems) {
+            ErrataMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

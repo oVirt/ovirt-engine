@@ -60,7 +60,7 @@ public class SubTabEngineErrataDetailsView extends AbstractSubTabFormView<Erratu
     }
 
     @Override
-    public void setMainTabSelectedItem(Erratum selectedItem) {
+    public void setMainSelectedItem(Erratum selectedItem) {
         updateErrataDetailFormPanel(selectedItem);
     }
 

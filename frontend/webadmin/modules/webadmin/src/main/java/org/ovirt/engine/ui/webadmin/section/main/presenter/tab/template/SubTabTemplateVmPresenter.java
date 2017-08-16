@@ -37,7 +37,7 @@ public class SubTabTemplateVmPresenter
 
     @Inject
     public SubTabTemplateVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, TemplateMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> modelProvider) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

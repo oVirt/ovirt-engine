@@ -39,7 +39,7 @@ public class SubTabStorageDRPresenter extends AbstractSubTabStoragePresenter<Sto
 
     @Inject
     public SubTabStorageDRPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             StorageDRActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<StorageDomainDR, StorageListModel, StorageDRListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

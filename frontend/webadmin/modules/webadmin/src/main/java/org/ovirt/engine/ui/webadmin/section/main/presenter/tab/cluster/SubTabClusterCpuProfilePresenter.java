@@ -39,7 +39,7 @@ public class SubTabClusterCpuProfilePresenter
 
     @Inject
     public SubTabClusterCpuProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, ClusterMainSelectedItems selectedItems,
             SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider) {
         // View uses CpuProfilesListModelTable gets action panel from elsewhere, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

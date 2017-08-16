@@ -37,7 +37,7 @@ public class SubTabQuotaStoragePresenter
 
     @Inject
     public SubTabQuotaStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, QuotaMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, QuotaMainSelectedItems selectedItems,
             SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

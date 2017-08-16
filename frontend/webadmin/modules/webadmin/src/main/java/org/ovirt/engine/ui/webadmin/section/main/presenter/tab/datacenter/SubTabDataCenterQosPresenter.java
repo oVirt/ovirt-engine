@@ -37,7 +37,7 @@ public class SubTabDataCenterQosPresenter
 
     @Inject
     public SubTabDataCenterQosPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DataCenterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DataCenterMainSelectedItems selectedItems,
             DataCenterStorageQosActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

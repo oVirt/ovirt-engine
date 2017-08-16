@@ -38,7 +38,7 @@ public class SubTabHostHookPresenter
 
     @Inject
     public SubTabHostHookPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> modelProvider) {
         // View has no actionPanel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

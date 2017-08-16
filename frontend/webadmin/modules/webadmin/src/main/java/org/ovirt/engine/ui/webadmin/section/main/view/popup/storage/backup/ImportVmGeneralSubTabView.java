@@ -48,7 +48,7 @@ public class ImportVmGeneralSubTabView  extends AbstractSubTabFormView<VM, Impor
     }
 
     @Override
-    public void setMainTabSelectedItem(VM selectedItem) {
+    public void setMainSelectedItem(VM selectedItem) {
         form.update();
     }
 

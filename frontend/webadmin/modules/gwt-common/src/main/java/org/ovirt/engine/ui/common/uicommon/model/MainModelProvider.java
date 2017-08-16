@@ -15,6 +15,6 @@ public interface MainModelProvider<T, M extends SearchableListModel> extends Sea
     /**
      * Notifies {@link org.ovirt.engine.ui.uicommonweb.models.CommonModel} that the corresponding main tab has been selected.
      */
-    void onMainTabSelected();
+    void onMainViewSelected();
 
 }

@@ -36,7 +36,7 @@ public class SubTabPoolGeneralPresenter
 
     @Inject
     public SubTabPoolGeneralPresenter(EventBus eventBus, SubTabPoolGeneralView view, ProxyDef proxy,
-            PlaceManager placeManager, PoolMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, PoolMainSelectedItems selectedItems,
             DetailModelProvider<PoolListModel, PoolGeneralModel> modelProvider) {
         // View has no action panel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

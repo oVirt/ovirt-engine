@@ -103,7 +103,7 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
     public EventListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
         setHelpTag(HelpTag.events);
-        setApplicationPlace(WebAdminApplicationPlaces.eventMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.eventMainPlace);
         setHashName("events"); //$NON-NLS-1$
 
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$

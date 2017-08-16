@@ -136,7 +136,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     }
 
     @Override
-    public void setMainTabSelectedItem(GlusterVolumeEntity selectedItem) {
+    public void setMainSelectedItem(GlusterVolumeEntity selectedItem) {
         driver.edit(getDetailModel());
 
         replicaFormItem.setIsAvailable(selectedItem.getVolumeType().isReplicatedType());

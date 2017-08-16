@@ -37,7 +37,7 @@ public class SubTabVirtualMachineNetworkInterfacePresenter
 
     @Inject
     public SubTabVirtualMachineNetworkInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider) {
         // The action panel is passed to the view due to the view using a VmInterfaceListModelTable, so we can pass null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

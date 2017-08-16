@@ -110,7 +110,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     }
 
     @Override
-    public void setMainTabSelectedItem(Disk selectedItem) {
+    public void setMainSelectedItem(Disk selectedItem) {
         driver.edit(getDetailModel());
         formBuilder.update(getDetailModel());
     }

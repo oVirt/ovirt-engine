@@ -37,7 +37,7 @@ public class SubTabDataCenterQuotaPresenter
 
     @Inject
     public SubTabDataCenterQuotaPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DataCenterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DataCenterMainSelectedItems selectedItems,
             DataCenterQuotaActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

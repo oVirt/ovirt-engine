@@ -47,7 +47,7 @@ public class StorageSubTabPanelPresenter extends
 
     @Inject
     public StorageSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            StorageMainTabSelectedItems selectedItems) {
+            StorageMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

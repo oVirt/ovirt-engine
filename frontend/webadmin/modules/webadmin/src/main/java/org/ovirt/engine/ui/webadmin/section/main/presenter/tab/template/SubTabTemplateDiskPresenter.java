@@ -37,7 +37,7 @@ public class SubTabTemplateDiskPresenter
 
     @Inject
     public SubTabTemplateDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, TemplateMainSelectedItems selectedItems,
             TemplateDiskActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

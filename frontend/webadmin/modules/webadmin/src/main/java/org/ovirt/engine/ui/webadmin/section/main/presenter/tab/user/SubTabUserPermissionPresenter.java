@@ -38,7 +38,7 @@ public class SubTabUserPermissionPresenter
 
     @Inject
     public SubTabUserPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, UserMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, UserMainSelectedItems selectedItems,
             DetailPermissionActionPanelPresenterWidget<UserListModel, UserPermissionListModel> actionPanel,
             SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

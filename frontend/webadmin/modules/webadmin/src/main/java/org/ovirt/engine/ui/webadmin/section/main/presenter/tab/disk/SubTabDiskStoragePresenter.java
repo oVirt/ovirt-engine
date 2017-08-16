@@ -37,7 +37,7 @@ public class SubTabDiskStoragePresenter
 
     @Inject
     public SubTabDiskStoragePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DiskMainSelectedItems selectedItems,
             SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> modelProvider) {
         // View has no action panel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

@@ -37,7 +37,7 @@ public class SubTabPoolVmPresenter
 
     @Inject
     public SubTabPoolVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, PoolMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, PoolMainSelectedItems selectedItems,
             PoolVmActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

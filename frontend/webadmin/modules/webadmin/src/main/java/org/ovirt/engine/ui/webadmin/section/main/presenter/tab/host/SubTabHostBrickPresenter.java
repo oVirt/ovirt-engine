@@ -37,7 +37,7 @@ public class SubTabHostBrickPresenter
 
     @Inject
     public SubTabHostBrickPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel> modelProvider) {
         // View has no action panel.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

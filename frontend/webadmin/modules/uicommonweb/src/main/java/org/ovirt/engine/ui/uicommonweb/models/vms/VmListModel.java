@@ -494,7 +494,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM>
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
-        setApplicationPlace(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.virtualMachineMainPlace);
         setHashName("virtual_machines"); //$NON-NLS-1$
 
         setDefaultSearchString("Vms:"); //$NON-NLS-1$

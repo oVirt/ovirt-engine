@@ -98,7 +98,7 @@ public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> impl
         this.eventListModel = userEventListModel;
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.userMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.userMainPlace);
 
         setDefaultSearchString("Users:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

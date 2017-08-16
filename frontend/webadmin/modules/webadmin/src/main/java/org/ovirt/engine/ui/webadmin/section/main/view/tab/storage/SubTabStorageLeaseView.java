@@ -45,7 +45,7 @@ public class SubTabStorageLeaseView extends AbstractSubTabTableView<StorageDomai
     }
 
     @Override
-    public void setMainTabSelectedItem(StorageDomain storageDomain) {
+    public void setMainSelectedItem(StorageDomain storageDomain) {
         initTable(storageDomain);
     }
 

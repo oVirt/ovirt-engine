@@ -36,7 +36,7 @@ public class WebAdminPlaceManager extends ApplicationPlaceManager {
     PlaceRequest resolveMainSectionPlace(ApplicationMode uiMode) {
         switch (uiMode) {
         case GlusterOnly:
-            return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainTabPlace);
+            return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainPlace);
         case VirtOnly:
         case AllModes:
         default:

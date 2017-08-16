@@ -37,7 +37,7 @@ public class SubTabVnicProfilePermissionPresenter
 
     @Inject
     public SubTabVnicProfilePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VnicProfileMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VnicProfileMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

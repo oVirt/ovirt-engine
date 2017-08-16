@@ -37,7 +37,7 @@ public class SubTabVolumePermissionPresenter
 
     @Inject
     public SubTabVolumePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VolumeMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, VolumeListModel, PermissionListModel<GlusterVolumeEntity>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

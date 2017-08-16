@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -43,8 +43,8 @@ public class PoolModule extends AbstractGinModule {
             final Provider<PoolNewPopupPresenterWidget> poolPopupProvider,
             final Provider<PoolEditPopupPresenterWidget> poolEditPopupProvider,
             final Provider<PoolListModel> modelProvider) {
-        MainTabModelProvider<VmPool, PoolListModel> result =
-                new MainTabModelProvider<VmPool, PoolListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<VmPool, PoolListModel> result =
+                new MainViewModelProvider<VmPool, PoolListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PoolListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -108,7 +108,7 @@ public class PoolModule extends AbstractGinModule {
         bind(PoolGeneralModel.class).in(Singleton.class);
         bind(PoolVmListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VmPool>>(){}).in(Singleton.class);
-        bind(PoolMainTabSelectedItems.class).asEagerSingleton();
+        bind(PoolMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<PoolListModel, PoolGeneralModel>>(){})

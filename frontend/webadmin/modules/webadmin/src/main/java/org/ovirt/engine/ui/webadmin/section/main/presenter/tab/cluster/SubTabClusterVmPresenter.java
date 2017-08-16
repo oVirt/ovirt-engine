@@ -37,7 +37,7 @@ public class SubTabClusterVmPresenter
 
     @Inject
     public SubTabClusterVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, ClusterMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel> modelProvider) {
         // View doesn't have action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

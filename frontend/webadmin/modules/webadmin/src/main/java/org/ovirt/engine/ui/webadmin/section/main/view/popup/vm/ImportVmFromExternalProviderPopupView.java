@@ -403,7 +403,7 @@ public class ImportVmFromExternalProviderPopupView extends AbstractModelBoundPop
     }
 
     protected void setGeneralViewSelection(Object selectedItem) {
-        generalView.setMainTabSelectedItem((VM) selectedItem);
+        generalView.setMainSelectedItem((VM) selectedItem);
     }
 
     private void initSubTabLayoutPanel() {

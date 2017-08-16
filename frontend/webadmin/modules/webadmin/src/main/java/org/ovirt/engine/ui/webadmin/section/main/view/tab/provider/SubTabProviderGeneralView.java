@@ -82,7 +82,7 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
     }
 
     @Override
-    public void setMainTabSelectedItem(Provider selectedItem) {
+    public void setMainSelectedItem(Provider selectedItem) {
         driver.edit(getDetailModel());
         formBuilder.update(getDetailModel());
     }

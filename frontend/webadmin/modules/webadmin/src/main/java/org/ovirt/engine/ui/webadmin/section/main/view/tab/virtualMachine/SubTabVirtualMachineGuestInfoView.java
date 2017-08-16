@@ -45,7 +45,7 @@ public class SubTabVirtualMachineGuestInfoView
     }
 
     @Override
-    public void setMainTabSelectedItem(VM selectedItem) {
+    public void setMainSelectedItem(VM selectedItem) {
         form.update();
     }
 

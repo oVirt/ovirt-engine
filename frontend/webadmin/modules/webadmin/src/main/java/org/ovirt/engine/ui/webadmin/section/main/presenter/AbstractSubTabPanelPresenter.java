@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.ui.common.presenter.AbstractMainTabSelectedItems;
+import org.ovirt.engine.ui.common.presenter.AbstractMainSelectedItems;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -36,7 +36,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
 
     }
 
-    private final AbstractMainTabSelectedItems<?> selectedItems;
+    private final AbstractMainSelectedItems<?> selectedItems;
     private final Map<TabData, Model> detailTabToModelMapping = new HashMap<>();
 
     @Inject
@@ -46,7 +46,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Object tabContentSlot,
             Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
-            AbstractMainTabSelectedItems<?> selectedItems) {
+            AbstractMainSelectedItems<?> selectedItems) {
         this(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
                 selectedItems, MainContentPresenter.TYPE_SetContent);
     }
@@ -55,7 +55,7 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Object tabContentSlot,
             Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
-            AbstractMainTabSelectedItems<?> selectedItems,
+            AbstractMainSelectedItems<?> selectedItems,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
                 slot);

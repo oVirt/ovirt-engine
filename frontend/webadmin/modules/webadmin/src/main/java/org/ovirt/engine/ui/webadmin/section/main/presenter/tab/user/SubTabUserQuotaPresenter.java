@@ -37,7 +37,7 @@ public class SubTabUserQuotaPresenter
 
     @Inject
     public SubTabUserQuotaPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, UserMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, UserMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel> modelProvider) {
         // View doesn't have an actionPanel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

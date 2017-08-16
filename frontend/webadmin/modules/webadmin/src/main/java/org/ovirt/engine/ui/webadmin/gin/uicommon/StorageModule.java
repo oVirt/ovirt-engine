@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -60,7 +60,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -83,8 +83,8 @@ public class StorageModule extends AbstractGinModule {
             final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider,
             final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
             final Provider<StorageListModel> modelProvider) {
-        MainTabModelProvider<StorageDomain, StorageListModel> result =
-                new MainTabModelProvider<StorageDomain, StorageListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<StorageDomain, StorageListModel> result =
+                new MainViewModelProvider<StorageDomain, StorageListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -559,7 +559,7 @@ public class StorageModule extends AbstractGinModule {
         bind(StorageLeaseListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<StorageDomain>>(){}).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<DiskProfile>>(){}).in(Singleton.class);
-        bind(StorageMainTabSelectedItems.class).asEagerSingleton();
+        bind(StorageMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<StorageListModel, StorageGeneralModel>>(){})

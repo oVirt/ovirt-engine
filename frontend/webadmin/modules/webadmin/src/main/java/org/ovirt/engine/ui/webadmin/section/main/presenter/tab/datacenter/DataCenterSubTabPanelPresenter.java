@@ -47,7 +47,7 @@ public class DataCenterSubTabPanelPresenter extends
 
     @Inject
     public DataCenterSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            DataCenterMainTabSelectedItems selectedItems) {
+            DataCenterMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

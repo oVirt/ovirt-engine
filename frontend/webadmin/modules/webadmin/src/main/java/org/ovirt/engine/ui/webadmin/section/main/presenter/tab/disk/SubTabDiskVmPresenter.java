@@ -37,7 +37,7 @@ public class SubTabDiskVmPresenter
 
     @Inject
     public SubTabDiskVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DiskMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> modelProvider) {
         // View doesn't have an actionPanel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

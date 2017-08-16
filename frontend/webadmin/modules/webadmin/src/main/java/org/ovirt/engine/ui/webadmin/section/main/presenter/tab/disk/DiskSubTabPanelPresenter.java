@@ -47,7 +47,7 @@ public class DiskSubTabPanelPresenter extends
 
     @Inject
     public DiskSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            DiskMainTabSelectedItems selectedItems) {
+            DiskMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

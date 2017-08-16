@@ -36,7 +36,7 @@ public class SubTabStorageDataCenterPresenter
 
     @Inject
     public SubTabStorageDataCenterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             StorageDataCenterActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

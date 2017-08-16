@@ -36,7 +36,7 @@ public class SubTabNetworkGeneralPresenter
 
     @Inject
     public SubTabNetworkGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, NetworkMainSelectedItems selectedItems,
             DetailModelProvider<NetworkListModel, NetworkGeneralModel> modelProvider) {
         // View has no action panel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmat
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserMainSelectedItems;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -51,8 +51,8 @@ public class UserModule extends AbstractGinModule {
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<UserListModel> modelProvider) {
-        MainTabModelProvider<DbUser, UserListModel> result =
-                new MainTabModelProvider<DbUser, UserListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<DbUser, UserListModel> result =
+                new MainViewModelProvider<DbUser, UserListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -169,7 +169,7 @@ public class UserModule extends AbstractGinModule {
         bind(UserQuotaListModel.class).in(Singleton.class);
         bind(UserEventListModel.class).in(Singleton.class);
         bind(UserGroupListModel.class).in(Singleton.class);
-        bind(UserMainTabSelectedItems.class).asEagerSingleton();
+        bind(UserMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<UserListModel, UserGeneralModel>>(){})

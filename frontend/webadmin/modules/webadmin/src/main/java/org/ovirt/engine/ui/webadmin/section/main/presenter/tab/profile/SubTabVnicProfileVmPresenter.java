@@ -37,7 +37,7 @@ public class SubTabVnicProfileVmPresenter
 
     @Inject
     public SubTabVnicProfileVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VnicProfileMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VnicProfileMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> modelProvider) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

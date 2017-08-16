@@ -15,7 +15,7 @@ public class EngineErrataListModel extends AbstractErrataListModel {
 
     public EngineErrataListModel() {
         super();
-        setApplicationPlace(WebAdminApplicationPlaces.errataMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.errataMainPlace);
     }
 
     @Override

@@ -127,7 +127,7 @@ public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> {
 
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.quotaMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.quotaMainPlace);
 
         setDefaultSearchString("Quota:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

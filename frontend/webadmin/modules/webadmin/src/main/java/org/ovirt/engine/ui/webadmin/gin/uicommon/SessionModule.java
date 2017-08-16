@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -19,8 +19,8 @@ public class SessionModule extends AbstractGinModule {
     public MainModelProvider<UserSession, SessionListModel> getSessionListProvider(EventBus eventBus,
             final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<SessionListModel> modelProvider) {
-        MainTabModelProvider<UserSession, SessionListModel> mainTabSessionModelProvider =
-                new MainTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
+        MainViewModelProvider<UserSession, SessionListModel> mainTabSessionModelProvider =
+                new MainViewModelProvider<>(eventBus, defaultConfirmPopupProvider);
         mainTabSessionModelProvider.setModelProvider(modelProvider);
         return mainTabSessionModelProvider;
     }

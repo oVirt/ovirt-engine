@@ -48,7 +48,7 @@ public class SubTabTemplateGeneralView extends AbstractSubTabFormView<VmTemplate
     }
 
     @Override
-    public void setMainTabSelectedItem(VmTemplate selectedItem) {
+    public void setMainSelectedItem(VmTemplate selectedItem) {
         form.update();
     }
 

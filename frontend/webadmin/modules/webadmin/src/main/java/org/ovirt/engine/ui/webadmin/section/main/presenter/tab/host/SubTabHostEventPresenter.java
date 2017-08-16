@@ -37,7 +37,7 @@ public class SubTabHostEventPresenter
 
     @Inject
     public SubTabHostEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> modelProvider) {
         // View does not have actionPanel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

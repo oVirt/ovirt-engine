@@ -36,7 +36,7 @@ public class SubTabDiskGeneralPresenter
 
     @Inject
     public SubTabDiskGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DiskMainSelectedItems selectedItems,
             DetailModelProvider<DiskListModel, DiskGeneralModel> modelProvider) {
         // View doesn't have actionPanel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

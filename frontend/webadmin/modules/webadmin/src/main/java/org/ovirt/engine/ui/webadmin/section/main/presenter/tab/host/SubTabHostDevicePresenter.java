@@ -37,7 +37,7 @@ public class SubTabHostDevicePresenter
 
     @Inject
     public SubTabHostDevicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             SearchableDetailModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel> modelProvider) {
         // No action buttons, pass null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

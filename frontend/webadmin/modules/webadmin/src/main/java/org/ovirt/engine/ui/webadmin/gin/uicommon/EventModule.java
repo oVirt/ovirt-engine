@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
@@ -30,8 +30,8 @@ public class EventModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> popupProvider,
             @Named("main") final Provider<EventListModel<Void>> modelProvider) {
-        MainTabModelProvider<AuditLog, EventListModel<Void>> result =
-                new MainTabModelProvider<AuditLog, EventListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<AuditLog, EventListModel<Void>> result =
+                new MainViewModelProvider<AuditLog, EventListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(EventListModel<Void> source,
                     UICommand lastExecutedCommand, Model windowModel) {

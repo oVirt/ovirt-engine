@@ -160,7 +160,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> {
         addCustomModelsDetailModelList(list, 3);
         setDetailModels(list);
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.templateMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.templateMainPlace);
 
         setDefaultSearchString("Template:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

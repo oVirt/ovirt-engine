@@ -184,7 +184,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<Cluster, Cl
     }
 
     @Override
-    public void setMainTabSelectedItem(Cluster selectedItem) {
+    public void setMainSelectedItem(Cluster selectedItem) {
         servicesTable.asEditor().edit(getDetailModel().getServiceList());
         driver.edit(getDetailModel());
     }

@@ -37,7 +37,7 @@ public class SubTabVirtualMachineEventPresenter
 
     @Inject
     public SubTabVirtualMachineEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> modelProvider) {
         // View has no action panel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

@@ -37,7 +37,7 @@ public class SubTabUserEventNotifierPresenter
 
     @Inject
     public SubTabUserEventNotifierPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, UserMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, UserMainSelectedItems selectedItems,
             UserEventNotifierActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<EventSubscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

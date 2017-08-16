@@ -47,7 +47,7 @@ public class PoolSubTabPanelPresenter extends
 
     @Inject
     public PoolSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PoolMainTabSelectedItems selectedItems) {
+            PoolMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

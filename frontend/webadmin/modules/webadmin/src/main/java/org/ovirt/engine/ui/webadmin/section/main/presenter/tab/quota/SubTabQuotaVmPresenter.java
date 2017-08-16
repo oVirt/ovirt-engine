@@ -37,7 +37,7 @@ public class SubTabQuotaVmPresenter
 
     @Inject
     public SubTabQuotaVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, QuotaMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, QuotaMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, QuotaListModel, QuotaVmListModel> modelProvider) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

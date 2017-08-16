@@ -47,7 +47,7 @@ public class ClusterSubTabPanelPresenter extends AbstractSubTabPanelPresenter<Cl
 
     @Inject
     public ClusterSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ClusterMainTabSelectedItems selectedItems) {
+            ClusterMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

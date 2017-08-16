@@ -36,7 +36,7 @@ public class SubTabProviderGeneralPresenter
 
     @Inject
     public SubTabProviderGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, ProviderMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, ProviderMainSelectedItems selectedItems,
             DetailModelProvider<ProviderListModel, ProviderGeneralModel> modelProvider) {
         // No action panel pass null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

@@ -68,7 +68,7 @@ public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, Ne
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
         setHelpTag(HelpTag.networks);
-        setApplicationPlace(WebAdminApplicationPlaces.networkMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.networkMainPlace);
         setHashName("networks"); //$NON-NLS-1$
 
         setDefaultSearchString("Network:"); //$NON-NLS-1$

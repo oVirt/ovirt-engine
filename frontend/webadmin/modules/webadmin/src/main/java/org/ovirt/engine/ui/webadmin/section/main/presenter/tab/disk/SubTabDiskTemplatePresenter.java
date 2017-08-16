@@ -37,7 +37,7 @@ public class SubTabDiskTemplatePresenter
 
     @Inject
     public SubTabDiskTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DiskMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DiskMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> modelProvider) {
         // No action panel on disk template view, can pass null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

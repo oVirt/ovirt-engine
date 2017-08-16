@@ -95,11 +95,11 @@ public class VolumeActionPanelPresenterWidget extends ActionPanelPresenterWidget
                 volumeProfilingActions), volumeProfilingActions);
 
         List<ActionButtonDefinition<GlusterVolumeEntity>> volumeSnapshotActions = getVolumeSnapshotMenu();
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainTabTitle(),
+        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.volumeSnapshotMainViewTitle(),
                 volumeSnapshotActions), volumeSnapshotActions);
 
         List<ActionButtonDefinition<GlusterVolumeEntity>> volumeGeoRepActions = getGeoRepCreateMenu(constants);
-        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainTabTitle(),
+        addActionButton(new WebAdminMenuBarButtonDefinition<>(constants.geoReplicationMainViewTitle(),
                 volumeGeoRepActions), volumeGeoRepActions);
     }
 

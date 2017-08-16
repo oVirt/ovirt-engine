@@ -21,15 +21,15 @@ public abstract class AbstractSubTabQuotaPresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <Quota, QuotaListModel, D, V, P> {
 
     public AbstractSubTabQuotaPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<QuotaListModel, D> modelProvider, QuotaMainTabSelectedItems selectedItems,
+            DetailModelProvider<QuotaListModel, D> modelProvider, QuotaMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, QuotaListModel, D> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.quotaMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.quotaMainPlace);
     }
 
 }

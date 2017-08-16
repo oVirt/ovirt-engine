@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenter
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -62,7 +62,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.VfsConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.label.AffinityLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksLabelPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceAgentModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.FenceProxyModelProvider;
@@ -95,8 +95,8 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostInstallPopupPresenterWidget> installPopupProvider,
             final Provider<NumaSupportPopupPresenterWidget> numaSupportPopupProvider,
             final Provider<HostListModel<Void>> modelProvider) {
-        MainTabModelProvider<VDS, HostListModel<Void>> result =
-                new MainTabModelProvider<VDS, HostListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<VDS, HostListModel<Void>> result =
+                new MainViewModelProvider<VDS, HostListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel<Void> source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -407,7 +407,7 @@ public class HostModule extends AbstractGinModule {
         bind(HostErrataCountModel.class).in(Singleton.class);
         bind(HostErrataListModel.class).in(Singleton.class);
         bind(HostAffinityLabelListModel.class).in(Singleton.class);
-        bind(HostMainTabSelectedItems.class).asEagerSingleton();
+        bind(HostMainSelectedItems.class).asEagerSingleton();
 
 
         // Form Detail Models

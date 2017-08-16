@@ -47,7 +47,7 @@ public class TemplateSubTabPanelPresenter extends
 
     @Inject
     public TemplateSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            TemplateMainTabSelectedItems selectedItems) {
+            TemplateMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

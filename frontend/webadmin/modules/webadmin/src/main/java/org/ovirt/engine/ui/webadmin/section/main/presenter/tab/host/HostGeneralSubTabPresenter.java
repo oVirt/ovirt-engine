@@ -78,7 +78,7 @@ public class HostGeneralSubTabPresenter extends AbstractSubTabHostPresenter<Host
 
     @Inject
     public HostGeneralSubTabPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

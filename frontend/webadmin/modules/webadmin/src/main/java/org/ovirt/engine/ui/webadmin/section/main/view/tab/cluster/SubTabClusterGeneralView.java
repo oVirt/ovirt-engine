@@ -101,7 +101,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<Cluster, Cl
             Cluster entity = modelProvider.getModel().getEntity();
 
             if (entity != null) {
-                setMainTabSelectedItem(entity);
+                setMainSelectedItem(entity);
             }
         });
 
@@ -128,7 +128,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<Cluster, Cl
     }
 
     @Override
-    public void setMainTabSelectedItem(Cluster selectedItem) {
+    public void setMainSelectedItem(Cluster selectedItem) {
         driver.edit(getDetailModel());
         form.update();
         glusterSwiftPanel.setVisible(false);

@@ -21,14 +21,14 @@ public abstract class AbstractSubTabStoragePresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <StorageDomain, StorageListModel, D, V, P> {
 
     public AbstractSubTabStoragePresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<StorageListModel, D> modelProvider, StorageMainTabSelectedItems selectedItems,
+            DetailModelProvider<StorageListModel, D> modelProvider, StorageMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, StorageListModel, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.storageMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.storageMainPlace);
     }
 }

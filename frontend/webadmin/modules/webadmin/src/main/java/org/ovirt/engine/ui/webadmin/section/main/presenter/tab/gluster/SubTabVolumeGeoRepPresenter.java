@@ -37,7 +37,7 @@ public class SubTabVolumeGeoRepPresenter
 
     @Inject
     public SubTabVolumeGeoRepPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VolumeMainSelectedItems selectedItems,
             VolumeGeoRepActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

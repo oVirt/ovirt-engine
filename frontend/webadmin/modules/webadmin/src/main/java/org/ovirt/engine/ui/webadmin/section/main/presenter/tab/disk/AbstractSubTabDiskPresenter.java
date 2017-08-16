@@ -21,14 +21,14 @@ public abstract class AbstractSubTabDiskPresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <Disk, DiskListModel, D, V, P> {
 
     public AbstractSubTabDiskPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<DiskListModel, D> modelProvider, DiskMainTabSelectedItems selectedItems,
+            DetailModelProvider<DiskListModel, D> modelProvider, DiskMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, DiskListModel, D> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.diskMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.diskMainPlace);
     }
 }

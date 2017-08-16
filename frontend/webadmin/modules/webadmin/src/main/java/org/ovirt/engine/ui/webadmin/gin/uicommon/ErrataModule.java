@@ -4,10 +4,10 @@ import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EngineErrataListModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.errata.ErrataMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.errata.ErrataMainSelectedItems;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -26,8 +26,8 @@ public class ErrataModule extends AbstractGinModule {
             final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EngineErrataListModel> modelProvider) {
 
-        MainTabModelProvider<Erratum, EngineErrataListModel> result =
-                new MainTabModelProvider<>(eventBus, defaultConfirmPopupProvider);
+        MainViewModelProvider<Erratum, EngineErrataListModel> result =
+                new MainViewModelProvider<>(eventBus, defaultConfirmPopupProvider);
 
         result.setModelProvider(modelProvider);
 
@@ -53,6 +53,6 @@ public class ErrataModule extends AbstractGinModule {
     @Override
     protected void configure() {
         bind(EngineErrataListModel.class).in(Singleton.class);
-        bind(ErrataMainTabSelectedItems.class).asEagerSingleton();
+        bind(ErrataMainSelectedItems.class).asEagerSingleton();
     }
 }

@@ -41,37 +41,37 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String searchButtonLabel();
 
-    String dataCenterMainTabLabel();
+    String dataCenterMainViewLabel();
 
-    String clusterMainTabLabel();
+    String clusterMainViewLabel();
 
-    String hostMainTabLabel();
+    String hostMainViewLabel();
 
-    String networkMainTabLabel();
+    String networkMainViewLabel();
 
-    String vnicProfilesMainTabLabel();
+    String vnicProfilesMainViewLabel();
 
-    String storageMainTabLabel();
+    String storageMainViewLabel();
 
-    String virtualMachineMainTabLabel();
+    String virtualMachineMainViewLabel();
 
-    String poolMainTabLabel();
+    String poolMainViewLabel();
 
-    String templateMainTabLabel();
+    String templateMainViewLabel();
 
-    String userMainTabLabel();
+    String userMainViewLabel();
 
-    String quotaMainTabLabel();
+    String quotaMainViewLabel();
 
-    String volumeMainTabLabel();
+    String volumeMainViewLabel();
 
-    String providerMainTabLabel();
+    String providerMainViewLabel();
 
-    String errataMainTabLabel();
+    String errataMainViewLabel();
 
     String errataDetailsSubTabLabel();
 
-    String activeUserSessionMainTabLabel();
+    String activeUserSessionMainViewLabel();
 
     String volumeGeneralSubTabLabel();
 
@@ -638,7 +638,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String userEventSubTabLabel();
 
-    String eventMainTabLabel();
+    String eventMainViewLabel();
 
     String eventBasicViewLabel();
 
@@ -902,7 +902,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String quotaTemplateSubTabLabel();
 
-    String diskMainTabLabel();
+    String diskMainViewLabel();
 
     String diskGeneralSubTabLabel();
 
@@ -3081,7 +3081,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String volumeNameLabel();
 
-    String volumeSnapshotMainTabTitle();
+    String volumeSnapshotMainViewTitle();
 
     String configureClusterSnapshotOptions();
 
@@ -3157,7 +3157,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String geoRepSlaveVolume();
 
-    String geoReplicationMainTabTitle();
+    String geoReplicationMainViewTitle();
 
     String selectGeoRepSlaveVolumeButtonLabel();
 

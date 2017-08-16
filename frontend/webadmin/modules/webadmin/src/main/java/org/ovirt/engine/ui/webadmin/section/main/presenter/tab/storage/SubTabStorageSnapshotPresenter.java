@@ -37,7 +37,7 @@ public class SubTabStorageSnapshotPresenter
 
     @Inject
     public SubTabStorageSnapshotPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-        PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+        PlaceManager placeManager, StorageMainSelectedItems selectedItems,
         StorageSnapshotActionPanelPresenterWidget actionPanel,
         SearchableDetailModelProvider<Disk, StorageListModel, StorageSnapshotListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

@@ -47,7 +47,7 @@ public class HostSubTabPanelPresenter extends
 
     @Inject
     public HostSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            HostMainTabSelectedItems selectedItems) {
+            HostMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

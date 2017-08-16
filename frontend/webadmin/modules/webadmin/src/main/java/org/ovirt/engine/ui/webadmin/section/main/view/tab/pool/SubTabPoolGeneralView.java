@@ -133,7 +133,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     }
 
     @Override
-    public void setMainTabSelectedItem(VmPool selectedItem) {
+    public void setMainSelectedItem(VmPool selectedItem) {
         driver.edit(getDetailModel());
 
         // Required because of type conversion

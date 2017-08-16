@@ -37,7 +37,7 @@ public class SubTabVirtualMachinePermissionPresenter
 
     @Inject
     public SubTabVirtualMachinePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

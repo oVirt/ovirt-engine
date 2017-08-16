@@ -21,15 +21,15 @@ public abstract class AbstractSubTabGlusterPresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <GlusterVolumeEntity, VolumeListModel, D, V, P> {
 
     public AbstractSubTabGlusterPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<VolumeListModel, D> modelProvider, VolumeMainTabSelectedItems selectedItems,
+            DetailModelProvider<VolumeListModel, D> modelProvider, VolumeMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, VolumeListModel, D> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainPlace);
     }
 
 }

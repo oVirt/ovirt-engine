@@ -168,7 +168,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     }
 
     @Override
-    public void setMainTabSelectedItem(StorageDomain selectedItem) {
+    public void setMainSelectedItem(StorageDomain selectedItem) {
         driver.edit(getDetailModel());
 
         // Required because of StorageGeneralModel.getEntity() returning Object

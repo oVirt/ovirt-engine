@@ -43,7 +43,7 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
 
     @Inject
     public SubTabEngineErrataDetailsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, ErrataMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, ErrataMainSelectedItems selectedItems,
             DetailTabModelProvider<EngineErrataListModel, EntityModel<Erratum>> modelProvider) {
         // View has no action panel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
@@ -51,8 +51,8 @@ public class SubTabEngineErrataDetailsPresenter extends AbstractSubTabPresenter<
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.errataMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.errataMainPlace);
     }
 
 }

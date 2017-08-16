@@ -45,7 +45,7 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplat
         VmTemplate vmTemplate = ((ImportTemplateData) importEntityData).getTemplate();
 
         templateGeneralModel.setEntity(vmTemplate);
-        generalView.setMainTabSelectedItem(vmTemplate);
+        generalView.setMainSelectedItem(vmTemplate);
 
         disksTable.setRowData((List) Arrays.asList(vmTemplate.getDiskTemplateMap().values().toArray()));
         nicsTable.setRowData((List) Arrays.asList(vmTemplate.getInterfaces().toArray()));

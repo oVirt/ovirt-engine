@@ -188,8 +188,8 @@ public class SubTabDataCenterQosView extends AbstractSubTabTableView<StoragePool
     }
 
     @Override
-    public void setMainTabSelectedItem(StoragePool selectedItem) {
-        super.setMainTabSelectedItem(selectedItem);
+    public void setMainSelectedItem(StoragePool selectedItem) {
+        super.setMainSelectedItem(selectedItem);
         cpuModelProvider.activateDetailModel();
         vmNetworkModelProvider.activateDetailModel();
         hostNetworkModelProvider.activateDetailModel();

@@ -275,7 +275,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         this.eventListModel = volumeEventListModel;
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
-        setApplicationPlace(WebAdminApplicationPlaces.volumeMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.volumeMainPlace);
 
         setDefaultSearchString("Volumes:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

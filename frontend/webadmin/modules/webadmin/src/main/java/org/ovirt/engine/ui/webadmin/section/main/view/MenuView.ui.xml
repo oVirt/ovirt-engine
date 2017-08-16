@@ -22,42 +22,42 @@
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#vms" targetHistoryToken="vms" ui:field="vmsAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.virtualMachineMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.virtualMachineMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#templates" targetHistoryToken="templates" ui:field="templatesAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.templateMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.templateMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#pools" targetHistoryToken="pools" ui:field="poolsAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.poolMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.poolMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#hosts" targetHistoryToken="hosts" ui:field="hostsAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.hostMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.hostMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#dataCenters" targetHistoryToken="dataCenters" ui:field="dataCentersAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.dataCenterMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.dataCenterMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#clusters" targetHistoryToken="clusters" ui:field="clustersAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.clusterMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.clusterMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
@@ -76,14 +76,14 @@
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#vnicProfiles" targetHistoryToken="vnicProfiles" ui:field="vnicProfilesAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.vnicProfilesMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.vnicProfilesMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#networks" targetHistoryToken="networks" ui:field="networksAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.networkMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.networkMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
@@ -92,24 +92,24 @@
             <b:ListGroupItem addStyleNames="secondary-nav-item-pf" ui:field="storageSecondaryItem">
                 <b:Anchor ui:field="storagePrimaryHeader">
                     <span class="fa fa-database" />
-                    <span class="list-group-item-value"><ui:text from="{constants.storageMainTabLabel}" /></span>
+                    <span class="list-group-item-value"><ui:text from="{constants.storageMainViewLabel}" /></span>
                 </b:Anchor>
                 <g:FlowPanel addStyleNames="nav-pf-secondary-nav" ui:field="storageSecondaryContainer">
                     <g:FlowPanel addStyleNames="nav-item-pf-header">
                         <b:Anchor href="javascript:;" addStyleNames="secondary-collapse-toggle-pf" ui:field="storageSecondaryHeader"/>
-                        <b:html.Span><ui:text from="{constants.storageMainTabLabel}" /></b:html.Span>
+                        <b:html.Span><ui:text from="{constants.storageMainViewLabel}" /></b:html.Span>
                     </g:FlowPanel>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#dataCenters" targetHistoryToken="dataCenters" ui:field="dataCentersStorageAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.dataCenterMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.dataCenterMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#clusters" targetHistoryToken="clusters" ui:field="clustersStorageAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.clusterMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.clusterMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
@@ -123,14 +123,14 @@
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#volumes" targetHistoryToken="volumes" ui:field="volumesAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.volumeMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.volumeMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#disks" targetHistoryToken="disks" ui:field="disksAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.diskMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.diskMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
@@ -149,35 +149,35 @@
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#providers" targetHistoryToken="providers" ui:field="providersAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.providerMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.providerMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#quota" targetHistoryToken="quota" ui:field="quotasAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.quotaMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.quotaMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#sessions" targetHistoryToken="sessions" ui:field="sessionsAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.activeUserSessionMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.activeUserSessionMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#users" targetHistoryToken="users" ui:field="usersAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.userMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.userMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
                     <b:ListGroup>
                         <b:ListGroupItem>
                             <b:Anchor href="#errata" targetHistoryToken="errata" ui:field="errataAnchor">
-                                <span class="list-group-item-value"><ui:text from="{constants.errataMainTabLabel}" /></span>
+                                <span class="list-group-item-value"><ui:text from="{constants.errataMainViewLabel}" /></span>
                             </b:Anchor>
                         </b:ListGroupItem>
                     </b:ListGroup>
@@ -193,7 +193,7 @@
             <b:ListGroupItem>
                 <b:Anchor href="#events">
                     <span class="pficon pficon-flag" />
-                    <span class="list-group-item-value"><ui:text from="{constants.eventMainTabLabel}" /></span>
+                    <span class="list-group-item-value"><ui:text from="{constants.eventMainViewLabel}" /></span>
                 </b:Anchor>
             </b:ListGroupItem>
         </b:ListGroup>

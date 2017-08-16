@@ -47,7 +47,7 @@ public class QuotaSubTabPanelPresenter extends
 
     @Inject
     public QuotaSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            QuotaMainTabSelectedItems selectedItems) {
+            QuotaMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

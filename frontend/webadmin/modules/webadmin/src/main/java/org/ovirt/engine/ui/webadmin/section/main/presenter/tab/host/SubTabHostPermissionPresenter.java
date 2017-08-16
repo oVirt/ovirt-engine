@@ -37,7 +37,7 @@ public class SubTabHostPermissionPresenter
 
     @Inject
     public SubTabHostPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

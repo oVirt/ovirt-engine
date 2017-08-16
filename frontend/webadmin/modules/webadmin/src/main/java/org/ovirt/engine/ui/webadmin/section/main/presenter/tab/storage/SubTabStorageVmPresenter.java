@@ -37,7 +37,7 @@ public class SubTabStorageVmPresenter
 
     @Inject
     public SubTabStorageVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> modelProvider) {
         // View has no action panel passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

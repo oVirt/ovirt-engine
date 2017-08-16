@@ -47,7 +47,7 @@ public class UserSubTabPanelPresenter extends
 
     @Inject
     public UserSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            UserMainTabSelectedItems selectedItems) {
+            UserMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

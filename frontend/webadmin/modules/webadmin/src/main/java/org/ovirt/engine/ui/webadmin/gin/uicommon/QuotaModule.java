@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -29,7 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaMainSelectedItems;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -49,8 +49,8 @@ public class QuotaModule extends AbstractGinModule {
             final Provider<QuotaPopupPresenterWidget> quotaPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<QuotaListModel> modelProvider) {
-        MainTabModelProvider<Quota, QuotaListModel> result =
-                new MainTabModelProvider<Quota, QuotaListModel>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<Quota, QuotaListModel> result =
+                new MainViewModelProvider<Quota, QuotaListModel>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
                             QuotaListModel source,
@@ -198,7 +198,7 @@ public class QuotaModule extends AbstractGinModule {
         bind(QuotaUserListModel.class).in(Singleton.class);
         bind(QuotaPermissionListModel.class).in(Singleton.class);
         bind(QuotaEventListModel.class).in(Singleton.class);
-        bind(QuotaMainTabSelectedItems.class).asEagerSingleton();
+        bind(QuotaMainSelectedItems.class).asEagerSingleton();
 
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<QuotaCluster, QuotaListModel,

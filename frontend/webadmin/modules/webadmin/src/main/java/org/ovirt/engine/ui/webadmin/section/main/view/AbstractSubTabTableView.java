@@ -106,7 +106,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     }
 
     @Override
-    public void setMainTabSelectedItem(I selectedItem) {
+    public void setMainSelectedItem(I selectedItem) {
         // No-op since table-based sub tab views don't handle main tab selection on their own
     }
 

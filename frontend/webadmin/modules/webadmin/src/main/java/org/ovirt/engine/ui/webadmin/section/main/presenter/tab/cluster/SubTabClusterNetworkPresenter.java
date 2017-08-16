@@ -41,7 +41,7 @@ public class SubTabClusterNetworkPresenter
 
     @Inject
     public SubTabClusterNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, ClusterMainSelectedItems selectedItems,
             ClusterNetworkActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

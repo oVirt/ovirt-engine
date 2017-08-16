@@ -37,7 +37,7 @@ public class SubTabHostVmPresenter
 
     @Inject
     public SubTabHostVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, HostMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, HostMainSelectedItems selectedItems,
             HostVmActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

@@ -37,7 +37,7 @@ public class SubTabClusterPermissionPresenter
 
     @Inject
     public SubTabClusterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, ClusterMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<Cluster>> modelProvider) {
         // View uses PermissionWithInheritedPermissionListModelTable to get action panel elsewhere passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

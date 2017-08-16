@@ -34,7 +34,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
  */
 public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity,
   V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
-        extends AbstractTabPresenter<V, P> implements MainTabSelectedItemChangeListener<T> {
+        extends AbstractTabPresenter<V, P> implements MainSelectedItemChangeListener<T> {
 
     // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will
     // require adding new type parameter to presenter (do later as part of refactoring)
@@ -44,7 +44,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         /**
          * Notifies the view that the main tab item selection has changed.
          */
-        void setMainTabSelectedItem(T selectedItem);
+        void setMainSelectedItem(T selectedItem);
 
     }
 
@@ -55,7 +55,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     private final PlaceManager placeManager;
     private final DetailModelProvider<M, D> modelProvider;
-    private final AbstractMainTabSelectedItems<T> selectedMainItems;
+    private final AbstractMainSelectedItems<T> selectedMainItems;
 
     /**
      * @param view View type (extends AbstractSubTabPresenter.ViewDef&lt;T&gt;)
@@ -65,7 +65,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
      */
     public AbstractSubTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
-            AbstractMainTabSelectedItems<T> selectedMainItems,
+            AbstractMainSelectedItems<T> selectedMainItems,
             ActionPanelPresenterWidget<?, M> actionPanelPresenterWidget,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, actionPanelPresenterWidget, slot);
@@ -105,10 +105,10 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     public void itemChanged(T item) {
         boolean widgetVisible = getView().asWidget().isVisible();
         if (item != null && widgetVisible) {
-            getView().setMainTabSelectedItem(item);
+            getView().setMainSelectedItem(item);
         } else if (item == null && widgetVisible && modelProvider.getMainModel().getItems().isEmpty()) {
             // No selection so we can't positively show anything, switch to grid.
-            placeManager.revealPlace(getMainTabRequest());
+            placeManager.revealPlace(getMainContentRequest());
         }
     }
 
@@ -172,7 +172,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             getProxy().manualReveal(this);
         } else {
             getProxy().manualRevealFailed();
-            placeManager.revealPlace(getMainTabRequest());
+            placeManager.revealPlace(getMainContentRequest());
         }
     }
 
@@ -181,7 +181,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
      * <p>
      * Will be revealed when the user tries to access this sub tab while there is nothing selected in the main tab.
      */
-    protected abstract PlaceRequest getMainTabRequest();
+    protected abstract PlaceRequest getMainContentRequest();
 
     /**
      * Returns items currently selected in the table or {@code null} if the sub tab view has no table widget associated.
@@ -229,7 +229,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     @SuppressWarnings("unchecked")
     protected void onDetailModelEntityChange(Object entity) {
         try {
-            getView().setMainTabSelectedItem((T) entity);
+            getView().setMainSelectedItem((T) entity);
         } catch (ClassCastException ex) {
             // Detail model entity type is different from main model item type.
             // This usually happens with synthetic item types that wrap multiple
@@ -243,7 +243,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         return modelProvider;
     }
 
-    protected AbstractMainTabSelectedItems<T> getSelectedMainItems() {
+    protected AbstractMainSelectedItems<T> getSelectedMainItems() {
         return selectedMainItems;
     }
 

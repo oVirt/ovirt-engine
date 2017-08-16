@@ -39,7 +39,7 @@ public class SubTabNetworkTemplatePresenter
 
     @Inject
     public SubTabNetworkTemplatePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, NetworkMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, NetworkMainSelectedItems selectedItems,
             NetworkTemplateActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

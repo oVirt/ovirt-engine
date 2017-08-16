@@ -37,7 +37,7 @@ public class SubTabTemplateInterfacePresenter
 
     @Inject
     public SubTabTemplateInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, TemplateMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, TemplateMainSelectedItems selectedItems,
             SearchableDetailModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> modelProvider) {
         // View uses TemplateInterfaceListModelTable and gets action panel from somewhere else passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

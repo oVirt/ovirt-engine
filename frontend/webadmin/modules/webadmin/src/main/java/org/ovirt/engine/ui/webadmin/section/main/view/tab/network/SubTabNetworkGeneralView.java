@@ -117,7 +117,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     }
 
     @Override
-    public void setMainTabSelectedItem(NetworkView selectedItem) {
+    public void setMainSelectedItem(NetworkView selectedItem) {
         driver.edit(getDetailModel());
         formBuilder.update(getDetailModel());
     }

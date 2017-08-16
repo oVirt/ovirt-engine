@@ -37,7 +37,7 @@ public class SubTabStoragePermissionPresenter
 
     @Inject
     public SubTabStoragePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, StorageMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, StorageMainSelectedItems selectedItems,
             SearchableDetailModelProvider<Permission, StorageListModel,
             PermissionListModel<StorageDomain>> modelProvider) {
         // View has no action panel, passing null.

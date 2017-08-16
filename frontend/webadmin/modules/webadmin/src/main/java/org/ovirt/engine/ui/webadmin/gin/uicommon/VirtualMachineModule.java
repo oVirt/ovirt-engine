@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresent
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
+import org.ovirt.engine.ui.common.uicommon.model.MainViewModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -82,7 +82,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCr
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotCustomPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineMainTabSelectedItems;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineMainSelectedItems;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
@@ -123,8 +123,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
             final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeDiskConfirmPopupProvider) {
-        MainTabModelProvider<VM, VmListModel<Void>> result =
-                new MainTabModelProvider<VM, VmListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
+        MainViewModelProvider<VM, VmListModel<Void>> result =
+                new MainViewModelProvider<VM, VmListModel<Void>>(eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmListModel<Void> source,
                             UICommand lastExecutedCommand, Model windowModel) {
@@ -530,7 +530,7 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(VmErrataCountModel.class).in(Singleton.class);
         bind(VmErrataListModel.class).in(Singleton.class);
         bind(VmAffinityLabelListModel.class).in(Singleton.class);
-        bind(VirtualMachineMainTabSelectedItems.class).asEagerSingleton();
+        bind(VirtualMachineMainSelectedItems.class).asEagerSingleton();
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>(){})

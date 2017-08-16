@@ -36,7 +36,7 @@ public class SubTabVolumeGeneralPresenter
 
     @Inject
     public SubTabVolumeGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VolumeMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VolumeMainSelectedItems selectedItems,
             DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider) {
         // General has no action panel
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

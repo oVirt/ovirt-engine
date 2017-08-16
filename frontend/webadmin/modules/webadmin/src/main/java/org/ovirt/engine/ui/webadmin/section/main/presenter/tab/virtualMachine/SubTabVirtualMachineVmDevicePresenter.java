@@ -42,7 +42,7 @@ public class SubTabVirtualMachineVmDevicePresenter
     @Inject
     public SubTabVirtualMachineVmDevicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, SearchableDetailModelProvider<VmDeviceFeEntity, VmListModel<Void>, VmDevicesListModel<VM>> modelProvider,
-            VirtualMachineMainTabSelectedItems selectedItems) {
+            VirtualMachineMainSelectedItems selectedItems) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);

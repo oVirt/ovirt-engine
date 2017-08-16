@@ -54,7 +54,7 @@ public class SubTabVirtualMachineErrataPresenter
 
     @Inject
     public SubTabVirtualMachineErrataPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             DetailTabModelProvider<VmListModel<Void>, VmErrataCountModel> errataCountModelProvider) {
         // View has no action panel, passing null.
         super(eventBus, view, proxy, placeManager, errataCountModelProvider, selectedItems, null,

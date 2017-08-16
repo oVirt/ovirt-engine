@@ -70,7 +70,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
     }
 
     @Override
-    public void setMainTabSelectedItem(VM selectedItem) {
+    public void setMainSelectedItem(VM selectedItem) {
         form.update();
     }
 

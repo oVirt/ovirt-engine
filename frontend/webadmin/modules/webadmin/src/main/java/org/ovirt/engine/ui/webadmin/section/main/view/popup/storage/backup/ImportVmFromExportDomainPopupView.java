@@ -698,7 +698,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     protected void setGeneralViewSelection(Object selectedItem) {
-        generalView.setMainTabSelectedItem((VM) selectedItem);
+        generalView.setMainSelectedItem((VM) selectedItem);
     }
 
     @Override

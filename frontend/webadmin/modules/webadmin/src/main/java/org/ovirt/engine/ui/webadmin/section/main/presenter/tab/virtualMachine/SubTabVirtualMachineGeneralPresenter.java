@@ -51,7 +51,7 @@ public class SubTabVirtualMachineGeneralPresenter
 
     @Inject
     public SubTabVirtualMachineGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, VirtualMachineMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
             DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider) {
         // View has no actionPanel, passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

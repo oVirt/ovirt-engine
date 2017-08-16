@@ -37,7 +37,7 @@ public class SubTabDataCenterEventPresenter
 
     @Inject
     public SubTabDataCenterEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DataCenterMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, DataCenterMainSelectedItems selectedItems,
             SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> modelProvider) {
         // View has no action panel, passing null
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

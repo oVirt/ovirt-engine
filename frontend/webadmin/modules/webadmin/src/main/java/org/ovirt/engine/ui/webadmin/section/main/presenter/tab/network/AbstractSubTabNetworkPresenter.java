@@ -21,14 +21,14 @@ public abstract class AbstractSubTabNetworkPresenter<D extends HasEntity<?>,
         extends AbstractSubTabPresenter <NetworkView, NetworkListModel, D, V, P> {
 
     public AbstractSubTabNetworkPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<NetworkListModel, D> modelProvider, NetworkMainTabSelectedItems selectedItems,
+            DetailModelProvider<NetworkListModel, D> modelProvider, NetworkMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, NetworkListModel, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.networkMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.networkMainPlace);
     }
 }

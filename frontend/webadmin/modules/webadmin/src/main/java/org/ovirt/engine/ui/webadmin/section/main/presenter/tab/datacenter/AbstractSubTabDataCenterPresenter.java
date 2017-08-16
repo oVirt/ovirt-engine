@@ -21,14 +21,14 @@ public abstract class AbstractSubTabDataCenterPresenter
         extends AbstractSubTabPresenter<StoragePool, DataCenterListModel, D, V, P> {
 
     public AbstractSubTabDataCenterPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager,
-            DetailModelProvider<DataCenterListModel, D> modelProvider, DataCenterMainTabSelectedItems selectedItems,
+            DetailModelProvider<DataCenterListModel, D> modelProvider, DataCenterMainSelectedItems selectedItems,
             DetailActionPanelPresenterWidget<?, DataCenterListModel, ?> actionPanel,
             Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel, slot);
     }
 
     @Override
-    protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.dataCenterMainTabPlace);
+    protected PlaceRequest getMainContentRequest() {
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.dataCenterMainPlace);
     }
 }

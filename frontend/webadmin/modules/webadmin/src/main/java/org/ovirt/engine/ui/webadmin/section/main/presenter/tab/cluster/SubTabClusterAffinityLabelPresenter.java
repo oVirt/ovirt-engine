@@ -37,7 +37,7 @@ public class SubTabClusterAffinityLabelPresenter
 
     @Inject
     public SubTabClusterAffinityLabelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-           PlaceManager placeManager, ClusterMainTabSelectedItems selectedItems,
+           PlaceManager placeManager, ClusterMainSelectedItems selectedItems,
            SearchableDetailModelProvider<Label, ClusterListModel<Void>, ClusterAffinityLabelListModel> modelProvider,
            ClusterAffinityLabelActionPanelPresenterWidget actionPanel) {
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,

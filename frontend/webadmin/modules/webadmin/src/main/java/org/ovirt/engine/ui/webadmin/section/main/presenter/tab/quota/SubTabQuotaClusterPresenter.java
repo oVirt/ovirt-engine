@@ -37,7 +37,7 @@ public class SubTabQuotaClusterPresenter
 
     @Inject
     public SubTabQuotaClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, QuotaMainTabSelectedItems selectedItems,
+            PlaceManager placeManager, QuotaMainSelectedItems selectedItems,
             SearchableDetailModelProvider<QuotaCluster, QuotaListModel, QuotaClusterListModel> modelProvider) {
         // View doesn't have an actionPanel passing null.
         super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,

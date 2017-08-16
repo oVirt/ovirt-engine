@@ -47,7 +47,7 @@ public class VnicProfileSubTabPanelPresenter extends
 
     @Inject
     public VnicProfileSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            VnicProfileMainTabSelectedItems selectedItems) {
+            VnicProfileMainSelectedItems selectedItems) {
         super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, selectedItems);
     }
 

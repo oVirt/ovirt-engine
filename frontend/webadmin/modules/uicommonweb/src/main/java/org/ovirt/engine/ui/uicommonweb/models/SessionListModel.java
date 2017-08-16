@@ -27,7 +27,7 @@ public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, Us
 
         setTitle(ConstantsManager.getInstance().getConstants().userSessionsTitle());
         setHelpTag(HelpTag.engine_sessions);
-        setApplicationPlace(WebAdminApplicationPlaces.sessionMainTabPlace);
+        setApplicationPlace(WebAdminApplicationPlaces.sessionMainPlace);
         setHashName("sessions"); //$NON-NLS-1$
 
         setDefaultSearchString("Session:"); //$NON-NLS-1$
