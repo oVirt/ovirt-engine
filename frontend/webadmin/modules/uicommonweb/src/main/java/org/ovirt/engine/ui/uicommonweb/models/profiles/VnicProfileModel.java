@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VersionQueryParameters;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkFilter;
@@ -31,8 +32,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -386,8 +387,8 @@ public abstract class VnicProfileModel extends Model {
     }
 
     public boolean validate() {
-        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
-
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(),
+                new LengthValidation(BusinessEntitiesDefinitions.NETWORK_NAME_SIZE) });
         return getName().getIsValid() && getCustomPropertySheet().validate();
     }
 
