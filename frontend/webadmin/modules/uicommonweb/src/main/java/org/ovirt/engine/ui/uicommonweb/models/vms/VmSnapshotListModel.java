@@ -205,6 +205,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
 
         snapshots.sort(Linq.SnapshotByCreationDateCommparer.reversed());
         ArrayList<Snapshot> sortedSnapshots = new ArrayList<>();
+        boolean hasNoPreviewSnapshot = getInType(SnapshotType.PREVIEW, snapshots) == null;
 
         for (Snapshot snapshot : snapshots) {
             SnapshotModel snapshotModel = snapshotsMap.get(snapshot.getId());
@@ -214,7 +215,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
             }
             snapshotModel.setEntity(snapshot);
 
-            if ((snapshot.getType() == SnapshotType.ACTIVE && getInType(SnapshotType.PREVIEW, snapshots) == null)
+            if ((snapshot.getType() == SnapshotType.ACTIVE && hasNoPreviewSnapshot)
                     || snapshot.getType() == SnapshotType.PREVIEW) {
                 sortedSnapshots.add(0, snapshot);
             }
