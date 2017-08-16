@@ -28,9 +28,6 @@
         <exclude name="binding/**" />
     </source>
 
-    <!-- Specify the application specific style sheet -->
-    <stylesheet src="WebAdmin.css" />
-
     <!-- Allow user agent locale information to determine the locale -->
     <set-configuration-property name="locale.useragent" value="Y" />
 
