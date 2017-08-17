@@ -524,7 +524,8 @@ public class LinkHelper {
         map.add(VmNicResource.class, VmNicsResource.class, Vm.class);
         TYPES.put(Nic.class, map);
 
-        map.add(NicNetworkFilterParameterResource.class, NicNetworkFilterParametersResource.class, Nic.class);
+        map = new LocationByParentMap(NicNetworkFilterParameterResource.class,
+                NicNetworkFilterParametersResource.class, Nic.class);
         TYPES.put(NetworkFilterParameter.class, map);
 
         map = new LocationByParentMap(VmNumaNodeResource.class, VmNumaNodesResource.class, Vm.class);
