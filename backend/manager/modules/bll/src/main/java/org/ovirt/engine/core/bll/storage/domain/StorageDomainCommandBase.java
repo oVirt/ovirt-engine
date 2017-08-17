@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -52,6 +53,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
+import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -73,6 +75,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     private LunDao lunDao;
     @Inject
     private StorageDomainDao storageDomainDao;
+    @Inject
+    private VmDao vmDao;
 
     @Inject
     protected ImagesHandler imagesHandler;
@@ -398,6 +402,13 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     private StorageDomainSharedStatus getStorageDomainSharedStatus() {
         return getStorageDomain() == null ? null : getStorageDomain().getStorageDomainSharedStatus();
+    }
+
+    protected List<VM> getVmsOnlyOnStorageDomain() {
+        List<VM> allVmsRelatedToSD = vmDao.getAllForStorageDomain(getStorageDomainId());
+        List<VM> vmsWithDisksOnMultipleStorageDomain = vmDao.getAllVMsWithDisksOnOtherStorageDomain(getStorageDomainId());
+        allVmsRelatedToSD.removeAll(vmsWithDisksOnMultipleStorageDomain);
+        return allVmsRelatedToSD;
     }
 
     protected void addStorageDomainStatusIllegalMessage() {
