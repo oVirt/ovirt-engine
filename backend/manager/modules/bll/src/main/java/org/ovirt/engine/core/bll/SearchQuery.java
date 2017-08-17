@@ -522,8 +522,6 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 // setting FromSearch value
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
                 if (searchObj.getError() != SyntaxError.NO_ERROR) {
-                    log.info("ResourceManager::searchBusinessObjects - erroneous search text - ''{}''",
-                            searchText);
                     int startPos = searchObj.getErrorStartPos();
                     int endPos = searchObj.getErrorEndPos();
                     int length = endPos - startPos;
@@ -539,6 +537,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                                     :
                                     searchObj.getError().toString();
                     getQueryReturnValue().setExceptionString(error);
+                    log.info("ResourceManager::searchBusinessObjects - erroneous search text - ''{}'' error - ''{}''",
+                            searchText, error);
                     return null;
                 }
                 if (!searchObj.getvalid()) {
