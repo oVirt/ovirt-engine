@@ -8,7 +8,7 @@ import com.google.gwt.dom.client.Style.HasCssName;
 
 public class IconStatusPanel extends Span {
 
-    private static final String OBRAND_LIST_VIEW_ICON = "obrand_list_view_icon"; // $NON-NLS-1$
+    private static final String ICON_STATUS_PANEL_CONTAINER = "icon-status-panel-container"; //$NON-NLS-1$
 
     public IconStatusPanel(HasCssName iconCssName) {
         this(iconCssName, Styles.FONT_AWESOME_BASE);
@@ -21,7 +21,7 @@ public class IconStatusPanel extends Span {
         Span icon = new Span();
         Italic iconContainer = new Italic();
         iconContainer.addStyleName(base);
-        iconContainer.addStyleName(OBRAND_LIST_VIEW_ICON);
+        iconContainer.addStyleName(ICON_STATUS_PANEL_CONTAINER);
         icon.add(iconContainer);
         iconContainer.addStyleName(iconCssName);
         add(icon);
