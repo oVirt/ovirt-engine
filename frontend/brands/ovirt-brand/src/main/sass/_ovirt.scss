@@ -85,28 +85,6 @@ TODO: use SASS, break into landing.sass
     padding-right: 8px;
 }
 
-.landing-bg-bottom-left {
-    background-image: url(images/oVirt_Landing_Bottom_Left_Corner.png);
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-top: 4px solid #00659c;
-    background-repeat: no-repeat;
-}
-
-.landing-bg-top-right {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-image: url(images/oVirt_Landing_Top_Right_Corner.png);
-    width: 561px;
-    height: 413px;
-    background-repeat: no-repeat;
-}
-
-
 /***************************************
 Tooltips
 TODO: use SASS, break into tooltips.sass

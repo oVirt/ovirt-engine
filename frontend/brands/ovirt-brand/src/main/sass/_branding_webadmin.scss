@@ -1,7 +1,7 @@
-/* HeaderView.ui.xml:
-logo used in the application header */
-.obrand_headerLogoImage {
-    background-image: url(images/ovirt_header_logo.png);
+/* classes used to brand (logos, colors, etc) webadmin */
+
+.obrand_webadminMastheadLogo {
+    background-image: url(images/ovirt_webadmin_masthead_logo.png);
     width: 272px;
     height: 16px;
     position: relative;
@@ -12,8 +12,26 @@ logo used in the application header */
     background-repeat: no-repeat;
 }
 
-/* background of application header */
-.obrand_headerLogoBackgroundImage {
-    background-image: url(images/oVirt_Banner_solid.png);
+.obrand_webadminMastheadBackground {
+    background-image: url(images/ovirt_webadmin_masthead_bg.png);
     background-size: cover;
+}
+
+.obrand_webadminAboutBackground {
+    width: 565px;
+    height: 355px;
+    background-image: url(images/ovirt_webadmin_about_bg.png);
+}
+
+.obrand_webadminAboutApplicationLogo {
+    background-image: url(images/ovirt_logo.png);
+    width: 80px;
+    height: 30px;
+    border: 0px;
+    display: block;
+    background-size: contain;
+    background-repeat: no-repeat;
+    float: right;
+    position: relative;
+    top: 140px;
 }

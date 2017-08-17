@@ -16,15 +16,15 @@
 </head>
 <body>
     <c:set var="ssoSession" value="${sessionScope['ovirt-ssoSession']}" />
-    <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoImageLink">
-        <span class="obrand_loginPageLogoImage"></span>
+    <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoLink">
+        <span class="obrand_loginPageLogo"></span>
     </a>
     <div class="ovirt-container">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
                     <div id="brand">
-                        <div class="obrand_loginFormLogoImage"></div>
+                        <div class="obrand_middleLogoName"></div>
                     </div>
                 </div>
 

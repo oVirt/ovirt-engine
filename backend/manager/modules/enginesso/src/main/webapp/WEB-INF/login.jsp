@@ -32,16 +32,16 @@
 
     <c:set target="${ssoSession}" property="reauthenticate" value="true" />
 
-    <div class="landing-bg-bottom-left"></div>
-    <div class="landing-bg-top-right"></div>
+    <div class="obrand_landingBgBottomLeft"></div>
+    <div class="obrand_landingBgTopRight"></div>
 
-    <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoImageLink">
-        <span class="obrand_loginPageLogoImage"></span>
+    <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoLink">
+        <span class="obrand_loginPageLogo"></span>
     </a>
     <div class="ovirt-container">
         <div class="container">
             <div id="welcome-section-login">
-                <div class="obrand_loginFormLogoImage"></div>
+                <div class="obrand_middleLogoName"></div>
             </div>
 
             <div class="row">

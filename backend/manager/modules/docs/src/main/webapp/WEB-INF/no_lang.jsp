@@ -17,11 +17,11 @@
     <obrand:javascripts />
 </head>
 <body>
-    <div class="landing-bg-bottom-left"></div>
-    <div class="landing-bg-top-right"></div>
+    <div class="obrand_landingBgBottomLeft"></div>
+    <div class="obrand_landingBgTopRight"></div>
 
-    <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoImageLink">
-        <span class="obrand_loginPageLogoImage"></span>
+    <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoLink">
+        <span class="obrand_loginPageLogo"></span>
     </a>
 
     <div class="ovirt-container">
