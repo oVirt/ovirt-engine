@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -101,13 +100,6 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         }
         log.info("End detach storage domain");
         setSucceeded(returnValue.getSucceeded());
-    }
-
-    private List<VM> getVmsOnlyOnStorageDomain() {
-        List<VM> allVmsRelatedToSD = vmDao.getAllForStorageDomain(getStorageDomainId());
-        List<VM> vmsWithDisksOnMultipleStorageDomain = vmDao.getAllVMsWithDisksOnOtherStorageDomain(getStorageDomainId());
-        allVmsRelatedToSD.removeAll(vmsWithDisksOnMultipleStorageDomain);
-        return allVmsRelatedToSD;
     }
 
     private void detachCinderStorageDomain() {
