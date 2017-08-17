@@ -80,11 +80,11 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     }
 
     protected Resources getTableHeaderlessResources() {
-        return GWT.<Resources> create(SubTableHeaderlessResources.class);
+        return GWT.create(SubTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {
-        return GWT.<Resources> create(SubTableResources.class);
+        return GWT.create(SubTableResources.class);
     }
 
     protected D getDetailModel() {
