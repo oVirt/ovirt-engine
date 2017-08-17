@@ -328,6 +328,6 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
                                 getStorageDomainId(), getDiskImage().getId(),
                                 getDiskImage().isWipeAfterDelete(), getStorageDomain().getDiscardAfterDelete(),
-                                getParameters().getForceDelete())));
+                                getParameters().isForceDelete())));
     }
 }

@@ -44,7 +44,7 @@ public class StoragePoolParametersBase extends ActionParametersBase {
         storagePoolId = value;
     }
 
-    public boolean getForceDelete() {
+    public boolean isForceDelete() {
         return forceDelete;
     }
 

@@ -97,12 +97,12 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         Collections.sort(storageDomains, Comparator.comparing(StorageDomain::getStorageDomainType));
 
         if (storageDomains.size() > 0) {
-            if (!getParameters().getForceDelete() && getAllRunningVdssInPool().size() > 0) {
+            if (!getParameters().isForceDelete() && getAllRunningVdssInPool().size() > 0) {
                 if(!regularRemoveStorageDomains(storageDomains)) {
                     setSucceeded(false);
                     return;
                 }
-            } else if (getParameters().getForceDelete()) {
+            } else if (getParameters().isForceDelete()) {
                 forceRemoveStorageDomains(storageDomains);
             } else {
                 return;
@@ -309,7 +309,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             return false;
         }
 
-        if (getStoragePool().getStatus() != StoragePoolStatus.Uninitialized && !getParameters().getForceDelete()
+        if (getStoragePool().getStatus() != StoragePoolStatus.Uninitialized && !getParameters().isForceDelete()
                 && !initializeVds()) {
             return false;
         }
@@ -320,7 +320,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         if (!validateDomainsInMaintenance(poolDomains)) {
             return false;
         }
-        if (!getParameters().getForceDelete()) {
+        if (!getParameters().isForceDelete()) {
             if(poolDomains.size() > 1) {
                 return failValidation(EngineMessage.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_NONMASTER_DOMAINS);
             }
@@ -363,7 +363,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if (getParameters().getForceDelete()){
+        if (getParameters().isForceDelete()){
             return getSucceeded() ? AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL : AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL_FAILED;
         }
         return getSucceeded() ? AuditLogType.USER_REMOVE_STORAGE_POOL : AuditLogType.USER_REMOVE_STORAGE_POOL_FAILED;
