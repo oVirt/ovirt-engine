@@ -27,16 +27,42 @@ public class BackendImageTransfersResource
         super(ImageTransfer.class, org.ovirt.engine.core.common.businessentities.storage.ImageTransfer.class);
     }
 
+    /**
+     * Adding using an Image entity - for 4.1 backwards compatibility
+     */
+    @Deprecated
     @Override
-    public Response add(ImageTransfer imageTransfer) {
+    public Response addForImage(ImageTransfer imageTransfer) {
         TransferDiskImageParameters params = new TransferDiskImageParameters();
+        params.setImageGroupID(GuidUtils.asGuid(imageTransfer.getImage().getId()));
+        return performCreate(imageTransfer, params);
+    }
+
+    @Override
+    public Response addForDisk(ImageTransfer imageTransfer) {
+        TransferDiskImageParameters params = new TransferDiskImageParameters();
+        params.setImageGroupID(GuidUtils.asGuid(imageTransfer.getDisk().getId()));
+        return performCreate(imageTransfer, params);
+    }
+
+    @Override
+    public Response addForSnapshot(ImageTransfer imageTransfer) {
+        TransferDiskImageParameters params = new TransferDiskImageParameters();
+        params.setImageId(GuidUtils.asGuid(imageTransfer.getSnapshot().getId()));
+        return performCreate(imageTransfer, params);
+    }
+
+    private Response performCreate(ImageTransfer imageTransfer, TransferDiskImageParameters params) {
+        updateTransferType(imageTransfer, params);
+        return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
+                IdQueryParameters.class));
+    }
+
+    private void updateTransferType(ImageTransfer imageTransfer, TransferDiskImageParameters params) {
         if (imageTransfer.isSetDirection() && imageTransfer.getDirection() == ImageTransferDirection.DOWNLOAD) {
             // Upload is the default direction, so we set the transfer type only if download was explicitly specified.
             params.setTransferType(TransferType.Download);
         }
-        params.setImageId(GuidUtils.asGuid(imageTransfer.getImage().getId()));
-        return performCreate(ActionType.TransferDiskImage, params, new QueryIdResolver<Guid>(QueryType.GetImageTransferById,
-                IdQueryParameters.class));
     }
 
     @Override
