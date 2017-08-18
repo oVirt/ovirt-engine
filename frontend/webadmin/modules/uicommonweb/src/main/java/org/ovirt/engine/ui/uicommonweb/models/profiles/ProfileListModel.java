@@ -138,7 +138,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         Frontend.getInstance().runQuery(QueryType.GetAllQosByStoragePoolIdAndType,
                 new QosQueryParameterBase(dcId, getQosType()),
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
-                        List<Q> qosList = (ArrayList<Q>) returnValue.getReturnValue();
+                        List<Q> qosList = returnValue.getReturnValue();
                         qosMap = new HashMap<>();
                     if (qosList != null) {
                             for (Q qos : qosList) {
@@ -156,7 +156,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         }
         Frontend.getInstance().runQuery(getQueryType(),
                 new IdQueryParameters(getEntity().getId()),
-                new AsyncQuery<QueryReturnValue>(returnValue -> setItems((List<P>) returnValue.getReturnValue())));
+                new AsyncQuery<QueryReturnValue>(returnValue -> setItems(returnValue.getReturnValue())));
     }
 
     @Override
