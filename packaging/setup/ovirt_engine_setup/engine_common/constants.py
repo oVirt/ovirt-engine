@@ -143,6 +143,7 @@ class Defaults(object):
     )
 
     DEFAULT_POSTGRES_PROVISIONING_SERVICE = 'postgresql'
+    DEFAULT_POSTGRES_PROVISIONING_OLD_SERVICE = 'postgresql'
     DEFAULT_POSTGRES_PROVISIONING_MAX_CONN = 150
     DEFAULT_POSTGRES_PROVISIONING_LISTEN_ADDRESS = "'*'"
     DEFAULT_POSTGRES_PROVISIONING_LC_MESSAGES = "'en_US.UTF-8'"
@@ -168,6 +169,10 @@ class Stages(object):
     DB_CREDENTIALS_AVAILABLE_LATE = 'osetup.db.connection.credentials.late'
     DB_CONNECTION_AVAILABLE = 'osetup.db.connection.available'
     DB_SCHEMA = 'osetup.db.schema'
+    DB_UPGRADEDBMS_ENGINE = 'osetup.db.upgrade.dbms.engine'
+    DB_UPGRADEDBMS_DWH = 'osetup.db.upgrade.dbms.dwh'
+    DB_CUST_UPGRADEDBMS_ENGINE = 'osetup.db.cust.upgrade.dbms.engine'
+    DB_CUST_UPGRADEDBMS_DWH = 'osetup.db.cust.upgrade.dbms.dwh'
 
     CONFIG_DB_ENCRYPTION_AVAILABLE = 'osetup.config.encryption.available'
 
@@ -298,6 +303,7 @@ class ProvisioningEnv(object):
     POSTGRES_PG_HBA = 'OVESETUP_PROVISIONING/postgresPgHba'
     POSTGRES_PG_VERSION = 'OVESETUP_PROVISIONING/postgresPgVersion'
     POSTGRES_SERVICE = 'OVESETUP_PROVISIONING/postgresService'
+    OLD_POSTGRES_SERVICE = 'OVESETUP_PROVISIONING/oldPostgresService'
     POSTGRES_EXTRA_CONFIG_ITEMS =\
         'OVESETUP_PROVISIONING/postgresExtraConfigItems'
     POSTGRES_MAX_CONN = 'OVESETUP_PROVISIONING/postgresMaxConn'

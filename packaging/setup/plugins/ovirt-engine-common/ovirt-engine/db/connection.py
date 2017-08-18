@@ -185,14 +185,6 @@ class Plugin(plugin.PluginBase):
                     self.logger.info(_(
                         'The engine DB has been restored from a backup'
                     ))
-            if self.environment[
-                oenginecons.EngineDBEnv.NEED_DBMSUPGRADE
-            ]:
-                self.logger.error(
-                    'The DBMS instance used for the engine '
-                    'DB has to be upgraded'
-                )
-                # TODO: handle the upgrade
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

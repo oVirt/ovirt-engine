@@ -206,6 +206,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_EARLY_MISC,
+        after=(
+            oengcommcons.Stages.DB_UPGRADEDBMS_ENGINE,
+        ),
         condition=lambda self:
             self.environment[
                 oenginecons.CoreEnv.ENABLE

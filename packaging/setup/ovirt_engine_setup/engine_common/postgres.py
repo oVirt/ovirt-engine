@@ -22,6 +22,7 @@ import os
 import platform
 import random
 import re
+import shutil
 import time
 
 from otopi import constants as otopicons
@@ -34,6 +35,7 @@ from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.provisiondb import constants as oprovisioncons
 
 DEK = oengcommcons.DBEnvKeysConst
 
@@ -599,5 +601,203 @@ class Provisioning(base.Base):
 
         self.restartPG()
 
+    def getConfigFiles(
+        self,
+    ):
+        if not self.supported():
+            raise RuntimeError(
+                _(
+                    'Unsupported distribution for automatic '
+                    'upgrading postgresql'
+                )
+            )
+
+        conf_f = {}
+
+        with AlternateUser(
+            user=self.environment[
+                oengcommcons.SystemEnv.USER_POSTGRES
+            ],
+        ):
+            usockenv = {
+                self._dbenvkeys[DEK.HOST]: '',  # usock
+                self._dbenvkeys[DEK.PORT]: '',
+                self._dbenvkeys[DEK.SECURED]: False,
+                self._dbenvkeys[DEK.HOST_VALIDATION]: False,
+                self._dbenvkeys[DEK.USER]: 'postgres',
+                self._dbenvkeys[DEK.PASSWORD]: '',
+                self._dbenvkeys[DEK.DATABASE]: 'template1',
+            }
+            self._waitForDatabase(
+                environment=usockenv,
+            )
+
+            dbstatement = database.Statement(
+                dbenvkeys=self._dbenvkeys,
+                environment=usockenv,
+            )
+            for f in [
+                'config_file',
+                'hba_file',
+                'ident_file',
+                'data_directory'
+            ]:
+                ret = dbstatement.execute(
+                    statement="SHOW {f}".format(f=f),
+                    ownConnection=True,
+                    transaction=False,
+                )
+                conf_f[f] = ret[0][f]
+
+        return conf_f
+
+
+class DBMSUpgradeTransaction(transaction.TransactionElement):
+    """dbms upgrade transaction element."""
+
+    def __init__(
+        self,
+        parent,
+        inplace=False,
+        cleanupold=False,
+        upgrade_from='postgresql',
+    ):
+        self._parent = parent
+        self._inplace = inplace
+        self._cleanupold = cleanupold
+        self._upgrade_from = upgrade_from
+        self._upgrade_to = self._parent.environment[
+            oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
+        ]
+        self._old_data_directory = None
+
+    def __str__(self):
+        return _("DBMS Upgrade Transaction")
+
+    @property
+    def command(self):
+        return self._parent.command
+
+    @property
+    def environment(self):
+        return self._parent.environment
+
+    @property
+    def services(self):
+        return self._parent.services
+
+    @property
+    def logger(self):
+        return self._parent.logger
+
+    def prepare(self):
+
+        provisioning = Provisioning(
+            plugin=self._parent,
+            dbenvkeys=oprovisioncons.Const.PROVISION_DB_ENV_KEYS,
+            defaults=oprovisioncons.Const.DEFAULT_PROVISION_DB_ENV_KEYS,
+        )
+
+        conf_f = provisioning.getConfigFiles()
+        self._old_data_directory = conf_f['data_directory']
+        self.services.state(
+            name=self._upgrade_from,
+            state=False,
+        )
+        self._parent.execute(
+            (
+                self.command.get('postgresql-setup'),
+                '--upgrade',
+                '--upgrade-from={f}'.format(f=self._upgrade_from)
+            ),
+            envAppend={
+                'PGSETUP_PGUPGRADE_OPTIONS': '--link'
+            } if self._inplace else {},
+            raiseOnError=True,
+        )
+        shutil.copy2(
+            conf_f['config_file'],
+            self.environment[
+                oengcommcons.ProvisioningEnv.POSTGRES_CONF
+            ]
+        )
+        shutil.copy2(
+            conf_f['hba_file'],
+            self.environment[
+                oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
+            ]
+        )
+        self.logger.info(
+            _(
+                'PostgreSQL has been successfully upgraded, '
+                'starting the new instance ({service}).'
+            ).format(
+                service=self._upgrade_to,
+            )
+        )
+        self.services.state(
+            name=self._upgrade_to,
+            state=True,
+        )
+
+    def abort(self):
+        if not self._inplace:
+            self.logger.info(
+                _(
+                    'Rolling back to the previous PostgreSQL '
+                    'instance ({service}).'
+                ).format(
+                    service=self._upgrade_from,
+                )
+            )
+            self.services.state(
+                name=self._upgrade_to,
+                state=False,
+            )
+            self.services.state(
+                name=self._upgrade_from,
+                state=True,
+            )
+            shutil.rmtree(
+                os.path.dirname(
+                    self.environment[
+                        oengcommcons.ProvisioningEnv.POSTGRES_PG_HBA
+                    ]
+                )
+            )
+        else:
+            self.logger.error(_(
+                'FATAL: engine-setup failed and, '
+                'since PostgreSQL has been upgraded in place, '
+                'an automatic rollback of it is not possible.\n'
+                'Please manually roll it back restoring a backup or '
+                'a snapshot.'
+            ))
+
+    def commit(self):
+        # TODO: mask the service if available in otopi
+        self.services.startup(
+            name=self._upgrade_from,
+            state=False,
+        )
+        self.services.startup(
+            name=self._upgrade_to,
+            state=True,
+        )
+        if self._old_data_directory:
+            if self._cleanupold:
+                self.logger.info(
+                    'Cleaning the previous PostgreSQL data directory'
+                )
+                shutil.rmtree(self._old_data_directory)
+            else:
+                if not self._inplace:
+                    self.logger.info(
+                        (
+                            'The previous PostgreSQL configuration '
+                            'and data are stored in folder {d}. '
+                            'You can safely delete it.'
+                        ).format(d=self._old_data_directory)
+                    )
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -66,6 +66,17 @@ RE_KEY_VALUE = re.compile(
             (?P<value>\S+)
         """,
 )
+RE_KEY_VALUE_MULTIPLE = re.compile(
+    flags=re.VERBOSE,
+    pattern=r"""
+            \s*
+            (?P<key>\w+)
+            \s*
+            =
+            \s*
+            (?P<value>\S+)
+        """,
+)
 
 
 def _ind_env(inst, keykey):
@@ -1345,6 +1356,74 @@ class OvirtUtils(base.Base):
             ),
         )
 
+    def getInstanceSize(
+        self,
+        host=None,
+        port=None,
+        secured=None,
+        user=None,
+        password=None,
+        database=None,
+    ):
+        statement = Statement(
+            environment=self.environment,
+            dbenvkeys=self._dbenvkeys,
+        )
+        ret = statement.execute(
+            statement=(
+                'SELECT '
+                'SUM(pg_database_size(datname)) '
+                'As dbms_size FROM pg_database'
+            ),
+            args=dict(),
+            host=host,
+            port=port,
+            secured=secured,
+            user=user,
+            password=password,
+            database=database,
+            ownConnection=True,
+            transaction=False,
+        )
+        dbms_human_size = int(ret[0]['dbms_size'])
+        return dbms_human_size
+
+    def getPGDATA(
+        self,
+    ):
+        rc, stdout, stderr = self._plugin.execute(
+            (
+                self.command.get('systemctl'),
+                'show',
+                '-p',
+                'Environment',
+                self.environment[
+                    oengcommcons.ProvisioningEnv.POSTGRES_SERVICE
+                ]
+            ),
+            raiseOnError=False,
+        )
+        if rc == 0:
+            for l in stdout:
+                for k, v in RE_KEY_VALUE_MULTIPLE.findall(l):
+                    if k == 'PGDATA':
+                        return v
+        raise RuntimeError(_('Unable to detect PGDATA location'))
+
+    def getPGDATAAvailableSpace(
+        self,
+        pgdata,
+    ):
+        found = False
+        pd = pgdata
+        while not found:
+            if not os.path.exists(pd):
+                pd = os.path.dirname(pd)
+            else:
+                found = True
+        statvfs = os.statvfs(pd)
+        return statvfs.f_frsize * statvfs.f_bavail
+
     def getDBConfig(self, prefix, localhost_replacement=None):
         return (
             '{prefix}_DB_HOST="{host}"\n'
@@ -1369,6 +1448,158 @@ class OvirtUtils(base.Base):
             secured=_ind_env(self, DEK.SECURED),
             hostValidation=_ind_env(self, DEK.HOST_VALIDATION),
             jdbcUrl=self.getJdbcUrl(localhost_replacement),
+        )
+
+    def _setupOwnsDB(self):
+        # FIXME localhost is inappropriate in case of docker e.g
+        # we need a deterministic notion of local/remote pg_host in sense of
+        # 'we own postgres' or not.
+        return self.replaced_localhost(
+            localhost_replacement=None
+        ) == 'localhost'
+
+    def _HumanReadableSize(self, bytes):
+        size_in_mb = bytes / pow(2, 20)
+        return (
+            _('{size} MB').format(size=size_in_mb)
+            if size_in_mb < 1024
+            else _('{size:1.1f} GB').format(
+                size=size_in_mb/1024.0,
+            )
+        )
+
+    def DBMSUpgradeCustomizationHelper(self, which_db):
+        upgrade_approved_inplace = False
+        upgrade_approved_cleanupold = False
+
+        client_v = self.checkClientVersion()
+        server_v = self.checkServerVersion()
+
+        self.logger.warning(
+            _(
+                'This release requires PostgreSQL server {cv} but the '
+                '{db} database is currently hosted on PostgreSQL server {sv}'
+            ).format(
+                cv=client_v,
+                sv=server_v,
+                db=which_db,
+            )
+        )
+
+        if not self._setupOwnsDB:
+            self.logger.error(_(
+                'Please upgrade the PostgreSQL instance that serves the {db}'
+                'database to {v} and retry.\n'
+                'If the remote DBMS is on an EL7 system, install '
+                'PostgreSQL and the scl utility, and use\n'
+                '    postgresql-setup upgrade\n'
+                'to upgrade it on the EL7 system.\n'
+                'Otherwise please consult the documentation shipped with your '
+                'PostgreSQL distribution.'
+            ).format(
+                db=which_db,
+            ))
+            raise RuntimeError(
+                _(
+                    'Please upgrade {db} PostgreSQL '
+                    'server to {v} and retry.'
+                ).format(
+                    v=client_v,
+                    db=which_db,
+                )
+            )
+
+        instance_size = self.getInstanceSize()
+        pgdata = self.getPGDATA()
+        available_space = self.getPGDATAAvailableSpace(pgdata)
+        upgrade_approved = dialog.queryBoolean(
+            dialog=self.dialog,
+            name='UPGRADE_DBMS',
+            note=_(
+                'This tool can automatically upgrade PostgreSQL. '
+                'Automatically upgrade? (@VALUES@) [@DEFAULT@]: '
+            ),
+            prompt=True,
+            default=True,
+        )
+        if not upgrade_approved:
+            raise RuntimeError(
+                _(
+                    'Please upgrade {db} PostgreSQL '
+                    'server to {v} and retry.'
+                ).format(
+                    v=client_v,
+                    db=which_db,
+                )
+            )
+        upgrade_approved_inplace = dialog.queryBoolean(
+            dialog=self.dialog,
+            name='UPGRADE_DBMS_INPLACE',
+            note=_(
+                'The size of the PostgreSQL instance used by {db} '
+                'database is {i_s}.\n'
+                'The destination DB will be created under \'{pgdata}\' '
+                'where you currently have {a_s} available.\n'
+                'This tool can perform the DBMS upgrade:\n'
+                ' - copying the data files to the new instance\n'
+                ' - in-place hard-linking them\n'
+                'Upgrading in-place is faster and doesn\'t require '
+                '{i_s} free on the target directory, but '
+                'it cannot be automatically rolled-back on failures. '
+                'Please ensure you are able to restore your DBMS '
+                'instance using engine-backup or other means '
+                '(DB backup, FS backup, LVM snapshot).\n'
+                'The in-place upgrade has the data files of '
+                'the source instance on the same filesystem of the target '
+                'instance (hard-links).\n'
+                'Do you want to perform an in-place upgrade? '
+                '(@VALUES@) [@DEFAULT@]: '
+            ).format(
+                i_s=self._HumanReadableSize(instance_size),
+                a_s=self._HumanReadableSize(available_space),
+                pgdata=pgdata,
+                db=which_db,
+            ),
+            prompt=True,
+            default=False,
+        )
+        if upgrade_approved_inplace:
+            upgrade_approved_cleanupold = False
+            self.logger.warning(_(
+                'PostgreSQL will be upgraded in place, '
+                'automatic rollback on failure will not be possible.'
+            ))
+        else:
+            if instance_size > available_space:
+                raise RuntimeError(_(
+                    "Insufficient free space to migrate PostgreSQL: "
+                    "required {r}, available {a}"
+                ).format(
+                    r=self._HumanReadableSize(instance_size),
+                    a=self._HumanReadableSize(available_space),
+                ))
+            upgrade_approved_cleanupold = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='UPGRADE_DBMS_CLEANUPOLD',
+                note=_(
+                    'Do you want to automatically clean up the old data '
+                    'directory on success to reclaim its space ({s})? '
+                    '(@VALUES@) [@DEFAULT@]: '
+                ).format(
+                    s=self._HumanReadableSize(instance_size),
+                ),
+                prompt=True,
+                default=True,
+            )
+
+        self.logger.info(_(
+            'Any further action on the DB will be performed only '
+            'after PostgreSQL has been successfully upgraded to 9.5.'
+        ))
+        return (
+            upgrade_approved,
+            upgrade_approved_inplace,
+            upgrade_approved_cleanupold,
         )
 
 

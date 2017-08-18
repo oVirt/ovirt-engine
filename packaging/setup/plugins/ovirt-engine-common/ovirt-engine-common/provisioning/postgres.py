@@ -86,6 +86,9 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ProvisioningEnv.PG_AUTOVACUUM_MAINTENANCE_WORK_MEM,
             oengcommcons.Defaults.PG_PROV_AUTOVACUUM_MAINTENANCE_WORK_MEM
         )
-
+        self.environment.setdefault(
+            oengcommcons.ProvisioningEnv.OLD_POSTGRES_SERVICE,
+            oengcommcons.Defaults.DEFAULT_POSTGRES_PROVISIONING_SERVICE
+        )
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -23,6 +23,7 @@ from otopi import util
 
 from . import configuration
 from . import connection
+from . import dbmsupgrade
 from . import schema
 from . import vacuum
 
@@ -31,6 +32,7 @@ from . import vacuum
 def createPlugins(context):
     connection.Plugin(context=context)
     configuration.Plugin(context=context)
+    dbmsupgrade.Plugin(context=context)
     schema.Plugin(context=context)
     vacuum.Plugin(context=context)
 
