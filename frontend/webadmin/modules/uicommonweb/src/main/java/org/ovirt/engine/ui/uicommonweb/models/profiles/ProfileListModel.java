@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +99,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     }
 
     private void initProfileParentList(ProfileBaseModel<P, Q, R> model) {
-        model.getParentListModel().setItems(Arrays.<R> asList(getEntity()));
+        model.getParentListModel().setItems(Collections.singletonList(getEntity()));
         model.getParentListModel().setSelectedItem(getEntity());
         model.getParentListModel().setIsChangeable(false);
     }
