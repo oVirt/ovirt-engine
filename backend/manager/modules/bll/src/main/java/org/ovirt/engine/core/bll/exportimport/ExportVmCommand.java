@@ -10,10 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.ConcurrentChildCommandsExecutionCallback;
 import org.ovirt.engine.core.bll.DisableInPrepareMode;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -25,6 +28,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.disk.image.DisksFilter;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.storage.ovfstore.OvfUpdateProcessHelper;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmOverheadCalculator;
@@ -114,6 +118,10 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     @Inject
     private ClusterUtils clusterUtils;
+
+    @Inject
+    @Typed(ConcurrentChildCommandsExecutionCallback.class)
+    private Instance<ConcurrentChildCommandsExecutionCallback> callbackProvider;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -298,10 +306,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                 moveOrCopyAllImageGroups();
                 return null;
             });
-
-            if (!getReturnValue().getVdsmTaskIdList().isEmpty()) {
-                setSucceeded(true);
-            }
+            setSucceeded(true);
         }
     }
 
@@ -381,7 +386,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
 
             // copy the memory configuration (of the VM) image
             vdcRetValue = runInternalActionWithTasksContext(
@@ -391,7 +397,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
         }
     }
 
@@ -444,8 +451,8 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
             if (!vdcRetValue.getSucceeded()) {
                 throw new EngineException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
-
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+            // TODO: Currently REST-API doesn't support coco for async commands, remove when bug 1199011 fixed
+            getTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
         }
     }
 
@@ -553,6 +560,11 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
                 ovfUpdateProcessHelper.getVmImagesFromDb(getVm()));
         return ovfUpdateProcessHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return callbackProvider.get();
     }
 
     @Override
