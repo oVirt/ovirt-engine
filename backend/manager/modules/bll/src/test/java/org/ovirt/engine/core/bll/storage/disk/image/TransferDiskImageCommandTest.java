@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskImageDao;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,6 +43,9 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
     @Mock
     StorageDomainDao storageDomainDao;
 
+    @Mock
+    DiskImageDao diskImageDao;
+
     @Override
     protected TransferDiskImageCommand spyCommand() {
         return new TransferDiskImageCommand(new TransferDiskImageParameters(), null);
@@ -56,8 +60,10 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
         super.initSuppliedImage(transferImageCommand);
 
         DiskImage diskImage = new DiskImage();
+        diskImage.setActive(true);
+        diskImage.setImageId(transferImageCommand.getParameters().getImageId());
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.newGuid())));
-        doReturn(diskImage).when(diskDao).get(any());
+        doReturn(diskImage).when(diskImageDao).get(any());
 
         doReturn(diskValidator).when(getCommand()).getDiskValidator(any());
         doReturn(diskImagesValidator).when(getCommand()).getDiskImagesValidator(any());
@@ -143,7 +149,7 @@ public class TransferDiskImageCommandTest extends TransferImageCommandTest {
     public void testPermissionSubjectOnProvidedImage() {
         initializeSuppliedImage();
         assertEquals(getCommand().getPermissionCheckSubjects().get(0),
-                new PermissionSubject(getCommand().getParameters().getImageId(),
+                new PermissionSubject(getCommand().getParameters().getImageGroupID(),
                         VdcObjectType.Disk,
                         ActionGroup.EDIT_DISK_PROPERTIES));
     }

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActionReturnValue;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.TransferImageParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -93,7 +94,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         imageTransferDao.save(entity);
 
         if (isImageProvided()) {
-            handleImageIsReadyForTransfer(getParameters().getImageId());
+            handleImageIsReadyForTransfer();
         } else {
             if (getParameters().getTransferType() == TransferType.Download) {
                 failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
@@ -109,7 +110,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     }
 
     protected boolean isImageProvided() {
-        return !Guid.isNullOrEmpty(getParameters().getImageId());
+        return !Guid.isNullOrEmpty(getParameters().getImageId()) ||
+                !Guid.isNullOrEmpty(getParameters().getImageGroupID());
     }
 
     public void proceedCommandExecution(Guid childCmdId) {
@@ -123,7 +125,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         if (entity.getDiskId() != null) {
             // Make the disk id available for all states below.  If the transfer is still
             // initializing, this may be set below in the INITIALIZING block instead.
-            setImage((DiskImage) diskDao.get(entity.getDiskId()));
+            setImageGroupId(entity.getDiskId());
         }
 
         // Check conditions for pausing the transfer (ie UI is MIA)
@@ -208,20 +210,21 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         }
 
         Guid createdId = addDiskRetVal.getActionReturnValue();
-        handleImageIsReadyForTransfer(createdId);
+        // Saving disk id in the parameters in order to persist it in command_entities table
+        getParameters().setImageGroupID(createdId);
+        handleImageIsReadyForTransfer();
     }
 
-    protected void handleImageIsReadyForTransfer(Guid imageGuid) {
-        DiskImage image = (DiskImage) diskDao.get(imageGuid);
+    protected void handleImageIsReadyForTransfer() {
+        DiskImage image = getDiskImage();
         Guid domainId = image.getStorageIds().get(0);
 
         getParameters().setStorageDomainId(domainId);
-        getParameters().setImageId(imageGuid);
         getParameters().setDestinationImageId(image.getImageId());
 
         // ovirt-imageio-daemon must know the boundaries of the target image for writing permissions.
         if (getParameters().getTransferSize() == 0) {
-            getParameters().setTransferSize(image.getSize());
+            getParameters().setTransferSize(getTransferSize(image, domainId));
         }
 
         persistCommand(getParameters().getParentCommand(), true);
@@ -231,9 +234,12 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         log.info("Successfully added {} for image transfer command '{}'",
                 getTransferDescription(), getCommandId());
 
-        ImageTransfer updates = new ImageTransfer();
-        updates.setDiskId(imageGuid);
-        updateEntity(updates);
+        // ImageGroup is empty when downloading a disk snapshot
+        if (!Guid.isNullOrEmpty(getParameters().getImageGroupID())) {
+            ImageTransfer updates = new ImageTransfer();
+            updates.setDiskId(getParameters().getImageGroupID());
+            updateEntity(updates);
+        }
 
         // The image will remain locked until the transfer command has completed.
         lockImage();
@@ -244,6 +250,17 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
                 + " for image transfer command '{}'", getCommandId());
 
         resetPeriodicPauseLogTime(0);
+    }
+
+    private long getTransferSize(DiskImage image, Guid domainId) {
+        if (getParameters().getTransferType() == TransferType.Download) {
+            DiskImage imageInfoFromVdsm = imagesHandler.getVolumeInfoFromVdsm(
+                    image.getStoragePoolId(), domainId, image.getId(), image.getImageId());
+            return imageInfoFromVdsm.getApparentSizeInBytes();
+        } else {
+            // Upload
+            return getDiskImage().getSize();
+        }
     }
 
     private void handleResuming() {
@@ -300,21 +317,23 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             if (getParameters().getTransferType() == TransferType.Download) {
                 unLockImage();
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
+                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
             }
             // We want to use the transferring vds for image actions for having a coherent log when transferring.
             else if (verifyImage(transferingVdsId)) {
                 setVolumeLegalityInStorage(LEGAL_IMAGE);
-                if (getImage().getVolumeFormat().equals(VolumeFormat.COW)) {
+                if (getDiskImage().getVolumeFormat().equals(VolumeFormat.COW)) {
                     setQcowCompat(getImage().getImage(),
                             getStoragePool().getId(),
-                            getImage().getImage().getDiskId(),
-                            getImage().getImageId(),
+                            getDiskImage().getId(),
+                            getDiskImage().getImageId(),
                             getStorageDomainId(),
                             transferingVdsId);
                     imageDao.update(getImage().getImage());
                 }
                 unLockImage();
                 updateEntityPhase(ImageTransferPhase.FINISHED_SUCCESS);
+                setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_SUCCESS);
             } else {
                 setImageStatus(ImageStatus.ILLEGAL);
                 updateEntityPhase(ImageTransferPhase.FINALIZING_FAILURE);
@@ -329,8 +348,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         ImageActionsVDSCommandParameters parameters =
                 new ImageActionsVDSCommandParameters(transferingVdsId, getStoragePool().getId(),
                         getStorageDomainId(),
-                        getImage().getImage().getDiskId(),
-                        getImage().getImageId());
+                        getDiskImage().getId(),
+                        getDiskImage().getImageId());
 
         try {
             // As we currently support a single volume image, we only need to verify that volume.
@@ -350,6 +369,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         setImageStatus(getParameters().getTransferType() == TransferType.Upload ?
                 ImageStatus.ILLEGAL : ImageStatus.OK);
         updateEntityPhase(ImageTransferPhase.FINISHED_FAILURE);
+        setAuditLogTypeFromPhase(ImageTransferPhase.FINISHED_FAILURE);
     }
 
     private void handleFinishedSuccess() {
@@ -441,7 +461,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return false;
         }
 
-        if (!setVolumeLegalityInStorage(ILLEGAL_IMAGE)) {
+        if (getParameters().getTransferType() == TransferType.Upload &&
+                !setVolumeLegalityInStorage(ILLEGAL_IMAGE)) {
             return false;
         }
 
@@ -486,8 +507,8 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
         SetVolumeLegalityVDSCommandParameters parameters =
                 new SetVolumeLegalityVDSCommandParameters(getStoragePool().getId(),
                         getStorageDomainId(),
-                        getImage().getImage().getDiskId(),
-                        getImage().getImageId(),
+                        getDiskImage().getId(),
+                        getDiskImage().getImageId(),
                         legal);
         try {
             runVdsCommand(VDSCommandType.SetVolumeLegality, parameters);
@@ -504,16 +525,15 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
 
     @Override
     protected boolean validate() {
-        Guid imageId = getParameters().getImageId();
         if (isImageProvided()) {
-            return validateImageTransfer(imageId);
+            return validateImageTransfer();
         } else if (getParameters().getTransferType() == TransferType.Download) {
             return failValidation(EngineMessage.ACTION_TYPE_FAILED_IMAGE_NOT_SPECIFIED_FOR_DOWNLOAD);
         }
         return validateCreateImage();
     }
 
-    protected abstract boolean validateImageTransfer(Guid imageId);
+    protected abstract boolean validateImageTransfer();
 
     protected abstract boolean validateCreateImage();
 
@@ -727,6 +747,16 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     }
 
     @Override
+    protected void endSuccessfully() {
+        if (getParameters().getTransferType() == TransferType.Upload) {
+            // Update image data in DB, set Qcow Compat, etc
+            // (relevant only for upload)
+            super.endSuccessfully();
+        }
+        setSucceeded(true);
+    }
+
+    @Override
     protected void endWithFailure() {
         if (getParameters().getTransferType() == TransferType.Upload) {
             // Do rollback only for upload
@@ -738,5 +768,10 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
     @Override
     public CommandCallback getCallback() {
         return new TransferImageCommandCallback();
+    }
+
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Command);
     }
 }

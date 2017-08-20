@@ -18,6 +18,7 @@ public class DiskImage extends DiskImageBase {
     private Date lastModifiedDate;
     private List<String> storagesNames;
     private long actualSizeInBytes;
+    private long apparentSizeInBytes;
     private int readRateFromDiskImageDynamic;
     private int writeRateFromDiskImageDynamic;
 
@@ -122,6 +123,14 @@ public class DiskImage extends DiskImageBase {
 
     public boolean hasActualSize() {
         return true;
+    }
+
+    public long getApparentSizeInBytes() {
+        return apparentSizeInBytes;
+    }
+
+    public void setApparentSizeInBytes(long apparentSizeInBytes) {
+        this.apparentSizeInBytes = apparentSizeInBytes;
     }
 
     public int getReadRate() {

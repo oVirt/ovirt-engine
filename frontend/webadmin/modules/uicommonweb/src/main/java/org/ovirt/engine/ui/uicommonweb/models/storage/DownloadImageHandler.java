@@ -46,7 +46,7 @@ public class DownloadImageHandler {
     private TransferDiskImageParameters createInitParams() {
         TransferDiskImageParameters parameters = new TransferDiskImageParameters();
         parameters.setTransferType(TransferType.Download);
-        parameters.setImageId(diskImage.getId());
+        parameters.setImageGroupID(diskImage.getId());
         parameters.setTransferSize(diskImage.getActualSizeInBytes());
         String fileExtension = diskImage.getVolumeFormat() == VolumeFormat.COW ?
                 ".qcow2" : ".raw"; //$NON-NLS-1$ //$NON-NLS-2$

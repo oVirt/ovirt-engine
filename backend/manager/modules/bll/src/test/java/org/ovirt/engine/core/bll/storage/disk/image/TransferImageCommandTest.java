@@ -84,7 +84,7 @@ public class TransferImageCommandTest extends BaseCommandTest{
         readyImage.setStorageIds(sdList);
         readyImage.setSize(1024L);
 
-        doReturn(readyImage).when(diskDao).get(readyImage.getImageId());
+        doReturn(readyImage).when(transferImageCommand).getDiskImage();
         return readyImage;
     }
 
@@ -102,10 +102,10 @@ public class TransferImageCommandTest extends BaseCommandTest{
     public void testValidationCallOnSuppliedImage() {
         Guid imageId = Guid.newGuid();
         transferImageCommand.getParameters().setImageId(imageId);
-        doReturn(true).when(transferImageCommand).validateImageTransfer(imageId);
+        doReturn(true).when(transferImageCommand).validateImageTransfer();
 
         transferImageCommand.validate();
-        verify(transferImageCommand, times(1)).validateImageTransfer(imageId);
+        verify(transferImageCommand, times(1)).validateImageTransfer();
     }
 
     @Test
@@ -126,13 +126,13 @@ public class TransferImageCommandTest extends BaseCommandTest{
         verify(transferImageCommand, times(1)).createImage();
 
         // Make sure that a transfer session won't start yet.
-        verify(transferImageCommand, never()).handleImageIsReadyForTransfer(any());
+        verify(transferImageCommand, never()).handleImageIsReadyForTransfer();
     }
 
     @Test
     public void testNotCreatingImageIfSupplied() {
         Guid suppliedImageId = Guid.newGuid();
-        doNothing().when(transferImageCommand).handleImageIsReadyForTransfer(suppliedImageId);
+        doNothing().when(transferImageCommand).handleImageIsReadyForTransfer();
         transferImageCommand.getParameters().setImageId(suppliedImageId);
         transferImageCommand.executeCommand();
 
@@ -140,7 +140,7 @@ public class TransferImageCommandTest extends BaseCommandTest{
         verify(transferImageCommand, never()).createImage();
 
         // Make sure that a transfer session will start.
-        verify(transferImageCommand, times(1)).handleImageIsReadyForTransfer(suppliedImageId);
+        verify(transferImageCommand, times(1)).handleImageIsReadyForTransfer();
     }
 
     @Test
@@ -159,9 +159,8 @@ public class TransferImageCommandTest extends BaseCommandTest{
     public void testParamsUpdated() {
         DiskImage readyImage = initReadyImageForUpload();
 
-        transferImageCommand.handleImageIsReadyForTransfer(readyImage.getImageId());
+        transferImageCommand.handleImageIsReadyForTransfer();
 
-        assertTrue(transferImageCommand.getParameters().getImageId().equals(readyImage.getImageId()));
         assertTrue(transferImageCommand.getParameters().getStorageDomainId().equals(readyImage.getStorageIds().get(0)));
         assertTrue(transferImageCommand.getParameters().getTransferSize() == readyImage.getSize());
     }
@@ -173,15 +172,11 @@ public class TransferImageCommandTest extends BaseCommandTest{
         TransferDiskImageParameters params = spy(new TransferDiskImageParameters());
         doReturn(params).when(transferImageCommand).getParameters();
 
-        transferImageCommand.handleImageIsReadyForTransfer(readyImage.getImageId());
+        transferImageCommand.handleImageIsReadyForTransfer();
 
         // Verify that persistCommand is being called after each of the params changes.
         InOrder inOrder = inOrder(params, transferImageCommand);
         inOrder.verify(params).setStorageDomainId(any());
-        inOrder.verify(transferImageCommand).persistCommand(any(), anyBoolean());
-
-        inOrder = inOrder(params, transferImageCommand);
-        inOrder.verify(params).setImageId(any());
         inOrder.verify(transferImageCommand).persistCommand(any(), anyBoolean());
 
         inOrder = inOrder(params, transferImageCommand);

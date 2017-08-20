@@ -66,6 +66,9 @@ public class GetVolumeInfoVDSCommand<P extends GetVolumeInfoVDSCommandParameters
             if (struct.containsKey("truesize")) {
                 newImage.setActualSizeInBytes(Long.parseLong(struct.get("truesize").toString()));
             }
+            if (struct.containsKey("apparentsize")) {
+                newImage.setApparentSizeInBytes(Long.parseLong(struct.get("apparentsize").toString()));
+            }
             if (struct.containsKey("ctime")) {
                 long secsSinceEpoch = Long.parseLong(struct.get("ctime").toString());
                 newImage.setCreationDate(makeDTFromCTime(secsSinceEpoch));
