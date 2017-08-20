@@ -47,7 +47,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
 
     @Override
     protected void executeCommand() {
-        if (getStoragePool() != null) {
+        if (isAttachedStorageDomain()) {
             try {
                 // if master try to reconstruct
                 if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
@@ -76,7 +76,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
 
         storageDomainDao.remove(getStorageDomain().getId());
 
-        if (getStoragePool() != null) {
+        if (isAttachedStorageDomain()) {
             // if iso reset path for pool
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
                 // todo: when iso in multiple pools will be implemented, we
@@ -89,6 +89,10 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
             }
         }
         setSucceeded(true);
+    }
+
+    private boolean isAttachedStorageDomain() {
+        return getStoragePool() != null;
     }
 
     @Override
@@ -105,7 +109,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                         && (getStorageDomain().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || checkStorageDomainStatusNotEqual(StorageDomainStatus.Active));
 
         if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.Master
-                && getStoragePool() != null) {
+                && isAttachedStorageDomain()) {
             if (electNewMaster() == null) {
                 returnValue = false;
                 addValidationMessage(EngineMessage.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
