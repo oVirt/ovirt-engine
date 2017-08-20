@@ -46,7 +46,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
 
     @Override
     protected void executeCommand() {
-        if (isAttachedStorageDomain()) {
+        if (isAttachedStorageDomain() && hasRunningHostsInPool()) {
             try {
                 // if master try to reconstruct
                 if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
@@ -55,7 +55,6 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                     tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                     runInternalAction(ActionType.ReconstructMasterDomain, tempVar);
                 }
-                releaseStorageDomainMacPool(getVmsOnlyOnStorageDomain());
 
                 // try to force detach first
                 DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(
@@ -68,8 +67,15 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                         ex.getMessage());
                 log.debug("Exception", ex);
             }
+        } else {
+            log.info("Avoid running host operations like reconstruct/detach on force remove for storage domain '{}'." +
+                    "Storage domain attached to pool: '{}'" +
+                    "Active Hosts exists in DC: '{}'",
+                    getStorageDomain().getStorageName(),
+                    isAttachedStorageDomain(),
+                    hasRunningHostsInPool());
         }
-
+        releaseStorageDomainMacPool(getVmsOnlyOnStorageDomain());
         storageHelperDirector.getItem(getStorageDomain().getStorageType())
                 .storageDomainRemoved(getStorageDomain().getStorageStaticData());
 
@@ -88,6 +94,10 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
             }
         }
         setSucceeded(true);
+    }
+
+    private boolean hasRunningHostsInPool() {
+        return getAllRunningVdssInPool().size() > 0;
     }
 
     private boolean isAttachedStorageDomain() {
