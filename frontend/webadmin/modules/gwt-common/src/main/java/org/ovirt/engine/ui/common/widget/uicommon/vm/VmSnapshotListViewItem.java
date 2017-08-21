@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -28,6 +29,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.PatternflyIconType;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
+import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -48,6 +50,7 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
     private static final CommonApplicationTemplates templates = AssetProvider.getTemplates();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
     private static final FullDateTimeRenderer dateRenderer = new FullDateTimeRenderer();
+    private static final DiskSizeRenderer<Long> sizeRenderer = new DiskSizeRenderer<>(SizeConverter.SizeUnit.BYTES);
 
     private static final FullDateTimeRenderer fullDateTimeRenderer = new FullDateTimeRenderer();
 
@@ -142,9 +145,9 @@ public class VmSnapshotListViewItem extends PatternflyListViewItem<Snapshot> {
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.aliasDisk()),
                     image.getDiskAlias(), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.provisionedSizeDisk()),
-                    String.valueOf(image.getSize()), dl);
+                    String.valueOf(sizeRenderer.render(image.getSize())), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.sizeDisk()),
-                    String.valueOf(image.getActualSizeInBytes()), dl);
+                    String.valueOf(sizeRenderer.render(image.getActualSizeInBytes())), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.allocationDisk()),
                     String.valueOf(VolumeType.forValue(image.getVolumeType().getValue())), dl);
             addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.interfaceDisk()), getInterface(image), dl);
