@@ -633,6 +633,8 @@ public interface CommonApplicationConstants extends Constants {
 
     String portMirroringEnabled();
 
+    String portMirroringDisabled();
+
     String mbps();
 
     String bytes();

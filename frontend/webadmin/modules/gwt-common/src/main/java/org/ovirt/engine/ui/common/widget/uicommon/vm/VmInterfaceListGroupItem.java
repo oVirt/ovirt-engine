@@ -87,8 +87,18 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
         addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macInterface()), networkInterface.getMacAddress(), dl);
         addDetailItem(templates.sub(constants.speedInterface(), constants.mbps()),
                 String.valueOf(networkInterface.getSpeed()), dl);
+        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.portMirroring()),
+                renderPortMirroring(networkInterface.isPortMirroring()), dl);
         column.getElement().appendChild(dl);
         return createItemContainerPanel(content);
+    }
+
+    private String renderPortMirroring(boolean portMirroring) {
+        if (portMirroring) {
+            return constants.portMirroringEnabled();
+        } else {
+            return constants.portMirroringDisabled();
+        }
     }
 
     private String renderLinkState(boolean linkState) {
