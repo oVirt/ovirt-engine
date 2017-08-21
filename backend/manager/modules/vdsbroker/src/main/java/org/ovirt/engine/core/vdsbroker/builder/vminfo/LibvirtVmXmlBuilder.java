@@ -132,6 +132,8 @@ public class LibvirtVmXmlBuilder {
     private Guid hostId;
     private MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier;
 
+    private Map<String, Map<String, Object>> vnicMetadata;
+
     public LibvirtVmXmlBuilder(
             Map<String, Object> createInfo,
             VM vm,
@@ -147,6 +149,7 @@ public class LibvirtVmXmlBuilder {
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         payloadIndex = -1;
         cdRomIndex = -1;
+        vnicMetadata = new HashMap<>();
         hostDevicesSupplier = new MemoizingSupplier<>(() -> {
             return hostDeviceDao.getHostDevicesByHostId(hostId)
                     .stream()
@@ -174,7 +177,6 @@ public class LibvirtVmXmlBuilder {
         writeIoThreads();
         writeMaxMemory();
         writevCpu();
-        writeMetadata();
         writeSystemInfo();
         writeClock();
         writePowerEvents();
@@ -185,6 +187,7 @@ public class LibvirtVmXmlBuilder {
         writeDevices();
         // note that this must be called after writeDevices to get the serial console, if exists
         writeOs();
+        writeMetadata();
         return writer.getStringXML();
     }
 
@@ -558,6 +561,20 @@ public class LibvirtVmXmlBuilder {
         writer.writeEndElement();
     }
 
+    private void writeNetworkInterfaceMetadata() {
+        vnicMetadata.forEach((mac, data) -> {
+            writer.writeStartElement("device");
+            writer.writeAttributeString("mac_address", mac);
+            List<String> portMirroring = (List<String>) data.get("portMirroring");
+            if (portMirroring != null) {
+                writer.writeStartElement("portMirroring");
+                portMirroring.forEach(network -> writer.writeElement("network", network));
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+        });
+    }
+
     private void writeQosMetadata() {
         writer.writeStartElement(OVIRT_TUNE_URI, "qos");
         writer.writeEndElement();
@@ -568,6 +585,7 @@ public class LibvirtVmXmlBuilder {
         writeMinGuaranteedMemoryMetadata();
         writeClusterVersionMetadata();
         writeVmCustomMetadata();
+        writeNetworkInterfaceMetadata();
         writer.writeEndElement();
     }
 
@@ -1780,6 +1798,13 @@ public class LibvirtVmXmlBuilder {
 
         Map<String, Object> profileData = new HashMap<>();
         vmInfoBuildUtils.addProfileDataToNic(profileData, vm, device, nic);
+
+        List<String> portMirroring = (List<String>) profileData.get(VdsProperties.PORT_MIRRORING);
+        if (portMirroring != null && !portMirroring.isEmpty()) {
+            // store port mirroring in the metadata
+            vnicMetadata.computeIfAbsent(nic.getMacAddress(), mac -> new HashMap<>());
+            vnicMetadata.get(nic.getMacAddress()).put("portMirroring", portMirroring);
+        }
 
         writer.writeStartElement("bandwidth");
         @SuppressWarnings("unchecked")
