@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,6 +22,7 @@ public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends 
                 .collect(Collectors.toList()));
         proceedProxyReturnValue();
         Map<String, Object>[] struct = fullVmListReturn.vmList;
+        Arrays.stream(struct).forEach(this::changeScsiDeviceToVirtioScsi);
         setReturnValue(struct);
     }
 
@@ -37,5 +39,20 @@ public class FullListVDSCommand<P extends FullListVDSCommandParameters> extends 
     @Override
     protected boolean getIsPrintReturnValue() {
         return false;
+    }
+
+    /**
+     * Changes the name of 'scsi' controller to 'virtio-scsi' which engine expects.
+     */
+    private void changeScsiDeviceToVirtioScsi(Map<String, Object> vmStruct) {
+        Arrays.stream((Object[]) vmStruct.get(VdsProperties.Devices))
+                .map(o -> (Map<String, Object>)o)
+                .filter(device -> VdsProperties.Controller.equals(device.get(VdsProperties.Type)))
+                .filter(device -> VdsProperties.Scsi.equals(device.get(VdsProperties.Device)))
+                .filter(device -> VdsProperties.VirtioScsi.equals(device.get(VdsProperties.Model)))
+                .forEach(device -> {
+                    device.put(VdsProperties.Device, VdsProperties.VirtioScsi);
+                    device.remove(VdsProperties.Model);
+                });
     }
 }
