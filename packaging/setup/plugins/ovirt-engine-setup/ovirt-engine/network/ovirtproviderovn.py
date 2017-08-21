@@ -493,11 +493,18 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-    def _execute_command(self, command, error_message, manual_commands=None):
+    def _execute_command(
+        self,
+        command,
+        error_message,
+        manual_commands=None,
+        env=None,
+    ):
         if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             rc, stdout, stderr = self.execute(
                 command,
-                raiseOnError=False
+                raiseOnError=False,
+                env=env,
             )
             if rc != 0:
                 self.logger.error(error_message)
@@ -695,7 +702,7 @@ class Plugin(plugin.PluginBase):
     def _upate_external_providers_keystore(self):
         config = configfile.ConfigFile([
             oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_DEFAULTS,
-            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_SSO
+            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
         ])
         truststore = config.get(
             'ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE'
@@ -703,7 +710,7 @@ class Plugin(plugin.PluginBase):
         truststore_password = config.get(
             'ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD'
         )
-        command_parts = (
+        command = (
             'keytool',
             '-import',
             '-alias',
@@ -713,12 +720,8 @@ class Plugin(plugin.PluginBase):
             '-file',
             oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
             '-noprompt',
-            '-storepass',
-        )
-        command = command_parts + (truststore_password, )
-        manual_keytool_command = (
-            command_parts +
-            ('"${ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD}"', )
+            '-storepass:env',
+            'pass',
         )
         self._execute_command(
             command,
@@ -732,8 +735,17 @@ class Plugin(plugin.PluginBase):
                     FileLocations.OVIRT_ENGINE_DATADIR +
                     '/bin/engine-prolog.sh'
                 ),
-                manual_keytool_command,
-            )
+                (
+                    (
+                        'export pass='
+                        '"${ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD}"'
+                    ),
+                ),
+                command,
+            ),
+            env={
+                'pass': truststore_password,
+            },
         )
 
     def _is_provider_installed(self):
