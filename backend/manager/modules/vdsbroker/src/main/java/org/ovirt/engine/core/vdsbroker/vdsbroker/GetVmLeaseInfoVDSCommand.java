@@ -19,9 +19,10 @@ public class GetVmLeaseInfoVDSCommand<T extends VmLeaseVDSParameters> extends Ir
                 getParameters().getLeaseId().toString(),
                 getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        Map<String, String> leaseInfo = result.getLeaseInfo();
+        Map<String, Object> leaseInfo = result.getLeaseInfo();
         leaseInfo.remove(VdsProperties.VmLeaseId);
         leaseInfo.remove(VdsProperties.VmLeaseSdId);
+        leaseInfo.forEach((key, value) -> leaseInfo.put(key, String.valueOf(value)));
         setReturnValue(leaseInfo);
     }
 

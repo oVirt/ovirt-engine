@@ -8,19 +8,19 @@ public class LeaseInfoReturn {
     private static final String INFO = "info";
 
     private Status status;
-    private Map<String, String> leaseInfo = Collections.emptyMap();
+    private Map<String, Object> leaseInfo = Collections.emptyMap();
 
     @SuppressWarnings("unchecked")
     public LeaseInfoReturn(Map<String, Object> innerMap) {
         status = new Status((Map<String, Object>) innerMap.get(STATUS));
-        leaseInfo = (Map<String, String>) innerMap.get(INFO);
+        leaseInfo = (Map<String, Object>) innerMap.get(INFO);
     }
 
     public Status getStatus() {
         return status;
     }
 
-    public Map<String, String> getLeaseInfo() {
+    public Map<String, Object> getLeaseInfo() {
         return leaseInfo;
     }
 }

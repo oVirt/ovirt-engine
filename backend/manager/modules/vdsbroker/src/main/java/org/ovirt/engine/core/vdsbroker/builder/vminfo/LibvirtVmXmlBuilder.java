@@ -814,7 +814,7 @@ public class LibvirtVmXmlBuilder {
 
         writer.writeStartElement("target");
         Map<String, String> leaseInfo = vm.getStaticData().getLeaseInfo();
-        writer.writeAttributeString("offset", String.valueOf(leaseInfo.get(VdsProperties.VmLeaseOffset)));
+        writer.writeAttributeString("offset", leaseInfo.get(VdsProperties.VmLeaseOffset));
         writer.writeAttributeString("path", leaseInfo.get(VdsProperties.VmLeasePath));
         writer.writeEndElement();
 
