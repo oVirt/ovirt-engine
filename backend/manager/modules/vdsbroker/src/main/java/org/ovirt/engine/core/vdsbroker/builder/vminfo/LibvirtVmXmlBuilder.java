@@ -125,19 +125,33 @@ public class LibvirtVmXmlBuilder {
     private int cdRomIndex;
     private VmDevice runOncePayload;
     private boolean volatileRun;
+    private Map<Guid, String> passthroughVnicToVfMap;
 
     private Map<String, Object> createInfo;
     private VM vm;
     private Guid hostId;
+    private MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier;
 
-    public LibvirtVmXmlBuilder(Map<String, Object> createInfo, VM vm, Guid hostId, VmDevice runOncePayload, boolean volatileRun) {
+    public LibvirtVmXmlBuilder(
+            Map<String, Object> createInfo,
+            VM vm,
+            Guid hostId,
+            VmDevice runOncePayload,
+            boolean volatileRun,
+            Map<Guid, String> passthroughVnicToVfMap) {
         this.createInfo = createInfo;
         this.vm = vm;
         this.runOncePayload = runOncePayload;
         this.volatileRun = volatileRun;
         this.hostId = hostId;
+        this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         payloadIndex = -1;
         cdRomIndex = -1;
+        hostDevicesSupplier = new MemoizingSupplier<>(() -> {
+            return hostDeviceDao.getHostDevicesByHostId(hostId)
+                    .stream()
+                    .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device));
+        });
     }
 
     @PostConstruct
@@ -605,11 +619,6 @@ public class LibvirtVmXmlBuilder {
         Map<DiskInterface, Integer> controllerIndexMap =
                 ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new GetControllerIndices()).returnValue();
         int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
-        MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier = new MemoizingSupplier<>(() -> {
-            return hostDeviceDao.getHostDevicesByHostId(hostId)
-                    .stream()
-                    .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device));
-        });
 
         List<VmDevice> interfaceDevices = new ArrayList<>();
         List<VmDevice> diskDevices = new ArrayList<>();
@@ -1730,9 +1739,14 @@ public class LibvirtVmXmlBuilder {
                 writer.writeEndElement();
                 writer.writeEndElement();
             }
-//            String vfDeviceName = vm.getPassthroughVnicToVfMap().get(nic.getId());
-//            writer.writeStartElement("$SOURCE:" + vfDeviceName+"$");
-//            writer.writeEndElement();
+            writer.writeStartElement("source");
+            writer.writeStartElement("address");
+            String vfDeviceName = passthroughVnicToVfMap.get(nic.getId());
+            Map<String, String> sourceAddress = hostDevicesSupplier.get().get(vfDeviceName).getAddress();
+            sourceAddress.put("type", "pci");
+            sourceAddress.entrySet().forEach(e -> writer.writeAttributeString(e.getKey(), e.getValue()));
+            writer.writeEndElement();
+            writer.writeEndElement();
             break;
         }
 
