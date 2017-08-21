@@ -8,7 +8,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVnicProfileModel extends VnicProfileModel {
 
@@ -16,7 +15,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
             boolean customPropertiesVisible,
             Guid dcId) {
         super(sourceModel, customPropertiesVisible, dcId, null);
-        setTitle(ConstantsManager.getInstance().getConstants().vnicProfileTitle());
+        setTitle(constants.vnicProfileTitle());
         setHelpTag(HelpTag.new_vnic_profile);
         setHashName("new_vnic_profile"); //$NON-NLS-1$
         getPortMirroring().setEntity(false);

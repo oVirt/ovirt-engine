@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class VnicProfileModel extends Model {
 
@@ -61,6 +62,7 @@ public abstract class VnicProfileModel extends Model {
     private final boolean customPropertiesVisible;
     private final Guid defaultQosId;
     private NetworkQoS defaultQos;
+    protected UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private static final NetworkFilter EMPTY_FILTER = new NetworkFilter();
 
@@ -191,12 +193,8 @@ public abstract class VnicProfileModel extends Model {
             getPassthrough().setIsChangeable(passthroughAndPortMirroringAllowed);
 
             if (!passthroughAndPortMirroringAllowed) {
-                getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                    .getConstants()
-                    .portMirroringNotSupportedExternalNetworks());
-                getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
-                    .getConstants()
-                    .passthroughNotSupportedExternalNetworks());
+                getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotSupportedExternalNetworks());
+                getPassthrough().setChangeProhibitionReason(constants.passthroughNotSupportedExternalNetworks());
             }
         });
 
@@ -397,21 +395,15 @@ public abstract class VnicProfileModel extends Model {
     private void initPassthroughChangeListener() {
         getPassthrough().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (getPassthrough().getEntity()) {
-                getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                        .getConstants()
-                        .portMirroringNotChangedIfPassthrough());
+                getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotChangedIfPassthrough());
                 getPortMirroring().setIsChangeable(false);
                 getPortMirroring().setEntity(false);
 
-                getNetworkQoS().setChangeProhibitionReason(ConstantsManager.getInstance()
-                        .getConstants()
-                        .networkQosNotChangedIfPassthrough());
+                getNetworkQoS().setChangeProhibitionReason(constants.networkQosNotChangedIfPassthrough());
                 getNetworkQoS().setIsChangeable(false);
                 getNetworkQoS().setSelectedItem(NetworkQoSModel.EMPTY_QOS);
 
-                getNetworkFilter().setChangeProhibitionReason(ConstantsManager.getInstance()
-                        .getConstants()
-                        .networkFilterNotChangedIfPassthrough());
+                getNetworkFilter().setChangeProhibitionReason(constants.networkFilterNotChangedIfPassthrough());
                 getNetworkFilter().setIsChangeable(false);
                 getNetworkFilter().setSelectedItem(EMPTY_FILTER);
                 getMigratable().setIsChangeable(true);

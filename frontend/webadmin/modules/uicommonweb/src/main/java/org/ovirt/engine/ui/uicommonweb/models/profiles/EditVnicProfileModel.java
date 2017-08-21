@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditVnicProfileModel extends VnicProfileModel {
 
@@ -23,7 +22,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
             Guid dcId,
             boolean customPropertiesVisible) {
         super(sourceModel, customPropertiesVisible, dcId, profile.getNetworkQosId());
-        setTitle(ConstantsManager.getInstance().getConstants().vnicProfileTitle());
+        setTitle(constants.vnicProfileTitle());
         setHelpTag(HelpTag.edit_vnic_profile);
         setHashName("edit_vnic_profile"); //$NON-NLS-1$
 
@@ -66,14 +65,10 @@ public class EditVnicProfileModel extends VnicProfileModel {
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     Collection<VM> vms = returnValue.getReturnValue();
                     if (vms != null && !vms.isEmpty()) {
-                        getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                .getConstants()
-                                .portMirroringNotChangedIfUsedByVms());
+                        getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotChangedIfUsedByVms());
                         getPortMirroring().setIsChangeable(false);
 
-                        getPassthrough().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                .getConstants()
-                                .passthroughNotChangedIfUsedByVms());
+                        getPassthrough().setChangeProhibitionReason(constants.passthroughNotChangedIfUsedByVms());
                         getPassthrough().setIsChangeable(false);
                     }
                     stopProgress();
