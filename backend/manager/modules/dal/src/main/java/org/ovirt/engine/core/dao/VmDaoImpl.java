@@ -304,6 +304,13 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                         .addValue("disk_profile_ids", createArrayOfUUIDs(diskProfileIds)));
     }
 
+    @Override
+    public List<VM> getAllPinnedToHost(Guid hostId) {
+        return getCallsHandler().executeReadList("GetVmsPinnedToHost",
+                vmRowMapper,
+                getCustomMapSqlParameterSource().addValue("host_id", hostId));
+    }
+
     static final RowMapper<VM> vmRowMapper = (rs, rowNum) -> {
         VM entity = new VM();
         entity.setStaticData(VmStaticDaoImpl.getRowMapper().mapRow(rs, rowNum));

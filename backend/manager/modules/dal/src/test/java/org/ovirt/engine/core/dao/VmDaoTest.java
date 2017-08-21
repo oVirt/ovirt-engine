@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -606,6 +607,17 @@ public class VmDaoTest extends BaseDaoTestCase {
         assertEquals(count3, dao.getVmsByOrigins(list3).size());
 
         dao.remove(heVmId);
+    }
+
+    @Test
+    public void testGetVmsPinnedToHost() {
+        List<VM> vms = dao.getAllPinnedToHost(FixturesTool.VDS_RHEL6_NFS_SPM);
+
+        assertNotNull(vms);
+        assertThat(vms)
+                .hasSize(2)
+                .extracting(VM::getId)
+                .contains(FixturesTool.VM_RHEL5_POOL_57, FixturesTool.VM_RHEL5_POOL_52);
     }
 
 }

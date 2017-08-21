@@ -2172,3 +2172,14 @@ BEGIN
     WHERE run_on_vds = v_vds_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetVmsPinnedToHost(v_host_id UUID)
+RETURNS SETOF vms STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vms.*
+    FROM vms
+        JOIN vm_host_pinning_map pin ON pin.vm_id = vms.vm_guid
+    WHERE pin.vds_id = v_host_id;
+END; $procedure$
+LANGUAGE plpgsql;

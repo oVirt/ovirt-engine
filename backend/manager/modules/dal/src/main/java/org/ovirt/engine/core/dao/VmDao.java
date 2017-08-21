@@ -340,4 +340,12 @@ public interface VmDao extends Dao {
      * Get all vms with given origins
      */
     List<VM> getVmsByOrigins(List<OriginType> origins);
+
+    /**
+     * Retrieves all VMS that are pinned to the specified host
+     *
+     * @param hostId Id of the host
+     * @return list of VMs
+     */
+    List<VM> getAllPinnedToHost(Guid hostId);
 }
