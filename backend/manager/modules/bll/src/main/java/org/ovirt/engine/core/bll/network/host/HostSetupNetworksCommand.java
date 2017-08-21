@@ -252,34 +252,35 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             return;
         }
 
-        int timeout = getSetupNetworksTimeout();
-        FutureVDSCall<VDSReturnValue> setupNetworksTask = invokeSetupNetworksCommand(timeout);
+        try (EngineLock monitoringLock = acquireMonitorLock()) {
+            int timeout = getSetupNetworksTimeout();
+            FutureVDSCall<VDSReturnValue> setupNetworksTask = invokeSetupNetworksCommand(timeout);
 
-        try {
-            VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
-            if (retVal != null) {
-                if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().rollbackOnFailure()) {
-                    throw new EngineException(EngineError.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
-                }
+            try {
+                VDSReturnValue retVal = setupNetworksTask.get(timeout, TimeUnit.SECONDS);
+                if (retVal != null) {
+                    if (!retVal.getSucceeded() && retVal.getVdsError() == null && getParameters().rollbackOnFailure()) {
+                        throw new EngineException(EngineError.SETUP_NETWORKS_ROLLBACK, retVal.getExceptionString());
+                    }
 
-                VdsHandler.handleVdsResult(retVal);
+                    VdsHandler.handleVdsResult(retVal);
 
-                if (retVal.getSucceeded()) {
-                    try (EngineLock monitoringLock = acquireMonitorLock()) {
+                    if (retVal.getSucceeded()) {
+
                         VDSReturnValue returnValue =
-                            runVdsCommand(VDSCommandType.GetCapabilities,
-                                new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+                                runVdsCommand(VDSCommandType.GetCapabilities,
+                                        new VdsIdAndVdsVDSCommandParametersBase(getVds()));
                         VDS updatedHost = (VDS) returnValue.getReturnValue();
                         persistNetworkChanges(updatedHost);
                     }
-                    logMonitorLockReleased("Host setup networks");
 
                     setSucceeded(true);
                 }
+            } catch (TimeoutException e) {
+                log.debug("Host Setup networks command timed out for {} seconds", timeout);
             }
-        } catch (TimeoutException e) {
-            log.debug("Host Setup networks command timed out for {} seconds", timeout);
         }
+        logMonitorLockReleased("Host setup networks");
     }
 
     private void removeUnchangedBonds(List<VdsNetworkInterface> existingNics) {
