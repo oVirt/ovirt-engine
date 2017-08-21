@@ -143,7 +143,7 @@ public enum VDSCommandType {
     AddImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     RemoveImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     ExtendImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    GetImageTransferSessionStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GetImageTicket("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     VerifyUntrustedVolume("org.ovirt.engine.core.vdsbroker.vdsbroker"),
 
     // Gluster VDS commands

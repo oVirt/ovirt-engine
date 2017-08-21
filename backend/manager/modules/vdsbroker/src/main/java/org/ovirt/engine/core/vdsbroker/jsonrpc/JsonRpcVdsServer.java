@@ -49,10 +49,10 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostJobsReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturn;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageTicketInformationReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LUNListReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.LldpReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateStatusReturn;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.OneMapReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainInfoReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturn;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturn;
@@ -1835,14 +1835,14 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public OneMapReturn get_image_transfer_session_stats(String ticketId) {
+    public ImageTicketInformationReturn getImageTicket(String ticketId) {
         JsonRpcRequest request =
-                new RequestBuilder("Host.get_image_transfer_session_stats")
-                        .withParameter("ticketUUID", ticketId)
+                new RequestBuilder("Host.get_image_ticket")
+                        .withParameter("uuid", ticketId)
                         .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("statsMap");
-        return new OneMapReturn(response);
+        Map<String, Object> response = new FutureMap(this.client, request)
+                .withResponseKey("result");
+        return new ImageTicketInformationReturn(response);
     }
 
     @Override

@@ -93,7 +93,7 @@ public interface IVdsServer {
 
     StatusOnlyReturn extend_image_ticket(String ticketId, long timeout);
 
-    OneMapReturn get_image_transfer_session_stats(String ticketId);
+    ImageTicketInformationReturn getImageTicket(String ticketId);
 
     StatusOnlyReturn desktopLogin(String vmId, String domain, String user, String password);
 
