@@ -643,6 +643,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> {
                 return false;
             }
 
+            if (disk.getContentType() == DiskContentType.MEMORY_METADATA_VOLUME ||
+                    disk.getContentType() == DiskContentType.MEMORY_DUMP_VOLUME) {
+                return false;
+            }
+
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER) {
                 ImageStatus imageStatus = ((DiskImage) disk).getImageStatus();
                 if (imageStatus == ImageStatus.LOCKED) {
