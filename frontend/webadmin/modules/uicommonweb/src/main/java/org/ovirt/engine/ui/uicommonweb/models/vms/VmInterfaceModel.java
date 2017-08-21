@@ -268,11 +268,11 @@ public abstract class VmInterfaceModel extends Model {
 
                 boolean isPlugChangeable = getPlugged().getIsChangable();
 
-                getPlugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getPlugged_IsSelected().setIsChangeable(isPlugChangeable);
+                getPlugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
 
-                getUnplugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getUnplugged_IsSelected().setIsChangeable(isPlugChangeable);
+                getUnplugged_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
             } else if (propArgs.propertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isPlugAvailable = getPlugged().getIsAvailable();
                 getPlugged_IsSelected().setIsAvailable(isPlugAvailable);
@@ -299,11 +299,11 @@ public abstract class VmInterfaceModel extends Model {
             } else if (propArgs.propertyName.equals("IsChangable")) { //$NON-NLS-1$
                 boolean isLinkedChangeable = getLinked().getIsChangable();
 
-                getLinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getLinked_IsSelected().setIsChangeable(isLinkedChangeable);
+                getLinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
 
-                getUnlinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getUnlinked_IsSelected().setIsChangeable(isLinkedChangeable);
+                getUnlinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
             } else if (propArgs.propertyName.equals("IsAvailable")) { //$NON-NLS-1$
                 boolean isLinkedAvailable = getLinked().getIsAvailable();
                 getLinked_IsSelected().setIsAvailable(isLinkedAvailable);

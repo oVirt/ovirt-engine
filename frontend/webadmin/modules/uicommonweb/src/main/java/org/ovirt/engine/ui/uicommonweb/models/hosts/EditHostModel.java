@@ -51,10 +51,10 @@ public class EditHostModel extends HostModel {
     @Override
     protected void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance() {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        getDataCenter().setChangeProhibitionReason(constants.dcCanOnlyBeChangedWhenHostInMaintMode());
         getDataCenter().setIsChangeable(false);
-        getCluster().setChangeProhibitionReason(constants.clusterCanOnlyBeChangedWhenHostInMaintMode());
+        getDataCenter().setChangeProhibitionReason(constants.dcCanOnlyBeChangedWhenHostInMaintMode());
         getCluster().setIsChangeable(false);
+        getCluster().setChangeProhibitionReason(constants.clusterCanOnlyBeChangedWhenHostInMaintMode());
     }
 
     @Override

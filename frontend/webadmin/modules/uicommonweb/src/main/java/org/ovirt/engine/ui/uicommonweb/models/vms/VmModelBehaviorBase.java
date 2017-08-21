@@ -836,8 +836,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getHostCpu().setIsChangeable(true);
         } else {
             getModel().getHostCpu().setEntity(false);
-            getModel().getHostCpu().setChangeProhibitionReason(constants.hosCPUUnavailable());
             getModel().getHostCpu().setIsChangeable(false);
+            getModel().getHostCpu().setChangeProhibitionReason(constants.hosCPUUnavailable());
         }
     }
 

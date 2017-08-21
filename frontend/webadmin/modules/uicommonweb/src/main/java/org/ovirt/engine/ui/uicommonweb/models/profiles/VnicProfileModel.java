@@ -395,16 +395,16 @@ public abstract class VnicProfileModel extends Model {
     private void initPassthroughChangeListener() {
         getPassthrough().getEntityChangedEvent().addListener((ev, sender, args) -> {
             if (getPassthrough().getEntity()) {
-                getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotChangedIfPassthrough());
                 getPortMirroring().setIsChangeable(false);
+                getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotChangedIfPassthrough());
                 getPortMirroring().setEntity(false);
 
-                getNetworkQoS().setChangeProhibitionReason(constants.networkQosNotChangedIfPassthrough());
                 getNetworkQoS().setIsChangeable(false);
+                getNetworkQoS().setChangeProhibitionReason(constants.networkQosNotChangedIfPassthrough());
                 getNetworkQoS().setSelectedItem(NetworkQoSModel.EMPTY_QOS);
 
-                getNetworkFilter().setChangeProhibitionReason(constants.networkFilterNotChangedIfPassthrough());
                 getNetworkFilter().setIsChangeable(false);
+                getNetworkFilter().setChangeProhibitionReason(constants.networkFilterNotChangedIfPassthrough());
                 getNetworkFilter().setSelectedItem(EMPTY_FILTER);
                 getMigratable().setIsChangeable(true);
             } else {

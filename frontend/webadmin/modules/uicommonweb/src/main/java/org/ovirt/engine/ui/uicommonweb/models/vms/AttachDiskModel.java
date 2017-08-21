@@ -163,8 +163,8 @@ public class AttachDiskModel extends NewDiskModel {
                                         });
                                     }
                                     else {
-                                        diskModel.getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
                                         diskModel.getIsBootable().setIsChangeable(false);
+                                        diskModel.getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
                                     }
                                 }
                                 List<EntityModel<DiskModel>> entities =

@@ -39,8 +39,8 @@ public abstract class ImportEntityData<E> extends EntityModel<E> {
 
     public void enforceClone(String prohibitReason) {
         getClone().setEntity(true);
-        getClone().setChangeProhibitionReason(prohibitReason);
         getClone().setIsChangeable(false);
+        getClone().setChangeProhibitionReason(prohibitReason);
     }
 
     public ListModel<Cluster> getCluster() {

@@ -65,11 +65,11 @@ public class EditVnicProfileModel extends VnicProfileModel {
                 new AsyncQuery<QueryReturnValue>(returnValue -> {
                     Collection<VM> vms = returnValue.getReturnValue();
                     if (vms != null && !vms.isEmpty()) {
-                        getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotChangedIfUsedByVms());
                         getPortMirroring().setIsChangeable(false);
+                        getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotChangedIfUsedByVms());
 
-                        getPassthrough().setChangeProhibitionReason(constants.passthroughNotChangedIfUsedByVms());
                         getPassthrough().setIsChangeable(false);
+                        getPassthrough().setChangeProhibitionReason(constants.passthroughNotChangedIfUsedByVms());
                     }
                     stopProgress();
                 }));
