@@ -16,9 +16,11 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.EventFloodRegulator;
 import org.ovirt.engine.core.dao.AuditLogDao;
+
 
 public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> extends ExternalEventCommandBase<T> {
 
@@ -49,7 +51,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
         // clear the id so the auditLog will be considered as a system-level auditLog
         auditLog.setUserId(Guid.Empty);
-        AuditLogableBase logableToClear = new AuditLogableBase(auditLog);
+        AuditLogable logableToClear = createAuditLogableImpl(auditLog);
 
         // clean cache manager entry (if exists)
         EventFloodRegulator eventFloodRegulator = new EventFloodRegulator(logableToClear, auditLog.getLogType());
@@ -72,6 +74,20 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
         this.setVdsId(auditLog.getVdsId());
         this.setVmId(auditLog.getVmId());
         this.setVmTemplateId(auditLog.getVmTemplateId());
+    }
+
+
+    private AuditLogable createAuditLogableImpl(AuditLog event) {
+        AuditLogable logable = new AuditLogableImpl();
+        logable.setStorageDomainId(event.getStorageDomainId());
+        logable.setStoragePoolId(event.getStoragePoolId());
+        logable.setUserId(event.getUserId());
+        logable.setClusterId(event.getClusterId());
+        logable.setVdsId(event.getVdsId());
+        logable.setVmId(event.getVmId());
+        logable.setVmTemplateId(event.getVmTemplateId());
+
+        return logable;
     }
 
     @Override
