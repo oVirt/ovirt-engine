@@ -1027,7 +1027,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         .filter(snapshot -> !StringUtils.isEmpty(snapshot.getMemoryVolume()))
         .forEach(snapshot -> {
             addDisk(createMemoryDisk(snapshot));
-            addDisk(createMetadaaDisk(snapshot));
+            addDisk(createMetadataDisk(snapshot));
         });
     }
 
@@ -1048,7 +1048,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return memoryDisk;
     }
 
-    private DiskImage createMetadaaDisk(Snapshot snapshot) {
+    private DiskImage createMetadataDisk(Snapshot snapshot) {
         List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
         DiskImage memoryDisk = MemoryUtils.createMetadataDisk();
         memoryDisk.setId(guids.get(4));
