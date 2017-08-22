@@ -505,7 +505,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     private List<String> getAuthzNamespaces() {
         ProfileEntry profileEntry = getProfile().getSelectedItem();
-        return profileEntry != null ? namespacesMap.get(profileEntry.getAuthz()) : Collections.<String> emptyList();
+        return profileEntry != null ? namespacesMap.get(profileEntry.getAuthz()) : Collections.emptyList();
     }
 
 }
