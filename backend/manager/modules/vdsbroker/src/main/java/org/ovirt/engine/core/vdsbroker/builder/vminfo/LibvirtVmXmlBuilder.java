@@ -129,7 +129,6 @@ public class LibvirtVmXmlBuilder {
 
     private Map<String, Object> createInfo;
     private VM vm;
-    private Guid hostId;
     private MemoizingSupplier<Map<String, HostDevice>> hostDevicesSupplier;
 
     private Map<String, Map<String, Object>> vnicMetadata;
@@ -145,16 +144,13 @@ public class LibvirtVmXmlBuilder {
         this.vm = vm;
         this.runOncePayload = runOncePayload;
         this.volatileRun = volatileRun;
-        this.hostId = hostId;
         this.passthroughVnicToVfMap = passthroughVnicToVfMap;
         payloadIndex = -1;
         cdRomIndex = -1;
         vnicMetadata = new HashMap<>();
-        hostDevicesSupplier = new MemoizingSupplier<>(() -> {
-            return hostDeviceDao.getHostDevicesByHostId(hostId)
-                    .stream()
-                    .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device));
-        });
+        hostDevicesSupplier = new MemoizingSupplier<>(() -> hostDeviceDao.getHostDevicesByHostId(hostId)
+                .stream()
+                .collect(Collectors.toMap(HostDevice::getDeviceName, device -> device)));
     }
 
     @PostConstruct
@@ -599,8 +595,7 @@ public class LibvirtVmXmlBuilder {
         Map<String, String> vmCustomProperties = VmPropertiesUtils.getInstance().getVMProperties(
                 vm.getCompatibilityVersion(),
                 vm.getStaticData());
-        vmCustomProperties.entrySet().forEach(
-                property -> writer.writeElement(OVIRT_VM_URI, property.getKey(), property.getValue()));
+        vmCustomProperties.forEach((key, value) -> writer.writeElement(OVIRT_VM_URI, key, value));
         writer.writeEndElement();
     }
 
@@ -1767,7 +1762,7 @@ public class LibvirtVmXmlBuilder {
             String vfDeviceName = passthroughVnicToVfMap.get(nic.getId());
             Map<String, String> sourceAddress = hostDevicesSupplier.get().get(vfDeviceName).getAddress();
             sourceAddress.put("type", "pci");
-            sourceAddress.entrySet().forEach(e -> writer.writeAttributeString(e.getKey(), e.getValue()));
+            sourceAddress.forEach((key, value) -> writer.writeAttributeString(key, value));
             writer.writeEndElement();
             writer.writeEndElement();
             break;
@@ -1944,7 +1939,7 @@ public class LibvirtVmXmlBuilder {
     private void writeAddress(Map<String, String> addressMap) {
         if (!addressMap.isEmpty()) {
             writer.writeStartElement("address");
-            addressMap.entrySet().forEach(x -> writer.writeAttributeString(x.getKey(), x.getValue()));
+            addressMap.forEach((key, value) -> writer.writeAttributeString(key, value));
             writer.writeEndElement();
         }
     }
