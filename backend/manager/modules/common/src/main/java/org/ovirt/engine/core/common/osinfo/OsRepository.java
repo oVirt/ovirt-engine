@@ -77,12 +77,12 @@ public interface OsRepository {
     ArchitectureType getArchitectureFromOS(int osId);
 
     /**
-     * @return minimum RAM in mb
+     * @return minimum RAM in MiB
      */
     int getMinimumRam(int osId, Version version);
 
     /**
-     * @return maximum RAM in mb
+     * @return maximum RAM in MiB
      */
     int getMaximumRam(int osId, Version version);
 
