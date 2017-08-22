@@ -30,12 +30,12 @@ CREATE OR REPLACE FUNCTION GetDiskByDiskId (
     v_user_id UUID,
     v_is_filtered boolean
     )
-RETURNS SETOF all_disks_including_memory STABLE AS $PROCEDURE$
+RETURNS SETOF all_disks STABLE AS $PROCEDURE$
 BEGIN
     RETURN QUERY
 
     SELECT *
-    FROM all_disks_including_memory
+    FROM all_disks
     WHERE image_group_id = v_disk_id
         AND (
             NOT v_is_filtered

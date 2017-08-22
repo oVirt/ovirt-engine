@@ -52,7 +52,7 @@ WHERE sse.step_entity_weight IS NOT NULL
     AND s.progress IS NOT NULL
 GROUP BY sse.entity_id;
 
-CREATE OR REPLACE VIEW memory_and_disk_images_storage_domain_view AS
+CREATE OR REPLACE VIEW images_storage_domain_view AS
 
 SELECT images.image_guid AS image_guid,
     storage_domain_static.storage_name AS storage_name,
@@ -133,12 +133,6 @@ LEFT JOIN entity_step_progress
     ON images.image_group_id = entity_step_progress.entity_id
 WHERE images.image_guid != '00000000-0000-0000-0000-000000000000';
 
-CREATE OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
-
-SELECT *
-FROM memory_and_disk_images_storage_domain_view
-WHERE disk_content_type NOT IN (2, 3) -- Not memory dump volume or memory metadata volume
-    OR disk_content_type IS NULL; -- Content type might be null in case the image doesn't have a disk
 
 CREATE OR REPLACE VIEW storage_domain_file_repos AS
 
@@ -427,9 +421,7 @@ FROM (
 INNER JOIN base_disks bd
     ON bd.disk_id = storage_impl.image_group_id;
 
--- The following view is mostly a copy-paste of all_disks_including_snapshots but it uses
--- memory_and_disk_images_storage_domain_view to get memory disks as well
--- TODO: when memory disks are handled correctly this view should be deleted
+
 CREATE OR REPLACE VIEW all_disks_including_snapshots_and_memory AS
 
 SELECT storage_impl.*,
@@ -502,9 +494,9 @@ FROM (
         NULL AS device_size,
         NULL AS discard_max_size,
         NULL AS discard_zeroes_data
-    FROM memory_and_disk_images_storage_domain_view
+    FROM images_storage_domain_view
     INNER JOIN storage_for_image_view
-        ON memory_and_disk_images_storage_domain_view.image_guid = storage_for_image_view.image_id
+        ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
     GROUP BY storage_for_image_view.storage_id,
         storage_for_image_view.storage_name,
         storage_for_image_view.storage_type,
@@ -616,32 +608,25 @@ INNER JOIN base_disks bd
 CREATE OR REPLACE VIEW all_disks AS
 
 SELECT *
-FROM all_disks_including_snapshots
-WHERE active IS NULL
-    OR active = TRUE;
-
-CREATE OR REPLACE VIEW all_disks_including_memory AS
-
-SELECT *
 FROM all_disks_including_snapshots_and_memory
 WHERE active IS NULL
     OR active = TRUE;
 
 CREATE OR REPLACE VIEW all_disks_for_vms AS
 
-SELECT all_disks_including_snapshots.*,
+SELECT all_disks_including_snapshots_and_memory.*,
     vm_device.is_plugged,
     vm_device.logical_name,
     vm_device.vm_id
-FROM all_disks_including_snapshots
+FROM all_disks_including_snapshots_and_memory
 INNER JOIN vm_device
-    ON vm_device.device_id = all_disks_including_snapshots.image_group_id
+    ON vm_device.device_id = all_disks_including_snapshots_and_memory.image_group_id
 WHERE (
         (
             vm_device.snapshot_id IS NULL
-            AND all_disks_including_snapshots.active IS NOT FALSE
+            AND all_disks_including_snapshots_and_memory.active IS NOT FALSE
             )
-        OR vm_device.snapshot_id = all_disks_including_snapshots.vm_snapshot_id
+        OR vm_device.snapshot_id = all_disks_including_snapshots_and_memory.vm_snapshot_id
         );
 
 CREATE OR REPLACE VIEW storage_domains_image_sizes AS
