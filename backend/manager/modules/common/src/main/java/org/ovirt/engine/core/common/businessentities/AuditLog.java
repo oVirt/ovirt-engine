@@ -38,6 +38,7 @@ public class AuditLog implements Queryable {
     private Guid glusterVolumeId;
     private String glusterVolumeName;
     private String origin;
+    private String customId;
     private int customEventId;
     private int eventFloodInSec;
     private String customData;
@@ -108,6 +109,7 @@ public class AuditLog implements Queryable {
             Guid vmTemplateId,
             String vmTemplateName,
             String origin,
+            String customId,
             int customEventId,
             int eventFloogInSec,
             String customData) {
@@ -123,6 +125,7 @@ public class AuditLog implements Queryable {
                 vmTemplateId,
                 vmTemplateName);
         this.origin = origin;
+        this.customId = customId;
         this.customEventId = customEventId;
         this.eventFloodInSec = eventFloogInSec;
         this.customData = customData;
@@ -140,6 +143,7 @@ public class AuditLog implements Queryable {
             Guid vmTemplateId,
             String vmTemplateName,
             String origin,
+            String customId,
             int customEventId,
             int eventFloogInSec,
             Guid brickId,
@@ -157,6 +161,7 @@ public class AuditLog implements Queryable {
                 vmTemplateId,
                 vmTemplateName,
                 origin,
+                customId,
                 customEventId,
                 eventFloogInSec,
                 customData);
@@ -401,6 +406,14 @@ public class AuditLog implements Queryable {
         this.origin = origin;
     }
 
+    public String getCustomId() {
+        return customId;
+    }
+
+    public void setCustomId(String customId) {
+        this.customId = customId;
+    }
+
     public int getCustomEventId() {
         return customEventId;
     }
@@ -508,6 +521,7 @@ public class AuditLog implements Queryable {
                 correlationId,
                 jobId,
                 origin,
+                customId,
                 customEventId,
                 eventFloodInSec,
                 customData,
@@ -542,6 +556,7 @@ public class AuditLog implements Queryable {
                 && Objects.equals(correlationId, other.correlationId)
                 && Objects.equals(jobId, other.jobId)
                 && Objects.equals(origin, other.origin)
+                && Objects.equals(customId, other.customId)
                 && customEventId == other.customEventId
                 && eventFloodInSec == other.eventFloodInSec
                 && Objects.equals(customData, other.customData)
@@ -562,6 +577,9 @@ public class AuditLog implements Queryable {
         }
         sb.append("Call Stack: ");
         sb.append(callStack);
+        sb.append(", ");
+        sb.append("Custom ID: ");
+        sb.append(customId);
         sb.append(", ");
         sb.append("Custom Event ID: ");
         sb.append(customEventId);

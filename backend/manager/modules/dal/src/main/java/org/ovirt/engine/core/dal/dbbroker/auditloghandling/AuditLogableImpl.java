@@ -408,6 +408,7 @@ public class AuditLogableImpl implements AuditLogable {
                 getVmTemplateId(),
                 getVmTemplateName(),
                 getOrigin(),
+                getCustomId(),
                 getCustomEventId(),
                 getEventFloodInSec(),
                 getCustomData());
@@ -444,6 +445,7 @@ public class AuditLogableImpl implements AuditLogable {
                 .append("correlationId", getCorrelationId())
                 .append("customId", getCustomId())
                 .append("origin", getOrigin())
+                .append("customId", getCustomId())
                 .append("customEventId", getCustomEventId())
                 .append("eventFloodInSec", getEventFloodInSec())
                 .append("customData", getCustomData())

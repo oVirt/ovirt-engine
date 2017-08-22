@@ -826,6 +826,7 @@ public class AuditLogableBase implements AuditLogable {
                 getVmTemplateIdRef(),
                 getVmTemplateName(),
                 getOrigin(),
+                getCustomId(),
                 getCustomEventId(),
                 getEventFloodInSec(),
                 getCustomData());

@@ -86,6 +86,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
         logable.setVdsId(event.getVdsId());
         logable.setVmId(event.getVmId());
         logable.setVmTemplateId(event.getVmTemplateId());
+        logable.setCustomId(event.getCustomId());
 
         return logable;
     }
