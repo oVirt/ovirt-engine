@@ -211,7 +211,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
             }));
         }));
 
-        AsyncDataProvider.getInstance().getRoleList(new AsyncQuery<>(result -> populateRoles(result)));
+        AsyncDataProvider.getInstance().getRoleList(new AsyncQuery<>(this::populateRoles));
     }
 
     @Override
