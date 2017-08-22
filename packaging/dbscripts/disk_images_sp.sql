@@ -71,7 +71,7 @@ RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
      RETURN QUERY SELECT *
-     FROM images_storage_domain_view images_storage_domain_view
+     FROM images_storage_domain_view
      WHERE storage_id = v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
