@@ -287,7 +287,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
             }
         }
 
-        Collections.sort(rolesToPopulate, new NameableComparator());
+        rolesToPopulate.sort(new NameableComparator());
 
         getRole().setItems(rolesToPopulate);
         if (selectedRole != null) {
