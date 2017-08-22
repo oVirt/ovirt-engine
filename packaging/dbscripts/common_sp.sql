@@ -923,6 +923,21 @@ LANGUAGE plpgsql;
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+
+CREATE OR replace FUNCTION fn_db_drop_index (
+        v_index_name VARCHAR(128)
+        )
+    RETURNS void AS $PROCEDURE$
+
+    DECLARE v_sql TEXT;
+
+    BEGIN
+        v_sql := 'DROP INDEX ' || ' IF EXISTS ' || v_index_name || ';' ;
+        EXECUTE v_sql;
+END;$PROCEDURE$
+LANGUAGE plpgsql;
+
+
 -- Unlocks a specific disk
 CREATE OR REPLACE FUNCTION fn_db_unlock_disk (v_id UUID)
 RETURNS void AS $PROCEDURE$
