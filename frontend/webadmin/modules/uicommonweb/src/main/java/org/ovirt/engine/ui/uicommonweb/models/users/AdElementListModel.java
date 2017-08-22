@@ -43,14 +43,14 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         MY_GROUPS;
     }
 
-    private UICommand privateSearchMyGroupsCommand;
+    private UICommand searchMyGroupsCommand;
 
     public UICommand getSearchMyGroupsCommand() {
-        return privateSearchMyGroupsCommand;
+        return searchMyGroupsCommand;
     }
 
     private void setSearchMyGroupsCommand(UICommand value) {
-        privateSearchMyGroupsCommand = value;
+        searchMyGroupsCommand = value;
     }
 
     private EntityModel<Boolean> searchInProgress;
@@ -63,87 +63,87 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         this.searchInProgress = searchInProgress;
     }
 
-    private Iterable<DbUser> privateExcludeItems;
+    private Iterable<DbUser> excludeItems;
 
     private Map<String, List<String>> namespacesMap = new HashMap<>();
 
     public Iterable<DbUser> getExcludeItems() {
-        return privateExcludeItems;
+        return excludeItems;
     }
 
     public void setExcludeItems(Iterable<DbUser> value) {
-        privateExcludeItems = value;
+        excludeItems = value;
     }
 
-    private ListModel<ProfileEntry> privateProfile;
+    private ListModel<ProfileEntry> profile;
 
     public ListModel<ProfileEntry> getProfile() {
-        return privateProfile;
+        return profile;
     }
 
     private void setProfile(ListModel<ProfileEntry> value) {
-        privateProfile = value;
+        profile = value;
     }
 
-    private ListModel<String> privateNamespace;
+    private ListModel<String> namespace;
 
     public void setNamespace(ListModel<String> value) {
-        privateNamespace = value;
+        namespace = value;
     }
 
     public ListModel<String> getNamespace() {
-        return privateNamespace;
+        return namespace;
     }
 
-    private ListModel<Role> privateRole;
+    private ListModel<Role> role;
 
     public ListModel<Role> getRole() {
-        return privateRole;
+        return role;
     }
 
     private void setRole(ListModel<Role> value) {
-        privateRole = value;
+        role = value;
     }
 
-    private EntityModel<Boolean> privateSelectAll;
+    private EntityModel<Boolean> selectAll;
 
     public EntityModel<Boolean> getSelectAll() {
-        return privateSelectAll;
+        return selectAll;
     }
 
     public void setSelectAll(EntityModel<Boolean> value) {
-        privateSelectAll = value;
+        selectAll = value;
     }
 
     // This is required for the webadmin.
-    private EntityModel<Boolean> privateIsRoleListHiddenModel;
+    private EntityModel<Boolean> isRoleListHiddenModel;
 
     public EntityModel<Boolean> getIsRoleListHiddenModel() {
-        return privateIsRoleListHiddenModel;
+        return isRoleListHiddenModel;
     }
 
     private void setIsRoleListHiddenModel(EntityModel<Boolean> value) {
-        privateIsRoleListHiddenModel = value;
+        isRoleListHiddenModel = value;
     }
 
-    private EntityModel<Boolean> privateIsEveryoneSelectionHidden;
+    private EntityModel<Boolean> isEveryoneSelectionHidden;
 
     public EntityModel<Boolean> getIsEveryoneSelectionHidden() {
-        return privateIsEveryoneSelectionHidden;
+        return isEveryoneSelectionHidden;
     }
 
     private void setIsEveryoneSelectionHidden(EntityModel<Boolean> value) {
-        privateIsEveryoneSelectionHidden = value;
+        isEveryoneSelectionHidden = value;
     }
 
-    private EntityModel<Boolean> privateIsMyGroupsSelectionHidden;
+    private EntityModel<Boolean> isMyGroupsSelectionHidden;
 
     public EntityModel<Boolean> getIsMyGroupsSelectionHidden() {
-        return privateIsMyGroupsSelectionHidden;
+        return isMyGroupsSelectionHidden;
     }
 
     private void setIsMyGroupsSelectionHidden(EntityModel<Boolean> value) {
-        privateIsMyGroupsSelectionHidden = value;
+        isMyGroupsSelectionHidden = value;
     }
 
     private boolean isRoleListHidden;
@@ -441,24 +441,24 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
         }
     }
 
-    private ArrayList<EntityModel<DbUser>> privateusers;
+    private ArrayList<EntityModel<DbUser>> users;
 
     public ArrayList<EntityModel<DbUser>> getusers() {
-        return privateusers;
+        return users;
     }
 
     public void setusers(ArrayList<EntityModel<DbUser>> value) {
-        privateusers = value;
+        users = value;
     }
 
-    private ArrayList<EntityModel<DbUser>> privategroups;
+    private ArrayList<EntityModel<DbUser>> roups;
 
     public ArrayList<EntityModel<DbUser>> getgroups() {
-        return privategroups;
+        return roups;
     }
 
     public void setgroups(ArrayList<EntityModel<DbUser>> value) {
-        privategroups = value;
+        roups = value;
     }
 
     @Override
