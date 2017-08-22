@@ -25,8 +25,8 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
-import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -59,7 +59,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         addValueLabelToPanel(panel, new EnumLabel<VolumeType>(), disk.getVolumeType(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskInterface>(), dve.getDiskInterface(), "120px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new EnumLabel<DiskStorageType>(), disk.getDiskStorageType(), "120px"); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DateLabel(), disk.getCreationDate(), "90px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new FullDateTimeLabel(), disk.getCreationDate(), "140px"); //$NON-NLS-1$
         TreeItem treeItem = new TreeItem(panel);
         treeItem.setUserObject(disk.getId());
         return treeItem;

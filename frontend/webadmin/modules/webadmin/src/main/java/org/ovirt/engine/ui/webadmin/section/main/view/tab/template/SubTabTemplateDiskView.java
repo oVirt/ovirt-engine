@@ -41,7 +41,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
         table.addColumn(new EmptyColumn(), constants.allocationDisk(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.interfaceDisk(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.typeDisk(), "120px"); //$NON-NLS-1$
-        table.addColumn(new EmptyColumn(), constants.creationDateDisk(), "120px"); //$NON-NLS-1$
+        table.addColumn(new EmptyColumn(), constants.creationDateDisk(), "150px"); //$NON-NLS-1$
     }
 
     @Override
