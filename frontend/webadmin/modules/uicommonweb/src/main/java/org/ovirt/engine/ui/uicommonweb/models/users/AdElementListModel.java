@@ -179,24 +179,24 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
 
     public AdElementListModel() {
         setSearchMyGroupsCommand(new UICommand("SearchMyGroups", this)); //$NON-NLS-1$
-        setRole(new ListModel<Role>());
-        setProfile(new ListModel<ProfileEntry>());
-        setNamespace(new ListModel<String>());
+        setRole(new ListModel<>());
+        setProfile(new ListModel<>());
+        setNamespace(new ListModel<>());
 
-        setSelectAll(new EntityModel<Boolean>());
+        setSelectAll(new EntityModel<>());
         getSelectAll().setEntity(false);
         getSelectAll().getEntityChangedEvent().addListener(this);
 
-        setIsRoleListHiddenModel(new EntityModel<Boolean>());
+        setIsRoleListHiddenModel(new EntityModel<>());
         getIsRoleListHiddenModel().setEntity(false);
 
-        setIsEveryoneSelectionHidden(new EntityModel<Boolean>());
+        setIsEveryoneSelectionHidden(new EntityModel<>());
         getIsEveryoneSelectionHidden().setEntity(false);
 
-        setIsMyGroupsSelectionHidden(new EntityModel<Boolean>());
+        setIsMyGroupsSelectionHidden(new EntityModel<>());
         getIsMyGroupsSelectionHidden().setEntity(false);
 
-        setSearchInProgress(new EntityModel<Boolean>());
+        setSearchInProgress(new EntityModel<>());
         getSearchInProgress().setEntity(false);
 
         searchType = AdSearchType.USER;
@@ -236,9 +236,9 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                     excludeUsers.add(item.getExternalId());
                 }
             }
-            setgroups(new ArrayList<EntityModel<DbUser>>());
+            setgroups(new ArrayList<>());
             addGroupsToModel(queryReturnValue, excludeUsers);
-            setusers(new ArrayList<EntityModel<DbUser>>());
+            setusers(new ArrayList<>());
             onUserAndAdGroupsLoaded();
         });
         asyncQuery.setHandleFailure(true);
@@ -322,7 +322,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                 return;
             }
 
-            setusers(new ArrayList<EntityModel<DbUser>>());
+            setusers(new ArrayList<>());
             addUsersToModel(queryReturnValue, getExcludeUsers());
             onAdUsersLoaded();
         });
@@ -345,7 +345,7 @@ public class AdElementListModel extends SearchableListModel<Object, EntityModel<
                     excludeUsers.add(item.getExternalId());
                 }
             }
-            setgroups(new ArrayList<EntityModel<DbUser>>());
+            setgroups(new ArrayList<>());
             addGroupsToModel(queryReturnValue, excludeUsers);
             onAdGroupsLoaded();
         });
