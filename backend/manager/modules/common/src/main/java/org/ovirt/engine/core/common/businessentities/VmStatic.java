@@ -38,7 +38,7 @@ public class VmStatic extends VmBase {
     @EditableVmField
     private boolean useLatestVersion;
 
-    @EditableVmField
+    @EditableVmField(onHostedEngine = true)
     private Guid providerId;
 
     public VmStatic() {
