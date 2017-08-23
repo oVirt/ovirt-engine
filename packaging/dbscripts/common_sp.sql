@@ -88,25 +88,11 @@ BEGIN
                         )
                 )
             ) THEN
-    BEGIN
-        v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
+        BEGIN
+            v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
+            EXECUTE v_sql;
+        END;
 
-        EXECUTE v_sql;
-    END;
-
-    --- ignore operation if requested type is already there
-    ELSIF(NOT EXISTS (
-                SELECT 1
-                FROM information_schema.columns
-                WHERE table_schema = 'public'
-                    AND table_name ilike v_table
-                    AND column_name ilike v_column
-                    AND (
-                        udt_name ilike v_new_type
-                        OR data_type ilike v_new_type
-                        )
-                )) THEN
-                    RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
     END IF;
 
 END;$PROCEDURE$
