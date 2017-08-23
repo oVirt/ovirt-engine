@@ -18,6 +18,10 @@
         .container {
             width: 100%;
         }
+
+        .specificQuotaLabel {
+            padding-right: 10px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="475px" height="275px">
@@ -32,10 +36,10 @@
                     <b:Column size="SM_4">
                         <ge:EntityModelRadioButtonEditor ui:field="unlimitedMemRadioButtonEditor" label="{constants.ultQuotaPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_3">
+                    <b:Column size="SM_4" addStyleNames="{style.specificQuotaLabel}">
                         <ge:EntityModelRadioButtonEditor ui:field="specificMemRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_5">
+                    <b:Column size="SM_4">
                         <ge:LongEntityModelTextBoxEditor ui:field="memValueEditor" usePatternFly="true" unitString="{constants.mb}" />
                     </b:Column>
                 </b:Row>
@@ -48,10 +52,10 @@
                     <b:Column size="SM_4">
                         <ge:EntityModelRadioButtonEditor ui:field="unlimitedCpuRadioButtonEditor" label="{constants.ultQuotaPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_3">
+                    <b:Column size="SM_4" addStyleNames="{style.specificQuotaLabel}">
                         <ge:EntityModelRadioButtonEditor ui:field="specificCpuRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_5">
+                    <b:Column size="SM_4">
                         <ge:IntegerEntityModelTextBoxEditor ui:field="cpuValueEditor" usePatternFly="true" unitString="{constants.vcpus}" />
                     </b:Column>
                 </b:Row>

@@ -17,6 +17,10 @@
         .container {
             width: 96%;
         }
+
+        .specificQuotaLabel {
+            padding-right: 10px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="475px" height="200px">
@@ -31,10 +35,10 @@
                     <b:Column size="SM_4">
                         <ge:EntityModelRadioButtonEditor ui:field="unlimitedStorageRadioButtonEditor" label="{constants.ultQuotaPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_3">
+                    <b:Column size="SM_4" addStyleNames="{style.specificQuotaLabel}">
                         <ge:EntityModelRadioButtonEditor ui:field="specificStorageRadioButtonEditor" label="{constants.useQuotaPopup}" usePatternFly="true" />
                     </b:Column>
-                    <b:Column size="SM_5">
+                    <b:Column size="SM_4">
                         <ge:LongEntityModelTextBoxEditor ui:field="storageValueEditor" usePatternFly="true" unitString="{constants.gb}" />
                     </b:Column>
                 </b:Row>
