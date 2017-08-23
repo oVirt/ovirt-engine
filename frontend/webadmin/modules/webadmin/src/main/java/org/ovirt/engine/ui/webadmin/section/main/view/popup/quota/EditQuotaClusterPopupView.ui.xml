@@ -12,7 +12,7 @@
 			width: 60px;
 		}
 		.radioButtonWidth {
-			width: 120px;
+			width: 125px;
 		}
 		.labelVisible {
 			display: none;
