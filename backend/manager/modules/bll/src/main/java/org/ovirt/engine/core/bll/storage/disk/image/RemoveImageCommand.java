@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -147,13 +148,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             new GetImagesListVDSCommandParameters(getStorageDomainId(), getDiskImage().getStoragePoolId()));
 
         if (retValue.getSucceeded()) {
-            List<Guid> ids = (List<Guid>) retValue.getReturnValue();
-            for (Guid id : ids) {
-                if (id.equals(getDiskImage().getId())) {
-                    return false;
-                }
-            }
-            return true;
+            return ((List<Guid>) retValue.getReturnValue()).stream().noneMatch(id -> id.equals(getDiskImage().getId()));
         } else {
             log.warn("Could not retrieve image list from storage domain '{}' '{}', disk '{}' might "
                             + "not have been deleted",
@@ -211,9 +206,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         baseDiskDao.remove(diskImage.getId());
                         vmDeviceDao.remove(new VmDeviceId(diskImage.getId(), null));
 
-                        for (Snapshot s : updatedSnapshots) {
-                            snapshotDao.update(s);
-                        }
+                        updatedSnapshots.forEach(snapshotDao::update);
 
                         return null;
                     });
@@ -239,23 +232,17 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void getImageChildren(Guid snapshot, List<Guid> children) {
-        List<Guid> list = new ArrayList<>();
-        for (DiskImage image : diskImageDao.getAllSnapshotsForParent(snapshot)) {
-            list.add(image.getImageId());
-        }
-        children.addAll(list);
-        for (Guid snapshotId : list) {
-            getImageChildren(snapshotId, children);
-        }
+        List<Guid> snapshotIds = diskImageDao.getAllSnapshotsForParent(snapshot).stream()
+                .map(DiskImage::getImageId).collect(Collectors.toList());
+        children.addAll(snapshotIds);
+        snapshotIds.forEach(id -> getImageChildren(id, children));
     }
 
     private void removeChildren(Guid snapshot) {
         List<Guid> children = new ArrayList<>();
         getImageChildren(snapshot, children);
         Collections.reverse(children);
-        for (Guid child : children) {
-            removeSnapshot(diskImageDao.getSnapshotById(child));
-        }
+        children.forEach(child -> removeSnapshot(diskImageDao.getSnapshotById(child)));
     }
 
     /**
