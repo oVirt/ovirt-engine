@@ -301,20 +301,20 @@ public class LibvirtVmXmlBuilder {
     }
 
     private void writeCpuTune() {
+        writer.writeStartElement("cputune");
         @SuppressWarnings("unchecked")
         Map<String, Object> cpuPinning = (Map<String, Object>) createInfo.get(VdsProperties.cpuPinning);
-
-        if (cpuPinning == null) {
-            return;
+        if (cpuPinning != null) {
+            cpuPinning.forEach((vcpu, cpuset) -> {
+                writer.writeStartElement("vcpupin");
+                writer.writeAttributeString("vcpu", vcpu);
+                writer.writeAttributeString("cpuset", (String) cpuset);
+                writer.writeEndElement();
+            });
         }
-
-        writer.writeStartElement("cputune");
-        cpuPinning.forEach((vcpu, cpuset) -> {
-            writer.writeStartElement("vcpupin");
-            writer.writeAttributeString("vcpu", vcpu);
-            writer.writeAttributeString("cpuset", (String) cpuset);
-            writer.writeEndElement();
-        });
+        if (vm.getCpuShares() > 0) {
+            writer.writeElement("shares", String.valueOf(vm.getCpuShares()));
+        }
         writer.writeEndElement();
     }
 
