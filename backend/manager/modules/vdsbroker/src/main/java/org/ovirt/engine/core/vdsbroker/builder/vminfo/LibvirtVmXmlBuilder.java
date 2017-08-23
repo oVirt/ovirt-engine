@@ -586,7 +586,12 @@ public class LibvirtVmXmlBuilder {
         writeClusterVersionMetadata();
         writeVmCustomMetadata();
         writeNetworkInterfaceMetadata();
+        writeRunAndPauseMetadata();
         writer.writeEndElement();
+    }
+
+    private void writeRunAndPauseMetadata() {
+        writer.writeElement("launchPaused", String.valueOf(vm.isRunAndPause()));
     }
 
     private void writeVmCustomMetadata() {
