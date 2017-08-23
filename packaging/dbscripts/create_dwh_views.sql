@@ -393,7 +393,6 @@ CREATE OR REPLACE VIEW dwh_vm_disk_configuration_history_view AS
 SELECT d.disk_id AS vm_disk_id,
     d.disk_alias AS vm_disk_name,
     d.disk_description AS vm_disk_description,
-    i.image_guid AS image_id,
     image_storage_domain_map.storage_domain_id AS storage_domain_id,
     CAST(i.size / 1048576 AS INT) AS vm_disk_size_mb,
     CAST(i.volume_type AS SMALLINT) AS vm_disk_type,
@@ -406,14 +405,15 @@ INNER JOIN base_disks AS d
     ON i.image_group_id = d.disk_id
 INNER JOIN image_storage_domain_map
     ON image_storage_domain_map.image_id = i.image_guid
-LEFT JOIN vm_device
-    ON vm_device.device_id = i.image_group_id
-LEFT JOIN vm_static
-    ON vm_static.vm_guid = vm_device.vm_id
 WHERE i.active = TRUE
-    AND (
-        vm_static.entity_type = 'VM'
-        OR vm_static.entity_type IS NULL
+    AND i.image_group_id in (
+        SELECT device_id
+        FROM vm_device
+        LEFT JOIN vm_static
+            ON vm_static.vm_guid = vm_device.vm_id
+        WHERE
+            vm_static.entity_type = 'VM'
+            OR vm_static.entity_type IS NULL
         )
     AND (
         (
@@ -430,7 +430,8 @@ WHERE i.active = TRUE
                 WHERE (var_name = 'lastSync')
                 )
             )
-        );
+        )
+GROUP BY vm_disk_id, storage_domain_id, vm_disk_size_mb, vm_disk_type, vm_disk_format, create_date, update_date;
 
 CREATE OR REPLACE VIEW dwh_vm_device_history_view AS
 
