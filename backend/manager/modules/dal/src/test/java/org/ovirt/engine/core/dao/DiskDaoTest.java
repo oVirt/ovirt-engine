@@ -236,4 +236,34 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         Set<Guid> actualFloatingDiskIds = disks.stream().map(BaseDisk::getId).collect(Collectors.toSet());
         assertEquals("Wrong attachable disks", expectedFloatingDiskIds, actualFloatingDiskIds);
     }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshots() {
+        List<Disk> result = dao.getAllFromDisksIncludingSnapshots(null, false);
+        assertEquals("wrong number of returned disks", 15, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsForUnprivilegedUserWithFilter() {
+        List<Disk> result = dao.getAllFromDisksIncludingSnapshots(UNPRIVILEGED_USER_ID, true);
+        assertEquals("wrong number of returned disks", 0, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsForUnprivilegedUserWithoutFilter() {
+        List<Disk> result = dao.getAllFromDisksIncludingSnapshots(UNPRIVILEGED_USER_ID, false);
+        assertEquals("wrong number of returned disks", 15, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsForPrivilegedUserWithoutFilter() {
+        List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, false);
+        assertEquals("wrong number of returned disks", 15, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsForPrivilegedUserWithFilter() {
+        List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, true);
+        assertEquals("wrong number of returned disks", 14, result.size());
+    }
 }

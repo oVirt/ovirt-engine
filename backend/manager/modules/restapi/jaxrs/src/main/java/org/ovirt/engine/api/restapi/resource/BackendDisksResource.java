@@ -16,7 +16,6 @@ import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.LinkHelper;
 import org.ovirt.engine.core.common.action.ActionType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryParametersBase;
 import org.ovirt.engine.core.common.queries.QueryType;
@@ -108,11 +107,7 @@ public class BackendDisksResource
 
     @Override
     public Disks list() {
-        if (isFiltered()) {
-            return mapCollection(getBackendCollection(QueryType.GetAllDisks, new QueryParametersBase()));
-        } else {
-            return mapCollection(getBackendCollection(SearchType.Disk));
-        }
+        return mapCollection(getBackendCollection(QueryType.GetAllDisksWithSnapshots, new QueryParametersBase()));
     }
 
     @Override

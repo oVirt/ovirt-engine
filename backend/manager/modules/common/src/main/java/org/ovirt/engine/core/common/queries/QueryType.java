@@ -192,7 +192,7 @@ public enum QueryType implements Serializable {
     GetAllDisksByVmId(QueryAuthType.User),
     GetAllAttachableDisksForVm(QueryAuthType.User),
     GetAllDisksByStorageDomainId,
-    GetAllDisks(QueryAuthType.User),
+    GetAllDisksWithSnapshots(QueryAuthType.User),
     GetAllDiskSnapshotsByStorageDomainId,
     GetUnregisteredDisks,
     GetUnregisteredDisk,
