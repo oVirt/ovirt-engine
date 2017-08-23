@@ -181,6 +181,7 @@ public class LibvirtVmXmlBuilder {
         writeCpuTune();
         writeNumaTune();
         writeDevices();
+        writePowerManagement();
         // note that this must be called after writeDevices to get the serial console, if exists
         writeOs();
         writeMetadata();
@@ -404,6 +405,17 @@ public class LibvirtVmXmlBuilder {
 
             writer.writeEndElement();
         }
+    }
+
+    private void writePowerManagement() {
+        writer.writeStartElement("pm");
+        writer.writeStartElement("suspend-to-disk");
+        writer.writeAttributeString("enabled", "no");
+        writer.writeEndElement();
+        writer.writeStartElement("suspend-to-mem");
+        writer.writeAttributeString("enabled", "no");
+        writer.writeEndElement();
+        writer.writeEndElement();
     }
 
     private void writeOs() {
