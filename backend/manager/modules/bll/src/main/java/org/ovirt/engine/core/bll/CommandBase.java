@@ -40,7 +40,6 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -993,62 +992,6 @@ public abstract class CommandBase<T extends ActionParametersBase>
     }
 
     /**
-     * Checks if the input user and groups is authorized to run the given action on the given object.
-     *
-     * @param userId
-     *            the user to check
-     * @param groupIds
-     *            the groups to check
-     * @param actionGroup
-     *            the action group to check
-     * @param object
-     *            the object to check
-     * @param type
-     *            the type of the object to check
-     * @param ignoreEveryone
-     *            if true, the "everyone" will not be considered
-     * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
-     */
-    protected boolean checkUserAndGroupsAuthorization(Guid userId,
-            Collection<Guid> groupIds,
-            final ActionGroup actionGroup,
-            final Guid object,
-            final VdcObjectType type,
-            final boolean ignoreEveryone) {
-        // Grant if there is matching permission in the database:
-        if (log.isDebugEnabled()) {
-            log.debug("Checking whether user '{}' or groups '{}' have action group '{}' on object type '{}'",
-                    userId,
-                    groupIds,
-                    actionGroup,
-                    object,
-                    type.name());
-        }
-        final Guid permId =
-                permissionDao.getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
-        if (permId != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("Found permission '{}' for user when running '{}', on '{}' with id '{}'",
-                        permId,
-                        getActionType(),
-                        type.getVdcObjectTranslation(),
-                        object);
-            }
-            return true;
-        }
-
-        // Deny otherwise:
-        if (log.isDebugEnabled()) {
-            log.debug("No permission found for user when running action '{}', on object '{}' for action group '{}' with id '{}'.",
-                    getActionType(),
-                    type.getVdcObjectTranslation(),
-                    actionGroup,
-                    object);
-        }
-        return false;
-    }
-
-    /**
      * Check if current user is authorized to run current action. Skip check if
      * MLA is off or command is internal.
      *
@@ -1497,22 +1440,6 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     protected abstract void executeCommand();
 
-    /**
-     * provides the information on child commands
-     */
-    protected void buildChildCommandInfos() {
-    }
-
-    /**
-     * calls execute action the child command.
-     */
-    protected ActionReturnValue runCommand(CommandBase<?> command) {
-        ActionReturnValue returnValue = command.executeAction();
-        returnValue.setCorrelationId(command.getParameters().getCorrelationId());
-        returnValue.setJobId(command.getJobId());
-        return returnValue;
-    }
-
     private void logCommand() {
         Class<?> type = getClass();
         InternalCommandAttribute annotation = type.getAnnotation(InternalCommandAttribute.class);
@@ -1628,10 +1555,6 @@ public abstract class CommandBase<T extends ActionParametersBase>
         if (!getReturnValue().getTaskPlaceHolderIdList().contains(taskId)) {
             getReturnValue().getTaskPlaceHolderIdList().add(taskId);
         }
-    }
-
-    public void deleteAsyncTaskPlaceHolder() {
-        deleteAsyncTaskPlaceHolder(DEFAULT_TASK_KEY);
     }
 
     public void deleteAsyncTaskPlaceHolder(String taskKey) {
@@ -1796,20 +1719,6 @@ public abstract class CommandBase<T extends ActionParametersBase>
                 parentCommand,
                 description,
                 entitiesMap);
-    }
-
-    /**
-     * Create the {@link SPMTask} object to be run
-     * @param taskId the id of the async task place holder in the database
-     * @param asyncTaskCreationInfo Info on how to create the task
-     * @param parentCommand The type of command issuing the task
-     * @return An {@link SPMTask} object representing the task to be run
-     */
-    public SPMTask concreteCreateTask(
-            Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            ActionType parentCommand) {
-        return CommandCoordinatorUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
     }
 
     public StepEnum getCommandStep() {
@@ -2319,10 +2228,6 @@ public abstract class CommandBase<T extends ActionParametersBase>
         return returnValue;
     }
 
-    public void updateCommandData() {
-        CommandCoordinatorUtil.updateCommandData(getCommandId(), commandData);
-    }
-
     public void persistCommand(ActionType parentCommand) {
         persistCommand(parentCommand, getContext(), getCallback() != null, callbackTriggeredByEvent());
     }
@@ -2557,12 +2462,6 @@ public abstract class CommandBase<T extends ActionParametersBase>
 
     protected CommandActionState getActionState() {
         return actionState;
-    }
-
-    protected void subscribe(String eventKey) {
-        CommandEntity commandEntity = buildCommandEntity(getCommandId(), true);
-        commandEntity.setWaitingForEvent(true);
-        CommandCoordinatorUtil.subscribe(eventKey, commandEntity);
     }
 
     private class DefaultCommandTransactionCompletionListener extends NoOpTransactionCompletionListener {
