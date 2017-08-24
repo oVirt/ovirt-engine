@@ -87,7 +87,7 @@ public class MemoryUtils {
     public static DiskImage createSnapshotMetadataDisk() {
         DiskImage image = createMetadataDisk();
         image.setDiskAlias(VM_SNAPSHOT_METADATA_DISK_ALIAS);
-        image.setDescription(VM_SNAPSHOT_METADATA_DISK_DESCRIPTION);
+        image.setDiskDescription(VM_SNAPSHOT_METADATA_DISK_DESCRIPTION);
         return image;
     }
 
