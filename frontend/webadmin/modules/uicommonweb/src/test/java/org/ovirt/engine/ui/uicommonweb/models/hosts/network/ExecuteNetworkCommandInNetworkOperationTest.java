@@ -583,7 +583,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         assertBond(newOrModifiedBond, resusingName ? existingBondId : null, Arrays.asList(nicA, nicB, nicC, nicD));
 
         assertThat(dataFromHostSetupNetworksModel.getRemovedBonds().size(), is(resusingName ? 1 : 2));
-        assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(existingBondId), is(resusingName ? false : true)); //$NON-NLS-1$
+        assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(existingBondId), is(!resusingName)); //$NON-NLS-1$
         assertThat("id mismatch", dataFromHostSetupNetworksModel.getRemovedBonds().contains(bondB.getId()), is(true)); //$NON-NLS-1$
     }
 
