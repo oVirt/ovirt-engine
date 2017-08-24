@@ -1027,7 +1027,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         .filter(snapshot -> !StringUtils.isEmpty(snapshot.getMemoryVolume()))
         .forEach(snapshot -> {
             addDisk(createMemoryDisk(snapshot));
-            addDisk(createMetadataDisk(snapshot));
+            addDisk(createMetadataDisk(getVm(), snapshot));
         });
     }
 
@@ -1039,7 +1039,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         DiskImage memoryDisk = MemoryUtils.createMemoryDisk(
                 vm,
                 storageDomainStaticDao.get(guids.get(0)).getStorageType(),
-                vmOverheadCalculator);
+                vmOverheadCalculator, MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
         memoryDisk.setId(guids.get(2));
         memoryDisk.setImageId(guids.get(3));
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));
@@ -1048,9 +1048,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return memoryDisk;
     }
 
-    private DiskImage createMetadataDisk(Snapshot snapshot) {
+    private DiskImage createMetadataDisk(VM vm, Snapshot snapshot) {
         List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
-        DiskImage memoryDisk = MemoryUtils.createMetadataDisk();
+        DiskImage memoryDisk = MemoryUtils.createMetadataDisk(MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
         memoryDisk.setId(guids.get(4));
         memoryDisk.setImageId(guids.get(5));
         memoryDisk.setStorageIds(new ArrayList<>(Collections.singletonList(guids.get(0))));

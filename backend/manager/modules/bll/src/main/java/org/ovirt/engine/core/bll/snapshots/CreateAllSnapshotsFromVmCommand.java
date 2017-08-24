@@ -307,7 +307,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         if (getParameters().isSaveMemory() && isLiveSnapshotApplicable()) {
             return new LiveSnapshotMemoryImageBuilder(getVm(), cachedStorageDomainId, getStoragePool(),
-                    this, vmOverheadCalculator);
+                    this, vmOverheadCalculator, getParameters().getDescription());
         }
 
         return new NullableMemoryImageBuilder();

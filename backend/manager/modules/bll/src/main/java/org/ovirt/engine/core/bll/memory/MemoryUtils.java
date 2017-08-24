@@ -28,10 +28,9 @@ public class MemoryUtils {
     private static final String VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN = "%s_hibernation_metadata";
     private static final String VM_HIBERNATION_MEMORY_DISK_ALIAS_PATTERN = "%s_hibernation_memory";
 
-    private static final String VM_SNAPSHOT_METADATA_DISK_DESCRIPTION = "metadata for VM snapshot";
-    private static final String VM_SNAPSHOT_MEMORY_DISK_DESCRIPTION = "memory dump for VM snapshot";
     private static final String VM_SNAPSHOT_METADATA_DISK_ALIAS = "snapshot_metadata";
     private static final String VM_SNAPSHOT_MEMORY_DISK_ALIAS = "snapshot_memory";
+    private static final String MEMORY_DISK_DESCRIPTION = "Memory snapshot disk for snapshot '%s' of VM '%s' (VM ID: '%s')";
 
     /**
      * Modified the given memory volume String representation to have the given storage
@@ -84,26 +83,26 @@ public class MemoryUtils {
         return Arrays.asList(memoryVolume, dataVolume);
     }
 
-    public static DiskImage createSnapshotMetadataDisk() {
-        DiskImage image = createMetadataDisk();
+    public static DiskImage createSnapshotMetadataDisk(String diskDescription) {
+        DiskImage image = createMetadataDisk(diskDescription);
         image.setDiskAlias(VM_SNAPSHOT_METADATA_DISK_ALIAS);
-        image.setDiskDescription(VM_SNAPSHOT_METADATA_DISK_DESCRIPTION);
         return image;
     }
 
     public static DiskImage createHibernationMetadataDisk(VM vm) {
-        DiskImage image = createMetadataDisk();
+        DiskImage image = createMetadataDisk(null);
         image.setDiskAlias(generateHibernationMetadataDiskAlias(vm.getName()));
         image.setDescription(VM_HIBERNATION_METADATA_DISK_DESCRIPTION);
         return image;
     }
 
-    public static DiskImage createMetadataDisk() {
+    public static DiskImage createMetadataDisk(String diskDescription) {
         DiskImage image = new DiskImage();
         image.setSize(MemoryUtils.METADATA_SIZE_IN_BYTES);
         image.setVolumeType(VolumeType.Preallocated);
         image.setVolumeFormat(VolumeFormat.RAW);
         image.setContentType(DiskContentType.MEMORY_METADATA_VOLUME);
+        image.setDiskDescription(diskDescription);
         return image;
     }
 
@@ -111,26 +110,26 @@ public class MemoryUtils {
         return String.format(VM_HIBERNATION_METADATA_DISK_ALIAS_PATTERN, vmName);
     }
 
-    public static DiskImage createSnapshotMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator) {
-        DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator);
+    public static DiskImage createSnapshotMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator, String diskDescription) {
+        DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator, diskDescription);
         image.setDiskAlias(VM_SNAPSHOT_MEMORY_DISK_ALIAS);
-        image.setDescription(VM_SNAPSHOT_MEMORY_DISK_DESCRIPTION);
         return image;
     }
 
     public static DiskImage createHibernationMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator) {
-        DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator);
+        DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator, null);
         image.setDiskAlias(generateHibernationMemoryDiskAlias(vm.getName()));
         image.setDescription(VM_HIBERNATION_MEMORY_DISK_DESCRIPTION);
         return image;
     }
 
-    public static DiskImage createMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator) {
+    public static DiskImage createMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator, String diskDescription) {
         DiskImage image = new DiskImage();
         image.setSize(vmOverheadCalculator.getSnapshotMemorySizeInBytes(vm));
         image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
         image.setVolumeFormat(VolumeFormat.RAW);
         image.setContentType(DiskContentType.MEMORY_DUMP_VOLUME);
+        image.setDiskDescription(diskDescription);
         return image;
     }
 
@@ -156,5 +155,9 @@ public class MemoryUtils {
     public static Guid getMetadataDiskId(String memoryVolume) {
         return StringUtils.isEmpty(memoryVolume) ? null
                 : GuidUtils.getGuidListFromString(memoryVolume).get(4);
+    }
+
+    public static String generateMemoryDiskDescription(VM vm, String snapshotDescription) {
+        return String.format(MEMORY_DISK_DESCRIPTION, snapshotDescription, vm.getName(), vm.getId());
     }
 }
