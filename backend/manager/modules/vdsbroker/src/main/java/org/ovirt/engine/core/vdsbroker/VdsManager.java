@@ -690,7 +690,7 @@ public class VdsManager {
                         new VdsIdAndVdsVDSCommandParametersBase(vds));
         if (caps.getSucceeded()) {
             // Verify version capabilities
-            HashSet<Version> hostVersions = null;
+            Set<Version> hostVersions = null;
             Version clusterCompatibility = vds.getClusterCompatibilityVersion();
             if (// Verify that this VDS also
                 // supports the specific cluster level. Otherwise getHardwareInfo API won't exist for the

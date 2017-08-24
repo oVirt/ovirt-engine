@@ -535,7 +535,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsDynamic.setSupportedClusterLevels(value);
     }
 
-    public HashSet<Version> getSupportedClusterVersionsSet() {
+    public Set<Version> getSupportedClusterVersionsSet() {
         return vdsDynamic.getSupportedClusterVersionsSet();
     }
 
@@ -547,7 +547,7 @@ public class VDS implements Queryable, BusinessEntityWithStatus<Guid, VDSStatus>
         vdsDynamic.setSupportedEngines(value);
     }
 
-    public HashSet<Version> getSupportedENGINESVersionsSet() {
+    public Set<Version> getSupportedENGINESVersionsSet() {
         return vdsDynamic.getSupportedEngineVersionsSet();
     }
 

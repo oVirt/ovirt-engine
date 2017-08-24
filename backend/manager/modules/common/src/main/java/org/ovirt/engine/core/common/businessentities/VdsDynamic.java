@@ -150,9 +150,9 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private RpmVersion rpmVersion;
 
-    private HashSet<Version> supportedClusterVersionsSet;
+    private Set<Version> supportedClusterVersionsSet;
 
-    private HashSet<Version> supportedEngineVersionsSet;
+    private Set<Version> supportedEngineVersionsSet;
 
     private SELinuxMode selinuxEnforceMode;
 
@@ -464,7 +464,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         supportedClusterLevels = value;
     }
 
-    public HashSet<Version> getSupportedClusterVersionsSet() {
+    public Set<Version> getSupportedClusterVersionsSet() {
         if (supportedClusterVersionsSet == null) {
             supportedClusterVersionsSet = parseSupportedVersions(getSupportedClusterLevels());
         }
@@ -479,7 +479,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         supportedEngines = value;
     }
 
-    public HashSet<Version> getSupportedEngineVersionsSet() {
+    public Set<Version> getSupportedEngineVersionsSet() {
         if (supportedEngineVersionsSet == null) {
             supportedEngineVersionsSet = parseSupportedVersions(getSupportedEngines());
         }
@@ -543,8 +543,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
      * @throws RuntimeException
      *             thrown in case and parsing a version fails
      */
-    private HashSet<Version> parseSupportedVersions(String supportedVersions) {
-        HashSet<Version> parsedVersions = new HashSet<>();
+    private Set<Version> parseSupportedVersions(String supportedVersions) {
+        Set<Version> parsedVersions = new HashSet<>();
         if (!StringHelper.isNullOrEmpty(supportedVersions)) {
             for (String ver : supportedVersions.split("[,]", -1)) {
                 try {
