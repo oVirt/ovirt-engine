@@ -462,6 +462,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public void setSupportedClusterLevels(String value) {
         supportedClusterLevels = value;
+        supportedClusterVersionsSet = null;
     }
 
     public Set<Version> getSupportedClusterVersionsSet() {
@@ -477,6 +478,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public void setSupportedEngines(String value) {
         supportedEngines = value;
+        supportedEngineVersionsSet = null;
     }
 
     public Set<Version> getSupportedEngineVersionsSet() {
