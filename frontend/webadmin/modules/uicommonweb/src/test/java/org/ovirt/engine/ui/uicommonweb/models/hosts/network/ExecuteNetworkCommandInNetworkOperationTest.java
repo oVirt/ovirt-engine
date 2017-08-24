@@ -72,7 +72,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     private static final String existingBondName = "existingBond"; //$NON-NLS-1$
     private Bond existingBond = createBond(existingBondId, existingBondName, Arrays.asList(nicA, nicB)).toBond();
     private CreateOrUpdateBond newlyCreatedBond =
-            createBond(null, "newlyCreatedBond", Collections.<VdsNetworkInterface> emptyList()); //$NON-NLS-1$
+            createBond(null, "newlyCreatedBond", Collections.emptyList()); //$NON-NLS-1$
 
     @Mock
     private HostSetupNetworksModel setupModel;
@@ -242,7 +242,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
 
         dataFromHostSetupNetworksModel.getBonds().add(createOrUpdateBond);
 
-        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
+        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.emptyList());
         when(bondNetworkInterfaceModelA.getCreateOrUpdateBond()).thenReturn(createOrUpdateBond);
 
         NetworkOperation.BREAK_BOND.getTarget().executeNetworkCommand(
@@ -273,7 +273,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 dataFromHostSetupNetworksModel,
                 newlyCreatedBond);
 
-        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
+        when(bondNetworkInterfaceModelA.getItems()).thenReturn(Collections.emptyList());
         when(bondNetworkInterfaceModelA.getCreateOrUpdateBond())
                 .thenReturn(dataFromHostSetupNetworksModel.getBonds().iterator().next());
 
@@ -382,7 +382,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     public void testReBondingTwoNicsWithReattachingNetworkAttachmentOnNewlyCreatedBond() throws Exception {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
-                Collections.<LogicalNetworkModel> emptyList());
+                Collections.emptyList());
 
         initOrginalBondNameToIdMap(CreateOrUpdateBond.fromBond(existingBond));
 
@@ -395,7 +395,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
                 networkInterfaceModelOfNicA,
                 networkInterfaceModelOfNicB,
                 dataFromHostSetupNetworksModel,
-                createBond(null, existingBondName, Collections.<VdsNetworkInterface> emptyList()));
+                createBond(null, existingBondName, Collections.emptyList()));
 
         // related network attachment will be updated, not removed and created new one.
         assertThat(dataFromHostSetupNetworksModel.getNetworkAttachments().size(), is(0));
@@ -415,7 +415,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     public void testAddingNewNicWithNetworkAttachmentToExistingBondWithoutAnyAttachment() throws Exception {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
-                Collections.<LogicalNetworkModel> emptyList());
+                Collections.emptyList());
 
         NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(networkInterfaceModelOfNicC,
                 logicalNetworkModelOfNetworkC);
@@ -451,7 +451,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         existingBond.getSlaves().add(nicC.getName());
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
-                Collections.<LogicalNetworkModel> emptyList());
+                Collections.emptyList());
         when(bondNetworkInterfaceModelA.getSlaves())
                 .thenReturn(Arrays.asList(networkInterfaceModelOfNicA,
                         networkInterfaceModelOfNicB,
@@ -487,7 +487,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     public void testRemoveSlaveFromBondWithTwoSlaves() throws Exception {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
-                Collections.<LogicalNetworkModel> emptyList());
+                Collections.emptyList());
         when(bondNetworkInterfaceModelA.getSlaves())
                 .thenReturn(Arrays.asList(networkInterfaceModelOfNicA, networkInterfaceModelOfNicB));
 
@@ -540,7 +540,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     private void joinBondsTest(boolean resusingName) {
         addBondToParamsAndModel(existingBond,
                 bondNetworkInterfaceModelA,
-                Collections.<LogicalNetworkModel> emptyList());
+                Collections.emptyList());
         NetworkAttachment networkAttachment = createAttachmentOnNetworkModelAndUpdateParams(bondNetworkInterfaceModelA,
                 logicalNetworkModelOfNetworkA);
 
@@ -555,7 +555,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
         when(bondNetworkInterfaceModelA.getSlaves()).thenReturn(Arrays.asList(networkInterfaceModelOfNicA,
                 networkInterfaceModelOfNicB));
 
-        when(bondNetworkInterfaceModelB.getItems()).thenReturn(Collections.<LogicalNetworkModel> emptyList());
+        when(bondNetworkInterfaceModelB.getItems()).thenReturn(Collections.emptyList());
         when(bondNetworkInterfaceModelB.getSlaves())
                 .thenReturn(Arrays.asList(networkInterfaceModelOfNicC, networkInterfaceModelOfNicD));
 
