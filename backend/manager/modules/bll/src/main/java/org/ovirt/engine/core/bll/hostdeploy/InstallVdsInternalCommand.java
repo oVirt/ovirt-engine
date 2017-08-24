@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -33,7 +32,6 @@ import org.ovirt.engine.core.common.utils.ansible.AnsibleConstants;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleExecutor;
 import org.ovirt.engine.core.common.utils.ansible.AnsibleReturnCode;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.dao.ClusterDao;
@@ -240,11 +238,6 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 new Pair<>("host_deploy_override_firewall", getParameters().getOverrideFirewall()),
                 new Pair<>("host_deploy_firewall_type", firewallType.name()),
                 new Pair<>("ansible_port", getVds().getSshPort()),
-                new Pair<>(
-                    "host_deploy_firewalld_supported",
-                    getVds().getSupportedClusterVersionsSet().contains(Version.v4_2)
-                        && getVds().getVdsType().getValue() != VDSType.oVirtVintageNode.getValue()
-                ),
                 new Pair<>("host_deploy_post_tasks", AnsibleConstants.HOST_DEPLOY_POST_TASKS_FILE_PATH)
             )
             // /var/log/ovirt-engine/host-deploy/ovirt-host-deploy-ansible-{hostname}-{correlationid}-{timestamp}.log
