@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts.network;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -14,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -588,8 +586,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
     }
 
     private void assertBond(CreateOrUpdateBond bond, Guid bondId, List<VdsNetworkInterface> slaves) {
-        Matcher bondIdMatcher = bondId == null ? nullValue() : is(bondId);
-        assertThat("id mismatch", bond.getId(), bondIdMatcher); //$NON-NLS-1$
+        assertThat("id mismatch", bond.getId(), is(bondId)); //$NON-NLS-1$
 
         for (VdsNetworkInterface slave : slaves) {
             assertThat("missing slave", bond.getSlaves().contains(slave.getName()), is(true)); //$NON-NLS-1$
@@ -601,8 +598,7 @@ public class ExecuteNetworkCommandInNetworkOperationTest {
             Guid attachmentId,
             Guid networkId,
             Guid nicId) {
-        Matcher attachmentIdMatcher = attachmentId == null ? nullValue() : is(attachmentId);
-        assertThat("id mismatch", networkAttachment.getId(), attachmentIdMatcher); //$NON-NLS-1$
+        assertThat("id mismatch", networkAttachment.getId(), is(attachmentId)); //$NON-NLS-1$
         assertThat("network id mismatch", networkAttachment.getNetworkId(), equalTo(networkId)); //$NON-NLS-1$
         assertThat("nicId mismatch", networkAttachment.getNicId(), equalTo(nicId)); //$NON-NLS-1$
     }
