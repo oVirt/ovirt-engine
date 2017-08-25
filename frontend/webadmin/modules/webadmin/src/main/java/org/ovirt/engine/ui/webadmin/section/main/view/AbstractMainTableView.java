@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -10,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 
 /**
  * Base class for table-based main tab views.
@@ -33,7 +32,7 @@ public abstract class AbstractMainTableView<T, M extends SearchableListModel> ex
     }
 
     protected SimpleActionTable<T> createActionTable() {
-        return new SimpleActionTable<T>(modelProvider, getTableHeaderlessResources(), getTableResources(),
+        return new SimpleActionTable<T>(modelProvider, getTableResources(),
                 ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
             {
                 showRefreshButton();
@@ -43,10 +42,6 @@ public abstract class AbstractMainTableView<T, M extends SearchableListModel> ex
                 enableHeaderContextMenu();
             }
         };
-    }
-
-    protected Resources getTableHeaderlessResources() {
-        return (Resources) GWT.create(MainTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {

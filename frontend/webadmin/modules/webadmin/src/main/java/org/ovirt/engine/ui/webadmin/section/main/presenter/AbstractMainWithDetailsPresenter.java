@@ -19,8 +19,11 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
@@ -47,6 +50,11 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
 
     public interface ViewDef<T> extends View, HasActionTable<T> {
         void setDetailPlaceTransitionHandler(DetailsTransitionHandler<T> handler);
+
+        void resizeToFullHeight();
+
+        HandlerRegistration addWindowResizeHandler(ResizeHandler handler);
+
     }
 
     @ContentSlot
@@ -102,6 +110,9 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
             applySearchString(event.getSearchString());
         }));
         getView().setDetailPlaceTransitionHandler(this);
+        registerHandler(getView().addWindowResizeHandler(e -> {
+            Scheduler.get().scheduleDeferred(() -> getView().resizeToFullHeight());
+        }));
         String searchString = searchStringCollector.getSearchStringPrefix(modelProvider.getModel().getSearchString());
         if (searchString != null) {
             // Someone set search string before we were instantiated, update the search string.
@@ -148,7 +159,6 @@ public abstract class AbstractMainWithDetailsPresenter<T, M extends ListWithDeta
     protected void onReveal() {
         super.onReveal();
 
-        getTable().resetScrollPosition();
         setInSlot(TYPE_SetSearchPanel, searchPanelPresenterWidget);
         setInSlot(TYPE_SetBreadCrumbs, breadCrumbsPresenterWidget);
     }

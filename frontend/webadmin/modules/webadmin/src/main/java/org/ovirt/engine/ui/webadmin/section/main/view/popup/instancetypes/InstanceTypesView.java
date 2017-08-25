@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes;
 
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -19,7 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -79,7 +78,7 @@ public class InstanceTypesView extends Composite {
 
     private void initMainTable(InstanceTypesActionPanelPresenterWidget actionPanel) {
         typeTable = new SimpleActionTable<>(instanceTypeModelProvider,
-                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+                getTableResources(), eventBus, clientStorage);
 
         AbstractTextColumn<InstanceType> nameColumn = new AbstractTextColumn<InstanceType>() {
             @Override
@@ -107,10 +106,6 @@ public class InstanceTypesView extends Composite {
         detailsWidget = new InstanceTypeGeneralModelForm(instanceTypeGeneralModelProvider);
 
         detailsPanel.add(detailsWidget);
-    }
-
-    protected Resources getTableHeaderlessResources() {
-        return GWT.create(MainTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {

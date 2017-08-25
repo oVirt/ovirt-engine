@@ -31,6 +31,7 @@ public class SubTabStorageTemplateView extends AbstractSubTabTreeView<TemplatesT
         table.addColumn(new EmptyColumn(), constants.provisionedSizeTemplate(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.actualSizeTemplate(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.creationDateTemplate(), "170px"); //$NON-NLS-1$
+        table.setHeight("30px"); // $NON-NLS-1$
     }
 
     @Override

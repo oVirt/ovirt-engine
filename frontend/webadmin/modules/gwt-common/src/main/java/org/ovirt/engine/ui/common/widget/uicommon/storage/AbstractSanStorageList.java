@@ -24,7 +24,7 @@ import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -180,49 +180,40 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
 
     protected abstract TreeItem createLeafNode(L leafModel);
 
-    public interface SanStorageListHeaderResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
+    public interface SanStorageListTargetRootResources extends DataGrid.Resources {
+        interface Style extends DataGrid.Style {
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListHeader.css" })
-        TableStyle cellTableStyle();
+        @Source({ DataGrid.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListTargetRoot.css" })
+        Style dataGridStyle();
     }
 
-    public interface SanStorageListTargetRootResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
+    public interface SanStorageListLunTableResources extends DataGrid.Resources {
+        interface Style extends DataGrid.Style {
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListTargetRoot.css" })
-        TableStyle cellTableStyle();
+        @Source({ DataGrid.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListLunTable.css" })
+        Style dataGridStyle();
     }
 
-    public interface SanStorageListLunTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
+    public interface SanStorageListLunRootResources extends DataGrid.Resources {
+        interface Style extends DataGrid.Style {
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListLunTable.css" })
-        TableStyle cellTableStyle();
+        @Source({ DataGrid.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListLunRoot.css" })
+        Style dataGridStyle();
     }
 
-    public interface SanStorageListLunRootResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
+    public interface SanStorageListTargetTableResources extends DataGrid.Resources {
+        interface Style extends DataGrid.Style {
         }
 
         @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListLunRoot.css" })
-        TableStyle cellTableStyle();
-    }
-
-    public interface SanStorageListTargetTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListTargetTable.css" })
-        TableStyle cellTableStyle();
+        @Source({ DataGrid.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/SanStorageListTargetTable.css" })
+        Style dataGridStyle();
     }
 
 }

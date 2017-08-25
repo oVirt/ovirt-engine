@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.MacPool;
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -20,13 +19,15 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
@@ -43,7 +44,10 @@ public class SharedMacPoolView extends Composite {
     FlowPanel macPoolPanel;
 
     @UiField
-    FlowPanel authorizationPanel;
+    ResizeLayoutPanel macPoolResizePanel;
+
+    @UiField
+    ResizeLayoutPanel authorizationPanel;
 
     private final PermissionModelProvider<MacPool, SharedMacPoolListModel> permissionModelProvider;
     private final SharedMacPoolModelProvider sharedMacPoolModelProvider;
@@ -54,11 +58,13 @@ public class SharedMacPoolView extends Composite {
     private static final ApplicationResources resources = AssetProvider.getResources();
     private static final ApplicationConstants constants = AssetProvider.getConstants();
 
+    private SimpleActionTable<MacPool> macPoolTable;
+
     @Inject
     public SharedMacPoolView(final EventBus eventBus, final ClientStorage clientStorage,
             SharedMacPoolModelProvider sharedMacPoolModelProvider,
             PermissionModelProvider<MacPool, SharedMacPoolListModel> permissionModelProvider,
-            SharedMacPoolActionPanelPresenterWidget actionPanel) {
+            final SharedMacPoolActionPanelPresenterWidget actionPanel) {
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;
         this.sharedMacPoolModelProvider = sharedMacPoolModelProvider;
@@ -69,12 +75,24 @@ public class SharedMacPoolView extends Composite {
         macPoolPanel.add(actionPanel);
         macPoolPanel.add(createMacPoolTable());
 
-        PermissionListModelTable<PermissionListModel<MacPool>> authorizationTable = new PermissionListModelTable<>(permissionModelProvider, eventBus, null, clientStorage);
+        final PermissionListModelTable<PermissionListModel<MacPool>> authorizationTable =
+                new PermissionListModelTable<>(permissionModelProvider, eventBus, null, clientStorage);
         authorizationTable.initTable();
         authorizationTable.getTable().getSelectionModel().addSelectionChangeHandler(event ->
                 permissionModelProvider.setSelectedItems(authorizationTable.getTable().getSelectedItems()));
         authorizationPanel.add(authorizationTable);
 
+        authorizationPanel.addResizeHandler(e -> {
+            // Set the height of the table to the height of the container - the height of the action panel -
+            // the height of the table controls.
+            macPoolTable.table.setHeight(macPoolPanel.getOffsetHeight()
+                    - actionPanel.asWidget().getOffsetHeight()
+                    - macPoolTable.getTableControlsHeight() + Unit.PX.getType());
+            // Set the height of the table to the height of the container - the height of the table controls.
+            authorizationTable.getTable().table.setHeight(e.getHeight()
+                    - authorizationTable.getTable().getTableControlsHeight()
+                    + Unit.PX.getType());
+        });
         setupAuthorizationPanelVisibility(false);
     }
 
@@ -87,9 +105,8 @@ public class SharedMacPoolView extends Composite {
     }
 
     private SimpleActionTable<MacPool> createMacPoolTable() {
-        SimpleActionTable<MacPool> macPoolTable =
+        macPoolTable =
                 new SimpleActionTable<>(sharedMacPoolModelProvider,
-                        getTableHeaderlessResources(),
                         getTableResources(),
                         eventBus,
                         clientStorage);
@@ -131,10 +148,6 @@ public class SharedMacPoolView extends Composite {
         });
 
         return macPoolTable;
-    }
-
-    protected Resources getTableHeaderlessResources() {
-        return (Resources) GWT.create(MainTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {

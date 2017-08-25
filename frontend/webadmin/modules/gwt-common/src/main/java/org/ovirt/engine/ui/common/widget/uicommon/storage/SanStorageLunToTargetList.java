@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TableLayout;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -61,7 +61,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
     @Override
     protected void createHeaderWidget() {
         EntityModelCellTable<ListModel<LunModel>> table = new EntityModelCellTable<>(false,
-                (Resources) GWT.create(SanStorageListHeaderResources.class),
+                (Resources) GWT.create(SanStorageListTargetTableResources.class),
                 true);
 
         // Create select all button
@@ -90,7 +90,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.setRowData(new ArrayList<EntityModel>());
 
         // Style table
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); //$NON-NLS-1$
 
         // Add table as header widget
         treeHeader.add(table);
@@ -120,6 +120,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 return ""; //$NON-NLS-1$
             }
         }, multiSelection ? selectAllHeader : null, "20px"); //$NON-NLS-1$
+        // This was the height of the header
+        table.setHeight("23px"); // $NON-NLS-1$
     }
 
     final IEventListener<PropertyChangedEventArgs> lunModelSelectedItemListener = (ev, sender, args) -> {
@@ -162,7 +164,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.setRowData(items);
         table.asEditor().edit(listModel);
 
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); // $NON-NLS-1$
 
         rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
         rootModel.getPropertyChangedEvent().addListener(lunModelSelectedItemListener, table);
@@ -185,7 +187,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         // Create tree item
         HorizontalPanel panel = new HorizontalPanel();
         panel.add(table);
-        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setWidth("100%"); // $NON-NLS-1$
         panel.getElement().getStyle().setTableLayout(TableLayout.FIXED);
 
         TreeItem item = new TreeItem(panel);
@@ -293,7 +295,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         table.asEditor().edit(leafModel);
         leafModel.setSelectedItem(selectedItem);
 
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); // $NON-NLS-1$
 
         ScrollPanel panel = new ScrollPanel();
         panel.add(table);

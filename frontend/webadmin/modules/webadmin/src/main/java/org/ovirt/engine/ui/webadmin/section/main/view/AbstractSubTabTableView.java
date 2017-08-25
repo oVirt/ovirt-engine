@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
-import org.ovirt.engine.ui.common.SubTableHeaderlessResources;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -13,7 +12,10 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
@@ -44,8 +46,18 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         generateIds();
     }
 
+    @Override
+    public HandlerRegistration addWindowResizeHandler(ResizeHandler handler) {
+        return Window.addResizeHandler(handler);
+    }
+
+    @Override
+    public void resizeToFullHeight() {
+        table.updateGridSize();
+    }
+
     protected SimpleActionTable<T> createActionTable() {
-        return new SimpleActionTable<T>(modelProvider, getTableHeaderlessResources(), getTableResources(),
+        return new SimpleActionTable<T>(modelProvider, getTableResources(),
                 ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage()) {
             {
                 if (useTableWidgetForContent()) {
@@ -77,10 +89,6 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
      */
     protected boolean useTableWidgetForContent() {
         return true;
-    }
-
-    protected Resources getTableHeaderlessResources() {
-        return GWT.create(SubTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {

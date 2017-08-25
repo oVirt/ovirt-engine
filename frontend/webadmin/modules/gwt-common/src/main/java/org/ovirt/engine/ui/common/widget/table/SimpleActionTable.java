@@ -10,10 +10,9 @@ import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
@@ -25,9 +24,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     interface WidgetUiBinder extends UiBinder<FlowPanel, SimpleActionTable<?>> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
-
-    @UiField
-    Style style;
 
     @UiField
     Container tableOverheadContainer;
@@ -45,40 +41,31 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     @UiField
     HTMLPanel toCount;
 
+    @UiField
+    FlowPanel controlsContainer;
+
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        this(dataProvider, null, null, eventBus, clientStorage);
+        this(dataProvider, null, eventBus, clientStorage);
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             EventBus eventBus, ClientStorage clientStorage,
             AbstractRefreshManager<RefreshPanel> refreshManager) {
-        this(dataProvider, null, null, eventBus, clientStorage, refreshManager);
+        this(dataProvider, null, eventBus, clientStorage, refreshManager);
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, EventBus eventBus, ClientStorage clientStorage) {
-        this(dataProvider, resources, null, eventBus, clientStorage);
-    }
-
-    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, EventBus eventBus, ClientStorage clientStorage,
-            AbstractRefreshManager<RefreshPanel> refreshManager) {
-        this(dataProvider, resources, null, eventBus, clientStorage, refreshManager);
-    }
-
-    public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerResources,
+            Resources resources,
             EventBus eventBus, ClientStorage clientStorage) {
-        this(dataProvider, resources, headerResources, eventBus, clientStorage,
+        this(dataProvider, resources, eventBus, clientStorage,
                 new SimpleRefreshManager(dataProvider, eventBus, clientStorage));
     }
 
     public SimpleActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerResources,
-            EventBus eventBus, ClientStorage clientStorage,
+            Resources resources, EventBus eventBus, ClientStorage clientStorage,
             AbstractRefreshManager<RefreshPanel> refreshManager) {
-        super(dataProvider, resources, headerResources, clientStorage);
+        super(dataProvider, resources, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         refreshPanel.setVisible(false);
@@ -111,6 +98,14 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
         toCount.getElement().setInnerText(to);
     }
 
+    public int getTableControlsHeight() {
+        return controlsContainer.getOffsetHeight();
+    }
+
+    @Override
+    public void setVisible(boolean value) {
+        super.setVisible(value);
+    }
     /**
      * Show the refresh buttons if the data provider's refresh timer is enabled.
      */
@@ -128,10 +123,6 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     public void setTableOverhead(Widget widget) {
         tableOverheadContainer.setVisible(true);
         tableOverhead.setWidget(widget);
-    }
-
-    interface Style extends CssResource {
-        String subTitledButton();
     }
 
 }

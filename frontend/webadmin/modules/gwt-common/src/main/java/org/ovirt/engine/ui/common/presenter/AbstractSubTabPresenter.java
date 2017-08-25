@@ -13,8 +13,10 @@ import org.ovirt.engine.ui.uicommonweb.models.OvirtSelectionModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
@@ -46,6 +48,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
          */
         void setMainSelectedItem(T selectedItem);
 
+        void resizeToFullHeight();
+
+        HandlerRegistration addWindowResizeHandler(ResizeHandler handler);
     }
 
     private static final Logger logger = Logger.getLogger(AbstractSubTabPresenter.class.getName());
@@ -96,6 +101,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
             }));
         }
         initializeHandlers();
+        registerHandler(getView().addWindowResizeHandler(e -> {
+            Scheduler.get().scheduleDeferred(() -> getView().resizeToFullHeight());
+        }));
         getSelectedMainItems().registerListener(this);
         itemChanged(getSelectedMainItems().getSelectedItem());
         setInSlot(TYPE_SetActionPanel, getActionPanelPresenterWidget());
@@ -158,10 +166,6 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
         // Clear table selection before starting
         clearSelection();
-
-        if (getTable() != null) {
-            getTable().resetScrollPosition();
-        }
     }
 
     @Override

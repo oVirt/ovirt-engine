@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.common;
 
-import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.DataGrid;
 
-public interface PopupSimpleTableResources extends CellTable.Resources {
+public interface PopupSimpleTableResources extends DataGrid.Resources {
 
-    interface TableStyle extends CellTable.Style {
+    interface Style extends DataGrid.Style {
     }
 
     @Override
-    @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/PopupSimpleCellTable.css" })
-    TableStyle cellTableStyle();
+    @Source({ DataGrid.Style.DEFAULT_CSS, "org/ovirt/engine/ui/common/css/PopupSimpleCellTable.css" })
+    Style dataGridStyle();
 
 }

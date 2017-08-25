@@ -132,7 +132,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         }
 
         disksTable.setRowData(new ArrayList<EntityModel>());
-        disksTable.setWidth("100%", true); //$NON-NLS-1$
+        disksTable.setWidth("100%"); // $NON-NLS-1$
         disksTable.setSelectionModel(new NoSelectionModel());
     }
 
@@ -266,7 +266,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         nicsTable.addColumn(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()), "90px"); //$NON-NLS-1$
 
         nicsTable.setRowData(new ArrayList<EntityModel>());
-        nicsTable.setWidth("100%", true); //$NON-NLS-1$
+        nicsTable.setWidth("100%"); // $NON-NLS-1$
         nicsTable.setSelectionModel(new NoSelectionModel());
     }
 
@@ -282,7 +282,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         appsTable.addColumn(appNameColumn, constants.nameSnapshot());
 
         appsTable.setRowData(new ArrayList<EntityModel>());
-        appsTable.setWidth("100%", true); //$NON-NLS-1$
+        appsTable.setWidth("100%"); // $NON-NLS-1$
         appsTable.setSelectionModel(new NoSelectionModel());
     }
 
@@ -322,7 +322,7 @@ public abstract class RegisterEntityInfoPanel<T, D extends ImportEntityData<T>, 
         }, constants.statusContainer());
 
         containersTable.setRowData(new ArrayList<EntityModel>());
-        containersTable.setWidth("100%", true); //$NON-NLS-1$
+        containersTable.setWidth("100%"); // $NON-NLS-1$
         containersTable.setSelectionModel(new NoSelectionModel());
     }
 }

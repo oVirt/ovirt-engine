@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -53,6 +54,8 @@ import com.google.inject.Inject;
 
 public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends AbstractTabbedModelBoundPopupView<T>
     implements AbstractNetworkPopupPresenterWidget.ViewDef<T> {
+
+    private static final int CLUSTERS_TABLE_HEIGHT = 390;
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractNetworkPopupView<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -210,6 +213,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         mtuEditor.setUsePatternFly(true);
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.clustersTable = new EntityModelCellTable<>(SelectionMode.NONE, true);
+        this.clustersTable.setHeight(CLUSTERS_TABLE_HEIGHT + Unit.PX.getType());
         shouldSetDnsConfigurationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

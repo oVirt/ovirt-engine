@@ -7,6 +7,9 @@ import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
@@ -32,6 +35,16 @@ public class AbstractSubTabTableWidgetView<I, T, M extends ListWithDetailsModel,
     public AbstractSubTabTableWidgetView(AbstractModelBoundTableWidget<T, D> modelBoundTableWidget) {
         this.modelBoundTableWidget = modelBoundTableWidget;
         this.table = modelBoundTableWidget.getTable();
+    }
+
+    @Override
+    public HandlerRegistration addWindowResizeHandler(ResizeHandler handler) {
+        return Window.addResizeHandler(handler);
+    }
+
+    @Override
+    public void resizeToFullHeight() {
+        table.updateGridSize();
     }
 
     @Override

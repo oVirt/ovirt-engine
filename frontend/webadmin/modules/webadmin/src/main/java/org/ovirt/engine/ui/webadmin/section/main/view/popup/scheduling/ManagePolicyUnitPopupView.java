@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -60,7 +59,6 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         policyUnitTable = new ListModelObjectCellTable<>();
         policyUnitTable.enableColumnResizing();
         policyUnitTableContainer.add(policyUnitTable);
-        policyUnitTable.addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
 
         policyUnitTable.addColumn(new AbstractImageResourceColumn<PolicyUnit>() {
             @Override

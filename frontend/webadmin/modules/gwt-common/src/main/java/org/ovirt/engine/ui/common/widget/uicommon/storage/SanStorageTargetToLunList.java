@@ -6,7 +6,6 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -14,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.label.StringValueLabel;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractScrollableTextColumn;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractSanStorageList.SanStorageListTargetTableResources;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SortedListModel;
@@ -26,7 +26,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,7 +39,6 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
     protected int treeScrollPosition;
 
-    private static final CommonApplicationResources resources = AssetProvider.getResources();
     private static final CommonApplicationConstants constants = AssetProvider.getConstants();
     private static final CommonApplicationMessages messages = AssetProvider.getMessages();
 
@@ -71,7 +70,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
     @Override
     protected void createHeaderWidget() {
         EntityModelCellTable<ListModel> table = new EntityModelCellTable<>(false,
-                (Resources) GWT.create(SanStorageListHeaderResources.class),
+                (Resources) GWT.create(SanStorageListTargetTableResources.class),
                 true);
 
         // Add first blank column
@@ -103,7 +102,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         }, constants.portSanStorage(), "65px"); //$NON-NLS-1$
 
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); //$NON-NLS-1$
 
         // Add last blank columns
         table.addColumn(new TextColumn<SanTargetModel>() {
@@ -121,7 +120,9 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
 
         // Add blank item list
         table.setRowData(new ArrayList<EntityModel>());
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); //$NON-NLS-1$
+        // This was the height of the header
+        table.setHeight("23px"); // $NON-NLS-1$
 
         // Add table as header widget
         treeHeader.add(table);
@@ -258,7 +259,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         table.asEditor().edit(sortedLeafModel);
         sortedLeafModel.setSelectedItem(selectedItem);
 
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); // $NON-NLS-1$
 
         if (!multiSelection) {
             for (LunModel lunModel : items) {

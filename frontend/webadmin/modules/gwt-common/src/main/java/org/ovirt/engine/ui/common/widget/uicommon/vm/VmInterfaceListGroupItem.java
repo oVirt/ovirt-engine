@@ -34,7 +34,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkInterface> {
 
-    private static final String COMMA_DELIMITOR = ", "; // $NON-NLS-1$
+    private static final String COMMA_DELIMITER = ", "; // $NON-NLS-1$
     private static final String DANGER = "text-danger"; // $NON-NLS-1$
     private static final String ROTATE_270 = "fa-rotate-270"; //$NON-NLS-1$
     private static final String DL_HORIZONTAL = "dl-horizontal"; // $NON-NLS-1$
@@ -131,13 +131,12 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
 
         addDetailItem(templates.sub(constants.txRate(), constants.mbps()),
                 rateRenderer.render(new Double[] { networkInterface.getStatistics().getTransmitRate(),
-                        networkInterface.hasSpeed() ? networkInterface.getSpeed().doubleValue() : 0 }), dl);
-
-        addDetailItem(templates.sub(constants.rxTotal(), constants.mbps()),
+                        networkInterface.getSpeed().doubleValue() }), dl);
+        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.rxTotal()),
                 networkInterface.getStatistics().getReceivedBytes() != null ?
-                        String.valueOf(networkInterface.getStatistics().getReceivedBytes()) :
-                            constants.notAvailableLabel(), dl);
-        addDetailItem(templates.sub(constants.txTotal(), constants.mbps()),
+                String.valueOf(networkInterface.getStatistics().getReceivedBytes()) :
+                    constants.notAvailableLabel(), dl);
+        addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.txTotal()),
                 networkInterface.getStatistics().getTransmittedBytes() != null ?
                         String.valueOf(networkInterface.getStatistics().getTransmittedBytes()) :
                             constants.notAvailableLabel(), dl);
@@ -162,10 +161,12 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
                         guestAgentInterface.getInterfaceName(), dl);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv4VmGuestAgent()),
                         guestAgentInterface.getIpv4Addresses() != null ?
-                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv4Addresses()) : constants.notAvailableLabel(), dl); // $NON-NLS-1$
+                        String.join(COMMA_DELIMITER, guestAgentInterface.getIpv4Addresses())
+                        : constants.notAvailableLabel(), dl);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.ipv6VmGuestAgent()),
                         guestAgentInterface.getIpv6Addresses() != null ?
-                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv6Addresses()) : constants.notAvailableLabel(), dl); // $NON-NLS-1$
+                        String.join(COMMA_DELIMITER, guestAgentInterface.getIpv6Addresses())
+                        : constants.notAvailableLabel(), dl);
                 addDetailItem(SafeHtmlUtils.fromSafeConstant(constants.macVmGuestAgent()),
                         guestAgentInterface.getMacAddress(), dl);
                 column.getElement().appendChild(dl);
@@ -236,16 +237,16 @@ public class VmInterfaceListGroupItem extends PatternflyListViewItem<VmNetworkIn
     protected void addNetworkMainInfo(VmNetworkInterface networkInterface, HasWidgets targetPanel) {
         DListElement dl = Document.get().createDLElement();
         FlowPanel infoPanel = new FlowPanel();
-        StringJoiner ipv4AddressJoiner = new StringJoiner(COMMA_DELIMITOR);
-        StringJoiner ipv6AddressJoiner = new StringJoiner(COMMA_DELIMITOR);
+        StringJoiner ipv4AddressJoiner = new StringJoiner(COMMA_DELIMITER);
+        StringJoiner ipv6AddressJoiner = new StringJoiner(COMMA_DELIMITER);
         for (VmGuestAgentInterface guestAgentInterface: allGuestAgentData) {
             if (guestAgentInterface.getIpv4Addresses() != null) {
                 ipv4AddressJoiner.add(
-                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv4Addresses()));
+                        String.join(COMMA_DELIMITER, guestAgentInterface.getIpv4Addresses()));
             }
             if (guestAgentInterface.getIpv6Addresses() != null) {
                 ipv6AddressJoiner.add(
-                        String.join(COMMA_DELIMITOR, guestAgentInterface.getIpv6Addresses()));
+                        String.join(COMMA_DELIMITER, guestAgentInterface.getIpv6Addresses()));
             }
         }
         String ipv4Address = ipv4AddressJoiner.toString();

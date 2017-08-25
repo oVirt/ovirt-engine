@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.table.column.ColumnWithElementId;
 
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Widget;
@@ -30,17 +31,17 @@ public class ElementIdCellTable<T> extends ColumnResizeCellTable<T> implements H
         super(pageSize, keyProvider);
     }
 
-    public ElementIdCellTable(int pageSize, CellTable.Resources resources,
+    public ElementIdCellTable(int pageSize, DataGrid.Resources resources,
             ProvidesKey<T> keyProvider, Widget loadingIndicator) {
         super(pageSize, resources, keyProvider, loadingIndicator);
     }
 
-    public ElementIdCellTable(int pageSize, CellTable.Resources resources,
+    public ElementIdCellTable(int pageSize, DataGrid.Resources resources,
             ProvidesKey<T> keyProvider) {
         super(pageSize, resources, keyProvider);
     }
 
-    public ElementIdCellTable(int pageSize, CellTable.Resources resources) {
+    public ElementIdCellTable(int pageSize, DataGrid.Resources resources) {
         super(pageSize, resources);
     }
 

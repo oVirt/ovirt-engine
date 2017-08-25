@@ -33,6 +33,7 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
         table.addColumn(new EmptyColumn(), constants.freeSpaceStorage(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.usedSpaceStorage(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.totalSpaceStorage(), "120px"); //$NON-NLS-1$
+        table.setHeight("30px"); // $NON-NLS-1$
     }
 
     @Override

@@ -25,6 +25,7 @@ public class ColumnResizeHandler<T> implements NativePreviewHandler {
     private final Element headerElement;
     private final Column<T, ?> column;
     private final HasResizableColumns<T> table;
+    private final int columnAbsoluteLeft;
 
     // Used to release native event handler after we are done with column resizing
     private final HandlerRegistration eventHandler;
@@ -35,6 +36,7 @@ public class ColumnResizeHandler<T> implements NativePreviewHandler {
         this.table = table;
         this.eventHandler = Event.addNativePreviewHandler(this);
 
+        this.columnAbsoluteLeft = headerElement.getAbsoluteLeft();
         // Indicate resize start
         table.onResizeStart(column, headerElement);
     }
@@ -47,9 +49,8 @@ public class ColumnResizeHandler<T> implements NativePreviewHandler {
 
         if (BrowserEvents.MOUSEMOVE.equals(nativeEvent.getType())) {
             // Calculate display-relative column width
-            int absoluteLeft = headerElement.getAbsoluteLeft();
             int clientX = nativeEvent.getClientX();
-            int displayColumnWidth = clientX - absoluteLeft + DRAG_AREA_OFFSET;
+            int displayColumnWidth = clientX - columnAbsoluteLeft + DRAG_AREA_OFFSET;
 
             // Adjust column width as necessary
             int minimumColumnWidth = table.getMinimumColumnWidth(column);

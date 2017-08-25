@@ -9,12 +9,6 @@
         .height {
             height: 470px;
         }
-
-        .scrollable {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-        }
     </ui:style>
 
     <b:Container fluid="true">
@@ -22,10 +16,12 @@
             <b:Column size="SM_12">
                 <g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.height}">
                     <g:center>
-                        <g:FlowPanel ui:field="macPoolPanel" addStyleNames="{style.scrollable}" />
+                        <g:ResizeLayoutPanel ui:field="macPoolResizePanel">
+                            <g:FlowPanel ui:field="macPoolPanel" />
+                        </g:ResizeLayoutPanel>
                     </g:center>
                      <g:south size="150">
-                        <g:FlowPanel ui:field="authorizationPanel" addStyleNames="{style.scrollable}" />
+                        <g:ResizeLayoutPanel ui:field="authorizationPanel" />
                     </g:south>
                  </g:SplitLayoutPanel>
             </b:Column>

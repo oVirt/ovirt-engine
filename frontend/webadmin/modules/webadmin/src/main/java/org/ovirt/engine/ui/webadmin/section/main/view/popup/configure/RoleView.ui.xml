@@ -10,7 +10,7 @@
 
     <ui:style>
         .gridHeight {
-            height: 415px;
+            height: 403px;
         }
 
         .imageStyle {
@@ -20,10 +20,16 @@
             margin-left: 15px;
         }
 
-        .scrollable {
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
+        .radioButtons {
+            height: 47px;
+        }
+
+        .radioButtonsColumn {
+            padding-right: 0;
+        }
+
+        .actionPanelColumn {
+            padding-left: 0;
         }
     </ui:style>
 
@@ -34,22 +40,26 @@
             </b:Column>
         </b:Row>
         <b:Row>
-            <b:Column size="SM_12">
-                <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" text="{constants.allRolesLabel}" value="true" />
-                <g:Image resource="{resources.adminImage}" addStyleNames="{style.imageStyle}" />
-                <g:RadioButton name="rolesRadioButton" ui:field="adminRolesRadioButton" text="{constants.adminRolesLabel}" />
-                <g:Image resource="{resources.userImage}" addStyleNames="{style.imageStyle}" />
-                <g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton" text="{constants.userRolesLabel}" />
+            <b:Column size="SM_6" addStyleNames="{style.radioButtonsColumn}">
+                <g:FlowPanel addStyleNames="toolbar-pf {style.radioButtons}">
+                    <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" text="{constants.allRolesLabel}" value="true" />
+                    <g:Image resource="{resources.adminImage}" addStyleNames="{style.imageStyle}" />
+                    <g:RadioButton name="rolesRadioButton" ui:field="adminRolesRadioButton" text="{constants.adminRolesLabel}" />
+                    <g:Image resource="{resources.userImage}" addStyleNames="{style.imageStyle}" />
+                    <g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton" text="{constants.userRolesLabel}" />
+                </g:FlowPanel>
+            </b:Column>
+            <b:Column size="SM_6" addStyleNames="{style.actionPanelColumn}" ui:field="actionPanelContainer">
             </b:Column>
         </b:Row>
         <b:Row>
             <b:Column size="SM_12">
                 <g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.gridHeight}">
                     <g:center>
-                        <g:FlowPanel ui:field="roleTablePanel" addStyleNames="{style.scrollable}" />
+                        <g:ResizeLayoutPanel ui:field="roleTablePanel" />
                     </g:center>
                     <g:south size="150">
-                        <g:FlowPanel ui:field="permissionTablePanel" addStyleNames="{style.scrollable}" />
+                        <g:FlowPanel ui:field="permissionTablePanel"/>
                     </g:south>
                 </g:SplitLayoutPanel>
             </b:Column>

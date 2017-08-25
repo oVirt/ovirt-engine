@@ -1,0 +1,11 @@
+.dataGridWidget {
+    width: 100%;
+}
+
+.dataGridHeader {
+    padding: 0 2px 0 2px;
+}
+
+.dataGridCell {
+    padding: 0 3px;
+}

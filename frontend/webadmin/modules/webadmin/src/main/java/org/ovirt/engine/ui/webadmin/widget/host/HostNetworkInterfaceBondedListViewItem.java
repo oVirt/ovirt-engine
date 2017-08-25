@@ -8,13 +8,13 @@ import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
-import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.BondMode;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.ui.common.PopupTableResources;
+import org.ovirt.engine.ui.common.CellTablePopupTableResources;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -93,13 +94,14 @@ public class HostNetworkInterfaceBondedListViewItem extends HostNetworkInterface
         Container container = createItemContainerPanel(content);
 
         CellTable<HostInterface> slavesTable = new CellTable<>(MAX_SLAVES,
-                (Resources)GWT.create(PopupTableResources.class));
-        slavesTable.getElement().addClassName("table"); // $NON-NLS-1$
-        slavesTable.getElement().addClassName("table-striped"); // $NON-NLS-1$
-        slavesTable.getElement().addClassName("table-bordered"); // $NON-NLS-1$
+                (Resources)GWT.create(CellTablePopupTableResources.class));
+
+        slavesTable.getElement().addClassName(Styles.TABLE);
+        slavesTable.getElement().addClassName(PatternflyConstants.PF_TABLE_STRIPED);
+        slavesTable.getElement().addClassName(PatternflyConstants.PF_TABLE_BORDERED);
         ListDataProvider<HostInterface> logicalNetworkDataProvider = new ListDataProvider<>();
-        logicalNetworkDataProvider.setList(getEntity().getInterfaces());
         logicalNetworkDataProvider.addDataDisplay(slavesTable);
+        logicalNetworkDataProvider.setList(getEntity().getInterfaces());
 
         //Setup columns
         TextColumn<HostInterface> name = new TextColumn<HostInterface>() {

@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DefaultModelItemComparator;
@@ -46,6 +47,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -65,7 +67,7 @@ import com.google.gwt.view.client.ProvidesKey;
  * @param <T>
  *            Table row data type.
  */
-public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizableColumns<T>, ColumnController<T>,
+public class ColumnResizeCellTable<T> extends DataGrid<T> implements HasResizableColumns<T>, ColumnController<T>,
     HasCleanup {
 
     private static final String GRID_HIDDEN = "grid-hidden"; //$NON-NLS-1$
@@ -152,32 +154,39 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     public ColumnResizeCellTable() {
         super();
+        addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
     public ColumnResizeCellTable(int pageSize, ProvidesKey<T> keyProvider) {
         super(pageSize, keyProvider);
+        addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
-    public ColumnResizeCellTable(int pageSize, CellTable.Resources resources,
+    public ColumnResizeCellTable(int pageSize, DataGrid.Resources resources,
             ProvidesKey<T> keyProvider, Widget loadingIndicator) {
         super(pageSize, resources, keyProvider, loadingIndicator);
+        addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
-    public ColumnResizeCellTable(int pageSize, CellTable.Resources resources,
+    public ColumnResizeCellTable(int pageSize, DataGrid.Resources resources,
             ProvidesKey<T> keyProvider) {
-        super(pageSize, resources, keyProvider);
+        super(pageSize, resources, keyProvider, null);
+        addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
-    public ColumnResizeCellTable(int pageSize, CellTable.Resources resources) {
+    public ColumnResizeCellTable(int pageSize, DataGrid.Resources resources) {
         super(pageSize, resources);
+        addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
     public ColumnResizeCellTable(int pageSize) {
         super(pageSize);
+        addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
     public ColumnResizeCellTable(ProvidesKey<T> keyProvider) {
         super(keyProvider);
+        addStyleName(PatternflyConstants.PF_TABLE_BORDERED);
     }
 
     private NativeContextMenuHandler ensureContextMenuHandler() {
@@ -537,8 +546,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     public void enableColumnResizing() {
         columnResizingEnabled = true;
 
-        // Column resize implementation needs table-layout:fixed (disable browser-specific table layout algorithm)
-        setWidth("100%", true); //$NON-NLS-1$
+        setWidth("100%"); //$NON-NLS-1$
     }
 
     @Override

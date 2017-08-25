@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Cluster;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -20,7 +19,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
@@ -80,7 +79,7 @@ public class ClusterPolicyView extends Composite {
 
     private void initClusterPolicyTable(ClusterPolicyActionPanelPresenterWidget policyActionPanel) {
         clusterPolicyTable = new SimpleActionTable<>(clusterPolicyModelProvider,
-                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+                getTableResources(), eventBus, clientStorage);
 
         clusterPolicyTable.addColumn(new AbstractImageResourceColumn<ClusterPolicy>() {
             @Override
@@ -124,7 +123,7 @@ public class ClusterPolicyView extends Composite {
 
     private void initClustersTable() {
         clusterTable = new SimpleActionTable<>(clusterPolicyClusterModelProvider,
-                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+                getTableResources(), eventBus, clientStorage);
 
         AbstractTextColumn<Cluster> clusterColumn = new AbstractTextColumn<Cluster>() {
             @Override
@@ -135,10 +134,6 @@ public class ClusterPolicyView extends Composite {
         clusterTable.addColumn(clusterColumn, constants.clusterPolicyAttachedCluster());
 
         clusterPanel.add(clusterTable);
-    }
-
-    protected Resources getTableHeaderlessResources() {
-        return (Resources) GWT.create(MainTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {

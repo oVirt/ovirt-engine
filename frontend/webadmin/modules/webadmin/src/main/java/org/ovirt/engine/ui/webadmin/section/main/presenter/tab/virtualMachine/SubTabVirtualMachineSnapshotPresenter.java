@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.action.SnapshotActionPanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -28,9 +29,6 @@ public class SubTabVirtualMachineSnapshotPresenter
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VM> {
-
-        void addModelListeners();
-
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
@@ -41,17 +39,10 @@ public class SubTabVirtualMachineSnapshotPresenter
     @Inject
     public SubTabVirtualMachineSnapshotPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
+            SnapshotActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider) {
-        // View uses a VmSnapshotListModelTable which gets its action panel from a different location. passing null.
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
-    }
-
-    @Override
-    public void initializeHandlers() {
-        super.initializeHandlers();
-
-        getView().addModelListeners();
     }
 
 }

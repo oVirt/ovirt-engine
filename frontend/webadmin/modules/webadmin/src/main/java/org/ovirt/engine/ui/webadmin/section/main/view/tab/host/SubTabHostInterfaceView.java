@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
+import org.ovirt.engine.ui.common.view.AbstractDetailTabListView;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListView;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItemCreator;
@@ -20,17 +20,15 @@ import org.ovirt.engine.ui.webadmin.widget.host.HostNetworkInterfaceListViewItem
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 
-public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostInterfaceListModel>
+public class SubTabHostInterfaceView extends AbstractDetailTabListView<VDS, HostListModel<Void>, HostInterfaceListModel>
         implements SubTabHostInterfacePresenter.ViewDef, PatternflyListViewItemCreator<HostInterfaceLineModel> {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostInterfaceView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final FlowPanel contentPanel;
     private VDS currentMainModel;
 
     private PatternflyListView<VDS, HostInterfaceLineModel, HostInterfaceListModel> hostInterfaceListView;
@@ -43,12 +41,11 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         super(modelProvider);
         hostInterfaceListView = new PatternflyListView<>();
 
-        contentPanel = new FlowPanel();
         hostInterfaceListView.setCreator(this);
         hostInterfaceListView.setModel(modelProvider.getModel());
         hostInterfaceListView.setSelectionModel(modelProvider.getModel().getSelectionModel());
-        contentPanel.add(hostInterfaceListView);
-        initWidget(contentPanel);
+        getContentPanel().add(hostInterfaceListView);
+        initWidget(getContentPanel());
     }
 
     @Override
@@ -59,7 +56,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     @Override
     public void setInSlot(Object slot, IsWidget content) {
         if (slot == AbstractSubTabPresenter.TYPE_SetActionPanel) {
-            contentPanel.insert(content, 0);
+            getContainer().insert(content, 0);
         } else {
             super.setInSlot(slot, content);
         }

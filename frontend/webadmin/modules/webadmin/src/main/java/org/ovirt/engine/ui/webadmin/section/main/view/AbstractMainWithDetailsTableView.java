@@ -26,6 +26,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.DetailsTransitionHand
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.PresenterWidget;
@@ -40,8 +43,6 @@ import com.gwtplatform.mvp.client.PresenterWidget;
  */
 public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDetailsModel> extends AbstractMainTableView<T, M>
         implements AbstractMainWithDetailsPresenter.ViewDef<T> {
-
-    private static final String OBRAND_MAIN_TAB = "obrand_main_tab"; // $NON-NLS-1$
 
     protected DetailsTransitionHandler<T> transitionHandler;
 
@@ -63,8 +64,17 @@ public abstract class AbstractMainWithDetailsTableView<T, M extends ListWithDeta
         FlowPanel tableContainer = table.getOuterWidget();
         addBreadCrumbs(tableContainer);
         addActionSearchPanel(tableContainer);
-        table.addStyleName(OBRAND_MAIN_TAB);
         table.addStyleName(Styles.CONTAINER_FLUID);
+    }
+
+    @Override
+    public HandlerRegistration addWindowResizeHandler(ResizeHandler handler) {
+        return Window.addResizeHandler(handler);
+    }
+
+    @Override
+    public void resizeToFullHeight() {
+        table.updateGridSize();
     }
 
     @Override

@@ -256,4 +256,10 @@ public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInter
             }
         }
     }
+
+    @Override
+    protected boolean isSingleSelectionOnly() {
+        // Single selection model
+        return true;
+    }
 }

@@ -219,8 +219,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
                 "30px"); //$NON-NLS-1$
 
-        imageDiskTable.setWidth("100%", true); //$NON-NLS-1$
-        imageDiskTable.setHeight("100%"); //$NON-NLS-1$
+        imageDiskTable.setWidth("100%"); // $NON-NLS-1$
+        imageDiskTable.setHeight("100%"); // $NON-NLS-1$
     }
 
     private void initLunDisksTable() {
@@ -336,8 +336,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
                 "30px"); //$NON-NLS-1$
 
-        lunDiskTable.setWidth("100%", true); //$NON-NLS-1$
-        lunDiskTable.setHeight("100%"); //$NON-NLS-1$
+        lunDiskTable.setWidth("100%"); // $NON-NLS-1$
+        lunDiskTable.setHeight("100%"); // $NON-NLS-1$
     }
 
     private void initCinderDisksTable() {
@@ -407,8 +407,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                                }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
                 "30px"); //$NON-NLS-1$
 
-        cinderDiskTable.setWidth("100%", true); //$NON-NLS-1$
-        cinderDiskTable.setHeight("100%"); //$NON-NLS-1$
+        cinderDiskTable.setWidth("100%"); // $NON-NLS-1$
+        cinderDiskTable.setHeight("100%"); // $NON-NLS-1$
     }
 
     @Override

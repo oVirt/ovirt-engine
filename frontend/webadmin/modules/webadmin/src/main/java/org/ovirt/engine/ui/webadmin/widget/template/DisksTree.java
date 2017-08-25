@@ -69,7 +69,7 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     protected TreeItem getNodeItem(StorageDomain storage) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setWidth("100%"); // $NON-NLS-1$
 
         addItemToPanel(panel, new Image(resources.storageImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new StringValueLabel(), storage.getStorageName(), ""); //$NON-NLS-1$
@@ -95,7 +95,8 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
         table.addColumn(new EmptyColumn(), constants.usedSpaceDisksTree(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.totalSpaceDisksTree(), "130px"); //$NON-NLS-1$
         table.setRowData(new ArrayList());
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); // $NON-NLS-1$
+        table.setHeight("30px"); // $NON-NLS-1$
         return new TreeItem(table);
     }
 

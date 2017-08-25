@@ -45,7 +45,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     protected TreeItem getRootItem(StorageDomainModel storageDomainModel) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setWidth("100%"); // $NON-NLS-1$
 
         StorageDomain storage = storageDomainModel.getStorageDomain();
 
@@ -66,7 +66,7 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
     protected TreeItem getNodeItem(DiskModel diskModel) {
         HorizontalPanel panel = new HorizontalPanel();
         panel.setSpacing(1);
-        panel.setWidth("100%"); //$NON-NLS-1$
+        panel.setWidth("100%"); // $NON-NLS-1$
 
         DiskImage disk = (DiskImage) diskModel.getDisk();
 
@@ -96,7 +96,8 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
         table.addColumn(new EmptyColumn(), constants.typeDisk(), "110px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.creationDateStorageTree(), "100px"); //$NON-NLS-1$
         table.setRowData(new ArrayList());
-        table.setWidth("100%", true); //$NON-NLS-1$
+        table.setWidth("100%"); // $NON-NLS-1$
+        table.setHeight("30px"); // $NON-NLS-1$
 
         TreeItem item = new TreeItem(table);
         item.setUserObject(NODE_HEADER);

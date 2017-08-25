@@ -1,19 +1,19 @@
-.cellTableWidget {
+.dataGridWidget {
 	width: 100%;
 }
 
-.cellTableFirstColumn {
+.dataGridFirstColumn {
 	padding: 2px 0px;
 }
 
-.cellTableLastColumn {
+.dataGridLastColumn {
 
 }
 
-.cellTableFooter {
+.dataGridFooter {
 }
 
-.cellTableHeader {
+.dataGridHeader {
 	border-top: 1px solid #E3EDF6;
 	border-bottom: 1px solid #E3EDF6;
 	border-left: 1px solid #D7D7E1;
@@ -29,7 +29,7 @@
 	white-space: normal;
 }
 
-.cellTableCell {
+.dataGridCell {
 	padding: 0px 3px;
 	height: 24px !important;
 	border-top: 0px;
@@ -40,25 +40,20 @@
 	cursor: pointer;
 }
 
-.cellTableEvenRow {
+.dataGridEvenRow {
 	background-color: transparent;
 }
 
-.cellTableOddRow {
+.dataGridOddRow {
 	background-color: transparent;
 }
 
-.cellTableHoveredRow {
+.dataGridHoveredRow {
 	background-color: transparent;
 }
 
-.cellTableSelectedRow {
+.dataGridSelectedRow {
 	background-color: transparent;
 	color: black;
 	overflow: auto;
-}
-
-@sprite .cellTableLoading {
-	gwt-image: 'cellTableLoading';
-	margin: 3px;
 }

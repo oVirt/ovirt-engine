@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.PopupTableResources;
+import org.ovirt.engine.ui.common.DataGridPopupTableResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
@@ -19,8 +19,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.DataGrid;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionModel;
@@ -44,7 +44,7 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
     private final HasDataListModelEditorAdapter<M, T> editorAdapter;
 
     public ListModelObjectCellTable() {
-        super(DEFAULT_PAGESIZE, (CellTable.Resources) GWT.create(PopupTableResources.class));
+        super(DEFAULT_PAGESIZE, (DataGrid.Resources) GWT.create(DataGridPopupTableResources.class));
         this.editorAdapter = new HasDataListModelEditorAdapter<>(this);
 
         SingleSelectionModel<T> selectionModel = new SingleSelectionModel<>();

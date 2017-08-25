@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.Button;
@@ -19,21 +18,16 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.BrowserEvents;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortList.ColumnSortInfo;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.user.cellview.client.RowStyles;
@@ -43,7 +37,6 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.CellPreviewEvent.Handler;
@@ -58,7 +51,6 @@ import com.google.gwt.view.client.SelectionModel;
  * <li>{@link #prevPageButton} widget representing the "previous page" button
  * <li>{@link #nextPageButton} widget representing the "next page" button
  * <li>{@link #tableContainer} widget for displaying the actual table
- * <li>{@link #tableHeaderContainer} widget for displaying the table header
  * </ul>
  *
  * @param <T>
@@ -97,33 +89,20 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     @UiField
     public FlowPanel tableContainer;
 
-    @UiField
-    public SimplePanel tableHeaderContainer;
-
     private final OvirtSelectionModel<T> selectionModel;
 
     @WithElementId("content")
     public final ActionCellTable<T> table;
-    protected final ActionCellTable<T> tableHeader;
-
-    // If false, tableHeader widget will be visible, providing a separate table header UI.
-    // If true, tableHeader widget will be hidden, with header UI provided by the main table widget.
-    protected final boolean showDefaultHeader;
 
     private boolean multiSelectionDisabled;
     private final int[] mousePosition = new int[2];
 
-    // Table container's horizontal scroll position, used to align table header with main table
-    private int tableContainerHorizontalScrollPosition = 0;
-
     private boolean doAutoSelect;
-
-    private int scrollOffset = 0;
 
     private RowVisitor<T> rowVisitor;
 
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerResources, ClientStorage clientStorage) {
+            Resources resources, ClientStorage clientStorage) {
         super(dataProvider);
         this.selectionModel = dataProvider.getModel().getSelectionModel();
         this.table = new ActionCellTable<T>(dataProvider, resources) {
@@ -172,13 +151,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                     autoSelectFirst();
                 }
                 updateTableControls();
-                enforceScrollPosition();
             }
 
             @Override
             protected void onLoadingStateChanged(LoadingState state) {
                 super.onLoadingStateChanged(state);
-                enforceScrollPosition();
                 if (state == LoadingState.LOADING) {
                     Scheduler.get().scheduleDeferred(() -> doAutoSelect = true);
                 } else if (state == LoadingState.LOADED) {
@@ -199,19 +176,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             protected String getGridElementId() {
                 return AbstractActionTable.this.getElementId();
             }
-
-            @Override
-            protected void pushColumnSort(ColumnSortInfo columnSortInfo) {
-                AbstractActionTable.this.pushColumnSort(columnSortInfo);
-            }
-
-            @Override
-            protected void clearColumnSort() {
-                AbstractActionTable.this.clearColumnSort();
-            }
-
         };
 
+        this.table.enableFullHeight();
         // Can't do this in the onBrowserEvent, as GWT CellTable doesn't support double click.
         this.table.addDomHandler(event -> {
             SearchableListModel model = dataProvider.getModel();
@@ -222,83 +189,19 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
         }, DoubleClickEvent.getType());
 
-        // Create table header row
-        this.tableHeader = new ActionCellTable<T>(dataProvider, headerResources) {
-
-            @Override
-            public void onResizeEnd(Column<T, ?> column, Element headerElement) {
-                super.onResizeEnd(column, headerElement);
-
-                // Redraw main table
-                table.redraw();
-            }
-
-            @Override
-            public void resizeColumn(Column<T, ?> column, int newWidth) {
-                super.resizeColumn(column, newWidth);
-
-                // Resize the corresponding column in main table
-                table.resizeColumn(column, newWidth);
-            }
-
-            @Override
-            protected void configureElementId(Column<T, ?> column) {
-                // No-op, don't set element ID here, since column
-                // instances are shared between main and header table
-            }
-
-            @Override
-            protected String getGridElementId() {
-                return AbstractActionTable.this.getElementId();
-            }
-
-            @Override
-            protected void pushColumnSort(ColumnSortInfo columnSortInfo) {
-                AbstractActionTable.this.pushColumnSort(columnSortInfo);
-            }
-
-            @Override
-            protected void clearColumnSort() {
-                AbstractActionTable.this.clearColumnSort();
-            }
-
-            @Override
-            public void setColumnVisible(Column<T, ?> column, boolean visible) {
-                super.setColumnVisible(column, visible);
-
-                // Update main table
-                table.setColumnVisible(column, visible);
-            }
-
-            @Override
-            public void swapColumns(Column<T, ?> columnOne, Column<T, ?> columnTwo) {
-                super.swapColumns(columnOne, columnTwo);
-
-                // Update main table
-                table.swapColumns(columnOne, columnTwo);
-            }
-        };
-
-        this.tableHeader.setRowData(new ArrayList<T>());
-        this.showDefaultHeader = headerResources == null;
-
         // Apply selection model to the table widget
         this.selectionModel.asMultiSelectionModel().setDataDisplay(table);
 
         // Default to 'no items to display'
         this.table.setEmptyTableWidget(new NoItemsLabel());
 
-        if (isTableHeaderVisible()) {
-            // column resizing persistence -- can be enabled only when the tableHeader widget is visible
-            tableHeader.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
-            table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
-
-            // hide the table widget's default header and the header widget's body
-            table.getElement().addClassName("aat-hide-header"); //$NON-NLS-1$
-            tableHeader.getElement().addClassName("aat-hide-body"); //$NON-NLS-1$
-        }
+        table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
 
         addModelSearchStringChangeListener(dataProvider.getModel());
+    }
+
+    public void updateGridSize() {
+        this.table.updateGridSize();
     }
 
     public void setRowVisitor(RowVisitor<T> rowVisitor) {
@@ -328,7 +231,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
                     if (!model.isSearchValidForServerSideSorting()) {
                         model.clearSortOptions();
-                        clearColumnSort();
+                        table.clearColumnSort();
                     }
                 }
             });
@@ -445,72 +348,24 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
         }, KeyDownEvent.getType());
 
-        // Use fixed table layout
-        setWidth("100%", true); //$NON-NLS-1$
+        setWidth("100%"); //$NON-NLS-1$
 
         // Attach table widget to the corresponding panel
         tableContainer.add(table);
-        tableHeaderContainer.setWidget(tableHeader);
-        tableHeaderContainer.setVisible(isTableHeaderVisible());
 
         table.getElement().addClassName("aat-table"); //$NON-NLS-1$
-        tableHeader.getElement().addClassName("aat-header"); //$NON-NLS-1$
-
-        // Use relative positioning for tableHeader, in order to align it with main table
-        tableHeader.getElement().getStyle().setPosition(Position.RELATIVE);
-
-        // Attach scroll event handler to main table container, so that the tableHeader widget
-        // can have its position aligned with main table container's current scroll position
-        tableContainer.addDomHandler(event -> {
-            tableContainerHorizontalScrollPosition = tableContainer.getElement().getScrollLeft();
-            updateTableHeaderPosition();
-        }, ScrollEvent.getType());
-
-        // Reset main table container's scroll position
-        enforceScrollPosition();
     }
 
     void initSortHandler() {
         // Allow sorting by one column at a time
-        tableHeader.getColumnSortList().setLimit(1);
         table.getColumnSortList().setLimit(1);
 
         // Attach column sort handler
-        ActionCellTable<T> tableWithHeader = isTableHeaderVisible() ? tableHeader : table;
-        tableWithHeader.initModelSortHandler(getDataProvider().getModel());
+        table.initModelSortHandler(getDataProvider().getModel());
     }
 
-    void pushColumnSort(ColumnSortInfo columnSortInfo) {
-        tableHeader.getColumnSortList().push(columnSortInfo);
-        table.getColumnSortList().push(columnSortInfo);
-    }
-
-    void clearColumnSort() {
-        tableHeader.getColumnSortList().clear();
-        table.getColumnSortList().clear();
-    }
-
-    void enforceScrollPosition() {
-        tableContainer.getElement().setScrollLeft(tableContainerHorizontalScrollPosition);
-        updateTableHeaderPosition();
-        if (table.getParent() != null && table.getParent().getElement() != null) {
-            table.getParent().getElement().setScrollTop(scrollOffset);
-        }
-    }
-
-    void updateTableHeaderPosition() {
-        tableHeader.getElement().getStyle().setLeft(-tableContainerHorizontalScrollPosition, Unit.PX);
-    }
-
-    @Override
-    public void resetScrollPosition() {
-        tableContainerHorizontalScrollPosition = 0;
-        enforceScrollPosition();
-    }
-
-    public void setWidth(String width, boolean isFixedLayout) {
-        table.setWidth(width, isFixedLayout);
-        tableHeader.setWidth(width, isFixedLayout);
+    public void setWidth(String width) {
+        table.setWidth(width);
     }
 
     @UiHandler("prevPageButton")
@@ -525,13 +380,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     public void setColumnWidth(Column<T, ?> column, String width) {
         table.setColumnWidth(column, width);
-        tableHeader.setColumnWidth(column, width);
     }
 
     @Override
     public void addColumn(Column<T, ?> column, String headerText) {
         table.addColumn(column, headerText);
-        tableHeader.addColumn(column, headerText);
     }
 
     @Override
@@ -543,19 +396,16 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     @Override
     public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml) {
         table.addColumnWithHtmlHeader(column, headerHtml);
-        tableHeader.addColumnWithHtmlHeader(column, headerHtml);
     }
 
     @Override
     public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml, String width) {
         table.addColumnWithHtmlHeader(column, headerHtml, width);
-        tableHeader.addColumnWithHtmlHeader(column, headerHtml, width);
     }
 
     @Override
     public void addColumn(Column<T, ?> column, SafeHtmlHeader header) {
         table.addColumn(column, header);
-        tableHeader.addColumn(column, header);
     }
 
     @Override
@@ -569,7 +419,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      */
     public void ensureColumnVisible(Column<T, ?> column, String headerText, boolean visible) {
         table.ensureColumnVisible(column, headerText, visible);
-        tableHeader.ensureColumnVisible(column, headerText, visible);
     }
 
     /**
@@ -579,7 +428,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      */
     public void ensureColumnVisible(Column<T, ?> column, String headerText, boolean visible, String width) {
         table.ensureColumnVisible(column, headerText, visible, width);
-        tableHeader.ensureColumnVisible(column, headerText, visible, width);
     }
 
     /**
@@ -589,7 +437,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      */
     public void ensureColumnVisible(Column<T, ?> column, SafeHtml headerHtml, boolean visible, String width) {
         table.ensureColumnVisible(column, headerHtml, visible, width);
-        tableHeader.ensureColumnVisible(column, headerHtml, visible, width);
     }
 
     /**
@@ -599,7 +446,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      */
     public void ensureColumnVisible(Column<T, ?> column, SafeHtmlHeader header, boolean visible, String width) {
         table.ensureColumnVisible(column, header, visible, width);
-        tableHeader.ensureColumnVisible(column, header, visible, width);
     }
 
     /**
@@ -611,8 +457,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      * items.</em>
      */
     public void enableHeaderContextMenu() {
-        ActionCellTable<T> tableWithHeader = isTableHeaderVisible() ? tableHeader : table;
-        tableWithHeader.enableHeaderContextMenu();
+        table.enableHeaderContextMenu();
     }
 
     /**
@@ -624,11 +469,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      * behavior will not function properly.</em>
      */
     public void enableColumnResizing() {
-        // Column resizing is supported only when the tableHeader widget is visible
-        if (isTableHeaderVisible()) {
-            table.enableColumnResizing();
-            tableHeader.enableColumnResizing();
-        }
+        table.enableColumnResizing();
     }
 
     @Override
@@ -668,10 +509,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     public String getContentTableElementId() {
         return table.getElementId();
-    }
-
-    boolean isTableHeaderVisible() {
-        return !showDefaultHeader;
     }
 
     public String getColumnWidth(Column<T, ?> column) {

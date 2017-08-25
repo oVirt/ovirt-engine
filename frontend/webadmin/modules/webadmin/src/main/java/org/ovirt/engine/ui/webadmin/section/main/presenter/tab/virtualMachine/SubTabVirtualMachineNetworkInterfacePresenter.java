@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.action.VmInterfaceActionPanelPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -38,9 +39,9 @@ public class SubTabVirtualMachineNetworkInterfacePresenter
     @Inject
     public SubTabVirtualMachineNetworkInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, VirtualMachineMainSelectedItems selectedItems,
+            VmInterfaceActionPanelPresenterWidget actionPanel,
             SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider) {
-        // The action panel is passed to the view due to the view using a VmInterfaceListModelTable, so we can pass null.
-        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, null,
+        super(eventBus, view, proxy, placeManager, modelProvider, selectedItems, actionPanel,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -13,10 +12,11 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.inject.Inject;
@@ -54,7 +54,7 @@ public class SystemPermissionView extends Composite {
 
     private void initTable(SystemPermissionActionPanelPresenterWidget actionPanel) {
         table = new SimpleActionTable<>(modelProvider,
-                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+                getTableResources(), eventBus, clientStorage);
         table.enableColumnResizing();
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -100,10 +100,7 @@ public class SystemPermissionView extends Composite {
 
         tablePanel.add(actionPanel);
         tablePanel.add(table);
-    }
-
-    protected Resources getTableHeaderlessResources() {
-        return (Resources) GWT.create(MainTableHeaderlessResources.class);
+        table.table.setHeight(360 + Unit.PX.getType());
     }
 
     protected Resources getTableResources() {

@@ -23,7 +23,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.HasCleanup;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 
 import com.google.gwt.core.client.GWT;
@@ -39,7 +38,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ScrollPanel;
 
 public abstract class AbstractPermissionsPopupView<T extends AdElementListModel> extends AbstractModelBoundPopupView<T>
     implements AbstractPermissionsPopupPresenterWidget.ViewDef<T>, HasCleanup {
@@ -56,7 +54,8 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     /**
      * This is the max width of a column in this dialogs
      */
-    private static final String MAX_COL_WIDTH = "260px"; //$NON-NLS-1$
+    private static final String MAX_COL_WIDTH = "260px"; // $NON-NLS-1$
+    private static final String SEARCH_GRID_HEIGHT = "258px"; // $NON-NLS-1$
 
     @UiField
     @WithElementId
@@ -80,7 +79,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @UiField(provided = true)
     @Ignore
     @WithElementId
-    public EntityModelCellTable<ListModel> searchItems;
+    public EntityModelCellTable<AdElementListModel> searchItems;
 
     @UiField
     @Ignore
@@ -111,9 +110,6 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public FlowPanel roleSelectionPanel;
 
     @UiField
-    public ScrollPanel searchItemsScrollPanel;
-
-    @UiField
     @Ignore
     Label errorMessage;
 
@@ -134,6 +130,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         initListBoxEditors();
         searchItems = new EntityModelCellTable<>(true);
         searchItems.enableColumnResizing();
+        searchItems.setHeight(SEARCH_GRID_HEIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         generateIds();
         searchStringEditor.setStyleName("");

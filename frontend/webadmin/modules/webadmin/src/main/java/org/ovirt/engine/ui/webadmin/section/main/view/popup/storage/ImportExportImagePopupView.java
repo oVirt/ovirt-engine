@@ -171,7 +171,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
             }
         }, constants.actualSizeTemplate(), "75px"); //$NON-NLS-1$
 
-        imageList.setWidth("100%", true); //$NON-NLS-1$
+        imageList.setWidth("100%"); // $NON-NLS-1$
         imageListPanel.setWidget(imageList);
     }
 

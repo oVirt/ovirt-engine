@@ -2,9 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
-import org.ovirt.engine.ui.common.SubTableHeaderlessResources;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.presenter.ActionPanelPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -16,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -82,7 +80,7 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
 
     SimpleActionTable<T> createActionTable(EventBus eventBus, ClientStorage clientStorage) {
         return new SimpleActionTable<T>(modelProvider,
-                getTableHeaderlessResources(), getTableResources(),
+                getTableResources(),
                 eventBus, clientStorage) {
             {
                 if (useTableWidgetForContent()) {
@@ -109,11 +107,6 @@ public abstract class AbstractModelBoundTableWidget<T, M extends SearchableListM
 
     private Resources getTableResources() {
         return useMainTableResources ? GWT.create(MainTableResources.class) : GWT.create(SubTableResources.class);
-    }
-
-    private Resources getTableHeaderlessResources() {
-        return useMainTableResources ? GWT.create(MainTableHeaderlessResources.class)
-                : GWT.create(SubTableHeaderlessResources.class);
     }
 
     public M getModel() {

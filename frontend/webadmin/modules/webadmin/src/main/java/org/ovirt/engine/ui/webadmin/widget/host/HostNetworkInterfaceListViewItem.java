@@ -11,13 +11,12 @@ import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Styles;
-import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.ui.common.CellTablePopupTableResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.css.PatternflyConstants;
 import org.ovirt.engine.ui.common.widget.listgroup.ExpandableListViewItem;
 import org.ovirt.engine.ui.common.widget.listgroup.PatternflyListViewItem;
@@ -42,6 +41,7 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -280,13 +280,13 @@ public class HostNetworkInterfaceListViewItem extends PatternflyListViewItem<Hos
         Container container = createItemContainerPanel(content);
 
         CellTable<HostVLan> logicalNetworkTable = new CellTable<>(MAX_LOGICAL_NETWORKS,
-                (Resources)GWT.create(PopupTableResources.class));
-        logicalNetworkTable.getElement().addClassName("table"); // $NON-NLS-1$
-        logicalNetworkTable.getElement().addClassName("table-striped"); // $NON-NLS-1$
-        logicalNetworkTable.getElement().addClassName("table-bordered"); // $NON-NLS-1$
+                (Resources)GWT.create(CellTablePopupTableResources.class));
+        logicalNetworkTable.getElement().addClassName(Styles.TABLE);
+        logicalNetworkTable.getElement().addClassName(PatternflyConstants.PF_TABLE_STRIPED);
+        logicalNetworkTable.getElement().addClassName(PatternflyConstants.PF_TABLE_BORDERED);
         ListDataProvider<HostVLan> logicalNetworkDataProvider = new ListDataProvider<>();
-        logicalNetworkDataProvider.setList(logicalNetworks);
         logicalNetworkDataProvider.addDataDisplay(logicalNetworkTable);
+        logicalNetworkDataProvider.setList(logicalNetworks);
 
         final HostVLanNameRenderer renderer = new HostVLanNameRenderer();
 

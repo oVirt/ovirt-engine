@@ -1,23 +1,22 @@
-.cellTableWidget {
+.dataGridWidget {
     margin-left: 2px;
     width: 99% !important;
 }
 
-.cellTableFirstColumn {
+.dataGridFirstColumn {
 }
 
-.cellTableLastColumn {
-	
+.dataGridLastColumn {
 }
 
-.cellTableFooter {
+.dataGridFooter {
 }
 
-.cellTableHeader {
+.dataGridHeader {
 	display: none;
 }
 
-.cellTableCell {
+.dataGridCell {
 	padding: 0px;
 	margin: 0px;
 	height: 24px !important;
@@ -26,28 +25,23 @@
 	cursor: pointer;
 }
 
-.cellTableEvenRow {
+.dataGridEvenRow {
 	background-color: transparent;
 	color: grey;
 }
 
-.cellTableOddRow {
+.dataGridOddRow {
 	background-color: transparent;
 	color: grey;
 }
 
-.cellTableHoveredRow {
+.dataGridHoveredRow {
 	background-color: transparent;
 	color: grey;
 }
 
-.cellTableSelectedRow {
+.dataGridSelectedRow {
 	background-color: transparent;
 	color: black;
 	overflow: auto;
-}
-
-@sprite .cellTableLoading {
-	gwt-image: 'cellTableLoading';
-	margin: 3px;
 }

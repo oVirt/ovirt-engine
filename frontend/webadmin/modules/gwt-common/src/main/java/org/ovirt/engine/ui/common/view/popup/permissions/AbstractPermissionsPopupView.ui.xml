@@ -73,9 +73,7 @@
                 </b:Row>
                 <b:Row addStyleNames="{style.gridRow}">
                     <b:Column size="SM_12">
-                        <g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
-                            <e:EntityModelCellTable ui:field="searchItems" />
-                        </g:ScrollPanel>
+                        <e:EntityModelCellTable ui:field="searchItems" />
                     </b:Column>
                 </b:Row>
                 <b:Row>

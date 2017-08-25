@@ -6,6 +6,9 @@ import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
+import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 
 /**
@@ -25,6 +28,16 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
 
     public AbstractSubTabFormView(DetailModelProvider<M, D> modelProvider) {
         this.modelProvider = modelProvider;
+    }
+
+    @Override
+    public HandlerRegistration addWindowResizeHandler(ResizeHandler handler) {
+        return Window.addResizeHandler(handler);
+    }
+
+    @Override
+    public void resizeToFullHeight() {
+        // No op, doesn't need to manually resize.
     }
 
     protected D getDetailModel() {

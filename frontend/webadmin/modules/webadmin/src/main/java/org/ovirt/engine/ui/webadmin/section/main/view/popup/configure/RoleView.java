@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
+import org.gwtbootstrap3.client.ui.Column;
 import org.gwtbootstrap3.client.ui.Container;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -18,13 +18,15 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.IsLockedImageTypeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.RoleTypeColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.cellview.client.DataGrid.Resources;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ResizeLayoutPanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
@@ -44,10 +46,13 @@ public class RoleView extends Composite {
     RadioButton userRolesRadioButton;
 
     @UiField
+    Column actionPanelContainer;
+
+    @UiField
     SplitLayoutPanel splitLayoutPanel;
 
     @UiField
-    FlowPanel roleTablePanel;
+    ResizeLayoutPanel roleTablePanel;
 
     @UiField
     FlowPanel permissionTablePanel;
@@ -76,9 +81,19 @@ public class RoleView extends Composite {
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initRolesFilterRadioButtons();
-        initRoleTable(roleActionPanel);
+        actionPanelContainer.add(roleActionPanel);
+        initRoleTable();
         initPermissionTable(permissionActionPanel);
 
+        roleTablePanel.addResizeHandler(e -> {
+            // Set the height of the role table to its container height - the table control height.
+            roleTable.table.setHeight(e.getHeight() - roleTable.getTableControlsHeight() + Unit.PX.getType());
+            // Set the height of the permissions table to its container height - the action panel height and - the
+            // table controls height.
+            permissionTable.table.setHeight(permissionTablePanel.getOffsetHeight() - permissionTable.getTableControlsHeight()
+                    - permissionActionPanel.asWidget().getOffsetHeight()
+                    + Unit.PX.getType());
+        });
         setSubTabVisibility(false);
     }
 
@@ -113,9 +128,9 @@ public class RoleView extends Composite {
         });
     }
 
-    private void initRoleTable(RoleActionPanelPresenterWidget roleActionPanel) {
+    private void initRoleTable() {
         roleTable = new SimpleActionTable<>(roleModelProvider,
-                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+                getTableResources(), eventBus, clientStorage);
 
         roleTable.enableColumnResizing();
 
@@ -150,13 +165,12 @@ public class RoleView extends Composite {
             }
         });
 
-        roleTablePanel.add(roleActionPanel);
         roleTablePanel.add(roleTable);
     }
 
     private void initPermissionTable(RolePermissionActionPanelPresenterWidget permissionActionPanel) {
         permissionTable = new SimpleActionTable<>(permissionModelProvider,
-                getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
+                getTableResources(), eventBus, clientStorage);
 
         permissionTable.enableColumnResizing();
 
@@ -183,10 +197,6 @@ public class RoleView extends Composite {
 
         permissionTablePanel.add(permissionActionPanel);
         permissionTablePanel.add(permissionTable);
-    }
-
-    protected Resources getTableHeaderlessResources() {
-        return (Resources) GWT.create(MainTableHeaderlessResources.class);
     }
 
     protected Resources getTableResources() {

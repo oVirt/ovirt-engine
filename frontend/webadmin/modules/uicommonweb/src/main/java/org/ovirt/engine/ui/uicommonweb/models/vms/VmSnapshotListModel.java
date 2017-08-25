@@ -854,4 +854,10 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot> {
     protected String getListName() {
         return "VmSnapshotListModel"; //$NON-NLS-1$
     }
+
+    @Override
+    protected boolean isSingleSelectionOnly() {
+        // Single selection model
+        return true;
+    }
 }

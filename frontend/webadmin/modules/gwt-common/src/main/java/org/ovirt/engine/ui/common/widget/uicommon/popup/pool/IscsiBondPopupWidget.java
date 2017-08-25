@@ -106,7 +106,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         };
         networksTable.addColumn(descriptionColumn, constants.description(), "60%"); //$NON-NLS-1$
 
-        networksTable.setWidth("100%", true); //$NON-NLS-1$
+        networksTable.setWidth("100%"); // $NON-NLS-1$
     }
 
     private void initConnectionsTable() {
@@ -136,7 +136,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         };
         connectionsTable.addColumn(portColumn, constants.portSanStorage(), "30%"); //$NON-NLS-1$
 
-        connectionsTable.setWidth("100%", true); //$NON-NLS-1$
+        connectionsTable.setWidth("100%"); // $NON-NLS-1$
     }
 
     private void localize() {

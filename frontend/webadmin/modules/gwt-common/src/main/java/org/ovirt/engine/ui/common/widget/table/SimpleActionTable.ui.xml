@@ -8,7 +8,7 @@
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
-    <ui:style type="org.ovirt.engine.ui.common.widget.table.SimpleActionTable.Style">
+    <ui:style>
         .tableHorizontalOverflow {
             overflow-x: auto;
             margin-top: -1px;
@@ -19,14 +19,6 @@
             cursor: pointer;
             border: 1px solid transparent;
             display: table-cell;
-        }
-
-        .headerContainer {
-            background-image: linear-gradient(to bottom, #fafafa 0, #ededed 100%);
-        }
-
-        .subTitledButton {
-            padding-left: 30px !important;
         }
 
         .tableOverhead {
@@ -49,7 +41,7 @@
                 </b:Column>
             </b:Row>
         </b:Container>
-        <g:FlowPanel addStyleNames="content-view-pf-pagination table-view-pf-pagination clearfix">
+        <g:FlowPanel ui:field="controlsContainer" addStyleNames="content-view-pf-pagination table-view-pf-pagination clearfix">
             <b:FormGroup>
                 <r:RefreshPanel ui:field="refreshPanel" addStyleNames="{style.refreshPanel}" />
             </b:FormGroup>
@@ -67,8 +59,7 @@
                 </b:ButtonGroup>
             </b:FormGroup>
         </g:FlowPanel>
-        <g:FlowPanel addStyleNames="table-bordered {style.tableHorizontalOverflow}">
-            <g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
+        <g:FlowPanel addStyleNames="{style.tableHorizontalOverflow}">
             <g:FlowPanel ui:field="tableContainer" />
         </g:FlowPanel>
         <b:DropDown ui:field="menuContainer">

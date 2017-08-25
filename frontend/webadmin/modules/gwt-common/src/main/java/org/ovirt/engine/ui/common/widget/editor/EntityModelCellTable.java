@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.PopupTableResources;
+import org.ovirt.engine.ui.common.DataGridPopupTableResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.utils.ElementTooltipUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -85,7 +85,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      * Create a new {@link EntityModelCellTable} with single selection mode.
      */
     public EntityModelCellTable() {
-        this(SelectionMode.SINGLE, GWT.create(PopupTableResources.class));
+        this(SelectionMode.SINGLE, GWT.create(DataGridPopupTableResources.class));
     }
 
     /**
@@ -105,7 +105,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Table selection mode.
      */
     public EntityModelCellTable(SelectionMode selectionMode) {
-        this(selectionMode, GWT.create(PopupTableResources.class));
+        this(selectionMode, GWT.create(DataGridPopupTableResources.class));
     }
 
     /**
@@ -115,7 +115,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to allow multiple ({@code true}) or single ({@code false}) selection mode.
      */
     public EntityModelCellTable(boolean isMultiple) {
-        this(isMultiple, GWT.create(PopupTableResources.class));
+        this(isMultiple, GWT.create(DataGridPopupTableResources.class));
     }
 
     /**
@@ -127,7 +127,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to hide selection column or not.
      */
     public EntityModelCellTable(SelectionMode selectionMode, boolean hideCheckbox) {
-        this(selectionMode, GWT.create(PopupTableResources.class), hideCheckbox, false);
+        this(selectionMode, GWT.create(DataGridPopupTableResources.class), hideCheckbox, false);
     }
 
     /**
@@ -139,7 +139,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to hide selection column or not.
      */
     public EntityModelCellTable(boolean isMultiple, boolean hideCheckbox) {
-        this(isMultiple, GWT.create(PopupTableResources.class), hideCheckbox);
+        this(isMultiple, GWT.create(DataGridPopupTableResources.class), hideCheckbox);
     }
 
     /**
@@ -153,7 +153,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      *            Whether to show the SelectAll Checkbox in the header or not.
      */
     public EntityModelCellTable(boolean isMultiple, boolean hideCheckbox, boolean showSelectAllCheckbox) {
-        this(isMultiple, GWT.create(PopupTableResources.class), hideCheckbox, showSelectAllCheckbox);
+        this(isMultiple, GWT.create(DataGridPopupTableResources.class), hideCheckbox, showSelectAllCheckbox);
     }
 
     /**

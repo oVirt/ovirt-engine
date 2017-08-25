@@ -18,11 +18,6 @@ public interface ActionTable<T> {
     OvirtSelectionModel<T> getSelectionModel();
 
     /**
-     * Resets table scroll position to zero (left-most) position.
-     */
-    void resetScrollPosition();
-
-    /**
      * Enforces given loading state on this table.
      */
     void setLoadingState(LoadingState state);

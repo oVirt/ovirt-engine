@@ -118,9 +118,16 @@ public class DialogTabPanel extends Composite {
     public void switchTab(TabListItem tabItem) {
         boolean found = false;
         for (int i = 0; i < navTabs.getWidgetCount(); i++) {
-            if (tabItem.getText().equals(((TabListItem) navTabs.getWidget(i)).getText())) {
-                ((TabListItem) navTabs.getWidget(i)).showTab();
+            TabListItem currentTabItem = (TabListItem) navTabs.getWidget(i);
+            if (tabItem.getText().equals(currentTabItem.getText())) {
+                currentTabItem.showTab();
                 TabPane tabPane = (TabPane) tabContent.getWidget(i);
+                // Detach and immediately re-attach so the content gets the onAttach event so they can react to being
+                // made visible. Otherwise there is no way for the content to know if they are visible or not due to
+                // the visibility being controlled by the 'active' class on the tab, which doesn't trigger any GWT
+                // events when added.
+                tabContent.remove(tabPane);
+                tabContent.insert(tabPane, i);
                 ((FlowPanel) tabPane.getWidget(0)).insert(tabHeaderContainer, 0);
                 tabPane.getWidget(0).setHeight(height);
                 tabPane.setActive(true);

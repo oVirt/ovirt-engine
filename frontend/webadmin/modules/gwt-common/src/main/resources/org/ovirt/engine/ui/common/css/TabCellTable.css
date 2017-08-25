@@ -64,11 +64,6 @@
     color: #333333;
 }
 
-@sprite .cellTableLoading {
-    gwt-image: 'cellTableLoading';
-    margin: 3px;
-}
-
 .cellTableFirstColumn {
     padding-left: 3px;
     border-left: 0;
