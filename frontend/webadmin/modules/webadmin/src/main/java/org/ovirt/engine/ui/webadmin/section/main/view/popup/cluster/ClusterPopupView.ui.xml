@@ -160,6 +160,12 @@
         .floatRight {
             float: right;
         }
+
+        .contentPanel {
+            border-bottom: #d1d1d1 1px solid;
+            margin: 5px 0px 15px 0px;
+            padding: 15px 0px 15px 0px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="860px" height="560px">
@@ -269,6 +275,16 @@
                                         <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.floatLeft} {style.groupTitle}" text="{constants.clusterPopupCpuThreadsPanelTitle}" />
                                         <d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
                                         <ge:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" label="{constants.clusterPopupCountThreadsAsCoresLabel}" removeFormGroup="true" usePatternFly="true" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <g:FlowPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}" />
+                                    </b:Column>
+                                </b:Row>
+                                <b:Row>
+                                    <b:Column size="SM_12">
+                                        <w:AlertWithIcon text="{constants.hostOptionChangeInfo}" />
                                     </b:Column>
                                 </b:Row>
                                 <b:Row>

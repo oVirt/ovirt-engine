@@ -147,6 +147,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     String additionalRngSource();
 
+    String hostOptionChangeInfo();
+
     String ksmLabelTitle();
 
     String enableKsmLabel();
