@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
@@ -15,7 +16,7 @@ public class DiskImage extends DiskImageBase {
     private static final long serialVersionUID = 3185087852755356847L;
 
     private Date lastModifiedDate;
-    private ArrayList<String> storagesNames;
+    private List<String> storagesNames;
     private long actualSizeInBytes;
     private int readRateFromDiskImageDynamic;
     private int writeRateFromDiskImageDynamic;
@@ -28,12 +29,12 @@ public class DiskImage extends DiskImageBase {
     private String appList;
     // TODO from storage_domain_static
     private Guid storagePoolId;
-    private ArrayList<DiskImage> snapshots;
+    private List<DiskImage> snapshots;
     private double actualDiskWithSnapthotsSize;
-    private ArrayList<Guid> quotaIds;
-    private ArrayList<String> quotaNames;
-    private ArrayList<Guid> diskProfileIds;
-    private ArrayList<String> diskProfileNames;
+    private List<Guid> quotaIds;
+    private List<String> quotaNames;
+    private List<Guid> diskProfileIds;
+    private List<String> diskProfileNames;
     private String vmSnapshotDescription;
 
     public DiskImage() {
@@ -213,22 +214,22 @@ public class DiskImage extends DiskImageBase {
         getImage().setLastModified(lastModified);
     }
 
-    private ArrayList<Guid> storageIds;
-    private ArrayList<StorageType> storageTypes;
+    private List<Guid> storageIds;
+    private List<StorageType> storageTypes;
 
-    public ArrayList<Guid> getStorageIds() {
+    public List<Guid> getStorageIds() {
         return storageIds;
     }
 
-    public void setStorageIds(ArrayList<Guid> storageIds) {
+    public void setStorageIds(List<Guid> storageIds) {
         this.storageIds = storageIds;
     }
 
-    public ArrayList<StorageType> getStorageTypes() {
+    public List<StorageType> getStorageTypes() {
         return storageTypes;
     }
 
-    public void setStorageTypes(ArrayList<StorageType> storageTypes) {
+    public void setStorageTypes(List<StorageType> storageTypes) {
         this.storageTypes = storageTypes;
     }
 
@@ -248,11 +249,11 @@ public class DiskImage extends DiskImageBase {
         this.vmSnapshotDescription = vmSnapshotDescription;
     }
 
-    public ArrayList<String> getStoragesNames() {
+    public List<String> getStoragesNames() {
         return storagesNames;
     }
 
-    public void setStoragesNames(ArrayList<String> storagesNames) {
+    public void setStoragesNames(List<String> storagesNames) {
         this.storagesNames = storagesNames;
     }
 
@@ -297,15 +298,15 @@ public class DiskImage extends DiskImageBase {
         return getImageId();
     }
 
-    public ArrayList<DiskImage> getSnapshots() {
+    public List<DiskImage> getSnapshots() {
         return snapshots;
     }
 
-    public ArrayList<Guid> getQuotaIds() {
+    public List<Guid> getQuotaIds() {
         return quotaIds;
     }
 
-    public void setQuotaIds(ArrayList<Guid> quotaIds) {
+    public void setQuotaIds(List<Guid> quotaIds) {
         this.quotaIds = quotaIds;
     }
 
@@ -321,11 +322,11 @@ public class DiskImage extends DiskImageBase {
         quotaIds.add(quotaId);
     }
 
-    public ArrayList<String> getQuotaNames() {
+    public List<String> getQuotaNames() {
         return quotaNames;
     }
 
-    public void setQuotaNames(ArrayList<String> quotaNames) {
+    public void setQuotaNames(List<String> quotaNames) {
         this.quotaNames = quotaNames;
     }
 
@@ -336,19 +337,19 @@ public class DiskImage extends DiskImageBase {
         return quotaNames.get(0);
     }
 
-    public ArrayList<Guid> getDiskProfileIds() {
+    public List<Guid> getDiskProfileIds() {
         return diskProfileIds;
     }
 
-    public void setDiskProfileIds(ArrayList<Guid> diskProfileIds) {
+    public void setDiskProfileIds(List<Guid> diskProfileIds) {
         this.diskProfileIds = diskProfileIds;
     }
 
-    public ArrayList<String> getDiskProfileNames() {
+    public List<String> getDiskProfileNames() {
         return diskProfileNames;
     }
 
-    public void setDiskProfileNames(ArrayList<String> diskProfileNames) {
+    public void setDiskProfileNames(List<String> diskProfileNames) {
         this.diskProfileNames = diskProfileNames;
     }
 

@@ -654,7 +654,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             for (DiskModel diskModel : diskImages) {
                 List<StorageDomain> availableDiskStorageDomains;
                 diskModel.getQuota().setItems(getModel().getQuota().getItems());
-                ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
+                List<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
 
                 // Active storage domains that the disk resides on
                 List<StorageDomain> activeDiskStorageDomains =

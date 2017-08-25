@@ -92,7 +92,7 @@ public class DisksViewColumns {
                 String value = "";
                 if (object.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) object;
-                    ArrayList<String> quotaNamesArr = diskImage.getQuotaNames();
+                    List<String> quotaNamesArr = diskImage.getQuotaNames();
                     if (quotaNamesArr != null) {
                         value = String.join(", ", quotaNamesArr);//$NON-NLS-1$
                     }

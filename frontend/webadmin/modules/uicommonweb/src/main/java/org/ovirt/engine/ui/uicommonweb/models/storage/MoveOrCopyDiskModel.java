@@ -146,7 +146,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             DiskImage diskImage = (DiskImage) disk.getDisk();
 
             // Source storage domains
-            ArrayList<Guid> diskStorageIds = diskImage.getStorageIds();
+            List<Guid> diskStorageIds = diskImage.getStorageIds();
             List<StorageDomain> sourceStorageDomains =
                     Linq.getStorageDomainsByIds(diskStorageIds, getActiveStorageDomains());
 

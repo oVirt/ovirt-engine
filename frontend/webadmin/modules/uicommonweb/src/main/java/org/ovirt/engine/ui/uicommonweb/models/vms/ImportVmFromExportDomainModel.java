@@ -207,8 +207,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
             }
             Frontend.getInstance().runMultipleQueries(queryTypeList, queryParamsList, result -> {
                 List<QueryReturnValue> returnValueList = result.getReturnValues();
-                Map<Guid, ArrayList<StorageDomain>> templateDisksStorageDomains =
-                        new HashMap<>();
+                Map<Guid, List<StorageDomain>> templateDisksStorageDomains = new HashMap<>();
                 for (QueryReturnValue returnValue : returnValueList) {
                     for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
                         templateDisksStorageDomains.put(diskImage.getImageId(),
@@ -220,8 +219,7 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
                     for (Disk disk : guidListEntry.getValue()) {
                         DiskImage diskImage = (DiskImage) disk;
                         if (diskImage.getParentId() != null && !Guid.Empty.equals(diskImage.getParentId())) {
-                            ArrayList<StorageDomain> storageDomains =
-                                    templateDisksStorageDomains.get(diskImage.getParentId());
+                            List<StorageDomain> storageDomains = templateDisksStorageDomains.get(diskImage.getParentId());
                             if (storageDomains == null) {
                                 missingTemplateDiskMap.put(guidListEntry.getKey(), guidListEntry.getValue());
                             }
@@ -315,8 +313,8 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         onPropertyChanged(new PropertyChangedEventArgs(ON_DISK_LOAD));
     }
 
-    private ArrayList<StorageDomain> getStorageDomainsByIds(ArrayList<Guid> getstorage_ids) {
-        ArrayList<StorageDomain> domains = new ArrayList<>();
+    private List<StorageDomain> getStorageDomainsByIds(List<Guid> getstorage_ids) {
+        List<StorageDomain> domains = new ArrayList<>();
         for (Guid storageDomainId : getstorage_ids) {
             for (StorageDomain storageDomain : filteredStorageDomains) {
                 if (storageDomainId.equals(storageDomain.getId())) {

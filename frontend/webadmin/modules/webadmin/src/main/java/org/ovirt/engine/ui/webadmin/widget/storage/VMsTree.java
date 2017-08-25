@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.widget.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -102,7 +103,7 @@ public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M
         return constants.differentStorageDomainWarning();
     }
 
-    private TreeItem getSnapshotNode(ArrayList<DiskImage> disks) {
+    private TreeItem getSnapshotNode(List<DiskImage> disks) {
         VerticalPanel vPanel = new VerticalPanel();
         vPanel.setWidth("100%"); //$NON-NLS-1$
 
