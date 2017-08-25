@@ -194,7 +194,7 @@ public class VmDevicesConverter {
             }
 
             String devNode = target.selectSingleNode(NODE).innerText;
-            String devSize = target.selectSingleNode(SIZE).innerText;
+            String devSize = kiloBytesToMegaBytes(target.selectSingleNode(SIZE).innerText);
             VmDevice dbDev = dbDevices.stream()
                     .sorted(Comparator.comparing(VmDevice::isManaged).reversed()) // try to match managed devices first
                     .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
@@ -218,6 +218,11 @@ public class VmDevicesConverter {
             result.add(dev);
         }
         return result;
+    }
+
+    private String kiloBytesToMegaBytes(String value) {
+        final int intKbValue = Integer.parseUnsignedInt(value);
+        return String.valueOf(intKbValue / 1024);
     }
 
     private List<Map<String, Object>> parseHostDevices(XmlDocument document, List<VmDevice> devices, Guid hostId) {
