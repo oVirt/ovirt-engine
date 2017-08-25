@@ -330,7 +330,7 @@ public class TemplateBackupModel extends ManageBackupModel<VmTemplate> {
         }
         else {
             AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery<>(list -> {
-                if (list != null && list.size() > 0) {
+                if (list != null && list.size() > 0 && getEntity() != null) {
                     StoragePool dataCenter = list.get(0);
                     Frontend.getInstance().runQuery(QueryType.GetTemplatesFromExportDomain,
                             new GetAllFromExportDomainQueryParameters(dataCenter.getId(),

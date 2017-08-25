@@ -90,7 +90,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
                             templateData.setExistsInSystem(templateExistsInSystem);
                             if (templateExistsInSystem) {
                                 templateData.enforceClone(constants.importTemplateThatExistsInSystemMustClone());
-                            } else if (findAnyVmTemplateById(vmtList, template.getBaseTemplateId()) == null) {
+                            } else if (!template.isBaseTemplate() && findAnyVmTemplateById(vmtList, template.getBaseTemplateId()) == null) {
                                 templateData.enforceClone(constants.importTemplateWithoutBaseMustClone());
                             }
                             templateDataList.add(templateData);
