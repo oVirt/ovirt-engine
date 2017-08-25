@@ -21,7 +21,7 @@ public class GuidUtils {
      */
     public static List<Guid> getGuidListFromString(String str) {
         return Arrays.stream(StringUtils.split(Objects.toString(str, StringUtils.EMPTY), SEPARATOR))
-                .map(Guid::createGuidFromStringDefaultEmpty)
+                .map(Guid::new)
                 .collect(Collectors.toList());
     }
 }
