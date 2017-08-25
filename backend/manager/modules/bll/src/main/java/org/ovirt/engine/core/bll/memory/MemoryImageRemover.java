@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +80,7 @@ public abstract class MemoryImageRemover {
     }
 
     private boolean removeMemoryVolumes(String memVols) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(memVols);
+        List<Guid> guids = Guid.createGuidListFromString(memVols);
 
         if (guids.size() != NUM_OF_UUIDS_IN_MEMORY_STATE) {
             log.warn("Cannot remove memory volumes, invalid format '{}'", memVols);

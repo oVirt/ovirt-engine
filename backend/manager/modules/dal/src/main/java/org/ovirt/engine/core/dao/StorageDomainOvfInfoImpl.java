@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -51,7 +50,7 @@ public class StorageDomainOvfInfoImpl extends DefaultGenericDao<StorageDomainOvf
         }
         String storedOvfs = resultSet.getString("stored_ovfs_ids");
         if (storedOvfs != null && !storedOvfs.isEmpty()) {
-            toReturn.setStoredOvfIds(GuidUtils.getGuidListFromString(resultSet.getString("stored_ovfs_ids")));
+            toReturn.setStoredOvfIds(Guid.createGuidListFromString(resultSet.getString("stored_ovfs_ids")));
         } else {
             toReturn.setStoredOvfIds(new LinkedList<>());
         }

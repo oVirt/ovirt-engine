@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -148,7 +147,7 @@ public abstract class VmBaseDao<T extends VmBase> extends DefaultGenericDao<T, G
             entity.setSpiceFileTransferEnabled(rs.getBoolean("is_spice_file_transfer_enabled"));
             entity.setSpiceCopyPasteEnabled(rs.getBoolean("is_spice_copy_paste_enabled"));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
-            entity.setDedicatedVmForVdsList(GuidUtils.getGuidListFromString(rs.getString("dedicated_vm_for_vds")));
+            entity.setDedicatedVmForVdsList(Guid.createGuidListFromString(rs.getString("dedicated_vm_for_vds")));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));

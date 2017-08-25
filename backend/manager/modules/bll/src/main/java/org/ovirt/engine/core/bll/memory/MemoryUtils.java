@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.GuidUtils;
 
 public class MemoryUtils {
 
@@ -38,7 +37,7 @@ public class MemoryUtils {
      */
     public static String changeStorageDomainAndPoolInMemoryState(
             String originalMemoryVolume, Guid storageDomainId, Guid storagePoolId) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(originalMemoryVolume);
+        List<Guid> guids = Guid.createGuidListFromString(originalMemoryVolume);
         return createMemoryStateString(storageDomainId, storagePoolId,
                 guids.get(2), guids.get(3), guids.get(4), guids.get(5));
     }
@@ -149,12 +148,12 @@ public class MemoryUtils {
 
     public static Guid getMemoryDiskId(String memoryVolume) {
         return StringUtils.isEmpty(memoryVolume) ? null
-                : GuidUtils.getGuidListFromString(memoryVolume).get(2);
+                : Guid.createGuidListFromString(memoryVolume).get(2);
     }
 
     public static Guid getMetadataDiskId(String memoryVolume) {
         return StringUtils.isEmpty(memoryVolume) ? null
-                : GuidUtils.getGuidListFromString(memoryVolume).get(4);
+                : Guid.createGuidListFromString(memoryVolume).get(4);
     }
 
     public static String generateMemoryDiskDescription(VM vm, String snapshotDescription) {

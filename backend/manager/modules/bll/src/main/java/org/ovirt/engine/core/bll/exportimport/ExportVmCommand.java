@@ -76,7 +76,6 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -372,7 +371,7 @@ public class ExportVmCommand<T extends MoveOrCopyParameters> extends MoveOrCopyT
 
     private void copyAllMemoryImages(Guid containerID) {
         for (Snapshot snapshot : snapshotsWithMemory) {
-            List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+            List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
 
             // copy the memory dump image
             ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(

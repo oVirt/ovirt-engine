@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.compat;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class Guid implements Serializable, Comparable<Guid> {
     /**
@@ -18,6 +21,7 @@ public class Guid implements Serializable, Comparable<Guid> {
     public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     public static final Guid Empty = new Guid("00000000-0000-0000-0000-000000000000");
+    private static final String SEPARATOR = ",";
 
     private UUID uuid;
 
@@ -91,6 +95,21 @@ public class Guid implements Serializable, Comparable<Guid> {
             return defaultValue;
         }
         return new Guid(candidate);
+    }
+
+    /**
+     * Gets a string containing multiple <code>Guid</code> values separated by a comma and returns a List of
+     * <code>Guid</code>. If the String is null/empty returns an empty array.
+     *
+     * @param str
+     *            - String which contains list of <code>Guid</code>.
+     * @return - List of <code>Guid</code> type.
+     */
+    public static List<Guid> createGuidListFromString(String str) {
+        return Arrays.stream(Objects.toString(str, "").split(SEPARATOR))
+                .filter(s -> !s.isEmpty())
+                .map(Guid::new)
+                .collect(Collectors.toList());
     }
 
     public static boolean isNullOrEmpty(Guid id) {

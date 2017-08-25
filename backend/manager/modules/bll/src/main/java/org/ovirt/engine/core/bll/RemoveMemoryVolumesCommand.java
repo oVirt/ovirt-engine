@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 
 /**
  * Command for removing the given memory volumes.
@@ -37,7 +36,7 @@ public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters>
     @Override
     protected void executeCommand() {
         if (isMemoryRemovable()) {
-            List<Guid> guids = GuidUtils.getGuidListFromString(getParameters().getMemoryVolumes());
+            List<Guid> guids = Guid.createGuidListFromString(getParameters().getMemoryVolumes());
 
             RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
             removeMemoryDumpDiskParameters.setShouldBeLogged(false);

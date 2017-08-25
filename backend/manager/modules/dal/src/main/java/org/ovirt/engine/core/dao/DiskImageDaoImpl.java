@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -216,7 +215,7 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
             entity.setLastModified(DbFacadeUtils.fromDate(rs
                     .getTimestamp("lastModified")));
             entity.setAppList(rs.getString("app_list"));
-            entity.setStorageIds(GuidUtils.getGuidListFromString(rs.getString("storage_id")));
+            entity.setStorageIds(Guid.createGuidListFromString(rs.getString("storage_id")));
             entity.setStorageTypes(getStorageTypesList(rs.getString("storage_type")));
             entity.setStoragesNames(split(rs.getString("storage_name")));
             entity.setVmSnapshotId(getGuid(rs, "vm_snapshot_id"));

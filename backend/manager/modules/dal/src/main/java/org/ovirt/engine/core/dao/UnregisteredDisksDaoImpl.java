@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 @Named
@@ -88,7 +87,7 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
         diskImage.setSize(rs.getLong("size"));
         diskImage.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
         diskImage.setLastModified(DbFacadeUtils.fromDate(rs.getTimestamp("last_modified")));
-        diskImage.setStorageIds(GuidUtils.getGuidListFromString(rs.getString("storage_domain_id")));
+        diskImage.setStorageIds(Guid.createGuidListFromString(rs.getString("storage_domain_id")));
         diskImage.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
         diskImage.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
         entity.setDiskImage(diskImage);

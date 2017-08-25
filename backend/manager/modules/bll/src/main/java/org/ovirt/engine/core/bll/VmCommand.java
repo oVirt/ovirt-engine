@@ -55,7 +55,6 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.TagDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VmManager;
 
@@ -276,7 +275,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected boolean removeMemoryDisks(String memory) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(memory);
+        List<Guid> guids = Guid.createGuidListFromString(memory);
 
         RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(guids.get(2));
         removeMemoryDumpDiskParameters.setShouldBeLogged(false);

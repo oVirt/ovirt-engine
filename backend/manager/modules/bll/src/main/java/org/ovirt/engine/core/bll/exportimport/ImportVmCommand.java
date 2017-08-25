@@ -101,7 +101,6 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmStatisticsDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -733,7 +732,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private void copyAllMemoryImages(Guid containerId) {
         for (String memoryVolumes : MemoryUtils.getMemoryVolumesFromSnapshots(getVm().getSnapshots())) {
-            List<Guid> guids = GuidUtils.getGuidListFromString(memoryVolumes);
+            List<Guid> guids = Guid.createGuidListFromString(memoryVolumes);
 
             // copy the memory dump image
             ActionReturnValue vdcRetValue = runInternalActionWithTasksContext(
@@ -1017,7 +1016,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void updateMemoryDisks(Snapshot snapshot) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+        List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
         snapshot.setMemoryDiskId(guids.get(2));
         snapshot.setMetadataDiskId(guids.get(4));
     }
@@ -1032,7 +1031,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private DiskImage createMemoryDisk(Snapshot snapshot) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+        List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
         VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
                 snapshot.getVmConfiguration(),
                 snapshot.getVmId(), snapshot.getId());
@@ -1049,7 +1048,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private DiskImage createMetadataDisk(VM vm, Snapshot snapshot) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+        List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
         DiskImage memoryDisk = MemoryUtils.createMetadataDisk(MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
         memoryDisk.setId(guids.get(4));
         memoryDisk.setImageId(guids.get(5));
