@@ -29,6 +29,8 @@ public class VmDeviceCommonUtils {
     static final String NETWORK_CHAR = "N";
     static final String CDROM_CHAR = "D";
     static final String DRIVE_CHAR = "C";
+
+    /** Expected unit: MiB */
     public static final String SPEC_PARAM_SIZE = "size";
     public static final String SPEC_PARAM_NODE = "node";
 

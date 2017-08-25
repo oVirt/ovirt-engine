@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.libvirt;
 
+import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.SPEC_PARAM_NODE;
+import static org.ovirt.engine.core.common.utils.VmDeviceCommonUtils.SPEC_PARAM_SIZE;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -198,8 +201,8 @@ public class VmDevicesConverter {
             VmDevice dbDev = dbDevices.stream()
                     .sorted(Comparator.comparing(VmDevice::isManaged).reversed()) // try to match managed devices first
                     .filter(d -> d.getDevice().equals(dev.get(VdsProperties.Device)))
-                    .filter(d -> Objects.equals(d.getSpecParams().get(NODE).toString(), devNode))
-                    .filter(d -> Objects.equals(d.getSpecParams().get(SIZE).toString(), devSize))
+                    .filter(d -> Objects.equals(d.getSpecParams().get(SPEC_PARAM_NODE).toString(), devNode))
+                    .filter(d -> Objects.equals(d.getSpecParams().get(SPEC_PARAM_SIZE).toString(), devSize))
                     .findFirst()
                     .orElse(null);
 
@@ -210,8 +213,8 @@ public class VmDevicesConverter {
             } else {
                 dev.put(VdsProperties.DeviceId, Guid.newGuid().toString());
                 Map<String, Object> specParams = new HashMap<>();
-                specParams.put(NODE, devNode);
-                specParams.put(SIZE, devSize);
+                specParams.put(SPEC_PARAM_NODE, devNode);
+                specParams.put(SPEC_PARAM_SIZE, devSize);
                 dev.put(VdsProperties.SpecParams, specParams);
             }
 
