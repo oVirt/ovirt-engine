@@ -255,7 +255,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private void initSorting() {
         hostStatus.makeSortable();
         nameColumn.makeSortable();
-        hostOutOfSync.makeSortable(Comparator.<PairQueryable<VdsNetworkInterface, VDS>, VdsNetworkInterface> comparing(PairQueryable::getFirst, Comparator.<VdsNetworkInterface, Boolean> comparing(i -> i != null && i.getNetworkImplementationDetails().isInSync())));
+        hostOutOfSync.makeSortable(Comparator.comparing((PairQueryable<VdsNetworkInterface, VDS> p) -> p.getFirst(), Comparator.comparing(i -> i != null && i.getNetworkImplementationDetails().isInSync())));
 
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
