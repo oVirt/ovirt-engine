@@ -473,7 +473,7 @@ public abstract class TransferImageCommand<T extends TransferImageParameters> ex
             return false;
         }
 
-        String[] transferOps = new String[] {getParameters().getTransferType().getOp()};
+        String[] transferOps = new String[] {getParameters().getTransferType().getAllowedOperation()};
         AddImageTicketVDSCommandParameters transferCommandParams = new AddImageTicketVDSCommandParameters(getVdsId(),
                 imagedTicketId,
                 transferOps,

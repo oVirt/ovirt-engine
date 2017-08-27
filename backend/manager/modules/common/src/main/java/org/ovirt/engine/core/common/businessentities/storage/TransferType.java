@@ -4,13 +4,13 @@ public enum TransferType {
     Download("read"),
     Upload("write");
 
-    private String op;
+    private String allowedOperation;
 
-    TransferType(String op) {
-        this.op = op;
+    TransferType(String allowedOperation) {
+        this.allowedOperation = allowedOperation;
     }
 
-    public String getOp() {
-        return op;
+    public String getAllowedOperation() {
+        return allowedOperation;
     }
 }
