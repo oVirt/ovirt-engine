@@ -51,7 +51,17 @@
     min-height: calc(100vh - 66px);
 }
 
-.obrand_landingBgBottomLeft {
+.obrand_landingBgTop {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-image: url(images/ovirt_landing_bg_top_right.png);
+    width: 561px;
+    height: 413px;
+    background-repeat: no-repeat;
+}
+
+.obrand_landingBgBottom {
     background-image: url(images/ovirt_landing_bg_bottom_left.png);
     position: absolute;
     bottom: 0;
@@ -59,15 +69,5 @@
     width: 100%;
     height: 100%;
     border-top: 4px solid #00659c;
-    background-repeat: no-repeat;
-}
-
-.obrand_landingBgTopRight {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-image: url(images/ovirt_landing_bg_top_right.png);
-    width: 561px;
-    height: 413px;
     background-repeat: no-repeat;
 }

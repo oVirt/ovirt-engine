@@ -15,7 +15,7 @@
             padding-left: 50px;
             padding-right: 20px;
             color: white;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .applicationTitleRow {
@@ -30,6 +30,10 @@
             opacity: 1;
         }
 
+        .close:active, .close:hover {
+            color: #39a5dc;
+        }
+
         .label {
             font-weight: bold;
             padding-right: 5px;
@@ -37,8 +41,8 @@
 
         .app-title {
             color: white;
-            font-size: 22px;
-            font-weight:200;
+            font-size: 20px;
+            font-weight: 200;
         }
     </ui:style>
 

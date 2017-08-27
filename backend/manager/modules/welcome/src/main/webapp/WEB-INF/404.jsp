@@ -14,8 +14,8 @@
     <obrand:javascripts />
 </head>
 <body>
-    <div class="obrand_landingBgBottomLeft"></div>
-    <div class="obrand_landingBgTopRight"></div>
+    <div class="obrand_landingBgTop"></div>
+    <div class="obrand_landingBgBottom"></div>
 
     <a href="<obrand:messages key="obrand.common.vendor_url"/>" class="obrand_loginPageLogoLink">
         <span class="obrand_loginPageLogo"></span>

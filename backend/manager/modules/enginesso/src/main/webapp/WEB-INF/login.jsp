@@ -32,8 +32,8 @@
 
     <c:set target="${ssoSession}" property="reauthenticate" value="true" />
 
-    <div class="obrand_landingBgBottomLeft"></div>
-    <div class="obrand_landingBgTopRight"></div>
+    <div class="obrand_landingBgTop"></div>
+    <div class="obrand_landingBgBottom"></div>
 
     <a href="${ssoSession.engineUrl}" class="obrand_loginPageLogoLink">
         <span class="obrand_loginPageLogo"></span>
