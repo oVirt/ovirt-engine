@@ -184,8 +184,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         @Override
         public SafeHtml getTooltip(ClusterNetworkModel clusterNetworkModel) {
             return MultiImageColumnHelper.getTooltip(clusterNetworkModel.isVmNetwork() ?
-                    Collections.singletonMap(vmImage, constants.vmItemInfo())
-                    : Collections.<SafeHtml, String>emptyMap());
+                    Collections.singletonMap(vmImage, constants.vmItemInfo()) : Collections.emptyMap());
         }
     }
 
