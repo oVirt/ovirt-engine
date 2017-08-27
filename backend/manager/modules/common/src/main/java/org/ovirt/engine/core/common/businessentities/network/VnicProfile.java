@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
-import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -24,7 +23,6 @@ public class VnicProfile implements IVdcQueryable, BusinessEntity<Guid>, Nameabl
     private Guid id;
     @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE, groups = { CreateEntity.class,
             UpdateEntity.class })
-    @ValidName(message = "VALIDATION_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     private Guid networkId;
