@@ -109,7 +109,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -265,7 +264,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
         sourceImageDomainsImageMap = new HashMap<>();
         for (DiskImage image : images) {
-            MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
+            sourceImageDomainsImageMap.computeIfAbsent(image.getStorageIds().get(0), k -> new ArrayList<>()).add(image);
             if (!diskInfoDestinationMap.containsKey(image.getId())) {
                 // The volume's format and type were not specified and thus should be null.
                 image.setVolumeFormat(null);

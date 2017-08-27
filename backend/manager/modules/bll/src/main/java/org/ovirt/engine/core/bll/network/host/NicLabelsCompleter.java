@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
@@ -16,7 +17,6 @@ import org.ovirt.engine.core.common.utils.MapNetworkAttachments;
 import org.ovirt.engine.core.common.utils.NetworkCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class NicLabelsCompleter {
 
@@ -68,12 +68,7 @@ public class NicLabelsCompleter {
     }
 
     private void initLabelsToNetworks() {
-        for (Network network : clusterNetworks) {
-            MultiValueMapUtils.addToMap(network.getLabel(),
-                    network,
-                    labelToNetworks,
-                    new MultiValueMapUtils.ListCreator<>());
-        }
+        labelToNetworks = clusterNetworks.stream().collect(Collectors.groupingBy(Network::getLabel));
     }
 
     private void completeNetworkAttachmentsByRemovedLabels() {

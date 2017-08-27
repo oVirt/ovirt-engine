@@ -51,7 +51,6 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.VmIconDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -266,7 +265,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
             for (DiskImage disk : disks) {
                 domainsList.addAll(disk.getStorageIds());
                 for (Guid storageDomainId : disk.getStorageIds()) {
-                    MultiValueMapUtils.addToMap(storageDomainId, disk, storageToDisksMap);
+                    storageToDisksMap.computeIfAbsent(storageDomainId, k -> new ArrayList<>()).add(disk);
                 }
             }
         }

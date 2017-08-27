@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.di.interceptor.InvocationLogger;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
@@ -56,15 +54,13 @@ public class VmDaoImpl extends BaseDao implements VmDao {
 
     @Override
     public Map<Boolean, List<VM>> getForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
-        Map<Boolean, List<VM>> result = new HashMap<>();
         List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);
-        for (Pair<VM, VmDevice> pair : vms) {
-            VmDevice device = pair.getSecond();
-            if (includeVmsSnapshotAttachedTo || device.getSnapshotId() == null) {
-                MultiValueMapUtils.addToMap(device.isPlugged(), pair.getFirst(), result);
-            }
-        }
-        return result;
+
+        return vms.stream()
+                .filter(p -> includeVmsSnapshotAttachedTo || p.getSecond().getSnapshotId() == null)
+                .collect(Collectors.groupingBy(p -> p.getSecond().isPlugged(),
+                        Collectors.mapping(Pair::getFirst, Collectors.toList())));
+
     }
 
     @Override

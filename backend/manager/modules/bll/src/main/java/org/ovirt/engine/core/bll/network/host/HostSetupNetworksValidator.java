@@ -53,8 +53,6 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils.ListCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -400,12 +398,8 @@ public class HostSetupNetworksValidator {
     }
 
     private Map<String, List<Guid>> getIdsOfNetworkAttachmentsRelatedToInterfaceNames(Collection<NetworkAttachment> networkAttachments) {
-        Map<String, List<Guid>> map = new HashMap<>();
-        for (NetworkAttachment attachment : networkAttachments) {
-            MultiValueMapUtils.addToMap(attachment.getNicName(), attachment.getId(), map, new ListCreator<>());
-        }
-
-        return map;
+        return networkAttachments.stream().collect(Collectors.groupingBy(
+                NetworkAttachment::getNicName, Collectors.mapping(NetworkAttachment::getId, Collectors.toList())));
     }
 
     /**

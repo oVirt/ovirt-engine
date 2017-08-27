@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -49,7 +50,6 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ReflectionUtils;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsCommandExecutor;
 import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
@@ -112,14 +112,10 @@ public class ResourceManager implements BackendService {
 
     private void populateVdsAndVmsList() {
         final List<VmDynamic> vms = vmDynamicDao.getAll();
-        for (VmDynamic vm : vms) {
-            if (!vm.getStatus().isNotRunning() && vm.getRunOnVds() != null) {
-                MultiValueMapUtils.addToMap(vm.getRunOnVds(),
-                        vm.getId(),
-                        vdsAndVmsList,
-                        new MultiValueMapUtils.SetCreator<>());
-            }
-        }
+        vdsAndVmsList.putAll(vms.stream()
+                .filter(vm -> !vm.getStatus().isNotRunning() && vm.getRunOnVds() != null)
+                .collect(Collectors.groupingBy(VmDynamic::getRunOnVds,
+                        Collectors.mapping(VmDynamic::getId, Collectors.toSet()))));
     }
 
     public boolean addAsyncRunningVm(Guid vmId) {

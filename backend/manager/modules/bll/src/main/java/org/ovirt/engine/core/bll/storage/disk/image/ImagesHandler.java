@@ -70,7 +70,6 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -605,8 +604,7 @@ public class ImagesHandler {
 
     // the last image in each list is the leaf
     public static Map<Guid, List<DiskImage>> getImagesLeaf(List<DiskImage> images) {
-        Map<Guid, List<DiskImage>> retVal = new HashMap<>();
-        images.forEach(image -> MultiValueMapUtils.addToMap(image.getId(), image, retVal));
+        Map<Guid, List<DiskImage>> retVal = images.stream().collect(Collectors.groupingBy(DiskImage::getId));
         retVal.values().forEach(ImagesHandler::sortImageList);
         return retVal;
     }

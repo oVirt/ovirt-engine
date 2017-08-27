@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.hostdev;
 
-import static org.ovirt.engine.core.utils.collections.MultiValueMapUtils.addToMap;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -44,7 +42,8 @@ public class RemoveVmHostDevicesCommand extends AbstractVmHostDevicesCommand<VmH
 
             if (deviceExists) {
                 VmHostDevice device = existingDevices.get(hostDevice.getDeviceName());
-                addToMap(getIommuGroupKey(hostDevice.getIommuGroup()), device, existingDevicesByIommuGroup);
+                existingDevicesByIommuGroup
+                        .computeIfAbsent(hostDevice.getIommuGroup(), k -> new ArrayList<>()).add(device);
 
                 if (shouldRemoveDevice) {
                     // first just set the flag that this device is not required

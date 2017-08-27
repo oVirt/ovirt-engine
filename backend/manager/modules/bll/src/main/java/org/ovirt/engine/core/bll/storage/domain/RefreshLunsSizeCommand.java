@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDao;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -142,6 +141,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
     **/
     private Map<String, List<Pair<VDS, LUNs>>> getDeviceListAllVds(Set<String> lunsToResize) {
         Map<String, List<Pair<VDS, LUNs>>> lunToVds = new HashMap<>();
+
         for (VDS vds : getAllRunningVdssInPool()) {
             GetDeviceListVDSCommandParameters parameters =
                     new GetDeviceListVDSCommandParameters(vds.getId(),
@@ -150,8 +150,7 @@ public class RefreshLunsSizeCommand<T extends ExtendSANStorageDomainParameters> 
 
             List<LUNs> luns = (List<LUNs>) runVdsCommand(VDSCommandType.GetDeviceList, parameters).getReturnValue();
             for (LUNs lun : luns) {
-                MultiValueMapUtils.addToMap(lun.getLUNId(),
-                        new Pair<>(vds, lun), lunToVds);
+                lunToVds.computeIfAbsent(lun.getLUNId(), k -> new ArrayList<>()).add(new Pair<>(vds, lun));
             }
         }
         return lunToVds;

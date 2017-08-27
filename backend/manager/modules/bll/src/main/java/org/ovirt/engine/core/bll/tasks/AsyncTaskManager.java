@@ -13,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.concurrent.ManagedScheduledExecutorService;
@@ -44,7 +45,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogable;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableImpl;
 import org.ovirt.engine.core.di.Injector;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.threadpool.ThreadPools;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -251,11 +251,7 @@ public final class AsyncTaskManager implements BackendService {
      * commands that were partially submitted to vdsm
      */
     private Map<Guid, List<AsyncTask>> groupTasksByRootCommandId(List<AsyncTask> tasksInDB) {
-        Map<Guid, List<AsyncTask>> rootCommandIdToCommandsMap = new HashMap<>();
-        for (AsyncTask task : tasksInDB) {
-            MultiValueMapUtils.addToMap(task.getRootCommandId(), task, rootCommandIdToCommandsMap);
-        }
-        return rootCommandIdToCommandsMap;
+        return tasksInDB.stream().collect(Collectors.groupingBy(AsyncTask::getRootCommandId));
     }
 
     private static boolean isPartiallyExecutedTask(AsyncTask task) {

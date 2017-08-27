@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll.storage.pool;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 @InternalCommandAttribute
 public abstract class ConnectHostToStoragePoolServerCommandBase<T extends StoragePoolParametersBase> extends
@@ -68,23 +67,16 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
     }
 
     private void updateConnectionsTypeMap() {
-        connectionsTypeMap = new HashMap<>();
-        for (StorageServerConnections conn : connections) {
-            StorageType connType = conn.getStorageType();
-            MultiValueMapUtils.addToMap(connType, conn, connectionsTypeMap);
-        }
+        connectionsTypeMap =
+                connections.stream().collect(Collectors.groupingBy(StorageServerConnections::getStorageType));
     }
 
     private void updateConnectionMapForFiberChannel(Set<StorageDomainStatus> statuses) {
         List<StorageDomain> storageDomainList =
                 storageDomainDao.getAllForStoragePool(getStoragePool().getId());
-        for (StorageDomain sd : storageDomainList) {
-            if (sd.getStorageType() == StorageType.FCP && statuses.contains(sd.getStatus())) {
-                MultiValueMapUtils.addToMap(StorageType.FCP,
-                        FCPStorageHelper.getFCPConnection(),
-                        getConnectionsTypeMap());
-                break;
-            }
+        if (storageDomainList.stream().anyMatch
+                (sd -> sd.getStorageType() == StorageType.FCP && statuses.contains(sd.getStatus()))) {
+            getConnectionsTypeMap().put(StorageType.FCP, Collections.singletonList(FCPStorageHelper.getFCPConnection()));
         }
     }
 

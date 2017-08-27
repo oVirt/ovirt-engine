@@ -1,10 +1,12 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.ActionType;
@@ -13,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 /**
  * A validator for multiple storage domains.
@@ -50,7 +51,7 @@ public class MultipleStorageDomainsValidator {
         for (DiskImage disk : diskImages) {
             List<Guid> domainIds = disk.getStorageIds();
             for (Guid domainId : domainIds) {
-                MultiValueMapUtils.addToMap(domainId, disk, domainsDisksMap);
+                domainsDisksMap.computeIfAbsent(domainId, k -> new ArrayList<>()).add(disk);
             }
         }
         return domainsDisksMap;
@@ -183,10 +184,6 @@ public class MultipleStorageDomainsValidator {
     }
 
     private Map<Guid, List<SubchainInfo>> getDomainsToSnapshotsMap(List<SubchainInfo> snapshots) {
-        Map<Guid, List<SubchainInfo>> domainsDisksMap = new HashMap<>();
-        for (SubchainInfo subchain : snapshots) {
-            MultiValueMapUtils.addToMap(subchain.getStorageDomainId(), subchain, domainsDisksMap);
-        }
-        return domainsDisksMap;
+        return snapshots.stream().collect(Collectors.groupingBy(SubchainInfo::getStorageDomainId));
     }
 }

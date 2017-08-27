@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.hostdev;
 
-import static org.ovirt.engine.core.utils.collections.MultiValueMapUtils.addToMap;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -9,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.VmDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
@@ -147,14 +145,10 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
             return Collections.emptyMap();
         }
 
-        Map<String, List<String>> childrenDeviceMap = new HashMap<>();
-
-        // aggregate inverse information: parent -> list of children
-        for (Map.Entry<String, HostDevice> entry : fetchedDevicesMap.entrySet()) {
-            String deviceName = entry.getKey();
-            HostDevice device = entry.getValue();
-            MultiValueMapUtils.addToMap(device.getParentDeviceName(), deviceName, childrenDeviceMap);
-        }
+        Map<String, List<String>> childrenDeviceMap =
+                fetchedDevicesMap.entrySet().stream().collect(Collectors.groupingBy(
+                        e -> e.getValue().getParentDeviceName(),
+                        Collectors.mapping(Map.Entry::getKey, Collectors.toList())));
 
         Stack<String> toTraverse = new Stack<>();
         toTraverse.push(VdsProperties.ROOT_HOST_DEVICE);
@@ -178,12 +172,9 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
      */
     private Map<String, List<VmDevice>> getAttachedVmDevicesMap() {
         if (attachedVmDevicesMap == null) {
-            attachedVmDevicesMap = new HashMap<>();
-
             List<VmDevice> vmDevices = hostDeviceDao.getVmDevicesAttachedToHost(getVdsId());
-            for (VmDevice vmDevice : vmDevices) {
-                addToMap(vmDevice.getDevice(), vmDevice, attachedVmDevicesMap);
-            }
+
+            attachedVmDevicesMap = vmDevices.stream().collect(Collectors.groupingBy(VmDevice::getDevice));
         }
 
         return attachedVmDevicesMap;

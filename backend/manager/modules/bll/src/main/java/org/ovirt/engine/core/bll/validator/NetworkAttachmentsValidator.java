@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.validator.network.NetworkExclusivenessValidator;
@@ -18,7 +19,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 /**
  * The {@code NetworkAttachmentsValidator} performs validation on the entire network attachments as a whole and for
@@ -80,8 +80,7 @@ public class NetworkAttachmentsValidator {
             Network networkToConfigure = networkBusinessEntityMap.get(attachment.getNetworkId());
             NetworkType networkTypeToAdd = determineNetworkType(networkToConfigure);
 
-            MultiValueMapUtils.ListCreator<NetworkType> listCreator = new MultiValueMapUtils.ListCreator<>();
-            MultiValueMapUtils.addToMap(nicName, networkTypeToAdd, nicNameToNetworkTypes, listCreator);
+            nicNameToNetworkTypes.computeIfAbsent(nicName, k -> new ArrayList<>()).add(networkTypeToAdd);
         }
         return nicNameToNetworkTypes;
     }
@@ -93,18 +92,11 @@ public class NetworkAttachmentsValidator {
     }
 
     public ValidationResult verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately() {
-        Map<String, List<Guid>> networkNameToIdsOfReferencingAttachments = new HashMap<>();
-        MultiValueMapUtils.ListCreator<Guid> creator = new MultiValueMapUtils.ListCreator<>();
-
-        for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
-            Network network = networkBusinessEntityMap.get(networkAttachment.getNetworkId());
-
-            MultiValueMapUtils.addToMap(network.getName(),
-                networkAttachment.getId(),
-                networkNameToIdsOfReferencingAttachments,
-                creator);
-        }
-
+        Map<String, List<Guid>> networkNameToIdsOfReferencingAttachments =
+                attachmentsToConfigure.stream()
+                        .collect(Collectors.groupingBy(
+                                n -> networkBusinessEntityMap.get(n.getNetworkId()).getName(),
+                                Collectors.mapping(NetworkAttachment::getId, Collectors.toList())));
 
         for (Entry<String, List<Guid>> entry : networkNameToIdsOfReferencingAttachments.entrySet()) {
             List<Guid> referencingAttachments = entry.getValue();

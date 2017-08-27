@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 /**
  * Factory creates parameters to be used to refresh out of sync networks using
@@ -85,7 +84,7 @@ public class RefreshNetworksParametersFactory {
         for (Network network : networks) {
             List<VDS> hostRecordsForNetwork = vdsDao.getAllForNetwork(network.getId());
             for (VDS host : hostRecordsForNetwork) {
-                MultiValueMapUtils.addToMap(host.getId(), network, networksPerHostId);
+                networksPerHostId.computeIfAbsent(host.getId(), k -> new ArrayList<>()).add(network);
             }
         }
         return networksPerHostId;

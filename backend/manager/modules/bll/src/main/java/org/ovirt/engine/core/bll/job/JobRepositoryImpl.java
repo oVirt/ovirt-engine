@@ -24,7 +24,6 @@ import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StepSubjectEntityDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +160,7 @@ public class JobRepositoryImpl implements JobRepository {
             if (step.getParentStepId() == null) {
                 jobDirectSteps.add(step);
             } else {
-                MultiValueMapUtils.addToMap(step.getParentStepId(), step, parentStepMap);
+                parentStepMap.computeIfAbsent(step.getParentStepId(), k -> new ArrayList<>()).add(step);
             }
         }
 
