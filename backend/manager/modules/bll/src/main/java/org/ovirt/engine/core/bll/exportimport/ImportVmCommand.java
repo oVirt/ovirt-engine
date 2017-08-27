@@ -1032,12 +1032,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private DiskImage createMemoryDisk(Snapshot snapshot) {
         List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
+        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, guids.get(0), guids.get(2), guids.get(3));
+        if (sd == null) {
+            return null;
+        }
         VM vm = snapshotVmConfigurationHelper.getVmFromConfiguration(
                 snapshot.getVmConfiguration(),
                 snapshot.getVmId(), snapshot.getId());
         DiskImage memoryDisk = MemoryUtils.createMemoryDisk(
                 vm,
-                storageDomainStaticDao.get(guids.get(0)).getStorageType(),
+                sd.getStorageType(),
                 vmOverheadCalculator, MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
         memoryDisk.setId(guids.get(2));
         memoryDisk.setImageId(guids.get(3));
@@ -1049,6 +1053,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private DiskImage createMetadataDisk(VM vm, Snapshot snapshot) {
         List<Guid> guids = Guid.createGuidListFromString(snapshot.getMemoryVolume());
+
+        StorageDomainStatic sd = validateStorageDomainExistsInDb(snapshot, guids.get(0), guids.get(4), guids.get(5));
+        if (sd == null) {
+            return null;
+        }
         DiskImage memoryDisk = MemoryUtils.createMetadataDisk(MemoryUtils.generateMemoryDiskDescription(vm, snapshot.getDescription()));
         memoryDisk.setId(guids.get(4));
         memoryDisk.setImageId(guids.get(5));
@@ -1058,10 +1067,27 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return memoryDisk;
     }
 
+    private StorageDomainStatic validateStorageDomainExistsInDb(Snapshot snapshot, Guid storageDomainId, Guid diskId, Guid imageId) {
+        StorageDomainStatic sd = storageDomainStaticDao.get(storageDomainId);
+        if (sd == null) {
+            log.error("Memory disk '{}'/'{}' of snapshot '{}'(id: '{}') could not be added since storage domain id '{}' does not exists",
+                    diskId,
+                    imageId,
+                    snapshot.getDescription(),
+                    snapshot.getId(),
+                    storageDomainId);
+        }
+        return sd;
+    }
+
     private void addDisk(DiskImage disk) {
-        saveImage(disk);
-        saveBaseDisk(disk);
-        saveDiskImageDynamic(disk);
+        if (disk != null) {
+            saveImage(disk);
+            saveBaseDisk(disk);
+            saveDiskImageDynamic(disk);
+        } else {
+            log.error("Memory metadata/dump disk could not be added");
+        }
     }
 
     /**
