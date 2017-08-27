@@ -96,6 +96,11 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                     failedDisksToImportForAuditLog))) {
                 return false;
             }
+            if (!validate(importValidator.validateStorageExistsForMemoryDisks(getVm().getSnapshots(),
+                    getParameters().isAllowPartialImport(),
+                    failedDisksToImportForAuditLog))) {
+                return false;
+            }
             setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
         return super.validate();

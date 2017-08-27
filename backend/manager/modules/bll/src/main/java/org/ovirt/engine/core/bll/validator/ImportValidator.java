@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.ImportParameters;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.Queryable;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -78,6 +80,31 @@ public class ImportValidator {
                 failedDisksToImport.putIfAbsent(image.getId(), image.getDiskAlias());
                 imageToDestinationDomainMap.remove(image.getId());
                 images.remove(image);
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateStorageExistsForMemoryDisks(List<Snapshot> snapshots,
+            boolean allowPartial,
+            Map<Guid, String> failedDisksToImport) {
+        for (Snapshot snap : snapshots) {
+            if (StringUtils.isNotEmpty(snap.getMemoryVolume())) {
+                List<Guid> guids = Guid.createGuidListFromString(snap.getMemoryVolume());
+                StorageDomain sd = getStorageDomainDao().getForStoragePool(guids.get(0), params.getStoragePoolId());
+                ValidationResult result = new StorageDomainValidator(sd).isDomainExistAndActive();
+                if (!result.isValid()) {
+                    log.error("Storage Domain '{}', could not be found for memory disks: '{}','{}' in snapshot '{}' (id: '{}')",
+                            guids.get(0),
+                            guids.get(2),
+                            guids.get(4),
+                            snap.getDescription(),
+                            snap.getId());
+                    if (!allowPartial) {
+                        return result;
+                    }
+                    failedDisksToImport.putIfAbsent(guids.get(2), snap.getDescription() + "(memory disk)");
+                }
             }
         }
         return ValidationResult.VALID;
