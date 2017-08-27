@@ -154,7 +154,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
         }
 
         // populate all the domains of the template
-        Set<Guid> allDomainsList = getStorageDomainsByDisks(imageTemplates, true);
+        Set<Guid> allDomainsList = getStorageDomainsByDisks(imageTemplates);
         getParameters().setStorageDomainsList(new ArrayList<>(allDomainsList));
 
         // check template images for selected domains
@@ -260,15 +260,13 @@ public class RemoveVmTemplateCommand<T extends VmTemplateManagementParameters> e
     /**
      * Get a list of all domains id that the template is on
      */
-    private Set<Guid> getStorageDomainsByDisks(List<DiskImage> disks, boolean isFillStorageTodDiskMap) {
+    private Set<Guid> getStorageDomainsByDisks(List<DiskImage> disks) {
         Set<Guid> domainsList = new HashSet<>();
         if (disks != null) {
             for (DiskImage disk : disks) {
                 domainsList.addAll(disk.getStorageIds());
-                if (isFillStorageTodDiskMap) {
-                    for (Guid storageDomainId : disk.getStorageIds()) {
-                        MultiValueMapUtils.addToMap(storageDomainId, disk, storageToDisksMap);
-                    }
+                for (Guid storageDomainId : disk.getStorageIds()) {
+                    MultiValueMapUtils.addToMap(storageDomainId, disk, storageToDisksMap);
                 }
             }
         }
