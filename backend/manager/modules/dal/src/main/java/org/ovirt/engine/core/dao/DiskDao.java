@@ -151,4 +151,18 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDao<Disk> {
      * @return the list of disks
      */
     public List<Disk> getAllFromDisksIncludingSnapshots(Guid userID, boolean isFiltered);
+
+    /**
+     * Retrieves all disks for the specified disk id, with optional filtering.
+     *
+     * @param id
+     *            the disk id
+     * @param userID
+     *            the ID of the user requesting the information
+     * @param isFiltered
+     *            Whether the results should be filtered according to the user's permissions
+
+     * @return the list of disks
+     */
+    public List<Disk> getAllFromDisksIncludingSnapshotsByDiskId(Guid id, Guid userID, boolean isFiltered);
 }

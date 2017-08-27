@@ -266,4 +266,38 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         List<Disk> result = dao.getAllFromDisksIncludingSnapshots(PRIVILEGED_USER_ID, true);
         assertEquals("wrong number of returned disks", 14, result.size());
     }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsByDiskId() {
+        List<Disk> result = dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, null, false);
+        assertEquals("wrong number of returned disks", 4, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsByDiskIdForPrivilegedUserWithFilter() {
+        List<Disk> result =
+                dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, PRIVILEGED_USER_ID, true);
+        assertEquals("wrong number of returned disks", 4, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsByDiskIdForPrivilegedUserWithoutFilter() {
+        List<Disk> result =
+                dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, PRIVILEGED_USER_ID, false);
+        assertEquals("wrong number of returned disks", 4, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsByDiskIdForUnPrivilegedUserWithoutFilter() {
+        List<Disk> result =
+                dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, UNPRIVILEGED_USER_ID, false);
+        assertEquals("wrong number of returned disks", 4, result.size());
+    }
+
+    @Test
+    public void testGetAllFromDisksIncludingSnapshotsByDiskIdForUnPrivilegedUserWithFilter() {
+        List<Disk> result =
+                dao.getAllFromDisksIncludingSnapshotsByDiskId(FixturesTool.IMAGE_GROUP_ID, UNPRIVILEGED_USER_ID, true);
+        assertEquals("wrong number of returned disks", 0, result.size());
+    }
 }

@@ -247,4 +247,26 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetDiskAndSnapshotsByDiskId (
+    v_disk_id UUID,
+    v_user_id UUID,
+    v_is_filtered BOOLEAN
+    )
+RETURNS SETOF all_disks_including_snapshots STABLE AS $PROCEDURE$
+BEGIN
+    RETURN QUERY
 
+    SELECT *
+    FROM all_disks_including_snapshots
+    WHERE image_group_id = v_disk_id
+        AND (
+            NOT v_is_filtered
+            OR EXISTS (
+                SELECT 1
+                FROM user_disk_permissions_view
+                WHERE user_id = v_user_id
+                    AND entity_id = v_disk_id
+                )
+            );
+END;$PROCEDURE$
+LANGUAGE plpgsql;

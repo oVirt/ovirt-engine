@@ -36,7 +36,7 @@ public class BackendStorageDomainDiskResourceTest
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-                QueryType.GetDiskByDiskId,
+                QueryType.GetDiskAndSnapshotsByDiskId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
@@ -51,7 +51,7 @@ public class BackendStorageDomainDiskResourceTest
     public void testGetNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-                QueryType.GetDiskByDiskId,
+                QueryType.GetDiskAndSnapshotsByDiskId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { DISK_ID },

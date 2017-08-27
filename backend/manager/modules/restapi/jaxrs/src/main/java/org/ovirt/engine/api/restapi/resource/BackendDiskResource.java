@@ -173,7 +173,7 @@ public class BackendDiskResource
 
     @Override
     public Disk get() {
-        return performGet(QueryType.GetDiskByDiskId, new IdQueryParameters(guid));
+        return performGet(QueryType.GetDiskAndSnapshotsByDiskId, new IdQueryParameters(guid));
     }
 
     @Override

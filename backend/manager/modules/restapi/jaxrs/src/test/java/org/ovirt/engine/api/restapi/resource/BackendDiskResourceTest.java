@@ -36,7 +36,7 @@ public class BackendDiskResourceTest
     public void testGet() {
         setUriInfo(setUpBasicUriExpectations());
         setUpEntityQueryExpectations(
-                QueryType.GetDiskByDiskId,
+                QueryType.GetDiskAndSnapshotsByDiskId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
@@ -63,7 +63,7 @@ public class BackendDiskResourceTest
 
     @Test
     public void testMoveById() throws  Exception {
-        setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
+        setUpEntityQueryExpectations(QueryType.GetDiskAndSnapshotsByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {DISK_ID},
@@ -78,7 +78,7 @@ public class BackendDiskResourceTest
 
     @Test
     public void testCopyById() throws Exception {
-        setUpEntityQueryExpectations(QueryType.GetDiskByDiskId,
+        setUpEntityQueryExpectations(QueryType.GetDiskAndSnapshotsByDiskId,
                 IdQueryParameters.class,
                 new String[] {"Id"},
                 new Object[] {DISK_ID},

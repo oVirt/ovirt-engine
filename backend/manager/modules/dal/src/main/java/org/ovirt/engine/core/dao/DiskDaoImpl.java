@@ -148,6 +148,13 @@ public class DiskDaoImpl extends BaseDao implements DiskDao {
     }
 
     @Override
+    public List<Disk> getAllFromDisksIncludingSnapshotsByDiskId(Guid id, Guid userID, boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetDiskAndSnapshotsByDiskId", diskRowMapper, parameterSource);
+    }
+
+    @Override
     public List<Disk> getAllWithQuery(String query) {
         return getJdbcTemplate().query(query, diskRowMapper);
     }

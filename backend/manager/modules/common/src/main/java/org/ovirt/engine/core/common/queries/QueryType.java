@@ -197,6 +197,7 @@ public enum QueryType implements Serializable {
     GetUnregisteredDisks,
     GetUnregisteredDisk,
     GetDiskByDiskId(QueryAuthType.User),
+    GetDiskAndSnapshotsByDiskId(QueryAuthType.User),
     GetDiskSnapshotByImageId,
     GetAncestorImagesByImagesIds(QueryAuthType.User),
     GetImageTransferById(QueryAuthType.User),
