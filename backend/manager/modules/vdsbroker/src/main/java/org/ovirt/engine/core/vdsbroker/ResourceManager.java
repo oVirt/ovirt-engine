@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker;
 import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -62,7 +61,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 public class ResourceManager implements BackendService {
 
-    private final Map<Guid, HashSet<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
+    private final Map<Guid, Set<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
     private final Map<Guid, VdsManager> vdsManagersDict = new ConcurrentHashMap<>();
     private final Set<Guid> asyncRunningVms =
             Collections.newSetFromMap(new ConcurrentHashMap<>());
@@ -118,7 +117,7 @@ public class ResourceManager implements BackendService {
                 MultiValueMapUtils.addToMap(vm.getRunOnVds(),
                         vm.getId(),
                         vdsAndVmsList,
-                        new MultiValueMapUtils.HashSetCreator<>());
+                        new MultiValueMapUtils.SetCreator<>());
             }
         }
     }
@@ -154,14 +153,14 @@ public class ResourceManager implements BackendService {
     }
 
     public void removeVmFromDownVms(Guid vdsId, Guid vmId) {
-        HashSet<Guid> vms = vdsAndVmsList.get(vdsId);
+        Set<Guid> vms = vdsAndVmsList.get(vdsId);
         if (vms != null) {
             vms.remove(vmId);
         }
     }
 
     public void handleVmsFinishedInitOnVds(Guid vdsId) {
-        HashSet<Guid> vms = vdsAndVmsList.get(vdsId);
+        Set<Guid> vms = vdsAndVmsList.get(vdsId);
         if (vms != null) {
             getEventListener().processOnVmStop(vms, vdsId);
             vdsAndVmsList.remove(vdsId);
