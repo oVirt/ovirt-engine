@@ -63,7 +63,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     private Iterable<ClusterNetworkModel> getNetworksTableItems() {
         ClusterNetworkManageModel tableModel = networks.asEditor().flush();
-        return tableModel != null ? tableModel.getItems() : new ArrayList<ClusterNetworkModel>();
+        return tableModel != null ? tableModel.getItems() : new ArrayList<>();
     }
 
     private void refreshNetworksTable() {
