@@ -41,7 +41,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
-import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VdsDao;
 import org.ovirt.engine.core.dao.VmDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -60,8 +59,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
     private NetworkDao networkDao;
     @Inject
     private VnicProfileDao vnicProfileDao;
-    @Inject
-    private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
     private StorageDomainDao storageDomainDao;
     @Inject
@@ -171,13 +168,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         boolean retVal = true;
         final StorageDomain masterDomain =
                 storageDomains.stream().filter(s ->  s.getStorageDomainType() == StorageDomainType.Master).findFirst().orElse(null);
-        TransactionSupport.executeInNewTransaction(() -> {
-            getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
-            masterDomain.setStatus(StorageDomainStatus.Locked);
-            storagePoolIsoMapDao.update(masterDomain.getStoragePoolIsoMapData());
-            getCompensationContext().stateChanged();
-            return null;
-        });
+        lockStorageDomain(masterDomain);
         // destroying a pool is an SPM action. We need to connect all hosts
         // to the pool. Later on, during spm election, one of the hosts will
         // lock the pool

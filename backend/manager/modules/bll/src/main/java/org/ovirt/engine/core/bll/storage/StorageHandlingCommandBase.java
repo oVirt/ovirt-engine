@@ -76,6 +76,7 @@ import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDao;
 import org.ovirt.engine.core.dao.VdsDao;
@@ -123,6 +124,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private  StorageDomainOvfInfoDao storageDomainOvfInfoDao;
     @Inject
     private  StorageDomainStaticDao storageDomainStaticDao;
+    @Inject
+    private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
     private  UnregisteredDisksDao unregisteredDisksDao;
     @Inject
@@ -660,6 +663,16 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
             masterDomain.setStorageDomainType(StorageDomainType.Data);
             storageDomainStaticDao.update(masterDomain.getStorageStaticData());
+            getCompensationContext().stateChanged();
+            return null;
+        });
+    }
+
+    protected void lockStorageDomain(StorageDomain storageDomain) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            getCompensationContext().snapshotEntity(storageDomain.getStoragePoolIsoMapData());
+            storageDomain.setStatus(StorageDomainStatus.Locked);
+            storagePoolIsoMapDao.update(storageDomain.getStoragePoolIsoMapData());
             getCompensationContext().stateChanged();
             return null;
         });
