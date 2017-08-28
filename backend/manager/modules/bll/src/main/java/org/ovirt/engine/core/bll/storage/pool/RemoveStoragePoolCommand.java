@@ -198,7 +198,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         handleDestroyStoragePoolCommand();
-        handleMasterDomain(masterDomain);
+        handleDetachMasterDomain(masterDomain);
         runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
 
         setSucceeded(true);
@@ -222,18 +222,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         return retVal;
-    }
-
-    private void handleMasterDomain(StorageDomain masterDomain) {
-        TransactionSupport.executeInNewTransaction(() -> {
-            releaseStorageDomainMacPool(vmDao.getAllForStoragePool(getStoragePoolId()));
-            detachStorageDomainWithEntities(masterDomain);
-            getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
-            masterDomain.setStorageDomainType(StorageDomainType.Data);
-            storageDomainStaticDao.update(masterDomain.getStorageStaticData());
-            getCompensationContext().stateChanged();
-            return null;
-        });
     }
 
     private void handleDestroyStoragePoolCommand() {

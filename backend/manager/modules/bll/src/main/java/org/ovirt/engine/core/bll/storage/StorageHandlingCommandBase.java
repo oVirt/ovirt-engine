@@ -653,6 +653,18 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return null;
     }
 
+    protected void handleDetachMasterDomain(StorageDomain masterDomain) {
+        TransactionSupport.executeInNewTransaction(() -> {
+            releaseStorageDomainMacPool(vmDao.getAllForStoragePool(getStoragePoolId()));
+            detachStorageDomainWithEntities(masterDomain);
+            getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
+            masterDomain.setStorageDomainType(StorageDomainType.Data);
+            storageDomainStaticDao.update(masterDomain.getStorageStaticData());
+            getCompensationContext().stateChanged();
+            return null;
+        });
+    }
+
     protected void runSynchronizeOperation(ActivateDeactivateSingleAsyncOperationFactory factory,
             Object... addionalParams) {
         List<VDS> allRunningVdsInPool = getAllRunningVdssInPool();
