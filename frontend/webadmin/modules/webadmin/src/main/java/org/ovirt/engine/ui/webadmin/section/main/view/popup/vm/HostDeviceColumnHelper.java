@@ -21,7 +21,10 @@ public final class HostDeviceColumnHelper {
     }
 
     public static String renderVmNamesList(List<String> names) {
-        return String.join(", ", names); //$NON-NLS-1$
+        if (names != null) {
+            return String.join(", ", names); //$NON-NLS-1$
+        }
+        return "";
     }
 
     public static String renderIommuGroup(Integer group) {
