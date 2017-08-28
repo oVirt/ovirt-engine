@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.HostNic;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.HostNicResource;
+import org.ovirt.engine.api.resource.LinkLayerDiscoveryProtocolResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.api.resource.NetworkLabelsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
@@ -156,5 +157,11 @@ public class BackendHostNicResource
     @Override
     public VirtualFunctionAllowedNetworksResource getVirtualFunctionAllowedNetworksResource() {
         return inject(new BackendVirtualFunctionAllowedNetworksResource(guid, parent.getHostId()));
+    }
+
+    @Override
+    public LinkLayerDiscoveryProtocolResource getLinkLayerDiscoveryProtocolElementsResource() {
+        // TODO: Implement this.
+        return null;
     }
 }

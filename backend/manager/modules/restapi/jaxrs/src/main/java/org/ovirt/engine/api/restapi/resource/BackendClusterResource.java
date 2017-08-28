@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.ClusterEnabledFeaturesResource;
 import org.ovirt.engine.api.resource.ClusterNetworksResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.NetworkFiltersResource;
@@ -135,5 +136,11 @@ public class BackendClusterResource<P extends BackendClustersResource>
     public Response remove() {
         get();
         return performAction(VdcActionType.RemoveCluster, new ClusterParametersBase(asGuid(id)));
+    }
+
+    @Override
+    public ClusterEnabledFeaturesResource getEnabledFeaturesResource() {
+        // TODO: Implement this.
+        return null;
     }
 }

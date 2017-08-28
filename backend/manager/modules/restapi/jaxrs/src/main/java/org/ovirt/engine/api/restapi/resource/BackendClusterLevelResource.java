@@ -21,6 +21,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.ClusterLevel;
+import org.ovirt.engine.api.resource.ClusterFeaturesResource;
 import org.ovirt.engine.api.resource.ClusterLevelResource;
 
 public class BackendClusterLevelResource extends BackendResource implements ClusterLevelResource {
@@ -41,5 +42,11 @@ public class BackendClusterLevelResource extends BackendResource implements Clus
             }
         }
         throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    @Override
+    public ClusterFeaturesResource getClusterFeaturesResource() {
+        // TODO: Implement this.
+        return null;
     }
 }
