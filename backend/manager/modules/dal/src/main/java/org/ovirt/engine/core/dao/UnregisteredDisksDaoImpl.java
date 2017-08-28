@@ -14,19 +14,27 @@ import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 @Named
 @Singleton
-public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDisksDao {
+public class UnregisteredDisksDaoImpl extends MassOperationsGenericDao<UnregisteredDisk, UnregisteredDiskId>
+        implements UnregisteredDisksDao {
+
+    public UnregisteredDisksDaoImpl() {
+        super("unregistereddisk");
+    }
+
+    public UnregisteredDisksDaoImpl(String entityStoredProcedureName) {
+        super(entityStoredProcedureName);
+    }
 
     @Override
     public List<UnregisteredDisk> getByDiskIdAndStorageDomainId(Guid diskId, Guid storageDomainId) {
         List<UnregisteredDisk> unregisteredDisks =
                 getCallsHandler().executeReadList("GetDiskByDiskIdAndStorageDomainId",
                         unregisteredDiskRowMapper,
-                        getCustomMapSqlParameterSource()
-                                .addValue("disk_id", diskId)
-                                .addValue("storage_domain_id", storageDomainId));
+                        createIdParameterMapper(new UnregisteredDiskId(diskId, storageDomainId)));
         for (UnregisteredDisk unregDisk : unregisteredDisks) {
             List<VmBase> vms = getCallsHandler().executeReadList("GetEntitiesByDiskId",
                     vmsForUnregisteredDiskRowMapper,
@@ -38,9 +46,8 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
 
     @Override
     public void removeUnregisteredDisk(Guid diskId, Guid storageDomainId) {
-        getCallsHandler().executeModification("RemoveDiskFromUnregistered", getCustomMapSqlParameterSource()
-                .addValue("disk_id", diskId)
-                .addValue("storage_domain_id", storageDomainId));
+        getCallsHandler().executeModification("RemoveDiskFromUnregistered",
+                createIdParameterMapper(new UnregisteredDiskId(diskId, storageDomainId)));
     }
 
     @Override
@@ -54,26 +61,13 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
     public void saveUnregisteredDisk(UnregisteredDisk disk) {
         // OVF data is not included since it is being updated in the stored procedure.
         getCallsHandler().executeModification("InsertUnregisteredDisk",
-                getCustomMapSqlParameterSource()
-                        .addValue("disk_id", disk.getDiskImage().getId())
-                        .addValue("image_id", disk.getDiskImage().getImageId())
-                        .addValue("disk_alias", disk.getDiskImage().getDiskAlias())
-                        .addValue("disk_description", disk.getDiskImage().getDiskDescription())
-                        .addValue("creation_date", disk.getDiskImage().getCreationDate())
-                        .addValue("last_modified", disk.getDiskImage().getLastModified())
-                        .addValue("volume_type", disk.getDiskImage().getVolumeType())
-                        .addValue("volume_format", disk.getDiskImage().getVolumeFormat())
-                        .addValue("actual_size", disk.getDiskImage().getActualSize())
-                        .addValue("size", disk.getDiskImage().getSize())
-                        .addValue("storage_domain_id", disk.getDiskImage().getStorageIds().get(0)));
+                createFullParametersMapper(disk));
 
         for (VmBase vmBase : disk.getVms()) {
             getCallsHandler().executeModification("InsertUnregisteredDisksToVms",
-                    getCustomMapSqlParameterSource()
-                            .addValue("disk_id", disk.getDiskImage().getId())
+                    createIdParameterMapper(disk.getId())
                             .addValue("entity_id", vmBase.getId())
-                            .addValue("entity_name", vmBase.getName())
-                            .addValue("storage_domain_id", disk.getDiskImage().getStorageIds().get(0)));
+                            .addValue("entity_name", vmBase.getName()));
         }
     }
 
@@ -102,4 +96,31 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
         vmBase.setName(rs.getString("entity_name"));
         return vmBase;
     };
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(UnregisteredDisk entity) {
+        return createIdParameterMapper(entity.getId())
+                .addValue("disk_alias", entity.getDiskAlias())
+                .addValue("disk_description", entity.getDiskDescription())
+                .addValue("creation_date", entity.getDiskImage().getCreationDate())
+                .addValue("last_modified", entity.getDiskImage().getLastModified())
+                .addValue("volume_type", entity.getDiskImage().getVolumeType())
+                .addValue("volume_format", entity.getDiskImage().getVolumeFormat())
+                .addValue("actual_size", entity.getDiskImage().getActualSizeInBytes())
+                .addValue("size", entity.getDiskImage().getSize())
+                .addValue("image_id", entity.getDiskImage().getImageId());
+
+    }
+
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(UnregisteredDiskId unregisteredDiskId) {
+        return getCustomMapSqlParameterSource()
+                .addValue("disk_id", unregisteredDiskId.getDiskId())
+                .addValue("storage_domain_id", unregisteredDiskId.getStorageDomainId());
+    }
+
+    @Override
+    protected RowMapper<UnregisteredDisk> createEntityRowMapper() {
+        return unregisteredDiskRowMapper;
+    }
 }

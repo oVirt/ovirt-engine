@@ -3,9 +3,10 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDiskId;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface UnregisteredDisksDao extends Dao {
+public interface UnregisteredDisksDao extends Dao, MassOperationsDao<UnregisteredDisk, UnregisteredDiskId> {
     /**
      * Retrieves the disk with the given entityId and storage domain id.<BR/>
      * If the Storage Domain id is null, then return all the unregistered disks with the diskId.<BR/>
