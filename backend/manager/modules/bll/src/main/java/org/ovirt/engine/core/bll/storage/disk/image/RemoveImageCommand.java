@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -231,18 +230,17 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         return null;
     }
 
-    private void getImageChildren(Guid snapshot, List<Guid> children) {
-        List<Guid> snapshotIds = diskImageDao.getAllSnapshotsForParent(snapshot).stream()
-                .map(DiskImage::getImageId).collect(Collectors.toList());
-        children.addAll(snapshotIds);
-        snapshotIds.forEach(id -> getImageChildren(id, children));
+    private void getImageChildren(Guid snapshot, List<DiskImage> children) {
+        List<DiskImage> snapshots = diskImageDao.getAllSnapshotsForParent(snapshot);
+        children.addAll(snapshots);
+        snapshots.forEach(s -> getImageChildren(s.getId(), children));
     }
 
     private void removeChildren(Guid snapshot) {
-        List<Guid> children = new ArrayList<>();
+        List<DiskImage> children = new ArrayList<>();
         getImageChildren(snapshot, children);
         Collections.reverse(children);
-        children.forEach(child -> removeSnapshot(diskImageDao.getSnapshotById(child)));
+        children.forEach(this::removeSnapshot);
     }
 
     /**
