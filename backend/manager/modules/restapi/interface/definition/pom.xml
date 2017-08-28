@@ -62,6 +62,12 @@
       <version>${metamodel.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>metamodel-server</artifactId>
+      <version>${metamodel.version}</version>
+    </dependency>
+
     <!-- The metamodel tool isn't really a dependency of this project, but
          it is required in order to generate the code. To use it without
          interfering with the build class path, we set the scope to 'runtime',
