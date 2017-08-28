@@ -19,7 +19,7 @@
         }
 
         .listItems {
-            display: initial;
+            display: inherit;
             position: relative;
             box-shadow: none;
             background-clip: inherit;
