@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDiskId;
 import org.ovirt.engine.core.common.queries.IdAndBooleanQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.UnregisteredDisksDao;
@@ -53,7 +54,7 @@ public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAnd
     private void setUpQueryEntities() throws OvfReaderException {
         // Set up the expected result
         UnregisteredDisk unregistedDisk = new UnregisteredDisk();
-        unregistedDisk.setId(newDiskId);
+        unregistedDisk.setId(new UnregisteredDiskId(newDiskId, storageDomainId));
         unregistedDisk.setDiskAlias("DiskAlias");
         unregistedDisk.setDescription("DiskDescription");
         ArrayList<VmBase> vms = new ArrayList<>();
@@ -64,7 +65,7 @@ public class GetUnregisteredDisksFromDBQueryTest extends AbstractQueryTest<IdAnd
         unregistedDisk.setVms(vms);
 
         UnregisteredDisk unregistedDisk2 = new UnregisteredDisk();
-        unregistedDisk2.setId(newDiskId2);
+        unregistedDisk2.setId(new UnregisteredDiskId(newDiskId2, storageDomainId));
         unregistedDisk2.setDiskAlias("DiskAlias2");
         unregistedDisk2.setDescription("DiskDescription2");
 

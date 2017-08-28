@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDiskId;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.util.StringUtils;
 
@@ -127,7 +128,7 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         UnregisteredDisk unregisteredDisk = initUnregisteredDisks(vms);
         dao.saveUnregisteredDisk(unregisteredDisk);
         List<UnregisteredDisk> fetchedUnregisteredDisk =
-                dao.getByDiskIdAndStorageDomainId(unregisteredDisk.getId(),
+                dao.getByDiskIdAndStorageDomainId(unregisteredDisk.getDiskId(),
                         FixturesTool.STORAGE_DOMAIN_NFS2_1);
 
         assertTrue("Disk should exists in the UnregisteredDisks table", !fetchedUnregisteredDisk.isEmpty());
@@ -145,7 +146,8 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         diskImage.setDiskAlias("Disk Alias");
         diskImage.setDiskDescription("Disk Description");
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(FixturesTool.STORAGE_DOMAIN_NFS2_1)));
-        return new UnregisteredDisk(diskImage, vms);
+        UnregisteredDiskId id = new UnregisteredDiskId(diskImage.getId(), diskImage.getStorageIds().get(0));
+        return new UnregisteredDisk(id, diskImage, vms);
     }
 
     @Test
@@ -160,10 +162,11 @@ public class UnregisteredDisksDaoTest extends BaseDaoTestCase {
         DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.newGuid());
         diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(FixturesTool.STORAGE_DOMAIN_NFS2_1)));
-        UnregisteredDisk unregDisk = new UnregisteredDisk(diskImage, vms);
+        UnregisteredDiskId id = new UnregisteredDiskId(diskImage.getId(), diskImage.getStorageIds().get(0));
+        UnregisteredDisk unregDisk = new UnregisteredDisk(id, diskImage, vms);
         dao.saveUnregisteredDisk(unregDisk);
         List<UnregisteredDisk> fetchedUnregisteredDisk =
-                dao.getByDiskIdAndStorageDomainId(unregDisk.getId(), FixturesTool.STORAGE_DOMAIN_NFS2_1);
+                dao.getByDiskIdAndStorageDomainId(unregDisk.getDiskId(), FixturesTool.STORAGE_DOMAIN_NFS2_1);
         assertTrue("Disk should exists in the UnregisteredDisks table", !fetchedUnregisteredDisk.isEmpty());
         assertEquals("Disk should have vm attached", 1, fetchedUnregisteredDisk.get(0).getVms().size());
         assertTrue("Disk alias should not be initialized",

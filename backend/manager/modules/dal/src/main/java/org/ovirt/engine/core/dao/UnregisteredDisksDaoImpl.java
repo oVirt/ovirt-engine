@@ -8,6 +8,7 @@ import javax.inject.Singleton;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDiskId;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +30,7 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
         for (UnregisteredDisk unregDisk : unregisteredDisks) {
             List<VmBase> vms = getCallsHandler().executeReadList("GetEntitiesByDiskId",
                     vmsForUnregisteredDiskRowMapper,
-                    getCustomMapSqlParameterSource().addValue("disk_id", unregDisk.getId()));
+                    getCustomMapSqlParameterSource().addValue("disk_id", unregDisk.getDiskId()));
             unregDisk.getVms().addAll(vms);
         }
         return unregisteredDisks;
@@ -91,6 +92,7 @@ public class UnregisteredDisksDaoImpl extends BaseDao implements UnregisteredDis
         diskImage.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
         diskImage.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
         entity.setDiskImage(diskImage);
+        entity.setId(new UnregisteredDiskId(diskImage.getId(), diskImage.getStorageIds().get(0)));
         return entity;
     };
 

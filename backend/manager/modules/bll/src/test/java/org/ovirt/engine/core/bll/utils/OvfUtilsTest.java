@@ -15,6 +15,7 @@ import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.OvfUtils;
@@ -63,10 +64,11 @@ public class OvfUtilsTest {
     public void testUpdateUnregisteredDisksWithVMsWithInitializedUnregDisks() throws Exception {
         XmlDocument xmlDocument = new XmlDocument(getXmlOvfData());
         List<UnregisteredDisk> unregDisks = new ArrayList<>();
-        UnregisteredDisk unregDisk = new UnregisteredDisk();
-        unregDisk.getDiskImage().setId(Guid.createGuidFromString("8c634412-1e8b-4ef3-bc40-b67a456e9d2f"));
-        unregDisk.getDiskImage()
-                .setStorageIds(new ArrayList<>(Collections.singletonList(Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588"))));
+        DiskImage diskImage = new DiskImage();
+        diskImage.setId(Guid.createGuidFromString("8c634412-1e8b-4ef3-bc40-b67a456e9d2f"));
+        diskImage.setStorageIds(new ArrayList<>(Collections.singletonList(Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588"))));
+        UnregisteredDisk unregDisk = new UnregisteredDisk(diskImage);
+
         unregDisks.add(unregDisk);
         ovfUtils.updateUnregisteredDisksWithVMs(unregDisks, Guid.newGuid(), "TestVM", xmlDocument);
         assertTrue("The list of disks should not be empty", !unregDisks.isEmpty());

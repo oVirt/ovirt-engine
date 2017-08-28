@@ -204,7 +204,7 @@ public class OvfUtils {
             XmlDocument xmlDocument) {
         for (Guid diskId : fetchVmDisks(xmlDocument)) {
             UnregisteredDisk unregisterDisk = unregisteredDisks.stream()
-                    .filter(unregrDisk -> diskId.equals(unregrDisk.getId()))
+                    .filter(unregrDisk -> diskId.equals(unregrDisk.getDiskId()))
                     .findAny()
                     .orElse(null);
             VmBase vm = new VmBase();

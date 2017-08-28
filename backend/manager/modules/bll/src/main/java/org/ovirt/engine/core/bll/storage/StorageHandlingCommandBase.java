@@ -630,13 +630,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 log.info("Disk {} with id '{}' already exists in the engine, therefore will not be " +
                         "part of the unregistered disks.",
                         unregisteredDisk.getDiskAlias(),
-                        unregisteredDisk.getId());
+                        unregisteredDisk.getDiskId());
                 continue;
             }
-            unregisteredDisksDao.removeUnregisteredDisk(unregisteredDisk.getId(), storageDomainId);
+            unregisteredDisksDao.removeUnregisteredDisk(unregisteredDisk.getDiskId(), storageDomainId);
             unregisteredDisksDao.saveUnregisteredDisk(unregisteredDisk);
             log.info("Adding unregistered disk of disk id '{}' and disk alias '{}'",
-                    unregisteredDisk.getId(),
+                    unregisteredDisk.getDiskId(),
                     unregisteredDisk.getDiskAlias());
         }
     }

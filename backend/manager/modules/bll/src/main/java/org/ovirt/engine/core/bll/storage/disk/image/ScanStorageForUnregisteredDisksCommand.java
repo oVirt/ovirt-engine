@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDisk;
+import org.ovirt.engine.core.common.businessentities.storage.UnregisteredDiskId;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
@@ -122,7 +123,8 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
         if (disksFromStorage != null) {
             for (DiskImage disk : disksFromStorage) {
                 disk.getStorageIds().set(0, getStorageDomainId());
-                UnregisteredDisk unregisteredDisk = new UnregisteredDisk(disk, new ArrayList<>());
+                UnregisteredDiskId id = new UnregisteredDiskId(disk.getId(), disk.getStorageIds().get(0));
+                UnregisteredDisk unregisteredDisk = new UnregisteredDisk(id, disk, new ArrayList<>());
                 unregisteredDisks.add(unregisteredDisk);
             }
         }
@@ -131,16 +133,16 @@ public class ScanStorageForUnregisteredDisksCommand<T extends StorageDomainParam
     protected void initUnregisteredDisksToDB() {
         List<DiskImage> existingDisks = diskImageDao.getAllForStorageDomain(getParameters().getStorageDomainId());
         for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
-            if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getId()))) {
+            if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getDiskImage().getId()))) {
                 log.info("Disk {} with id '{}' already exists in the engine, therefore will not be " +
                                 "part of the unregistered disks.",
                         unregisteredDisk.getDiskAlias(),
-                        unregisteredDisk.getId());
+                        unregisteredDisk.getDiskImage().getId());
                 continue;
             }
             saveUnregisterDisk(unregisteredDisk);
             log.info("Adding unregistered disk of disk id '{}' and disk alias '{}'",
-                    unregisteredDisk.getId(),
+                    unregisteredDisk.getDiskImage().getId(),
                     unregisteredDisk.getDiskAlias());
         }
     }
