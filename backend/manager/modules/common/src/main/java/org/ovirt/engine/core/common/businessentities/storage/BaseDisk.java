@@ -3,9 +3,10 @@ package org.ovirt.engine.core.common.businessentities.storage;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.Size;
 
@@ -83,11 +84,7 @@ public class BaseDisk implements Queryable, BusinessEntity<Guid>, ProgressEntity
     }
 
     public void setDiskVmElements(Collection<DiskVmElement> diskVmElements) {
-        // Done Java-7 style since it undergoes GWT compilation, should be revised once this changes
-        diskVmElementsMap = new HashMap<>();
-        for (DiskVmElement element : diskVmElements) {
-            diskVmElementsMap.put(element.getId().getVmId(), element);
-        }
+        diskVmElementsMap = diskVmElements.stream().collect(Collectors.toMap(d -> d.getId().getVmId(), Function.identity()));
     }
 
     @JsonIgnore
