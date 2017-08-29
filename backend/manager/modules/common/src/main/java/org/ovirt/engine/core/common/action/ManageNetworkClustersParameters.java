@@ -13,13 +13,13 @@ public class ManageNetworkClustersParameters extends ActionParametersBase {
     private Collection<NetworkCluster> updates;
 
     public ManageNetworkClustersParameters(Collection<NetworkCluster> attachments) {
-        this(attachments, Collections.<NetworkCluster>emptyList());
+        this(attachments, Collections.emptyList());
     }
 
     public ManageNetworkClustersParameters(
             Collection<NetworkCluster> attachments,
             Collection<NetworkCluster> detachments) {
-        this(attachments, detachments, Collections.<NetworkCluster>emptyList());
+        this(attachments, detachments, Collections.emptyList());
     }
 
     public ManageNetworkClustersParameters(
