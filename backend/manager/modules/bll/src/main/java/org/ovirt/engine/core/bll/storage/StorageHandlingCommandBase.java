@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.QueryType;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -90,6 +91,7 @@ import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 import org.ovirt.engine.core.utils.ovf.OvfParser;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
 public abstract class StorageHandlingCommandBase<T extends StoragePoolParametersBase> extends CommandBase<T> {
 
@@ -654,6 +656,27 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             log.debug("Exception", e);
         }
         return null;
+    }
+
+    protected void handleDestroyStoragePoolCommand() {
+        try {
+            runVdsCommand(VDSCommandType.DestroyStoragePool,
+                    new IrsBaseVDSCommandParameters(getStoragePool().getId()));
+        } catch (EngineException e) {
+            try {
+                TransactionSupport.executeInNewTransaction(() -> {
+                    runVdsCommand(VDSCommandType.SpmStopOnIrs,
+                            new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
+                    return null;
+                });
+            } catch (Exception e1) {
+                log.error("Failed destroy storage pool with id '{}' and after that failed to stop spm: {}",
+                        getStoragePoolId(),
+                        e1.getMessage());
+                log.debug("Exception", e1);
+            }
+            throw e;
+        }
     }
 
     protected void handleDetachMasterDomain(StorageDomain masterDomain) {

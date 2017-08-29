@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDao;
@@ -50,7 +49,6 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SynchronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
@@ -213,27 +211,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         return retVal;
-    }
-
-    private void handleDestroyStoragePoolCommand() {
-        try {
-            runVdsCommand(VDSCommandType.DestroyStoragePool,
-                            new IrsBaseVDSCommandParameters(getStoragePool().getId()));
-        } catch (EngineException e) {
-            try {
-                TransactionSupport.executeInNewTransaction(() -> {
-                    runVdsCommand(VDSCommandType.SpmStopOnIrs,
-                                    new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
-                    return null;
-                });
-            } catch (Exception e1) {
-                log.error("Failed destroy storage pool with id '{}' and after that failed to stop spm: {}",
-                        getStoragePoolId(),
-                        e1.getMessage());
-                log.debug("Exception", e1);
-            }
-            throw e;
-        }
     }
 
     private void removeDomainFromDb(final StorageDomain domain) {
