@@ -7,7 +7,7 @@
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
-    <g:FlowPanel addStyleNames="nav-pf-vertical nav-pf-vertical-with-sub-menus">
+    <g:FlowPanel addStyleNames="nav-pf-vertical nav-pf-vertical-with-sub-menus nav-pf-vertical-collapsible-menus">
         <b:ListGroup ui:field="menuListGroup">
             <b:ListGroupItem addStyleNames="secondary-nav-item-pf" ui:field="computeSecondaryItem">
                 <b:Anchor ui:field="computePrimaryHeader">

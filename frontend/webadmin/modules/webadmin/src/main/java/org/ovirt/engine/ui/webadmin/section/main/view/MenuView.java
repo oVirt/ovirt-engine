@@ -227,6 +227,7 @@ public class MenuView extends AbstractView implements MenuPresenterWidget.ViewDe
         if (index < 0) {
             iconSpan.addStyleName(Styles.FONT_AWESOME_BASE);
             iconSpan.addStyleName(IconType.TACHOMETER.getCssName());
+            newMenuItem.addStyleName(Styles.ACTIVE);
             index = 0;
         }
         menuAnchor.add(iconSpan);
