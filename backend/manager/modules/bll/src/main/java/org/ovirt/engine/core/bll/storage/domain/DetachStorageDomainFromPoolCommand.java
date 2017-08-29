@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
@@ -82,12 +81,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         connectHostsInUpToDomainStorageServer();
 
         log.info(" Detach storage domain: after connect");
-
-        VDSReturnValue returnValue = runVdsCommand(
-                VDSCommandType.DetachStorageDomain,
-                new DetachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
-                        getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
-                                .getMasterDomainVersion()));
+        boolean detachSucceeded = detachNonMasterStorageDomainFromHost();
 
         log.info(" Detach storage domain: after disconnect storage");
         TransactionSupport.executeInNewTransaction(() -> {
@@ -107,13 +101,21 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         log.info(" Detach storage domain: after detach in vds");
         disconnectAllHostsInPool();
 
-        if (returnValue.getSucceeded() && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
+        if (detachSucceeded && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             // reset iso for this pool in vdsBroker cache
             runVdsCommand(VDSCommandType.ResetISOPath,
                     new IrsBaseVDSCommandParameters(getParameters().getStoragePoolId()));
         }
         log.info("End detach storage domain");
-        setSucceeded(returnValue.getSucceeded());
+        setSucceeded(detachSucceeded);
+    }
+
+    private boolean detachNonMasterStorageDomainFromHost() {
+        return runVdsCommand(
+                VDSCommandType.DetachStorageDomain,
+                new DetachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
+                        .getMasterDomainVersion())).getSucceeded();
     }
 
     private void detachCinderStorageDomain() {
