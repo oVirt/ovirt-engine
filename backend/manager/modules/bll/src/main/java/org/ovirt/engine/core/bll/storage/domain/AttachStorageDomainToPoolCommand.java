@@ -178,6 +178,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                             getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
                     unregisteredEntitiesFromOvfDisk.addAll(returnValueFromStorageOvfDisk);
                 }
+
+                List<DiskImage> ovfStoreDiskImages =
+                        getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
                 executeInNewTransaction(() -> {
                     final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
                     map.setStatus(StorageDomainStatus.Maintenance);
@@ -186,21 +189,20 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     if (sdType == StorageDomainType.Master) {
                         calcStoragePoolStatusByDomainsStatus();
                     }
+                    if (getStorageDomain().getStorageDomainType().isDataDomain()) {
+                        registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
 
-                    List<DiskImage> ovfStoreDiskImages =
-                            getAllOVFDisks(getParameters().getStorageDomainId(), getStoragePoolIdFromVds());
-                    registerAllOvfDisks(ovfStoreDiskImages, getParameters().getStorageDomainId());
-
-                    // Update unregistered entities
-                    for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
-                        unregisteredOVFDataDao.removeEntity(ovf.getEntityId(),
-                                getParameters().getStorageDomainId());
-                        unregisteredOVFDataDao.saveOVFData(ovf);
-                        log.info("Adding OVF data of entity id '{}' and entity name '{}'",
-                                ovf.getEntityId(),
-                                ovf.getEntityName());
+                        // Update unregistered entities
+                        for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
+                            unregisteredOVFDataDao.removeEntity(ovf.getEntityId(),
+                                    getParameters().getStorageDomainId());
+                            unregisteredOVFDataDao.saveOVFData(ovf);
+                            log.info("Adding OVF data of entity id '{}' and entity name '{}'",
+                                    ovf.getEntityId(),
+                                    ovf.getEntityName());
+                        }
+                        initUnregisteredDisksToDB(getParameters().getStorageDomainId());
                     }
-                    initUnregisteredDisksToDB(getParameters().getStorageDomainId());
 
                     // upgrade the domain format to the storage pool format
                     updateStorageDomainFormatIfNeeded(getStorageDomain());
