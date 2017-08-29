@@ -79,7 +79,13 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                 StorageDomainStatus.Detaching);
         log.info(" Detach storage domain: before connect");
         connectHostsInUpToDomainStorageServer();
+        boolean detachSucceeded = true;
+        detachSucceeded = detachNonMasterStorageDomain();
+        log.info("End detach storage domain");
+        setSucceeded(detachSucceeded);
+    }
 
+    private boolean detachNonMasterStorageDomain() {
         log.info(" Detach storage domain: after connect");
         boolean detachSucceeded = detachNonMasterStorageDomainFromHost();
 
@@ -102,8 +108,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
             runVdsCommand(VDSCommandType.ResetISOPath,
                     new IrsBaseVDSCommandParameters(getParameters().getStoragePoolId()));
         }
-        log.info("End detach storage domain");
-        setSucceeded(detachSucceeded);
+        return detachSucceeded;
     }
 
     private boolean detachNonMasterStorageDomainFromHost() {
