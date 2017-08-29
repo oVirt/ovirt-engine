@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-Copyright (c) 2014 Red Hat, Inc.
+Copyright (c) 2014-2017 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ limitations under the License.
     <module name="javax.ws.rs.api"/>
     <module name="javax.xml.bind.api"/>
     <module name="org.apache.commons.lang"/>
+    <module name="org.ovirt.engine.api.metamodel-server"/>
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.slf4j"/>
     <module name="org.yaml.snakeyaml"/>
