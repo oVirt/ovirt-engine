@@ -292,8 +292,13 @@ public class NumaSupportModel extends Model {
      */
     public List<VmNumaNode> getNumaNodes(Guid vmId) {
         final List<VmNumaNode> numaNodes = new ArrayList<>();
-        for (final VNodeModel model : numaModelsPerVm.get(vmId).values()) {
-            numaNodes.add(model.toVmNumaNode());
+        Map<Integer, VNodeModel> numaModels = numaModelsPerVm.get(vmId);
+        if (numaModels != null) {
+            for (final VNodeModel model : numaModels.values()) {
+                if (model != null) {
+                    numaNodes.add(model.toVmNumaNode());
+                }
+            }
         }
         return numaNodes;
     }
