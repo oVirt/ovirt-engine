@@ -104,7 +104,9 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
                 MetadataDiskDescriptionHandler.getInstance()
                         .enrichDiskByJsonDescription(newDiskImage.getDescription(), newDiskImage);
             } catch (IOException | DecoderException e) {
-                log.warn("Exception while parsing JSON for disk. Exception: '{}'", e);
+                log.warn("Could not parse the description ({}) of disk ID '{}'. The description is expected to be in "
+                                + "JSON format.", newDiskImage.getDescription(), newDiskImage.getId());
+                log.debug("Exception while parsing JSON for disk", e);
             }
         }
         newDiskImage.setStoragePoolId(storagePoolId);
