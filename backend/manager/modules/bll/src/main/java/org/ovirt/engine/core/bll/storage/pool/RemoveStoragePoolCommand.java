@@ -186,8 +186,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         }
 
-        handleDestroyStoragePoolCommand();
-        handleDetachMasterDomain(masterDomain);
+        masterDomainDetachWithDestroyPool(masterDomain);
         runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
 
         setSucceeded(true);

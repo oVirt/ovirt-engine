@@ -701,6 +701,11 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         });
     }
 
+    protected void masterDomainDetachWithDestroyPool(StorageDomain masterDomain) {
+        handleDestroyStoragePoolCommand();
+        handleDetachMasterDomain(masterDomain);
+    }
+
     protected void runSynchronizeOperation(ActivateDeactivateSingleAsyncOperationFactory factory,
             Object... addionalParams) {
         List<VDS> allRunningVdsInPool = getAllRunningVdssInPool();
