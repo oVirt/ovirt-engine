@@ -77,7 +77,6 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     public void edit(final VnicProfileModel model) {
         driver.edit(model);
         publicInfo.setVisible(model.getPublicUse().getIsAvailable());
-        nameEditor.fireValueChangeOnKeyDown();
         model.getName().getEntityChangedEvent().addListener((ev, sender, args) -> ValueChangeEvent.fire(VnicProfileWidget.this, model));
     }
 

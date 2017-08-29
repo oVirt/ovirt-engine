@@ -33,7 +33,6 @@ public class DnsServerEditor extends AbstractModelBoundPopupWidget<NameServerMod
     @Override
     public void edit(final NameServerModel model) {
         driver.edit(model);
-        stringEditor.fireValueChangeOnKeyDown();
         stringEditor.asValueBox().addValueChangeHandler(event -> ValueChangeEvent.fire(DnsServerEditor.this, model));
     }
 

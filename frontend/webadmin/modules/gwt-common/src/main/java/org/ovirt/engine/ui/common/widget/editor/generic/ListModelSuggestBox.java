@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 
@@ -20,7 +19,6 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
         initWidget(asSuggestBox());
 
         handlerRegistrations.add(asSuggestBox().getValueBox().addFocusHandler(event -> Scheduler.get().scheduleDeferred(() -> asSuggestBox().showSuggestionList())));
-        handlerRegistrations.add(addKeyPressHandler(event -> Scheduler.get().scheduleDeferred(() -> ValueChangeEvent.fire(asSuggestBox(), asSuggestBox().getText()))));
         handlerRegistrations.add(Event.addNativePreviewHandler(event -> {
             if (event.getTypeInt() == Event.ONKEYDOWN && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB) {
                 // By default SuggestBox applies selection upon tab press - this is bad

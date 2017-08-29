@@ -75,8 +75,6 @@ public class MacRangeEditor extends AbstractModelBoundPopupWidget<MacRangeModel>
     @Override
     public void edit(final MacRangeModel model) {
         driver.edit(model);
-        leftBound.fireValueChangeOnKeyDown();
-        rightBound.fireValueChangeOnKeyDown();
         IEventListener<EventArgs> textChangedListener =
                 (ev, sender, args) -> ValueChangeEvent.fire(MacRangeEditor.this, model);
         model.getLeftBound().getEntityChangedEvent().addListener(textChangedListener);
