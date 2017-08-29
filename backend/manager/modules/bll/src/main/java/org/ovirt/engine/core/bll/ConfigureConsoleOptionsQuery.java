@@ -262,7 +262,10 @@ public class ConfigureConsoleOptionsQuery<P extends ConfigureConsoleOptionsParam
         }
 
         if (Config.getValue(ConfigValues.SSLEnabled)) {
-            String spiceSecureChannels = Config.getValue(ConfigValues.SpiceSecureChannels);
+            String spiceSecureChannels = Config.getValue(
+                ConfigValues.SpiceSecureChannels,
+                cachedVm.getCompatibilityVersion().toString()
+            );
             if (!StringUtils.isBlank(spiceSecureChannels)) {
                 options.setSslChanels(spiceSecureChannels);
             }
