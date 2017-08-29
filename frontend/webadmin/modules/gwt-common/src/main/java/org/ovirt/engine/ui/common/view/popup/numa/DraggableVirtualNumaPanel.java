@@ -138,9 +138,14 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         if (!dragEnabled) {
             return;
         }
-        event.setData("VM_GID", nodeModel.getVm().getId().toString()); //$NON-NLS-1$
-        event.setData("PINNED", String.valueOf(nodeModel.isPinned())); //$NON-NLS-1$
-        event.setData("INDEX", String.valueOf(nodeModel.getIndex())); //$NON-NLS-1$
+        // IE strikes again, for some unknown reason, in IE you can only put 'Text' as the setData first
+        // parameter. So if you want to pass multiple values, you have to collect them in one string, then parse
+        // the string on the other end instead of passing different values.
+        String aggregatedString = "VM_GID=" + nodeModel.getVm().getId().toString(); //$NON-NLS-1$
+        aggregatedString += "|PINNED=" + String.valueOf(nodeModel.isPinned()); //$NON-NLS-1$
+        aggregatedString += "|INDEX=" + String.valueOf(nodeModel.getIndex()); //$NON-NLS-1$
+        event.setData("Text", aggregatedString); //$NON-NLS-1$
+
         // show a ghost of the widget under cursor.
         NativeEvent nativeEvent = event.getNativeEvent();
         int x = nativeEvent.getClientX() - getAbsoluteLeft();

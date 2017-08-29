@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.view.popup.numa;
 
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
@@ -76,26 +75,29 @@ public class DragTargetScrollPanel extends Composite implements HasHandlers {
 
     @UiHandler("container")
     void onPanelDragDrop(DropEvent event) {
-        String vmGid = event.getData("VM_GID"); //$NON-NLS-1$
-
-        if (StringUtils.isNotEmpty(vmGid)) {
-            Guid vmGuid = Guid.createGuidFromString(vmGid);
-            boolean pinned = Boolean.valueOf(event.getData("PINNED")); //$NON-NLS-1$
-            int vNumaNodeIndex = Integer.parseInt(event.getData("INDEX")); //$NON-NLS-1$
-            container.removeStyleName(style.dragOver());
-            event.preventDefault();
-            UpdatedVnumaEvent.fire(this, vmGuid, pinned, vNumaNodeIndex, pNumaNodeIndex);
-        } else {
-            container.removeStyleName(style.dragOver());
+        String aggregatedString = event.getData("Text"); // $NON-NLS-1$
+        String[] dataItems = aggregatedString.split("\\|"); // $NON-NLS-1$
+        if (dataItems.length == 3) {
+            String vmGid = getValue("VM_GID", dataItems[0]); // $NON-NLS-1$
+            if (StringUtils.isNotEmpty(vmGid)) {
+                Guid vmGuid = Guid.createGuidFromString(vmGid);
+                boolean pinned = Boolean.valueOf(getValue("PINNED", dataItems[1])); //$NON-NLS-1$
+                int vNumaNodeIndex = Integer.parseInt(getValue("INDEX", dataItems[2])); //$NON-NLS-1$
+                container.removeStyleName(style.dragOver());
+                event.preventDefault();
+                UpdatedVnumaEvent.fire(this, vmGuid, pinned, vNumaNodeIndex, pNumaNodeIndex);
+            } else {
+                container.removeStyleName(style.dragOver());
+            }
         }
     }
 
-    private Pair<Guid, Pair<Boolean, Integer>> parseDropString(String dropString) {
-        Pair<Boolean, Integer> pinnedIndexPair = new Pair<>();
-        String[] splitString = dropString.split("_"); //$NON-NLS-1$
-        pinnedIndexPair.setFirst(Boolean.valueOf(splitString[1]));
-        pinnedIndexPair.setSecond(Integer.valueOf(splitString[2]));
-        return new Pair<>(Guid.createGuidFromString(splitString[0]), pinnedIndexPair);
+    private String getValue(String key, String vmGidString) {
+        String[] keyValue = vmGidString.split("="); // $NON-NLS-1$
+        if (keyValue.length == 2 && keyValue[0].equals(key)) {
+            return keyValue[1];
+        }
+        return "";
     }
 
     public void setIndex(int numaNodeIndex) {
