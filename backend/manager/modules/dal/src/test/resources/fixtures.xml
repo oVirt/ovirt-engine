@@ -7207,6 +7207,7 @@
         <column>gluster_volume_id</column>
         <column>gluster_volume_name</column>
         <column>origin</column>
+        <column>custom_id</column>
         <column>custom_event_id</column>
         <column>event_flood_in_sec</column>
         <column>custom_data</column>
@@ -7241,6 +7242,7 @@
             <null />
             <null />
             <value>oVirt</value>
+            <value>dummy</value>
             <value>9022</value>
             <value>30</value>
             <value></value>
@@ -7276,6 +7278,7 @@
             <null />
             <null />
             <value>oVirt</value>
+            <value>dummy</value>
             <value>-1</value>
             <value>30</value>
             <value></value>
@@ -7311,6 +7314,7 @@
             <null />
             <null />
             <value>oVirt</value>
+            <value>dummy</value>
             <value>-1</value>
             <value>30</value>
             <value></value>
@@ -7346,6 +7350,7 @@
             <null />
             <null />
             <value>oVirt</value>
+            <value>dummy</value>
             <value>-1</value>
             <value>30</value>
             <value></value>
@@ -7381,6 +7386,7 @@
             <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
             <value>test-vol-distribute-1</value>
             <value>oVirt</value>
+            <value>dummy</value>
             <value>-1</value>
             <value>30</value>
             <value></value>
@@ -7416,6 +7422,7 @@
             <null />
             <null />
             <value>oVirt</value>
+            <value>dummy</value>
             <value>-1</value>
             <value>30</value>
             <value></value>
@@ -7451,6 +7458,7 @@
             <null />
             <null />
             <value>oVirt</value>
+            <value>dummy</value>
             <value>-1</value>
             <value>30</value>
             <value></value>
@@ -7486,6 +7494,7 @@
             <null />
             <null />
             <value>EMC</value>
+            <value>dummy</value>
             <value>1</value>
             <value>30</value>
             <value></value>

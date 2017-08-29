@@ -56,6 +56,7 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
         entity.setGlusterVolumeId(getGuid(rs, "gluster_volume_id"));
         entity.setGlusterVolumeName(rs.getString("gluster_volume_name"));
         entity.setOrigin(rs.getString("origin"));
+        entity.setCustomId(rs.getString("custom_id"));
         entity.setCustomEventId(rs.getInt("custom_event_id"));
         entity.setEventFloodInSec(rs.getInt("event_flood_in_sec"));
         entity.setCustomData(rs.getString("custom_data"));
@@ -206,7 +207,8 @@ public class AuditLogDaoImpl extends BaseDao implements AuditLogDao {
                 .addValue("call_stack", event.getCallStack())
                 .addValue("repeatable", event.isRepeatable())
                 .addValue("brick_id", event.getBrickId())
-                .addValue("brick_path", event.getBrickPath());
+                .addValue("brick_path", event.getBrickPath())
+                .addValue("custom_id", event.getCustomId());
     }
 
     private MapSqlParameterSource getExternalEventSqlMapper(AuditLog event) {

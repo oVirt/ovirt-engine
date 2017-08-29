@@ -164,6 +164,7 @@ public class AuditLogDirector {
                     auditLogable.getVmTemplateIdRef(),
                     auditLogable.getVmTemplateIdRef() != null ? getDbFacadeInstance().getVmTemplateDao().get(auditLogable.getVmTemplateIdRef()).getName() : null,
                     auditLogable.getOrigin(),
+                    auditLogable.getCustomId(),
                     auditLogable.getCustomEventId(),
                     auditLogable.getEventFloodInSec(),
                     auditLogable.getCustomData());
