@@ -91,7 +91,7 @@ public class MemoryUtils {
     public static DiskImage createHibernationMetadataDisk(VM vm) {
         DiskImage image = createMetadataDisk(null);
         image.setDiskAlias(generateHibernationMetadataDiskAlias(vm.getName()));
-        image.setDescription(VM_HIBERNATION_METADATA_DISK_DESCRIPTION);
+        image.setDiskDescription(VM_HIBERNATION_METADATA_DISK_DESCRIPTION);
         return image;
     }
 
@@ -118,7 +118,7 @@ public class MemoryUtils {
     public static DiskImage createHibernationMemoryDisk(VM vm, StorageType storageType, VmOverheadCalculator vmOverheadCalculator) {
         DiskImage image = createMemoryDisk(vm, storageType, vmOverheadCalculator, null);
         image.setDiskAlias(generateHibernationMemoryDiskAlias(vm.getName()));
-        image.setDescription(VM_HIBERNATION_MEMORY_DISK_DESCRIPTION);
+        image.setDiskDescription(VM_HIBERNATION_MEMORY_DISK_DESCRIPTION);
         return image;
     }
 
