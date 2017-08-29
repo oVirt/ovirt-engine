@@ -80,9 +80,25 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         log.info(" Detach storage domain: before connect");
         connectHostsInUpToDomainStorageServer();
         boolean detachSucceeded = true;
-        detachSucceeded = detachNonMasterStorageDomain();
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
+            log.info(" Detach storage domain(master): Lock master storage domain");
+            lockStorageDomain(getStorageDomain());
+            log.info(" Detach storage domain(master): destroy storage pool");
+            masterDomainDetachWithDestroyPool(getStorageDomain());
+            updateDetachedMasterStorageDomain();
+        } else {
+            detachSucceeded = detachNonMasterStorageDomain();
+        }
         log.info("End detach storage domain");
         setSucceeded(detachSucceeded);
+    }
+
+    private void updateDetachedMasterStorageDomain() {
+        TransactionSupport.executeInNewTransaction(() -> {
+            removeStoragePoolIsoMapWithCompensation();
+            calcStoragePoolStatusByDomainsStatus();
+            return null;
+        });
     }
 
     private boolean detachNonMasterStorageDomain() {
