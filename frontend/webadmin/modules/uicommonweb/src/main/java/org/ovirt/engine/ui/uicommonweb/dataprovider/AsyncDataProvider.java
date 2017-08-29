@@ -2757,6 +2757,12 @@ public class AsyncDataProvider {
                 versions.add(entry.getKey().getValue());
             }
         }
+        /* because if there is no special value for 'general' version in db then a record for 'general' is added with
+         * value based on ConfigValues > @DefaultValueAttribute
+         */
+        if (versions.size() > 1 && versions.contains(GENERAL)) {
+            versions.remove(GENERAL);
+        }
         return versions;
     }
 

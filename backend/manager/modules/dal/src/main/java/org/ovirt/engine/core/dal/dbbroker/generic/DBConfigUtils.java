@@ -48,11 +48,32 @@ public class DBConfigUtils extends ConfigUtilsBase {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getValue(ConfigValues name, String version) {
+        T returnValue;
         Map<String, Object> values = _vdcOptionCache.get(name.toString());
         if (values != null && values.containsKey(version)) {
-            return (T) values.get(version);
+            returnValue = (T) values.get(version);
+        } else {
+            VdcOption option = new VdcOption();
+            option.setOptionName(name.toString());
+            option.setOptionValue(null);
+            // returns default value - version independent
+            returnValue = (T) getValue(option);
+
+            // If just requested version is missing, add the default value with the requested version.
+            if (values != null) {
+                values.put(version, returnValue);
+            } else {
+                // Couldn't find this value at all, adding to cache.
+                Map<String, Object> defaultValues = new HashMap<>();
+                defaultValues.put(version, returnValue);
+                _vdcOptionCache.put(option.getOptionName(), defaultValues);
+                log.debug("Adding new value to configuration cache.");
+            }
+            log.debug("Didn't find the value of '{}' in DB for version '{}' - using default: '{}'",
+                    name, version, returnValue);
         }
-        return null;
+
+        return returnValue;
     }
 
     private static VdcOptionDao getVdcOptionDao() {

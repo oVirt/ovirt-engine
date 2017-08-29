@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.config.DefaultValueAttribute;
 import org.ovirt.engine.core.common.config.IConfigUtilsInterface;
 import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.TypeConverterAttribute;
@@ -32,14 +33,19 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
 
     public static final class EnumValue {
         final Class<?> fieldType;
+        final String defaultValue;
         final OptionBehaviourAttribute optionBehaviour;
-        public EnumValue(Class<?> fieldType, OptionBehaviourAttribute optionBehaviour) {
+        public EnumValue(Class<?> fieldType, String defaultValue, OptionBehaviourAttribute optionBehaviour) {
             super();
             this.fieldType = fieldType;
+            this.defaultValue = defaultValue;
             this.optionBehaviour = optionBehaviour;
         }
         public Class<?> getFieldType() {
             return fieldType;
+        }
+        public String getDefaultValue() {
+            return defaultValue;
         }
         public OptionBehaviourAttribute getOptionBehaviour() {
             return optionBehaviour;
@@ -57,7 +63,13 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
         if (enumValue != null) {
             final OptionBehaviourAttribute optionBehaviour = enumValue.getOptionBehaviour();
             final Class<?> fieldType = enumValue.getFieldType();
+            final String defaultValue = enumValue.getDefaultValue();
             result = parseValue(option.getOptionValue(), option.getOptionName(), fieldType);
+
+            // if null use default from @DefaultValueAttribute
+            if (result == null) {
+                result = parseValue(defaultValue, option.getOptionName(), fieldType);
+            }
 
             if (optionBehaviour != null) {
                 Map<String, Object> values = null;
@@ -170,13 +182,19 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
             // get type
             if (fi.isAnnotationPresent(TypeConverterAttribute.class)) {
                 final Class<?> fieldType = fi.getAnnotation(TypeConverterAttribute.class).value();
+                String defaultValue = null;
                 OptionBehaviourAttribute optionBehaviour = null;
+
+                // get default value
+                if (fi.isAnnotationPresent(DefaultValueAttribute.class)) {
+                    defaultValue = fi.getAnnotation(DefaultValueAttribute.class).value();
+                }
 
                 // get the attribute for default behaviour
                 if (fi.isAnnotationPresent(OptionBehaviourAttribute.class)) {
                     optionBehaviour = fi.getAnnotation(OptionBehaviourAttribute.class);
                 }
-                return new EnumValue(fieldType, optionBehaviour);
+                return new EnumValue(fieldType, defaultValue, optionBehaviour);
             } else {
                 // if could not get type then cannot continue
                 return null;
