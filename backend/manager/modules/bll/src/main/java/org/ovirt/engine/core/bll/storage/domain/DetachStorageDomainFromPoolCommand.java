@@ -87,14 +87,10 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         TransactionSupport.executeInNewTransaction(() -> {
             releaseStorageDomainMacPool(getVmsOnlyOnStorageDomain());
             detachStorageDomainWithEntities(getStorageDomain());
-            StoragePoolIsoMap mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
-            getCompensationContext().snapshotEntity(mapToRemove);
-            storagePoolIsoMapDao.remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
-                    mapToRemove.getStoragePoolId()));
+            removeStoragePoolIsoMapWithCompensation();
             // when detaching SD for data center, we should remove any attachment to qos, which is part of the old
             // data center
             diskProfileDao.nullifyQosForStorageDomain(getStorageDomain().getId());
-            getCompensationContext().stateChanged();
             return null;
         });
 
@@ -116,6 +112,14 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                 new DetachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
                         .getMasterDomainVersion())).getSucceeded();
+    }
+
+    private void removeStoragePoolIsoMapWithCompensation() {
+        StoragePoolIsoMap mapToRemove = getStorageDomain().getStoragePoolIsoMapData();
+        getCompensationContext().snapshotEntity(mapToRemove);
+        storagePoolIsoMapDao.remove(new StoragePoolIsoMapId(mapToRemove.getStorageId(),
+                mapToRemove.getStoragePoolId()));
+        getCompensationContext().stateChanged();
     }
 
     private void detachCinderStorageDomain() {
