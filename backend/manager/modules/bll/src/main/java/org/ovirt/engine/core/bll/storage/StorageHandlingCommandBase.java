@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -624,15 +625,21 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     protected void initUnregisteredDisksToDB(Guid storageDomainId) {
-        List<DiskImage> existingDisks = diskImageDao.getAllForStorageDomain(storageDomainId);
-        for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
-            if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getId()))) {
+        // Using a Set to later use an O(1) HashSet#contains
+        Set<Guid> existingDiskIds = diskImageDao.getAllForStorageDomain(storageDomainId)
+                .stream()
+                .map(DiskImage::getId)
+                .collect(Collectors.toSet());
+
+        for (UnregisteredDisk unregisteredDisk: unregisteredDisks) {
+            if (existingDiskIds.contains(unregisteredDisk.getDiskId())) {
                 log.info("Disk {} with id '{}' already exists in the engine, therefore will not be " +
                         "part of the unregistered disks.",
                         unregisteredDisk.getDiskAlias(),
                         unregisteredDisk.getDiskId());
                 continue;
             }
+
             unregisteredDisksDao.removeUnregisteredDisk(unregisteredDisk.getDiskId(), storageDomainId);
             unregisteredDisksDao.saveUnregisteredDisk(unregisteredDisk);
             log.info("Adding unregistered disk of disk id '{}' and disk alias '{}'",
