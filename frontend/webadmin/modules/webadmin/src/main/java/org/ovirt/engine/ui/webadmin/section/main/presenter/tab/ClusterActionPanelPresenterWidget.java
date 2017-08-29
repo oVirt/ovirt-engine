@@ -43,7 +43,7 @@ public class ClusterActionPanelPresenterWidget extends ActionPanelPresenterWidge
                 return getModel().getEditCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<Cluster>(constants.removeCluster()) {
+        addActionButton(new WebAdminButtonDefinition<Cluster>(constants.removeCluster()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

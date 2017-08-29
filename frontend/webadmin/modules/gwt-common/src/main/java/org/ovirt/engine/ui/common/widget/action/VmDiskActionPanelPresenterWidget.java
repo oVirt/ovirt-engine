@@ -56,7 +56,7 @@ public class VmDiskActionPanelPresenterWidget extends ActionPanelPresenterWidget
             }
         });
 
-        addMenuListItem(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.removeDisk()) {
+        addActionButton(new UiCommandButtonDefinition<Disk>(getSharedEventBus(), constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

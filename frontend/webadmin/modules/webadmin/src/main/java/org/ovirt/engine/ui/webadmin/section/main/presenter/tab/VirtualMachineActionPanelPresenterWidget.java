@@ -55,7 +55,7 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
                 return getModel().getEditCommand();
             }
         });
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
+        addActionButton(new WebAdminButtonDefinition<VM>(constants.removeVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
@@ -67,38 +67,42 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
                 return getModel().getCloneVmCommand();
             }
         });
-        addDividerToKebab();
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.runOnceVm()) {
+
+        List<ActionButtonDefinition<VM>> runSubActions = new LinkedList<>();
+        runSubActions.add(new UiCommandButtonDefinition<VM>(getSharedEventBus(), constants.runOnceVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRunOnceCommand();
             }
         });
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.runVm(), IconType.PLAY) {
+        addComboActionButton(new WebAdminImageButtonDefinition<VM>(constants.runVm(), IconType.PLAY) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRunCommand();
             }
-        });
+        }, runSubActions);
         addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(), IconType.MOON_O) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getPauseCommand();
             }
         });
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(), IconType.STOP
-                ) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getShutdownCommand();
-            }
-        });
-        addActionButton(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(), IconType.POWER_OFF) {
+
+        List<ActionButtonDefinition<VM>> shutdownSubActions = new LinkedList<>();
+        shutdownSubActions.add(new WebAdminImageButtonDefinition<VM>(constants.powerOffVm(), IconType.POWER_OFF) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getStopCommand();
             }
         });
+        addComboActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(), IconType.STOP
+                ) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getShutdownCommand();
+            }
+        }, shutdownSubActions);
+
         addActionButton(new WebAdminImageButtonDefinition<VM>(constants.rebootVm(), IconType.REPEAT) {
             @Override
             protected UICommand resolveCommand() {
@@ -122,20 +126,29 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             }
         }, consoleOptionsSubActions);
 
-        addDividerToKebab();
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.consoleOptions()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getEditConsoleCommand();
-            }
-        });
-        addDividerToKebab();
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
+        addActionButton(new WebAdminButtonDefinition<VM>(constants.migrateVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getMigrateCommand();
             }
         });
+
+        addActionButton(new WebAdminButtonDefinition<VM>(constants.createSnapshotVM()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getCreateSnapshotCommand();
+            }
+        });
+
+        addDividerToKebab();
+        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.changeCdVm()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getModel().getChangeCdCommand();
+            }
+        });
+        addDividerToKebab();
+
         addMenuListItem(new WebAdminButtonDefinition<VM>(constants.cancelMigrationVm()) {
             @Override
             protected UICommand resolveCommand() {
@@ -160,18 +173,6 @@ public class VirtualMachineActionPanelPresenterWidget extends ActionPanelPresent
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getExportCommand();
-            }
-        });
-        addMenuListItem(new WebAdminButtonDefinition<VM>(constants.createSnapshotVM()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getCreateSnapshotCommand();
-            }
-        });
-        addActionButton(new WebAdminButtonDefinition<VM>(constants.changeCdVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getChangeCdCommand();
             }
         });
         addMenuListItem(new WebAdminButtonDefinition<VM>(constants.assignTagsVm()) {
