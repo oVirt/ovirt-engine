@@ -1594,10 +1594,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("en_US")
     DefaultSysprepLocale,
 
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("0")
-    UserSessionHardLimit,
-
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     PMHealthCheckEnabled,

@@ -470,7 +470,6 @@ select fn_db_add_config_value('EventQueueName','jms.queue.events','general');
 select fn_db_add_config_value('EventProcessingPoolSize','10','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('UnknownTaskPrePollingLapse','60000','general');
-select fn_db_add_config_value('UserSessionHardLimit','600','general');
 select fn_db_add_config_value_for_versions_up_to('UserDefinedVMProperties', '','4.2');
 select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
 select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');
