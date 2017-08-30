@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -98,7 +97,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         storagePoolExists();
         masterDomainIsUp();
         canDetachDomain();
-        assertFalse(cmd.canDetachDomain(false, false));
+        assertFalse(cmd.canDetachDomain(false));
     }
 
     @Test
@@ -107,7 +106,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         storagePoolExists();
         masterDomainIsUp();
         canDetachDomain();
-        assertTrue(cmd.canDetachDomain(false, false));
+        assertTrue(cmd.canDetachDomain(false));
     }
 
     @Test
@@ -117,7 +116,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
         cinderStorageDomainContainsDisks();
         masterDomainIsUp();
         canDetachDomain();
-        assertFalse(cmd.canDetachDomain(false, false));
+        assertFalse(cmd.canDetachDomain(false));
     }
 
     @Test
@@ -299,7 +298,7 @@ public class StorageDomainCommandBaseTest extends BaseCommandTest {
     }
 
     private void canDetachDomain() {
-        doReturn(true).when(cmd).isDetachAllowed(anyBoolean());
+        doReturn(true).when(cmd).isDetachAllowed();
     }
 
     private boolean commandHasInvalidStatusMessage() {

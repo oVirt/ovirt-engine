@@ -159,10 +159,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected boolean validate() {
-        boolean isLastStorage = storageDomainDao.getAllForStoragePool(getStoragePool().getId()).size() == 1;
-        boolean canRemoveLastStorage = isLastStorage || getParameters().getRemoveLast();
         return canDetachStorageDomainWithVmsAndDisks(getStorageDomain()) &&
-                canDetachDomain(getParameters().getDestroyingPool(), canRemoveLastStorage) &&
+                canDetachDomain(getParameters().getDestroyingPool()) &&
                 isNoLeasesOnStorageDomain();
     }
 

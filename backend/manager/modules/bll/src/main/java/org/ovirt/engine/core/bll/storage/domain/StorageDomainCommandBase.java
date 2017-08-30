@@ -106,21 +106,21 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                 .getStorageDomainId() : super.getStorageDomainId() : super.getStorageDomainId();
     }
 
-    protected boolean canDetachDomain(boolean isDestroyStoragePool, boolean isRemoveLast) {
+    protected boolean canDetachDomain(boolean isDestroyStoragePool) {
         return checkStoragePool()
                 && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Maintenance)
                 && (isMaster() || isDestroyStoragePool || checkMasterDomainIsUp())
-                && isDetachAllowed(isRemoveLast)
+                && isDetachAllowed()
                 && isCinderStorageHasNoDisks();
     }
 
-    protected boolean isDetachAllowed(final boolean isRemoveLast) {
+    protected boolean isDetachAllowed() {
 
         if (getStoragePoolIsoMap() == null) {
             return failValidation(EngineMessage.STORAGE_DOMAIN_NOT_ATTACHED_TO_STORAGE_POOL);
         }
-        if (!isRemoveLast && isMaster()) {
+        if (isMaster() && storageDomainDao.getAllForStoragePool(getStoragePoolId()).size() > 1) {
             return failValidation(EngineMessage.ERROR_CANNOT_DETACH_LAST_STORAGE_DOMAIN);
         }
         return true;
