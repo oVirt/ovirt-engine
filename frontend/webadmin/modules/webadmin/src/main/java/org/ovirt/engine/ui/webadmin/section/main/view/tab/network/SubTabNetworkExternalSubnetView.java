@@ -85,7 +85,11 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
                 new AbstractTextColumn<ExternalSubnet>() {
                     @Override
                     public String getValue(ExternalSubnet object) {
-                        return String.join(", ", object.getDnsServers()); //$NON-NLS-1$
+                        if (object != null && object.getDnsServers() != null) {
+                            return String.join(", ", object.getDnsServers()); //$NON-NLS-1$
+                        } else {
+                            return "";
+                        }
                     }
                 };
         dnsServersColumn.makeSortable();
