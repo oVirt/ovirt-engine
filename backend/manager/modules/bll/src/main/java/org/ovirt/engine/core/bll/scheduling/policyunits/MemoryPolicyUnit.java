@@ -133,7 +133,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
                     vds.getName(),
                     vds.getMaxSchedulingMemory());
 
-            messages.addMessage(vds.getId(), String.format("$availableMem %1$f", vds.getMaxSchedulingMemory()));
+            messages.addMessage(vds.getId(), String.format("$availableMem %1$.0f", vds.getMaxSchedulingMemory()));
             messages.addMessage(vds.getId(), EngineMessage.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
         }
 
