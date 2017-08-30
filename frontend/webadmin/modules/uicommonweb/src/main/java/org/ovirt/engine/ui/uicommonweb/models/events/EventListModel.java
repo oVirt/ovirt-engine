@@ -180,6 +180,13 @@ public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> i
         Frontend.getInstance().runQuery(VdcQueryType.Search, params, query);
     }
 
+    @Override
+    public boolean hasItemsSorted() {
+        // Always return true to bypass the default sorting as we don't want this applied
+        // to events.
+        return true;
+    }
+
     private void details() {
 
         AuditLog event = getSelectedItem();
