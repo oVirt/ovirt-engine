@@ -168,11 +168,15 @@
         .floatRight {
             float: right;
         }
+
+        .tabBar {
+            width: 165px !important;
+        }
     </ui:style>
 
-    <d:SimpleDialogPanel width="800px" height="560px">
+    <d:SimpleDialogPanel width="805px" height="560px">
         <d:content>
-            <t:DialogTabPanel ui:field="tabPanel" height="100%">
+            <t:DialogTabPanel ui:field="tabPanel" height="100%" barStyle="{style.tabBar}">
                 <t:tab>
                     <t:DialogTab ui:field="generalTab" label="{constants.clusterPopupGeneralTabLabel}">
                         <t:content>
