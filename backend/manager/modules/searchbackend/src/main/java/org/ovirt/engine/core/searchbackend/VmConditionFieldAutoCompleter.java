@@ -17,7 +17,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String NAME = "NAME";
     public static final String COMMENT = "COMMENT";
     public static final String STATUS = "STATUS";
-    public static final String HOST = "HOST";
+    public static final String HOST = "ON_HOST";
     public static final String IP = "IP";
     public static final String FQDN = "FQDN";
     public static final String UPTIME = "UPTIME";
