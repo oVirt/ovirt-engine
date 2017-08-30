@@ -93,7 +93,7 @@ public class OvirtBreadCrumbsView<T, M extends SearchableListModel> extends Abst
         exchangeButton.getElement().getStyle().setMarginLeft(10, Unit.PX);
         exchangeButton.getElement().getStyle().setMarginTop(-5, Unit.PX);
         Anchor anchor = dropDown.getAnchor();
-        anchor.setText(currentName.asString());
+        anchor.getElement().setInnerHTML(currentName.asString());
         anchor.getElement().getStyle().setFontSize(28, Unit.PX);
         anchor.addClickHandler(e -> {
             if (popover.isVisible()) {
