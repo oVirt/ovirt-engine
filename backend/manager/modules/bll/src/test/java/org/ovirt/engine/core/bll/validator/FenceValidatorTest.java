@@ -155,7 +155,7 @@ public class FenceValidatorTest {
         vds.getFenceAgents().add(agent);
         List<String> messages = new LinkedList<>();
         mcr.mockConfigValue(ConfigValues.VdsFenceType, Version.getLast(), "apc");
-        mcr.mockConfigValue(ConfigValues.CustomVdsFenceType, Version.getLast(), "apc");
+        mcr.mockConfigValue(ConfigValues.CustomVdsFenceType, "apc");
         boolean result = validator.isPowerManagementEnabledAndLegal(vds, cluster, messages);
         assertTrue(result);
     }
