@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
@@ -43,6 +44,8 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
     private StoragePoolIsoMapDao storagePoolIsoMapDao;
     @Inject
     private CINDERStorageHelper cinderStorageHelper;
+    @Inject
+    private StorageDomainDao storageDomainDao;
 
     public DetachStorageDomainFromPoolCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -156,9 +159,10 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected boolean validate() {
+        boolean isLastStorage = storageDomainDao.getAllForStoragePool(getStoragePool().getId()).size() == 1;
+        boolean canRemoveLastStorage = isLastStorage || getParameters().getRemoveLast();
         return canDetachStorageDomainWithVmsAndDisks(getStorageDomain()) &&
-                canDetachDomain(getParameters().getDestroyingPool(),
-                        getParameters().getRemoveLast()) &&
+                canDetachDomain(getParameters().getDestroyingPool(), canRemoveLastStorage) &&
                 isNoLeasesOnStorageDomain();
     }
 
