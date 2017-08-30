@@ -56,6 +56,7 @@ import org.ovirt.engine.ui.common.presenter.ExpandAllButtonPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.NetworkBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.OvirtBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.QuotaBreadCrumbsPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.TemplateBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.VnicProfileBreadCrumbsPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.HostMaintenanceConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.ActionPanelView;
@@ -63,6 +64,7 @@ import org.ovirt.engine.ui.common.view.ExpandAllButtonView;
 import org.ovirt.engine.ui.common.view.NetworkBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.OvirtBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.QuotaBreadCrumbsView;
+import org.ovirt.engine.ui.common.view.TemplateBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.VnicProfileBreadCrumbsView;
 import org.ovirt.engine.ui.common.view.popup.HostMaintenanceConfirmationPopupView;
 import org.ovirt.engine.ui.common.widget.MenuDetailsProvider;
@@ -1186,10 +1188,9 @@ public class PresenterModule extends BasePresenterModule {
                 new TypeLiteral<SearchPanelPresenterWidget<VmTemplate, TemplateListModel>>(){},
                 new TypeLiteral<SearchPanelPresenterWidget.ViewDef<TemplateListModel>>(){},
                 new TypeLiteral<SearchPanelView<TemplateListModel>>(){});
-        bindPresenterWidget(
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget<VmTemplate, TemplateListModel>>(){},
-                new TypeLiteral<OvirtBreadCrumbsPresenterWidget.ViewDef<VmTemplate>>(){},
-                new TypeLiteral<OvirtBreadCrumbsView<VmTemplate, TemplateListModel>>(){});
+        bindPresenterWidget(TemplateBreadCrumbsPresenterWidget.class,
+                TemplateBreadCrumbsPresenterWidget.TemplateBreadCrumbsViewDef.class,
+                TemplateBreadCrumbsView.class);
         bindActionPanel(new TypeLiteral<ActionPanelPresenterWidget.ViewDef<VmTemplate>>(){},
             new TypeLiteral<ActionPanelView<VmTemplate>>(){});
 
