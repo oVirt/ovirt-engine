@@ -1102,10 +1102,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getVm().getDiskMap()
                 .values()
                 .stream()
-                .map(disk -> (DiskImage) disk)
                 .anyMatch(vmDisk -> vmDisk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                        storageDomainStaticDao.get(vmDisk.getStorageIds().get(0)).isBackup());
-
+                        storageDomainStaticDao.get(((DiskImage) vmDisk).getStorageIds().get(0)).isBackup());
     }
 
     @Override

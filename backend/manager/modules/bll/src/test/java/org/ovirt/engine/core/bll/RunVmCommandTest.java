@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -580,6 +581,30 @@ public class RunVmCommandTest extends BaseCommandTest {
         Guid storageDomainId2 = initDiskImage(vm);
         when(storageDomainStaticDao.get(storageDomainId2)).thenReturn(backupStorageDomain(true));
         assertTrue("checkDisksNotInBackupStorage() fails to run because one or more disk is in backup domain",
+                command.checkDisksInBackupStorage());
+    }
+
+    @Test
+    public void testSuccessWithExternalLunDisk() {
+        final VM vm = new VM();
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+        LunDisk lunDisk = new LunDisk();
+        lunDisk.setId(Guid.newGuid());
+        vm.getDiskMap().put(lunDisk.getId(), lunDisk);
+        assertFalse("checkDisksNotInBackupStorage() Will succeed since Lun disk should not be validated for storage",
+                command.checkDisksInBackupStorage());
+    }
+
+    @Test
+    public void testFailureWithExternalLunDiskAndImageOnBackup() {
+        final VM vm = new VM();
+        when(vmDao.get(command.getParameters().getVmId())).thenReturn(vm);
+        LunDisk lunDisk = new LunDisk();
+        lunDisk.setId(Guid.newGuid());
+        Guid storageDomainId = initDiskImage(vm);
+        when(storageDomainStaticDao.get(storageDomainId)).thenReturn(backupStorageDomain(true));
+        vm.getDiskMap().put(lunDisk.getId(), lunDisk);
+        assertTrue("checkDisksNotInBackupStorage() Will fail since one of the disks is in backup storage domain",
                 command.checkDisksInBackupStorage());
     }
 }
