@@ -625,8 +625,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected void initUnregisteredDisksToDB(Guid storageDomainId) {
         List<DiskImage> existingDisks = diskImageDao.getAllForStorageDomain(storageDomainId);
-        for (Object unregisteredDiskObj : unregisteredDisks) {
-            UnregisteredDisk unregisteredDisk = (UnregisteredDisk) unregisteredDiskObj;
+        for (UnregisteredDisk unregisteredDisk : unregisteredDisks) {
             if (existingDisks.stream().anyMatch(diskImage -> diskImage.getId().equals(unregisteredDisk.getId()))) {
                 log.info("Disk {} with id '{}' already exists in the engine, therefore will not be " +
                         "part of the unregistered disks.",
