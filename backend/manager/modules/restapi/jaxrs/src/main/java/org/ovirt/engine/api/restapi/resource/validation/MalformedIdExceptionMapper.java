@@ -24,6 +24,7 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,9 @@ public class MalformedIdExceptionMapper implements ExceptionMapper<MalformedIdEx
             uriInfo.getPath()
         );
         log.error("Exception", exception);
-        return Response.status(Status.BAD_REQUEST).entity(exception.getCause().getMessage()).build();
+        final Fault fault = new Fault();
+        fault.setReason("Operation failed");
+        fault.setDetail(exception.getCause().getMessage());
+        return Response.status(Status.BAD_REQUEST).entity(fault).build();
     }
 }
