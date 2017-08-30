@@ -106,7 +106,8 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         boolean widgetVisible = getView().asWidget().isVisible();
         if (item != null && widgetVisible) {
             getView().setMainSelectedItem(item);
-        } else if (item == null && widgetVisible && modelProvider.getMainModel().getItems().isEmpty()) {
+        } else if (item == null && widgetVisible && (modelProvider.getMainModel().getItems() == null
+                || modelProvider.getMainModel().getItems().isEmpty())) {
             // No selection so we can't positively show anything, switch to grid.
             placeManager.revealPlace(getMainContentRequest());
         }
