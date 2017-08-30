@@ -35,6 +35,7 @@ import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.Balance;
 import org.ovirt.engine.api.model.BaseResource;
+import org.ovirt.engine.api.model.BaseResources;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.Cdrom;
 import org.ovirt.engine.api.model.Cluster;
@@ -341,6 +342,7 @@ import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypeResource;
 import org.ovirt.engine.api.resource.openstack.OpenstackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.invocation.Current;
 import org.ovirt.engine.api.restapi.invocation.CurrentManager;
+import org.ovirt.engine.api.utils.EntityHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -829,6 +831,7 @@ public class LinkHelper {
      * @param obj the object to check
      * @return    a list of any inline BaseResource objects
      */
+    @SuppressWarnings("unchecked")
     private static List<BaseResource> getInlineResources(Object obj) {
         ArrayList<BaseResource> ret = new ArrayList<>();
 
@@ -844,6 +847,23 @@ public class LinkHelper {
             if (inline != null) {
                 if (inline instanceof BaseResource) {
                     ret.add((BaseResource) inline);
+                }
+                else if (inline instanceof BaseResources) {
+                    BaseResources entities = (BaseResources)inline;
+                    Method getter = EntityHelper.getCollectionGetter(entities);
+                    try {
+                        List<BaseResource> entitiesList = (List<BaseResource>) getter.invoke(entities);
+                        for (BaseResource entity : entitiesList) {
+                            ret.add(entity);
+                        }
+                    } catch (Exception e) {
+                        log.error(
+                            "Error invoking method '{}' on class '{}'.",
+                            method.getName(),
+                            entities.getClass().getSimpleName()
+                        );
+                        log.error("Exception", e);
+                    }
                 }
                 else {
                     ret.addAll(getInlineResources(inline));
