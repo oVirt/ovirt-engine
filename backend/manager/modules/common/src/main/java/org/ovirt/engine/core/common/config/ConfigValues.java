@@ -841,10 +841,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("500")
     VdsLocalDisksCriticallyLowFreeSpace,
 
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("100")
-    DefaultMaxThreadWaitQueueSize,
-
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirtmgmt")
