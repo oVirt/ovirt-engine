@@ -15,8 +15,8 @@ public class UserConfiguredNetworkData {
     private final Map<String, UserOverriddenNicValues> userOverriddenNicValuesByNicName;
 
     public UserConfiguredNetworkData() {
-        this(Collections.<NetworkAttachment> emptyList(),
-                Collections.<Guid> emptySet(),
+        this(Collections.emptyList(),
+                Collections.emptySet(),
                 new HashMap<String, UserOverriddenNicValues>());
     }
 
