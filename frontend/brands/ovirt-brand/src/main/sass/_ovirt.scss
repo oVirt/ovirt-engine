@@ -110,6 +110,10 @@ TODO: use SASS, break into tooltips.sass
     max-width: 620px !important;
 }
 
+[rel=tooltip] [disabled] {
+    pointer-events: none;
+}
+
 /***************************************
 Widgets -- cells and columns
 TODO: use SASS, break into widgets.scss
