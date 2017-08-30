@@ -188,9 +188,13 @@ public abstract class VnicProfileModel extends Model {
             Network network = getNetwork().getSelectedItem();
             boolean passthroughAndPortMirroringAllowed = network == null || !network.isExternal();
 
-            getPortMirroring().setIsChangeable(passthroughAndPortMirroringAllowed
-                    && getPortMirroring().getIsChangable());
-            getPassthrough().setIsChangeable(passthroughAndPortMirroringAllowed);
+            EntityModel<Boolean> portMirroring = getPortMirroring();
+            EntityModel<Boolean> passthrough = getPassthrough();
+
+            portMirroring.setIsChangeable(passthroughAndPortMirroringAllowed
+                    && portMirroring.getIsChangable(), portMirroring.getChangeProhibitionReason());
+            passthrough.setIsChangeable(passthroughAndPortMirroringAllowed
+                    && passthrough.getIsChangable(), passthrough.getChangeProhibitionReason());
 
             if (!passthroughAndPortMirroringAllowed) {
                 getPortMirroring().setChangeProhibitionReason(constants.portMirroringNotSupportedExternalNetworks());
